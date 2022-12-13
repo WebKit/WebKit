@@ -50,7 +50,7 @@ WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, Value* ptr, unsigned o
     , m_offset(offset)
     , m_boundsType(Type::Maximum)
 {
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     size_t redzoneLimit = static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) + Wasm::Memory::fastMappedRedzoneBytes();
     ASSERT_UNUSED(redzoneLimit, maximum <= redzoneLimit);
 #endif

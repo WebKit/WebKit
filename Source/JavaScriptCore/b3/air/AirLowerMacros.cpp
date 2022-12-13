@@ -53,16 +53,25 @@ void lowerMacros(Code& code)
 
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
 
-                unsigned offset = value->type() == Void ? 0 : 1;
+                unsigned resultCount = cCallResultCount(value);
+                ASSERT_IMPLIES(is64Bit(), resultCount <= 1);
+                
                 Vector<ShufflePair, 16> shufflePairs;
                 bool hasRegisterSource = false;
-                for (unsigned i = 1; i < destinations.size(); ++i) {
-                    Value* child = value->child(i);
-                    ShufflePair pair(inst.args[offset + i], destinations[i], widthForType(child->type()));
+                unsigned offset = 1;
+                auto addNextPair = [&](Width width) {
+                    ShufflePair pair(inst.args[offset + resultCount], destinations[offset], width);
                     shufflePairs.append(pair);
                     hasRegisterSource |= pair.src().isReg();
+                    ++offset;
+                };
+                for (unsigned i = 1; i < value->numChildren(); ++i) {
+                    Value* child = value->child(i);
+                    for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++)
+                        addNextPair(cCallArgumentRegisterWidth(child));
                 }
-
+                ASSERT(offset = inst.args.size());
+                
                 if (UNLIKELY(hasRegisterSource))
                     insertionSet.insertInst(instIndex, createShuffle(inst.origin, Vector<ShufflePair>(shufflePairs)));
                 else {
@@ -91,31 +100,37 @@ void lowerMacros(Code& code)
                 destinations[0] = inst.args[0];
 
                 // Save where the original instruction put its result.
-                Arg resultDst = value->type() == Void ? Arg() : inst.args[1];
+                Arg resultDst0 = resultCount >= 1 ? inst.args[1] : Arg();
+#if USE(JSVALUE32_64)
+                Arg resultDst1 = resultCount >= 2 ? inst.args[2] : Arg();
+#endif
 
                 inst = buildCCall(code, inst.origin, destinations);
                 if (oldKind.effects)
                     inst.kind.effects = true;
 
-                Tmp result = cCallResult(value->type());
                 switch (value->type().kind()) {
                 case Void:
                 case Tuple:
                     break;
                 case Float:
-                    insertionSet.insert(instIndex + 1, MoveFloat, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, MoveFloat, value, cCallResult(value, 0), resultDst0);
                     break;
                 case Double:
-                    insertionSet.insert(instIndex + 1, MoveDouble, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, MoveDouble, value, cCallResult(value, 0), resultDst0);
                     break;
                 case Int32:
-                    insertionSet.insert(instIndex + 1, Move32, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, Move32, value, cCallResult(value, 0), resultDst0);
                     break;
                 case Int64:
-                    insertionSet.insert(instIndex + 1, Move, value, result, resultDst);
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(value, 0), resultDst0);
+#if USE(JSVALUE32_64)
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(value, 1), resultDst1);
+#endif
                     break;
                 case V128:
-                    insertionSet.insert(instIndex + 1, MoveVector, value, result, resultDst);
+                    ASSERT(is64Bit());
+                    insertionSet.insert(instIndex + 1, MoveVector, value, cCallResult(value, 0), resultDst0);
                     break;
                 }
             };

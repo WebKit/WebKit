@@ -132,9 +132,13 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap b3
     for (const B3::PCToOriginMap::OriginRange& originRange : b3PCToOriginMap.ranges()) {
         B3::Origin b3Origin = originRange.origin;
         if (b3Origin) {
+#if USE(JSVALUE64)
             Wasm::OpcodeOrigin wasmOrigin { b3Origin };
             // We stash the location into a BytecodeIndex.
             appendItem(originRange.label, CodeOrigin(BytecodeIndex(wasmOrigin.location())));
+#elif USE(JSVALUE32_64)
+            UNREACHABLE_FOR_PLATFORM(); // Needs porting
+#endif
         } else
             appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
     }

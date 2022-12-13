@@ -135,6 +135,10 @@ void lowerStackArgs(Code& code)
                         insertionSet.insert(instIndex, Add64, inst.origin, Air::Tmp(MacroAssembler::stackPointerRegister), tmp);
                         result = Arg::addr(tmp, 0);
                         return result;
+#elif CPU(ARM)
+                        // We solve this from the macro assembler for now
+                        UNUSED_PARAM(instIndex);
+                        return result;
 #elif CPU(X86_64)
                         UNUSED_PARAM(instIndex);
                         // Can't happen on x86: immediates are always big enough for frame size.
@@ -161,7 +165,7 @@ void lowerStackArgs(Code& code)
                             Air::Opcode storeOpcode = Store32;
                             Air::Arg::Kind operandKind = Arg::ZeroReg;
                             Air::Arg operand = Arg::zeroReg();
-#elif CPU(X86_64)
+#elif CPU(X86_64) || CPU(ARM)
                             Air::Opcode storeOpcode = Move32;
                             Air::Arg::Kind operandKind = Arg::Imm;
                             Air::Arg operand = Arg::imm(0);

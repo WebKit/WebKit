@@ -214,6 +214,9 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     context.gpr(RISCV64Registers::ra) = bitwise_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
+#elif CPU(ARM)
+    UNUSED_VARIABLE(framePointer);
+    UNREACHABLE_FOR_PLATFORM(); // Should not try to tier up yet
 #else
 #error Unsupported architecture.
 #endif
@@ -728,7 +731,7 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, uint32_
     return true;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, size_t, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
+JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, uint32_t, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
 {
     return setWasmTableElement(instance, tableIndex, signedIndex, encValue);
 }
@@ -1078,9 +1081,10 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
     return vm.targetMachinePCForThrow;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, PointerPair, (Instance* instance))
+namespace WasmOperationsInternal {
+
+static ThrownExceptionInfo retrieveAndClearExceptionIfCatchableImpl(Instance* instance)
 {
-#if USE(JSVALUE64)
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
     VM& vm = globalObject->vm();
@@ -1099,15 +1103,25 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Poin
     void* payload = nullptr;
     if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
         payload = bitwise_cast<void*>(wasmException->payload().data());
-    return PointerPair { bitwise_cast<void*>(JSValue::encode(thrownValue)), payload };
-#elif USE(JSVALUE32_64)
-    // Note: This function needs to return a pointer and a JSValue, so will need to
-    // change signature on JSVALE32_64, nevertheless, for now it's unused.
-    UNREACHABLE_FOR_PLATFORM();
-    UNUSED_PARAM(instance);
-    return { nullptr, nullptr };
-#endif
+
+    return { JSValue::encode(thrownValue), payload };
 }
+
+}
+
+#if USE(JSVALUE64)
+JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, ThrownExceptionInfo, (Instance* instance))
+{
+    return WasmOperationsInternal::retrieveAndClearExceptionIfCatchableImpl(instance);
+}
+#else
+JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void*, (Instance* instance, EncodedJSValue* encodedThrownValue))
+{
+    auto info = WasmOperationsInternal::retrieveAndClearExceptionIfCatchableImpl(instance);
+    *encodedThrownValue = info.thrownValue;
+    return info.payload;
+}
+#endif // USE(JSVALUE64)
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue))
 {

@@ -1096,7 +1096,8 @@ tools/JSDollarVM.cpp
 tools/SigillCrashAnalyzer.cpp
 tools/VMInspector.cpp
 
-wasm/WasmAirIRGeneratorTmp.cpp @no-unify
+wasm/WasmAirIRGenerator32_64.cpp @no-unify
+wasm/WasmAirIRGenerator64.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp

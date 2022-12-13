@@ -62,13 +62,10 @@ void splitStack(BlockSignature originalSignature, EnclosingStack& enclosingStack
     enclosingStack.shrink(offset);
 }
 
-template<typename Context>
-class FunctionParser : public Parser<void> {
-public:
-    struct ControlEntry;
-
-    using ControlType = typename Context::ControlType;
-    using ExpressionType = typename Context::ExpressionType;
+template<typename Control, typename Expression>
+struct FunctionParserTypes {
+    using ControlType = Control;
+    using ExpressionType = Expression;
 
     class TypedExpression {
     public:
@@ -99,9 +96,6 @@ public:
         Type m_type;
         ExpressionType m_value;
     };
-
-    using ControlStack = Vector<ControlEntry, 16>;
-    using ResultList = Vector<ExpressionType, 8>;
     using Stack = Vector<TypedExpression, 16, UnsafeVectorOverflow>;
 
     struct ControlEntry {
@@ -109,6 +103,21 @@ public:
         Stack elseBlockStack;
         ControlType controlData;
     };
+    using ControlStack = Vector<ControlEntry, 16>;
+
+    using ResultList = Vector<ExpressionType, 8>;
+};
+
+template<typename Context>
+class FunctionParser : public Parser<void>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType> {
+public:
+    using ControlType = typename FunctionParser::ControlType;
+    using ControlEntry = typename FunctionParser::ControlEntry;
+    using ControlStack = typename FunctionParser::ControlStack;
+    using ExpressionType = typename FunctionParser::ExpressionType;
+    using TypedExpression = typename FunctionParser::TypedExpression;
+    using Stack = typename FunctionParser::Stack;
+    using ResultList = typename FunctionParser::ResultList;
 
     FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const TypeDefinition&, const ModuleInformation&);
 
@@ -137,11 +146,10 @@ private:
         m_context.didPopValueFromStack();                                                   \
     } while (0)
 
-    template<OpType>
-    PartialResult WARN_UNUSED_RETURN unaryCase(Type returnType, Type operandType);
-
-    template<OpType>
-    PartialResult WARN_UNUSED_RETURN binaryCase(Type returnType, Type lhsType, Type rhsType);
+    using UnaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN unaryCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
+    using BinaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN binaryCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
 
     PartialResult WARN_UNUSED_RETURN store(Type memoryType);
     PartialResult WARN_UNUSED_RETURN load(Type memoryType);
@@ -350,8 +358,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
 }
 
 template<typename Context>
-template<OpType op>
-auto FunctionParser<Context>::binaryCase(Type returnType, Type lhsType, Type rhsType) -> PartialResult
+auto FunctionParser<Context>::binaryCase(OpType op, BinaryOperationHandler handler, Type returnType, Type lhsType, Type rhsType) -> PartialResult
 {
     TypedExpression right;
     TypedExpression left;
@@ -363,14 +370,13 @@ auto FunctionParser<Context>::binaryCase(Type returnType, Type lhsType, Type rhs
     WASM_VALIDATOR_FAIL_IF(right.type() != rhsType, op, " right value type mismatch");
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(template addOp<op>(left, right, result));
+    WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(left, right, result));
     m_expressionStack.constructAndAppend(returnType, result);
     return { };
 }
 
 template<typename Context>
-template<OpType op>
-auto FunctionParser<Context>::unaryCase(Type returnType, Type operandType) -> PartialResult
+auto FunctionParser<Context>::unaryCase(OpType op, UnaryOperationHandler handler, Type returnType, Type operandType) -> PartialResult
 {
     TypedExpression value;
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary");
@@ -378,7 +384,7 @@ auto FunctionParser<Context>::unaryCase(Type returnType, Type operandType) -> Pa
     WASM_VALIDATOR_FAIL_IF(value.type() != operandType, op, " value type mismatch");
 
     ExpressionType result;
-    WASM_TRY_ADD_TO_CONTEXT(template addOp<op>(value, result));
+    WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(value, result));
     m_expressionStack.constructAndAppend(returnType, result);
     return { };
 }
@@ -609,6 +615,10 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         m_expressionStack.constructAndAppend(type, m_context.addConstant(Types::F64, 0));
         return { };
     };
+
+    // only used in some specializations
+    UNUSED_VARIABLE(pushUnreachable);
+    UNUSED_PARAM(optionalRelation);
 
     auto parseMemOp = [&] (uint32_t& offset, TypedExpression& pointer) -> PartialResult {
         uint32_t maxAlignment;
@@ -1351,12 +1361,12 @@ template<typename Context>
 auto FunctionParser<Context>::parseExpression() -> PartialResult
 {
     switch (m_currentOpcode) {
-#define CREATE_CASE(name, id, b3op, inc, lhsType, rhsType, returnType) case OpType::name: return binaryCase<OpType::name>(Types::returnType, Types::lhsType, Types::rhsType);
-    FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
+#define CREATE_CASE(name, id, b3op, inc, lhsType, rhsType, returnType) case OpType::name: return binaryCase(OpType::name, &Context::add##name, Types::returnType, Types::lhsType, Types::rhsType);
+        FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case OpType::name: return unaryCase<OpType::name>(Types::returnType, Types::operandType);
-    FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
+#define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case OpType::name: return unaryCase(OpType::name, &Context::add##name, Types::returnType, Types::operandType);
+        FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
     case Select: {

@@ -295,6 +295,29 @@ JSC_DECLARE_JIT_OPERATION(stdPowFloat, float, (float, float));
 JSC_DECLARE_JIT_OPERATION(fmodDouble, double, (double, double));
 JSC_DECLARE_JIT_OPERATION(roundDouble, double, (double));
 JSC_DECLARE_JIT_OPERATION(jsRoundDouble, double, (double));
+JSC_DECLARE_JIT_OPERATION(roundFloat, float, (float));
+
+JSC_DECLARE_JIT_OPERATION(f32_nearest, float, (float));
+JSC_DECLARE_JIT_OPERATION(f64_nearest, double, (double));
+
+JSC_DECLARE_JIT_OPERATION(i32_div_s, int32_t, (int32_t, int32_t));
+JSC_DECLARE_JIT_OPERATION(i32_div_u, uint32_t, (uint32_t, uint32_t));
+JSC_DECLARE_JIT_OPERATION(i32_rem_s, int32_t, (int32_t, int32_t));
+JSC_DECLARE_JIT_OPERATION(i32_rem_u, uint32_t, (uint32_t, uint32_t));
+JSC_DECLARE_JIT_OPERATION(i64_div_s, int64_t, (int64_t, int64_t));
+JSC_DECLARE_JIT_OPERATION(i64_div_u, uint64_t, (uint64_t, uint64_t));
+JSC_DECLARE_JIT_OPERATION(i64_rem_s, int64_t, (int64_t, int64_t));
+JSC_DECLARE_JIT_OPERATION(i64_rem_u, uint64_t, (uint64_t, uint64_t));
+
+JSC_DECLARE_JIT_OPERATION(i64_trunc_u_f32, uint64_t, (float));
+JSC_DECLARE_JIT_OPERATION(i64_trunc_s_f32, int64_t, (float));
+JSC_DECLARE_JIT_OPERATION(i64_trunc_u_f64, uint64_t, (double));
+JSC_DECLARE_JIT_OPERATION(i64_trunc_s_f64, int64_t, (double));
+
+JSC_DECLARE_JIT_OPERATION(f32_convert_u_i64, float, (uint64_t));
+JSC_DECLARE_JIT_OPERATION(f32_convert_s_i64, float, (int64_t));
+JSC_DECLARE_JIT_OPERATION(f64_convert_u_i64, double, (uint64_t));
+JSC_DECLARE_JIT_OPERATION(f64_convert_s_i64, double, (int64_t));
 
 } // namespace Math
 } // namespace JSC

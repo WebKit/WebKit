@@ -129,6 +129,27 @@ constexpr bool isAddress32Bit()
     return !isAddress64Bit();
 }
 
+constexpr size_t registerSize()
+{
+#if CPU(REGISTER64)
+    return 8;
+#elif CPU(REGISTER32)
+    return 4;
+#else
+#  error "Unknown register size"
+#endif
+}
+
+constexpr bool isRegister64Bit()
+{
+    return registerSize() == 8;
+}
+
+constexpr bool isRegister32Bit()
+{
+    return registerSize() == 4;
+}
+
 inline bool optimizeForARMv7IDIVSupported()
 {
     return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();

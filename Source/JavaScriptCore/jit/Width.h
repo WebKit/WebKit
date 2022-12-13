@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "CPU.h"
+
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -120,7 +122,14 @@ inline constexpr uint64_t mask(Width width)
 
 constexpr Width pointerWidth()
 {
-    if (sizeof(void*) == 8)
+    if (isAddress64Bit())
+        return Width64;
+    return Width32;
+}
+
+constexpr Width registerWidth()
+{
+    if (isRegister64Bit())
         return Width64;
     return Width32;
 }

@@ -30,7 +30,6 @@
 #include "IndexingType.h"
 #include "JITOperationValidation.h"
 #include "JSCJSValue.h"
-#include "SlowPathReturnType.h"
 #include "WasmExceptionType.h"
 #include "WasmOSREntryData.h"
 
@@ -74,7 +73,7 @@ JSC_DECLARE_JIT_OPERATION(operationWasmMemoryFill, size_t, (Instance*, uint32_t 
 JSC_DECLARE_JIT_OPERATION(operationWasmMemoryCopy, size_t, (Instance*, uint32_t dstAddress, uint32_t srcAddress, uint32_t count));
 
 JSC_DECLARE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance*, unsigned, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, size_t, (Instance*, unsigned, uint32_t, EncodedJSValue encValue));
+JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, uint32_t, (Instance*, unsigned, uint32_t, EncodedJSValue encValue));
 JSC_DECLARE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance*, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmTableInit, size_t, (Instance*, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length));
 JSC_DECLARE_JIT_OPERATION(operationWasmElemDrop, void, (Instance*, unsigned elementIndex));
@@ -98,15 +97,25 @@ JSC_DECLARE_JIT_OPERATION(operationWasmThrow, void*, (Instance*, CallFrame*, uns
 JSC_DECLARE_JIT_OPERATION(operationWasmRethrow, void*, (Instance*, CallFrame*, EncodedJSValue thrownValue));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame*, Wasm::ExceptionType, Instance*));
-struct PointerPair {
-    void* first;
-    void* second;
+
+struct ThrownExceptionInfo {
+    EncodedJSValue thrownValue;
+    void* payload;
 };
-JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, PointerPair, (Instance*));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue encValue, uint32_t index));
 JSC_DECLARE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint32_t typeIndex, EncodedJSValue encValue, uint32_t index, EncodedJSValue value));
+
+#if USE(JSVALUE64)
+JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, ThrownExceptionInfo, (Instance*));
+#else
+/* On 32-bit platforms, we can't return both an EncodedJSValue and the payload
+ * together (not enough return registers are available in the ABI and we don't
+ * handle stack arguments when calling C functions), so, instead, return the
+ * payload and return the thrown value via an out pointer */
+JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void*, (Instance*, EncodedJSValue*));
+#endif // USE(JSVALUE64)
 
 } } // namespace JSC::Wasm
 

@@ -1753,7 +1753,7 @@ protected:
         // Note that the input property requires an analysis over ZDef's, so it's only valid so long
         // as the input gets a register. We don't know if the input gets a register, but we do know
         // that if it doesn't get a register then we will still emit this Move32.
-        if (inst.kind.opcode == Move32) {
+        if (inst.kind.opcode == Move32 && !is32Bit()) {
             if (!tmpWidth)
                 return false;
 

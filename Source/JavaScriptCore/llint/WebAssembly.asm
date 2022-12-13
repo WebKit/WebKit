@@ -438,7 +438,7 @@ end
 
 # Tier up immediately, while saving full vectors in argument FPRs
 macro wasmPrologueSIMD(loadWasmInstance)
-if WEBASSEMBLY_B3JIT
+if WEBASSEMBLY_B3JIT and not ARMv7
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
     loadWasmInstance()

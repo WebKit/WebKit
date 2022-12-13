@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCCallingConvention.h"
 #include "AirInstInlines.h"
 #include "B3CCallValue.h"
 #include "B3ValueInlines.h"
@@ -64,7 +65,14 @@ bool CCallCustom::isValidForm(Inst& inst)
     if (!value)
         return false;
 
-    if (inst.args.size() != (value->type() == Void ? 0 : 1) + value->numChildren())
+    size_t resultCount = cCallResultCount(value);
+    size_t expectedArgCount = resultCount;
+    for (Value* child : value->children()) {
+        ASSERT(child->type() != Tuple);
+        expectedArgCount += cCallArgumentRegisterCount(child);
+    }
+
+    if (inst.args.size() != expectedArgCount)
         return false;
 
     // The arguments can only refer to the stack, tmps, or immediates.
@@ -73,25 +81,31 @@ bool CCallCustom::isValidForm(Inst& inst)
             return false;
     }
 
-    unsigned offset = 0;
-
+    // Callee
     if (!inst.args[0].isGP())
         return false;
 
+    unsigned offset = 1;
+
     // If there is a result then it cannot be an immediate.
-    if (value->type() != Void) {
-        if (inst.args[1].isSomeImm())
+    for (size_t i = 0 ; i < resultCount; ++i) {
+        if (inst.args[offset].isSomeImm())
             return false;
-        if (!inst.args[1].canRepresent(value))
+        if (!inst.args[offset].canRepresent(value))
             return false;
         offset++;
     }
 
-    for (unsigned i = value->numChildren(); i-- > 1;) {
+    auto checkNextArg = [&](Value* child) {
+        return inst.args[offset++].canRepresent(child);
+    };
+
+    for (unsigned i = 1 ; i < value->numChildren(); ++i) {
         Value* child = value->child(i);
-        Arg arg = inst.args[offset + i];
-        if (!arg.canRepresent(child))
-            return false;
+        for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++) {
+            if (!checkNextArg(child))
+                return false;
+        }
     }
 
     return true;

@@ -37,7 +37,7 @@ public:
         : m_masm(masm)
         , m_oldValueOfAllowScratchRegister(masm.m_allowScratchRegister)
     {
-#if CPU(ARM64)
+#if CPU(ARM64) || CPU(ARM_THUMB2)
         if (!m_oldValueOfAllowScratchRegister)
             m_masm.invalidateAllTempRegisters();
 #endif

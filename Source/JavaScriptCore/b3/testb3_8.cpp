@@ -28,7 +28,7 @@
 
 #include <wtf/UniqueArray.h>
 
-#if ENABLE(B3_JIT)
+#if ENABLE(B3_JIT) && !CPU(ARM)
 
 template<typename T>
 void testAtomicWeakCAS()

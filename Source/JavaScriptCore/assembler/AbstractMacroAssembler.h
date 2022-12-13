@@ -138,6 +138,7 @@ public:
         TimesFour,
         TimesEight,
         ScalePtr = isAddress64Bit() ? TimesEight : TimesFour,
+        ScaleRegWord = isRegister64Bit() ? TimesEight : TimesFour,
     };
 
     enum class Extend : uint8_t {

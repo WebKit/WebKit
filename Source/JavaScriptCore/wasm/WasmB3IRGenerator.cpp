@@ -80,6 +80,8 @@ void dumpProcedure(void* ptr)
     proc->dump(WTF::dataFile());
 }
 
+#if USE(JSVALUE64)
+
 namespace JSC { namespace Wasm {
 
 using namespace B3;
@@ -374,10 +376,15 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
     // Basic operators
-    template<OpType>
-    PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
-    template<OpType>
-    PartialResult WARN_UNUSED_RETURN addOp(ExpressionType left, ExpressionType right, ExpressionType& result);
+#define X(name, opcode, short, idx, ...) \
+    PartialResult WARN_UNUSED_RETURN add##name(ExpressionType arg, ExpressionType& result);
+    FOR_EACH_WASM_UNARY_OP(X)
+#undef X
+#define X(name, opcode, short, idx, ...) \
+    PartialResult WARN_UNUSED_RETURN add##name(ExpressionType left, ExpressionType right, ExpressionType& result);
+    FOR_EACH_WASM_BINARY_OP(X)
+#undef X
+
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
@@ -3614,14 +3621,6 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
     return result;
 }
 
-void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffer)
-{
-    if (context.procedure && context.procedure->needsPCToOriginMap()) {
-        B3::PCToOriginMap originMap = context.procedure->releasePCToOriginMap();
-        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, WTFMove(originMap)), linkBuffer);
-    }
-}
-
 // Custom wasm ops. These are the ones too messy to do in wasm.json.
 
 void B3IRGenerator::emitChecksForModOrDiv(B3::Opcode operation, Value* left, Value* right)
@@ -3652,8 +3651,7 @@ void B3IRGenerator::emitChecksForModOrDiv(B3::Opcode operation, Value* left, Val
     }
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32DivS>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32DivS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = Div;
     Value* left = get(leftVar);
@@ -3663,8 +3661,7 @@ auto B3IRGenerator::addOp<OpType::I32DivS>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32RemS>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32RemS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = Mod;
     Value* left = get(leftVar);
@@ -3674,8 +3671,7 @@ auto B3IRGenerator::addOp<OpType::I32RemS>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32DivU>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32DivU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = UDiv;
     Value* left = get(leftVar);
@@ -3685,8 +3681,7 @@ auto B3IRGenerator::addOp<OpType::I32DivU>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32RemU>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32RemU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = UMod;
     Value* left = get(leftVar);
@@ -3696,8 +3691,7 @@ auto B3IRGenerator::addOp<OpType::I32RemU>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64DivS>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64DivS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = Div;
     Value* left = get(leftVar);
@@ -3707,8 +3701,7 @@ auto B3IRGenerator::addOp<OpType::I64DivS>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64RemS>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64RemS(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = Mod;
     Value* left = get(leftVar);
@@ -3718,8 +3711,7 @@ auto B3IRGenerator::addOp<OpType::I64RemS>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64DivU>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64DivU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = UDiv;
     Value* left = get(leftVar);
@@ -3729,8 +3721,7 @@ auto B3IRGenerator::addOp<OpType::I64DivU>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64RemU>(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64RemU(ExpressionType leftVar, ExpressionType rightVar, ExpressionType& result) -> PartialResult
 {
     const B3::Opcode op = UMod;
     Value* left = get(leftVar);
@@ -3740,8 +3731,7 @@ auto B3IRGenerator::addOp<OpType::I64RemU>(ExpressionType leftVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32Ctz(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, origin());
@@ -3754,8 +3744,7 @@ auto B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType argVar, ExpressionType&
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64Ctz(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
@@ -3768,8 +3757,7 @@ auto B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType argVar, ExpressionType&
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32Popcnt(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
 #if CPU(X86_64)
@@ -3790,8 +3778,7 @@ auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType argVar, ExpressionTy
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64Popcnt(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
 #if CPU(X86_64)
@@ -3812,8 +3799,7 @@ auto B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType argVar, ExpressionTy
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addF64ConvertUI64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
@@ -3834,8 +3820,7 @@ auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType argVar, ExpressionType&
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addF32ConvertUI64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
@@ -3856,8 +3841,7 @@ auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType argVar, Express
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addF64Nearest(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
@@ -3870,8 +3854,7 @@ auto B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType argVar, ExpressionT
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addF32Nearest(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
@@ -3884,8 +3867,7 @@ auto B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType argVar, ExpressionT
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addF64Trunc(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
@@ -3898,8 +3880,7 @@ auto B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType argVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addF32Trunc(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
@@ -3912,8 +3893,7 @@ auto B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType argVar, ExpressionTyp
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32TruncSF64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
@@ -3936,8 +3916,7 @@ auto B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType argVar, Expressio
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32TruncSF32(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
@@ -3961,8 +3940,7 @@ auto B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType argVar, Expressio
 }
 
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32TruncUF64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
@@ -3985,8 +3963,7 @@ auto B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType argVar, Expressio
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI32TruncUF32(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
@@ -4009,8 +3986,7 @@ auto B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType argVar, Expressio
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64TruncSF64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
@@ -4033,8 +4009,7 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType argVar, Expressio
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64TruncUF64(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
@@ -4077,8 +4052,7 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType argVar, Expressio
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64TruncSF32(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
@@ -4101,8 +4075,7 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType argVar, Expressio
     return { };
 }
 
-template<>
-auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType argVar, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addI64TruncUF32(ExpressionType argVar, ExpressionType& result) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* max = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
@@ -4148,5 +4121,31 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType argVar, Expressio
 } } // namespace JSC::Wasm
 
 #include "WasmB3IRGeneratorInlines.h"
+
+#endif // USE(JSVALUE64)
+
+namespace JSC { namespace Wasm {
+
+using namespace B3;
+
+#if !USE(JSVALUE64)
+// On 32-bit platforms, we stub out the entire B3 generator
+
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t, std::optional<bool>, uint32_t, TierUpCount*)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+#endif
+
+void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffer)
+{
+    if (context.procedure && context.procedure->needsPCToOriginMap()) {
+        B3::PCToOriginMap originMap = context.procedure->releasePCToOriginMap();
+        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, WTFMove(originMap)), linkBuffer);
+    }
+}
+
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY_B3JIT)

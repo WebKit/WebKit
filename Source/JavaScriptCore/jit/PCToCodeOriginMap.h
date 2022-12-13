@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY_B3JIT)
 namespace B3 {
 class PCToOriginMap;
 }
