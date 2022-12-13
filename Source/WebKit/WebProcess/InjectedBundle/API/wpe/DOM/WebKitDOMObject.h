@@ -47,7 +47,7 @@ struct _WebKitDOMObjectClass {
     GObjectClass parentClass;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_object_get_type(void);
 
 G_END_DECLS

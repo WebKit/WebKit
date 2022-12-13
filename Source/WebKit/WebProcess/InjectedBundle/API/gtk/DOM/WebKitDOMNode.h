@@ -169,7 +169,7 @@ struct _WebKitDOMNodeClass {
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_node_get_type(void);
 
 /**
@@ -526,7 +526,7 @@ webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, GError
 WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_node_get_parent_element(WebKitDOMNode* self);
 
-WEBKIT_API WebKitDOMNode *
+WEBKIT_DEPRECATED WebKitDOMNode *
 webkit_dom_node_for_js_value(JSCValue* value);
 
 G_END_DECLS

@@ -52,10 +52,10 @@ struct _WebKitDOMNodeClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_node_get_type     (void);
 
-WEBKIT_API WebKitDOMNode *
+WEBKIT_DEPRECATED WebKitDOMNode *
 webkit_dom_node_for_js_value (JSCValue *value);
 
 G_END_DECLS

@@ -242,10 +242,14 @@ JSCContext* webkit_frame_get_js_context_for_script_world(WebKitFrame* frame, Web
  * Returns: (transfer full): the #JSCValue referencing @dom_object.
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40
  */
 JSCValue* webkit_frame_get_js_value_for_dom_object(WebKitFrame* frame, WebKitDOMObject* domObject)
 {
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     return webkit_frame_get_js_value_for_dom_object_in_script_world(frame, domObject, webkit_script_world_get_default());
+    G_GNUC_END_IGNORE_DEPRECATIONS;
 }
 
 /**
@@ -260,11 +264,15 @@ JSCValue* webkit_frame_get_js_value_for_dom_object(WebKitFrame* frame, WebKitDOM
  * Returns: (transfer full): the #JSCValue referencing @dom_object
  *
  * Since: 2.22
+ *
+ * Deprecated: 2.40
  */
 JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* frame, WebKitDOMObject* domObject, WebKitScriptWorld* world)
 {
     g_return_val_if_fail(WEBKIT_IS_FRAME(frame), nullptr);
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     g_return_val_if_fail(WEBKIT_DOM_IS_OBJECT(domObject), nullptr);
+    G_GNUC_END_IGNORE_DEPRECATIONS;
     g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
 
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
@@ -273,8 +281,10 @@ JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* 
     JSValueRef jsValue = nullptr;
     {
         JSC::JSLockHolder lock(globalObject);
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         if (WEBKIT_DOM_IS_NODE(domObject))
             jsValue = toRef(globalObject, toJS(globalObject, globalObject, WebKit::core(WEBKIT_DOM_NODE(domObject))));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
     }
 
     return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue).leakRef() : nullptr;

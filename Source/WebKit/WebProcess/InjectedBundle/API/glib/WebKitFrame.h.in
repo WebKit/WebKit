@@ -86,11 +86,11 @@ WEBKIT_API JSCContext *
 webkit_frame_get_js_context_for_script_world             (WebKitFrame       *frame,
                                                           WebKitScriptWorld *world);
 
-WEBKIT_API JSCValue *
+WEBKIT_DEPRECATED JSCValue *
 webkit_frame_get_js_value_for_dom_object                 (WebKitFrame       *frame,
                                                           WebKitDOMObject   *dom_object);
 
-WEBKIT_API JSCValue *
+WEBKIT_DEPRECATED JSCValue *
 webkit_frame_get_js_value_for_dom_object_in_script_world (WebKitFrame       *frame,
                                                           WebKitDOMObject   *dom_object,
                                                           WebKitScriptWorld *world);
