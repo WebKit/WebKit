@@ -69,6 +69,7 @@ struct CSSPropertySyntax {
 
 private:
     template<typename CharacterType> static std::optional<Component> parseComponent(StringParsingBuffer<CharacterType>);
+    static Type typeForTypeName(StringView);
 };
 
 }

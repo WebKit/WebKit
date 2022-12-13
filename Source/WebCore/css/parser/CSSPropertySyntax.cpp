@@ -34,6 +34,14 @@ namespace WebCore {
 template<typename CharacterType>
 auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer) -> std::optional<Component>
 {
+    auto consumeMultiplier = [&] {
+        if (skipExactly(buffer, '+'))
+            return Multiplier::SpaceList;
+        if (skipExactly(buffer, '#'))
+            return Multiplier::CommaList;
+        return Multiplier::Single;
+    };
+
     if (skipExactly(buffer, '<')) {
         auto begin = buffer.position();
         skipUntil(buffer, '>');
@@ -44,64 +52,45 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
         if (!skipExactly(buffer, '>'))
             return { };
 
-        auto multiplier = [&] {
-            if (skipExactly(buffer, '+'))
-                return Multiplier::SpaceList;
-            if (skipExactly(buffer, '#'))
-                return Multiplier::CommaList;
-            return Multiplier::Single;
-        }();
+        auto multiplier = consumeMultiplier();
 
         skipWhile<isCSSSpace>(buffer);
         if (!buffer.atEnd())
             return { };
 
-        if (dataTypeName == "length"_s)
-            return Component { Type::Length, multiplier };
-        if (dataTypeName == "length-percentage"_s)
-            return Component { Type::LengthPercentage, multiplier };
-        if (dataTypeName == "custom-ident"_s)
-            return Component { Type::CustomIdent, multiplier };
-        if (dataTypeName == "percentage"_s)
-            return Component { Type::Percentage, multiplier };
-        if (dataTypeName == "integer"_s)
-            return Component { Type::Integer, multiplier };
-        if (dataTypeName == "number"_s)
-            return Component { Type::Number, multiplier };
-        if (dataTypeName == "angle"_s)
-            return Component { Type::Angle, multiplier };
-        if (dataTypeName == "time"_s)
-            return Component { Type::Time, multiplier };
-        if (dataTypeName == "resolution"_s)
-            return Component { Type::Resolution, multiplier };
-        if (dataTypeName == "color"_s)
-            return Component { Type::Color, multiplier };
-        if (dataTypeName == "image"_s)
-            return Component { Type::Image, multiplier };
-        if (dataTypeName == "url"_s)
-            return Component { Type::URL, multiplier };
-
-        return Component { Type::Unknown, multiplier };
+        auto type = typeForTypeName(dataTypeName);
+        return Component { type, multiplier };
     }
 
-    auto tokenizer = CSSTokenizer::tryCreate(buffer.stringViewOfCharactersRemaining().toStringWithoutCopying());
-    if (!tokenizer)
+    auto begin = buffer.position();
+    while (buffer.hasCharactersRemaining() && (*buffer != '+' && *buffer != '#'))
+        ++buffer;
+
+    auto ident = [&] {
+        auto tokenizer = CSSTokenizer::tryCreate(StringView(begin, buffer.position() - begin).toStringWithoutCopying());
+        if (!tokenizer)
+            return nullAtom();
+
+        auto range = tokenizer->tokenRange();
+        range.consumeWhitespace();
+        if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
+            return nullAtom();
+
+        auto value = range.consumeIncludingWhitespace().value();
+        return range.atEnd() ? value.toAtomString() : nullAtom();
+    }();
+
+    if (ident.isNull())
         return { };
 
-    auto range = tokenizer->tokenRange();
-    range.consumeWhitespace();
-    if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
-        return { };
+    auto multiplier = consumeMultiplier();
 
-    auto ident = range.consumeIncludingWhitespace().value();
-    if (!range.atEnd())
-        return { };
-
-    return Component { Type::CustomIdent, Multiplier::Single, ident.toAtomString() };
+    return Component { Type::CustomIdent, multiplier, ident };
 }
 
 std::optional<CSSPropertySyntax> CSSPropertySyntax::parse(StringView syntax)
 {
+    // The format doesn't quite parse with CSSTokenizer.
     return readCharactersForParsing(syntax, [&](auto buffer) -> std::optional<CSSPropertySyntax> {
         skipWhile<isCSSSpace>(buffer);
 
@@ -135,6 +124,36 @@ std::optional<CSSPropertySyntax> CSSPropertySyntax::parse(StringView syntax)
 
         return CSSPropertySyntax { definition };
     });
+}
+
+auto CSSPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
+{
+    if (dataTypeName == "length"_s)
+        return Type::Length;
+    if (dataTypeName == "length-percentage"_s)
+        return Type::LengthPercentage;
+    if (dataTypeName == "custom-ident"_s)
+        return Type::CustomIdent;
+    if (dataTypeName == "percentage"_s)
+        return Type::Percentage;
+    if (dataTypeName == "integer"_s)
+        return Type::Integer;
+    if (dataTypeName == "number"_s)
+        return Type::Number;
+    if (dataTypeName == "angle"_s)
+        return Type::Angle;
+    if (dataTypeName == "time"_s)
+        return Type::Time;
+    if (dataTypeName == "resolution"_s)
+        return Type::Resolution;
+    if (dataTypeName == "color"_s)
+        return Type::Color;
+    if (dataTypeName == "image"_s)
+        return Type::Image;
+    if (dataTypeName == "url"_s)
+        return Type::URL;
+
+    return Type::Unknown;
 }
 
 }
