@@ -17,8 +17,8 @@ FAIL Computed <url> is reified as CSSStyleValue assert_false: expected false got
 FAIL Computed ident is reified as CSSKeywordValue assert_false: expected false got true
 FAIL First computed value correctly reified in space-separated list assert_false: expected false got true
 FAIL First computed value correctly reified in comma-separated list assert_false: expected false got true
-FAIL All computed values correctly reified in space-separated list The given initial value does not parse for the given syntax.
-FAIL All computed values correctly reified in comma-separated list The given initial value does not parse for the given syntax.
+FAIL All computed values correctly reified in space-separated list assert_equals: expected 2 but got 1
+FAIL All computed values correctly reified in comma-separated list assert_equals: expected 2 but got 1
 PASS Specified * is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified * is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified foo is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]

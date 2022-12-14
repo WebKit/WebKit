@@ -58,6 +58,8 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
         return value.get() == std::get<Ref<CSSVariableData>>(other.m_value).get();
     }, [&](const SyntaxValue& value) {
         return value == std::get<SyntaxValue>(other.m_value);
+    }, [&](const SyntaxValueList& value) {
+        return value == std::get<SyntaxValueList>(other.m_value);
     });
 }
 
@@ -73,8 +75,10 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const RefPtr<StyleImage>& value) {
             // FIXME: This is not right for gradients that use `currentcolor`. There should be a way preserve it.
             return value->computedStyleValue(RenderStyle::defaultStyle())->cssText();
+        }, [&](const URL& value) {
+            return serializeURL(value.string());
         }, [&](const String& value) {
-            return serializeURL(value);
+            return value;
         });
     };
 
@@ -89,6 +93,15 @@ String CSSCustomPropertyValue::customCSSText() const
             m_stringValue = value->tokenRange().serialize();
         }, [&](const SyntaxValue& syntaxValue) {
             m_stringValue = serializeSyntaxValue(syntaxValue);
+        }, [&](const SyntaxValueList& syntaxValueList) {
+            StringBuilder builder;
+            auto separator = separatorCSSText(syntaxValueList.separator);
+            for (auto& syntaxValue : syntaxValueList.values) {
+                if (!builder.isEmpty())
+                    builder.append(separator);
+                builder.append(serializeSyntaxValue(syntaxValue));
+            }
+            m_stringValue = builder.toString();
         });
     }
     return m_stringValue;

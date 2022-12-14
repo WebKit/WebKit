@@ -223,12 +223,24 @@ bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>&
 
 void CSSValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
 {
+    if (auto* asList = dynamicDowncast<CSSValueList>(*this)) {
+        for (auto& listValue : *asList)
+            listValue->collectDirectComputationalDependencies(values);
+        return;
+    }
+
     if (is<CSSPrimitiveValue>(*this))
         downcast<CSSPrimitiveValue>(*this).collectDirectComputationalDependencies(values);
 }
 
 void CSSValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
 {
+    if (auto* asList = dynamicDowncast<CSSValueList>(*this)) {
+        for (auto& listValue : *asList)
+            listValue->collectDirectRootComputationalDependencies(values);
+        return;
+    }
+
     if (is<CSSPrimitiveValue>(*this))
         downcast<CSSPrimitiveValue>(*this).collectDirectRootComputationalDependencies(values);
 }

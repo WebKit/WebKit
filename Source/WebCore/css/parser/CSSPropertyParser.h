@@ -67,7 +67,7 @@ private:
     std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> consumeCustomPropertyValueWithSyntax(const CSSPropertySyntax&);
     bool canParseTypedCustomPropertyValue(const CSSPropertySyntax&);
     RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax&, Style::BuilderState&);
-    void collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax&, bool isRoot, HashSet<CSSPropertyID>& dependencies);
+    void collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax&, bool isInitial, HashSet<CSSPropertyID>& dependencies);
 
     bool inQuirksMode() const { return m_context.mode == HTMLQuirksMode; }
 
