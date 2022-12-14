@@ -1,0 +1,65 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true runSingly=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebKit test for creating WebGL context when it can fail</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<script src="resources/test-shader-implementation-language.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvasWorks"></canvas>
+<canvas id="canvasFails"></canvas>
+<script>
+"use strict";
+description("This test tests that WebGL platform context creation can fail and it doesn't crash.");
+// At the time of writing, the GPU process would crash if ANGLE was not present and
+// GraphicsContextGL creation would fail.
+
+debug("");
+var glWorks;
+var glFails;
+function runTest() {
+    glWorks = canvasWorks.getContext("webgl");
+    shouldBeNonNull(glWorks);
+    shouldBeTrue('"failPlatformContextCreationForTesting" in glWorks.getContextAttributes()'); // Expects support for "DOM Testing APIs Enabled internal setting"
+    glFails = canvasFails.getContext("webgl", { failPlatformContextCreationForTesting: true });
+    if (!glFails) {
+        testPassed("Context was not returned");
+        shouldBe("glWorks.NO_ERROR", "glWorks.getError()" );
+        finishTest();
+    } else {
+        canvasWorks.addEventListener('webglcontextcreationerror', () => {
+        testFailed("Received context creation error for glWorks");
+        }, false);
+        canvasWorks.addEventListener('webglcontextlost', () => {
+            testFailed("Received context lost error for glWorks");
+        }, false);
+        canvasFails.addEventListener('webglcontextcreationerror', () => {
+            testPassed("Received context creation error for glFails");
+            shouldBe("glWorks.NO_ERROR", "glWorks.getError()" );
+            finishTest();
+            clearTimeout(timeout);
+        }, false);
+        canvasFails.addEventListener('webglcontextlost', () => {
+            testPassed("Received context lost error for glFails");
+            shouldBe("glWorks.NO_ERROR", "glWorks.getError()" );
+            finishTest();
+            clearTimeout(timeout);
+        }, false);
+
+        var timeout = setTimeout(() => {
+            testFailed("Timeout while waiting for canvas creation error.");
+            finishTest();
+        }, 2000);
+    }
+}
+window.onload = runTest;
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

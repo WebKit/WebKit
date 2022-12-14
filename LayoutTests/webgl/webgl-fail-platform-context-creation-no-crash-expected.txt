@@ -1,0 +1,15 @@
+This test tests that WebGL platform context creation can fail and it doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 5 PASS, 0 FAIL
+
+
+PASS [object WebGLRenderingContext] is non-null.
+PASS "failPlatformContextCreationForTesting" in glWorks.getContextAttributes() is true
+PASS Received context lost error for glFails
+PASS glWorks.NO_ERROR is glWorks.getError()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

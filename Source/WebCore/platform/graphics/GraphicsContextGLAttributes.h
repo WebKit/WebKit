@@ -59,6 +59,7 @@ struct GraphicsContextGLAttributes {
     bool failIfMajorPerformanceCaveat { false };
     using PowerPreference = GraphicsContextGLPowerPreference;
     PowerPreference powerPreference { PowerPreference::Default };
+    bool failPlatformContextCreationForTesting { false };
 
     // Additional attributes.
     bool shareResources { true };

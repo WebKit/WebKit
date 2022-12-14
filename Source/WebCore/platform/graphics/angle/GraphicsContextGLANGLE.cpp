@@ -79,6 +79,8 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 
 bool GraphicsContextGLANGLE::initialize()
 {
+    if (contextAttributes().failPlatformContextCreationForTesting)
+        return false;
     if (!platformInitializeContext())
         return false;
     String extensionsString = String::fromLatin1(reinterpret_cast<const char*>(GL_GetString(GL_EXTENSIONS)));

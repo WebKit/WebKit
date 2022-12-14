@@ -45,5 +45,6 @@ enum WebGLPowerPreference {
     GLboolean preserveDrawingBuffer = false;
     WebGLPowerPreference powerPreference = "default";
     GLboolean failIfMajorPerformanceCaveat = false;
+    [EnabledBySetting=DOMTestingAPIsEnabled] GLboolean failPlatformContextCreationForTesting = false;
     [Conditional=WEBXR, EnabledBySetting=WebXREnabled] boolean xrCompatible = false;
 };

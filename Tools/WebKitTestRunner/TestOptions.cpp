@@ -85,6 +85,7 @@ const TestFeatures& TestOptions::defaults()
             { "ContentChangeObserverEnabled", false },
             { "CustomPasteboardDataEnabled", true },
             { "DOMPasteAllowed", true },
+            { "DOMTestingAPIsEnabled", true },
             { "DataTransferItemsEnabled", true },
             { "DeveloperExtrasEnabled", true },
             { "DirectoryUploadEnabled", true },
