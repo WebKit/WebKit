@@ -1126,7 +1126,6 @@ webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-sma
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-015.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-021.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/hr-time/timeOrigin.html [ Failure ]
 imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-non-same-origin.htm [ Skip ]
@@ -2747,7 +2746,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-none-011.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-none-012.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-none-013.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-shaping-002.html [ ImageOnlyFailure ]
@@ -2763,7 +2761,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/letter-spacing/
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-nesting-003.xht [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-shaping-001.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-016.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-017.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-normal-keep-all-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-shaping-001.html [ ImageOnlyFailure ]
@@ -3321,8 +3318,6 @@ webkit.org/b/203539 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 
 # Initial failures on the import of css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-008.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-013.html [ ImageOnlyFailure ]
