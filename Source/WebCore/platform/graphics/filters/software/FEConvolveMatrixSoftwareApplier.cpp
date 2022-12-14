@@ -246,6 +246,28 @@ inline void FEConvolveMatrixSoftwareApplier::setOuterPixels(PaintingData& painti
     }
 }
 
+void FEConvolveMatrixSoftwareApplier::setInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom)
+{
+    static constexpr int minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
+    int stride = 0;
+    if (int iterations = paintingData.width * paintingData.height / minimalRectDimension)
+        stride = clipBottom / iterations;
+
+    if (!stride) {
+        setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
+        return;
+    }
+
+    int chunkCount = (clipBottom + stride - 1) / stride;
+
+    ConcurrentWorkQueue::apply(chunkCount, [&](size_t index) {
+        int yStart = stride * index;
+        int yEnd = std::min<int>(yStart + stride, clipBottom);
+
+        setInteriorPixels(paintingData, clipRight, clipBottom, yStart, yEnd);
+    });
+}
+
 void FEConvolveMatrixSoftwareApplier::applyPlatform(PaintingData& paintingData) const
 {
     // Drawing fully covered pixels
@@ -257,22 +279,7 @@ void FEConvolveMatrixSoftwareApplier::applyPlatform(PaintingData& paintingData) 
         setOuterPixels(paintingData, 0, 0, paintingData.width, paintingData.height);
         return;
     }
-
-    static constexpr int minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs
-
-    if (int iterations = (paintingData.width * paintingData.height) / minimalRectDimension) {
-        int stride = clipBottom / iterations;
-        int chunkCount = (clipBottom + stride - 1) / stride;
-
-        ConcurrentWorkQueue::apply(chunkCount, [&](size_t index) {
-            int yStart = (stride * index);
-            int yEnd = std::min<int>(stride * (index + 1), clipBottom);
-
-            setInteriorPixels(paintingData, clipRight, clipBottom, yStart, yEnd);
-        });
-    } else
-        setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
-
+    setInteriorPixels(paintingData, clipRight, clipBottom);
     clipRight += paintingData.targetOffset.x() + 1;
     clipBottom += paintingData.targetOffset.y() + 1;
 

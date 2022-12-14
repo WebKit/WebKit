@@ -67,7 +67,7 @@ private:
 
     static inline void setInteriorPixels(PaintingData&, int clipRight, int clipBottom, int yStart, int yEnd);
     static inline void setOuterPixels(PaintingData&, int x1, int y1, int x2, int y2);
-
+    static void setInteriorPixels(PaintingData&, int clipRight, int clipBottom);
     void applyPlatform(PaintingData&) const;
 };
 
