@@ -189,8 +189,8 @@ void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
     }
     response.setExpectedContentLength(contentLength); // -1 on parse error or null
 
-    response.setMimeType(AtomString { extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)) });
-    response.setTextEncodingName(extractCharsetFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)).toAtomString());
+    response.setMimeType(extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)));
+    response.setTextEncodingName(extractCharsetFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)).toString());
 }
 
 void CurlCacheEntry::didFail()

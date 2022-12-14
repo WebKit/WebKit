@@ -45,7 +45,7 @@ CFURLResponseRef ResourceResponse::cfURLResponse() const
     if (!m_cfResponse && !m_isNull) {
         RetainPtr<CFURLRef> url = m_url.createCFURL();
         // FIXME: This creates a very incomplete CFURLResponse, which does not even have a status code.
-        m_cfResponse = adoptCF(CFURLResponseCreate(0, url.get(), m_mimeType.string().createCFString().get(), m_expectedContentLength, m_textEncodingName.string().createCFString().get(), kCFURLCacheStorageAllowed));
+        m_cfResponse = adoptCF(CFURLResponseCreate(0, url.get(), m_mimeType.createCFString().get(), m_expectedContentLength, m_textEncodingName.createCFString().get(), kCFURLCacheStorageAllowed));
     }
 
     return m_cfResponse.get();
@@ -74,7 +74,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         // Workaround for <rdar://problem/8757088>, can be removed once that is fixed.
         unsigned textEncodingNameLength = m_textEncodingName.length();
         if (textEncodingNameLength >= 2 && m_textEncodingName[0U] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
-            m_textEncodingName = StringView { m_textEncodingName }.substring(1, textEncodingNameLength - 2).toAtomString();
+            m_textEncodingName = StringView { m_textEncodingName }.substring(1, textEncodingNameLength - 2).toString();
 
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
@@ -95,7 +95,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     if (m_initLevel < AllFields && initLevel == AllFields) {
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
-            m_httpVersion = AtomString { String(adoptCF(CFHTTPMessageCopyVersion(httpResponse)).get()).convertToASCIIUppercase() };
+            m_httpVersion = String { String(adoptCF(CFHTTPMessageCopyVersion(httpResponse)).get()).convertToASCIIUppercase() };
 
             RetainPtr<CFStringRef> statusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(httpResponse));
             m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(statusLine.get());

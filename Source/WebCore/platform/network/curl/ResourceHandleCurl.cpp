@@ -549,8 +549,8 @@ void ResourceHandle::handleDataURL()
         charset = "US-ASCII"_s;
 
     ResourceResponse response;
-    response.setMimeType(AtomString { mimeType });
-    response.setTextEncodingName(charset.toAtomString());
+    response.setMimeType(mimeType);
+    response.setTextEncodingName(charset.toString());
     response.setURL(d->m_firstRequest.url());
 
     if (base64) {
