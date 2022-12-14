@@ -189,7 +189,7 @@ public:
     static bool hasReachedProcessCountLimit();
     static void setProcessCountLimit(unsigned);
 
-    static WebProcessProxy* processForIdentifier(WebCore::ProcessIdentifier);
+    static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static RefPtr<WebPageProxy> webPage(WebPageProxyIdentifier);
     static RefPtr<WebPageProxy> audioCapturingWebPage();
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
@@ -502,7 +502,9 @@ protected:
 #endif
 
 private:
-    static HashMap<WebCore::ProcessIdentifier, WebProcessProxy*>& allProcesses();
+    using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, WeakPtr<WebProcessProxy>>;
+    static WebProcessProxyMap& allProcessMap();
+    static Vector<RefPtr<WebProcessProxy>> allProcesses();
 
     void platformInitialize();
     void platformDestroy();

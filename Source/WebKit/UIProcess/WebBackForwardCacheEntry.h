@@ -47,7 +47,7 @@ public:
     SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPage();
     WebCore::ProcessIdentifier processIdentifier() const { return m_processIdentifier; }
-    WebProcessProxy& process() const;
+    RefPtr<WebProcessProxy> process() const;
 
 private:
     void expirationTimerFired();
