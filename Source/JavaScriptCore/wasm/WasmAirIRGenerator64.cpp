@@ -409,9 +409,9 @@ public:
         return { };
     }
 
-    void addSIMDSwizzle(ExpressionType& a, ExpressionType& b, ExpressionType& result)
+    auto addSIMDSwizzleHelperX86(ExpressionType& a, ExpressionType& b, ExpressionType& result) -> PartialResult
     {
-        ASSERT(result.type() == Types::V128);
+        ASSERT(isX86() && result.type() == Types::V128);
         // Let each byte mask be 112 (0x70) then after VectorAddSat
         // each index > 15 would set the saturated index's bit 7 to 1, 
         // whose corresponding byte will be zero cleared in VectorSwizzle.
@@ -420,8 +420,9 @@ public:
         mask.u64x2[0] = 0x7070707070707070;
         mask.u64x2[1] = 0x7070707070707070;
         auto saturatedIndexes = addConstant(mask);
-        append(VectorAddSat, Arg::simdInfo(SIMDInfo { SIMDLane::i16x8, SIMDSignMode::Unsigned }), saturatedIndexes, b, saturatedIndexes);
+        append(VectorAddSat, Arg::simdInfo(SIMDInfo { SIMDLane::i8x16, SIMDSignMode::Unsigned }), saturatedIndexes, b, saturatedIndexes);
         append(B3::Air::VectorSwizzle, a, saturatedIndexes, result);
+        return { };
     }
 
     auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
@@ -454,7 +455,7 @@ public:
         }
 
         if (isX86() && airOp == B3::Air::VectorSwizzle) {
-            addSIMDSwizzle(a, b, result);
+            addSIMDSwizzleHelperX86(a, b, result);
             return { };
         }
 
@@ -1569,7 +1570,7 @@ auto AirIRGenerator64::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionTy
         // Store each byte (w/ index < 16) of `a` to result
         // and zero clear each byte (w/ index > 15) in result.
         auto indexes = addConstant(imm);
-        addSIMDSwizzle(a, indexes, result);
+        addSIMDSwizzleHelperX86(a, indexes, result);
 
         // Store each byte (w/ index - 16 >= 0) of `b` to result2
         // and zero clear each byte (w/ index - 16 < 0) in result2.
@@ -1577,11 +1578,11 @@ auto AirIRGenerator64::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionTy
         v128_t mask;
         mask.u64x2[0] = 0x1010101010101010;
         mask.u64x2[1] = 0x1010101010101010;
-        append(VectorSub, Arg::simdInfo(SIMDInfo { SIMDLane::i16x8, SIMDSignMode::None }), addConstant(mask), indexes, indexes); // indexes = indexes VectorSub mask
+        append(VectorSub, Arg::simdInfo(SIMDInfo { SIMDLane::i8x16, SIMDSignMode::None }), indexes, addConstant(mask), indexes);
         append(B3::Air::VectorSwizzle, b, indexes, result2);
 
         // Since each index in [0, 31], we can return result2 VectorOr result.
-        append(VectorOr, result, result2, result);
+        append(VectorOr, Arg::simdInfo(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }), result, result2, result);
         return { };
     }
 
@@ -1619,7 +1620,10 @@ auto AirIRGenerator64::addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType poi
 
     auto offset = fixupPointerPlusOffset(pointer, uoffset);
     Arg addrArg = materializeSimpleAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(width)), offset);
-    appendEffectful(opcode, addrArg, result);
+    if (isX86() && op == SIMDLaneOperation::LoadSplat8)
+        appendEffectful(opcode, addrArg, result, tmpForType(Types::V128));
+    else
+        appendEffectful(opcode, addrArg, result);
 
     return { };
 }
