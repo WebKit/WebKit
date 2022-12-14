@@ -18,11 +18,20 @@ set(DumpRenderTree_SOURCES
     WorkQueue.cpp
 )
 
-set(DumpRenderTree_LIBRARIES
+set(DumpRenderTree_PRIVATE_LIBRARIES
     TestRunnerShared
-    WebKit::WebCoreTestSupport
-    WebKit::JavaScriptCore
 )
+set(DumpRenderTree_FRAMEWORKS
+    JavaScriptCore
+    PAL
+    WTF
+    WebCore
+    WebCoreTestSupport
+    WebKitLegacy
+)
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
+endif ()
 
 set(DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
@@ -31,12 +40,6 @@ set(DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${WebKitTestRunner_SHARED_DIR}
     ${WebKitTestRunner_SHARED_DIR}/Bindings
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
-)
-
-list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
-    ${PAL_FRAMEWORK_HEADERS_DIR}
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
 )
 
 set(DumpRenderTree_WEB_PREFERENCES_TEMPLATES

@@ -1,5 +1,3 @@
-WEBKIT_FRAMEWORK_DECLARE(TestRunnerShared)
-
 set(DumpRenderTree_BINDINGS_DIR ${TOOLS_DIR}/DumpRenderTree/Bindings)
 set(TestRunnerShared_DIR ${TOOLS_DIR}/TestRunnerShared)
 
@@ -17,15 +15,16 @@ set(TestRunnerShared_SOURCES
     UIScriptContext/UIScriptControllerShared.cpp
 )
 
-set(TestRunnerShared_PRIVATE_LIBRARIES
-    WebKit::WebCoreTestSupport
-)
-
 set(TestRunnerShared_FRAMEWORKS
     JavaScriptCore
+    PAL
+    WTF
+    WebCore
+    WebCoreTestSupport
 )
-
-add_dependencies(TestRunnerShared WebCore_CopyPrivateHeaders)
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
+endif ()
 
 set(TestRunnerShared_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
@@ -34,12 +33,6 @@ set(TestRunnerShared_PRIVATE_INCLUDE_DIRECTORIES
     ${TestRunnerShared_DIR}/Bindings
     ${TestRunnerShared_DIR}/UIScriptContext
     ${TestRunnerShared_DIR}/config
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-)
-
-list(APPEND TestRunnerShared_PRIVATE_INCLUDE_DIRECTORIES
-    ${PAL_FRAMEWORK_HEADERS_DIR}
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 set(TestRunnerShared_IDL_FILES
@@ -58,5 +51,6 @@ GENERATE_BINDINGS(TestRunnerSharedBindings
 set(TestRunnerShared_LIBRARY_TYPE OBJECT)
 set(TestRunnerShared_DEPENDENCIES TestRunnerSharedBindings)
 
+WEBKIT_FRAMEWORK_DECLARE(TestRunnerShared)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_FRAMEWORK(TestRunnerShared)

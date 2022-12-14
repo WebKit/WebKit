@@ -42,6 +42,10 @@ if (NOT USE_SYSTEM_MALLOC)
     list(APPEND WebKit_FRAMEWORKS bmalloc)
 endif ()
 
+set(WebKitLegacy_INTERFACE_LIBRARIES WebKitLegacy)
+set(WebKitLegacy_INTERFACE_INCLUDE_DIRECTORIES ${WebKitLegacy_FRAMEWORK_HEADERS_DIR})
+set(WebKitLegacy_INTERFACE_DEPENDENCIES WebKitLegacy_CopyHeaders)
+
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
@@ -52,10 +56,13 @@ if (MSVC)
 endif ()
 
 WEBKIT_FRAMEWORK(WebKitLegacy)
+WEBKIT_FRAMEWORK_TARGET(WebKitLegacy)
 
-if (TARGET WebKitLegacyGUID)
-    add_dependencies(WebKitLegacy WebKitLegacyGUID)
-endif ()
+WEBKIT_COPY_FILES(WebKitLegacy_CopyHeaders
+    DESTINATION ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy
+    FILES ${WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS}
+    FLATTENED
+)
 
 if (APPLE)
     set_target_properties(WebKitLegacy PROPERTIES LINK_FLAGS "-umbrella WebKit")

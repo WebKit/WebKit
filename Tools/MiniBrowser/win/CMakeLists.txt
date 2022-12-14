@@ -1,6 +1,5 @@
 set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 set(MiniBrowser_SOURCES
@@ -14,10 +13,15 @@ set(MiniBrowser_SOURCES
 
 set(MiniBrowser_PRIVATE_DEFINITIONS _UNICODE)
 set(MiniBrowser_PRIVATE_LIBRARIES
-    WebKit::WTF
     comctl32
     shlwapi
     user32
+)
+set(MiniBrowser_FRAMEWORKS
+    JavaScriptCore
+    PAL
+    WTF
+    WebCore
 )
 
 if (USE_CF)
@@ -28,9 +32,6 @@ endif ()
 
 if (ENABLE_WEBKIT_LEGACY)
     list(APPEND MiniBrowser_PRIVATE_DEFINITIONS ENABLE_WEBKIT_LEGACY)
-    list(APPEND MiniBrowser_INCLUDE_DIRECTORIES
-        ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
-    )
     list(APPEND MiniBrowser_SOURCES
         AccessibilityDelegate.cpp
         MiniBrowserWebHost.cpp
@@ -39,10 +40,7 @@ if (ENABLE_WEBKIT_LEGACY)
         WebDownloadDelegate.cpp
         WebKitLegacyBrowserWindow.cpp
     )
-    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        WebKitLegacy
-        WebKitLegacyGUID
-    )
+    list(APPEND MiniBrowser_FRAMEWORKS WebKitLegacy)
 endif ()
 
 if (ENABLE_WEBKIT)
@@ -51,9 +49,7 @@ if (ENABLE_WEBKIT)
         Common2.cpp
         WebKitBrowserWindow.cpp
     )
-    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        WebKit::WebKit
-    )
+    list(APPEND MiniBrowser_FRAMEWORKS WebKit)
 
     add_library(MiniBrowserInjectedBundle SHARED
         Common2.cpp
