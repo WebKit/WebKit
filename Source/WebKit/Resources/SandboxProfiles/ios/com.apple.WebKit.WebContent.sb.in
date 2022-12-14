@@ -1171,15 +1171,17 @@
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 (with-filter (system-attribute apple-internal)
-    (allow syscall-unix
-        (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+    (allow syscall-unix (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
 
-(with-filter (require-not (require-entitlement "com.apple.private.verified-jit"))
-    (allow syscall-unix (with report) (with telemetry)
+(define (lockdown-mode)
+    (require-not (require-entitlement "com.apple.private.verified-jit")))
+    
+(with-filter (lockdown-mode)
+    (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
         (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
-    (allow syscall-unix (with report) (with telemetry)
+    (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
         (syscall-unix-rarely-in-use))
-    (allow syscall-unix (with report) (with telemetry)
+    (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
         (syscall-unix-rarely-in-use-need-backtrace)))
 
 (deny file-ioctl (with telemetry))
@@ -1297,7 +1299,6 @@
 
 (define (syscall-mach-only-in-use-during-launch)
     (machtrap-number
-        MSC_mach_generate_activity_id
         MSC_mach_timebase_info_trap
         MSC_swtch_pri
         MSC_task_self_trap))
@@ -1309,7 +1310,6 @@
         MSC__kernelrpc_mach_port_deallocate_trap
         MSC__kernelrpc_mach_port_destruct_trap
         MSC__kernelrpc_mach_port_extract_member_trap
-        MSC__kernelrpc_mach_port_get_attributes_trap
         MSC__kernelrpc_mach_port_guard_trap
         MSC__kernelrpc_mach_port_insert_member_trap
         MSC__kernelrpc_mach_port_insert_right_trap
@@ -1324,46 +1324,53 @@
         MSC__kernelrpc_mach_vm_purgable_control_trap
         MSC_host_create_mach_voucher_trap
         MSC_host_self_trap
-        MSC_mach_msg_trap
+        MSC_mach_generate_activity_id
         MSC_mach_reply_port
-        MSC_mach_voucher_extract_attr_recipe_trap
         MSC_mk_timer_arm
         MSC_mk_timer_cancel
         MSC_mk_timer_create
-        MSC_mk_timer_destroy
-        MSC_pid_for_task
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
-        MSC_semaphore_wait_trap
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
-        MSC_thread_get_special_reply_port
+        MSC_thread_get_special_reply_port))
+
+(define (syscall-mach-blocked-in-lockdown-mode)
+    (machtrap-number
+        MSC__kernelrpc_mach_port_get_attributes_trap
+        MSC_mach_msg_trap
+        MSC_mach_voucher_extract_attr_recipe_trap
+        MSC_mk_timer_destroy
+        MSC_pid_for_task
+        MSC_semaphore_wait_trap
         MSC_thread_self_trap))
-    
-(when (defined? 'syscall-mach)
-    (deny syscall-mach
-        (machtrap-number MSC_mach_wait_until))
 
-    (deny syscall-mach (with telemetry))
-    (allow syscall-mach
-        (syscall-mach-only-in-use-during-launch)
-        (syscall-mach-in-use-after-launch))
+(deny syscall-mach
+    (machtrap-number MSC_mach_wait_until))
 
-    (when (defined? 'MSC_mach_msg2_trap)
-        (allow syscall-mach
-            (machtrap-number MSC_mach_msg2_trap)))
+(allow syscall-mach (with telemetry))
+(allow syscall-mach
+    (syscall-mach-blocked-in-lockdown-mode)
+    (syscall-mach-only-in-use-during-launch)
+    (syscall-mach-in-use-after-launch))
+
+(when (defined? 'MSC_mach_msg2_trap)
+    (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-        (allow syscall-mach
-            (syscall-mach-only-in-use-during-launch)))
-    (with-filter (state-flag "WebContentProcessLaunched")
-        (deny syscall-mach
-            (with telemetry)
-            (with message "Mach syscall used after launch")
-            (syscall-mach-only-in-use-during-launch)))
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow syscall-mach
+        (syscall-mach-only-in-use-during-launch)))
+(with-filter (state-flag "WebContentProcessLaunched")
+    (allow syscall-mach
+        (with telemetry)
+        (with message "Mach syscall used after launch")
+        (syscall-mach-only-in-use-during-launch)))
 #endif
-)
+
+(with-filter (lockdown-mode)
+    (allow syscall-mach (with report) (with telemetry) (with message "Lockdown mode")
+        (syscall-mach-blocked-in-lockdown-mode)))
 
 (define (kernel-mig-routine-in-use-watchos)
     (kernel-mig-routine
@@ -1378,7 +1385,6 @@
         host_get_special_port
         host_info
         io_server_version
-        mach_port_get_context_from_user
         task_restartable_ranges_register
         task_set_special_port))
 
@@ -1387,25 +1393,15 @@
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
         host_get_clock_service ;; After <rdar://85931614> has been fixed, we should evaluate if this is only used on launch.
         host_get_io_master
-        io_connect_async_method
-        io_connect_map_memory_into_task ;; <rdar://88300200>
-        io_connect_method
-        io_connect_set_notification_port_64
-        io_iterator_next
         io_registry_entry_from_path
         io_registry_entry_get_property_bin_buf
-        io_registry_entry_get_property_bytes
-        io_registry_entry_get_registry_entry_id
         io_service_get_matching_service_bin
-        io_service_get_matching_services_bin
-        io_service_open_extended
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000)
+        mach_port_extract_right
+        mach_port_get_context_from_user
         mach_port_get_refs
-#endif
         mach_port_set_attributes
         mach_vm_copy
         mach_vm_map_external
-        mach_vm_remap_external
         semaphore_create
         semaphore_destroy
         task_create_identity_token
@@ -1417,11 +1413,24 @@
         thread_set_exception_ports
         thread_suspend))
 
+(define (kernel-mig-routine-blocked-in-lockdown-mode)
+    (kernel-mig-routine
+        io_iterator_next
+        io_registry_entry_get_property_bytes
+        io_registry_entry_get_registry_entry_id
+        io_service_get_matching_services_bin
+        mach_vm_remap_external))
+
 (define (kernel-mig-routine-rarely-used-need-backtrace)
     (kernel-mig-routine
         clock_get_time
         io_connect_add_client
+        io_connect_async_method
+        io_connect_map_memory_into_task ;; <rdar://88300200>
+        io_connect_method
+        io_connect_set_notification_port_64
         io_service_close
+        io_service_open_extended
         mach_exception_raise
         mach_port_request_notification
         mach_vm_region
@@ -1436,42 +1445,46 @@
         thread_policy
         thread_policy_set))
     
-(when (defined? 'mach-kernel-endpoint)
-    (allow mach-kernel-endpoint
-        (apply-message-filter
-            (deny mach-message-send (with telemetry))
-            (allow mach-message-send (with telemetry-backtrace)
-                (kernel-mig-routine-rarely-used-need-backtrace))
+(allow mach-kernel-endpoint
+    (apply-message-filter
+        (allow mach-message-send (with telemetry))
+        (allow mach-message-send (with telemetry-backtrace)
+            (kernel-mig-routine-rarely-used-need-backtrace))
 
-            (allow mach-message-send (with telemetry)
-                (kernel-mig-routine-rarely-used))
+        (allow mach-message-send (with telemetry)
+            (kernel-mig-routine-rarely-used))
 
-            (allow mach-message-send
-                (kernel-mig-routine-only-in-use-during-launch)
-                (kernel-mig-routine-in-use))
+        (allow mach-message-send
+            (kernel-mig-routine-blocked-in-lockdown-mode)
+            (kernel-mig-routine-only-in-use-during-launch)
+            (kernel-mig-routine-in-use))
 
 #if PLATFORM(WATCHOS)
-            (allow mach-message-send
-                (kernel-mig-routine-in-use-watchos))
+        (allow mach-message-send
+            (kernel-mig-routine-in-use-watchos))
 #endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-                (allow mach-message-send
-                    (kernel-mig-routine-only-in-use-during-launch)))
-            (with-filter (state-flag "WebContentProcessLaunched")
-                (deny mach-message-send
-                    (with telemetry)
-                    (with message "kernel mig routine used after launch")
-                    (kernel-mig-routine-only-in-use-during-launch)))
+        (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+            (allow mach-message-send
+                (kernel-mig-routine-only-in-use-during-launch)))
+        (with-filter (state-flag "WebContentProcessLaunched")
+            (allow mach-message-send
+                (with telemetry)
+                (with message "kernel mig routine used after launch")
+                (kernel-mig-routine-only-in-use-during-launch)))
 #endif
 
-            (when (defined? 'mach_port_is_connection_for_service)
-                (allow mach-message-send (kernel-mig-routine mach_port_is_connection_for_service))
-            )
-        )
-    )
-)
+        (with-filter (lockdown-mode)
+            (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
+                (kernel-mig-routine-blocked-in-lockdown-mode))
+            (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
+                (kernel-mig-routine-rarely-used-need-backtrace))
+            (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
+                (kernel-mig-routine-rarely-used)))
+
+        (when (defined? 'mach_port_is_connection_for_service)
+            (allow mach-message-send (kernel-mig-routine mach_port_is_connection_for_service)))))
 
 (deny darwin-notification-post (with no-report))
 (allow darwin-notification-post
