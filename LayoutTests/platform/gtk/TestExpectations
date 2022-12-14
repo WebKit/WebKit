@@ -570,6 +570,12 @@ webkit.org/b/175199 crypto/subtle/ecdsa-import-jwk-public-key-alg-521.html [ Ski
 webkit.org/b/175199 crypto/subtle/ecdsa-import-key-sign-p521.html [ Skip ]
 webkit.org/b/175199 crypto/subtle/ecdsa-import-key-verify-p521.html [ Skip ]
 webkit.org/b/175199 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Skip ]
+ 
+#No support of ed25519 algorithm
+webkit.org/b/248980 crypto/subtle/ed25519-generate-export-key-raw.html [ Skip ]
+webkit.org/b/248980 crypto/subtle/ed25519-generate-key-sing-verify-Curve25519.html [ Skip ]
+webkit.org/b/248980 crypto/subtle/ed25519-import-raw-key.html [ Skip ]
+webkit.org/b/248980 crypto/subtle/ed25519-serialize.html [ Skip ]
 
 # GTK does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]

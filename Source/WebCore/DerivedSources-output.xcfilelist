@@ -839,6 +839,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEcdhKeyDeriveParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEcdhKeyDeriveParams.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEcdsaParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEcdsaParams.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEd25519Params.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEd25519Params.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+CSSOMView.cpp

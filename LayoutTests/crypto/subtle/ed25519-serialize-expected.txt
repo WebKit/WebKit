@@ -1,0 +1,12 @@
+Test importing an Ed25519 raw key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+First imported key 6S+xalLgetCVTx779iNYwshLHy/pXfE0M9ou0jM2nAQ=
+Second exported key 6S+xalLgetCVTx779iNYwshLHy/pXfE0M9ou0jM2nAQ=
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

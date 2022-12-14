@@ -33,14 +33,16 @@
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "CommonCryptoUtilities.h"
+#include <wtf/Vector.h>
 
-typedef CCECCryptorRef PlatformECKey;
+using PlatformECKey = std::variant<CCECCryptorRef, Vector<uint8_t>>;
+
 namespace WebCore {
 struct CCECCryptorRefDeleter {
     void operator()(CCECCryptorRef key) const { CCECCryptorRelease(key); }
 };
 }
-typedef std::unique_ptr<typename std::remove_pointer<CCECCryptorRef>::type, WebCore::CCECCryptorRefDeleter> PlatformECKeyContainer;
+typedef std::variant<std::unique_ptr<typename std::remove_pointer<CCECCryptorRef>::type, WebCore::CCECCryptorRefDeleter>, Vector<uint8_t>> PlatformECKeyContainer;
 #endif
 
 #if USE(GCRYPT)
@@ -66,6 +68,7 @@ public:
         P256,
         P384,
         P521,
+        Curve25519,
     };
 
     static Ref<CryptoKeyEC> create(CryptoAlgorithmIdentifier identifier, NamedCurve curve, CryptoKeyType type, PlatformECKeyContainer&& platformKey, bool extractable, CryptoKeyUsageBitmap usages)
@@ -89,7 +92,18 @@ public:
     size_t keySizeInBytes() const { return std::ceil(keySizeInBits() / 8.); }
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
+    
+#if PLATFORM(COCOA) && !PLATFORM(GTK)
+    PlatformECKey platformKey() const { return WTF::switchOn( m_platformKey, [&](const std::unique_ptr<typename std::remove_pointer<CCECCryptorRef>::type, WebCore::CCECCryptorRefDeleter>& options) -> PlatformECKey {
+        return options.get();
+            
+        }, [&](const Vector<uint8_t>& options) -> PlatformECKey {
+        return options;
+        });
+    }
+#else
     PlatformECKey platformKey() const { return m_platformKey.get(); }
+#endif
     static bool isValidECAlgorithm(CryptoAlgorithmIdentifier);
 
 private:

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test importing an Ed25519 raw key");
+
+jsTestIsAsync = true;
+
+var rawKey = new Uint8Array([233, 47, 177, 106, 82, 224, 122, 208, 149, 79, 30, 251, 246, 35, 88, 194, 200, 75, 31, 47, 233, 93, 241, 52, 51, 218, 46, 210, 51, 54, 156, 4]);
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("raw", rawKey, { name: "Ed25519"}, extractable, ['verify']).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'Ed25519'");
+    shouldBe("publicKey.usages", "['verify']");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test Ed25519 signing/verifying operations with generated Curve25519 keys");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var ed25519Params = {
+    name: "Ed25519",
+}
+var data = asciiToUint8Array("Hello, World!");
+
+debug("Generating keys");
+crypto.subtle.generateKey({ name: "Ed25519"}, extractable, ["sign", "verify"]).then(function(result) {
+    keyPair = result;
+    return crypto.subtle.sign(ed25519Params, keyPair.privateKey, data);
+}).then(function(result) {
+    signature = result;
+    shouldBe("signature.byteLength", "64");
+    return crypto.subtle.verify(ed25519Params, keyPair.publicKey, signature, data);
+}).then(function(result) {
+    verified = result;
+    shouldBeTrue("verified");
+    finishJSTest();
+}, failAndFinishJSTest);
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

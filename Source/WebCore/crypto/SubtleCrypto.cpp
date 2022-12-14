@@ -29,6 +29,7 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithm.h"
+#include "CryptoAlgorithmEd25519Params.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "JSAesCbcCfbParams.h"
 #include "JSAesCtrParams.h"
@@ -42,6 +43,7 @@
 #include "JSEcKeyParams.h"
 #include "JSEcdhKeyDeriveParams.h"
 #include "JSEcdsaParams.h"
+#include "JSEd25519Params.h"
 #include "JSHkdfParams.h"
 #include "JSHmacKeyParams.h"
 #include "JSJsonWebKey.h"
@@ -163,6 +165,12 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             result = makeUnique<CryptoAlgorithmEcdsaParams>(params);
             break;
         }
+        case CryptoAlgorithmIdentifier::Ed25519: {
+            auto params = convertDictionary<CryptoAlgorithmEd25519Params>(state, value.get());
+            RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+            result = makeUnique<CryptoAlgorithmEd25519Params>(params);
+            break;
+        }
         case CryptoAlgorithmIdentifier::RSA_PSS: {
             auto params = convertDictionary<CryptoAlgorithmRsaPssParams>(state, value.get());
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
@@ -232,6 +240,11 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
             result = makeUnique<CryptoAlgorithmEcKeyParams>(params);
             break;
+        }
+        case CryptoAlgorithmIdentifier::Ed25519: {
+            auto result = makeUnique<CryptoAlgorithmParameters>();
+            result->identifier = identifier.value();
+            return result;
         }
         default:
             return Exception { NotSupportedError };
@@ -316,6 +329,11 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
             result = makeUnique<CryptoAlgorithmEcKeyParams>(params);
             break;
+        }
+        case CryptoAlgorithmIdentifier::Ed25519: {
+            auto result = makeUnique<CryptoAlgorithmParameters>();
+            result->identifier = identifier.value();
+            return result;
         }
         case CryptoAlgorithmIdentifier::HKDF:
         case CryptoAlgorithmIdentifier::PBKDF2:
@@ -497,6 +515,7 @@ static bool isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
     case CryptoAlgorithmIdentifier::HMAC:
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
+    case CryptoAlgorithmIdentifier::Ed25519:
         return true;
     default:
         return false;

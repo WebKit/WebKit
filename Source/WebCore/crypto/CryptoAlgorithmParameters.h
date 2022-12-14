@@ -44,6 +44,7 @@ public:
         AesKeyParams,
         EcKeyParams,
         EcdhKeyDeriveParams,
+        Ed25519Params,
         EcdsaParams,
         HkdfParams,
         HmacKeyParams,

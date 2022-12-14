@@ -709,6 +709,7 @@ crypto/algorithms/CryptoAlgorithmAES_GCM.cpp
 crypto/algorithms/CryptoAlgorithmAES_KW.cpp
 crypto/algorithms/CryptoAlgorithmECDH.cpp
 crypto/algorithms/CryptoAlgorithmECDSA.cpp
+crypto/algorithms/CryptoAlgorithmEd25519.cpp
 crypto/algorithms/CryptoAlgorithmHKDF.cpp
 crypto/algorithms/CryptoAlgorithmHMAC.cpp
 crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
@@ -4119,6 +4120,7 @@ JSCSSStyleValue.cpp
 JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp
 JSFullscreenOptions.cpp
+JSEd25519Params.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp

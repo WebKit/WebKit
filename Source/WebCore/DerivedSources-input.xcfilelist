@@ -932,6 +932,7 @@ $(PROJECT_DIR)/crypto/parameters/AesKeyParams.idl
 $(PROJECT_DIR)/crypto/parameters/EcKeyParams.idl
 $(PROJECT_DIR)/crypto/parameters/EcdhKeyDeriveParams.idl
 $(PROJECT_DIR)/crypto/parameters/EcdsaParams.idl
+$(PROJECT_DIR)/crypto/parameters/Ed25519Params.idl
 $(PROJECT_DIR)/crypto/parameters/HkdfParams.idl
 $(PROJECT_DIR)/crypto/parameters/HmacKeyParams.idl
 $(PROJECT_DIR)/crypto/parameters/Pbkdf2Params.idl

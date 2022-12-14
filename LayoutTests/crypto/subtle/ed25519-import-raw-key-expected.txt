@@ -1,0 +1,15 @@
+Test importing an Ed25519 raw key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS publicKey.toString() is '[object CryptoKey]'
+PASS publicKey.type is 'public'
+PASS publicKey.extractable is true
+PASS publicKey.algorithm.name is 'Ed25519'
+PASS publicKey.usages is ['verify']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
