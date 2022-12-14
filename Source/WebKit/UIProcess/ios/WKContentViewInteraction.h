@@ -37,6 +37,7 @@
 #import "ImageAnalysisUtilities.h"
 #import "InteractionInformationAtPosition.h"
 #import "PasteboardAccessIntent.h"
+#import "RevealFocusedElementDeferrer.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingController.h"
 #import "TransactionID.h"
@@ -266,7 +267,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIMenu> machineReadableCodeMenu;
 };
 
-}
+} // namespace WebKit
 
 @class WKFocusedElementInfo;
 @protocol UIMenuBuilder;
@@ -434,6 +435,8 @@ struct ImageAnalysisContextMenuActionData {
     WeakObjCPtr<WKDataListSuggestionsControl> _dataListSuggestionsControl;
 #endif
 
+    RefPtr<WebKit::RevealFocusedElementDeferrer> _revealFocusedElementDeferrer;
+
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
@@ -472,8 +475,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _isRelinquishingFirstResponderToFocusedElement;
     BOOL _unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate;
     BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
-    BOOL _waitingForKeyboardToStartAnimatingInAfterElementFocus;
-    BOOL _shouldZoomToFocusRectAfterShowingKeyboard;
+    BOOL _waitingForKeyboardAppearanceAnimationToStart;
     BOOL _isHidingKeyboard;
     BOOL _isPreparingEditMenu;
 
