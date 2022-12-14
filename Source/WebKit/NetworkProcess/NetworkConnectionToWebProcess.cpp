@@ -95,6 +95,10 @@
 #include "IPCTesterMessages.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "NetworkConnectionIntegrityHelpers.h"
+#endif
+
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
@@ -1437,6 +1441,15 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 {
     MockContentFilterSettings::singleton() = WTFMove(settings);
 }
+#endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+void NetworkConnectionToWebProcess::requestLookalikeCharacterStrings(CompletionHandler<void(const HashSet<String>&)>&& completionHandler)
+{
+    WebKit::requestLookalikeCharacterStrings(WTFMove(completionHandler));
+}
+
 #endif
 
 } // namespace WebKit

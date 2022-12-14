@@ -6881,6 +6881,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     m_elementsToExcludeFromRemoveBackground.clear();
 #endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    updateLookalikeCharacterStringsIfNeeded();
+#endif
 }
 
 void WebPage::didFinishDocumentLoad(WebFrame& frame)
@@ -8363,6 +8367,28 @@ bool WebPage::isUsingUISideCompositing() const
     return false;
 #endif
 }
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+void WebPage::updateLookalikeCharacterStringsIfNeeded()
+{
+    if (!m_sanitizeLookalikeCharactersInLinksEnabled)
+        return;
+
+    RefPtr networkProcess = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcess)
+        return;
+
+    if (!std::exchange(m_shouldUpdateLookalikeCharacterStrings, false))
+        return;
+
+    networkProcess->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestLookalikeCharacterStrings(), [weakPage = WeakPtr { *this }](auto&& strings) {
+        if (RefPtr page = weakPage.get())
+            page->m_lookalikeCharacterStrings = WTFMove(strings);
+    });
+}
+
+#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 } // namespace WebKit
 

@@ -18,6 +18,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/DataDetectorsCoreSoftLink.h
     cocoa/MediaToolboxSoftLink.h
     cocoa/NaturalLanguageSoftLink.h
+    cocoa/NetworkConnectionIntegritySoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
     cocoa/PassKitSoftLink.h
     cocoa/RevealSoftLink.h
@@ -172,6 +173,7 @@ list(APPEND PAL_SOURCES
     cocoa/Gunzip.cpp
     cocoa/MediaToolboxSoftLink.cpp
     cocoa/NaturalLanguageSoftLink.mm
+    cocoa/NetworkConnectionIntegritySoftLink.mm
     cocoa/OpenGLSoftLinkCocoa.mm
     cocoa/PassKitSoftLink.mm
     cocoa/RevealSoftLink.mm

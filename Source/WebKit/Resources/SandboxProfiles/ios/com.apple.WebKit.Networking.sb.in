@@ -856,3 +856,7 @@
 (allow-read-and-issue-generic-extensions
     (apply subpath issue-extension-secondary-paths))
 #endif
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/com.apple.WebKit.NetworkingAdditions.sb.in>)
+#include <WebKitAdditions/com.apple.WebKit.NetworkingAdditions.sb.in>
+#endif
