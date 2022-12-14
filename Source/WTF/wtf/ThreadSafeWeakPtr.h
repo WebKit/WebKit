@@ -32,7 +32,6 @@
 namespace WTF {
 
 template<typename> class ThreadSafeWeakPtr;
-template<typename> class ThreadSafeWeakHashSet;
 template<typename, DestructionThread> class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
 
 template<typename T>
@@ -140,7 +139,6 @@ protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
 private:
     template<typename> friend class ThreadSafeWeakPtr;
-    template<typename> friend class ThreadSafeWeakHashSet;
     ThreadSafeWeakPtrControlBlock<T>& m_controlBlock { *new ThreadSafeWeakPtrControlBlock<T>(static_cast<T&>(*this)) };
 };
 
@@ -154,7 +152,7 @@ public:
     ThreadSafeWeakPtr(const ThreadSafeWeakPtr<T>& other)
         : m_controlBlock(other.m_controlBlock) { }
 
-    template<typename U, std::enable_if_t<!std::is_pointer_v<U>>* = nullptr>
+    template<typename U>
     ThreadSafeWeakPtr(const U& retainedReference)
         : m_controlBlock(controlBlock(retainedReference))
     {
@@ -225,7 +223,6 @@ private:
     }
 
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
-    template<typename> friend class ThreadSafeWeakHashSet;
     explicit ThreadSafeWeakPtr(ThreadSafeWeakPtrControlBlock<T>& controlBlock)
         : m_controlBlock(&controlBlock) { }
 
