@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-2007, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -693,9 +694,8 @@ static Node* previousNodeConsideringAtomicNodes(const Node* node)
             n = n->lastChild();
         return n;
     }
-    if (node->parentNode())
-        return node->parentNode();
-    return nullptr;
+    
+    return node->parentNode();
 }
 
 static Node* nextNodeConsideringAtomicNodes(const Node* node)
