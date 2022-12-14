@@ -140,7 +140,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-AppleSilicon-Big-Sur-Debug-Build-EWS': [
+        'macOS-AppleSilicon-Ventura-Debug-Build-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
