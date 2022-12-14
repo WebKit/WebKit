@@ -2467,7 +2467,7 @@ public:
         }
     }
 
-    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID scratch)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
@@ -2502,19 +2502,18 @@ public:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector Above comparisons directly.");
             break;
         case AboveOrEqual:
-            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpmaxub_rrr(right, left, dest);
-                m_assembler.vpcmpeqb_rrr(left, dest, dest);
+                m_assembler.vpmaxub_rrr(right, left, scratch);
+                m_assembler.vpcmpeqb_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpmaxuw_rrr(right, left, dest);
-                m_assembler.vpcmpeqw_rrr(left, dest, dest);
+                m_assembler.vpmaxuw_rrr(right, left, scratch);
+                m_assembler.vpcmpeqw_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpmaxud_rrr(right, left, dest);
-                m_assembler.vpcmpeqd_rrr(left, dest, dest);
+                m_assembler.vpmaxud_rrr(right, left, scratch);
+                m_assembler.vpcmpeqd_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i64x2:
                 RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64x2 unsigned comparisons are not supported.");
@@ -2529,19 +2528,18 @@ public:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Shouldn't emit integer vector Below comparisons directly.");
             break;
         case BelowOrEqual:
-            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpminub_rrr(right, left, dest);
-                m_assembler.vpcmpeqb_rrr(left, dest, dest);
+                m_assembler.vpminub_rrr(right, left, scratch);
+                m_assembler.vpcmpeqb_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpminuw_rrr(right, left, dest);
-                m_assembler.vpcmpeqw_rrr(left, dest, dest);
+                m_assembler.vpminuw_rrr(right, left, scratch);
+                m_assembler.vpcmpeqw_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpminud_rrr(right, left, dest);
-                m_assembler.vpcmpeqd_rrr(left, dest, dest);
+                m_assembler.vpminud_rrr(right, left, scratch);
+                m_assembler.vpcmpeqd_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i64x2:
                 RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64x2 unsigned comparisons are not supported.");
@@ -2569,19 +2567,18 @@ public:
             }
             break;
         case GreaterThanOrEqual:
-            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpmaxsb_rrr(right, left, dest);
-                m_assembler.vpcmpeqb_rrr(left, dest, dest);
+                m_assembler.vpmaxsb_rrr(right, left, scratch);
+                m_assembler.vpcmpeqb_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpmaxsw_rrr(right, left, dest);
-                m_assembler.vpcmpeqw_rrr(left, dest, dest);
+                m_assembler.vpmaxsw_rrr(right, left, scratch);
+                m_assembler.vpcmpeqw_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpmaxsd_rrr(right, left, dest);
-                m_assembler.vpcmpeqd_rrr(left, dest, dest);
+                m_assembler.vpmaxsd_rrr(right, left, scratch);
+                m_assembler.vpcmpeqd_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i64x2:
                 // Intel doesn't support 64-bit packed maximum/minimum without AVX512, so this condition should have been transformed
@@ -2611,19 +2608,18 @@ public:
             }
             break;
         case LessThanOrEqual:
-            // FIXME: these functions need to take scratch register since left can be dest.
             switch (simdInfo.lane) {
             case SIMDLane::i8x16:
-                m_assembler.vpminsb_rrr(right, left, dest);
-                m_assembler.vpcmpeqb_rrr(left, dest, dest);
+                m_assembler.vpminsb_rrr(right, left, scratch);
+                m_assembler.vpcmpeqb_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i16x8:
-                m_assembler.vpminsw_rrr(right, left, dest);
-                m_assembler.vpcmpeqw_rrr(left, dest, dest);
+                m_assembler.vpminsw_rrr(right, left, scratch);
+                m_assembler.vpcmpeqw_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i32x4:
-                m_assembler.vpminsd_rrr(right, left, dest);
-                m_assembler.vpcmpeqd_rrr(left, dest, dest);
+                m_assembler.vpminsd_rrr(right, left, scratch);
+                m_assembler.vpcmpeqd_rrr(left, scratch, dest);
                 break;
             case SIMDLane::i64x2:
                 // Intel doesn't support 64-bit packed maximum/minimum without AVX512, so this condition should have been transformed
