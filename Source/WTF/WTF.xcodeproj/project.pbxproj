@@ -81,7 +81,6 @@
 		53FC70D023FB950C005B1990 /* OSLogPrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53FC70CF23FB950C005B1990 /* OSLogPrintStream.cpp */; };
 		5C1F05932164356B0039302C /* CFURLExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F05912164356B0039302C /* CFURLExtras.cpp */; };
 		5C1F0595216437B30039302C /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F0594216437B30039302C /* URLCF.cpp */; };
-		5C6552C029423F85008CD0F3 /* ThreadSafeWeakHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6552BF29423F85008CD0F3 /* ThreadSafeWeakHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CB8CB6D28C16CB700539906 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB8CB6C28C16CB700539906 /* ArgumentCoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CC0EE7521629F1900A1A842 /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE7321629F1900A1A842 /* URLParser.cpp */; };
 		5CC0EE7621629F1900A1A842 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE7421629F1900A1A842 /* URL.cpp */; };
@@ -1157,7 +1156,6 @@
 		5C1F05922164356B0039302C /* CFURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFURLExtras.h; sourceTree = "<group>"; };
 		5C1F0594216437B30039302C /* URLCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLCF.cpp; sourceTree = "<group>"; };
 		5C1F0597216439940039302C /* URLHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHash.h; sourceTree = "<group>"; };
-		5C6552BF29423F85008CD0F3 /* ThreadSafeWeakHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeWeakHashSet.h; sourceTree = "<group>"; };
 		5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueRef.h; sourceTree = "<group>"; };
 		5CB8CB6C28C16CB700539906 /* ArgumentCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCoder.h; sourceTree = "<group>"; };
 		5CC0EE7121629F1800A1A842 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
@@ -2319,7 +2317,6 @@
 				5311BD591EA81A9600525281 /* ThreadMessage.h */,
 				A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */,
 				7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */,
-				5C6552BF29423F85008CD0F3 /* ThreadSafeWeakHashSet.h */,
 				5CFF32562925A2EB001050F2 /* ThreadSafeWeakPtr.h */,
 				4468567225094FE8008CCA05 /* ThreadSanitizerSupport.h */,
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
@@ -3286,7 +3283,6 @@
 				DD3DC92227A4BF8E007E5B61 /* ThreadMessage.h in Headers */,
 				DD3DC96927A4BF8E007E5B61 /* ThreadSafeRefCounted.h in Headers */,
 				DD3DC97C27A4BF8E007E5B61 /* ThreadSafetyAnalysis.h in Headers */,
-				5C6552C029423F85008CD0F3 /* ThreadSafeWeakHashSet.h in Headers */,
 				5CFF32572925A2EC001050F2 /* ThreadSafeWeakPtr.h in Headers */,
 				DD3DC90F27A4BF8E007E5B61 /* ThreadSanitizerSupport.h in Headers */,
 				DD3DC99327A4BF8E007E5B61 /* ThreadSpecific.h in Headers */,

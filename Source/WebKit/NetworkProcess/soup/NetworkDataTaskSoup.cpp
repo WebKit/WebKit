@@ -91,6 +91,8 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
 NetworkDataTaskSoup::~NetworkDataTaskSoup()
 {
     clearRequest();
+    if (m_session)
+        m_session->unregisterNetworkDataTask(*this);
 }
 
 String NetworkDataTaskSoup::suggestedFilename() const

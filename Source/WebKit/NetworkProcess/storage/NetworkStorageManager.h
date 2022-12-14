@@ -42,7 +42,6 @@
 #include <WebCore/IndexedDB.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
-#include <wtf/ThreadSafeWeakHashSet.h>
 
 namespace IPC {
 class SharedFileHandle;
@@ -188,7 +187,7 @@ private:
     FileSystem::Salt m_salt;
     bool m_closed { false };
     HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_originStorageManagers;
-    ThreadSafeWeakHashSet<IPC::Connection> m_connections;
+    WeakHashSet<IPC::Connection> m_connections; // Main thread only.
     std::unique_ptr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
     std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
     std::unique_ptr<IDBStorageRegistry> m_idbStorageRegistry;

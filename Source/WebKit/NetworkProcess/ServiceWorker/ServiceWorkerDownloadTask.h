@@ -64,6 +64,10 @@ public:
     void start();
     void stop() { cancel(); }
 
+    using NetworkDataTask::weakPtrFactory;
+    using NetworkDataTask::WeakValueType;
+    using NetworkDataTask::WeakPtrImplType;
+
 private:
     ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, DownloadID);
     void startListeningForIPC();

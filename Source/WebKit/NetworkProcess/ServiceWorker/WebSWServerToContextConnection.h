@@ -33,7 +33,6 @@
 #include "ServiceWorkerFetchTask.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/SWServerToContextConnection.h>
-#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -112,7 +111,7 @@ private:
 
     NetworkConnectionToWebProcess& m_connection;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
-    HashMap<WebCore::FetchIdentifier, ThreadSafeWeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
+    HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
     bool m_isThrottleable { true };
     WebPageProxyIdentifier m_webPageProxyID;
     size_t m_processingFunctionalEventCount { 0 };

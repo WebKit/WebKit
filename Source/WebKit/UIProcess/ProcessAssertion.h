@@ -28,7 +28,8 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/ProcessID.h>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if !OS(WINDOWS)
@@ -55,7 +56,7 @@ enum class ProcessAssertionType {
 
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);
 
-class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ProcessAssertion> {
+class ProcessAssertion : public ThreadSafeRefCounted<ProcessAssertion>, public CanMakeWeakPtr<ProcessAssertion, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode : bool { Sync, Async };

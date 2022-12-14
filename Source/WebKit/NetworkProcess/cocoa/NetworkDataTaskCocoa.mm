@@ -485,6 +485,9 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         auto dataTask = m_sessionWrapper->dataTaskMap.take([m_task taskIdentifier]);
         RELEASE_ASSERT(dataTask == this);
     }
+
+    if (m_session)
+        m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
@@ -625,7 +628,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 
     if (m_client)
-        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = ThreadSafeWeakPtr { *this }] (auto&& request) mutable {
+        m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = WeakPtr { *this }] (auto&& request) mutable {
             auto strongThis = weakThis.get();
             if (!strongThis || !m_session)
                 return completionHandler({ });
