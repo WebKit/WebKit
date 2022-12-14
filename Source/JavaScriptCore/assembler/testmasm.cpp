@@ -74,7 +74,7 @@ static Vector<double> doubleOperands()
 }
 
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 static Vector<float> floatOperands()
 {
     return Vector<float> {
@@ -2968,7 +2968,7 @@ void testOrUnsignedRightShift64()
 }
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 void testCompareFloat(MacroAssembler::DoubleCondition condition)
 {
     float arg1 = 0;
@@ -3009,7 +3009,7 @@ void testCompareFloat(MacroAssembler::DoubleCondition condition)
         }
     }
 }
-#endif // CPU(X86) || CPU(X86_64) || CPU(ARM64)
+#endif // CPU(X86_64) || CPU(ARM64)
 
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
@@ -4758,7 +4758,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
     uintptr_t modifiedFlags { 0 };
 #endif
     
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     auto flagsSPR = X86Registers::eflags;
     uintptr_t flagsMask = 0xc5;
 #elif CPU(ARM_THUMB2)
@@ -4940,7 +4940,7 @@ void testProbeModifiesStackValues()
 #endif
     size_t numberOfExtraEntriesToWrite { 10 }; // ARM64 requires that this be 2 word aligned.
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     MacroAssembler::SPRegisterID flagsSPR = X86Registers::eflags;
     uintptr_t flagsMask = 0xc5;
 #elif CPU(ARM_THUMB2)
@@ -5897,7 +5897,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testAtomicStrongCASFill16());
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareFloat);
 #endif
 
