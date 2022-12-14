@@ -205,13 +205,6 @@ bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descript
             return false;
     }
 
-    // Does not support multisampling
-    if (descriptor.multisample.count > 1)
-        return false;
-
-    if (descriptor.multisample.alphaToCoverageEnabled)
-        return false;
-
     return true;
 }
 
@@ -311,6 +304,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         // FIXME: set stencil state
         mtlDepthStencilState = [m_device newDepthStencilStateWithDescriptor:depthStencilState];
     }
+
+    mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
+    mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
 
     if (descriptor.primitive.nextInChain)
         return RenderPipeline::createInvalid(*this);
