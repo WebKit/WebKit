@@ -33,6 +33,7 @@
 #import "WebExtensionContextMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
+#import "_WKWebExtensionWebNavigationURLFilter.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/ScriptCallStack.h>
 #import <JavaScriptCore/ScriptCallStackFactory.h>
@@ -48,17 +49,26 @@ void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument1
     if (m_listeners.isEmpty())
         return;
 
-    // FIXME: Honor the targetURL making sure it matches the filter for each listener.
+    for (auto& listener : m_listeners) {
+        _WKWebExtensionWebNavigationURLFilter *filter = listener.second.get();
+        if (filter && ![filter matchesURL:targetURL])
+            continue;
 
-    for (auto& listener : m_listeners)
-        listener->call(argument1);
+        listener.first->call(argument1);
+    }
 }
 
 void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **exceptionString)
 {
-    // FIXME: Save the filter associated with each of these listeners.
+    _WKWebExtensionWebNavigationURLFilter *parsedFilter;
+    if (filter) {
+        parsedFilter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filter outErrorMessage:exceptionString];
+        if (!parsedFilter)
+            return;
+    }
 
-    m_listeners.append(listener);
+    FilterAndCallbackPair filterPair = FilterAndCallbackPair(listener, parsedFilter);
+    m_listeners.append(filterPair);
 
     if (!page)
         return;
@@ -69,7 +79,7 @@ void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExt
 void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
 {
     m_listeners.removeAllMatching([&](auto& entry) {
-        return entry->callbackFunction() == listener->callbackFunction();
+        return entry.first->callbackFunction() == listener->callbackFunction();
     });
 
     if (!page)
@@ -81,7 +91,7 @@ void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<Web
 bool WebExtensionAPIWebNavigationEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)
 {
     return m_listeners.containsIf([&](auto& entry) {
-        return entry->callbackFunction() == listener->callbackFunction();
+        return entry.first->callbackFunction() == listener->callbackFunction();
     });
 }
 

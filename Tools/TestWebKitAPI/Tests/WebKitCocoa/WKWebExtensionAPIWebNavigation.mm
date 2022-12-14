@@ -59,12 +59,52 @@ TEST(WKWebExtensionAPIWebNavigation, EventFiringTest)
 
     auto *backgroundScript = Util::constructScript(@[
         // Setup
-        @"function listener() { browser.test.notifyPass() }",
+        @"function passListener() { browser.test.notifyPass() }",
 
         // Test
-        @"browser.test.testWebNavigationEvent.addListener(listener)",
+        @"browser.test.testWebNavigationEvent.addListener(passListener)",
 
-        // The listener firing will consider the test passed.
+        // The passListener firing will consider the test passed.
+        @"browser.test.fireTestWebNavigationEvent('https://webkit.org')"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+// FIXME: Add an API test for an invalid filter throwing an exception.
+
+TEST(WKWebExtensionAPIWebNavigation, AllowedFilterTest)
+{
+    auto *manifest = @{ @"manifest_version": @3, @"permissions": @[ @"webNavigation" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener() { browser.test.notifyPass() }",
+
+        // Test
+        @"browser.test.testWebNavigationEvent.addListener(passListener, { 'url': [ {'hostContains': 'webkit'} ] })",
+
+        // The passListener firing will consider the test passed.
+        @"browser.test.fireTestWebNavigationEvent('https://webkit.org')"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIWebNavigation, DeniedFilterTest)
+{
+    auto *manifest = @{ @"manifest_version": @3, @"permissions": @[ @"webNavigation" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener() { browser.test.notifyPass() }",
+        @"function failListener() { browser.test.notifyFail('This listener should not have been called') }",
+
+        // Test
+        @"browser.test.testWebNavigationEvent.addListener(failListener, { 'url': [ {'hostContains': 'example'} ] })",
+        @"browser.test.testWebNavigationEvent.addListener(passListener)",
+
+        // The passListener firing will consider the test passed.
         @"browser.test.fireTestWebNavigationEvent('https://webkit.org')"
     ]);
 

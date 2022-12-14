@@ -816,6 +816,10 @@
 		3375A37129429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3375A37029429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3375A37529429DF50028536D /* WebExtensionAPIWebNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3375A37329429DF50028536D /* WebExtensionAPIWebNavigation.h */; };
 		3375A3772942A19D0028536D /* JSWebExtensionAPIWebNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3375A3762942A19C0028536D /* JSWebExtensionAPIWebNavigation.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		337822432947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		337822442947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 337822422947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h */; };
+		337822472947FBA5002106BB /* _WKWebExtensionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */; };
+		337822482947FBA5002106BB /* _WKWebExtensionUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 337822462947FBA4002106BB /* _WKWebExtensionUtilities.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		33F68338293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		33F6833E293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */; };
 		33F68340293FFB3F005C63C0 /* WebExtensionAPIWebNavigationEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 33F6833F293FFB3F005C63C0 /* WebExtensionAPIWebNavigationEventCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -4541,6 +4545,10 @@
 		3375A37029429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIWebNavigationCocoa.mm; sourceTree = "<group>"; };
 		3375A37329429DF50028536D /* WebExtensionAPIWebNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebNavigation.h; sourceTree = "<group>"; };
 		3375A3762942A19C0028536D /* JSWebExtensionAPIWebNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JSWebExtensionAPIWebNavigation.mm; path = DerivedSources/WebKit/JSWebExtensionAPIWebNavigation.mm; sourceTree = BUILT_PRODUCTS_DIR; };
+		337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionWebNavigationURLFilter.mm; sourceTree = "<group>"; };
+		337822422947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionWebNavigationURLFilter.h; sourceTree = "<group>"; };
+		337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionUtilities.h; sourceTree = "<group>"; };
+		337822462947FBA4002106BB /* _WKWebExtensionUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionUtilities.mm; sourceTree = "<group>"; };
 		33F68335293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebExtensionAPIWebNavigationEvent.h; path = DerivedSources/WebKit/JSWebExtensionAPIWebNavigationEvent.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JSWebExtensionAPIWebNavigationEvent.mm; path = DerivedSources/WebKit/JSWebExtensionAPIWebNavigationEvent.mm; sourceTree = BUILT_PRODUCTS_DIR; };
 		33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebNavigationEvent.h; sourceTree = "<group>"; };
@@ -8826,6 +8834,8 @@
 		1C3D0ABF291AE6200093F67E /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				337822422947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h */,
+				337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */,
 				1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */,
 			);
 			path = Cocoa;
@@ -12094,6 +12104,8 @@
 		B6114A8A293AE03600380B1B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */,
+				337822462947FBA4002106BB /* _WKWebExtensionUtilities.mm */,
 				B6114A8B293AE05200380B1B /* WebExtensionEventListenerType.h */,
 			);
 			path = Extensions;
@@ -14599,6 +14611,8 @@
 				1C8B2363289AE89400020CDC /* _WKWebExtensionPermission.h in Headers */,
 				1C3BEB712888842A00E66E38 /* _WKWebExtensionPrivate.h in Headers */,
 				1C049840289AFF9B0010308B /* _WKWebExtensionTab.h in Headers */,
+				337822472947FBA5002106BB /* _WKWebExtensionUtilities.h in Headers */,
+				337822442947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h in Headers */,
 				1C049841289AFF9B0010308B /* _WKWebExtensionWindow.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
@@ -17830,6 +17844,8 @@
 				1C1549D729381DFF001B9E5B /* _WKWebExtensionControllerConfiguration.mm in Sources */,
 				1C1CE972288DF5030098D3A1 /* _WKWebExtensionMatchPattern.mm in Sources */,
 				1C049838289AF5AD0010308B /* _WKWebExtensionPermission.mm in Sources */,
+				337822482947FBA5002106BB /* _WKWebExtensionUtilities.mm in Sources */,
+				337822432947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm in Sources */,
 				572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */,
 				517B5F7E275E97B6002DC22D /* AppBundleRequest.mm in Sources */,
 				EBA8D3B227A5E33F00CB7900 /* ApplePushServiceConnection.mm in Sources */,
