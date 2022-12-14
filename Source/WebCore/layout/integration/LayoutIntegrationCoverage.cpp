@@ -324,8 +324,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     };
     if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone()) {
         auto isSupportedLineClamp = [&] {
-            if (ancestor->style().lineClamp().isPercentage())
-                return false;
             for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
                 if (!is<RenderBlockFlow>(*flexItem))
                     return false;
