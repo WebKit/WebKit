@@ -71,16 +71,19 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
     return element->screenRect();
 }
 
-Ref<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
+Ref<WebFullScreenManager> WebFullScreenManager::create(WebPage& page)
 {
     return adoptRef(*new WebFullScreenManager(page));
 }
 
-WebFullScreenManager::WebFullScreenManager(WebPage* page)
+WebFullScreenManager::WebFullScreenManager(WebPage& page)
     : WebCore::EventListener(WebCore::EventListener::CPPEventListenerType)
     , m_page(page)
 #if ENABLE(VIDEO)
     , m_mainVideoElementTextRecognitionTimer(RunLoop::main(), this, &WebFullScreenManager::mainVideoElementTextRecognitionTimerFired)
+#endif
+#if !RELEASE_LOG_DISABLED
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif
 {
 }
@@ -116,7 +119,7 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
     if (pipStandbyElement == m_pipStandbyElement)
         return;
 
-    LOG(Fullscreen, "WebFullScreenManager %p setPIPStandbyElement() - old element %p, new element %p", this, m_pipStandbyElement.get(), pipStandbyElement);
+    ALWAYS_LOG(LOGIDENTIFIER, "old element ", m_pipStandbyElement ? m_pipStandbyElement->logIdentifier() : nullptr, ", new element ", pipStandbyElement ? pipStandbyElement->logIdentifier() : nullptr);
 
     if (m_pipStandbyElement)
         m_pipStandbyElement->setVideoFullscreenStandby(false);
@@ -138,7 +141,7 @@ bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
     if (!m_page->corePage()->settings().fullScreenEnabled())
         return false;
 
-    return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.get(), withKeyboard);
+    return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.ptr(), withKeyboard);
 }
 
 static auto& eventsToObserve()
@@ -176,7 +179,7 @@ void WebFullScreenManager::clearElement()
 
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 {
-    LOG(Fullscreen, "WebFullScreenManager %p enterFullScreenForElement(%p)", this, element);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(element);
     if (!element)
@@ -200,13 +203,13 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 #else
     FloatSize videoDimensions;
 #endif
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElementWithControls, videoDimensions);
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.ptr(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElementWithControls, videoDimensions);
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
-    LOG(Fullscreen, "WebFullScreenManager %p exitFullScreenForElement(%p) - fullscreen element %p", this, element, m_element.get());
-    m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.get(), element);
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.ptr(), element);
 #if ENABLE(VIDEO)
     setMainVideoElement(nullptr);
 #endif
@@ -214,7 +217,7 @@ void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 
 void WebFullScreenManager::willEnterFullScreen()
 {
-    LOG(Fullscreen, "WebFullScreenManager %p willEnterFullScreen() - element %p", this, m_element.get());
+    ALWAYS_LOG(LOGIDENTIFIER);
     ASSERT(m_element);
     if (!m_element)
         return;
@@ -229,12 +232,12 @@ void WebFullScreenManager::willEnterFullScreen()
 #endif
     m_element->document().updateLayout();
     m_finalFrame = screenRectOfContents(m_element.get());
-    m_page->injectedBundleFullScreenClient().beganEnterFullScreen(m_page.get(), m_initialFrame, m_finalFrame);
+    m_page->injectedBundleFullScreenClient().beganEnterFullScreen(m_page.ptr(), m_initialFrame, m_finalFrame);
 }
 
 void WebFullScreenManager::didEnterFullScreen()
 {
-    LOG(Fullscreen, "WebFullScreenManager %p didEnterFullScreen() - element %p", this, m_element.get());
+    ALWAYS_LOG(LOGIDENTIFIER);
     ASSERT(m_element);
     if (!m_element)
         return;
@@ -290,7 +293,7 @@ void WebFullScreenManager::updateMainVideoElement()
 
 void WebFullScreenManager::willExitFullScreen()
 {
-    LOG(Fullscreen, "WebFullScreenManager %p willExitFullScreen() - element %p", this, m_element.get());
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (!m_element)
         return;
 
@@ -306,12 +309,13 @@ void WebFullScreenManager::willExitFullScreen()
 #if !PLATFORM(IOS_FAMILY)
     m_page->showPageBanners();
 #endif
-    m_page->injectedBundleFullScreenClient().beganExitFullScreen(m_page.get(), m_finalFrame, m_initialFrame);
+    m_page->injectedBundleFullScreenClient().beganExitFullScreen(m_page.ptr(), m_finalFrame, m_initialFrame);
 }
 
 void WebFullScreenManager::didExitFullScreen()
 {
-    LOG(Fullscreen, "WebFullScreenManager %p didExitFullScreen() - element %p", this, m_element.get());
+    ALWAYS_LOG(LOGIDENTIFIER);
+    ASSERT(m_element);
     if (!m_element)
         return;
 
@@ -363,8 +367,8 @@ void WebFullScreenManager::close()
     if (m_closing)
         return;
     m_closing = true;
-    LOG(Fullscreen, "WebFullScreenManager %p close()", this);
-    m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.ptr());
 #if ENABLE(VIDEO)
     setMainVideoElement(nullptr);
 #endif
@@ -489,6 +493,18 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
             scheduleTextRecognitionForMainVideo();
     }
 }
+
+#if !RELEASE_LOG_DISABLED
+const Logger& WebFullScreenManager::logger() const
+{
+    return m_page->logger();
+}
+
+WTFLogChannel& WebFullScreenManager::logChannel() const
+{
+    return WebKit2LogFullscreen;
+}
+#endif
 
 #endif // ENABLE(VIDEO)
 

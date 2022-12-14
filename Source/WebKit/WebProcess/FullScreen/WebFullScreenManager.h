@@ -55,7 +55,7 @@ class WebPage;
 
 class WebFullScreenManager final : public WebCore::EventListener {
 public:
-    static Ref<WebFullScreenManager> create(WebPage*);
+    static Ref<WebFullScreenManager> create(WebPage&);
     virtual ~WebFullScreenManager();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -76,7 +76,7 @@ public:
     bool operator==(const WebCore::EventListener& listener) const final { return this == &listener; }
 
 protected:
-    WebFullScreenManager(WebPage*);
+    WebFullScreenManager(WebPage&);
 
     void setPIPStandbyElement(WebCore::HTMLVideoElement*);
 
@@ -95,7 +95,7 @@ protected:
     WebCore::IntRect m_finalFrame;
     WebCore::IntPoint m_scrollPosition;
     float m_topContentInset { 0 };
-    RefPtr<WebPage> m_page;
+    Ref<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementToRestore;
 #if ENABLE(VIDEO)
@@ -110,6 +110,13 @@ private:
     void setElement(WebCore::Element&);
     void clearElement();
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const;
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "WebFullScreenManager"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
 #if ENABLE(VIDEO)
     void scheduleTextRecognitionForMainVideo();
     void endTextRecognitionForMainVideoIfNeeded();
@@ -121,6 +128,10 @@ private:
     RunLoop::Timer<WebFullScreenManager> m_mainVideoElementTextRecognitionTimer;
     bool m_isPerformingTextRecognitionInMainVideo { false };
 #endif // ENABLE(VIDEO)
+
+#if !RELEASE_LOG_DISABLED
+    const void* m_logIdentifier;
+#endif
 
     bool m_closing { false };
 };

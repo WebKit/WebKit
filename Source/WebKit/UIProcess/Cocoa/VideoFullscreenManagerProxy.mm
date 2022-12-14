@@ -339,6 +339,7 @@ Ref<VideoFullscreenManagerProxy> VideoFullscreenManagerProxy::create(WebPageProx
 VideoFullscreenManagerProxy::VideoFullscreenManagerProxy(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
     : m_page(&page)
     , m_playbackSessionManagerProxy(playbackSessionManagerProxy)
+    , m_logger(page.logger())
 {
     m_page->process().addMessageReceiver(Messages::VideoFullscreenManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
 }
@@ -914,7 +915,6 @@ void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(PlaybackSessionCon
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-
 AVPlayerViewController *VideoFullscreenManagerProxy::playerViewController(PlaybackSessionContextIdentifier identifier) const
 {
 #if HAVE(PIP_CONTROLLER)
@@ -924,8 +924,12 @@ AVPlayerViewController *VideoFullscreenManagerProxy::playerViewController(Playba
     return interface ? interface->avPlayerViewController() : nil;
 #endif
 }
-
 #endif // PLATFORM(IOS_FAMILY)
+
+WTFLogChannel& VideoFullscreenManagerProxy::logChannel() const
+{
+    return WebKit2LogMedia;
+}
 
 } // namespace WebKit
 

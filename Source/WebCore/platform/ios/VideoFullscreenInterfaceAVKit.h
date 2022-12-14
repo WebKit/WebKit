@@ -167,6 +167,19 @@ public:
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
     WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const;
 
+    const Logger* loggerPtr();
+    const void* logIdentifier();
+    const char* logClassName() const { return "VideoFullscreenInterfaceAVKit"; }
+    WTFLogChannel& logChannel() const;
+
+    enum class NextAction {
+        NeedsEnterFullScreen = 1 << 0,
+        NeedsExitFullScreen = 1 << 1,
+    };
+    using NextActions = OptionSet<NextAction>;
+
+    static String nextActionToString(NextActions);
+
 protected:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
@@ -197,6 +210,9 @@ protected:
     FloatRect m_inlineRect;
     RouteSharingPolicy m_routeSharingPolicy { RouteSharingPolicy::Default };
     String m_routingContextUID;
+    RefPtr<const WTF::Logger> m_logger;
+    const void* m_logIdentifier { nullptr };
+
     bool m_allowsPictureInPicturePlayback { false };
     bool m_wirelessVideoPlaybackDisabled { true };
     bool m_shouldReturnToFullscreenWhenStoppingPictureInPicture { false };
@@ -234,17 +250,26 @@ protected:
     bool m_exitingPictureInPicture { false };
 
 private:
-    enum class NextAction {
-        NeedsEnterFullScreen = 1 << 0,
-        NeedsExitFullScreen = 1 << 1,
-    };
-    using NextActions = OptionSet<NextAction>;
-
     void exitFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
     void enterFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
 };
 
 }
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::VideoFullscreenInterfaceAVKit::NextActions> {
+    static String toString(const WebCore::VideoFullscreenInterfaceAVKit::NextActions actions)
+    {
+        return WebCore::VideoFullscreenInterfaceAVKit::nextActionToString(actions);
+    }
+};
+
+}; // namespace WTF
 
 #endif // PLATFORM(IOS_FAMILY)
 

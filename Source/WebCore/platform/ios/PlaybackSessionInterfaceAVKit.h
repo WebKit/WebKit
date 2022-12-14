@@ -79,10 +79,19 @@ public:
 
     WebAVPlayerController *playerController() const { return m_playerController.get(); }
 
+    WEBCORE_EXPORT void setLogger(const Logger&, const void*);
+    const Logger* loggerPtr() const { return m_logger.get(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "PlaybackSessionInterfaceAVKit"; }
+    WTFLogChannel& logChannel() const;
+
 private:
     PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
     RetainPtr<WebAVPlayerController> m_playerController;
     PlaybackSessionModel* m_playbackSessionModel { nullptr };
+
+    RefPtr<const WTF::Logger> m_logger;
+    const void* m_logIdentifier;
 };
 
 }

@@ -254,6 +254,17 @@ void PlaybackSessionInterfaceAVKit::modelDestroyed()
     ASSERT(!m_playbackSessionModel);
 }
 
+void PlaybackSessionInterfaceAVKit::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    m_logger = &logger;
+    m_logIdentifier = logIdentifier;
+}
+
+WTFLogChannel& PlaybackSessionInterfaceAVKit::logChannel() const
+{
+    return LogFullscreen;
+}
+
 }
 
 #endif // PLATFORM(COCOA) && HAVE(AVKIT)

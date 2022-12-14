@@ -253,10 +253,18 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
+    const Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "PlaybackSessionManagerProxy"; }
+    WTFLogChannel& logChannel() const;
+
     WebPageProxy* m_page;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
+
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier { 0 };
 };
 
 } // namespace WebKit

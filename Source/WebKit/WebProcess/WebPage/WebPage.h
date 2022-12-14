@@ -1596,6 +1596,8 @@ public:
     void updateImageAnimationEnabled();
 #endif
 
+    const Logger& logger() const;
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2558,6 +2560,8 @@ private:
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     WeakHashSet<WebCore::HTMLImageElement, WebCore::WeakPtrImplWithEventTargetData> m_elementsToExcludeFromRemoveBackground;
 #endif
+
+    mutable RefPtr<Logger> m_logger;
 };
 
 #if !PLATFORM(IOS_FAMILY)

@@ -211,6 +211,11 @@ private:
     void requestCloseAllMediaPresentations(PlaybackSessionContextIdentifier, bool finishedWithMedia, CompletionHandler<void()>&&);
     void callCloseCompletionHandlers();
 
+    const Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "VideoFullscreenManagerProxy"; }
+    WTFLogChannel& logChannel() const;
+
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
@@ -220,6 +225,8 @@ private:
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
 };
 
 } // namespace WebKit

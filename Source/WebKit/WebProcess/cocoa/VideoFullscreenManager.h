@@ -93,6 +93,8 @@ public:
     bool isFullscreen() const { return m_isFullscreen; }
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
+    PlaybackSessionContextIdentifier contextId() const { return m_contextId; }
+
 private:
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
@@ -170,6 +172,11 @@ protected:
 
     void setCurrentlyInFullscreen(VideoFullscreenInterfaceContext&, bool);
 
+    const Logger& logger() const { return m_logger.get(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "VideoFullscreenManager"; }
+    WTFLogChannel& logChannel() const;
+
     WebPage* m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
     HashMap<WebCore::HTMLVideoElement*, PlaybackSessionContextIdentifier> m_videoElements;
@@ -177,6 +184,8 @@ protected:
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_videoElementInPictureInPicture;
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
     bool m_currentlyInFullscreen { false };
 };
 
