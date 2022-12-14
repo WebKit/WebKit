@@ -316,8 +316,10 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 
 void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
 {
+    const bool shouldUpdateAssertion = m_shouldTakeSuspendedAssertion != shouldTakeSuspendedAssertion;
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
-    updateThrottleStateIfNeeded();
+    if (shouldUpdateAssertion && m_state == ProcessThrottleState::Suspended)
+        setThrottleState(ProcessThrottleState::Suspended);
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
