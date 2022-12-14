@@ -139,13 +139,19 @@ public:
     void addDouble(AbsoluteAddress address, FPRegisterID dest)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        m_assembler.addsd_mr(0, scratchRegister(), dest);
+        if (supportsAVX())
+            m_assembler.vaddsd_mrr(0, scratchRegister(), dest, dest);
+        else
+            m_assembler.addsd_mr(0, scratchRegister(), dest);
     }
 
     void convertInt32ToDouble(TrustedImm32 imm, FPRegisterID dest)
     {
         move(imm, scratchRegister());
-        m_assembler.cvtsi2sd_rr(scratchRegister(), dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2sd_rrr(scratchRegister(), dest, dest);
+        else
+            m_assembler.cvtsi2sd_rr(scratchRegister(), dest);
     }
 
     void store32(TrustedImm32 imm, void* address)
@@ -1126,22 +1132,34 @@ public:
 
     void move32ToFloat(RegisterID src, FPRegisterID dest)
     {
-        m_assembler.movd_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vmovd_rr(src, dest);
+        else
+            m_assembler.movd_rr(src, dest);
     }
 
     void move64ToDouble(RegisterID src, FPRegisterID dest)
     {
-        m_assembler.movq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vmovq_rr(src, dest);
+        else
+            m_assembler.movq_rr(src, dest);
     }
 
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
     {
-        m_assembler.movq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vmovq_rr(src, dest);
+        else
+            m_assembler.movq_rr(src, dest);
     }
     
     void moveVector(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.movaps_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vmovaps_rr(src, dest);
+        else
+            m_assembler.movaps_rr(src, dest);
     }
     
     void loadVector(TrustedImmPtr address, FPRegisterID dest)
@@ -2001,12 +2019,18 @@ public:
 
     void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
     {
-        m_assembler.cvttsd2siq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvttsd2siq_rr(src, dest);
+        else
+            m_assembler.cvttsd2siq_rr(src, dest);
     }
 
     void truncateDoubleToInt64(FPRegisterID src, RegisterID dest)
     {
-        m_assembler.cvttsd2siq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvttsd2siq_rr(src, dest);
+        else
+            m_assembler.cvttsd2siq_rr(src, dest);
     }
 
     // int64Min should contain exactly 0x43E0000000000000 == static_cast<double>(int64_t::min()). scratch may
@@ -2021,25 +2045,40 @@ public:
         // uint64_t; then add back int64_t::min() in the destination gpr.
 
         Jump large = branchDouble(DoubleGreaterThanOrEqualAndOrdered, src, int64Min);
-        m_assembler.cvttsd2siq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvttsd2siq_rr(src, dest);
+        else
+            m_assembler.cvttsd2siq_rr(src, dest);
         Jump done = jump();
         large.link(this);
-        moveDouble(src, scratch);
-        m_assembler.subsd_rr(int64Min, scratch);
+        if (supportsAVX()) {
+            m_assembler.vsubsd_rrr(int64Min, src, scratch);
+            m_assembler.vcvttsd2siq_rr(scratch, dest);
+        } else {
+            moveDouble(src, scratch);
+            m_assembler.subsd_rr(int64Min, scratch);
+            m_assembler.cvttsd2siq_rr(scratch, dest);
+        }
+
         m_assembler.movq_i64r(0x8000000000000000, scratchRegister());
-        m_assembler.cvttsd2siq_rr(scratch, dest);
         m_assembler.orq_rr(scratchRegister(), dest);
         done.link(this);
     }
 
     void truncateFloatToUint32(FPRegisterID src, RegisterID dest)
     {
-        m_assembler.cvttss2siq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvttss2siq_rr(src, dest);
+        else
+            m_assembler.cvttss2siq_rr(src, dest);
     }
 
     void truncateFloatToInt64(FPRegisterID src, RegisterID dest)
     {
-        m_assembler.cvttss2siq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvttss2siq_rr(src, dest);
+        else
+            m_assembler.cvttss2siq_rr(src, dest);
     }
 
     // int64Min should contain exactly 0x5f000000 == static_cast<float>(int64_t::min()). scratch may be the
@@ -2054,35 +2093,55 @@ public:
         // uint64_t; then add back int64_t::min() in the destination gpr.
 
         Jump large = branchFloat(DoubleGreaterThanOrEqualAndOrdered, src, int64Min);
-        m_assembler.cvttss2siq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvttss2siq_rr(src, dest);
+        else
+            m_assembler.cvttss2siq_rr(src, dest);
         Jump done = jump();
         large.link(this);
-        moveDouble(src, scratch);
-        m_assembler.subss_rr(int64Min, scratch);
+        if (supportsAVX()) {
+            m_assembler.vsubss_rrr(int64Min, src, scratch);
+            m_assembler.vcvttss2siq_rr(scratch, dest);
+        } else {
+            moveDouble(src, scratch);
+            m_assembler.subss_rr(int64Min, scratch);
+            m_assembler.cvttss2siq_rr(scratch, dest);
+        }
         m_assembler.movq_i64r(0x8000000000000000, scratchRegister());
-        m_assembler.cvttss2siq_rr(scratch, dest);
         m_assembler.orq_rr(scratchRegister(), dest);
         done.link(this);
     }
 
     void convertInt64ToDouble(RegisterID src, FPRegisterID dest)
     {
-        m_assembler.cvtsi2sdq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2sdq_rrr(src, dest, dest);
+        else
+            m_assembler.cvtsi2sdq_rr(src, dest);
     }
 
     void convertInt64ToDouble(Address src, FPRegisterID dest)
     {
-        m_assembler.cvtsi2sdq_mr(src.offset, src.base, dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2sdq_mrr(src.offset, src.base, dest, dest);
+        else
+            m_assembler.cvtsi2sdq_mr(src.offset, src.base, dest);
     }
 
     void convertInt64ToFloat(RegisterID src, FPRegisterID dest)
     {
-        m_assembler.cvtsi2ssq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2ssq_rrr(src, dest, dest);
+        else
+            m_assembler.cvtsi2ssq_rr(src, dest);
     }
 
     void convertInt64ToFloat(Address src, FPRegisterID dest)
     {
-        m_assembler.cvtsi2ssq_mr(src.offset, src.base, dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2ssq_mrr(src.offset, src.base, dest, dest);
+        else
+            m_assembler.cvtsi2ssq_mr(src.offset, src.base, dest);
     }
 
     // One of scratch or scratch2 may be the same as src
@@ -2092,7 +2151,10 @@ public:
 
         m_assembler.testq_rr(src, src);
         AssemblerLabel signBitSet = m_assembler.jCC(x86Condition(Signed));
-        m_assembler.cvtsi2sdq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2sdq_rrr(src, dest, dest);
+        else
+            m_assembler.cvtsi2sdq_rr(src, dest);
         AssemblerLabel done = m_assembler.jmp();
         m_assembler.linkJump(signBitSet, m_assembler.label());
         if (scratch != src)
@@ -2101,8 +2163,13 @@ public:
         m_assembler.shrq_i8r(1, scratch);
         m_assembler.andq_ir(1, scratch2);
         m_assembler.orq_rr(scratch, scratch2);
-        m_assembler.cvtsi2sdq_rr(scratch2, dest);
-        m_assembler.addsd_rr(dest, dest);
+        if (supportsAVX()) {
+            m_assembler.vcvtsi2sdq_rrr(scratch2, dest, dest);
+            m_assembler.vaddsd_rrr(dest, dest, dest);
+        } else {
+            m_assembler.cvtsi2sdq_rr(scratch2, dest);
+            m_assembler.addsd_rr(dest, dest);
+        }
         m_assembler.linkJump(done, m_assembler.label());
     }
 
@@ -2112,7 +2179,10 @@ public:
         RegisterID scratch2 = scratchRegister();
         m_assembler.testq_rr(src, src);
         AssemblerLabel signBitSet = m_assembler.jCC(x86Condition(Signed));
-        m_assembler.cvtsi2ssq_rr(src, dest);
+        if (supportsAVX())
+            m_assembler.vcvtsi2ssq_rrr(src, dest, dest);
+        else
+            m_assembler.cvtsi2ssq_rr(src, dest);
         AssemblerLabel done = m_assembler.jmp();
         m_assembler.linkJump(signBitSet, m_assembler.label());
         if (scratch != src)
@@ -2121,8 +2191,13 @@ public:
         m_assembler.shrq_i8r(1, scratch);
         m_assembler.andq_ir(1, scratch2);
         m_assembler.orq_rr(scratch, scratch2);
-        m_assembler.cvtsi2ssq_rr(scratch2, dest);
-        m_assembler.addss_rr(dest, dest);
+        if (supportsAVX()) {
+            m_assembler.vcvtsi2ssq_rrr(scratch2, dest, dest);
+            m_assembler.vaddss_rrr(dest, dest, dest);
+        } else {
+            m_assembler.cvtsi2ssq_rr(scratch2, dest);
+            m_assembler.addss_rr(dest, dest);
+        }
         m_assembler.linkJump(done, m_assembler.label());
     }
 
