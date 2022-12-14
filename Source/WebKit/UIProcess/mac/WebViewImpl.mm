@@ -332,6 +332,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [self startObservingFontPanel];
 
+    if (objc_getAssociatedObject(window, _impl))
+        return;
+
+    objc_setAssociatedObject(window, _impl, @YES, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
     [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
 }
@@ -362,6 +366,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_shouldObserveFontPanel)
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
 
+    if (!objc_getAssociatedObject(window, _impl))
+        return;
+
+    objc_setAssociatedObject(window, _impl, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
 }
@@ -2108,9 +2116,6 @@ bool WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint poin
 
 void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 {
-    // If we're in the middle of preparing to move to a window, we should only be moved to that window.
-    ASSERT_IMPLIES(m_targetWindowForMovePreparation, m_targetWindowForMovePreparation == window);
-
     NSWindow *currentWindow = [m_view window];
     if (window == currentWindow)
         return;
@@ -2133,6 +2138,8 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 
 void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 {
+    // If we're in the middle of preparing to move to a window, we should only be moved to that window.
+    ASSERT_IMPLIES(m_targetWindowForMovePreparation, m_targetWindowForMovePreparation == window);
     viewWillMoveToWindowImpl(window);
     m_targetWindowForMovePreparation = nil;
     m_isPreparingToUnparentView = false;
