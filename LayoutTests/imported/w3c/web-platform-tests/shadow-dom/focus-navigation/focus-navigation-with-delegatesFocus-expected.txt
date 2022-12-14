@@ -1,0 +1,22 @@
+This tests TAB focus navigation with delegatesFocus flag on shadow hosts
+
+
+
+
+FAIL Testing tab navigation order with mode open, no tabindex and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, no tabindex and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, tabindex=0 and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, tabindex=0 and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, tabindex=-1 and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, tabindex=-1 and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, tabindex=1 and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode open, tabindex=1 and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, no tabindex and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, no tabindex and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, tabindex=0 and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, tabindex=0 and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, tabindex=-1 and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, tabindex=-1 and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, tabindex=1 and delegatesFocus=false. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Testing tab navigation order with mode closed, tabindex=1 and delegatesFocus=true. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

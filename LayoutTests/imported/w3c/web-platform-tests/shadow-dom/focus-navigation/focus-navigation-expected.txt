@@ -1,0 +1,12 @@
+
+FAIL Focus controller should treat slots as a focus scope. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+document tree: [i0 -> [x-foo]]
+x-foo's shadow tree: [j5 -> [x-bar] -> j6]
+x-bar's shadow tree: [k1 -> k0 -> [s2]]
+slot #s2: [j1 -> j2 -> j3 -> j4 -> [s1] -> j0]
+
+slot #s1: [i1 -> i2]
+v1 ideal nav forward: [i0 -> j5 -> xbar -> k1 -> k0 -> j1 -> j2 -> j3 -> j4 -> i1 -> i2 -> j0 -> j6]
+
+
+

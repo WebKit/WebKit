@@ -1,0 +1,14 @@
+
+FAIL Focus should cover assigned elements of an assigned slot, as well as elements that are directly assigned to a slot. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+document tree: [i0 -> [x-foo]]
+x-foo's shadow tree: [j1 -> [s1] -> [s2] -> j2 ->[x-bar]]
+x-bar's shadow tree: [k1 -> [s3]]
+slot #s1: [i1 -> i2]
+slot #s2: [i3]
+slot #s3: [[s4]]
+slot #s4: [i4 -> i5]
+
+v1 ideal nav forward: [i0 -> j1 -> i1 -> i2 -> i3 -> j2 -> x-bar -> k1 -> i4 -> i5]
+
+
+

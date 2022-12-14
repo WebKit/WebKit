@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/delegatesFocus-highlight-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback-default-tabindex.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-2levels.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-delegatesFocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-input-type-radio.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassignable-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassigned-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-unassignable-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-with-negative-index.html

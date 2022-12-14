@@ -1,6 +1,7 @@
 
 PASS Declarative Shadow DOM: Basic test
 FAIL Declarative Shadow DOM: Feature detection assert_true: Unable to feature detect expected true got false
+FAIL Shadowrootmode reflection assert_equals: The shadowRootMode IDL should reflect the content attribute expected (string) "open" but got (undefined) undefined
 PASS Declarative Shadow DOM: Fragment parser basic test
 PASS Declarative Shadow DOM: Invalid shadow root attribute
 PASS Declarative Shadow DOM: Closed shadow root attribute

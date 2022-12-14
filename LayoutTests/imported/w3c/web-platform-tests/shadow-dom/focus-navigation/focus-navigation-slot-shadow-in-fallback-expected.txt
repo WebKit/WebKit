@@ -1,0 +1,4 @@
+
+FAIL Focus should cover assigned elements of an assigned slot, as well as elements that are directly assigned to a slot. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+
+

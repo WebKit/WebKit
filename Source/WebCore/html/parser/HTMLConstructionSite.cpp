@@ -539,7 +539,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
         std::optional<ShadowRootMode> mode;
         bool delegatesFocus = false;
         for (auto& attribute : token.attributes()) {
-            if (attribute.name() == HTMLNames::shadowrootAttr) {
+            if (attribute.name() == HTMLNames::shadowrootmodeAttr) {
                 if (equalLettersIgnoringASCIICase(attribute.value(), "closed"_s))
                     mode = ShadowRootMode::Closed;
                 else if (equalLettersIgnoringASCIICase(attribute.value(), "open"_s))

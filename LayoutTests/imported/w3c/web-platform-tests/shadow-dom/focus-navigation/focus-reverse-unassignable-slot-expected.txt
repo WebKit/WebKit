@@ -1,0 +1,4 @@
+
+
+FAIL Verifies that focusing backwards from an input inside a slot which has no shadow root goes to the previous focusable element in light DOM. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

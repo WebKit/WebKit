@@ -1,0 +1,4 @@
+
+FAIL Verifies that focusing backwards from a button inside a slot which has no assigned nodes goes to the previous focusable element. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+
+

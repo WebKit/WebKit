@@ -1,0 +1,11 @@
+
+
+PASS xshadow0 is not focusable without tabindex.
+PASS xshadow1 becomes focusable with tabindex.
+FAIL on focus(), focusable xshadow2 with delegatesFocus=true delegates focus into its inner element. assert_equals: expected "xshadow2" but got "xshadow1"
+PASS if an element within shadow is focused, focusing on shadow host should not slide focus to its inner element.
+PASS xshadow2.focus() shouldn't move focus to #one when its inner element is already focused.
+PASS focus() inside shadow DOM should not focus its shadow host, nor focusable siblings.
+PASS If any element including shadow host is not focusable, focus doesn't change.
+PASS If no element is focusable within a delegatesFocus shadow root, the host can't get focus regardless of host's tabIndex.
+
