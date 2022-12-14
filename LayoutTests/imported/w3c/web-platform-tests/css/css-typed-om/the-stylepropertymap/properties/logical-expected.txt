@@ -3,7 +3,7 @@ PASS Can set 'margin-block-start' to CSS-wide keywords: initial
 PASS Can set 'margin-block-start' to CSS-wide keywords: inherit
 PASS Can set 'margin-block-start' to CSS-wide keywords: unset
 PASS Can set 'margin-block-start' to CSS-wide keywords: revert
-FAIL Can set 'margin-block-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-block-start' to var() references:  var(--A)
 PASS Can set 'margin-block-start' to a percent: 0%
 PASS Can set 'margin-block-start' to a percent: -3.14%
 PASS Can set 'margin-block-start' to a percent: 3.14%
@@ -22,7 +22,7 @@ PASS Can set 'margin-block-end' to CSS-wide keywords: initial
 PASS Can set 'margin-block-end' to CSS-wide keywords: inherit
 PASS Can set 'margin-block-end' to CSS-wide keywords: unset
 PASS Can set 'margin-block-end' to CSS-wide keywords: revert
-FAIL Can set 'margin-block-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-block-end' to var() references:  var(--A)
 PASS Can set 'margin-block-end' to a percent: 0%
 PASS Can set 'margin-block-end' to a percent: -3.14%
 PASS Can set 'margin-block-end' to a percent: 3.14%
@@ -41,7 +41,7 @@ PASS Can set 'margin-inline-start' to CSS-wide keywords: initial
 PASS Can set 'margin-inline-start' to CSS-wide keywords: inherit
 PASS Can set 'margin-inline-start' to CSS-wide keywords: unset
 PASS Can set 'margin-inline-start' to CSS-wide keywords: revert
-FAIL Can set 'margin-inline-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-inline-start' to var() references:  var(--A)
 PASS Can set 'margin-inline-start' to a percent: 0%
 PASS Can set 'margin-inline-start' to a percent: -3.14%
 PASS Can set 'margin-inline-start' to a percent: 3.14%
@@ -60,7 +60,7 @@ PASS Can set 'margin-inline-end' to CSS-wide keywords: initial
 PASS Can set 'margin-inline-end' to CSS-wide keywords: inherit
 PASS Can set 'margin-inline-end' to CSS-wide keywords: unset
 PASS Can set 'margin-inline-end' to CSS-wide keywords: revert
-FAIL Can set 'margin-inline-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-inline-end' to var() references:  var(--A)
 PASS Can set 'margin-inline-end' to a percent: 0%
 PASS Can set 'margin-inline-end' to a percent: -3.14%
 PASS Can set 'margin-inline-end' to a percent: 3.14%
@@ -117,7 +117,7 @@ PASS Can set 'inset-block-start' to CSS-wide keywords: initial
 PASS Can set 'inset-block-start' to CSS-wide keywords: inherit
 PASS Can set 'inset-block-start' to CSS-wide keywords: unset
 PASS Can set 'inset-block-start' to CSS-wide keywords: revert
-FAIL Can set 'inset-block-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'inset-block-start' to var() references:  var(--A)
 PASS Can set 'inset-block-start' to a percent: 0%
 PASS Can set 'inset-block-start' to a percent: -3.14%
 PASS Can set 'inset-block-start' to a percent: 3.14%
@@ -136,7 +136,7 @@ PASS Can set 'inset-block-end' to CSS-wide keywords: initial
 PASS Can set 'inset-block-end' to CSS-wide keywords: inherit
 PASS Can set 'inset-block-end' to CSS-wide keywords: unset
 PASS Can set 'inset-block-end' to CSS-wide keywords: revert
-FAIL Can set 'inset-block-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'inset-block-end' to var() references:  var(--A)
 PASS Can set 'inset-block-end' to a percent: 0%
 PASS Can set 'inset-block-end' to a percent: -3.14%
 PASS Can set 'inset-block-end' to a percent: 3.14%
@@ -155,7 +155,7 @@ PASS Can set 'inset-inline-start' to CSS-wide keywords: initial
 PASS Can set 'inset-inline-start' to CSS-wide keywords: inherit
 PASS Can set 'inset-inline-start' to CSS-wide keywords: unset
 PASS Can set 'inset-inline-start' to CSS-wide keywords: revert
-FAIL Can set 'inset-inline-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'inset-inline-start' to var() references:  var(--A)
 PASS Can set 'inset-inline-start' to a percent: 0%
 PASS Can set 'inset-inline-start' to a percent: -3.14%
 PASS Can set 'inset-inline-start' to a percent: 3.14%
@@ -174,7 +174,7 @@ PASS Can set 'inset-inline-end' to CSS-wide keywords: initial
 PASS Can set 'inset-inline-end' to CSS-wide keywords: inherit
 PASS Can set 'inset-inline-end' to CSS-wide keywords: unset
 PASS Can set 'inset-inline-end' to CSS-wide keywords: revert
-FAIL Can set 'inset-inline-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'inset-inline-end' to var() references:  var(--A)
 PASS Can set 'inset-inline-end' to a percent: 0%
 PASS Can set 'inset-inline-end' to a percent: -3.14%
 PASS Can set 'inset-inline-end' to a percent: 3.14%
@@ -231,7 +231,7 @@ PASS Can set 'padding-block-start' to CSS-wide keywords: initial
 PASS Can set 'padding-block-start' to CSS-wide keywords: inherit
 PASS Can set 'padding-block-start' to CSS-wide keywords: unset
 PASS Can set 'padding-block-start' to CSS-wide keywords: revert
-FAIL Can set 'padding-block-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-block-start' to var() references:  var(--A)
 PASS Can set 'padding-block-start' to a percent: 0%
 FAIL Can set 'padding-block-start' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'padding-block-start' to a percent: 3.14%
@@ -250,7 +250,7 @@ PASS Can set 'padding-block-end' to CSS-wide keywords: initial
 PASS Can set 'padding-block-end' to CSS-wide keywords: inherit
 PASS Can set 'padding-block-end' to CSS-wide keywords: unset
 PASS Can set 'padding-block-end' to CSS-wide keywords: revert
-FAIL Can set 'padding-block-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-block-end' to var() references:  var(--A)
 PASS Can set 'padding-block-end' to a percent: 0%
 FAIL Can set 'padding-block-end' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'padding-block-end' to a percent: 3.14%
@@ -269,7 +269,7 @@ PASS Can set 'padding-inline-start' to CSS-wide keywords: initial
 PASS Can set 'padding-inline-start' to CSS-wide keywords: inherit
 PASS Can set 'padding-inline-start' to CSS-wide keywords: unset
 PASS Can set 'padding-inline-start' to CSS-wide keywords: revert
-FAIL Can set 'padding-inline-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-inline-start' to var() references:  var(--A)
 PASS Can set 'padding-inline-start' to a percent: 0%
 FAIL Can set 'padding-inline-start' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'padding-inline-start' to a percent: 3.14%
@@ -288,7 +288,7 @@ PASS Can set 'padding-inline-end' to CSS-wide keywords: initial
 PASS Can set 'padding-inline-end' to CSS-wide keywords: inherit
 PASS Can set 'padding-inline-end' to CSS-wide keywords: unset
 PASS Can set 'padding-inline-end' to CSS-wide keywords: revert
-FAIL Can set 'padding-inline-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'padding-inline-end' to var() references:  var(--A)
 PASS Can set 'padding-inline-end' to a percent: 0%
 FAIL Can set 'padding-inline-end' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'padding-inline-end' to a percent: 3.14%
@@ -359,7 +359,7 @@ PASS Can set 'border-block-start-width' to CSS-wide keywords: initial
 PASS Can set 'border-block-start-width' to CSS-wide keywords: inherit
 PASS Can set 'border-block-start-width' to CSS-wide keywords: unset
 PASS Can set 'border-block-start-width' to CSS-wide keywords: revert
-FAIL Can set 'border-block-start-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-block-start-width' to var() references:  var(--A)
 FAIL Can set 'border-block-start-width' to the 'thin' keyword: thin assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-start-width' to the 'medium' keyword: medium assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-start-width' to the 'thick' keyword: thick assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
@@ -378,7 +378,7 @@ PASS Can set 'border-block-start-color' to CSS-wide keywords: initial
 PASS Can set 'border-block-start-color' to CSS-wide keywords: inherit
 PASS Can set 'border-block-start-color' to CSS-wide keywords: unset
 PASS Can set 'border-block-start-color' to CSS-wide keywords: revert
-FAIL Can set 'border-block-start-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-block-start-color' to var() references:  var(--A)
 FAIL Can set 'border-block-start-color' to the 'currentcolor' keyword: currentcolor assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Setting 'border-block-start-color' to a length throws TypeError
 PASS Setting 'border-block-start-color' to a percent throws TypeError
@@ -392,7 +392,7 @@ PASS Can set 'border-block-start-style' to CSS-wide keywords: initial
 PASS Can set 'border-block-start-style' to CSS-wide keywords: inherit
 PASS Can set 'border-block-start-style' to CSS-wide keywords: unset
 PASS Can set 'border-block-start-style' to CSS-wide keywords: revert
-FAIL Can set 'border-block-start-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-block-start-style' to var() references:  var(--A)
 PASS Can set 'border-block-start-style' to the 'none' keyword: none
 PASS Can set 'border-block-start-style' to the 'solid' keyword: solid
 PASS Setting 'border-block-start-style' to a length throws TypeError
@@ -421,7 +421,7 @@ PASS Can set 'border-block-end-width' to CSS-wide keywords: initial
 PASS Can set 'border-block-end-width' to CSS-wide keywords: inherit
 PASS Can set 'border-block-end-width' to CSS-wide keywords: unset
 PASS Can set 'border-block-end-width' to CSS-wide keywords: revert
-FAIL Can set 'border-block-end-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-block-end-width' to var() references:  var(--A)
 FAIL Can set 'border-block-end-width' to the 'thin' keyword: thin assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-end-width' to the 'medium' keyword: medium assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-block-end-width' to the 'thick' keyword: thick assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
@@ -440,7 +440,7 @@ PASS Can set 'border-block-end-color' to CSS-wide keywords: initial
 PASS Can set 'border-block-end-color' to CSS-wide keywords: inherit
 PASS Can set 'border-block-end-color' to CSS-wide keywords: unset
 PASS Can set 'border-block-end-color' to CSS-wide keywords: revert
-FAIL Can set 'border-block-end-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-block-end-color' to var() references:  var(--A)
 FAIL Can set 'border-block-end-color' to the 'currentcolor' keyword: currentcolor assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Setting 'border-block-end-color' to a length throws TypeError
 PASS Setting 'border-block-end-color' to a percent throws TypeError
@@ -454,7 +454,7 @@ PASS Can set 'border-block-end-style' to CSS-wide keywords: initial
 PASS Can set 'border-block-end-style' to CSS-wide keywords: inherit
 PASS Can set 'border-block-end-style' to CSS-wide keywords: unset
 PASS Can set 'border-block-end-style' to CSS-wide keywords: revert
-FAIL Can set 'border-block-end-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-block-end-style' to var() references:  var(--A)
 PASS Can set 'border-block-end-style' to the 'none' keyword: none
 PASS Can set 'border-block-end-style' to the 'solid' keyword: solid
 PASS Setting 'border-block-end-style' to a length throws TypeError
@@ -483,7 +483,7 @@ PASS Can set 'border-inline-start-width' to CSS-wide keywords: initial
 PASS Can set 'border-inline-start-width' to CSS-wide keywords: inherit
 PASS Can set 'border-inline-start-width' to CSS-wide keywords: unset
 PASS Can set 'border-inline-start-width' to CSS-wide keywords: revert
-FAIL Can set 'border-inline-start-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-inline-start-width' to var() references:  var(--A)
 FAIL Can set 'border-inline-start-width' to the 'thin' keyword: thin assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-start-width' to the 'medium' keyword: medium assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-start-width' to the 'thick' keyword: thick assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
@@ -502,7 +502,7 @@ PASS Can set 'border-inline-start-color' to CSS-wide keywords: initial
 PASS Can set 'border-inline-start-color' to CSS-wide keywords: inherit
 PASS Can set 'border-inline-start-color' to CSS-wide keywords: unset
 PASS Can set 'border-inline-start-color' to CSS-wide keywords: revert
-FAIL Can set 'border-inline-start-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-inline-start-color' to var() references:  var(--A)
 FAIL Can set 'border-inline-start-color' to the 'currentcolor' keyword: currentcolor assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Setting 'border-inline-start-color' to a length throws TypeError
 PASS Setting 'border-inline-start-color' to a percent throws TypeError
@@ -516,7 +516,7 @@ PASS Can set 'border-inline-start-style' to CSS-wide keywords: initial
 PASS Can set 'border-inline-start-style' to CSS-wide keywords: inherit
 PASS Can set 'border-inline-start-style' to CSS-wide keywords: unset
 PASS Can set 'border-inline-start-style' to CSS-wide keywords: revert
-FAIL Can set 'border-inline-start-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-inline-start-style' to var() references:  var(--A)
 PASS Can set 'border-inline-start-style' to the 'none' keyword: none
 PASS Can set 'border-inline-start-style' to the 'solid' keyword: solid
 PASS Setting 'border-inline-start-style' to a length throws TypeError
@@ -545,7 +545,7 @@ PASS Can set 'border-inline-end-width' to CSS-wide keywords: initial
 PASS Can set 'border-inline-end-width' to CSS-wide keywords: inherit
 PASS Can set 'border-inline-end-width' to CSS-wide keywords: unset
 PASS Can set 'border-inline-end-width' to CSS-wide keywords: revert
-FAIL Can set 'border-inline-end-width' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-inline-end-width' to var() references:  var(--A)
 FAIL Can set 'border-inline-end-width' to the 'thin' keyword: thin assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-end-width' to the 'medium' keyword: medium assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'border-inline-end-width' to the 'thick' keyword: thick assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
@@ -564,7 +564,7 @@ PASS Can set 'border-inline-end-color' to CSS-wide keywords: initial
 PASS Can set 'border-inline-end-color' to CSS-wide keywords: inherit
 PASS Can set 'border-inline-end-color' to CSS-wide keywords: unset
 PASS Can set 'border-inline-end-color' to CSS-wide keywords: revert
-FAIL Can set 'border-inline-end-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-inline-end-color' to var() references:  var(--A)
 FAIL Can set 'border-inline-end-color' to the 'currentcolor' keyword: currentcolor assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Setting 'border-inline-end-color' to a length throws TypeError
 PASS Setting 'border-inline-end-color' to a percent throws TypeError
@@ -578,7 +578,7 @@ PASS Can set 'border-inline-end-style' to CSS-wide keywords: initial
 PASS Can set 'border-inline-end-style' to CSS-wide keywords: inherit
 PASS Can set 'border-inline-end-style' to CSS-wide keywords: unset
 PASS Can set 'border-inline-end-style' to CSS-wide keywords: revert
-FAIL Can set 'border-inline-end-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-inline-end-style' to var() references:  var(--A)
 PASS Can set 'border-inline-end-style' to the 'none' keyword: none
 PASS Can set 'border-inline-end-style' to the 'solid' keyword: solid
 PASS Setting 'border-inline-end-style' to a length throws TypeError
@@ -717,15 +717,15 @@ PASS Can set 'border-start-start-radius' to CSS-wide keywords: initial
 PASS Can set 'border-start-start-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-start-start-radius' to CSS-wide keywords: unset
 PASS Can set 'border-start-start-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-start-start-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-start-start-radius' to var() references:  var(--A)
 FAIL Can set 'border-start-start-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-start-start-radius' to a percent: -3.14% Invalid values
 FAIL Can set 'border-start-start-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-start-start-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-start-start-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 FAIL Can set 'border-start-start-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-start-start-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-start-start-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-start-start-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-start-start-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-start-start-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 PASS Setting 'border-start-start-radius' to a time throws TypeError
 PASS Setting 'border-start-start-radius' to an angle throws TypeError
 PASS Setting 'border-start-start-radius' to a flexible length throws TypeError
@@ -736,15 +736,15 @@ PASS Can set 'border-start-end-radius' to CSS-wide keywords: initial
 PASS Can set 'border-start-end-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-start-end-radius' to CSS-wide keywords: unset
 PASS Can set 'border-start-end-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-start-end-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-start-end-radius' to var() references:  var(--A)
 FAIL Can set 'border-start-end-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-start-end-radius' to a percent: -3.14% Invalid values
 FAIL Can set 'border-start-end-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-start-end-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-start-end-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 FAIL Can set 'border-start-end-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-start-end-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-start-end-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-start-end-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-start-end-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-start-end-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 PASS Setting 'border-start-end-radius' to a time throws TypeError
 PASS Setting 'border-start-end-radius' to an angle throws TypeError
 PASS Setting 'border-start-end-radius' to a flexible length throws TypeError
@@ -755,15 +755,15 @@ PASS Can set 'border-end-start-radius' to CSS-wide keywords: initial
 PASS Can set 'border-end-start-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-end-start-radius' to CSS-wide keywords: unset
 PASS Can set 'border-end-start-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-end-start-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-end-start-radius' to var() references:  var(--A)
 FAIL Can set 'border-end-start-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-end-start-radius' to a percent: -3.14% Invalid values
 FAIL Can set 'border-end-start-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-end-start-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-end-start-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 FAIL Can set 'border-end-start-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-end-start-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-end-start-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-end-start-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-end-start-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-end-start-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 PASS Setting 'border-end-start-radius' to a time throws TypeError
 PASS Setting 'border-end-start-radius' to an angle throws TypeError
 PASS Setting 'border-end-start-radius' to a flexible length throws TypeError
@@ -774,15 +774,15 @@ PASS Can set 'border-end-end-radius' to CSS-wide keywords: initial
 PASS Can set 'border-end-end-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-end-end-radius' to CSS-wide keywords: unset
 PASS Can set 'border-end-end-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-end-end-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-end-end-radius' to var() references:  var(--A)
 FAIL Can set 'border-end-end-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-end-end-radius' to a percent: -3.14% Invalid values
 FAIL Can set 'border-end-end-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-end-end-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-end-end-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 FAIL Can set 'border-end-end-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 FAIL Can set 'border-end-end-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-end-end-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-end-end-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-end-end-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+FAIL Can set 'border-end-end-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
 PASS Setting 'border-end-end-radius' to a time throws TypeError
 PASS Setting 'border-end-end-radius' to an angle throws TypeError
 PASS Setting 'border-end-end-radius' to a flexible length throws TypeError

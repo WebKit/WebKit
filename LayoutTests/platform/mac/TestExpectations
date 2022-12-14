@@ -2426,3 +2426,12 @@ svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
 
 webkit.org/b/249227 [ Monterey+ ] tables/mozilla/bugs/bug2479-3.html [ Failure ]
+
+# webkit.org/b/249282 REGRESSION(257672@main): [ Monterey+ ] Enabling OffscreenCanvas in workers broke 7 layout tests
+[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Failure ]

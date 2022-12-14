@@ -3,12 +3,12 @@ PASS Can set 'column-count' to CSS-wide keywords: initial
 PASS Can set 'column-count' to CSS-wide keywords: inherit
 PASS Can set 'column-count' to CSS-wide keywords: unset
 PASS Can set 'column-count' to CSS-wide keywords: revert
-FAIL Can set 'column-count' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'column-count' to var() references:  var(--A)
 PASS Can set 'column-count' to the 'auto' keyword: auto
-FAIL Can set 'column-count' to a number: 0 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'column-count' to a number: -3.14 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'column-count' to a number: 3.14 assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
-FAIL Can set 'column-count' to a number: calc(2 + 3) assert_equals: expected "CSSMathSum" but got "CSSStyleValue"
+FAIL Can set 'column-count' to a number: 0 assert_approx_equals: expected 1 +/- 0.000001 but got 0
+FAIL Can set 'column-count' to a number: -3.14 assert_approx_equals: expected 1 +/- 0.000001 but got 0
+PASS Can set 'column-count' to a number: 3.14
+PASS Can set 'column-count' to a number: calc(2 + 3)
 PASS Setting 'column-count' to a length throws TypeError
 PASS Setting 'column-count' to a percent throws TypeError
 PASS Setting 'column-count' to a time throws TypeError

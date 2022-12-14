@@ -334,37 +334,37 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeC
 
     auto rangeCopy = m_range;
 
-    auto tryConsumeComponent = [&](const auto& component) -> RefPtr<CSSValue> {
+    auto consumeSingleValue = [&](auto& range, auto& component) -> RefPtr<CSSValue> {
         switch (component.type) {
         case CSSPropertySyntax::Type::Length:
-            return consumeLength(m_range, m_context.mode, ValueRange::All);
+            return consumeLength(range, m_context.mode, ValueRange::All);
         case CSSPropertySyntax::Type::LengthPercentage:
-            return consumeLengthOrPercent(m_range, m_context.mode, ValueRange::All);
+            return consumeLengthOrPercent(range, m_context.mode, ValueRange::All);
         case CSSPropertySyntax::Type::CustomIdent:
-            if (auto value = consumeCustomIdent(m_range)) {
+            if (auto value = consumeCustomIdent(range)) {
                 if (component.ident.isNull() || value->stringValue() == component.ident)
                     return value;
-                m_range = rangeCopy;
+                range = rangeCopy;
             }
             return nullptr;
         case CSSPropertySyntax::Type::Percentage:
-            return consumePercent(m_range, ValueRange::All);
+            return consumePercent(range, ValueRange::All);
         case CSSPropertySyntax::Type::Integer:
-            return consumeInteger(m_range);
+            return consumeInteger(range);
         case CSSPropertySyntax::Type::Number:
-            return consumeNumber(m_range, ValueRange::All);
+            return consumeNumber(range, ValueRange::All);
         case CSSPropertySyntax::Type::Angle:
-            return consumeAngle(m_range, m_context.mode);
+            return consumeAngle(range, m_context.mode);
         case CSSPropertySyntax::Type::Time:
-            return consumeTime(m_range, m_context.mode, ValueRange::All);
+            return consumeTime(range, m_context.mode, ValueRange::All);
         case CSSPropertySyntax::Type::Resolution:
-            return consumeResolution(m_range);
+            return consumeResolution(range);
         case CSSPropertySyntax::Type::Color:
-            return consumeColor(m_range, m_context);
+            return consumeColor(range, m_context);
         case CSSPropertySyntax::Type::Image:
-            return consumeImage(m_range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
+            return consumeImage(range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
         case CSSPropertySyntax::Type::URL:
-            return consumeURL(m_range);
+            return consumeURL(range);
         case CSSPropertySyntax::Type::Unknown:
             return nullptr;
         }
@@ -372,8 +372,31 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeC
         return nullptr;
     };
 
+    auto consumeComponent = [&](auto& range, const auto& component) -> RefPtr<CSSValue> {
+        switch (component.multiplier) {
+        case CSSPropertySyntax::Multiplier::Single:
+            return consumeSingleValue(range, component);
+        case CSSPropertySyntax::Multiplier::CommaList: {
+            return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&](auto& range) {
+                return consumeSingleValue(range, component);
+            });
+        }
+        case CSSPropertySyntax::Multiplier::SpaceList: {
+            RefPtr<CSSValueList> valueList;
+            while (auto value = consumeSingleValue(range, component)) {
+                if (!valueList)
+                    valueList = CSSValueList::createSpaceSeparated();
+                valueList->append(value.releaseNonNull());
+            }
+            return valueList;
+        }
+        }
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    };
+
     for (auto& component : syntax.definition) {
-        if (auto value = tryConsumeComponent(component)) {
+        if (auto value = consumeComponent(m_range, component)) {
             if (!m_range.atEnd())
                 break;
             return { value, component.type };
@@ -391,18 +414,19 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSPropertySyntax
     return value && m_range.atEnd();
 }
 
-void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies)
+void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax& syntax, bool isInitial, HashSet<CSSPropertyID>& dependencies)
 {
     if (syntax.isUniversal())
         return;
 
     auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
 
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
-        primitiveValue->collectDirectComputationalDependencies(dependencies);
-        if (isRoot)
-            primitiveValue->collectDirectRootComputationalDependencies(dependencies);
-    }
+    if (!value)
+        return;
+
+    value->collectDirectComputationalDependencies(dependencies);
+    if (isInitial)
+        value->collectDirectRootComputationalDependencies(dependencies);
 }
 
 RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax& syntax, Style::BuilderState& builderState)
@@ -418,50 +442,65 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     if (!value)
         return nullptr;
 
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
+    auto resolveSyntaxValue = [&](const CSSValue& value, CSSPropertySyntax::Type syntaxType) -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
+        auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
 
-    switch (syntaxType) {
-    case CSSPropertySyntax::Type::LengthPercentage:
-    case CSSPropertySyntax::Type::Length: {
-        auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
-        return CSSCustomPropertyValue::createForLengthSyntax(name, WTFMove(length));
-    }
-    case CSSPropertySyntax::Type::Percentage:
-    case CSSPropertySyntax::Type::Integer:
-    case CSSPropertySyntax::Type::Number:
-    case CSSPropertySyntax::Type::Angle:
-    case CSSPropertySyntax::Type::Time:
-    case CSSPropertySyntax::Type::Resolution: {
-        auto canonicalUnit = canonicalUnitTypeForUnitType(primitiveValue->primitiveType());
-        return CSSCustomPropertyValue::createForNumericSyntax(name, primitiveValue->doubleValue(canonicalUnit), canonicalUnit);
-    }
-    case CSSPropertySyntax::Type::Color: {
-        auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
-        return CSSCustomPropertyValue::createForColorSyntax(name, color);
-    }
-    case CSSPropertySyntax::Type::Image: {
-        auto styleImage = builderState.createStyleImage(*value);
-        if (!styleImage)
-            return nullptr;
-        return CSSCustomPropertyValue::createForImageSyntax(name, WTFMove(styleImage));
-    }
-    case CSSPropertySyntax::Type::URL: {
-        auto url = m_context.completeURL(primitiveValue->stringValue());
-        return CSSCustomPropertyValue::createForURLSyntax(name, url.resolvedURL.string());
-    }
-    case CSSPropertySyntax::Type::CustomIdent: {
-        auto tokenizer = CSSTokenizer::tryCreate(value->cssText());
-        if (!tokenizer)
-            return nullptr;
-        // FIXME: Do this properly.
-        return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(tokenizer->tokenRange()));
-    }
-    case CSSPropertySyntax::Type::Unknown:
+        switch (syntaxType) {
+        case CSSPropertySyntax::Type::LengthPercentage:
+        case CSSPropertySyntax::Type::Length: {
+            auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
+            return { WTFMove(length) };
+        }
+        case CSSPropertySyntax::Type::Percentage:
+        case CSSPropertySyntax::Type::Integer:
+        case CSSPropertySyntax::Type::Number:
+        case CSSPropertySyntax::Type::Angle:
+        case CSSPropertySyntax::Type::Time:
+        case CSSPropertySyntax::Type::Resolution: {
+            auto canonicalUnit = canonicalUnitTypeForUnitType(primitiveValue->primitiveType());
+            auto doubleValue = primitiveValue->doubleValue(canonicalUnit);
+            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, canonicalUnit } };
+        }
+        case CSSPropertySyntax::Type::Color: {
+            auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
+            return { color };
+        }
+        case CSSPropertySyntax::Type::Image: {
+            auto styleImage = builderState.createStyleImage(value);
+            if (!styleImage)
+                return { };
+            return { WTFMove(styleImage) };
+        }
+        case CSSPropertySyntax::Type::URL: {
+            auto url = m_context.completeURL(primitiveValue->stringValue());
+            return { url.resolvedURL };
+        }
+        case CSSPropertySyntax::Type::CustomIdent:
+            return { primitiveValue->stringValue() };
+        case CSSPropertySyntax::Type::Unknown:
+            return { };
+        }
+        ASSERT_NOT_REACHED();
+        return { };
+    };
+
+    if (auto* valueList = dynamicDowncast<CSSValueList>(value.get())) {
+        auto syntaxValueList = CSSCustomPropertyValue::SyntaxValueList { { }, valueList->separator() };
+        for (auto& listValue : *valueList) {
+            auto syntaxValue = resolveSyntaxValue(listValue, syntaxType);
+            if (!syntaxValue)
+                return nullptr;
+            syntaxValueList.values.append(WTFMove(*syntaxValue));
+        }
+        return CSSCustomPropertyValue::createForSyntaxValueList(name, WTFMove(syntaxValueList));
+    };
+
+
+    auto syntaxValue = resolveSyntaxValue(*value, syntaxType);
+    if (!syntaxValue)
         return nullptr;
-    }
 
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return CSSCustomPropertyValue::createForSyntaxValue(name, WTFMove(*syntaxValue));
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system

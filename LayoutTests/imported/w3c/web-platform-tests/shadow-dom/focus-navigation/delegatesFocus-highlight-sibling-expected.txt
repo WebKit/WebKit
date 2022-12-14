@@ -1,0 +1,4 @@
+
+
+FAIL crbug/474687 :focus style should properly be applied to shadow hosts. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

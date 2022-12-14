@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.39.3
+================
+
+What's new in WebKitGTK 2.39.3?
+
+  - Add new API to query the permission state of web features.
+  - Deprecate all web extension DOM APIs (WebKitDOMDocument, WebKitDOMElement, WebKitDOMNode).
+  - Add webkit_web_hit_test_result_get_js_node() to get the JSCValue for the node.
+  - Add WebKitWebFormManager and deprecate WebKitWebPage form related signals.
+  - Don't perform position queries on video sink when the player is for audio only.
+  - Fix gibberish text when loading alternate data.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.39.2
 ================
 

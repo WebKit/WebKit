@@ -43,7 +43,7 @@ static inline IPC::ReceiverName messageReceiverName()
 #if PLATFORM(COCOA)
 class LoadURL {
 public:
-    using Arguments = std::tuple<const String&>;
+    using Arguments = std::tuple<String>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
@@ -53,20 +53,20 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 #endif
 
 #if PLATFORM(GTK)
 class LoadURL {
 public:
-    using Arguments = std::tuple<const String&, int64_t>;
+    using Arguments = std::tuple<String, int64_t>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
@@ -76,13 +76,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const String&, int64_t> m_arguments;
 };
 #endif
 

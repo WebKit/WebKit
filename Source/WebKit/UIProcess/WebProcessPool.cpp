@@ -536,7 +536,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     if (serviceWorkerPageIdentifier) {
         ASSERT(workerType == RemoteWorkerType::ServiceWorker);
         // This is a service worker for a service worker page so we need to make sure we use use the page's WebProcess for the service worker.
-        if (RefPtr process = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->processIdentifier()))
+        if (auto process = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->processIdentifier()))
             useProcessForRemoteWorkers(*process);
     }
 
@@ -1897,7 +1897,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
             });
         }
 
-        if (RefPtr<WebProcessProxy> process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
+        if (auto process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
             if (process->state() != WebProcessProxy::State::Terminated) {
                 // Make sure we remove the process from the cache if it is in there since we're about to use it.
                 if (process->isInProcessCache()) {

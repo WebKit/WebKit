@@ -161,7 +161,7 @@ void HTMLFrameElementBase::didFinishInsertingNode()
 void HTMLFrameElementBase::didAttachRenderers()
 {
     if (RenderWidget* part = renderWidget()) {
-        if (RefPtr<Frame> frame = contentFrame())
+        if (RefPtr frame = dynamicDowncast<LocalFrame>(contentFrame()))
             part->setWidget(frame->view());
     }
 }
@@ -205,7 +205,7 @@ void HTMLFrameElementBase::setFocus(bool received, FocusVisibility visibility)
     if (Page* page = document().page()) {
         CheckedRef focusController { page->focusController() };
         if (received)
-            focusController->setFocusedFrame(contentFrame());
+            focusController->setFocusedFrame(dynamicDowncast<LocalFrame>(contentFrame()));
         else if (focusController->focusedFrame() == contentFrame()) // Focus may have already been given to another frame, don't take it away.
             focusController->setFocusedFrame(nullptr);
     }

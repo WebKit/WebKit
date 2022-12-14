@@ -150,7 +150,8 @@
                     "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "triggers": [
                         "ventura-release-tests-wk1", "ventura-release-tests-wk2",
-                        "ventura-release-applesilicon-tests-wk1", "ventura-release-applesilicon-tests-wk2"
+                        "ventura-release-applesilicon-tests-wk1", "ventura-release-applesilicon-tests-wk2",
+                        "ventura-applesilicon-release-tests-test262"
                     ],
                     "workernames": ["bot245", "bot246"]
                     },
@@ -210,13 +211,13 @@
                     { "name": "Apple-Monterey-Release-Build", "factory": "BuildFactory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": [
-                          "monterey-applesilicon-release-tests-test262" ,"monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
+                          "monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
                           "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc",
                           "monterey-release-tests-wk2-accessibility-isolated-tree"
                       ],
                       "workernames": ["bot185", "bot187"]
                     },
-                    { "name": "Apple-Monterey-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
+                    { "name": "Apple-Ventura-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot165"]
                     },
@@ -766,8 +767,8 @@
                     { "type": "Triggerable", "name": "monterey-release-tests-test262",
                       "builderNames": ["Apple-Monterey-Release-Test262-Tests"]
                     },
-                    { "type": "Triggerable", "name": "monterey-applesilicon-release-tests-test262",
-                      "builderNames": ["Apple-Monterey-AppleSilicon-Release-Test262-Tests"]
+                    { "type": "Triggerable", "name": "ventura-applesilicon-release-tests-test262",
+                      "builderNames": ["Apple-Ventura-AppleSilicon-Release-Test262-Tests"]
                     },
                     { "type": "Triggerable", "name": "monterey-applesilicon-debug-tests-jsc",
                       "builderNames": ["Apple-Monterey-AppleSilicon-Debug-JSC-Tests"]

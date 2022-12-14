@@ -3,7 +3,7 @@ PASS Can set 'font-size' to CSS-wide keywords: initial
 PASS Can set 'font-size' to CSS-wide keywords: inherit
 PASS Can set 'font-size' to CSS-wide keywords: unset
 PASS Can set 'font-size' to CSS-wide keywords: revert
-FAIL Can set 'font-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-size' to var() references:  var(--A)
 PASS Can set 'font-size' to the 'xx-small' keyword: xx-small
 PASS Can set 'font-size' to the 'x-small' keyword: x-small
 PASS Can set 'font-size' to the 'small' keyword: small
@@ -16,11 +16,11 @@ PASS Can set 'font-size' to the 'smaller' keyword: smaller
 PASS Can set 'font-size' to a length: 0px
 PASS Can set 'font-size' to a length: -3.14em
 PASS Can set 'font-size' to a length: 3.14cm
-FAIL Can set 'font-size' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'font-size' to a length: calc(0px + 0em)
 PASS Can set 'font-size' to a percent: 0%
 PASS Can set 'font-size' to a percent: -3.14%
 PASS Can set 'font-size' to a percent: 3.14%
-FAIL Can set 'font-size' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'font-size' to a percent: calc(0% + 0%)
 PASS Setting 'font-size' to a time throws TypeError
 PASS Setting 'font-size' to an angle throws TypeError
 PASS Setting 'font-size' to a flexible length throws TypeError

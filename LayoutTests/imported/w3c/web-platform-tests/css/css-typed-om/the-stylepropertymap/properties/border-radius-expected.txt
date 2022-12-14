@@ -3,15 +3,15 @@ PASS Can set 'border-top-left-radius' to CSS-wide keywords: initial
 PASS Can set 'border-top-left-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-top-left-radius' to CSS-wide keywords: unset
 PASS Can set 'border-top-left-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-top-left-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'border-top-left-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-left-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-left-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-left-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-top-left-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-left-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-left-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-left-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+PASS Can set 'border-top-left-radius' to var() references:  var(--A)
+PASS Can set 'border-top-left-radius' to a length: 0px
+FAIL Can set 'border-top-left-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-top-left-radius' to a length: 3.14cm
+PASS Can set 'border-top-left-radius' to a length: calc(0px + 0em)
+PASS Can set 'border-top-left-radius' to a percent: 0%
+FAIL Can set 'border-top-left-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-top-left-radius' to a percent: 3.14%
+PASS Can set 'border-top-left-radius' to a percent: calc(0% + 0%)
 PASS Setting 'border-top-left-radius' to a time throws TypeError
 PASS Setting 'border-top-left-radius' to an angle throws TypeError
 PASS Setting 'border-top-left-radius' to a flexible length throws TypeError
@@ -22,15 +22,15 @@ PASS Can set 'border-top-right-radius' to CSS-wide keywords: initial
 PASS Can set 'border-top-right-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-top-right-radius' to CSS-wide keywords: unset
 PASS Can set 'border-top-right-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-top-right-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'border-top-right-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-right-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-right-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-right-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-top-right-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-right-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-right-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-top-right-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+PASS Can set 'border-top-right-radius' to var() references:  var(--A)
+PASS Can set 'border-top-right-radius' to a length: 0px
+FAIL Can set 'border-top-right-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-top-right-radius' to a length: 3.14cm
+PASS Can set 'border-top-right-radius' to a length: calc(0px + 0em)
+PASS Can set 'border-top-right-radius' to a percent: 0%
+FAIL Can set 'border-top-right-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-top-right-radius' to a percent: 3.14%
+PASS Can set 'border-top-right-radius' to a percent: calc(0% + 0%)
 PASS Setting 'border-top-right-radius' to a time throws TypeError
 PASS Setting 'border-top-right-radius' to an angle throws TypeError
 PASS Setting 'border-top-right-radius' to a flexible length throws TypeError
@@ -41,15 +41,15 @@ PASS Can set 'border-bottom-left-radius' to CSS-wide keywords: initial
 PASS Can set 'border-bottom-left-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-bottom-left-radius' to CSS-wide keywords: unset
 PASS Can set 'border-bottom-left-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-bottom-left-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'border-bottom-left-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-left-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-left-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-left-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-bottom-left-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-left-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-left-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-left-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+PASS Can set 'border-bottom-left-radius' to var() references:  var(--A)
+PASS Can set 'border-bottom-left-radius' to a length: 0px
+FAIL Can set 'border-bottom-left-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-bottom-left-radius' to a length: 3.14cm
+PASS Can set 'border-bottom-left-radius' to a length: calc(0px + 0em)
+PASS Can set 'border-bottom-left-radius' to a percent: 0%
+FAIL Can set 'border-bottom-left-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-bottom-left-radius' to a percent: 3.14%
+PASS Can set 'border-bottom-left-radius' to a percent: calc(0% + 0%)
 PASS Setting 'border-bottom-left-radius' to a time throws TypeError
 PASS Setting 'border-bottom-left-radius' to an angle throws TypeError
 PASS Setting 'border-bottom-left-radius' to a flexible length throws TypeError
@@ -60,15 +60,15 @@ PASS Can set 'border-bottom-right-radius' to CSS-wide keywords: initial
 PASS Can set 'border-bottom-right-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-bottom-right-radius' to CSS-wide keywords: unset
 PASS Can set 'border-bottom-right-radius' to CSS-wide keywords: revert
-FAIL Can set 'border-bottom-right-radius' to var() references:  var(--A) assert_equals: expected 2 but got 1
-FAIL Can set 'border-bottom-right-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-right-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-right-radius' to a length: 3.14cm assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-right-radius' to a length: calc(0px + 0em) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-bottom-right-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-right-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-right-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-bottom-right-radius' to a percent: calc(0% + 0%) assert_class_string: specified calc must be a CSSMathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+PASS Can set 'border-bottom-right-radius' to var() references:  var(--A)
+PASS Can set 'border-bottom-right-radius' to a length: 0px
+FAIL Can set 'border-bottom-right-radius' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-bottom-right-radius' to a length: 3.14cm
+PASS Can set 'border-bottom-right-radius' to a length: calc(0px + 0em)
+PASS Can set 'border-bottom-right-radius' to a percent: 0%
+FAIL Can set 'border-bottom-right-radius' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-bottom-right-radius' to a percent: 3.14%
+PASS Can set 'border-bottom-right-radius' to a percent: calc(0% + 0%)
 PASS Setting 'border-bottom-right-radius' to a time throws TypeError
 PASS Setting 'border-bottom-right-radius' to an angle throws TypeError
 PASS Setting 'border-bottom-right-radius' to a flexible length throws TypeError

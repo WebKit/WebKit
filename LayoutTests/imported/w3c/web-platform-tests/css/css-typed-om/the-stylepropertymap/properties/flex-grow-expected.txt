@@ -3,11 +3,11 @@ PASS Can set 'flex-grow' to CSS-wide keywords: initial
 PASS Can set 'flex-grow' to CSS-wide keywords: inherit
 PASS Can set 'flex-grow' to CSS-wide keywords: unset
 PASS Can set 'flex-grow' to CSS-wide keywords: revert
-FAIL Can set 'flex-grow' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'flex-grow' to var() references:  var(--A)
 PASS Can set 'flex-grow' to a number: 0
 FAIL Can set 'flex-grow' to a number: -3.14 assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'flex-grow' to a number: 3.14
-FAIL Can set 'flex-grow' to a number: calc(2 + 3) assert_equals: expected 2 but got 1
+PASS Can set 'flex-grow' to a number: calc(2 + 3)
 PASS Setting 'flex-grow' to a length throws TypeError
 PASS Setting 'flex-grow' to a percent throws TypeError
 PASS Setting 'flex-grow' to a time throws TypeError

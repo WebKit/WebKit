@@ -144,6 +144,11 @@ void printInternal(PrintStream& out, unsigned char value)
     out.printf("%u", static_cast<unsigned>(value));
 }
 
+void printInternal(PrintStream& out, char16_t value)
+{
+    out.printf("%lc", value);
+}
+
 void printInternal(PrintStream& out, short value)
 {
     out.printf("%d", static_cast<int>(value));

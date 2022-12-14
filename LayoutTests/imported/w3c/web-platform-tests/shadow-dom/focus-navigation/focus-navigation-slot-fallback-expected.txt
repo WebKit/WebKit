@@ -1,0 +1,13 @@
+
+FAIL Focus should jump to fallback elements when a slot does not have any assigned nodes. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+document tree: [i0 -> [x-foo]]
+x-foo's shadow tree: [j1 -> j2 -> [s1]]
+slot #s1: [k1 -> [x-bar] -> k0 -> [s2] -> [s3]]
+x-bar's shadow tree: [m1 -> m2]
+slot #s2: [i1 -> i2]
+slot #s3: [l1]
+
+v1 ideal nav forward: [i0 -> j1 -> j2 -> k1 -> x-bar -> m1 -> m2 -> k0 -> i1 -> i2 -> l1]
+
+
+

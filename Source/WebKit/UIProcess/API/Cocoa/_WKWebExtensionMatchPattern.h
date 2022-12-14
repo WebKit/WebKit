@@ -29,6 +29,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class _WKWebExtension;
+
 /*! @abstract Indicates a @link WKWebExtensionMatchPattern @/link error. */
 WK_EXTERN NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
@@ -66,6 +68,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebExtensionMatchPatternOptions) {
  consist of three parts: scheme, host, and path.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
 @interface _WKWebExtensionMatchPattern : NSObject <NSSecureCoding, NSCopying>
 
 + (instancetype)new NS_UNAVAILABLE;

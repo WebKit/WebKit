@@ -43,7 +43,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class SendString {
 public:
-    using Arguments = std::tuple<const String&>;
+    using Arguments = std::tuple<String>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendString; }
     static constexpr bool isSync = false;
@@ -55,18 +55,18 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 
 class SendStringAsync {
 public:
-    using Arguments = std::tuple<const String&>;
+    using Arguments = std::tuple<String>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsync; }
     static constexpr bool isSync = false;
@@ -82,18 +82,18 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 
 class SendStringSync {
 public:
-    using Arguments = std::tuple<const String&>;
+    using Arguments = std::tuple<String>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSync; }
     static constexpr bool isSync = true;
@@ -108,19 +108,19 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 
 #if PLATFORM(COCOA)
 class SendMachSendRight {
 public:
-    using Arguments = std::tuple<const MachSendRight&>;
+    using Arguments = std::tuple<MachSendRight>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendMachSendRight; }
     static constexpr bool isSync = false;
@@ -132,13 +132,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const MachSendRight&> m_arguments;
 };
 #endif
 
@@ -155,20 +155,20 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<MachSendRight>;
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<> m_arguments;
 };
 #endif
 
 #if PLATFORM(COCOA)
 class SendAndReceiveMachSendRight {
 public:
-    using Arguments = std::tuple<const MachSendRight&>;
+    using Arguments = std::tuple<MachSendRight>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight; }
     static constexpr bool isSync = true;
@@ -183,13 +183,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const MachSendRight&> m_arguments;
 };
 #endif
 

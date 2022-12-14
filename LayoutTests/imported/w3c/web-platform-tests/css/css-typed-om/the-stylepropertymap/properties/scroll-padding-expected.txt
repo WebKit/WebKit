@@ -3,7 +3,7 @@ PASS Can set 'scroll-padding-top' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-top' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-top' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-top' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-top' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-top' to var() references:  var(--A)
 PASS Can set 'scroll-padding-top' to a percent: 0%
 FAIL Can set 'scroll-padding-top' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-top' to a percent: 3.14%
@@ -22,7 +22,7 @@ PASS Can set 'scroll-padding-left' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-left' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-left' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-left' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-left' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-left' to var() references:  var(--A)
 PASS Can set 'scroll-padding-left' to a percent: 0%
 FAIL Can set 'scroll-padding-left' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-left' to a percent: 3.14%
@@ -41,7 +41,7 @@ PASS Can set 'scroll-padding-right' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-right' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-right' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-right' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-right' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-right' to var() references:  var(--A)
 PASS Can set 'scroll-padding-right' to a percent: 0%
 FAIL Can set 'scroll-padding-right' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-right' to a percent: 3.14%
@@ -60,7 +60,7 @@ PASS Can set 'scroll-padding-bottom' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-bottom' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-bottom' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-bottom' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-bottom' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-bottom' to var() references:  var(--A)
 PASS Can set 'scroll-padding-bottom' to a percent: 0%
 FAIL Can set 'scroll-padding-bottom' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-bottom' to a percent: 3.14%
@@ -79,7 +79,7 @@ PASS Can set 'scroll-padding-inline-start' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-inline-start' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-inline-start' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-inline-start' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-inline-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-inline-start' to var() references:  var(--A)
 PASS Can set 'scroll-padding-inline-start' to a percent: 0%
 FAIL Can set 'scroll-padding-inline-start' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-inline-start' to a percent: 3.14%
@@ -98,7 +98,7 @@ PASS Can set 'scroll-padding-block-start' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-block-start' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-block-start' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-block-start' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-block-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-block-start' to var() references:  var(--A)
 PASS Can set 'scroll-padding-block-start' to a percent: 0%
 FAIL Can set 'scroll-padding-block-start' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-block-start' to a percent: 3.14%
@@ -117,7 +117,7 @@ PASS Can set 'scroll-padding-inline-end' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-inline-end' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-inline-end' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-inline-end' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-inline-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-inline-end' to var() references:  var(--A)
 PASS Can set 'scroll-padding-inline-end' to a percent: 0%
 FAIL Can set 'scroll-padding-inline-end' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-inline-end' to a percent: 3.14%
@@ -136,7 +136,7 @@ PASS Can set 'scroll-padding-block-end' to CSS-wide keywords: initial
 PASS Can set 'scroll-padding-block-end' to CSS-wide keywords: inherit
 PASS Can set 'scroll-padding-block-end' to CSS-wide keywords: unset
 PASS Can set 'scroll-padding-block-end' to CSS-wide keywords: revert
-FAIL Can set 'scroll-padding-block-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'scroll-padding-block-end' to var() references:  var(--A)
 PASS Can set 'scroll-padding-block-end' to a percent: 0%
 FAIL Can set 'scroll-padding-block-end' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
 PASS Can set 'scroll-padding-block-end' to a percent: 3.14%

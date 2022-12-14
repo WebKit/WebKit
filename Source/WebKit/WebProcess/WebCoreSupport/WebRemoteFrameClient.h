@@ -23,37 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RevealFocusedElementDeferrer.h"
+#pragma once
 
-#if PLATFORM(IOS_FAMILY)
-
-#import "WKContentViewInteraction.h"
+#include <WebCore/RemoteFrameClient.h>
 
 namespace WebKit {
 
-RevealFocusedElementDeferrer::RevealFocusedElementDeferrer(WKContentView *view, OptionSet<RevealFocusedElementDeferralReason> reasons)
-    : m_view(view)
-    , m_reasons(reasons)
-{
-    ASSERT(!m_reasons.isEmpty());
+class WebRemoteFrameClient final : public WebCore::RemoteFrameClient {
+public:
+    explicit WebRemoteFrameClient(Ref<WebFrame>&&);
+
+    WebFrame& webFrame() const { return m_frame.get(); }
+
+private:
+    Ref<WebFrame> m_frame;
+};
+
 }
-
-Ref<RevealFocusedElementDeferrer> RevealFocusedElementDeferrer::create(WKContentView *view, OptionSet<RevealFocusedElementDeferralReason> reasons)
-{
-    return adoptRef(*new RevealFocusedElementDeferrer(view, reasons));
-}
-
-void RevealFocusedElementDeferrer::fulfill(RevealFocusedElementDeferralReason reason)
-{
-    m_reasons.remove(reason);
-    if (!m_reasons.isEmpty())
-        return;
-
-    Ref protectedThis = *this;
-    [std::exchange(m_view, nil) _zoomToRevealFocusedElement];
-}
-
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY)

@@ -1,0 +1,7 @@
+
+PASS insert-ordered-list-crash2
+AAA
+
+BBB
+CCC
+DDD

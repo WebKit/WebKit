@@ -527,7 +527,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
         Node& node = *nodePtr;
         Frame* childFrame;
         if ((is<HTMLFrameElementBase>(node) || is<HTMLObjectElement>(node))
-            && (childFrame = downcast<HTMLFrameOwnerElement>(node).contentFrame())) {
+            && (childFrame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(node).contentFrame()))) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
             if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter)))

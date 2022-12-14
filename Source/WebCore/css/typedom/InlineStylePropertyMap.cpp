@@ -104,7 +104,11 @@ bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
         return false;
     bool didFailParsing = false;
     bool important = false;
+    // FIXME: We should be able to validate CSSValues without having to serialize to text and go through the
+    // parser. This is inefficient.
     m_element->setInlineStyleProperty(propertyID, value->cssText(), important, &didFailParsing);
+    if (!didFailParsing)
+        m_element->setInlineStyleProperty(propertyID, WTFMove(value));
     return !didFailParsing;
 }
 

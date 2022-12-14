@@ -3,7 +3,7 @@ PASS Can set 'font-synthesis-weight' to CSS-wide keywords: initial
 PASS Can set 'font-synthesis-weight' to CSS-wide keywords: inherit
 PASS Can set 'font-synthesis-weight' to CSS-wide keywords: unset
 PASS Can set 'font-synthesis-weight' to CSS-wide keywords: revert
-FAIL Can set 'font-synthesis-weight' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-synthesis-weight' to var() references:  var(--A)
 PASS Can set 'font-synthesis-weight' to the 'auto' keyword: auto
 PASS Can set 'font-synthesis-weight' to the 'none' keyword: none
 PASS Setting 'font-synthesis-weight' to a length throws TypeError
@@ -18,7 +18,7 @@ PASS Can set 'font-synthesis-style' to CSS-wide keywords: initial
 PASS Can set 'font-synthesis-style' to CSS-wide keywords: inherit
 PASS Can set 'font-synthesis-style' to CSS-wide keywords: unset
 PASS Can set 'font-synthesis-style' to CSS-wide keywords: revert
-FAIL Can set 'font-synthesis-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-synthesis-style' to var() references:  var(--A)
 PASS Can set 'font-synthesis-style' to the 'auto' keyword: auto
 PASS Can set 'font-synthesis-style' to the 'none' keyword: none
 PASS Setting 'font-synthesis-style' to a length throws TypeError
@@ -33,7 +33,7 @@ PASS Can set 'font-synthesis-small-caps' to CSS-wide keywords: initial
 PASS Can set 'font-synthesis-small-caps' to CSS-wide keywords: inherit
 PASS Can set 'font-synthesis-small-caps' to CSS-wide keywords: unset
 PASS Can set 'font-synthesis-small-caps' to CSS-wide keywords: revert
-FAIL Can set 'font-synthesis-small-caps' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-synthesis-small-caps' to var() references:  var(--A)
 PASS Can set 'font-synthesis-small-caps' to the 'auto' keyword: auto
 PASS Can set 'font-synthesis-small-caps' to the 'none' keyword: none
 PASS Setting 'font-synthesis-small-caps' to a length throws TypeError

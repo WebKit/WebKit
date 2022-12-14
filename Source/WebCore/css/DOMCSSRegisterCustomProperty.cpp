@@ -51,7 +51,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         return Exception { SyntaxError, "Invalid property syntax definition."_s };
 
     RefPtr<CSSCustomPropertyValue> initialValue;
-    if (!descriptor.initialValue.isEmpty()) {
+    if (!descriptor.initialValue.isNull()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
         auto styleResolver = Style::Resolver::create(document);
 
@@ -60,7 +60,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         auto style = styleResolver->defaultStyleForElement(nullptr);
 
         HashSet<CSSPropertyID> dependencies;
-        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, false, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
+        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, true /* isInitial */, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
 
         if (!dependencies.isEmpty())
             return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
@@ -74,12 +74,6 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
-
-        initialValue->collectDirectComputationalDependencies(dependencies);
-        initialValue->collectDirectRootComputationalDependencies(dependencies);
-
-        if (!dependencies.isEmpty())
-            return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
     }
 
     CSSRegisteredCustomProperty property { AtomString { descriptor.name }, *syntax, descriptor.inherits, WTFMove(initialValue) };

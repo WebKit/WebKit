@@ -1,7 +1,5 @@
-CONSOLE MESSAGE: Error: assert_equals: Declarative template content should be null expected null but got DocumentFragment node with 3 children
-CONSOLE MESSAGE: Error: assert_unreached: Unrecognized template Reached unreachable code
-CONSOLE MESSAGE: Error: assert_unreached: Unrecognized template Reached unreachable code
+CONSOLE MESSAGE: TypeError: template.getInnerHTML is not a function. (In 'template.getInnerHTML({includeShadowRoots: true})', 'template.getInnerHTML' is undefined)
 
-Harness Error (FAIL), message = Error: assert_equals: Declarative template content should be null expected null but got DocumentFragment node with 3 children
+Harness Error (FAIL), message = TypeError: template.getInnerHTML is not a function. (In 'template.getInnerHTML({includeShadowRoots: true})', 'template.getInnerHTML' is undefined)
 
 

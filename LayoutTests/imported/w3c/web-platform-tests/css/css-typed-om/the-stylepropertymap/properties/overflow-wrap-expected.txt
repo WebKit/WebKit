@@ -3,7 +3,7 @@ PASS Can set 'overflow-wrap' to CSS-wide keywords: initial
 PASS Can set 'overflow-wrap' to CSS-wide keywords: inherit
 PASS Can set 'overflow-wrap' to CSS-wide keywords: unset
 PASS Can set 'overflow-wrap' to CSS-wide keywords: revert
-FAIL Can set 'overflow-wrap' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'overflow-wrap' to var() references:  var(--A)
 PASS Can set 'overflow-wrap' to the 'normal' keyword: normal
 PASS Can set 'overflow-wrap' to the 'break-word' keyword: break-word
 FAIL Can set 'overflow-wrap' to the 'break-spaces' keyword: break-spaces Invalid values

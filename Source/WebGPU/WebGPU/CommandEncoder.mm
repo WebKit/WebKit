@@ -127,11 +127,6 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
 
     // Some features are explicitly supported by WebGPU, however we do not have support for them.
     // The following checks reject descriptors using such features.
-    // FIXME: support multisampling.
-    for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
-        if (descriptor.colorAttachments[i].resolveTarget)
-            return false;
-    }
 
     // FIXME: support occlusion
     if (descriptor.occlusionQuerySet)
@@ -171,13 +166,15 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         mtlAttachment.slice = 0;
         mtlAttachment.depthPlane = 0;
         mtlAttachment.loadAction = loadAction(attachment.loadOp);
-        mtlAttachment.storeAction = storeAction(attachment.storeOp);
+        mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp);
 
-        // FIXME: Multisampling support
-        // mtlDescriptor.colorAttachments[i].resolveTexture = fromAPI(attachment.resolveTarget).texture();
-        // mtlAttachment.resolveLevel = 0;
-        // mtlAttachment.resolveSlice = 0;
-        // mtlAttachment.resolveDepthPlane = 0;
+        if (attachment.resolveTarget) {
+            mtlDescriptor.colorAttachments[i].resolveTexture = fromAPI(attachment.resolveTarget).texture();
+            mtlAttachment.resolveLevel = 0;
+            mtlAttachment.resolveSlice = 0;
+            mtlAttachment.resolveDepthPlane = 0;
+            mtlAttachment.storeAction = MTLStoreActionMultisampleResolve;
+        }
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {

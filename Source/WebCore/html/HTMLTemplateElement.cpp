@@ -125,7 +125,7 @@ void HTMLTemplateElement::attachAsDeclarativeShadowRootIfNeeded(Element& host)
         return;
     }
 
-    auto modeString = attributeWithoutSynchronization(HTMLNames::shadowrootAttr);
+    auto modeString = attributeWithoutSynchronization(HTMLNames::shadowrootmodeAttr);
     std::optional<ShadowRootMode> mode;
 
     if (equalLettersIgnoringASCIICase(modeString, "closed"_s))

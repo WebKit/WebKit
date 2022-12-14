@@ -3,7 +3,7 @@ PASS Can set 'margin-top' to CSS-wide keywords: initial
 PASS Can set 'margin-top' to CSS-wide keywords: inherit
 PASS Can set 'margin-top' to CSS-wide keywords: unset
 PASS Can set 'margin-top' to CSS-wide keywords: revert
-FAIL Can set 'margin-top' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-top' to var() references:  var(--A)
 PASS Can set 'margin-top' to the 'auto' keyword: auto
 PASS Can set 'margin-top' to a percent: 0%
 PASS Can set 'margin-top' to a percent: -3.14%
@@ -23,7 +23,7 @@ PASS Can set 'margin-left' to CSS-wide keywords: initial
 PASS Can set 'margin-left' to CSS-wide keywords: inherit
 PASS Can set 'margin-left' to CSS-wide keywords: unset
 PASS Can set 'margin-left' to CSS-wide keywords: revert
-FAIL Can set 'margin-left' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-left' to var() references:  var(--A)
 PASS Can set 'margin-left' to the 'auto' keyword: auto
 PASS Can set 'margin-left' to a percent: 0%
 PASS Can set 'margin-left' to a percent: -3.14%
@@ -43,7 +43,7 @@ PASS Can set 'margin-right' to CSS-wide keywords: initial
 PASS Can set 'margin-right' to CSS-wide keywords: inherit
 PASS Can set 'margin-right' to CSS-wide keywords: unset
 PASS Can set 'margin-right' to CSS-wide keywords: revert
-FAIL Can set 'margin-right' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-right' to var() references:  var(--A)
 PASS Can set 'margin-right' to the 'auto' keyword: auto
 PASS Can set 'margin-right' to a percent: 0%
 PASS Can set 'margin-right' to a percent: -3.14%
@@ -63,7 +63,7 @@ PASS Can set 'margin-bottom' to CSS-wide keywords: initial
 PASS Can set 'margin-bottom' to CSS-wide keywords: inherit
 PASS Can set 'margin-bottom' to CSS-wide keywords: unset
 PASS Can set 'margin-bottom' to CSS-wide keywords: revert
-FAIL Can set 'margin-bottom' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'margin-bottom' to var() references:  var(--A)
 PASS Can set 'margin-bottom' to the 'auto' keyword: auto
 PASS Can set 'margin-bottom' to a percent: 0%
 PASS Can set 'margin-bottom' to a percent: -3.14%

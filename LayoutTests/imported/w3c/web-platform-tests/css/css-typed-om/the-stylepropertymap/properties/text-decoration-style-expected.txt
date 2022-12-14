@@ -3,7 +3,7 @@ PASS Can set 'text-decoration-style' to CSS-wide keywords: initial
 PASS Can set 'text-decoration-style' to CSS-wide keywords: inherit
 PASS Can set 'text-decoration-style' to CSS-wide keywords: unset
 PASS Can set 'text-decoration-style' to CSS-wide keywords: revert
-FAIL Can set 'text-decoration-style' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'text-decoration-style' to var() references:  var(--A)
 PASS Can set 'text-decoration-style' to the 'solid' keyword: solid
 PASS Can set 'text-decoration-style' to the 'double' keyword: double
 PASS Can set 'text-decoration-style' to the 'dotted' keyword: dotted

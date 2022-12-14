@@ -33,7 +33,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     DurationChanged(struct WebKit::RemoteMediaPlayerState state)
     RateChanged(double rate)
     PlaybackStateChanged(bool paused, MediaTime mediaTime, MonotonicTime wallTime)
-    EngineFailedToLoad(int platformErrorCode)
+    EngineFailedToLoad(int64_t platformErrorCode)
     UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
     CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)

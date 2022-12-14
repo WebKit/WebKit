@@ -1,24 +1,37 @@
-if (DEVELOPER_MODE OR ENABLE_MINIBROWSER)
+if (ENABLE_API_TESTS OR ENABLE_LAYOUT_TESTS OR ENABLE_MINIBROWSER)
     add_subdirectory(wpe/backends)
 endif ()
 
-if (DEVELOPER_MODE)
+if (ENABLE_LAYOUT_TESTS)
     add_subdirectory(ImageDiff)
     add_subdirectory(TestRunnerShared)
     add_subdirectory(WebKitTestRunner)
-    add_subdirectory(flatpak)
+endif ()
 
-    if (ENABLE_API_TESTS)
-        add_subdirectory(TestWebKitAPI/glib)
-    endif ()
+if (DEVELOPER_MODE)
+    add_subdirectory(flatpak)
+endif ()
+
+if (ENABLE_API_TESTS)
+    add_subdirectory(TestWebKitAPI/glib)
 endif ()
 
 if (ENABLE_MINIBROWSER)
     add_subdirectory(MiniBrowser/wpe)
 endif ()
 
-if (DEVELOPER_MODE AND ENABLE_COG)
+if (ENABLE_COG)
     include(ExternalProject)
+    if ("${WPE_COG_PLATFORMS}" STREQUAL "")
+        set(WPE_COG_PLATFORMS "drm,headless,gtk4,x11,wayland")
+    elseif ("${WPE_COG_PLATFORMS}" STREQUAL "none")
+        set(WPE_COG_PLATFORMS "")
+    endif ()
+    if (DEFINED ENV{PKG_CONFIG_PATH})
+        set(WPE_COG_PKG_CONFIG_PATH ${CMAKE_BINARY_DIR}:$ENV{PKG_CONFIG_PATH})
+    else ()
+        set(WPE_COG_PKG_CONFIG_PATH ${CMAKE_BINARY_DIR})
+    endif ()
     if ("${WPE_COG_REPO}" STREQUAL "")
         set(WPE_COG_REPO "https://github.com/Igalia/cog.git")
     endif ()
@@ -52,9 +65,9 @@ if (DEVELOPER_MODE AND ENABLE_COG)
         CONFIGURE_COMMAND
             meson setup <BINARY_DIR> <SOURCE_DIR>
             --buildtype ${COG_MESON_BUILDTYPE}
-            --pkg-config-path ${CMAKE_BINARY_DIR}
+            --pkg-config-path ${WPE_COG_PKG_CONFIG_PATH}
             -Dsoup2=${COG_MESON_SOUP2}
-            -Dplatforms=drm,headless,gtk4,x11,wayland
+            -Dplatforms=${WPE_COG_PLATFORMS}
         BUILD_COMMAND
             meson compile -C <BINARY_DIR>
         INSTALL_COMMAND "")

@@ -17,16 +17,16 @@ PASS <length> values are computed correctly [10lh]
 PASS <length-percentage> values are computed correctly [17em]
 PASS <length-percentage> values are computed correctly [18%]
 PASS <length-percentage> values are computed correctly [calc(19em - 2%)]
-FAIL <length># values are computed correctly [10px, 3em] assert_equals: expected "10px, 30px" but got "0px"
-FAIL <length># values are computed correctly [4em ,9px] assert_equals: expected "40px, 9px" but got "0px"
+PASS <length># values are computed correctly [10px, 3em]
+PASS <length># values are computed correctly [4em ,9px]
 PASS <length># values are computed correctly [8em]
-FAIL <length-percentage># values are computed correctly [3% , 10vmax  , 22px] assert_equals: expected "3%, 80px, 22px" but got "0px"
-FAIL <length-percentage># values are computed correctly [calc(50% + 1em), 4px] assert_equals: expected "calc(50% + 10px), 4px" but got "0px"
+PASS <length-percentage># values are computed correctly [3% , 10vmax  , 22px]
+PASS <length-percentage># values are computed correctly [calc(50% + 1em), 4px]
 PASS <length-percentage># values are computed correctly [calc(13% + 37px)]
-FAIL <length>+ values are computed correctly [10px 3em] assert_equals: expected "10px 30px" but got "0px"
-FAIL <length>+ values are computed correctly [4em 9px] assert_equals: expected "40px 9px" but got "0px"
-FAIL <length-percentage>+ values are computed correctly [3% 10vmax 22px] assert_equals: expected "3% 80px 22px" but got "0px"
-FAIL <length-percentage>+ values are computed correctly [calc(50% + 1em) 4px] assert_equals: expected "calc(50% + 10px) 4px" but got "0px"
+PASS <length>+ values are computed correctly [10px 3em]
+PASS <length>+ values are computed correctly [4em 9px]
+PASS <length-percentage>+ values are computed correctly [3% 10vmax 22px]
+PASS <length-percentage>+ values are computed correctly [calc(50% + 1em) 4px]
 FAIL <transform-function> values are computed correctly [translateX(2px)] The given initial value does not parse for the given syntax.
 FAIL <transform-function> values are computed correctly [translateX(10em)] The given initial value does not parse for the given syntax.
 FAIL <transform-function> values are computed correctly [translateX(calc(11em + 10%))] The given initial value does not parse for the given syntax.
@@ -36,7 +36,7 @@ PASS <integer> values are computed correctly [calc(15 + 15)]
 PASS <integer> values are computed correctly [calc(2.4)]
 PASS <integer> values are computed correctly [calc(2.6)]
 PASS <integer> values are computed correctly [calc(2.6 + 3.1)]
-FAIL <integer>+ values are computed correctly [15 calc(2.4) calc(2.6)] assert_equals: expected "15 2 3" but got "0"
+PASS <integer>+ values are computed correctly [15 calc(2.4) calc(2.6)]
 PASS <color> values are computed correctly [#ff0000]
 PASS <color> values are computed correctly [#000f00]
 PASS <color> values are computed correctly [#00000a]

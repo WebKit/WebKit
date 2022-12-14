@@ -42,7 +42,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class SendSemaphore {
 public:
-    using Arguments = std::tuple<const IPC::Semaphore&>;
+    using Arguments = std::tuple<IPC::Semaphore>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_SendSemaphore; }
     static constexpr bool isSync = false;
@@ -52,13 +52,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const IPC::Semaphore&> m_arguments;
 };
 
 class ReceiveSemaphore {
@@ -71,13 +71,13 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<> m_arguments;
 };
 
 } // namespace TestWithSemaphore

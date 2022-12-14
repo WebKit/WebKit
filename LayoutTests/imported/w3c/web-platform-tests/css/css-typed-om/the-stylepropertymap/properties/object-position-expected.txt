@@ -6,5 +6,5 @@ PASS Can set 'object-position' to CSS-wide keywords: initial
 PASS Can set 'object-position' to CSS-wide keywords: inherit
 PASS Can set 'object-position' to CSS-wide keywords: unset
 PASS Can set 'object-position' to CSS-wide keywords: revert
-FAIL Can set 'object-position' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'object-position' to var() references:  var(--A)
 

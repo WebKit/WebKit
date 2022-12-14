@@ -4182,6 +4182,11 @@ public:
                 return;
         }
 
+        if (m_pattern.m_containsLookbehinds) {
+            codeBlock.setFallBackWithFailureReason(JITFailureReason::Lookbehind);
+            return;
+        }
+
         // We need to compile before generating code since we set flags based on compilation that
         // are used during generation.
         opCompileBody(m_pattern.m_body);
@@ -4714,6 +4719,9 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::ForwardReference:
         dataLog("Can't JIT a pattern containing forward references\n");
+        break;
+    case JITFailureReason::Lookbehind:
+        dataLog("Can't JIT a pattern containing lookbehinds\n");
         break;
     case JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum:
         dataLog("Can't JIT a pattern containing a variable counted parenthesis with a non-zero minimum\n");

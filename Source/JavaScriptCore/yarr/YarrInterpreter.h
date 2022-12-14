@@ -83,10 +83,12 @@ struct ByteTerm {
         AssertionBOL,
         AssertionEOL,
         AssertionWordBoundary,
+        // Character Types
         PatternCharacterOnce,
         PatternCharacterFixed,
         PatternCharacterGreedy,
         PatternCharacterNonGreedy,
+        // Cased Characeter Types
         PatternCasedCharacterOnce,
         PatternCasedCharacterFixed,
         PatternCasedCharacterGreedy,
@@ -102,17 +104,20 @@ struct ByteTerm {
         ParentheticalAssertionEnd,
         CheckInput,
         UncheckInput,
+        HaveCheckedInput,
         DotStarEnclosure,
     };
     Type type;
     bool m_capture : 1;
     bool m_invert : 1;
+    MatchDirection m_matchDirection : 1;
     unsigned inputPosition { 0 };
 
     ByteTerm(UChar32 ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
+        , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
         atom.patternCharacter = ch;
@@ -125,9 +130,11 @@ struct ByteTerm {
             type = (quantityCount == 1) ? ByteTerm::Type::PatternCharacterOnce : ByteTerm::Type::PatternCharacterFixed;
             break;
         case QuantifierType::Greedy:
+            atom.quantityMinCount = 0;
             type = ByteTerm::Type::PatternCharacterGreedy;
             break;
         case QuantifierType::NonGreedy:
+            atom.quantityMinCount = 0;
             type = ByteTerm::Type::PatternCharacterNonGreedy;
             break;
         }
@@ -137,24 +144,27 @@ struct ByteTerm {
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
+        , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
         switch (quantityType) {
         case QuantifierType::FixedCount:
             type = (quantityCount == 1) ? ByteTerm::Type::PatternCasedCharacterOnce : ByteTerm::Type::PatternCasedCharacterFixed;
+            atom.quantityMinCount = quantityCount;
             break;
         case QuantifierType::Greedy:
             type = ByteTerm::Type::PatternCasedCharacterGreedy;
+            atom.quantityMinCount = 0;
             break;
         case QuantifierType::NonGreedy:
             type = ByteTerm::Type::PatternCasedCharacterNonGreedy;
+            atom.quantityMinCount = 0;
             break;
         }
 
         atom.casedCharacter.lo = lo;
         atom.casedCharacter.hi = hi;
         atom.quantityType = quantityType;
-        atom.quantityMinCount = quantityCount;
         atom.quantityMaxCount = quantityCount;
     }
 
@@ -162,6 +172,7 @@ struct ByteTerm {
         : type(ByteTerm::Type::CharacterClass)
         , m_capture(false)
         , m_invert(invert)
+        , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
         atom.characterClass = characterClass;
@@ -174,6 +185,7 @@ struct ByteTerm {
         : type(type)
         , m_capture(capture)
         , m_invert(false)
+        , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
         atom.subpatternId = subpatternId;
@@ -187,6 +199,7 @@ struct ByteTerm {
         : type(type)
         , m_capture(false)
         , m_invert(invert)
+        , m_matchDirection(Forward)
     {
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
@@ -197,6 +210,20 @@ struct ByteTerm {
         : type(type)
         , m_capture(capture)
         , m_invert(invert)
+        , m_matchDirection(Forward)
+        , inputPosition(inputPos)
+    {
+        atom.subpatternId = subpatternId;
+        atom.quantityType = QuantifierType::FixedCount;
+        atom.quantityMinCount = 1;
+        atom.quantityMaxCount = 1;
+    }
+
+    ByteTerm(Type type, unsigned subpatternId, bool capture, bool invert, MatchDirection matchDirection, unsigned inputPos)
+        : type(type)
+        , m_capture(capture)
+        , m_invert(invert)
+        , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
         atom.subpatternId = subpatternId;
@@ -226,6 +253,13 @@ struct ByteTerm {
         return term;
     }
     
+    static ByteTerm HaveCheckedInput(Checked<unsigned> count)
+    {
+        ByteTerm term(Type::HaveCheckedInput);
+        term.checkInputCount = count;
+        return term;
+    }
+
     static ByteTerm EOL(unsigned inputPos)
     {
         ByteTerm term(Type::AssertionEOL);
@@ -233,16 +267,17 @@ struct ByteTerm {
         return term;
     }
 
-    static ByteTerm WordBoundary(bool invert, unsigned inputPos)
+    static ByteTerm WordBoundary(bool invert, MatchDirection matchDirection, unsigned inputPos)
     {
         ByteTerm term(Type::AssertionWordBoundary, invert);
+        term.m_matchDirection = matchDirection;
         term.inputPosition = inputPos;
         return term;
     }
     
-    static ByteTerm BackReference(unsigned subpatternId, unsigned inputPos)
+    static ByteTerm BackReference(unsigned subpatternId, MatchDirection matchDirection, unsigned inputPos)
     {
-        return ByteTerm(Type::BackReference, subpatternId, false, false, inputPos);
+        return ByteTerm(Type::BackReference, subpatternId, false, false, matchDirection, inputPos);
     }
 
     static ByteTerm BodyAlternativeBegin(bool onceThrough)
@@ -317,9 +352,29 @@ struct ByteTerm {
         return term;
     }
 
+    bool isCharacterType()
+    {
+        return type >= Type::PatternCharacterOnce && type <= Type::PatternCharacterNonGreedy;
+    }
+
+    bool isCasedCharacterType()
+    {
+        return type >= Type::PatternCasedCharacterOnce && type <= Type::PatternCasedCharacterNonGreedy;
+    }
+
+    bool isCharacterClass()
+    {
+        return type == Type::CharacterClass;
+    }
+
     bool invert()
     {
         return m_invert;
+    }
+
+    MatchDirection matchDirection()
+    {
+        return m_matchDirection;
     }
 
     bool capture()

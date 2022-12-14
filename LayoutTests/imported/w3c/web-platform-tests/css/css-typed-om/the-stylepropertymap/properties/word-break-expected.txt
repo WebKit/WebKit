@@ -3,7 +3,7 @@ PASS Can set 'word-break' to CSS-wide keywords: initial
 PASS Can set 'word-break' to CSS-wide keywords: inherit
 PASS Can set 'word-break' to CSS-wide keywords: unset
 PASS Can set 'word-break' to CSS-wide keywords: revert
-FAIL Can set 'word-break' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'word-break' to var() references:  var(--A)
 PASS Can set 'word-break' to the 'normal' keyword: normal
 PASS Can set 'word-break' to the 'keep-all' keyword: keep-all
 PASS Can set 'word-break' to the 'break-all' keyword: break-all

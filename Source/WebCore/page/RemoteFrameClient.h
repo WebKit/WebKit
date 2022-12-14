@@ -25,34 +25,14 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#include <wtf/FastMalloc.h>
 
-#import <wtf/OptionSet.h>
-#import <wtf/RefCounted.h>
-#import <wtf/WeakObjCPtr.h>
+namespace WebCore {
 
-@class WKContentView;
-
-namespace WebKit {
-
-enum class RevealFocusedElementDeferralReason : uint8_t {
-    EditorState,
-    KeyboardWillShow,
-    KeyboardDidShow,
-};
-
-class RevealFocusedElementDeferrer final : public RefCounted<RevealFocusedElementDeferrer> {
+class RemoteFrameClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RevealFocusedElementDeferrer> create(WKContentView *, OptionSet<RevealFocusedElementDeferralReason>);
-    void fulfill(RevealFocusedElementDeferralReason);
-
-private:
-    RevealFocusedElementDeferrer(WKContentView *, OptionSet<RevealFocusedElementDeferralReason>);
-
-    WeakObjCPtr<WKContentView> m_view;
-    OptionSet<RevealFocusedElementDeferralReason> m_reasons;
+    virtual ~RemoteFrameClient() { }
 };
 
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY)
+}

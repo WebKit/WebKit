@@ -1,0 +1,5 @@
+
+PASS Verifies that HTMLElement.offsetTop accounts for shadow boundaries.
+PASS Verifies that HTMLElement.offsetLeft accounts for shadow boundaries.
+PASS Verifies that HTMLElement.offsetTop accounts for shadow boundaries when nested in multiple shadow roots.
+

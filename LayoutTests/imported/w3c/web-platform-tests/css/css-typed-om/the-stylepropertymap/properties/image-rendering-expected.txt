@@ -3,7 +3,7 @@ PASS Can set 'image-rendering' to CSS-wide keywords: initial
 PASS Can set 'image-rendering' to CSS-wide keywords: inherit
 PASS Can set 'image-rendering' to CSS-wide keywords: unset
 PASS Can set 'image-rendering' to CSS-wide keywords: revert
-FAIL Can set 'image-rendering' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'image-rendering' to var() references:  var(--A)
 PASS Can set 'image-rendering' to the 'auto' keyword: auto
 FAIL Can set 'image-rendering' to the 'smooth' keyword: smooth Invalid values
 FAIL Can set 'image-rendering' to the 'high-quality' keyword: high-quality Invalid values

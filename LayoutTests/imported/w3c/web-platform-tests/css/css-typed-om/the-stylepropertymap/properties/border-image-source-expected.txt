@@ -3,7 +3,7 @@ PASS Can set 'border-image-source' to CSS-wide keywords: initial
 PASS Can set 'border-image-source' to CSS-wide keywords: inherit
 PASS Can set 'border-image-source' to CSS-wide keywords: unset
 PASS Can set 'border-image-source' to CSS-wide keywords: revert
-FAIL Can set 'border-image-source' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-image-source' to var() references:  var(--A)
 PASS Can set 'border-image-source' to the 'none' keyword: none
 PASS Can set 'border-image-source' to an image
 PASS Setting 'border-image-source' to a length throws TypeError

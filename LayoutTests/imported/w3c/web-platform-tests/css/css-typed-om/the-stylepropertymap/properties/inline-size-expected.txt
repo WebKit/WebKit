@@ -3,16 +3,16 @@ PASS Can set 'inline-size' to CSS-wide keywords: initial
 PASS Can set 'inline-size' to CSS-wide keywords: inherit
 PASS Can set 'inline-size' to CSS-wide keywords: unset
 PASS Can set 'inline-size' to CSS-wide keywords: revert
-FAIL Can set 'inline-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'inline-size' to var() references:  var(--A)
 PASS Can set 'inline-size' to the 'auto' keyword: auto
 PASS Can set 'inline-size' to a percent: 0%
 FAIL Can set 'inline-size' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'inline-size' to a percent: 3.14%
-FAIL Can set 'inline-size' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'inline-size' to a percent: calc(0% + 0%)
 PASS Can set 'inline-size' to a length: 0px
 PASS Can set 'inline-size' to a length: -3.14em
 PASS Can set 'inline-size' to a length: 3.14cm
-FAIL Can set 'inline-size' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'inline-size' to a length: calc(0px + 0em)
 PASS Setting 'inline-size' to a time throws TypeError
 PASS Setting 'inline-size' to an angle throws TypeError
 PASS Setting 'inline-size' to a flexible length throws TypeError
@@ -23,15 +23,15 @@ PASS Can set 'min-inline-size' to CSS-wide keywords: initial
 PASS Can set 'min-inline-size' to CSS-wide keywords: inherit
 PASS Can set 'min-inline-size' to CSS-wide keywords: unset
 PASS Can set 'min-inline-size' to CSS-wide keywords: revert
-FAIL Can set 'min-inline-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'min-inline-size' to var() references:  var(--A)
 PASS Can set 'min-inline-size' to a percent: 0%
 FAIL Can set 'min-inline-size' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'min-inline-size' to a percent: 3.14%
-FAIL Can set 'min-inline-size' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'min-inline-size' to a percent: calc(0% + 0%)
 PASS Can set 'min-inline-size' to a length: 0px
 PASS Can set 'min-inline-size' to a length: -3.14em
 PASS Can set 'min-inline-size' to a length: 3.14cm
-FAIL Can set 'min-inline-size' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'min-inline-size' to a length: calc(0px + 0em)
 PASS Setting 'min-inline-size' to a time throws TypeError
 PASS Setting 'min-inline-size' to an angle throws TypeError
 PASS Setting 'min-inline-size' to a flexible length throws TypeError
@@ -42,16 +42,16 @@ PASS Can set 'max-inline-size' to CSS-wide keywords: initial
 PASS Can set 'max-inline-size' to CSS-wide keywords: inherit
 PASS Can set 'max-inline-size' to CSS-wide keywords: unset
 PASS Can set 'max-inline-size' to CSS-wide keywords: revert
-FAIL Can set 'max-inline-size' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'max-inline-size' to var() references:  var(--A)
 PASS Can set 'max-inline-size' to the 'none' keyword: none
 PASS Can set 'max-inline-size' to a percent: 0%
 FAIL Can set 'max-inline-size' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'max-inline-size' to a percent: 3.14%
-FAIL Can set 'max-inline-size' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'max-inline-size' to a percent: calc(0% + 0%)
 PASS Can set 'max-inline-size' to a length: 0px
 PASS Can set 'max-inline-size' to a length: -3.14em
 PASS Can set 'max-inline-size' to a length: 3.14cm
-FAIL Can set 'max-inline-size' to a length: calc(0px + 0em) assert_equals: expected "px" but got "em"
+PASS Can set 'max-inline-size' to a length: calc(0px + 0em)
 PASS Setting 'max-inline-size' to a time throws TypeError
 PASS Setting 'max-inline-size' to an angle throws TypeError
 PASS Setting 'max-inline-size' to a flexible length throws TypeError

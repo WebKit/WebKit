@@ -83,6 +83,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -146,16 +147,23 @@ static bool isMainThreadOrCheckDisabled()
 #endif
 }
 
-HashMap<ProcessIdentifier, WebProcessProxy*>& WebProcessProxy::allProcesses()
+WebProcessProxy::WebProcessProxyMap& WebProcessProxy::allProcessMap()
 {
     ASSERT(isMainThreadOrCheckDisabled());
-    static NeverDestroyed<HashMap<ProcessIdentifier, WebProcessProxy*>> map;
+    static NeverDestroyed<WebProcessProxy::WebProcessProxyMap> map;
     return map;
 }
 
-WebProcessProxy* WebProcessProxy::processForIdentifier(ProcessIdentifier identifier)
+Vector<RefPtr<WebProcessProxy>> WebProcessProxy::allProcesses()
 {
-    return allProcesses().get(identifier);
+    return WTF::map(allProcessMap(), [] (auto& keyValue) -> RefPtr<WebProcessProxy> {
+        return keyValue.value.get();
+    });
+}
+
+RefPtr<WebProcessProxy> WebProcessProxy::processForIdentifier(ProcessIdentifier identifier)
+{
+    return allProcessMap().get(identifier).get();
 }
 
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
@@ -295,7 +303,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
 
-    auto result = allProcesses().add(coreProcessIdentifier(), this);
+    auto result = allProcessMap().add(coreProcessIdentifier(), WeakPtr { this });
     ASSERT_UNUSED(result, result.isNewEntry);
 
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
@@ -325,7 +333,7 @@ WebProcessProxy::~WebProcessProxy()
         removeMessageReceiver(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageReceiverName());
 #endif
 
-    auto result = allProcesses().remove(coreProcessIdentifier());
+    auto result = allProcessMap().remove(coreProcessIdentifier());
     ASSERT_UNUSED(result, result);
 
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
@@ -1345,7 +1353,7 @@ void WebProcessProxy::windowServerConnectionStateChanged()
 void WebProcessProxy::notifyHasMouseDeviceChanged(bool hasMouseDevice)
 {
     ASSERT(isMainRunLoop());
-    for (auto* webProcessProxy : WebProcessProxy::allProcesses().values())
+    for (auto webProcessProxy : WebProcessProxy::allProcesses())
         webProcessProxy->send(Messages::WebProcess::SetHasMouseDevice(hasMouseDevice), 0);
 }
 
@@ -1356,7 +1364,7 @@ void WebProcessProxy::notifyHasMouseDeviceChanged(bool hasMouseDevice)
 void WebProcessProxy::notifyHasStylusDeviceChanged(bool hasStylusDevice)
 {
     ASSERT(isMainRunLoop());
-    for (auto* webProcessProxy : WebProcessProxy::allProcesses().values())
+    for (auto webProcessProxy : WebProcessProxy::allProcesses())
         webProcessProxy->send(Messages::WebProcess::SetHasStylusDevice(hasStylusDevice), 0);
 }
 

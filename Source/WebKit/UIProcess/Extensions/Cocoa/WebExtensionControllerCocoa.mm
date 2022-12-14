@@ -68,7 +68,7 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
     if (!m_extensionContextBaseURLMap.add(extensionContext.baseURL(), extensionContext)) {
         m_extensionContexts.remove(extensionContext);
         if (outError)
-            *outError = extensionContext.createError(WebExtensionContext::Error::BaseURLTaken);
+            *outError = extensionContext.createError(WebExtensionContext::Error::BaseURLAlreadyInUse);
         return false;
     }
 

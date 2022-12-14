@@ -1,0 +1,9 @@
+Tests for moving focus by pressing tab key across shadow boundaries.
+To manually test, press tab key six times then shift+tab six times.
+It should traverse focusable elements in the increasing numerical order and then in the reverse order.
+
+1. Assigned to slot2.
+6. Assigned to slot7 which is assigned to slot6.
+
+FAIL Focus should cover assigned elements of an assigned slot espacially there are fallback contents. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

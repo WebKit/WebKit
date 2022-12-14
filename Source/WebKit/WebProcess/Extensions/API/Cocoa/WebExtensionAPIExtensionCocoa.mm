@@ -38,7 +38,7 @@ bool WebExtensionAPIExtension::isPropertyAllowed(String name, WebPage*)
 {
     // This method was removed in manifest version 3.
     if (name == "getURL"_s)
-        return !extensionContext().usesManifestVersion(3);
+        return !extensionContext().supportsManifestVersion(3);
 
     ASSERT_NOT_REACHED();
     return false;

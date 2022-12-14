@@ -5673,8 +5673,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     // the new process does not have sufficient information. To address the issue, we restore the information we stored on the NavigationAction during the original request
     // policy decision.
     if (navigationActionData.isRedirect && navigation) {
+        bool canHandleRequest = navigationActionData.canHandleRequest;
         navigationActionData = navigation->lastNavigationAction();
         navigationActionData.isRedirect = true;
+        navigationActionData.canHandleRequest = canHandleRequest;
         frameInfo.securityOrigin = navigation->destinationFrameSecurityOrigin();
     }
 

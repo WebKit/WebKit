@@ -529,7 +529,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
         return;
     }
 
-    WebCore::Frame* coreFrameFromElement = downcast<WebCore::HTMLFrameElementBase>(*coreElement).contentFrame();
+    auto* coreFrameFromElement = dynamicDowncast<WebCore::LocalFrame>(downcast<WebCore::HTMLFrameElementBase>(*coreElement).contentFrame());
     if (!coreFrameFromElement) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;

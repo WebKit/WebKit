@@ -436,14 +436,14 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidAction:
-        if (usesManifestVersion(3))
+        if (supportsManifestVersion(3))
             localizedDescription = WEB_UI_STRING("Missing or empty `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for action only");
         else
             localizedDescription = WEB_UI_STRING("Missing or empty `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action");
         break;
 
     case Error::InvalidActionIcon:
-        if (usesManifestVersion(3))
+        if (supportsManifestVersion(3))
             localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only");
         else
             localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action");
@@ -569,7 +569,7 @@ NSArray *WebExtension::errors()
     populateContentScriptPropertiesIfNeeded();
     populatePermissionsPropertiesIfNeeded();
 
-    return [m_errors copy];
+    return [m_errors copy] ?: @[ ];
 }
 
 NSString *WebExtension::webProcessDisplayName()
@@ -670,7 +670,7 @@ CocoaImage *WebExtension::actionIcon(CGSize size)
     populateActionPropertiesIfNeeded();
 
     NSString *localizedErrorDescription;
-    if (usesManifestVersion(3))
+    if (supportsManifestVersion(3))
         localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only");
     else
         localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action");
@@ -704,7 +704,7 @@ void WebExtension::populateActionPropertiesIfNeeded()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_action
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/page_action
 
-    if (usesManifestVersion(3))
+    if (supportsManifestVersion(3))
         m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey);
     else {
         m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
@@ -722,7 +722,7 @@ void WebExtension::populateActionPropertiesIfNeeded()
 
         if (!m_actionIcon) {
             NSString *localizedErrorDescription;
-            if (usesManifestVersion(3))
+            if (supportsManifestVersion(3))
                 localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action");
             else
                 localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action");
@@ -1006,9 +1006,9 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
         recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required key `scripts`, `page`, or `service_worker`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys")));
 
     NSNumber *persistentBoolean = objectForKey<NSNumber>(backgroundManifestDictionary, backgroundPersistentManifestKey);
-    m_backgroundContentIsPersistent = persistentBoolean ? persistentBoolean.boolValue : !(usesManifestVersion(3) || m_backgroundServiceWorkerPath);
+    m_backgroundContentIsPersistent = persistentBoolean ? persistentBoolean.boolValue : !(supportsManifestVersion(3) || m_backgroundServiceWorkerPath);
 
-    if (m_backgroundContentIsPersistent && usesManifestVersion(3)) {
+    if (m_backgroundContentIsPersistent && supportsManifestVersion(3)) {
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `manifest_version` greater-than or equal to `3` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for manifest v3")));
         m_backgroundContentIsPersistent = false;
     }
@@ -1253,7 +1253,7 @@ void WebExtension::populatePermissionsPropertiesIfNeeded()
 
     m_parsedManifestPermissionProperties = YES;
 
-    bool findMatchPatternsInPermissions = !usesManifestVersion(3);
+    bool findMatchPatternsInPermissions = !supportsManifestVersion(3);
 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions
 

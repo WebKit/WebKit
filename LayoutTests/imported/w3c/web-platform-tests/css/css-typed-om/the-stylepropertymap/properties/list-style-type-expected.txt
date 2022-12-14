@@ -3,7 +3,7 @@ PASS Can set 'list-style-type' to CSS-wide keywords: initial
 PASS Can set 'list-style-type' to CSS-wide keywords: inherit
 PASS Can set 'list-style-type' to CSS-wide keywords: unset
 PASS Can set 'list-style-type' to CSS-wide keywords: revert
-FAIL Can set 'list-style-type' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'list-style-type' to var() references:  var(--A)
 PASS Can set 'list-style-type' to the 'none' keyword: none
 FAIL Can set 'list-style-type' to the 'custom-ident' keyword: custom-ident Invalid values
 PASS Setting 'list-style-type' to a length throws TypeError

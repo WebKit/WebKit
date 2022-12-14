@@ -3,7 +3,7 @@ PASS Can set 'border-top-color' to CSS-wide keywords: initial
 PASS Can set 'border-top-color' to CSS-wide keywords: inherit
 PASS Can set 'border-top-color' to CSS-wide keywords: unset
 PASS Can set 'border-top-color' to CSS-wide keywords: revert
-FAIL Can set 'border-top-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-top-color' to var() references:  var(--A)
 PASS Can set 'border-top-color' to the 'currentcolor' keyword: currentcolor
 PASS Setting 'border-top-color' to a length throws TypeError
 PASS Setting 'border-top-color' to a percent throws TypeError
@@ -22,7 +22,7 @@ PASS Can set 'border-left-color' to CSS-wide keywords: initial
 PASS Can set 'border-left-color' to CSS-wide keywords: inherit
 PASS Can set 'border-left-color' to CSS-wide keywords: unset
 PASS Can set 'border-left-color' to CSS-wide keywords: revert
-FAIL Can set 'border-left-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-left-color' to var() references:  var(--A)
 PASS Can set 'border-left-color' to the 'currentcolor' keyword: currentcolor
 PASS Setting 'border-left-color' to a length throws TypeError
 PASS Setting 'border-left-color' to a percent throws TypeError
@@ -41,7 +41,7 @@ PASS Can set 'border-right-color' to CSS-wide keywords: initial
 PASS Can set 'border-right-color' to CSS-wide keywords: inherit
 PASS Can set 'border-right-color' to CSS-wide keywords: unset
 PASS Can set 'border-right-color' to CSS-wide keywords: revert
-FAIL Can set 'border-right-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-right-color' to var() references:  var(--A)
 PASS Can set 'border-right-color' to the 'currentcolor' keyword: currentcolor
 PASS Setting 'border-right-color' to a length throws TypeError
 PASS Setting 'border-right-color' to a percent throws TypeError
@@ -60,7 +60,7 @@ PASS Can set 'border-bottom-color' to CSS-wide keywords: initial
 PASS Can set 'border-bottom-color' to CSS-wide keywords: inherit
 PASS Can set 'border-bottom-color' to CSS-wide keywords: unset
 PASS Can set 'border-bottom-color' to CSS-wide keywords: revert
-FAIL Can set 'border-bottom-color' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'border-bottom-color' to var() references:  var(--A)
 PASS Can set 'border-bottom-color' to the 'currentcolor' keyword: currentcolor
 PASS Setting 'border-bottom-color' to a length throws TypeError
 PASS Setting 'border-bottom-color' to a percent throws TypeError

@@ -35,6 +35,7 @@
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
+#import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -757,6 +758,48 @@ TEST(ProcessSwap, KillWebContentProcessAfterServerRedirectPolicyDecision)
 
     TestWebKitAPI::Util::run(&done);
     done = false;
+}
+
+TEST(ProcessSwap, PSONRedirectionToExternal)
+{
+    TestWebKitAPI::HTTPServer server(std::initializer_list<std::pair<String, TestWebKitAPI::HTTPResponse>> { }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    HashMap<String, String> redirectHeaders;
+    redirectHeaders.add("location"_s, "other://test"_s);
+    TestWebKitAPI::HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
+
+    server.addResponse("/popup.html"_s, WTFMove(redirectResponse));
+    auto popupURL = makeString("https://localhost:", server.port(), "/popup.html");
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:popupURL]];
+    [webView loadRequest:request];
+    done = false;
+
+    __block BOOL isRedirection = NO;
+    navigationDelegate->decidePolicyForNavigationAction = ^(WKNavigationAction * action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        if (!isRedirection) {
+            isRedirection = YES;
+            return;
+        }
+
+        EXPECT_TRUE(!action._canHandleRequest);
+        done = true;
+    };
+
+    TestWebKitAPI::Util::run(&done);
 }
 
 TEST(ProcessSwap, KillProvisionalWebContentProcessThenStartNewLoad)
@@ -1975,7 +2018,7 @@ TEST(ProcessSwap, CrossSiteDownload)
 static const char* systemPreviewSameOriginTestBytes = R"PSONRESOURCE(
 <body>
     <a id="testLink" rel="ar" href="pson://www.webkit.org/whatever">
-        <img src="http://www.webkit.org/image">
+        <img src="pson://www.webkit.org/image">
     </a>
 </body>
 )PSONRESOURCE";
@@ -1983,7 +2026,7 @@ static const char* systemPreviewSameOriginTestBytes = R"PSONRESOURCE(
 static const char* systemPreviewCrossOriginTestBytes = R"PSONRESOURCE(
 <body>
     <a id="testLink" rel="ar" href="pson://www.apple.com/whatever">
-        <img src="http://www.webkit.org/image">
+        <img src="pson://www.webkit.org/image">
     </a>
 </body>
 )PSONRESOURCE";
@@ -1998,6 +2041,7 @@ TEST(ProcessSwap, SameOriginSystemPreview)
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:systemPreviewSameOriginTestBytes];
     [handler addMappingFromURLString:@"pson://www.webkit.org/whatever" toData:"Fake USDZ data"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/image" toData:"Fake image data"];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
 
     [webViewConfiguration _setSystemPreviewEnabled:YES];
@@ -2034,6 +2078,7 @@ TEST(ProcessSwap, CrossOriginSystemPreview)
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:systemPreviewCrossOriginTestBytes];
     [handler addMappingFromURLString:@"pson://www.apple.com/whatever" toData:"Fake USDZ data"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/image" toData:"Fake image data"];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
 
     [webViewConfiguration _setSystemPreviewEnabled:YES];

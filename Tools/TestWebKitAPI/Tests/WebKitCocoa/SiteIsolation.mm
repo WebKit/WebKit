@@ -36,6 +36,17 @@
 
 namespace TestWebKitAPI {
 
+static void enableSiteIsolation(WKWebViewConfiguration *configuration)
+{
+    auto preferences = [configuration preferences];
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"]) {
+            [preferences _setEnabled:YES forExperimentalFeature:feature];
+            break;
+        }
+    }
+}
+
 TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
 {
     auto exampleHTML = "<script>"
@@ -44,7 +55,7 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
     "    }, false);"
     "    onload = () => {"
     "        document.getElementById('webkit_frame').contentWindow.postMessage('ping', '*');"
-    "        setTimeout(() => { alert('postMessage failed') }, 3000)"
+    "        setTimeout(() => { alert('postMessage failed') }, 1000)"
     "    }"
     "</script>"
     "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s;
@@ -92,11 +103,7 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
     }).get();
 
     auto configuration = server.httpsProxyConfiguration();
-    auto preferences = [configuration preferences];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-        if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
-            [preferences _setEnabled:YES forExperimentalFeature:feature];
-    }
+    enableSiteIsolation(configuration);
 
     __block RetainPtr<NSString> alert;
     auto uiDelegate = adoptNS([TestUIDelegate new]);
@@ -123,6 +130,72 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
         EXPECT_NE(mainFramePid, 0);
         EXPECT_NE(childFramePid, 0);
         EXPECT_NE(mainFramePid, childFramePid);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>setTimeout(() => { alert('navigating to same domain failed') }, 1000)</script>"_s } },
+        { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
+        { "/webkit"_s, { "<script>window.location='https://example.com/example_subframe'</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "navigating to same domain failed"); // FIXME: This should succeed.
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = childFrame._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid); // FIXME: These should be equal.
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, ""); // FIXME: This should be example.com. The dynamicDowncast in WebFrame::info makes no security origin in the info with a RemoteFrame.
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>onload = () => { document.getElementById('webkit_frame').src = 'https://example.com/example_subframe' }</script>"_s } },
+        { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    // FIXME: call enableSiteIsolation to make this actually use site isolation.
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = childFrame._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_EQ(mainFramePid, childFramePid);
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "example.com");
         done = true;
     }];
     Util::run(&done);

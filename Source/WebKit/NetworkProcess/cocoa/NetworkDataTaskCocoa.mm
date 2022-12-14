@@ -291,7 +291,7 @@ void NetworkDataTaskCocoa::unblockCookies()
     }
 }
 
-// FIXME: Temporary fix for <rdar://problem/60089022> until content can be updated.
+// FIXME: Temporary fix for <rdar://60089022> and <rdar://100500464> until content can be updated.
 bool NetworkDataTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const
 {
     using RegistrableDomain = WebCore::RegistrableDomain;
@@ -299,6 +299,7 @@ bool NetworkDataTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk(const URL
         HashMap<RegistrableDomain, RegistrableDomain> map;
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("ymail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.com"_s));
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aolmail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aol.com"_s));
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("googleusercontent.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("google.com"_s));
         return map;
     }();
 

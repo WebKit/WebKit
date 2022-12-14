@@ -16,6 +16,7 @@ function toCamelCase(variable)
 target = document.getElementById("target");
 
 negative_length_properties = [
+    'background-size', // https://w3c.github.io/csswg-drafts/css-backgrounds/#the-background-size
     'border-block-start-width', 'border-block-end-width', 'border-inline-start-width', 'border-inline-end-width', // https://w3c.github.io/csswg-drafts/css-logical/#border-width
     'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-radius
     'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', // https://w3c.github.io/csswg-drafts/css-backgrounds/#the-border-width
@@ -34,6 +35,7 @@ negative_length_properties = [
     'width', // https://w3c.github.io/csswg-drafts/css-sizing-3/#propdef-width
 ];
 negative_percent_properties = [
+    'background-size', // https://w3c.github.io/csswg-drafts/css-backgrounds/#the-background-size
     'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-radius
     'border-image-slice', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-slice
     'border-image-width', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-width
@@ -80,21 +82,15 @@ for (let property of negative_time_properties) {
 
 // Special cases.
 
-// https://w3c.github.io/csswg-drafts/css-backgrounds/#the-background-size
-shouldNotThrow("target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'percent'))");
-shouldBeEqualToString("target.style.backgroundSize", "calc(-32%) auto");
-shouldNotThrow("target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'px'))");
-shouldBeEqualToString("target.style.backgroundSize", "calc(-32px) auto");
-
 // https://w3c.github.io/csswg-drafts/css-fonts/#font-weight-prop
 shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(0, 'number'))");
-shouldBeEqualToString("target.style.fontWeight", "1");
+shouldBeEqualToString("target.style.fontWeight", "calc(0)");
 shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(-32, 'number'))");
-shouldBeEqualToString("target.style.fontWeight", "1");
+shouldBeEqualToString("target.style.fontWeight", "calc(-32)");
 shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(100, 'number'))");
 shouldBeEqualToString("target.style.fontWeight", "100");
 shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(1001, 'number'))");
-shouldBeEqualToString("target.style.fontWeight", "1000");
+shouldBeEqualToString("target.style.fontWeight", "calc(1001)");
 </script>
 </body>
 </html>

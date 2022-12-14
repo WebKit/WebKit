@@ -62,12 +62,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/innerHTML-setter.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-element-list.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-type-radio.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/invalidate-shadow-dom-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/invalidate-sibling-different-slots-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/invalidate-sibling-different-slots-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/invalidate-sibling-different-slots.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/nested-slot-remove-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetTop-offsetLeft-across-shadow-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/shadow-style-invalidation-vw-units-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/shadow-style-invalidation-vw-units-ref.html

@@ -31,6 +31,7 @@
 #include "Length.h"
 #include "StyleColor.h"
 #include "StyleImage.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -42,15 +43,19 @@ public:
         double value;
         CSSUnitType unitType;
 
-        bool operator==(const NumericSyntaxValue& other) const
-        {
-            return value == other.value && unitType == other.unitType;
-        }
-
+        bool operator==(const NumericSyntaxValue& other) const { return value == other.value && unitType == other.unitType; }
     };
-    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, String>;
+    
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String>;
 
-    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue>;
+    struct SyntaxValueList {
+        Vector<SyntaxValue> values;
+        ValueSeparator separator;
+
+        bool operator==(const SyntaxValueList& other) const { return values == other.values && separator == other.separator; }
+    };
+
+    using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue, SyntaxValueList>;
 
     static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
 
@@ -71,30 +76,14 @@ public:
         return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { std::in_place_type<Ref<CSSVariableData>>, WTFMove(value) }));
     }
 
-    static Ref<CSSCustomPropertyValue> createForLengthSyntax(const AtomString& name, Length value)
+    static Ref<CSSCustomPropertyValue> createForSyntaxValue(const AtomString& name, SyntaxValue&& syntaxValue)
     {
-        ASSERT(!value.isUndefined());
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(value) } }));
+        return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTFMove(syntaxValue) }));
     }
 
-    static Ref<CSSCustomPropertyValue> createForNumericSyntax(const AtomString& name, double value, CSSUnitType unitType)
+    static Ref<CSSCustomPropertyValue> createForSyntaxValueList(const AtomString& name, SyntaxValueList&& syntaxValueList)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { NumericSyntaxValue { value, unitType } } }));
-    }
-
-    static Ref<CSSCustomPropertyValue> createForColorSyntax(const AtomString& name, StyleColor color)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(color) } }));
-    }
-
-    static Ref<CSSCustomPropertyValue> createForImageSyntax(const AtomString& name, RefPtr<StyleImage> image)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(image) } }));
-    }
-
-    static Ref<CSSCustomPropertyValue> createForURLSyntax(const AtomString& name, String url)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(name, { SyntaxValue { WTFMove(url) } }));
+        return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTFMove(syntaxValueList) }));
     }
 
     static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)

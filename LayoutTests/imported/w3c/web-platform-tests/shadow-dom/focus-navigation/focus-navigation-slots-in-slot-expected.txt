@@ -1,0 +1,8 @@
+Tests for moving focus by pressing tab key across nodes in slot scope.
+outside
+
+single nested slot  single nested slot  single nested slot  double nested slot  double nested slot  single nested slot double nested slot  Triple nested slot  Triple nested slot  double nested slot  single nested slot
+outside
+
+FAIL Focus should cover assigned nodes of slot, especially for nested slots in slot scope. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

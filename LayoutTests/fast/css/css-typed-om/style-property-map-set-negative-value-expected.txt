@@ -3,6 +3,8 @@ Checks that calling StylePropertyMap.set() with a negative value wraps it into a
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.backgroundSize is "calc(-32px)"
 PASS target.attributeStyleMap.set('border-block-start-width', new CSSUnitValue(-32, 'px')) did not throw exception.
 PASS target.style.borderBlockStartWidth is "calc(-32px)"
 PASS target.attributeStyleMap.set('border-block-end-width', new CSSUnitValue(-32, 'px')) did not throw exception.
@@ -63,6 +65,8 @@ PASS target.attributeStyleMap.set('scroll-padding-block-end', new CSSUnitValue(-
 PASS target.style.scrollPaddingBlockEnd is "calc(-32px)"
 PASS target.attributeStyleMap.set('width', new CSSUnitValue(-32, 'px')) did not throw exception.
 PASS target.style.width is "calc(-32px)"
+PASS target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.backgroundSize is "calc(-32%)"
 PASS target.attributeStyleMap.set('border-top-left-radius', new CSSUnitValue(-32, 'percent')) did not throw exception.
 PASS target.style.borderTopLeftRadius is "calc(-32%)"
 PASS target.attributeStyleMap.set('border-top-right-radius', new CSSUnitValue(-32, 'percent')) did not throw exception.
@@ -115,18 +119,14 @@ PASS target.attributeStyleMap.set('stroke-miterlimit', new CSSUnitValue(-32, 'nu
 PASS target.style.strokeMiterlimit is "calc(-32)"
 PASS target.attributeStyleMap.set('animation-duration', new CSSUnitValue(-32, 's')) did not throw exception.
 PASS target.style.animationDuration is "calc(-32s)"
-PASS target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'percent')) did not throw exception.
-PASS target.style.backgroundSize is "calc(-32%) auto"
-PASS target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'px')) did not throw exception.
-PASS target.style.backgroundSize is "calc(-32px) auto"
 PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(0, 'number')) did not throw exception.
-PASS target.style.fontWeight is "1"
+PASS target.style.fontWeight is "calc(0)"
 PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(-32, 'number')) did not throw exception.
-PASS target.style.fontWeight is "1"
+PASS target.style.fontWeight is "calc(-32)"
 PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(100, 'number')) did not throw exception.
 PASS target.style.fontWeight is "100"
 PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(1001, 'number')) did not throw exception.
-PASS target.style.fontWeight is "1000"
+PASS target.style.fontWeight is "calc(1001)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

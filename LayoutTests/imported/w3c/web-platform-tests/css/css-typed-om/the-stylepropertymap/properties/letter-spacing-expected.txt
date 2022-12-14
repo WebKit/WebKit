@@ -3,7 +3,7 @@ PASS Can set 'letter-spacing' to CSS-wide keywords: initial
 PASS Can set 'letter-spacing' to CSS-wide keywords: inherit
 PASS Can set 'letter-spacing' to CSS-wide keywords: unset
 PASS Can set 'letter-spacing' to CSS-wide keywords: revert
-FAIL Can set 'letter-spacing' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'letter-spacing' to var() references:  var(--A)
 PASS Can set 'letter-spacing' to the 'normal' keyword: normal
 FAIL Can set 'letter-spacing' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSKeywordValue"
 PASS Can set 'letter-spacing' to a length: -3.14em

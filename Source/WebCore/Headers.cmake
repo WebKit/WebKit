@@ -1250,6 +1250,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ReducedResolutionSeconds.h
     page/RemoteDOMWindow.h
     page/RemoteFrame.h
+    page/RemoteFrameClient.h
     page/RenderingUpdateScheduler.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h

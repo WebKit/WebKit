@@ -353,16 +353,18 @@ public:
     auto addSIMDRelOp(SIMDLaneOperation, SIMDInfo info, ExpressionType lhs, ExpressionType rhs, Arg relOp, ExpressionType& result) -> PartialResult
     {
         AIR_OP_CASES()
-        else if (scalarTypeIsFloatingPoint(info.lane)) airOp = B3::Air::CompareFloatingPointVector;
-        else if (scalarTypeIsIntegral(info.lane)) airOp = B3::Air::CompareIntegerVector;
+        else if (scalarTypeIsFloatingPoint(info.lane))
+            airOp = B3::Air::CompareFloatingPointVector;
+        else if (scalarTypeIsIntegral(info.lane))
+            airOp = B3::Air::CompareIntegerVector;
         result = tmpForType(Types::V128);
         if (isValidForm(airOp, Arg::DoubleCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
             return { };
         }
 
-        if (isValidForm(airOp, Arg::RelCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-            if (isX86()) {
+        if constexpr (isX86()) {
+            if (isValidForm(airOp, Arg::RelCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 // On Intel, the best codegen for a bitwise-complement of an integer vector is to
                 // XOR with a vector of all ones. This is necessary here since Intel also doesn't
                 // directly implement most relational conditions between vectors: the cases below
@@ -370,48 +372,52 @@ public:
                 v128_t allOnes;
                 allOnes.u64x2[0] = 0xffffffffffffffff;
                 allOnes.u64x2[1] = 0xffffffffffffffff;
+                auto scratch = tmpForType(Types::V128);
 
                 switch (relOp.asRelationalCondition()) {
                 case MacroAssembler::NotEqual:
-                    append(airOp, Arg::relCond(MacroAssembler::Equal), Arg::simdInfo(info), lhs, rhs, result);
-                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    append(airOp, Arg::relCond(MacroAssembler::Equal), Arg::simdInfo(info), lhs, rhs, result, scratch);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     break;
                 case MacroAssembler::Above:
-                    append(airOp, Arg::relCond(MacroAssembler::BelowOrEqual), Arg::simdInfo(info), lhs, rhs, result);
-                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    append(airOp, Arg::relCond(MacroAssembler::BelowOrEqual), Arg::simdInfo(info), lhs, rhs, result, scratch);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     break;
                 case MacroAssembler::Below:
-                    append(airOp, Arg::relCond(MacroAssembler::AboveOrEqual), Arg::simdInfo(info), lhs, rhs, result);
-                    append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                    append(airOp, Arg::relCond(MacroAssembler::AboveOrEqual), Arg::simdInfo(info), lhs, rhs, result, scratch);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     break;
                 case MacroAssembler::GreaterThanOrEqual:
                     if (info.lane == SIMDLane::i64x2) {
-                        append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), rhs, lhs, result);
-                        append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                        append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), rhs, lhs, result, scratch);
+                        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     } else
-                        append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+                        append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result, scratch);
                     break;
                 case MacroAssembler::LessThanOrEqual:
                     if (info.lane == SIMDLane::i64x2) {
-                        append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), lhs, rhs, result);
-                        append(VectorXor, Arg::simdInfo(info), result, addConstant(allOnes), result);
+                        append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), lhs, rhs, result, scratch);
+                        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     } else
-                        append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+                        append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result, scratch);
                     break;
                 default:
-                    append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+                    append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result, scratch);
                 }
-            } else
-                append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
+            }
+        }
+
+        if (isValidForm(airOp, Arg::RelCond, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result);
             return { };
         }
         RELEASE_ASSERT_NOT_REACHED();
         return { };
     }
 
-    void addSIMDSwizzle(ExpressionType& a, ExpressionType& b, ExpressionType& result)
+    auto addSIMDSwizzleHelperX86(ExpressionType& a, ExpressionType& b, ExpressionType& result) -> PartialResult
     {
-        ASSERT(result.type() == Types::V128);
+        ASSERT(isX86() && result.type() == Types::V128);
         // Let each byte mask be 112 (0x70) then after VectorAddSat
         // each index > 15 would set the saturated index's bit 7 to 1, 
         // whose corresponding byte will be zero cleared in VectorSwizzle.
@@ -420,8 +426,9 @@ public:
         mask.u64x2[0] = 0x7070707070707070;
         mask.u64x2[1] = 0x7070707070707070;
         auto saturatedIndexes = addConstant(mask);
-        append(VectorAddSat, Arg::simdInfo(SIMDInfo { SIMDLane::i16x8, SIMDSignMode::Unsigned }), saturatedIndexes, b, saturatedIndexes);
+        append(VectorAddSat, Arg::simdInfo(SIMDInfo { SIMDLane::i8x16, SIMDSignMode::Unsigned }), saturatedIndexes, b, saturatedIndexes);
         append(B3::Air::VectorSwizzle, a, saturatedIndexes, result);
+        return { };
     }
 
     auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
@@ -454,7 +461,7 @@ public:
         }
 
         if (isX86() && airOp == B3::Air::VectorSwizzle) {
-            addSIMDSwizzle(a, b, result);
+            addSIMDSwizzleHelperX86(a, b, result);
             return { };
         }
 
@@ -773,7 +780,10 @@ auto AirIRGenerator64::addConstant(v128_t value) -> ExpressionType
         return result;
     }
     if (value.u64x2[0] == 0xffffffffffffffff && value.u64x2[1] == 0xffffffffffffffff) {
-        append(CompareIntegerVector, Arg::relCond(MacroAssembler::RelationalCondition::Equal), Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), result, result, result);
+        if constexpr (isX86())
+            append(CompareIntegerVector, Arg::relCond(MacroAssembler::RelationalCondition::Equal), Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), result, result, result, tmpForType(Types::V128));
+        else
+            append(CompareIntegerVector, Arg::relCond(MacroAssembler::RelationalCondition::Equal), Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), result, result, result);
         return result;
     }
 
@@ -1569,7 +1579,7 @@ auto AirIRGenerator64::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionTy
         // Store each byte (w/ index < 16) of `a` to result
         // and zero clear each byte (w/ index > 15) in result.
         auto indexes = addConstant(imm);
-        addSIMDSwizzle(a, indexes, result);
+        addSIMDSwizzleHelperX86(a, indexes, result);
 
         // Store each byte (w/ index - 16 >= 0) of `b` to result2
         // and zero clear each byte (w/ index - 16 < 0) in result2.
@@ -1577,11 +1587,11 @@ auto AirIRGenerator64::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionTy
         v128_t mask;
         mask.u64x2[0] = 0x1010101010101010;
         mask.u64x2[1] = 0x1010101010101010;
-        append(VectorSub, Arg::simdInfo(SIMDInfo { SIMDLane::i16x8, SIMDSignMode::None }), addConstant(mask), indexes, indexes); // indexes = indexes VectorSub mask
+        append(VectorSub, Arg::simdInfo(SIMDInfo { SIMDLane::i8x16, SIMDSignMode::None }), indexes, addConstant(mask), indexes);
         append(B3::Air::VectorSwizzle, b, indexes, result2);
 
         // Since each index in [0, 31], we can return result2 VectorOr result.
-        append(VectorOr, result, result2, result);
+        append(VectorOr, Arg::simdInfo(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }), result, result2, result);
         return { };
     }
 
@@ -1619,7 +1629,10 @@ auto AirIRGenerator64::addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType poi
 
     auto offset = fixupPointerPlusOffset(pointer, uoffset);
     Arg addrArg = materializeSimpleAddrArg(emitCheckAndPreparePointer(pointer, offset, bytesForWidth(width)), offset);
-    appendEffectful(opcode, addrArg, result);
+    if (isX86() && op == SIMDLaneOperation::LoadSplat8)
+        appendEffectful(opcode, addrArg, result, tmpForType(Types::V128));
+    else
+        appendEffectful(opcode, addrArg, result);
 
     return { };
 }

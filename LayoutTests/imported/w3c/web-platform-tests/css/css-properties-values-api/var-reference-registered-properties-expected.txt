@@ -1,11 +1,11 @@
 
 FAIL var() references work with registered properties assert_equals: expected " 20px" but got "20px"
-FAIL References to registered var()-properties work in registered lists assert_equals: expected "1px, 10px, 2px" but got "0px"
-FAIL References to mixed registered and unregistered var()-properties work in registered lists assert_equals: expected "1px, 20px, 10px, 2px" but got "0px"
-FAIL Registered lists may be concatenated assert_equals: expected "1px, 10px, 2px, 1px, 20px, 10px, 2px" but got "0px"
+PASS References to registered var()-properties work in registered lists
+PASS References to mixed registered and unregistered var()-properties work in registered lists
+PASS Registered lists may be concatenated
 PASS Font-relative units are absolutized when substituting
 PASS Calc expressions are resolved when substituting
-FAIL Lists with relative units are absolutized when substituting assert_equals: expected "110px, 120px" but got "0px"
+PASS Lists with relative units are absolutized when substituting
 FAIL Values are absolutized when substituting into properties with universal syntax assert_equals: expected " 100px" but got "100px"
 PASS Valid fallback does not invalidate var()-reference [<length>, 10px]
 PASS Valid fallback does not invalidate var()-reference [<length> | <color>, red]

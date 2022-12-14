@@ -3,7 +3,7 @@ PASS Can set 'font-stretch' to CSS-wide keywords: initial
 PASS Can set 'font-stretch' to CSS-wide keywords: inherit
 PASS Can set 'font-stretch' to CSS-wide keywords: unset
 PASS Can set 'font-stretch' to CSS-wide keywords: revert
-FAIL Can set 'font-stretch' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'font-stretch' to var() references:  var(--A)
 FAIL Can set 'font-stretch' to the 'normal' keyword: normal assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'font-stretch' to the 'ultra-condensed' keyword: ultra-condensed assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 FAIL Can set 'font-stretch' to the 'extra-condensed' keyword: extra-condensed assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
@@ -16,7 +16,7 @@ FAIL Can set 'font-stretch' to the 'ultra-expanded' keyword: ultra-expanded asse
 PASS Can set 'font-stretch' to a percent: 0%
 FAIL Can set 'font-stretch' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 FAIL Can set 'font-stretch' to a percent: 3.14% assert_approx_equals: expected 3.14 +/- 0.000001 but got 3
-FAIL Can set 'font-stretch' to a percent: calc(0% + 0%) assert_equals: expected 2 but got 1
+PASS Can set 'font-stretch' to a percent: calc(0% + 0%)
 PASS Setting 'font-stretch' to a length throws TypeError
 PASS Setting 'font-stretch' to a time throws TypeError
 PASS Setting 'font-stretch' to an angle throws TypeError

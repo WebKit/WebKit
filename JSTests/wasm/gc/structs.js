@@ -183,6 +183,17 @@ function testStructNew() {
     instance.exports.main();
   }
 
+  instantiate(`
+    (module
+      (type $Empty (struct))
+      (func (export "main")
+        (drop
+          (struct.new_canon $Empty)
+        )
+      )
+    )
+  `).exports.main();
+
   {
     /*
      * (module
@@ -249,6 +260,16 @@ function testStructNew() {
       "WebAssembly.Module doesn't validate: struct.new index 2 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
     );
   }
+
+  instantiate(`
+    (module
+      (type $Point (struct (field $x i32) (field $y i32)))
+      (func (export "main")
+        unreachable
+        struct.new_canon $Point (i32.const 19) (i32.const 37)
+      )
+    )
+  `);
 }
 
 function testStructGet() {
@@ -267,6 +288,20 @@ function testStructGet() {
     */
     let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x09\x02\x5f\x01\x7f\x00\x60\x00\x01\x7f\x03\x02\x01\x01\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x00\x0a\x0d\x01\x0b\x00\x41\x25\xfb\x07\x00\xfb\x03\x00\x00\x0b"));
     assert.eq(instance.exports.main(), 37);
+  }
+
+  {
+    let main = instantiate(`
+      (module
+        (type $Point (struct (field $x i32)))
+         (func (export "main") (result i32)
+           (struct.get $Point $x
+             (struct.new_canon $Point (i32.const 37))
+           )
+         )
+      )
+    `).exports.main;
+    assert.eq(main(), 37);
   }
 
   {
@@ -489,6 +524,30 @@ function testStructSet() {
     */
     let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0f\x03\x5f\x01\x7f\x01\x60\x01\x6b\x00\x01\x7f\x60\x00\x01\x7f\x03\x03\x02\x01\x02\x07\x08\x01\x04\x6d\x61\x69\x6e\x00\x01\x0a\x1c\x02\x10\x00\x20\x00\x41\x25\xfb\x06\x00\x00\x20\x00\xfb\x03\x00\x00\x0b\x09\x00\x41\x00\xfb\x07\x00\x10\x00\x0b"));
     assert.eq(instance.exports.main(), 37);
+  }
+
+  {
+    let main = instantiate(`
+      (module
+        (type $Point (struct (field $x (mut i32))))
+        (func $doTest (param $p (ref $Point)) (result i32)
+          (struct.set $Point $x
+            (local.get $p)
+            (i32.const 37)
+          )
+          (struct.get $Point $x
+            (local.get $p)
+          )
+        )
+
+        (func (export "main") (result i32)
+          (call $doTest
+            (struct.new_canon $Point (i32.const 0))
+          )
+        )
+      )
+    `).exports.main;
+    assert.eq(main(), 37);
   }
 
   {

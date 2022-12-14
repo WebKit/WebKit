@@ -477,15 +477,22 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
     Length lengthOrPercentageValue;
     TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
     TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
-    for (auto& item : downcast<CSSValueList>(value)) {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
-        if (!primitiveValue.valueID())
-            lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
-        else if (primitiveValue.valueID() == CSSValueEachLine)
-            textIndentLineValue = TextIndentLine::EachLine;
-        else if (primitiveValue.valueID() == CSSValueHanging)
-            textIndentTypeValue = TextIndentType::Hanging;
-    }
+
+    if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
+        for (auto& item : *valueList) {
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+            if (!primitiveValue.valueID())
+                lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+            else if (primitiveValue.valueID() == CSSValueEachLine)
+                textIndentLineValue = TextIndentLine::EachLine;
+            else if (primitiveValue.valueID() == CSSValueHanging)
+                textIndentTypeValue = TextIndentType::Hanging;
+        }
+    } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSValueList.
+        lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+    } else
+        return;
 
     if (lengthOrPercentageValue.isUndefined())
         return;
@@ -1751,18 +1758,28 @@ inline void BuilderCustom::applyInitialFontVariantAlternates(BuilderState& build
 
 inline void BuilderCustom::applyValueFontVariantAlternates(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID()));
-        // Apply "normal" value (which is the same as initial).
-        applyInitialFontVariantAlternates(builderState);
+    auto setAlternates = [&builderState](FontVariantAlternates alternates) {
+        auto fontDescription = builderState.fontDescription();
+        fontDescription.setVariantAlternates(WTFMove(alternates));
+        builderState.setFontDescription(WTFMove(fontDescription));
+    };
+
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue->valueID())) {
+            setAlternates(FontVariantAlternates::Normal());
+            return;
+        }
+        if (primitiveValue->valueID() == CSSValueHistoricalForms) {
+            auto alternates = FontVariantAlternates::Normal();
+            alternates.valuesRef().historicalForms = true;
+            setAlternates(WTFMove(alternates));
+            return;
+        }
         return;
     }
 
-    if (value.isFontVariantAlternatesValue()) {
-        auto alternates = downcast<CSSFontVariantAlternatesValue>(value).value();
-        auto fontDescription = builderState.fontDescription();
-        fontDescription.setVariantAlternates(alternates);
-        builderState.setFontDescription(WTFMove(fontDescription));
+    if (auto* alternatesValues = dynamicDowncast<CSSFontVariantAlternatesValue>(value)) {
+        setAlternates(alternatesValues->value());
         return;
     }
 

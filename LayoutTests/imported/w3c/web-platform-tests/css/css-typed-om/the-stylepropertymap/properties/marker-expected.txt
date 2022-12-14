@@ -5,7 +5,7 @@ PASS Can set 'marker-start' to CSS-wide keywords: initial
 PASS Can set 'marker-start' to CSS-wide keywords: inherit
 PASS Can set 'marker-start' to CSS-wide keywords: unset
 PASS Can set 'marker-start' to CSS-wide keywords: revert
-FAIL Can set 'marker-start' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'marker-start' to var() references:  var(--A)
 PASS Can set 'marker-start' to the 'none' keyword: none
 PASS Setting 'marker-start' to a length throws TypeError
 PASS Setting 'marker-start' to a percent throws TypeError
@@ -18,7 +18,7 @@ PASS Can set 'marker-mid' to CSS-wide keywords: initial
 PASS Can set 'marker-mid' to CSS-wide keywords: inherit
 PASS Can set 'marker-mid' to CSS-wide keywords: unset
 PASS Can set 'marker-mid' to CSS-wide keywords: revert
-FAIL Can set 'marker-mid' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'marker-mid' to var() references:  var(--A)
 PASS Can set 'marker-mid' to the 'none' keyword: none
 PASS Setting 'marker-mid' to a length throws TypeError
 PASS Setting 'marker-mid' to a percent throws TypeError
@@ -31,7 +31,7 @@ PASS Can set 'marker-end' to CSS-wide keywords: initial
 PASS Can set 'marker-end' to CSS-wide keywords: inherit
 PASS Can set 'marker-end' to CSS-wide keywords: unset
 PASS Can set 'marker-end' to CSS-wide keywords: revert
-FAIL Can set 'marker-end' to var() references:  var(--A) assert_equals: expected 2 but got 1
+PASS Can set 'marker-end' to var() references:  var(--A)
 PASS Can set 'marker-end' to the 'none' keyword: none
 PASS Setting 'marker-end' to a length throws TypeError
 PASS Setting 'marker-end' to a percent throws TypeError

@@ -160,7 +160,7 @@ testing t: force
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,)
+	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,CLANG_STATIC_ANALYZER_MODE=deep)
 
 clean:
 ifndef XCODE_TARGET
