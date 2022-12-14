@@ -1975,7 +1975,7 @@ TEST(ProcessSwap, CrossSiteDownload)
 static const char* systemPreviewSameOriginTestBytes = R"PSONRESOURCE(
 <body>
     <a id="testLink" rel="ar" href="pson://www.webkit.org/whatever">
-        <img src="http://www.webkit.org/image">
+        <img src="pson://www.webkit.org/image">
     </a>
 </body>
 )PSONRESOURCE";
@@ -1983,7 +1983,7 @@ static const char* systemPreviewSameOriginTestBytes = R"PSONRESOURCE(
 static const char* systemPreviewCrossOriginTestBytes = R"PSONRESOURCE(
 <body>
     <a id="testLink" rel="ar" href="pson://www.apple.com/whatever">
-        <img src="http://www.webkit.org/image">
+        <img src="pson://www.webkit.org/image">
     </a>
 </body>
 )PSONRESOURCE";
@@ -1998,6 +1998,7 @@ TEST(ProcessSwap, SameOriginSystemPreview)
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:systemPreviewSameOriginTestBytes];
     [handler addMappingFromURLString:@"pson://www.webkit.org/whatever" toData:"Fake USDZ data"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/image" toData:"Fake image data"];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
 
     [webViewConfiguration _setSystemPreviewEnabled:YES];
@@ -2034,6 +2035,7 @@ TEST(ProcessSwap, CrossOriginSystemPreview)
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:systemPreviewCrossOriginTestBytes];
     [handler addMappingFromURLString:@"pson://www.apple.com/whatever" toData:"Fake USDZ data"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/image" toData:"Fake image data"];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
 
     [webViewConfiguration _setSystemPreviewEnabled:YES];
