@@ -159,9 +159,9 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->manifestVersion();
 }
 
-- (BOOL)usesManifestVersion:(double)version
+- (BOOL)supportsManifestVersion:(double)version
 {
-    return _webExtension->usesManifestVersion(version);
+    return _webExtension->supportsManifestVersion(version);
 }
 
 - (NSLocale *)defaultLocale
@@ -321,7 +321,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return 0;
 }
 
-- (BOOL)usesManifestVersion:(double)version
+- (BOOL)supportsManifestVersion:(double)version
 {
     return NO;
 }

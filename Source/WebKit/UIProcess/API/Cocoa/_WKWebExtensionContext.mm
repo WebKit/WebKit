@@ -60,14 +60,14 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-+ (instancetype)contextWithExtension:(_WKWebExtension *)extension
++ (instancetype)contextForExtension:(_WKWebExtension *)extension
 {
     NSParameterAssert(extension);
 
-    return [[self alloc] initWithExtension:extension];
+    return [[self alloc] initForExtension:extension];
 }
 
-- (instancetype)initWithExtension:(_WKWebExtension *)extension
+- (instancetype)initForExtension:(_WKWebExtension *)extension
 {
     NSParameterAssert(extension);
 
@@ -304,134 +304,134 @@ static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebKit::WebExten
     return _webExtensionContext->hasPermission(url, tab);
 }
 
-static inline _WKWebExtensionContextPermissionState toAPI(WebKit::WebExtensionContext::PermissionState state)
+static inline _WKWebExtensionContextPermissionStatus toAPI(WebKit::WebExtensionContext::PermissionState status)
 {
-    switch (state) {
+    switch (status) {
     case WebKit::WebExtensionContext::PermissionState::DeniedExplicitly:
-        return _WKWebExtensionContextPermissionStateDeniedExplicitly;
+        return _WKWebExtensionContextPermissionStatusDeniedExplicitly;
     case WebKit::WebExtensionContext::PermissionState::DeniedImplicitly:
-        return _WKWebExtensionContextPermissionStateDeniedImplicitly;
+        return _WKWebExtensionContextPermissionStatusDeniedImplicitly;
     case WebKit::WebExtensionContext::PermissionState::RequestedImplicitly:
-        return _WKWebExtensionContextPermissionStateRequestedImplicitly;
+        return _WKWebExtensionContextPermissionStatusRequestedImplicitly;
     case WebKit::WebExtensionContext::PermissionState::Unknown:
-        return _WKWebExtensionContextPermissionStateUnknown;
+        return _WKWebExtensionContextPermissionStatusUnknown;
     case WebKit::WebExtensionContext::PermissionState::RequestedExplicitly:
-        return _WKWebExtensionContextPermissionStateRequestedExplicitly;
+        return _WKWebExtensionContextPermissionStatusRequestedExplicitly;
     case WebKit::WebExtensionContext::PermissionState::GrantedImplicitly:
-        return _WKWebExtensionContextPermissionStateGrantedImplicitly;
+        return _WKWebExtensionContextPermissionStatusGrantedImplicitly;
     case WebKit::WebExtensionContext::PermissionState::GrantedExplicitly:
-        return _WKWebExtensionContextPermissionStateGrantedExplicitly;
+        return _WKWebExtensionContextPermissionStatusGrantedExplicitly;
     }
 }
 
-static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensionContextPermissionState state)
+static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensionContextPermissionStatus status)
 {
-    switch (state) {
-    case _WKWebExtensionContextPermissionStateDeniedExplicitly:
+    switch (status) {
+    case _WKWebExtensionContextPermissionStatusDeniedExplicitly:
         return WebKit::WebExtensionContext::PermissionState::DeniedExplicitly;
-    case _WKWebExtensionContextPermissionStateDeniedImplicitly:
+    case _WKWebExtensionContextPermissionStatusDeniedImplicitly:
         return WebKit::WebExtensionContext::PermissionState::DeniedImplicitly;
-    case _WKWebExtensionContextPermissionStateRequestedImplicitly:
+    case _WKWebExtensionContextPermissionStatusRequestedImplicitly:
         return WebKit::WebExtensionContext::PermissionState::RequestedImplicitly;
-    case _WKWebExtensionContextPermissionStateUnknown:
+    case _WKWebExtensionContextPermissionStatusUnknown:
         return WebKit::WebExtensionContext::PermissionState::Unknown;
-    case _WKWebExtensionContextPermissionStateRequestedExplicitly:
+    case _WKWebExtensionContextPermissionStatusRequestedExplicitly:
         return WebKit::WebExtensionContext::PermissionState::RequestedExplicitly;
-    case _WKWebExtensionContextPermissionStateGrantedImplicitly:
+    case _WKWebExtensionContextPermissionStatusGrantedImplicitly:
         return WebKit::WebExtensionContext::PermissionState::GrantedImplicitly;
-    case _WKWebExtensionContextPermissionStateGrantedExplicitly:
+    case _WKWebExtensionContextPermissionStatusGrantedExplicitly:
         return WebKit::WebExtensionContext::PermissionState::GrantedExplicitly;
     }
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForPermission:(_WKWebExtensionPermission)permission
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission
 {
     NSParameterAssert(permission);
 
-    return [self permissionStateForPermission:permission inTab:nil];
+    return [self permissionStatusForPermission:permission inTab:nil];
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForPermission:(_WKWebExtensionPermission)permission inTab:(id<_WKWebExtensionTab>)tab
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission inTab:(id<_WKWebExtensionTab>)tab
 {
     NSParameterAssert(permission);
 
     return toAPI(_webExtensionContext->permissionState(permission, tab));
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forPermission:(_WKWebExtensionPermission)permission
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forPermission:(_WKWebExtensionPermission)permission
 {
-    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
+    NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert(permission);
 
-    [self setPermissionState:state forPermission:permission expirationDate:nil];
+    [self setPermissionStatus:status forPermission:permission expirationDate:nil];
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forPermission:(_WKWebExtensionPermission)permission expirationDate:(NSDate *)expirationDate
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forPermission:(_WKWebExtensionPermission)permission expirationDate:(NSDate *)expirationDate
 {
-    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
+    NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert(permission);
 
-    _webExtensionContext->setPermissionState(toImpl(state), permission, toImpl(expirationDate));
+    _webExtensionContext->setPermissionState(toImpl(status), permission, toImpl(expirationDate));
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForURL:(NSURL *)url
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url
 {
     NSParameterAssert(url);
 
-    return [self permissionStateForURL:url inTab:nil];
+    return [self permissionStatusForURL:url inTab:nil];
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForURL:(NSURL *)url inTab:(id<_WKWebExtensionTab>)tab
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url inTab:(id<_WKWebExtensionTab>)tab
 {
     NSParameterAssert(url);
 
     return toAPI(_webExtensionContext->permissionState(url, tab));
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forURL:(NSURL *)url
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url
 {
-    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
+    NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert(url);
 
-    [self setPermissionState:state forURL:url expirationDate:nil];
+    [self setPermissionStatus:status forURL:url expirationDate:nil];
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forURL:(NSURL *)url expirationDate:(NSDate *)expirationDate
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url expirationDate:(NSDate *)expirationDate
 {
-    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
+    NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert(url);
 
-    _webExtensionContext->setPermissionState(toImpl(state), url, toImpl(expirationDate));
+    _webExtensionContext->setPermissionState(toImpl(status), url, toImpl(expirationDate));
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForMatchPattern:(_WKWebExtensionMatchPattern *)pattern
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(_WKWebExtensionMatchPattern *)pattern
 {
     NSParameterAssert(pattern);
 
-    return [self permissionStateForMatchPattern:pattern inTab:nil];
+    return [self permissionStatusForMatchPattern:pattern inTab:nil];
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForMatchPattern:(_WKWebExtensionMatchPattern *)pattern inTab:(id<_WKWebExtensionTab>)tab
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(_WKWebExtensionMatchPattern *)pattern inTab:(id<_WKWebExtensionTab>)tab
 {
     NSParameterAssert(pattern);
 
     return toAPI(_webExtensionContext->permissionState(pattern._webExtensionMatchPattern, tab));
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forMatchPattern:(_WKWebExtensionMatchPattern *)pattern
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern
 {
-    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
+    NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert(pattern);
 
-    [self setPermissionState:state forMatchPattern:pattern expirationDate:nil];
+    [self setPermissionStatus:status forMatchPattern:pattern expirationDate:nil];
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(NSDate *)expirationDate
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(NSDate *)expirationDate
 {
-    NSParameterAssert(state == _WKWebExtensionContextPermissionStateDeniedExplicitly || state == _WKWebExtensionContextPermissionStateUnknown || state == _WKWebExtensionContextPermissionStateGrantedExplicitly);
+    NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert(pattern);
 
-    _webExtensionContext->setPermissionState(toImpl(state), pattern._webExtensionMatchPattern, toImpl(expirationDate));
+    _webExtensionContext->setPermissionState(toImpl(status), pattern._webExtensionMatchPattern, toImpl(expirationDate));
 }
 
 - (BOOL)hasAccessToAllURLs
@@ -480,12 +480,12 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
-+ (instancetype)contextWithExtension:(_WKWebExtension *)extension
++ (instancetype)contextForExtension:(_WKWebExtension *)extension
 {
     return nil;
 }
 
-- (instancetype)initWithExtension:(_WKWebExtension *)extension
+- (instancetype)initForExtension:(_WKWebExtension *)extension
 {
     return nil;
 }
@@ -607,57 +607,57 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return NO;
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForPermission:(_WKWebExtensionPermission)permission
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission
 {
-    return _WKWebExtensionContextPermissionStateUnknown;
+    return _WKWebExtensionContextPermissionStatusUnknown;
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForPermission:(_WKWebExtensionPermission)permission inTab:(id<_WKWebExtensionTab>)tab
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission inTab:(id<_WKWebExtensionTab>)tab
 {
-    return _WKWebExtensionContextPermissionStateUnknown;
+    return _WKWebExtensionContextPermissionStatusUnknown;
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forPermission:(_WKWebExtensionPermission)permission
-{
-}
-
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forPermission:(_WKWebExtensionPermission)permission expirationDate:(NSDate *)expirationDate
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forPermission:(_WKWebExtensionPermission)permission
 {
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForURL:(NSURL *)url
-{
-    return _WKWebExtensionContextPermissionStateUnknown;
-}
-
-- (_WKWebExtensionContextPermissionState)permissionStateForURL:(NSURL *)url inTab:(id<_WKWebExtensionTab>)tab
-{
-    return _WKWebExtensionContextPermissionStateUnknown;
-}
-
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forURL:(NSURL *)url
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forPermission:(_WKWebExtensionPermission)permission expirationDate:(NSDate *)expirationDate
 {
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forURL:(NSURL *)url expirationDate:(NSDate *)expirationDate
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url
+{
+    return _WKWebExtensionContextPermissionStatusUnknown;
+}
+
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url inTab:(id<_WKWebExtensionTab>)tab
+{
+    return _WKWebExtensionContextPermissionStatusUnknown;
+}
+
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url
 {
 }
 
-- (_WKWebExtensionContextPermissionState)permissionStateForMatchPattern:(_WKWebExtensionMatchPattern *)pattern
-{
-    return _WKWebExtensionContextPermissionStateUnknown;
-}
-
-- (_WKWebExtensionContextPermissionState)permissionStateForMatchPattern:(_WKWebExtensionMatchPattern *)pattern inTab:(id<_WKWebExtensionTab>)tab
-{
-    return _WKWebExtensionContextPermissionStateUnknown;
-}
-
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forMatchPattern:(_WKWebExtensionMatchPattern *)pattern
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url expirationDate:(NSDate *)expirationDate
 {
 }
 
-- (void)setPermissionState:(_WKWebExtensionContextPermissionState)state forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(NSDate *)expirationDate
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(_WKWebExtensionMatchPattern *)pattern
+{
+    return _WKWebExtensionContextPermissionStatusUnknown;
+}
+
+- (_WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(_WKWebExtensionMatchPattern *)pattern inTab:(id<_WKWebExtensionTab>)tab
+{
+    return _WKWebExtensionContextPermissionStatusUnknown;
+}
+
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern
+{
+}
+
+- (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(NSDate *)expirationDate
 {
 }
 

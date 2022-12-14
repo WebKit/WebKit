@@ -141,7 +141,7 @@ public:
     NSDictionary *manifest();
 
     double manifestVersion();
-    bool usesManifestVersion(double version) { return manifestVersion() >= version; }
+    bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
 
 #if PLATFORM(MAC)
     SecStaticCodeRef bundleStaticCode();

@@ -142,8 +142,8 @@ static _WKWebExtensionContextError toAPI(WebExtensionContext::Error error)
         return _WKWebExtensionContextErrorAlreadyLoaded;
     case WebExtensionContext::Error::NotLoaded:
         return _WKWebExtensionContextErrorNotLoaded;
-    case WebExtensionContext::Error::BaseURLTaken:
-        return _WKWebExtensionContextErrorBaseURLTaken;
+    case WebExtensionContext::Error::BaseURLAlreadyInUse:
+        return _WKWebExtensionContextErrorBaseURLAlreadyInUse;
     }
 }
 
@@ -165,8 +165,8 @@ NSError *WebExtensionContext::createError(Error error, NSString *customLocalized
         localizedDescription = WEB_UI_STRING("Extension context is not loaded.", "WKWebExtensionContextErrorNotLoaded description");
         break;
 
-    case Error::BaseURLTaken:
-        localizedDescription = WEB_UI_STRING("Another extension context is loaded with the same base URL.", "WKWebExtensionContextErrorBaseURLTaken description");
+    case Error::BaseURLAlreadyInUse:
+        localizedDescription = WEB_UI_STRING("Another extension context is loaded with the same base URL.", "WKWebExtensionContextErrorBaseURLAlreadyInUse description");
         break;
     }
 

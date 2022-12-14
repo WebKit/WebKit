@@ -29,11 +29,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class _WKWebExtensionController;
+
 /*!
  @abstract A `WKWebExtensionControllerConfiguration` object with which to initialize a web extension controller.
  @discussion Contains properties used to configure a @link WKWebExtensionController @/link.
 */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+NS_SWIFT_NAME(_WKWebExtensionController.Configuration)
 @interface _WKWebExtensionControllerConfiguration : NSObject <NSSecureCoding, NSCopying>
 
 - (instancetype)init NS_UNAVAILABLE;

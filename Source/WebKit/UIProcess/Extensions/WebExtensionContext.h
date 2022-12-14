@@ -103,7 +103,7 @@ public:
         Unknown = 1,
         AlreadyLoaded,
         NotLoaded,
-        BaseURLTaken,
+        BaseURLAlreadyInUse,
     };
 
     enum class PermissionState : int8_t {

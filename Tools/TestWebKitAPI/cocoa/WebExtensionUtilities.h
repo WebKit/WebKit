@@ -38,7 +38,7 @@
 
 @interface TestWebExtensionManager : NSObject
 
-- (instancetype)initWithExtension:(_WKWebExtension *)extension;
+- (instancetype)initForExtension:(_WKWebExtension *)extension;
 
 @property (nonatomic, strong) _WKWebExtension *extension;
 @property (nonatomic, strong) _WKWebExtensionContext *context;

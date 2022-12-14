@@ -56,7 +56,7 @@ public:
     NSDictionary *manifest() { return m_manifest.get(); }
 
     double manifestVersion() { return m_manifestVersion; }
-    bool usesManifestVersion(double version) { return manifestVersion() >= version; }
+    bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
 
     bool inTestingMode() { return m_testingMode; }
 

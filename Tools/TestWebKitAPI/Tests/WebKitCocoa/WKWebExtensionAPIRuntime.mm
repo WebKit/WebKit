@@ -72,7 +72,7 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initWithExtension:extension.get()]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
@@ -92,7 +92,7 @@ TEST(WKWebExtensionAPIRuntime, Id)
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initWithExtension:extension.get()]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set an uniqueIdentifier so it is a known value and not the default random one.
     manager.get().context.uniqueIdentifier = uniqueIdentifier;
