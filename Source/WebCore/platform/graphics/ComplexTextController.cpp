@@ -388,7 +388,7 @@ void ComplexTextController::collectComplexTextRuns()
             if (auto capitalizedBase = capitalized(baseCharacter)) {
                 unsigned characterIndex = previousIndex;
                 U16_APPEND_UNSAFE(m_smallCapsBuffer, characterIndex, capitalizedBase.value());
-                for (unsigned i = characterIndex; i < characterIndex + markCount; ++i)
+                for (unsigned i = characterIndex; i < currentIndex; ++i)
                     m_smallCapsBuffer[i] = baseOfString[i];
                 nextIsSmallCaps = true;
             } else {
