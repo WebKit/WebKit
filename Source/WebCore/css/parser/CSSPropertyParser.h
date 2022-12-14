@@ -22,10 +22,10 @@
 
 #pragma once
 
+#include "CSSCustomPropertySyntax.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
-#include "CSSPropertySyntax.h"
 #include "StyleRuleType.h"
 #include <wtf/text/StringView.h>
 
@@ -51,9 +51,9 @@ public:
 
     // Parses a non-shorthand CSS property
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const CSSParserTokenRange&, const CSSParserContext&);
-    static bool canParseTypedCustomPropertyValue(const CSSPropertySyntax&, const CSSParserTokenRange&, const CSSParserContext&);
-    static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax&, const CSSParserTokenRange&, Style::BuilderState&, const CSSParserContext&);
-    static void collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax&, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange&, const CSSParserContext&);
+    static bool canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax&, const CSSParserTokenRange&, const CSSParserContext&);
+    static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, const CSSParserTokenRange&, Style::BuilderState&, const CSSParserContext&);
+    static void collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax&, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange&, const CSSParserContext&);
 
     static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 
@@ -64,10 +64,10 @@ private:
     bool parseValueStart(CSSPropertyID, bool important);
     bool consumeCSSWideKeyword(CSSPropertyID, bool important);
     RefPtr<CSSValue> parseSingleValue(CSSPropertyID, CSSPropertyID = CSSPropertyInvalid);
-    std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> consumeCustomPropertyValueWithSyntax(const CSSPropertySyntax&);
-    bool canParseTypedCustomPropertyValue(const CSSPropertySyntax&);
-    RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax&, Style::BuilderState&);
-    void collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax&, bool isInitial, HashSet<CSSPropertyID>& dependencies);
+    std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomPropertyValueWithSyntax(const CSSCustomPropertySyntax&);
+    bool canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax&);
+    RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, Style::BuilderState&);
+    void collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax&, bool isInitial, HashSet<CSSPropertyID>& dependencies);
 
     bool inQuirksMode() const { return m_context.mode == HTMLQuirksMode; }
 

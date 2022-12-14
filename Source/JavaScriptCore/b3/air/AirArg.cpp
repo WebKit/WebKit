@@ -72,8 +72,6 @@ bool Arg::usesTmp(Air::Tmp tmp) const
 
 bool Arg::canRepresent(Type type) const
 {
-    if (UNLIKELY(type == V128))
-        return isFPTmp();
     return isBank(bankForType(type));
 }
 

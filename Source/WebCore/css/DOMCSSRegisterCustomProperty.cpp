@@ -46,7 +46,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!isCustomPropertyName(descriptor.name))
         return Exception { SyntaxError, "The name of this property is not a custom property name."_s };
 
-    auto syntax = CSSPropertySyntax::parse(descriptor.syntax);
+    auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
     if (!syntax)
         return Exception { SyntaxError, "Invalid property syntax definition."_s };
 
@@ -74,6 +74,9 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
+
+        if (initialValue->containsCSSWideKeyword())
+            return Exception { SyntaxError, "The intitial value cannot be a CSS-wide keyword."_s };
     }
 
     CSSRegisteredCustomProperty property { AtomString { descriptor.name }, *syntax, descriptor.inherits, WTFMove(initialValue) };

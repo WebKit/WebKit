@@ -5,7 +5,7 @@ FAIL Can set 'page' to CSS-wide keywords: unset assert_not_equals: Computed valu
 FAIL Can set 'page' to CSS-wide keywords: revert assert_not_equals: Computed value must not be null got disallowed value null
 FAIL Can set 'page' to var() references:  var(--A) assert_not_equals: Computed value must not be null got disallowed value null
 FAIL Can set 'page' to the 'auto' keyword: auto assert_not_equals: Computed value must not be null got disallowed value null
-FAIL Can set 'page' to the 'custom-ident' keyword: custom-ident Invalid values
+FAIL Can set 'page' to the 'custom-ident' keyword: custom-ident assert_not_equals: Computed value must not be null got disallowed value null
 PASS Setting 'page' to a length throws TypeError
 PASS Setting 'page' to a percent throws TypeError
 PASS Setting 'page' to a time throws TypeError

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="container" aria-label="parent level">
+a <div id="textbox" aria-label="child level" contenteditable="true"></div> b
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests that the TextMarkerRange for an empty contenteditable is a valid, 0-length range.\n\n";
+
+        var textbox = accessibilityController.accessibleElementById("textbox");
+        var range = textbox.textMarkerRangeForElement(textbox);
+        output += expect("textbox.textMarkerRangeLength(range)", "0");
+
+        var start = textbox.startTextMarkerForTextMarkerRange(range);
+        output += expect("textbox.isTextMarkerValid(start)", "true");
+        output += expect("textbox.accessibilityElementForTextMarker(start).domIdentifier", "'textbox'");
+        var end = textbox.endTextMarkerForTextMarkerRange(range);
+        output += expect("textbox.isTextMarkerValid(end)", "true");
+        output += expect("textbox.accessibilityElementForTextMarker(end).domIdentifier", "'textbox'");
+
+        document.getElementById("container").style.visibility = "hidden";
+        debug(output);
+    }
+</script>
+</body>
+</html>

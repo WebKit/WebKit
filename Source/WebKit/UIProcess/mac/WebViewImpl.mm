@@ -2116,9 +2116,6 @@ bool WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint poin
 
 void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 {
-    // If we're in the middle of preparing to move to a window, we should only be moved to that window.
-    ASSERT_IMPLIES(m_targetWindowForMovePreparation, m_targetWindowForMovePreparation == window);
-
     NSWindow *currentWindow = [m_view window];
     if (window == currentWindow)
         return;
@@ -2141,6 +2138,8 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 
 void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 {
+    // If we're in the middle of preparing to move to a window, we should only be moved to that window.
+    ASSERT_IMPLIES(m_targetWindowForMovePreparation, m_targetWindowForMovePreparation == window);
     viewWillMoveToWindowImpl(window);
     m_targetWindowForMovePreparation = nil;
     m_isPreparingToUnparentView = false;

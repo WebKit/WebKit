@@ -4189,6 +4189,8 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     settings.setFileReaderAPIEnabled(false);
     settings.setFileSystemAccessEnabled(false);
     settings.setIndexedDBAPIEnabled(false);
+
+    DeprecatedGlobalSettings::setCacheAPIEnabled(false);
     
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInLockdownModeKey()));

@@ -89,19 +89,13 @@ layer at (326,75) size 102x56 clip at (327,76) size 100x54 scrollHeight 162
         RenderText {#text} at (53,144) size 36x18
           text run at (53,144) width 36: "More"
       RenderText {#text} at (0,0) size 0x0
-layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
-  RenderDeprecatedFlexibleBox {DIV} at (424,85) size 102x38 [border: (1px solid #808080)]
+layer at (432,98) size 102x38 clip at (433,99) size 100x36
+  RenderDeprecatedFlexibleBox {DIV} at (424,90) size 102x38 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x36
-      RenderText {#text} at (0,0) size 96x144
+      RenderText {#text} at (0,0) size 93x36
         text run at (0,0) width 30: "30%"
         text run at (0,18) width 73: "truncation. "
         text run at (72,18) width 21: "No"
-        text run at (0,36) width 96: "link at the end."
-        text run at (0,54) width 63: "This is an"
-        text run at (0,72) width 72: "example of"
-        text run at (0,90) width 51: "ellipsis-"
-        text run at (0,108) width 83: "truncation of"
-        text run at (0,126) width 96: "multi-line text."
 layer at (538,80) size 102x56 clip at (539,81) size 100x54
   RenderDeprecatedFlexibleBox {DIV} at (530,72) size 102x56 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x54

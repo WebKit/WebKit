@@ -1761,6 +1761,7 @@ public:
 
     void divDouble(FPRegisterID src, FPRegisterID dest)
     {
+        // dest = dest / src
         // https://www.felixcloutier.com/x86/divsd
         // VEX.LIG.F2.0F.WIG 5E /r VDIVSD xmm1, xmm2, xmm3/m64
         // B   NA   ModRM:reg (w)   VEX.vvvv (r)   ModRM:r/m (r)   NA
@@ -1772,6 +1773,7 @@ public:
 
     void divDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
+        // dest = op1 / op2
         // B := A / B is invalid.
         ASSERT(op1 == dest || op2 != dest);
         if (supportsAVX())
@@ -1784,6 +1786,7 @@ public:
 
     void divDouble(Address src, FPRegisterID dest)
     {
+        // dest = dest / src
         if (supportsAVX())
             m_assembler.vdivsd_mrr(src.offset, src.base, dest, dest);
         else
@@ -1813,6 +1816,7 @@ public:
 
     void subDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
+        // dest = op1 - op2
         if (supportsAVX())
             m_assembler.vsubsd_rrr(op2, op1, dest);
         else {
@@ -1825,6 +1829,7 @@ public:
 
     void subDouble(FPRegisterID op1, Address op2, FPRegisterID dest)
     {
+        // dest = op1 - op2
         if (supportsAVX())
             m_assembler.vsubsd_mrr(op2.offset, op2.base, op1, dest);
         else {
@@ -1835,6 +1840,7 @@ public:
 
     void subDouble(FPRegisterID op1, BaseIndex op2, FPRegisterID dest)
     {
+        // dest = op1 - op2
         if (supportsAVX())
             m_assembler.vsubsd_mrr(op2.offset, op2.base, op2.index, op2.scale, op1, dest);
         else {

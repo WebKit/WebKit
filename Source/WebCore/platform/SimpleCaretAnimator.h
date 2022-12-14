@@ -34,26 +34,22 @@ public:
     explicit SimpleCaretAnimator(CaretAnimationClient&);
 
 private:
-    enum class CaretBlinkState : bool { 
-        On, Off
-    };
-
     void updateAnimationProperties(ReducedResolutionSeconds) final;
     void start(ReducedResolutionSeconds) final;
 
     String debugDescription() const final;
 
-    bool isVisible() const final { return m_blinkState == CaretBlinkState::On; }
-    void setVisible(bool visible) final 
-    {
-        if ((visible && m_blinkState == CaretBlinkState::On) || (!visible && m_blinkState == CaretBlinkState::Off))
+    void setVisible(bool visible) final { setBlinkState(visible ? PresentationProperties::BlinkState::On : PresentationProperties::BlinkState::Off); }
+
+    void setBlinkState(PresentationProperties::BlinkState blinkState)
+    { 
+        if (m_presentationProperties.blinkState == blinkState)
             return;
 
-        m_blinkState = visible ? CaretBlinkState::On : CaretBlinkState::Off;
+        m_presentationProperties.blinkState = blinkState; 
         m_client.caretAnimationDidUpdate(*this);
     }
 
-    CaretBlinkState m_blinkState { CaretBlinkState::On };
     ReducedResolutionSeconds m_lastTimeCaretPaintWasToggled;
 };
 

@@ -617,6 +617,7 @@ static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPage
 
     // Navigate to another page that no longer requires the GPUProcess.
     [webView synchronouslyLoadTestPageNamed:@"simple"];
+    TestWebKitAPI::Util::runFor(0.5_s);
 
     // The GPUProcess should exit on memory pressure.
     do {

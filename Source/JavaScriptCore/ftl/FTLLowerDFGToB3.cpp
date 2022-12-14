@@ -21501,13 +21501,18 @@ IGNORE_CLANG_WARNINGS_END
     {
         PatchpointValue* result = m_out.patchpoint(Void);
         result->effects.writesLocalState = true;
-        result->append(value, ValueRep::reg(GPRInfo::regT0));
         Type valueType = value->type();
+        if (valueType == Double)
+            result->append(value, ValueRep::reg(FPRInfo::fpRegT0));
+        else
+            result->append(value, ValueRep::reg(GPRInfo::regT0));
         result->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             jit.probeDebug([=] (Probe::Context& context) {
-                if (valueType == Int32)
+                if (valueType == Double)
+                    dataLogLn(prefix, context.fpr<double>(FPRInfo::fpRegT0));
+                else if (valueType == Int32)
                     dataLogLn(prefix, context.gpr<int32_t>(GPRInfo::regT0));
                 else
                     dataLogLn(prefix, context.gpr<JSValue>(GPRInfo::regT0));

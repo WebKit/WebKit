@@ -964,8 +964,6 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
     , m_numImportFunctions(info.importFunctionCount())
     , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
 {
-    if (m_info.isSIMDFunction(m_functionIndex))
-        m_tierUp = nullptr;
     m_currentBlock = m_code.addBlock();
     m_rootBlock = m_currentBlock;
 
@@ -3415,13 +3413,9 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAirImpl(Compi
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
-    compilationContext.procedure = makeUnique<B3::Procedure>();
+    compilationContext.procedure = makeUnique<B3::Procedure>(info.isSIMDFunction(functionIndex));
     auto& procedure = *compilationContext.procedure;
     Code& code = procedure.code();
-
-    bool usesSIMD = info.isSIMDFunction(functionIndex);
-    if (usesSIMD)
-        procedure.setUsessSIMD();
 
     if constexpr (Generator::generatesB3OriginData) {
         procedure.setOriginPrinter([](PrintStream& out, B3::Origin origin) {

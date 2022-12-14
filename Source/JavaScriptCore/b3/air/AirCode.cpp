@@ -107,7 +107,8 @@ Code::Code(Procedure& proc)
             Vector<Reg> result;
             result.appendVector(volatileRegs);
             result.appendVector(fullCalleeSaveRegs);
-            result.appendVector(calleeSaveRegs);
+            if (!usesSIMD())
+                result.appendVector(calleeSaveRegs);
             setRegsInPriorityOrder(bank, result);
         });
 

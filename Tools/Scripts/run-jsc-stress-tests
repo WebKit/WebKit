@@ -1944,7 +1944,9 @@ end
 
 def runWebAssemblySIMDSpecTest(mode)
     return if !$isSIMDPlatform
-    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--webAssemblyBBQAirModeThreshold=0", "--wasmBBQUsesAir=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
+    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
+    # fixme: temporary extra tests since the simd options don't play nicely without BBQ Air enabled
+    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)

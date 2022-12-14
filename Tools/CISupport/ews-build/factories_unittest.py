@@ -140,7 +140,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-AppleSilicon-Big-Sur-Debug-Build-EWS': [
+        'macOS-AppleSilicon-Ventura-Debug-Build-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -155,7 +155,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS': [
+        'macOS-AppleSilicon-Ventura-Debug-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',

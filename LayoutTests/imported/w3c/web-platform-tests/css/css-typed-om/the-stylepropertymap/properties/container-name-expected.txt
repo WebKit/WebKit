@@ -5,7 +5,7 @@ PASS Can set 'container-name' to CSS-wide keywords: unset
 PASS Can set 'container-name' to CSS-wide keywords: revert
 PASS Can set 'container-name' to var() references:  var(--A)
 PASS Can set 'container-name' to the 'none' keyword: none
-FAIL Can set 'container-name' to the 'my-container' keyword: my-container Invalid values
+PASS Can set 'container-name' to the 'my-container' keyword: my-container
 PASS Setting 'container-name' to a length throws TypeError
 PASS Setting 'container-name' to a percent throws TypeError
 PASS Setting 'container-name' to a time throws TypeError

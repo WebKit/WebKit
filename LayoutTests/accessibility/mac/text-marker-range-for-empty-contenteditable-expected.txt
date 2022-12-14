@@ -1,0 +1,12 @@
+This tests that the TextMarkerRange for an empty contenteditable is a valid, 0-length range.
+
+PASS: textbox.textMarkerRangeLength(range) === 0
+PASS: textbox.isTextMarkerValid(start) === true
+PASS: textbox.accessibilityElementForTextMarker(start).domIdentifier === 'textbox'
+PASS: textbox.isTextMarkerValid(end) === true
+PASS: textbox.accessibilityElementForTextMarker(end).domIdentifier === 'textbox'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

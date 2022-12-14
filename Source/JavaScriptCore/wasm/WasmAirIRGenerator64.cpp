@@ -437,7 +437,7 @@ public:
         AIR_OP_CASE(And)
         AIR_OP_CASE(Andnot)
         AIR_OP_CASE(AvgRound)
-        AIR_OP_CASE(DotProductInt32)
+        AIR_OP_CASE(DotProduct)
         AIR_OP_CASE(Add)
         AIR_OP_CASE(Mul)
         AIR_OP_CASE(MulSat)

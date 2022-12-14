@@ -86,6 +86,13 @@ struct WebCore::CharacterRange {
     float z()
 }
 
+class WebCore::FloatQuad {
+    WebCore::FloatPoint p1();
+    WebCore::FloatPoint p2();
+    WebCore::FloatPoint p3();
+    WebCore::FloatPoint p4();
+}
+
 struct WebCore::IDBCursorRecord {
     WebCore::IDBKeyData key;
     WebCore::IDBKeyData primaryKey;
@@ -674,6 +681,33 @@ struct WebCore::ApplePayPaymentAuthorizationResult {
     std::optional<WebCore::ApplePayPaymentOrderDetails> orderDetails;
 #endif
 }
+
+enum class WebCore::ApplePayErrorContactField : uint8_t {
+    PhoneNumber,
+    EmailAddress,
+    Name,
+    PhoneticName,
+    PostalAddress,
+    AddressLines,
+    SubLocality,
+    Locality,
+    PostalCode,
+    SubAdministrativeArea,
+    AdministrativeArea,
+    Country,
+    CountryCode,
+};
+
+enum class WebCore::ApplePayErrorCode : uint8_t {
+    Unknown,
+    ShippingContactInvalid,
+    BillingContactInvalid,
+    AddressUnserviceable,
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    CouponCodeInvalid,
+    CouponCodeExpired,
+#endif
+};
 #endif // ENABLE(APPLE_PAY)
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
@@ -2076,3 +2110,44 @@ header: <WebCore/PathOperation.h>
     WebCore::BoxPathOperation,
     WebCore::RayPathOperation
 }
+
+#if PLATFORM(IOS_FAMILY)
+enum class WebCore::SelectionRenderingBehavior : bool
+#endif
+
+#if ENABLE(WEB_AUTHN)
+enum class WebCore::UserVerificationRequirement : uint8_t {
+    Required,
+    Preferred,
+    Discouraged
+};
+#endif // ENABLE(WEB_AUTHN)
+
+#if ENABLE(ENCRYPTED_MEDIA)
+struct WebCore::CDMKeySystemConfiguration {
+    String label;
+    Vector<AtomString> initDataTypes;
+    Vector<WebCore::CDMMediaCapability> audioCapabilities;
+    Vector<WebCore::CDMMediaCapability> videoCapabilities;
+    WebCore::CDMRequirement distinctiveIdentifier;
+    WebCore::CDMRequirement persistentState;
+    Vector<WebCore::CDMSessionType> sessionTypes;
+}
+#endif // ENABLE(ENCRYPTED_MEDIA)
+
+struct WebCore::MediaConfiguration {
+    std::optional<WebCore::VideoConfiguration> video;
+    std::optional<WebCore::AudioConfiguration> audio;
+
+    std::optional<Vector<String>> allowedMediaContainerTypes;
+    std::optional<Vector<String>> allowedMediaCodecTypes;
+};
+
+struct WebCore::MediaEncodingConfiguration : WebCore::MediaConfiguration {
+    WebCore::MediaEncodingType type;
+};
+
+struct WebCore::MediaDecodingConfiguration : WebCore::MediaConfiguration {
+    WebCore::MediaDecodingType type;
+    bool canExposeVP9;
+};

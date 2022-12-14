@@ -34,6 +34,8 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE ArgumentRegValue final : public Value {
 public:
+    enum VectorTag { UsesVectorArgs };
+
     static bool accepts(Kind kind) { return kind == ArgumentReg; }
     
     ~ArgumentRegValue() final;
@@ -49,12 +51,21 @@ private:
     friend class Value;
     
     static Opcode opcodeFromConstructor(Origin, Reg) { return ArgumentReg; }
+    static Opcode opcodeFromConstructor(Origin, Reg, VectorTag) { return ArgumentReg; }
 
     ArgumentRegValue(Origin origin, Reg reg)
         : Value(CheckedOpcode, ArgumentReg, reg.isGPR() ? pointerType() : Double, Zero, origin)
         , m_reg(reg)
     {
         ASSERT(reg.isSet());
+    }
+
+    ArgumentRegValue(Origin origin, Reg reg, VectorTag)
+        : Value(CheckedOpcode, ArgumentReg, V128, Zero, origin)
+        , m_reg(reg)
+    {
+        ASSERT(reg.isSet());
+        ASSERT(reg.isFPR());
     }
 
     Reg m_reg;

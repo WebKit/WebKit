@@ -879,6 +879,8 @@
 		4B1F22F62900BFC700CB5E66 /* Width.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBA4CD428FF5FE5003EBFC4 /* Width.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */; };
 		4B46940428984FEE00512FDF /* MacroAssemblerX86Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */; };
+		4B78E09E294427FC003C6682 /* B3Const128Value.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B78E099294427D2003C6682 /* B3Const128Value.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4B78E09F29442801003C6682 /* B3SIMDValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B78E09A294427D2003C6682 /* B3SIMDValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAA07CEB81F49A296E02203 /* WasmTypeDefinitionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 30A5F403F11C4F599CD596D5 /* WasmTypeDefinitionInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BC18E5628FDE6C800ECD68D /* SIMDInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BC18E5428FDE6C800ECD68D /* SIMDInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BDF3004289324AC00AE1DE3 /* AssemblyComments.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDF3002289324AC00AE1DE3 /* AssemblyComments.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1220,7 +1222,6 @@
 		7311FA32240DB1D3003D48DB /* DeleteByVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 7311FA31240DB1D3003D48DB /* DeleteByVariant.h */; };
 		734B655523F5C10400A069D1 /* DeletePropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 734B655423F4A33100A069D1 /* DeletePropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		73AD062923FF662600F53593 /* DeleteByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 73AD062823FF662600F53593 /* DeleteByStatus.h */; };
-		73E3799422E0EF6500933565 /* B3ReduceLoopStrength.h in Headers */ = {isa = PBXBuildFile; fileRef = 73E3799322E0EF4F00933565 /* B3ReduceLoopStrength.h */; };
 		7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		790081391E95A8EC0052D7CD /* WasmModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 790081371E95A8EC0052D7CD /* WasmModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 7905BB671D12050E0019FE57 /* InlineAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3851,6 +3852,10 @@
 		467DC2EC2906EE3600726988 /* WasmAirIRGenerator64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmAirIRGenerator64.cpp; sourceTree = "<group>"; };
 		467DC2ED2906EE3600726988 /* WasmAirIRGeneratorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmAirIRGeneratorBase.h; sourceTree = "<group>"; };
 		467DC2EE2906EE3600726988 /* WasmAirIRGenerator32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmAirIRGenerator32_64.cpp; sourceTree = "<group>"; };
+		4B78E098294427D2003C6682 /* B3SIMDValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3SIMDValue.cpp; path = b3/B3SIMDValue.cpp; sourceTree = "<group>"; };
+		4B78E099294427D2003C6682 /* B3Const128Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Const128Value.h; path = b3/B3Const128Value.h; sourceTree = "<group>"; };
+		4B78E09A294427D2003C6682 /* B3SIMDValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3SIMDValue.h; path = b3/B3SIMDValue.h; sourceTree = "<group>"; };
+		4B78E09B294427D2003C6682 /* B3Const128Value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Const128Value.cpp; path = b3/B3Const128Value.cpp; sourceTree = "<group>"; };
 		4BBA4CD428FF5FE5003EBFC4 /* Width.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Width.h; sourceTree = "<group>"; };
 		4BC18E5428FDE6C800ECD68D /* SIMDInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIMDInfo.h; sourceTree = "<group>"; };
 		4BDF15B128FF912800D36BA1 /* Width.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Width.cpp; sourceTree = "<group>"; };
@@ -4355,8 +4360,6 @@
 		73190D962400934900F891C9 /* DeleteByStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteByStatus.cpp; sourceTree = "<group>"; };
 		734B655423F4A33100A069D1 /* DeletePropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeletePropertySlot.h; sourceTree = "<group>"; };
 		73AD062823FF662600F53593 /* DeleteByStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteByStatus.h; sourceTree = "<group>"; };
-		73E3799322E0EF4F00933565 /* B3ReduceLoopStrength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ReduceLoopStrength.h; path = b3/B3ReduceLoopStrength.h; sourceTree = "<group>"; };
-		73E3799522E0EF9100933565 /* B3ReduceLoopStrength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ReduceLoopStrength.cpp; path = b3/B3ReduceLoopStrength.cpp; sourceTree = "<group>"; };
 		77B25CB2C3094A92A38E1DB3 /* JSModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.h; sourceTree = "<group>"; };
 		790081361E95A8EC0052D7CD /* WasmModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModule.cpp; sourceTree = "<group>"; };
 		790081371E95A8EC0052D7CD /* WasmModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmModule.h; sourceTree = "<group>"; };
@@ -6261,6 +6264,8 @@
 				795F099C1E03600500BBE37F /* B3Compile.cpp */,
 				7919B77F1E03559C005BEED8 /* B3Compile.h */,
 				0F86AE1F1C5311C5006BE8EC /* B3ComputeDivisionMagic.h */,
+				4B78E09B294427D2003C6682 /* B3Const128Value.cpp */,
+				4B78E099294427D2003C6682 /* B3Const128Value.h */,
 				0FEC84C31BDACDAC0080FF74 /* B3Const32Value.cpp */,
 				0FEC84C41BDACDAC0080FF74 /* B3Const32Value.h */,
 				0FEC84C51BDACDAC0080FF74 /* B3Const64Value.cpp */,
@@ -6353,10 +6358,10 @@
 				0F725CA61C503DED00AD943A /* B3PureCSE.h */,
 				43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */,
 				43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */,
-				73E3799522E0EF9100933565 /* B3ReduceLoopStrength.cpp */,
-				73E3799322E0EF4F00933565 /* B3ReduceLoopStrength.h */,
 				0FEC85B71BE1462F0080FF74 /* B3ReduceStrength.cpp */,
 				0FEC85B81BE1462F0080FF74 /* B3ReduceStrength.h */,
+				4B78E098294427D2003C6682 /* B3SIMDValue.cpp */,
+				4B78E09A294427D2003C6682 /* B3SIMDValue.h */,
 				0FEC84EA1BDACDAC0080FF74 /* B3SlotBaseValue.cpp */,
 				0FEC84EB1BDACDAC0080FF74 /* B3SlotBaseValue.h */,
 				0F2BBD911C5FF3F50023EF23 /* B3SparseCollection.h */,
@@ -9951,6 +9956,7 @@
 				0FEC850C1BDACDAC0080FF74 /* B3Commutativity.h in Headers */,
 				7919B7801E03559C005BEED8 /* B3Compile.h in Headers */,
 				0F86AE201C5311C5006BE8EC /* B3ComputeDivisionMagic.h in Headers */,
+				4B78E09E294427FC003C6682 /* B3Const128Value.h in Headers */,
 				0FEC850E1BDACDAC0080FF74 /* B3Const32Value.h in Headers */,
 				0FEC85101BDACDAC0080FF74 /* B3Const64Value.h in Headers */,
 				0FEC85121BDACDAC0080FF74 /* B3ConstDoubleValue.h in Headers */,
@@ -10002,8 +10008,8 @@
 				0FEC852D1BDACDAC0080FF74 /* B3ProcedureInlines.h in Headers */,
 				0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */,
 				43422A671C16267800E2EB98 /* B3ReduceDoubleToFloat.h in Headers */,
-				73E3799422E0EF6500933565 /* B3ReduceLoopStrength.h in Headers */,
 				0FEC85BD1BE1462F0080FF74 /* B3ReduceStrength.h in Headers */,
+				4B78E09F29442801003C6682 /* B3SIMDValue.h in Headers */,
 				0FEC85351BDACDAC0080FF74 /* B3SlotBaseValue.h in Headers */,
 				0F2BBD961C5FF3F50023EF23 /* B3SparseCollection.h in Headers */,
 				0F6B8ADD1C4EFAC300969052 /* B3SSACalculator.h in Headers */,

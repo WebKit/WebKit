@@ -67,7 +67,7 @@ State::State(Graph& graph)
     graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(graph.m_plan));
     finalizer = static_cast<JITFinalizer*>(graph.m_plan.finalizer());
 
-    proc = makeUnique<Procedure>();
+    proc = makeUnique<Procedure>(/* usesSIMD = */ false);
 
     if (graph.m_vm.shouldBuilderPCToCodeOriginMapping())
         proc->setNeedsPCToOriginMap();

@@ -324,8 +324,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     };
     if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone()) {
         auto isSupportedLineClamp = [&] {
-            if (ancestor->style().lineClamp().isPercentage())
-                return false;
             for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
                 if (!is<RenderBlockFlow>(*flexItem))
                     return false;
@@ -395,7 +393,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (style.shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
-            if (!renderer.parent()->style().isLeftToRightDirection() || !renderer.parent()->style().isHorizontalWritingMode())
+            if (!renderer.parent()->style().isLeftToRightDirection())
                 return false;
             if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
                 return false;

@@ -1,0 +1,10 @@
+Tests scrolling to reveal a text input on tap. To manually test, tap the input below without a hardware keyboard connected; the input field should be centered in the visible viewport.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollY is >= 400
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

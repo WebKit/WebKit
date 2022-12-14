@@ -119,11 +119,11 @@ PASS syntax:'<length>|INHERIT', initialValue:'10px' is invalid
 PASS syntax:'<percentage>|unsEt', initialValue:'2%' is invalid
 PASS syntax:'<color>|REVert', initialValue:'red' is invalid
 PASS syntax:'<integer>|deFAUlt', initialValue:'1' is invalid
-FAIL syntax:'*', initialValue:'initial' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'inherit' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'unset' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'revert' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'revert-layer' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'*', initialValue:'initial' is invalid
+PASS syntax:'*', initialValue:'inherit' is invalid
+PASS syntax:'*', initialValue:'unset' is invalid
+PASS syntax:'*', initialValue:'revert' is invalid
+PASS syntax:'*', initialValue:'revert-layer' is invalid
 FAIL syntax:'*', initialValue:'default' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 PASS syntax:'<custom-ident>', initialValue:'initial' is invalid
 PASS syntax:'<custom-ident>', initialValue:'inherit' is invalid

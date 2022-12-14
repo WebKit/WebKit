@@ -337,7 +337,7 @@ x86: MulFloat U:F:32, UD:F:32
     Tmp, Tmp
     Addr, Tmp
 
-arm: DivDouble U:F:64, U:F:32, D:F:64
+arm: DivDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
 
 x86: DivDouble U:F:64, UD:F:64
@@ -1938,10 +1938,10 @@ arm64: VectorMulSat U:F:128, U:F:128, D:F:128
 x86_64: VectorMulSat U:F:128, U:F:128, D:F:128, S:G:64, S:F:128
     Tmp, Tmp, Tmp, Tmp, Tmp
 
-arm64: VectorDotProductInt32 U:F:128, U:F:128, D:F:128, S:F:128
+arm64: VectorDotProduct U:F:128, U:F:128, D:F:128, S:F:128
     Tmp, Tmp, Tmp, Tmp
 
-x86_64: VectorDotProductInt32 U:F:128, U:F:128, D:F:128
+x86_64: VectorDotProduct U:F:128, U:F:128, D:F:128
     Tmp, Tmp, Tmp
 
 64: VectorSwizzle U:F:128, U:F:128, D:F:128

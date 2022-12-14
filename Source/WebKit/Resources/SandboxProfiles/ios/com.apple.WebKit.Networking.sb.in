@@ -773,51 +773,76 @@
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
-(when (defined? 'syscall-mach)
-    (deny syscall-mach (with telemetry))
-    (allow syscall-mach
-        (machtrap-number
-            MSC__kernelrpc_mach_port_allocate_trap
-            MSC__kernelrpc_mach_port_construct_trap
-            MSC__kernelrpc_mach_port_deallocate_trap
-            MSC__kernelrpc_mach_port_destruct_trap
-            MSC__kernelrpc_mach_port_extract_member_trap
-            MSC__kernelrpc_mach_port_guard_trap
-            MSC__kernelrpc_mach_port_insert_member_trap
-            MSC__kernelrpc_mach_port_insert_right_trap
-            MSC__kernelrpc_mach_port_mod_refs_trap
-            MSC__kernelrpc_mach_port_request_notification_trap
-            MSC__kernelrpc_mach_port_type_trap
-            MSC__kernelrpc_mach_port_unguard_trap
-            MSC__kernelrpc_mach_vm_allocate_trap
-            MSC__kernelrpc_mach_vm_deallocate_trap
-            MSC__kernelrpc_mach_vm_map_trap
-            MSC__kernelrpc_mach_vm_protect_trap
-            MSC__kernelrpc_mach_vm_purgable_control_trap
-            MSC_host_create_mach_voucher_trap
-            MSC_host_self_trap
-            MSC_mach_generate_activity_id
-            MSC_mach_msg_trap
-            MSC_mach_reply_port
-            MSC_mach_timebase_info_trap
-            MSC_mach_voucher_extract_attr_recipe_trap
-            MSC_mk_timer_arm
-            MSC_mk_timer_cancel
-            MSC_mk_timer_create
-            MSC_mk_timer_destroy
-            MSC_semaphore_signal_trap
-            MSC_semaphore_wait_trap
+(allow syscall-mach (with telemetry))
+(allow syscall-mach
+    (machtrap-number
+        MSC__kernelrpc_mach_port_allocate_trap
+        MSC__kernelrpc_mach_port_construct_trap
+        MSC__kernelrpc_mach_port_deallocate_trap
+        MSC__kernelrpc_mach_port_destruct_trap
+        MSC__kernelrpc_mach_port_extract_member_trap
+        MSC__kernelrpc_mach_port_guard_trap
+        MSC__kernelrpc_mach_port_insert_member_trap
+        MSC__kernelrpc_mach_port_insert_right_trap
+        MSC__kernelrpc_mach_port_mod_refs_trap
+        MSC__kernelrpc_mach_port_request_notification_trap
+        MSC__kernelrpc_mach_port_type_trap
+        MSC__kernelrpc_mach_port_unguard_trap
+        MSC__kernelrpc_mach_vm_allocate_trap
+        MSC__kernelrpc_mach_vm_deallocate_trap
+        MSC__kernelrpc_mach_vm_map_trap
+        MSC__kernelrpc_mach_vm_protect_trap
+        MSC__kernelrpc_mach_vm_purgable_control_trap
+        MSC_host_create_mach_voucher_trap
+        MSC_host_self_trap
+        MSC_mach_generate_activity_id
+        MSC_mach_msg_trap
+        MSC_mach_reply_port
+        MSC_mach_timebase_info_trap
+        MSC_mach_voucher_extract_attr_recipe_trap
+        MSC_mk_timer_arm
+        MSC_mk_timer_cancel
+        MSC_mk_timer_create
+        MSC_mk_timer_destroy
+        MSC_semaphore_signal_trap
+        MSC_semaphore_wait_trap
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
-            MSC_swtch_pri
+        MSC_swtch_pri
 #endif
-            MSC_syscall_thread_switch
-            MSC_task_self_trap
-            MSC_thread_get_special_reply_port)))
+        MSC_syscall_thread_switch
+        MSC_task_self_trap
+        MSC_thread_get_special_reply_port))
 
-(when (defined? 'mach-kernel-endpoint)
-    (allow mach-kernel-endpoint
-        (apply-message-filter
-            (allow mach-message-send (with report) ))))
+(when (defined? 'MSC_mach_msg2_trap)
+    (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
+
+(allow mach-kernel-endpoint
+    (apply-message-filter
+        (allow mach-message-send (with report) (with telemetry))
+        (allow mach-message-send
+            (kernel-mig-routine
+                _mach_make_memory_entry
+                host_get_clock_service
+                host_get_special_port
+                host_info
+                host_request_notification
+                mach_port_extract_right
+                mach_port_get_refs
+                mach_port_is_connection_for_service
+                mach_port_request_notification
+                mach_port_set_attributes
+                mach_vm_copy
+                mach_vm_map_external
+                semaphore_create
+                semaphore_destroy
+                task_get_special_port_from_user
+                task_info_from_user
+                task_restartable_ranges_register
+                task_restartable_ranges_synchronize
+                task_set_special_port
+                thread_policy
+                thread_resume
+                thread_suspend))))
 
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>

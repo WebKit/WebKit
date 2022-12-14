@@ -97,10 +97,11 @@ void AudioSession::addAudioSessionChangedObserver(const ChangedObserver& observe
 
 bool AudioSession::tryToSetActive(bool active)
 {
+    bool previousIsActive = isActive();
     if (!tryToSetActiveInternal(active))
         return false;
 
-    bool hasActiveChanged = m_active != active;
+    bool hasActiveChanged = previousIsActive != isActive();
     m_active = active;
     if (m_isInterrupted && m_active) {
         callOnMainThread([hasActiveChanged] {

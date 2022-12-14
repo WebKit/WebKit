@@ -469,6 +469,7 @@ UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
 UIProcess/ios/InputViewUpdateDeferrer.mm
 UIProcess/ios/PageClientImplIOS.mm
 UIProcess/ios/ProcessStateMonitor.mm
+UIProcess/ios/RevealFocusedElementDeferrer.mm
 UIProcess/ios/SmartMagnificationController.mm
 UIProcess/ios/TextCheckerIOS.mm
 UIProcess/ios/ViewGestureControllerIOS.mm
