@@ -2025,3 +2025,53 @@ header: <WebCore/BasicShapes.h>
     WebCore::BasicShapePath
     WebCore::BasicShapeInset
 }
+
+header: <WebCore/RenderStyleConstants.h>
+[CustomHeader] enum class WebCore::CSSBoxType : uint8_t {
+    BoxMissing,
+    MarginBox,
+    BorderBox,
+    PaddingBox,
+    ContentBox,
+    FillBox,
+    StrokeBox,
+    ViewBox
+};
+
+header: <WebCore/PathOperation.h>
+[Return=Ref, CustomHeader] class WebCore::ReferencePathOperation {
+    std::optional<WebCore::Path> path();
+}
+
+[Return=Ref, CustomHeader] class WebCore::ShapePathOperation {
+    Ref<WebCore::BasicShape> shape();
+    WebCore::CSSBoxType referenceBox();
+}
+
+[Return=Ref, CustomHeader] class WebCore::BoxPathOperation {
+    WebCore::Path path();
+    WebCore::CSSBoxType referenceBox();
+}
+
+[Nested, CustomHeader] enum class WebCore::RayPathOperation::Size : uint8_t {
+    ClosestSide,
+    ClosestCorner,
+    FarthestSide,
+    FarthestCorner,
+    Sides
+};
+
+[Return=Ref, CustomHeader] class WebCore::RayPathOperation {
+    float angle();
+    WebCore::RayPathOperation::Size size();
+    bool isContaining();
+    WebCore::FloatRect containingBlockBoundingRect();
+    WebCore::FloatPoint position();
+}
+
+[RefCounted] class WebCore::PathOperation subclasses {
+    WebCore::ReferencePathOperation,
+    WebCore::ShapePathOperation,
+    WebCore::BoxPathOperation,
+    WebCore::RayPathOperation
+}

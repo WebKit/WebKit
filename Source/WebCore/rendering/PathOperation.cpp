@@ -39,12 +39,24 @@ Ref<ReferencePathOperation> ReferencePathOperation::create(const String& url, co
     return adoptRef(*new ReferencePathOperation(url, fragment, element));
 }
 
+Ref<ReferencePathOperation> ReferencePathOperation::create(std::optional<Path>&& path)
+{
+    return adoptRef(*new ReferencePathOperation(WTFMove(path)));
+}
 
 ReferencePathOperation::ReferencePathOperation(const String& url, const AtomString& fragment, const RefPtr<SVGElement> element)
     : PathOperation(Reference)
     , m_url(url)
     , m_fragment(fragment)
     , m_element(element)
+{
+    if (is<SVGPathElement>(m_element) || is<SVGGeometryElement>(m_element))
+        m_path = pathFromGraphicsElement(m_element.get());
+}
+
+ReferencePathOperation::ReferencePathOperation(std::optional<Path>&& path)
+    : PathOperation(Reference)
+    , m_path(WTFMove(path))
 {
 }
 
@@ -53,11 +65,9 @@ const SVGElement* ReferencePathOperation::element() const
     return m_element.get();
 }
 
-const std::optional<Path> ReferencePathOperation::getPath(const FloatRect&, FloatPoint, OffsetRotation) const
+Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position)
 {
-    if (!is<SVGPathElement>(m_element.get()) && !is<SVGGeometryElement>(m_element.get()))
-        return std::nullopt;
-    return pathFromGraphicsElement(m_element.get());
+    return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(containingBlockBoundingRect), WTFMove(position)));
 }
 
 double RayPathOperation::lengthForPath() const
