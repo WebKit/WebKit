@@ -537,7 +537,7 @@ private:
     String innerHTML() const override;
     String outerHTML() const override;
 
-    // Ideally this would be a WeakPtr<AXIsolatedTree>, but WebKit's WeakPtr is not currently thread-safe.
+    // FIXME: Make this a ThreadSafeWeakPtr<AXIsolatedTree>.
     RefPtr<AXIsolatedTree> m_cachedTree;
     AXID m_parentID;
     Vector<AXID> m_childrenIDs;

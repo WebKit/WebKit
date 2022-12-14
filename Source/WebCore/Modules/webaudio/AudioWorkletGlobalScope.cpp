@@ -157,11 +157,7 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     if (!jsProcessor)
         return nullptr;
 
-    {
-        Locker locker { m_processorsLock };
-        m_processors.add(jsProcessor->wrapped());
-    }
-
+    m_processors.add(jsProcessor->wrapped());
     return &jsProcessor->wrapped();
 }
 
@@ -207,13 +203,11 @@ void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
 
 void AudioWorkletGlobalScope::processorIsNoLongerNeeded(AudioWorkletProcessor& processor)
 {
-    Locker locker { m_processorsLock };
     m_processors.remove(processor);
 }
 
 void AudioWorkletGlobalScope::visitProcessors(JSC::AbstractSlotVisitor& visitor)
 {
-    Locker locker { m_processorsLock };
     m_processors.forEach([&](auto& processor) {
         addWebCoreOpaqueRoot(visitor, processor);
     });
