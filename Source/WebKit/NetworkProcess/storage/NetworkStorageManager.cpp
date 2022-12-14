@@ -226,8 +226,9 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
     ASSERT(!m_closed);
 
     m_closed = true;
-    for (auto& connection : m_connections)
+    m_connections.forEach([] (auto& connection) {
         connection.removeWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName());
+    });
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_originStorageManagers.clear();

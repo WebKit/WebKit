@@ -213,8 +213,9 @@ void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& c
 
 void NetworkSession::invalidateAndCancel()
 {
-    for (auto& task : m_dataTaskSet)
+    m_dataTaskSet.forEach([] (auto& task) {
         task.invalidateAndCancel();
+    });
 #if ENABLE(TRACKING_PREVENTION)
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
@@ -573,16 +574,13 @@ std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyI
 
 void NetworkSession::registerNetworkDataTask(NetworkDataTask& task)
 {
+    // Unregistration happens automatically in ThreadSafeWeakHashSet::amortizedCleanupIfNeeded.
     m_dataTaskSet.add(task);
 
+    // FIXME: This is not in a good place. It should probably be in the NetworkDataTask constructor.
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     task.setEmulatedConditions(m_bytesPerSecondLimit);
 #endif
-}
-
-void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
-{
-    m_dataTaskSet.remove(task);
 }
 
 NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
@@ -712,8 +710,9 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 {
     m_bytesPerSecondLimit = WTFMove(bytesPerSecondLimit);
 
-    for (auto& task : m_dataTaskSet)
+    m_dataTaskSet.forEach([&] (auto& task) {
         task.setEmulatedConditions(m_bytesPerSecondLimit);
+    });
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

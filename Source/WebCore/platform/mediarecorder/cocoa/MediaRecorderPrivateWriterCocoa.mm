@@ -104,17 +104,17 @@ RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAu
 
 void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    callOnMainThread([weakWriter = WeakPtr { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
-        if (weakWriter)
-            weakWriter->processNewCompressedVideoSampleBuffers();
+    callOnMainThread([weakWriter = ThreadSafeWeakPtr<MediaRecorderPrivateWriter> { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
+        if (auto strongWriter = weakWriter.get())
+            strongWriter->processNewCompressedVideoSampleBuffers();
     });
 }
 
 void MediaRecorderPrivateWriter::compressedAudioOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    callOnMainThread([weakWriter = WeakPtr { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
-        if (weakWriter)
-            weakWriter->processNewCompressedAudioSampleBuffers();
+    callOnMainThread([weakWriter = ThreadSafeWeakPtr<MediaRecorderPrivateWriter> { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
+        if (auto strongWriter = weakWriter.get())
+            strongWriter->processNewCompressedAudioSampleBuffers();
     });
 }
 
@@ -349,8 +349,9 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
-        if (!weakThis) {
+    auto block = makeBlockPtr([this, weakThis = ThreadSafeWeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
+        auto strongThis = weakThis.get();
+        if (!strongThis) {
             callback();
             return;
         }
@@ -431,12 +432,14 @@ void MediaRecorderPrivateWriter::stopRecording()
 
     m_isStopping = true;
     // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
+    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+        auto strongThis = weakThis.get();
+        if (!strongThis)
             return;
 
         auto whenFinished = [this, weakThis] {
-            if (!weakThis)
+            auto strongThis = weakThis.get();
+            if (!strongThis)
                 return;
 
             m_isStopping = false;
@@ -459,7 +462,8 @@ void MediaRecorderPrivateWriter::stopRecording()
 
         ASSERT([m_writer status] == AVAssetWriterStatusWriting);
         flushCompressedSampleBuffers([this, weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
-            if (!weakThis)
+            auto strongThis = weakThis.get();
+            if (!strongThis)
                 return;
 
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -491,18 +495,19 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<Fragmen
         m_audioCompressor->flush();
 
     // We hop to the main thread since flushing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([this, weakThis = WeakPtr { *this }]() mutable {
+    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         flushCompressedSampleBuffers([weakThis = WTFMove(weakThis)]() mutable {
-            if (!weakThis)
+            auto strongThis = weakThis.get();
+            if (!strongThis)
                 return;
 
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [weakThis->m_writer flush];
+            [strongThis->m_writer flush];
             ALLOW_DEPRECATED_DECLARATIONS_END
 
             callOnMainThread([weakThis = WTFMove(weakThis)] {
-                if (weakThis)
-                    weakThis->completeFetchData();
+                if (auto strongThis = weakThis.get())
+                    strongThis->completeFetchData();
             });
         });
     });

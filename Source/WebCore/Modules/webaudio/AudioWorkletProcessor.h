@@ -36,7 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashMap.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -54,7 +54,7 @@ class MessagePort;
 class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 
-class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCounted<AudioWorkletProcessor>, public CanMakeWeakPtr<AudioWorkletProcessor> {
+class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioWorkletProcessor> {
     WTF_MAKE_ISO_ALLOCATED(AudioWorkletProcessor);
 public:
     static ExceptionOr<Ref<AudioWorkletProcessor>> create(ScriptExecutionContext&);
