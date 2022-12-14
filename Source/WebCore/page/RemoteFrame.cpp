@@ -27,11 +27,14 @@
 #include "RemoteFrame.h"
 
 #include "RemoteDOMWindow.h"
+#include "RemoteFrameClient.h"
 
 namespace WebCore {
 
-RemoteFrame::RemoteFrame(Page& page, FrameIdentifier frameID, AbstractFrame* parent)
-    : AbstractFrame(page, frameID, parent)
+RemoteFrame::RemoteFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client)
+    : AbstractFrame(page, frameID, ownerElement)
+    , m_window(RemoteDOMWindow::create(*this, GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }))
+    , m_client(WTFMove(client))
 {
 }
 
@@ -39,17 +42,23 @@ RemoteFrame::~RemoteFrame() = default;
 
 AbstractDOMWindow* RemoteFrame::virtualWindow() const
 {
-    return window();
+    return &window();
 }
 
-void RemoteFrame::setWindow(RemoteDOMWindow* window)
-{
-    m_window = WeakPtr { window };
-}
-
-RemoteDOMWindow* RemoteFrame::window() const
+RemoteDOMWindow& RemoteFrame::window() const
 {
     return m_window.get();
+}
+
+void RemoteFrame::didFinishLoadInAnotherProcess()
+{
+    auto* ownerElement = this->ownerElement();
+    if (!ownerElement)
+        return;
+
+    // FIXME: Do something so that this would not have caused the load event to fire before a state change
+    // but now does cause the load event to fire.
+    ownerElement->document().checkCompleted();
 }
 
 } // namespace WebCore

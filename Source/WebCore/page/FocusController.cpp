@@ -290,9 +290,9 @@ FocusNavigationScope FocusNavigationScope::scopeOwnedByScopeOwner(Element& eleme
 
 FocusNavigationScope FocusNavigationScope::scopeOwnedByIFrame(HTMLFrameOwnerElement& frame)
 {
-    ASSERT(frame.contentFrame());
-    ASSERT(frame.contentFrame()->document());
-    return FocusNavigationScope(*frame.contentFrame()->document());
+    ASSERT(is<LocalFrame>(frame.contentFrame()));
+    ASSERT(downcast<LocalFrame>(frame.contentFrame())->document());
+    return FocusNavigationScope(*downcast<LocalFrame>(frame.contentFrame())->document());
 }
 
 static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, bool focused)
@@ -425,9 +425,10 @@ Element* FocusController::findFocusableElementDescendingIntoSubframes(FocusDirec
     // 2) the deepest-nested HTMLFrameOwnerElement.
     while (is<HTMLFrameOwnerElement>(element)) {
         HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
-        if (!owner.contentFrame() || !owner.contentFrame()->document())
+        auto* localContentFrame = dynamicDowncast<LocalFrame>(owner.contentFrame());
+        if (!localContentFrame || !localContentFrame->document())
             break;
-        owner.contentFrame()->document()->updateLayoutIgnorePendingStylesheets();
+        localContentFrame->document()->updateLayoutIgnorePendingStylesheets();
         Element* foundElement = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), nullptr, event);
         if (!foundElement)
             break;
@@ -528,7 +529,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             return false;
 
         document->setFocusedElement(nullptr);
-        setFocusedFrame(owner.contentFrame());
+        setFocusedFrame(dynamicDowncast<LocalFrame>(owner.contentFrame()));
         return true;
     }
     
@@ -1088,7 +1089,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         // If we have an iframe without the src attribute, it will not have a contentFrame().
         // We ASSERT here to make sure that
         // updateFocusCandidateIfNeeded() will never consider such an iframe as a candidate.
-        ASSERT(frameElement->contentFrame());
+        ASSERT(is<LocalFrame>(frameElement->contentFrame()));
 
         if (focusCandidate.isOffscreenAfterScrolling) {
             scrollInDirection(&focusCandidate.visibleNode->document(), direction);
@@ -1099,8 +1100,8 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         Element* focusedElement = focusedOrMainFrame().document()->focusedElement();
         if (focusedElement && !hasOffscreenRect(focusedElement))
             rect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
-        frameElement->contentFrame()->document()->updateLayoutIgnorePendingStylesheets();
-        if (!advanceFocusDirectionallyInContainer(frameElement->contentFrame()->document(), rect, direction, event)) {
+        dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document()->updateLayoutIgnorePendingStylesheets();
+        if (!advanceFocusDirectionallyInContainer(dynamicDowncast<LocalFrame>(frameElement->contentFrame())->document(), rect, direction, event)) {
             // The new frame had nothing interesting, need to find another candidate.
             return advanceFocusDirectionallyInContainer(container, nodeRectInAbsoluteCoordinates(focusCandidate.visibleNode, true), direction, event);
         }

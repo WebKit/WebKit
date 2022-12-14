@@ -138,12 +138,9 @@ public:
     void removeDestructionObserver(FrameDestructionObserver&);
 
     WEBCORE_EXPORT void willDetachPage();
-    void disconnectOwnerElement();
 
     Frame& mainFrame() const;
     bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
-
-    WEBCORE_EXPORT HTMLFrameOwnerElement* ownerElement() const;
 
     Document* document() const;
     FrameView* view() const;
@@ -298,8 +295,6 @@ public:
 
     WEBCORE_EXPORT bool arePluginsEnabled();
 
-    WEBCORE_EXPORT void didFinishLoadInAnotherProcess();
-
 private:
     friend class NavigationDisabler;
 
@@ -320,7 +315,6 @@ private:
     UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
-    WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
     RefPtr<FrameView> m_view;
     RefPtr<Document> m_doc;
 

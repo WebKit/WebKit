@@ -145,7 +145,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringB
         return;
 
     const HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
-    Frame* frame = frameOwner.contentFrame();
+    auto* frame = dynamicDowncast<LocalFrame>(frameOwner.contentFrame());
     if (!frame)
         return;
 

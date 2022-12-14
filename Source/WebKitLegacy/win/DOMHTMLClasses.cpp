@@ -1586,7 +1586,7 @@ HRESULT DOMHTMLIFrameElement::contentFrame(_COM_Outptr_opt_ IWebFrame** result)
     *result = nullptr;
     ASSERT(m_element);
     HTMLIFrameElement& iFrameElement = downcast<HTMLIFrameElement>(*m_element);
-    COMPtr<IWebFrame> webFrame = kit(iFrameElement.contentFrame());
+    COMPtr<IWebFrame> webFrame = kit(dynamicDowncast<LocalFrame>(iFrameElement.contentFrame()));
     if (!webFrame)
         return E_FAIL;
     return webFrame.copyRefTo(result);

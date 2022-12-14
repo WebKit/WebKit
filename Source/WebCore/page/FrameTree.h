@@ -67,7 +67,7 @@ public:
 
     WEBCORE_EXPORT void appendChild(AbstractFrame&);
     void detachFromParent() { m_parent = nullptr; }
-    void removeChild(AbstractFrame&);
+    WEBCORE_EXPORT void removeChild(AbstractFrame&);
 
     AbstractFrame* child(unsigned index) const;
     AbstractFrame* child(const AtomString& name) const;

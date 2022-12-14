@@ -1974,16 +1974,13 @@ WebPage& WebPage::fromCorePage(Page& page)
     return static_cast<WebChromeClient&>(page.chrome().client()).page();
 }
 
-static std::optional<FrameTreeNodeData> frameTreeNodeData(Frame& frame)
+static std::optional<FrameTreeNodeData> frameTreeNodeData(AbstractFrame& frame)
 {
     std::optional<FrameTreeNodeData> info;
     if (auto* webFrame = WebFrame::fromCoreFrame(frame)) {
         Vector<FrameTreeNodeData> children;
         for (auto* childFrame = frame.tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-            auto* localChild = dynamicDowncast<LocalFrame>(childFrame);
-            if (!localChild)
-                continue;
-            if (auto childInfo = frameTreeNodeData(*localChild))
+            if (auto childInfo = frameTreeNodeData(*childFrame))
                 children.append(WTFMove(*childInfo));
         }
         info = FrameTreeNodeData {

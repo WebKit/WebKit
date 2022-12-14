@@ -227,7 +227,7 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
     URL upgradedRequestURL = requestURL;
     initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    RefPtr frame = ownerElement.contentFrame();
+    RefPtr frame = dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
     if (frame) {
         CompletionHandler<void()> stopDelayingLoadEvent = [] { };
         if (upgradedRequestURL.protocolIsJavaScript()) {
@@ -244,7 +244,7 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
         return nullptr;
 
     ASSERT(ownerElement.contentFrame() == frame || !ownerElement.contentFrame());
-    return ownerElement.contentFrame();
+    return dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
 }
 
 RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const String& referrer)

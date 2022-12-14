@@ -191,7 +191,10 @@ void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
     if (data)
         message->putDirect(vm, JSC::Identifier::fromString(vm, "data"_s), data);
 
-    auto* contentWindow = m_iframe->contentFrame()->window();
+    auto* contentFrame = dynamicDowncast<LocalFrame>(m_iframe->contentFrame());
+    if (!contentFrame)
+        return;
+    auto* contentWindow = contentFrame->window();
     auto* contentWindowGlobalObject = m_iframe->contentDocument()->globalObject();
 
     WindowPostMessageOptions options;

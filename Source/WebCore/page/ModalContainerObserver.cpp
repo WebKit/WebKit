@@ -238,7 +238,7 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         }
 
         for (auto& frameOwner : descendantsOfType<HTMLFrameOwnerElement>(*element)) {
-            RefPtr contentFrame = frameOwner.contentFrame();
+            RefPtr contentFrame = dynamicDowncast<LocalFrame>(frameOwner.contentFrame());
             if (!contentFrame)
                 continue;
 

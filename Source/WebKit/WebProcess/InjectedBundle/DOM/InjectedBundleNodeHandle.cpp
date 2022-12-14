@@ -424,7 +424,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
     if (!is<HTMLFrameElement>(m_node))
         return nullptr;
 
-    Frame* frame = downcast<HTMLFrameElement>(*m_node).contentFrame();
+    auto* frame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameElement>(*m_node).contentFrame());
     if (!frame)
         return nullptr;
 
@@ -436,7 +436,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
     if (!is<HTMLIFrameElement>(m_node))
         return nullptr;
 
-    Frame* frame = downcast<HTMLIFrameElement>(*m_node).contentFrame();
+    auto* frame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameElement>(*m_node).contentFrame());
     if (!frame)
         return nullptr;
 

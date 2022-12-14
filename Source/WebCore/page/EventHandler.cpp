@@ -2347,7 +2347,7 @@ static std::pair<bool, RefPtr<Frame>> contentFrameForNode(Node* target)
     if (!is<HTMLFrameElementBase>(target))
         return { false, nullptr };
 
-    return { true, downcast<HTMLFrameElementBase>(*target).contentFrame() };
+    return { true, dynamicDowncast<LocalFrame>(downcast<HTMLFrameElementBase>(*target).contentFrame()) };
 }
 
 static std::optional<DragOperation> convertDropZoneOperationToDragOperation(const String& dragOperation)

@@ -35,18 +35,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteDOMWindow);
 
-RemoteDOMWindow::RemoteDOMWindow(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier)
+RemoteDOMWindow::RemoteDOMWindow(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
     : AbstractDOMWindow(WTFMove(identifier))
-    , m_frame(WTFMove(frame))
+    , m_frame(frame)
 {
-    m_frame->setWindow(this);
 }
 
-RemoteDOMWindow::~RemoteDOMWindow()
-{
-    if (m_frame)
-        m_frame->setWindow(nullptr);
-}
+RemoteDOMWindow::~RemoteDOMWindow() = default;
 
 WindowProxy* RemoteDOMWindow::self() const
 {

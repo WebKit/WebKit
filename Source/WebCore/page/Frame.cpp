@@ -151,12 +151,11 @@ static inline float parentTextZoomFactor(Frame* frame)
 }
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier)
-    : AbstractFrame(page, identifier, ownerElement ? ownerElement->document().frame() : nullptr)
+    : AbstractFrame(page, identifier, ownerElement)
     , m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_settings(&page.settings())
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
-    , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
@@ -213,11 +212,6 @@ Frame::~Frame()
 
     if (!isMainFrame())
         m_mainFrame.selfOnlyDeref();
-}
-
-HTMLFrameOwnerElement* Frame::ownerElement() const
-{
-    return m_ownerElement.get();
 }
 
 void Frame::addDestructionObserver(FrameDestructionObserver& observer)
@@ -344,8 +338,8 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
         return;
 
-    if (m_ownerElement)
-        m_ownerElement->document().invalidateEventRegionsForFrame(*m_ownerElement);
+    if (RefPtr ownerElement = this->ownerElement())
+        ownerElement->document().invalidateEventRegionsForFrame(*ownerElement);
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -717,13 +711,13 @@ RenderView* Frame::contentRenderer() const
 
 RenderWidget* Frame::ownerRenderer() const
 {
-    auto* ownerElement = m_ownerElement.get();
+    RefPtr ownerElement = this->ownerElement();
     if (!ownerElement)
         return nullptr;
     auto* object = ownerElement->renderer();
     // FIXME: If <object> is ever fixed to disassociate itself from frames
     // that it has started but canceled, then this can turn into an ASSERT
-    // since m_ownerElement would be nullptr when the load is canceled.
+    // since ownerElement would be nullptr when the load is canceled.
     // https://bugs.webkit.org/show_bug.cgi?id=18585
     if (!is<RenderWidget>(object))
         return nullptr;
@@ -788,17 +782,6 @@ void Frame::willDetachPage()
     // - When adding a document to the back/forward cache, the tree is torn down before instantiating
     //   the CachedPage+CachedFrame object tree.
     ASSERT(!document() || !document()->renderView());
-}
-
-void Frame::disconnectOwnerElement()
-{
-    if (m_ownerElement) {
-        m_ownerElement->clearContentFrame();
-        m_ownerElement = nullptr;
-    }
-
-    if (auto* document = this->document())
-        document->frameWasDisconnectedFromOwner();
 }
 
 String Frame::displayStringModifiedByEncoding(const String& str) const
@@ -1111,11 +1094,6 @@ bool Frame::arePluginsEnabled()
     return settings().arePluginsEnabled();
 }
 
-void Frame::didFinishLoadInAnotherProcess()
-{
-    m_loader->checkCompleted();
-}
-
 void Frame::resetScript()
 {
     resetWindowProxy();
@@ -1149,7 +1127,7 @@ Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValue
     auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
     if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
         return nullptr;
-    return downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame();
+    return dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame());
 }
 
 #if ENABLE(DATA_DETECTION)

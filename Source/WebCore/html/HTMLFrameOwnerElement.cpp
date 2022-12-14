@@ -51,7 +51,7 @@ RenderWidget* HTMLFrameOwnerElement::renderWidget() const
     return downcast<RenderWidget>(renderer());
 }
 
-void HTMLFrameOwnerElement::setContentFrame(Frame& frame)
+void HTMLFrameOwnerElement::setContentFrame(AbstractFrame& frame)
 {
     // Make sure we will not end up with two frames referencing the same owner element.
     ASSERT(!m_contentFrame || m_contentFrame->ownerElement() != this);
@@ -76,7 +76,7 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    if (RefPtr<Frame> frame = m_contentFrame.get()) {
+    if (RefPtr frame = dynamicDowncast<LocalFrame>(m_contentFrame.get())) {
         frame->loader().frameDetached();
         frame->disconnectOwnerElement();
     }
@@ -90,7 +90,9 @@ HTMLFrameOwnerElement::~HTMLFrameOwnerElement()
 
 Document* HTMLFrameOwnerElement::contentDocument() const
 {
-    return m_contentFrame ? m_contentFrame->document() : nullptr;
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_contentFrame.get()))
+        return localFrame->document();
+    return nullptr;
 }
 
 WindowProxy* HTMLFrameOwnerElement::contentWindow() const
