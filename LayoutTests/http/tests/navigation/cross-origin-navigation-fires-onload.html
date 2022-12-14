@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("This tests that cross-origin-initiated navigations always fire the load event at their embedding iframe element.");
+jsTestIsAsync = true;
+
+window.onload = function() {
+    window.postMessage("postmessage", "*");
+    document.querySelector('iframe').src = "http://localhost:8000/navigation/resources/postmessage-on-hashchange.html#anchor1";
+}
+
+let onloadCount = 0;
+
+window.addEventListener('message', function (e) {
+    if (onloadCount == 2)
+        testPassed("onload fired 2 times.");
+    else
+        testFailed("onload fired " + onloadCount + " time(s).");
+    
+    finishJSTest();
+});
+
+function onloadFired() {
+    onloadCount++;
+}       
+</script>
+<iframe src="http://localhost:8000/navigation/resources/postmessage-on-hashchange.html" onload="onloadFired()"></iframe>
+</body>
+</html>

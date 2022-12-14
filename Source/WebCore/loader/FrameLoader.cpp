@@ -1187,6 +1187,11 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
         m_frame.document()->enqueueHashchangeEvent(oldURL.string(), url.string());
         m_client->dispatchDidChangeLocationWithinPage();
     }
+
+    if (auto* parentFrame = m_frame.tree().parent(); parentFrame
+        && (m_frame.document()->processingLoadEvent() || m_frame.document()->loadEventFinished())
+        && !m_frame.document()->securityOrigin().isSameOriginAs(parentFrame->document()->securityOrigin()))
+        m_frame.document()->dispatchWindowLoadEvent();
     
     // FrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
     m_client->didFinishLoad();
