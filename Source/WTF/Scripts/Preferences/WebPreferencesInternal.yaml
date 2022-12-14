@@ -251,6 +251,18 @@ DOMPasteAccessRequestsEnabled:
     WebCore:
       default: false
 
+DOMTestingAPIsEnabled:
+  type: bool
+  humanReadableName: "Additional Testing APIs for DOM Objects"
+  humanReadableDescription: "Enable additional testing APIs for DOM objects"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
   type: bool
