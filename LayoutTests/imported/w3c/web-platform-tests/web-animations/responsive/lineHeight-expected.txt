@@ -1,6 +1,6 @@
 
 PASS lineHeight responsive to style changes
-FAIL lineHeight clamped to 0px assert_equals: expected "0px" but got "20px"
+PASS lineHeight clamped to 0px on keyframes
 PASS lineHeight responsive to inherited changes from keyword
 PASS lineHeight responsive to inherited changes from number
 PASS lineHeight responsive to inherited changes from length

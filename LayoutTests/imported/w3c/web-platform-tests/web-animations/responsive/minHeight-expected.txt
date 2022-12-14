@@ -1,4 +1,4 @@
 
 PASS minHeight responsive to style changes
-FAIL minHeight clamped to 0px assert_equals: expected "0px" but got "7.5px"
+PASS minHeight clamped to 0px on keyframes
 
