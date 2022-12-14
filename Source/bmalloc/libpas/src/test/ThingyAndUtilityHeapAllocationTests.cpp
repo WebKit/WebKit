@@ -771,7 +771,7 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
             objectsInThisSpan.push_back(ptr);
             actualNumberOfObjects++;
         }
-        objects.push_back(move(objectsInThisSpan));
+        objects.push_back(std::move(objectsInThisSpan));
     }
 
 #if PAS_ENABLE_TESTING

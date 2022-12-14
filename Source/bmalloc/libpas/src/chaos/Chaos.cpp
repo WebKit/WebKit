@@ -148,7 +148,7 @@ void threadMain(uintptr_t threadIndex)
         [&] (unique_ptr<Packet> packet) {
             Locker locker(globalPoolLock);
             globalPoolNumBytes += packet->numBytes;
-            globalPool.push_back(move(packet));
+            globalPool.push_back(std::move(packet));
         };
     
     auto takePacketFromGlobalPool =
@@ -158,8 +158,8 @@ void threadMain(uintptr_t threadIndex)
                 return unique_ptr<Packet>(nullptr);
             uintptr_t index =
                 uniform_int_distribution<uintptr_t>(0, globalPool.size() - 1)(randomGenerator);
-            unique_ptr<Packet> result = move(globalPool[index]);
-            globalPool[index] = move(globalPool.back());
+            unique_ptr<Packet> result = std::move(globalPool[index]);
+            globalPool[index] = std::move(globalPool.back());
             PAS_ASSERT(result->numBytes <= globalPoolNumBytes);
             globalPoolNumBytes -= result->numBytes;
             globalPool.pop_back();
@@ -228,7 +228,7 @@ void threadMain(uintptr_t threadIndex)
                 } else {
                     unique_ptr<Packet> packet = takePacketFromGlobalPool();
                     if (packet)
-                        localPool.push_back(move(packet));
+                        localPool.push_back(std::move(packet));
                 }
             } else
                 allocate();
@@ -236,11 +236,11 @@ void threadMain(uintptr_t threadIndex)
             if (localPool.size() > maxPacketsPerThread) {
                 uintptr_t index = 
                     uniform_int_distribution<uintptr_t>(0, localPool.size() - 1)(randomGenerator);
-                unique_ptr<Packet> result = move(localPool[index]);
+                unique_ptr<Packet> result = std::move(localPool[index]);
                 PAS_ASSERT(result);
                 localPool.erase(localPool.begin() + index);
                 if (!result->objects.empty())
-                    givePacketToGlobalPool(move(result));
+                    givePacketToGlobalPool(std::move(result));
             }
         };
 
