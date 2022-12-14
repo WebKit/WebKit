@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2022 Apple Inc.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -97,13 +97,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 
     bool newPreserves = style().whiteSpace() == WhiteSpace::Pre;
     bool oldPreserves = oldStyle ? oldStyle->whiteSpace() == WhiteSpace::Pre : false;
-    if (oldPreserves && !newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), false), true);
-        return;
-    }
-
-    if (!oldPreserves && newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), true), true);
+    if (oldPreserves != newPreserves) {
+        setText(originalTextWS(), true);
         return;
     }
 
@@ -113,6 +108,15 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
     // The text metrics may be influenced by style changes.
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         textAncestor->subtreeStyleDidChange(this);
+}
+
+RefPtr<StringImpl>&& RenderSVGInlineText::originalTextWS() const
+{
+    auto const textWithWS = style() && style().whiteSpace() == WhiteSpace::Pre;
+    RefPtr<StringImpl> result = RenderSVGInlineText::originalTextWS();
+    if (!result)
+        return nullptr;
+    return applySVGWhitespaceRules(text, textWithWS);
 }
 
 std::unique_ptr<LegacyInlineTextBox> RenderSVGInlineText::createTextBox()
