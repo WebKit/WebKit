@@ -155,7 +155,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS': [
+        'macOS-AppleSilicon-Ventura-Debug-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',

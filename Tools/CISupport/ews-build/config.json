@@ -93,12 +93,12 @@
     { "name": "ews172", "platform": "mac-bigsur" },
     { "name": "ews173", "platform": "mac-bigsur" },
     { "name": "ews174", "platform": "mac-bigsur" },
-    { "name": "ews175", "platform": "mac-bigsur" },
-    { "name": "ews176", "platform": "mac-bigsur" },
-    { "name": "ews177", "platform": "mac-bigsur" },
-    { "name": "ews178", "platform": "mac-bigsur" },
-    { "name": "ews179", "platform": "mac-bigsur" },
-    { "name": "ews180", "platform": "mac-bigsur" },
+    { "name": "ews175", "platform": "mac-ventura" },
+    { "name": "ews176", "platform": "mac-ventura" },
+    { "name": "ews177", "platform": "mac-ventura" },
+    { "name": "ews178", "platform": "mac-ventura" },
+    { "name": "ews179", "platform": "mac-ventura" },
+    { "name": "ews180", "platform": "mac-ventura" },
     { "name": "ews181", "platform": "mac-bigsur" },
     { "name": "ews182", "platform": "mac-bigsur" },
     { "name": "ews183", "platform": "*" },
@@ -165,12 +165,12 @@
       "name": "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
       "factory": "macOSBuildOnlyFactory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["arm64"],
-      "triggers": ["macos-applesilicon-big-sur-debug-wk2-tests-ews"],
+      "triggers": ["macos-applesilicon-ventura-debug-wk2-tests-ews"],
       "workernames": ["ews171", "ews172", "ews173", "ews174"]
     },
     {
-      "name": "macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
-      "factory": "macOSWK2Factory", "platform": "mac-bigsur",
+      "name": "macOS-AppleSilicon-Ventura-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
+      "factory": "macOSWK2Factory", "platform": "mac-ventura",
       "configuration": "debug", "architectures": ["arm64"],
       "triggered_by": ["macos-applesilicon-big-sur-debug-build-ews"],
       "workernames": ["ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
@@ -404,8 +404,8 @@
       "builderNames": ["macOS-AppleSilicon-Big-Sur-Debug-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-applesilicon-big-sur-debug-wk2-tests-ews",
-      "builderNames": ["macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-applesilicon-ventura-debug-wk2-tests-ews",
+      "builderNames": ["macOS-AppleSilicon-Ventura-Debug-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "ios-16-sim-build-ews",
