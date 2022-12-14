@@ -224,7 +224,7 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     return parseSuccess;
 }
 
-static RefPtr<CSSValue> maybeConsumeCSSWideKeyword(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> maybeConsumeCSSWideKeyword(CSSParserTokenRange& range)
 {
     CSSParserTokenRange rangeCopy = range;
     CSSValueID valueID = rangeCopy.consumeIncludingWhitespace().id();
@@ -330,8 +330,6 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
 {
     ASSERT(!syntax.isUniversal());
 
-    m_range.consumeWhitespace();
-
     auto rangeCopy = m_range;
 
     auto consumeSingleValue = [&](auto& range, auto& component) -> RefPtr<CSSValue> {
@@ -410,8 +408,13 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSCustomProperty
     if (syntax.isUniversal())
         return true;
 
+    m_range.consumeWhitespace();
+
+    if (maybeConsumeCSSWideKeyword(m_range))
+        return true;
+
     auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
-    return value && m_range.atEnd();
+    return value;
 }
 
 void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax& syntax, bool isInitial, HashSet<CSSPropertyID>& dependencies)
@@ -419,8 +422,9 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCu
     if (syntax.isUniversal())
         return;
 
-    auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
+    m_range.consumeWhitespace();
 
+    auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
     if (!value)
         return;
 
@@ -431,12 +435,13 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCu
 
 RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, Style::BuilderState& builderState)
 {
-    if (syntax.isUniversal()) {
-        auto propertyValue = CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(m_range));
-        while (!m_range.atEnd())
-            m_range.consume();
-        return propertyValue;
-    }
+    if (syntax.isUniversal())
+        return CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(m_range.consumeAll()));
+
+    m_range.consumeWhitespace();
+
+    if (auto value = maybeConsumeCSSWideKeyword(m_range))
+        return CSSCustomPropertyValue::createWithID(name, value->valueID());
 
     auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
     if (!value)

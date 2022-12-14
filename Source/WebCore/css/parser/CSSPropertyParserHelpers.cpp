@@ -4306,11 +4306,7 @@ static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args)
     if (!args.atEnd())
         args.consume();
 
-    auto argumentList = CSSVariableData::create(args);
-
-    while (!args.atEnd())
-        args.consume();
-
+    auto argumentList = CSSVariableData::create(args.consumeAll());
     return CSSPaintImageValue::create(name, WTFMove(argumentList));
 }
 #endif

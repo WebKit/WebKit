@@ -127,4 +127,18 @@ Vector<CSSParserToken> CSSCustomPropertyValue::tokens() const
     return result;
 }
 
+bool CSSCustomPropertyValue::containsCSSWideKeyword() const
+{
+    return WTF::switchOn(m_value, [&](const CSSValueID& valueID) {
+        return WebCore::isCSSWideKeyword(valueID);
+    }, [&](const Ref<CSSVariableData>& value) {
+        auto range = CSSParserTokenRange { value->tokens() };
+        range.consumeWhitespace();
+        auto token = range.consumeIncludingWhitespace();
+        return range.atEnd() && token.type() == IdentToken && WebCore::isCSSWideKeyword(token.id());
+    }, [&](auto&) {
+        return false;
+    });
+}
+
 }

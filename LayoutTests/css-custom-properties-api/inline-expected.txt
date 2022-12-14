@@ -6,10 +6,10 @@ PASS CSS.registerProperty
 PASS Formerly valid values are still readable from inline styles but are computed as the unset value
 PASS Values not matching the registered type can't be set
 PASS Values can be removed from inline styles
-FAIL Stylesheets can be modified by CSSOM assert_equals: expected "0px" but got "20px"
-FAIL Valid values can be set on inline styles assert_equals: expected "inherit" but got "30em"
-FAIL Var values are accepted assert_equals: expected "calc(var(--b) + 10px)" but got "30em"
-FAIL Var values are accepted without validation assert_equals: expected "calc(var(--b) + 15px)" but got "30em"
-FAIL Var values are accepted without validation, even when it is obvious they will not parse assert_equals: expected "calc(var(--b) 15px)" but got "30em"
-FAIL Var values are accepted without validation, even when it is obvious they will not parse (typed) assert_equals: expected "calc(var(--registered) 15px)" but got "30em"
+PASS Stylesheets can be modified by CSSOM
+PASS Valid values can be set on inline styles
+FAIL Var values are accepted assert_equals: expected "calc(var(--b) + 10px)" but got "inherit"
+FAIL Var values are accepted without validation assert_equals: expected "calc(var(--b) + 15px)" but got "inherit"
+FAIL Var values are accepted without validation, even when it is obvious they will not parse assert_equals: expected "calc(var(--b) 15px)" but got "inherit"
+FAIL Var values are accepted without validation, even when it is obvious they will not parse (typed) assert_equals: expected "calc(var(--registered) 15px)" but got "inherit"
 

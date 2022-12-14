@@ -74,6 +74,9 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
+
+        if (initialValue->containsCSSWideKeyword())
+            return Exception { SyntaxError, "The intitial value cannot be a CSS-wide keyword."_s };
     }
 
     CSSRegisteredCustomProperty property { AtomString { descriptor.name }, *syntax, descriptor.inherits, WTFMove(initialValue) };

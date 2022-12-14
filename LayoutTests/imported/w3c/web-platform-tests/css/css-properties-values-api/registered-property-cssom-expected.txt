@@ -5,5 +5,5 @@ FAIL Formerly valid values are still readable from inline styles but are compute
 FAIL Values not matching the registered type can still be set assert_equals: expected "hi" but got ""
 PASS Values can be removed from inline styles
 FAIL Stylesheets can be modified by CSSOM assert_equals: expected "0px" but got "10px"
-FAIL Valid values can be set on inline styles assert_equals: expected "inherit" but got "pink"
+PASS Valid values can be set on inline styles
 
