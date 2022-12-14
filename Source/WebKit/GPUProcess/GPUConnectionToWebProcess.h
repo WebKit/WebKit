@@ -33,9 +33,12 @@
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
 #include "RemoteGPU.h"
+#include "RemoteImageBuffer.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
+#include "ThreadSafeObjectHeap.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
@@ -203,6 +206,17 @@ public:
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
+    struct RemoteImageBufferData : public ThreadSafeRefCounted<RemoteImageBufferData> {
+        RemoteImageBufferData(std::unique_ptr<WebCore::ImageBufferBackend>&& backend, const WebCore::ImageBufferBackend::Info& info)
+            : m_backend(WTFMove(backend))
+            , m_info(info)
+        { }
+
+        std::unique_ptr<WebCore::ImageBufferBackend> m_backend;
+        WebCore::ImageBufferBackend::Info m_info;
+    };
+    ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBufferData>>& serializedImageHeap() { return m_imageHeap; }
+
 #if ENABLE(WEBGL)
     void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
 #endif
@@ -234,7 +248,7 @@ private:
 
     void createRenderingBackend(RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
-    void releaseRenderingResource(RenderingBackendIdentifier, WebCore::RenderingResourceIdentifier);
+    void releaseRenderingResource(RemoteSerializedImageBufferWriteReference&&);
 
 #if ENABLE(WEBGL)
     void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
@@ -342,6 +356,7 @@ private:
 #endif
     using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
     RemoteGPUMap m_remoteGPUMap;
+    ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBufferData>> m_imageHeap;
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif

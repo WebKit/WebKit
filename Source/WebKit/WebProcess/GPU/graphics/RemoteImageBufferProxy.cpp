@@ -377,9 +377,7 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 
     prepareForBackingStoreChange();
 
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(backend()->parameters(), backendInfo(), m_renderingResourceIdentifier, m_remoteRenderingBackendProxy->renderingBackendIdentifier(), m_remoteRenderingBackendProxy->connection());
-
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(backend()->parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
 
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
@@ -388,18 +386,33 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     return ret;
 }
 
+RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
+    : m_referenceTracker(RemoteSerializedImageBufferIdentifier::generateThreadSafe())
+    , m_parameters(parameters)
+    , m_info(info)
+    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+    , m_connection(backend.connection())
+{
+    backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
+    backend.moveToSerializedBuffer(m_renderingResourceIdentifier, m_referenceTracker.write());
+
+    // Record an implicit read, since we always do a read+write (to get+remove) as a single
+    // operation.
+    m_referenceTracker.read();
+}
+
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
-    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend));
-    backend.transferImageBuffer(WTFMove(buffer), *result);
+    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
+    backend.moveToImageBuffer(buffer->m_referenceTracker.write(), result->renderingResourceIdentifier());
+    buffer->m_connection = nullptr;
     return result;
 }
 
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
-    if (completed)
-        return;
-    m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseRenderingResource(m_backendIdentifier, m_renderingResourceIdentifier), 0);
+    if (m_connection)
+        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseRenderingResource(m_referenceTracker.write()), 0);
 }
 
 } // namespace WebKit

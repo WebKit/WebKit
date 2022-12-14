@@ -29,6 +29,7 @@
 
 #include "ImageBufferBackendHandle.h"
 #include "RemoteDisplayListRecorderProxy.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferBackend.h>
@@ -139,15 +140,7 @@ public:
 
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier() { return m_renderingResourceIdentifier; }
 
-    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_backendIdentifier; }
-
-    RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, const RenderingBackendIdentifier& backendIdentifier, IPC::Connection* connection)
-        : m_parameters(parameters)
-        , m_info(info)
-        , m_renderingResourceIdentifier(renderingResourceIdentifier)
-        , m_backendIdentifier(backendIdentifier)
-        , m_connection(connection)
-    { }
+    RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
 
     size_t memoryCost() final
     {
@@ -161,20 +154,15 @@ private:
         return nullptr;
     }
 
-    void sinkIntoImageBufferCompleted()
-    {
-        completed = true;
-    }
-
     bool isRemoteSerializedImageBufferProxy() const final { return true; }
+
+    RemoteSerializedImageBufferReferenceTracker m_referenceTracker;
 
     WebCore::ImageBufferBackend::Parameters m_parameters;
     WebCore::ImageBufferBackend::Info m_info;
 
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
-    RenderingBackendIdentifier m_backendIdentifier;
     RefPtr<IPC::Connection> m_connection;
-    bool completed { false };
 };
 
 } // namespace WebKit

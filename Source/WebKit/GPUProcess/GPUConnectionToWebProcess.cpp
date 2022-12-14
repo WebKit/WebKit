@@ -577,15 +577,9 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
-void GPUConnectionToWebProcess::releaseRenderingResource(RenderingBackendIdentifier renderingBackendIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)
+void GPUConnectionToWebProcess::releaseRenderingResource(RemoteSerializedImageBufferWriteReference&& reference)
 {
-    auto* backend = remoteRenderingBackend(renderingBackendIdentifier);
-    if (!backend)
-        return;
-
-    backend->dispatch([backend = Ref { *backend }, renderingResourceIdentifier]() {
-        backend->releaseResource(renderingResourceIdentifier);
-    });
+    m_imageHeap.retireRemove(WTFMove(reference));
 }
 
 #if ENABLE(WEBGL)

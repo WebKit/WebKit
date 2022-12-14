@@ -157,14 +157,14 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     return nullptr;
 }
 
-void RemoteRenderingBackendProxy::transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> existing, ImageBuffer& imageBuffer)
+void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
 {
-    // This sends a message to the GPUP, asking it to transfer ownership of the 'real' ImageBuffer from the old ImageBufferProxy to the new.
-    // Once we receive a response to confirm that the transfer has happened, we notify the SerializedImageBuffer that
-    // we've completed and ownership of the reference belongs to the new buffer.
-    auto reply = streamConnection().sendSync(Messages::RemoteRenderingBackend::TransferImageBuffer(existing->renderingBackendIdentifier(), existing->renderingResourceIdentifier(), imageBuffer.renderingResourceIdentifier()), renderingBackendIdentifier(), Seconds::infinity());
-    if (std::get<0>(reply.takeReplyOr(false)))
-        existing->sinkIntoImageBufferCompleted();
+    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier, reference));
+}
+
+void RemoteRenderingBackendProxy::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(reference, identifier));
 }
 
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)
