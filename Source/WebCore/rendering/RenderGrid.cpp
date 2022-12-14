@@ -1022,11 +1022,21 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
 
 GridTrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
 {
+    if (isMasonryColumns())
+        return ForColumns;
+    if (isMasonryRows())
+        return ForRows;
+
     return style().isGridAutoFlowDirectionColumn() ? ForColumns : ForRows;
 }
 
 GridTrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const
 {
+    if (isMasonryColumns())
+        return ForRows;
+    if (isMasonryRows())
+        return ForColumns;
+
     return style().isGridAutoFlowDirectionColumn() ? ForRows : ForColumns;
 }
 
