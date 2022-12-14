@@ -40,13 +40,13 @@ void SimpleCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds cur
     auto caretBlinkInterval = RenderTheme::singleton().caretBlinkInterval();
 
     // Ensure the caret is always visible when blinking is suspended.
-    if (isBlinkingSuspended() && isVisible()) {
+    if (isBlinkingSuspended() && m_presentationProperties.blinkState == PresentationProperties::BlinkState::On) {
         m_blinkTimer.startOneShot(caretBlinkInterval);
         return;
     }
 
     if (currentTime - m_lastTimeCaretPaintWasToggled >= caretBlinkInterval) {
-        setVisible(m_blinkState == CaretBlinkState::Off);
+        setBlinkState(!m_presentationProperties.blinkState);
         m_lastTimeCaretPaintWasToggled = currentTime;
 
         m_blinkTimer.startOneShot(caretBlinkInterval);
@@ -62,7 +62,7 @@ void SimpleCaretAnimator::start(ReducedResolutionSeconds currentTime)
 String SimpleCaretAnimator::debugDescription() const
 {
     TextStream textStream;
-    textStream << "SimpleCaretAnimator " << this << " active " << isActive() << " blink state = " << (m_blinkState == CaretBlinkState::On ? "On" : "Off");
+    textStream << "SimpleCaretAnimator " << this << " active " << isActive() << " blink state = " << (m_presentationProperties.blinkState == PresentationProperties::BlinkState::On ? "On" : "Off");
     return textStream.release();
 }
 

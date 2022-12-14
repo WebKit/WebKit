@@ -163,11 +163,27 @@ static inline bool isPageActive(Document* document)
     return document && document->page() && document->page()->focusController().isActive();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/FrameSelectionAdditions.cpp>
+#else
+#if ENABLE(TEXT_CARET)
+static void fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color&color, const CaretAnimator::PresentationProperties&)
+{
+    context.fillRect(caret, color);
+}
+#endif
+
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection)
+{
+    return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
+}
+#endif
+
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
     , m_granularity(TextGranularity::CharacterGranularity)
     , m_appearanceUpdateTimer(*this, &FrameSelection::appearanceUpdateTimerFired)
-    , m_caretAnimator(makeUniqueRef<SimpleCaretAnimator>(*this))
+    , m_caretAnimator(createCaretAnimator(this))
     , m_caretInsidePositionFixed(false)
     , m_absCaretBoundsDirty(true)
     , m_focused(document && document->frame() && document->page() && document->page()->focusController().focusedFrame() == document->frame())
@@ -1718,15 +1734,6 @@ bool CaretBase::updateCaretRect(Document& document, const VisiblePosition& caret
     return !m_caretLocalRect.isEmpty();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/FrameSelectionAdditions.cpp>
-#else
-void CaretBase::fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color& color) const
-{
-    context.fillRect(caret, color);
-}
-#endif
-
 RenderBlock* FrameSelection::caretRendererWithoutUpdatingLayout() const
 {
     return rendererForCaretPainting(m_selection.start().deprecatedNode());
@@ -1859,8 +1866,8 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
 
 void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
 {
-    if (m_selection.isCaret() && caretAnimator().isVisible() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
+    if (m_selection.isCaret() && m_selection.start().deprecatedNode())
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator->presentationProperties());
 }
 
 Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
@@ -1886,10 +1893,10 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
 }
 
-void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, const CaretAnimator::PresentationProperties& caretPresentationProperties) const
 {
 #if ENABLE(TEXT_CARET)
-    if (m_caretVisibility == Hidden)
+    if (m_caretVisibility == Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
     auto drawingRect = localCaretRectWithoutUpdate();
@@ -1906,12 +1913,13 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
-    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor);
+    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, caretPresentationProperties);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
     UNUSED_PARAM(paintOffset);
     UNUSED_PARAM(clipRect);
+    UNUSED_PARAM(caretPresentationProperties);
 #endif
 }
 
@@ -2395,7 +2403,7 @@ void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect, { });
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
