@@ -393,7 +393,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (style.shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
-            if (!renderer.parent()->style().isLeftToRightDirection() || !renderer.parent()->style().isHorizontalWritingMode())
+            if (!renderer.parent()->style().isLeftToRightDirection())
                 return false;
             if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
                 return false;

@@ -272,9 +272,17 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
         return contentBoxTopLeft;
     }
 
+    auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
+    auto leftSideToLogicalTopLeft = [&] (auto& displayBox, auto& line) {
+        return isHorizontalWritingMode ? LayoutPoint(displayBox.left(), line.top()) : LayoutPoint(displayBox.top(), line.left());
+    };
+    auto rightSideToLogicalTopLeft = [&] (auto& displayBox, auto& line) {
+        return isHorizontalWritingMode ? LayoutPoint(displayBox.right(), line.top()) : LayoutPoint(displayBox.bottom(), line.left());
+    };
+
     auto previousDisplayBoxIndexBeforeOutOfFlowBox = previousDisplayBoxIndex(outOfFlowBox, boxes);
     if (!previousDisplayBoxIndexBeforeOutOfFlowBox)
-        return { boxes[0].left(), lines[0].top() };
+        return leftSideToLogicalTopLeft(boxes[0], lines[0]);
 
     auto& previousDisplayBox = boxes[*previousDisplayBoxIndexBeforeOutOfFlowBox];
     auto& currentLine = lines[previousDisplayBox.lineIndex()];
@@ -282,23 +290,27 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
         // Special handling for cases when this is the first box inside an inline box:
         // <div>text<span><img style="position: absolute">content</span></div>
         auto& inlineBox = previousDisplayBox.layoutBox();
-        auto firstDisplayBox = boxes[*firstDisplayBoxIndexForLayoutBox(inlineBox, boxes)];
-        auto& inlineBoxBoxGeometry = formattingContext().geometryForBox(inlineBox);
-        return { LayoutUnit(firstDisplayBox.left()) + inlineBoxBoxGeometry.borderAndPaddingStart(), lines[firstDisplayBox.lineIndex()].top() };
+        auto inlineBoxDisplayBox = boxes[*firstDisplayBoxIndexForLayoutBox(inlineBox, boxes)];
+        auto inlineContentBoxOffset = formattingContext().geometryForBox(inlineBox).borderAndPaddingStart();
+        if (isHorizontalWritingMode)
+            inlineBoxDisplayBox.moveHorizontally(inlineContentBoxOffset);
+        else
+            inlineBoxDisplayBox.moveVertically(inlineContentBoxOffset);
+        return leftSideToLogicalTopLeft(inlineBoxDisplayBox, lines[inlineBoxDisplayBox.lineIndex()]);
     }
 
-    auto previousBoxOverflows = previousDisplayBox.right() > currentLine.right() || previousDisplayBox.isLineBreakBox();
+    auto previousBoxOverflows = (isHorizontalWritingMode ? previousDisplayBox.right() > currentLine.right() : previousDisplayBox.bottom() > currentLine.bottom()) || previousDisplayBox.isLineBreakBox();
     if (!previousBoxOverflows)
-        return { previousDisplayBox.right(), currentLine.top() };
+        return rightSideToLogicalTopLeft(previousDisplayBox, currentLine);
 
     auto nextDisplayBoxIndexAfterOutOfFlow = nextDisplayBoxIndex(outOfFlowBox, boxes);
     if (!nextDisplayBoxIndexAfterOutOfFlow) {
         // This is the last content on the block and it does not fit the last line.
-        // FIXME: This still has line tyoe of constraints like text-align.
-        return LayoutPoint { contentBoxTopLeft.x(), currentLine.bottom() };
+        // FIXME: This still has line type of constraints like text-align.
+        return LayoutPoint { contentBoxTopLeft.x(), isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
     }
     auto& nextDisplayBox = boxes[*nextDisplayBoxIndexAfterOutOfFlow];
-    return { nextDisplayBox.left(), lines[nextDisplayBox.lineIndex()].top() };
+    return leftSideToLogicalTopLeft(nextDisplayBox, lines[nextDisplayBox.lineIndex()]);
 }
 
 LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft) const
@@ -306,13 +318,16 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(co
     ASSERT(outOfFlowBox.style().isDisplayBlockLevel());
 
     auto& formattingState = formattingContext().formattingState();
+    auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
     auto& lines = formattingState.lines();
     auto& boxes = formattingState.boxes();
+
     // Block level boxes are placed under the current line as if they were normal inflow block level boxes.
     auto previousDisplayBoxIndexBeforeOutOfFlowBox = previousDisplayBoxIndex(outOfFlowBox, boxes);
     if (!previousDisplayBoxIndexBeforeOutOfFlowBox)
-        return { contentBoxTopLeft.x(), lines[0].top() };
-    return { contentBoxTopLeft.x(), previousDisplayBoxIndexBeforeOutOfFlowBox ? LayoutUnit(lines[boxes[*previousDisplayBoxIndexBeforeOutOfFlowBox].lineIndex()].bottom()) : contentBoxTopLeft.y() };
+        return { contentBoxTopLeft.x(), isHorizontalWritingMode ? lines[0].top() : lines[0].left() };
+    auto& currentLine = lines[boxes[*previousDisplayBoxIndexBeforeOutOfFlowBox].lineIndex()];
+    return { contentBoxTopLeft.x(), LayoutUnit { isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() } };
 }
 
 InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) const
