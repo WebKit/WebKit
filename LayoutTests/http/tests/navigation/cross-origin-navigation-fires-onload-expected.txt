@@ -1,0 +1,10 @@
+This tests that cross-origin-initiated navigations always fire the load event at their embedding iframe element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS onload fired 2 times.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
