@@ -32,6 +32,7 @@
 #include "WebSocketDeflater.h"
 
 #include "Logging.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <zlib.h>
@@ -78,13 +79,18 @@ bool WebSocketDeflater::addBytes(const uint8_t* data, size_t length)
 
     size_t maxLength = deflateBound(m_stream.get(), length);
     size_t writePosition = m_buffer.size();
-    m_buffer.grow(writePosition + maxLength);
+    CheckedSize bufferSize = maxLength;
+    bufferSize += writePosition; 
+    if (bufferSize.hasOverflowed())
+        return false;
+
+    m_buffer.grow(bufferSize.value());
     setStreamParameter(m_stream.get(), data, length, m_buffer.data() + writePosition, maxLength);
     int result = deflate(m_stream.get(), Z_NO_FLUSH);
     if (result != Z_OK || m_stream->avail_in > 0)
         return false;
 
-    m_buffer.shrink(writePosition + maxLength - m_stream->avail_out);
+    m_buffer.shrink(bufferSize.value() - m_stream->avail_out);
     return true;
 }
 
@@ -92,7 +98,12 @@ bool WebSocketDeflater::finish()
 {
     while (true) {
         size_t writePosition = m_buffer.size();
-        m_buffer.grow(writePosition + bufferIncrementUnit);
+        CheckedSize bufferSize = writePosition;
+        bufferSize += bufferIncrementUnit; 
+        if (bufferSize.hasOverflowed())
+            return false;
+
+        m_buffer.grow(bufferSize.value());
         size_t availableCapacity = m_buffer.size() - writePosition;
         setStreamParameter(m_stream.get(), 0, 0, m_buffer.data() + writePosition, availableCapacity);
         int result = deflate(m_stream.get(), Z_SYNC_FLUSH);
@@ -145,7 +156,12 @@ bool WebSocketInflater::addBytes(const uint8_t* data, size_t length)
     size_t consumedSoFar = 0;
     while (consumedSoFar < length) {
         size_t writePosition = m_buffer.size();
-        m_buffer.grow(writePosition + bufferIncrementUnit);
+        CheckedSize bufferSize = writePosition;
+        bufferSize += bufferIncrementUnit; 
+        if (bufferSize.hasOverflowed())
+            return false;
+
+        m_buffer.grow(bufferSize.value());
         size_t availableCapacity = m_buffer.size() - writePosition;
         size_t remainingLength = length - consumedSoFar;
         setStreamParameter(m_stream.get(), data + consumedSoFar, remainingLength, m_buffer.data() + writePosition, availableCapacity);
@@ -177,7 +193,12 @@ bool WebSocketInflater::finish()
     size_t consumedSoFar = 0;
     while (consumedSoFar < strippedLength) {
         size_t writePosition = m_buffer.size();
-        m_buffer.grow(writePosition + bufferIncrementUnit);
+        CheckedSize bufferSize = writePosition;
+        bufferSize += bufferIncrementUnit; 
+        if (bufferSize.hasOverflowed())
+            return false;
+
+        m_buffer.grow(bufferSize.value());
         size_t availableCapacity = m_buffer.size() - writePosition;
         size_t remainingLength = strippedLength - consumedSoFar;
         setStreamParameter(m_stream.get(), strippedFields + consumedSoFar, remainingLength, m_buffer.data() + writePosition, availableCapacity);
