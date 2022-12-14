@@ -663,8 +663,6 @@ void Options::notifyOptionsChanged()
         if (Options::useWebAssemblySIMD()) {
             bool isValid = true;
             isValid &= Options::useBBQJIT();
-            isValid &= !Options::webAssemblyBBQAirModeThreshold();
-            isValid &= Options::wasmBBQUsesAir();
             isValid &= Options::useWasmLLInt();
             isValid &= Options::wasmLLIntTiersUpToBBQ();
             if (!isValid)

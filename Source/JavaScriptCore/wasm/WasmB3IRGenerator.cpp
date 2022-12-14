@@ -32,11 +32,13 @@
 #include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
+#include "B3Const128Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3EstimateStaticExecutionCounts.h"
 #include "B3FixSSA.h"
 #include "B3Generate.h"
 #include "B3InsertionSet.h"
+#include "B3SIMDValue.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
@@ -65,6 +67,7 @@
 #include "WasmOSREntryData.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmOperations.h"
+#include "WasmSIMDOpcodes.h"
 #include "WasmThunks.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <limits>
@@ -97,7 +100,7 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
 
-    static constexpr bool tierSupportsSIMD = false;
+    static constexpr bool tierSupportsSIMD = true;
 
     struct ControlData {
         ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -311,7 +314,187 @@ public:
 
     B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
 
-    void notifyFunctionUsesSIMD() NO_RETURN { ASSERT(m_info.isSIMDFunction(m_functionIndex)); RELEASE_ASSERT_NOT_REACHED(); }
+    // SIMD
+    void notifyFunctionUsesSIMD() { ASSERT(m_info.isSIMDFunction(m_functionIndex)); }
+    PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN addSIMDSplat(SIMDLane, ExpressionType scalar, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType v, ExpressionType shift, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadSplat(SIMDLaneOperation, ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadLane(SIMDLaneOperation, ExpressionType pointer, ExpressionType vector, uint32_t offset, uint8_t laneIndex, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation, ExpressionType pointer, ExpressionType vector, uint32_t offset, uint8_t laneIndex);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadExtend(SIMDLaneOperation, ExpressionType pointer, uint32_t offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation, ExpressionType pointer, uint32_t offset, ExpressionType& result);
+
+    ExpressionType WARN_UNUSED_RETURN addConstant(v128_t value)
+    {
+        return push(m_currentBlock->appendNew<Const128Value>(m_proc, origin(), value));
+    }
+
+    // SIMD generated
+
+    #define B3_OP_CASE(OP) \
+    else if (op == SIMDLaneOperation::OP) b3Op = B3::Vector##OP;
+
+    #define B3_OP_CASES() \
+    B3::Opcode b3Op = B3::Oops; \
+    if (false) { }
+
+    auto addExtractLane(SIMDInfo info, uint8_t lane, ExpressionType v, ExpressionType& result) -> PartialResult
+    {
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, toB3Type(simdScalarType(info.lane)), info,
+            lane,
+            get(v)));
+        return { };
+    }
+
+    auto addReplaceLane(SIMDInfo info, uint8_t lane, ExpressionType v, ExpressionType s, ExpressionType& result) -> PartialResult
+    {
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorReplaceLane, B3::V128, info,
+            lane,
+            get(v),
+            get(s)));
+        return { };
+    }
+
+    auto addSIMDI_V(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType& result) -> PartialResult
+    {
+        B3_OP_CASES()
+        B3_OP_CASE(Bitmask)
+        B3_OP_CASE(AnyTrue)
+        B3_OP_CASE(AllTrue)
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::Int32, info,
+            get(v)));
+        return { };
+    }
+
+    auto addSIMDV_V(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType& result) -> PartialResult
+    {
+        B3_OP_CASES()
+        B3_OP_CASE(Demote)
+        B3_OP_CASE(Promote)
+        B3_OP_CASE(Abs)
+        B3_OP_CASE(Popcnt)
+        B3_OP_CASE(Ceil)
+        B3_OP_CASE(Floor)
+        B3_OP_CASE(Trunc)
+        B3_OP_CASE(Nearest)
+        B3_OP_CASE(Sqrt)
+        B3_OP_CASE(ExtaddPairwise)
+        B3_OP_CASE(Convert)
+        B3_OP_CASE(ConvertLow)
+        B3_OP_CASE(ExtendHigh)
+        B3_OP_CASE(ExtendLow)
+        B3_OP_CASE(TruncSat)
+        B3_OP_CASE(Not)
+        B3_OP_CASE(Neg)
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
+            get(v)));
+        return { };
+    }
+
+    auto addSIMDBitwiseSelect(ExpressionType v1, ExpressionType v2, ExpressionType c, ExpressionType& result) -> PartialResult
+    {
+        auto b3Op = B3::VectorBitwiseSelect;
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, SIMDInfo { SIMDLane::v128, SIMDSignMode::None },
+            get(v1), get(v2), get(c)));
+        return { };
+    }
+
+    auto addSIMDRelOp(SIMDLaneOperation, SIMDInfo info, ExpressionType lhs, ExpressionType rhs, Air::Arg relOp, ExpressionType& result) -> PartialResult
+    {
+        B3::Opcode b3Op = Oops;
+        if (scalarTypeIsIntegral(info.lane)) {
+            switch (relOp.asRelationalCondition()) {
+            case MacroAssembler::Equal: 
+                b3Op = VectorEqual;
+                break;
+            case MacroAssembler::NotEqual: 
+                b3Op = VectorNotEqual;
+                break;
+            case MacroAssembler::LessThan: 
+                b3Op = VectorLessThan;
+                break;
+            case MacroAssembler::LessThanOrEqual: 
+                b3Op = VectorLessThanOrEqual;
+                break;
+            case MacroAssembler::Below: 
+                b3Op = VectorBelow;
+                break;
+            case MacroAssembler::BelowOrEqual: 
+                b3Op = VectorBelowOrEqual;
+                break;
+            case MacroAssembler::GreaterThan: 
+                b3Op = VectorGreaterThan;
+                break;
+            case MacroAssembler::GreaterThanOrEqual: 
+                b3Op = VectorGreaterThanOrEqual;
+                break;
+            case MacroAssembler::Above: 
+                b3Op = VectorAbove;
+                break;
+            case MacroAssembler::AboveOrEqual: 
+                b3Op = VectorAboveOrEqual;
+                break;
+            }
+        } else {
+            switch (relOp.asDoubleCondition()) {
+            case MacroAssembler::DoubleEqualAndOrdered: 
+                b3Op = VectorEqual;
+                break;
+            case MacroAssembler::DoubleNotEqualOrUnordered: 
+                b3Op = VectorNotEqual;
+                break;
+            case MacroAssembler::DoubleLessThanAndOrdered: 
+                b3Op = VectorLessThan;
+                break;
+            case MacroAssembler::DoubleLessThanOrEqualAndOrdered: 
+                b3Op = VectorLessThanOrEqual;
+                break;
+            case MacroAssembler::DoubleGreaterThanAndOrdered: 
+                b3Op = VectorGreaterThan;
+                break;
+            case MacroAssembler::DoubleGreaterThanOrEqualAndOrdered: 
+                b3Op = VectorGreaterThanOrEqual;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
+            get(lhs), get(rhs)));
+        return { };
+    }
+
+    auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
+    {
+        B3_OP_CASES()
+        B3_OP_CASE(And)
+        B3_OP_CASE(Andnot)
+        B3_OP_CASE(AvgRound)
+        B3_OP_CASE(DotProduct)
+        B3_OP_CASE(Add)
+        B3_OP_CASE(Mul)
+        B3_OP_CASE(MulSat)
+        B3_OP_CASE(Sub)
+        B3_OP_CASE(Div)
+        B3_OP_CASE(Pmax)
+        B3_OP_CASE(Pmin)
+        B3_OP_CASE(Or)
+        B3_OP_CASE(Swizzle)
+        B3_OP_CASE(Xor)
+        B3_OP_CASE(Narrow)
+        B3_OP_CASE(AddSat)
+        B3_OP_CASE(SubSat)
+        B3_OP_CASE(Max)
+        B3_OP_CASE(Min)
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
+            get(a), get(b)));
+        return { };
+    }
 
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -428,6 +611,7 @@ public:
     void didPopValueFromStack() { --m_stackSize; }
 
     Value* constant(B3::Type, uint64_t bits, std::optional<Origin> = std::nullopt);
+    Value* constant(B3::Type, v128_t bits, std::optional<Origin> = std::nullopt);
     Value* framePointer();
     void insertEntrySwitch();
     void insertConstants();
@@ -864,6 +1048,13 @@ Value* B3IRGenerator::constant(B3::Type type, uint64_t bits, std::optional<Origi
     return result.iterator->value;
 }
 
+Value* B3IRGenerator::constant(B3::Type type, v128_t bits, std::optional<Origin> maybeOrigin)
+{
+    Value* result = m_proc.addConstant(maybeOrigin ? *maybeOrigin : origin(), type, bits);
+    m_constantInsertionValues.insertValue(0, result);
+    return result;
+}
+
 Value* B3IRGenerator::framePointer()
 {
     if (!m_framePointer) {
@@ -942,8 +1133,12 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
         m_locals.uncheckedAppend(local);
-        auto val = isRefType(type) ? JSValue::encode(jsNull()) : 0;
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
+        if (type.isV128())
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), v128_t { }, Origin()));
+        else {
+            auto val = isRefType(type) ? JSValue::encode(jsNull()) : 0;
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
+        }
     }
     return { };
 }
@@ -965,7 +1160,13 @@ auto B3IRGenerator::addArguments(const TypeDefinition& signature) -> PartialResu
             if (type == B3::Int32)
                 argument = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), argument);
         } else if (rep.location.isFPR()) {
-            argument = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.fpr());
+            if (type.isVector()) {
+                ASSERT(rep.width == Width128);
+                argument = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.fpr(), B3::ArgumentRegValue::UsesVectorArgs);
+            } else {
+                ASSERT(rep.width != Width128);
+                argument = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.fpr());
+            }
             if (type == B3::Float)
                 argument = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), argument);
         } else {
@@ -2642,6 +2843,262 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
     return push(constant(toB3Type(type), value));
 }
 
+auto B3IRGenerator::addSIMDSplat(SIMDLane lane, ExpressionType scalar, ExpressionType& result) -> PartialResult
+{
+    Value* toSplat = get(scalar);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorSplat, B3::V128, lane, SIMDSignMode::None, toSplat));
+    return { };
+}
+
+auto B3IRGenerator::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, ExpressionType v, ExpressionType shift, ExpressionType& result) -> PartialResult
+{
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+        op == SIMDLaneOperation::Shr ? B3::VectorShr : B3::VectorShl, B3::V128, info, get(v), get(shift)));
+    return { };
+}
+
+auto B3IRGenerator::addSIMDExtmul(SIMDLaneOperation op, SIMDInfo info, ExpressionType lhs, ExpressionType rhs, ExpressionType& result) -> PartialResult
+{
+    ASSERT(info.signMode != SIMDSignMode::None);
+
+    auto extOp = op == SIMDLaneOperation::ExtmulLow ? VectorExtendLow : VectorExtendHigh;
+    Value* extLhs = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), extOp, B3::V128, info, get(lhs));
+    Value* extRhs = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), extOp, B3::V128, info, get(rhs));
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorMul, B3::V128, info, extLhs, extRhs));
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
+{
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorShuffle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, 
+        imm, get(a), get(b)));
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDLoad(ExpressionType pointerVariable, uint32_t uoffset, ExpressionType& result) -> PartialResult
+{
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, 16);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), B3::V128, origin(), ptr, offset));
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDStore(ExpressionType value, ExpressionType pointerVariable, uint32_t uoffset) -> PartialResult
+{
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, 16);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), get(value), ptr, offset);
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType pointerVariable, uint32_t uoffset, ExpressionType& result) -> PartialResult
+{
+    size_t byteSize;
+
+    B3::Opcode loadOp;
+    B3::Type type;
+    SIMDLane lane;
+    switch (op) {
+    case SIMDLaneOperation::LoadSplat8:
+        loadOp = Load8Z;
+        type = B3::Int32;
+        lane = SIMDLane::i8x16;
+        byteSize = 1;
+        break;
+    case SIMDLaneOperation::LoadSplat16:
+        loadOp = Load16Z;
+        type = B3::Int32;
+        lane = SIMDLane::i16x8;
+        byteSize = 2;
+        break;
+    case SIMDLaneOperation::LoadSplat32:
+        loadOp = Load;
+        type = B3::Int32;
+        lane = SIMDLane::i32x4;
+        byteSize = 4;
+        break;
+    case SIMDLaneOperation::LoadSplat64:
+        loadOp = Load;
+        type = B3::Int64;
+        lane = SIMDLane::i64x2;
+        byteSize = 8;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, byteSize);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    Value* memLoad = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(loadOp), type, origin(), ptr, offset);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorSplat, B3::V128, lane, SIMDSignMode::None, memLoad));
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDLoadLane(SIMDLaneOperation op, ExpressionType pointerVariable, ExpressionType vectorVariable, uint32_t uoffset, uint8_t laneIndex, ExpressionType& result) -> PartialResult 
+{
+    size_t byteSize;
+    B3::Opcode loadOp;
+    B3::Type type;
+    SIMDLane lane;
+    switch (op) {
+    case SIMDLaneOperation::LoadLane8:
+        loadOp = Load8Z;
+        type = B3::Int32;
+        lane = SIMDLane::i8x16;
+        byteSize = 1;
+        break;
+    case SIMDLaneOperation::LoadLane16:
+        loadOp = Load16Z;
+        type = B3::Int32;
+        lane = SIMDLane::i16x8;
+        byteSize = 2;
+        break;
+    case SIMDLaneOperation::LoadLane32:
+        loadOp = Load;
+        type = B3::Int32;
+        lane = SIMDLane::i32x4;
+        byteSize = 4;
+        break;
+    case SIMDLaneOperation::LoadLane64:
+        loadOp = Load;
+        type = B3::Int64;
+        lane = SIMDLane::i64x2;
+        byteSize = 8;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, byteSize);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    Value* memLoad = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(loadOp), type, origin(), ptr, offset);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorReplaceLane, B3::V128, lane, SIMDSignMode::None, laneIndex, get(vectorVariable), memLoad));
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointerVariable, ExpressionType vectorVariable, uint32_t uoffset, uint8_t laneIndex) -> PartialResult 
+{
+    size_t byteSize;
+    B3::Opcode storeOp;
+    B3::Type type;
+    SIMDLane lane;
+    switch (op) {
+    case SIMDLaneOperation::StoreLane8:
+        storeOp = Store8;
+        type = B3::Int32;
+        lane = SIMDLane::i8x16;
+        byteSize = 1;
+        break;
+    case SIMDLaneOperation::StoreLane16:
+        storeOp = Store16;
+        type = B3::Int32;
+        lane = SIMDLane::i16x8;
+        byteSize = 2;
+        break;
+    case SIMDLaneOperation::StoreLane32:
+        storeOp = Store;
+        type = B3::Int32;
+        lane = SIMDLane::i32x4;
+        byteSize = 4;
+        break;
+    case SIMDLaneOperation::StoreLane64:
+        storeOp = Store;
+        type = B3::Int64;
+        lane = SIMDLane::i64x2;
+        byteSize = 8;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, byteSize);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    Value* laneValue = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, type, lane, byteSize < 32 ? SIMDSignMode::Unsigned : SIMDSignMode::None, laneIndex, get(vectorVariable));
+    m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(storeOp), origin(), laneValue, ptr, offset);
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDLoadExtend(SIMDLaneOperation op, ExpressionType pointerVariable, uint32_t uoffset, ExpressionType& result) -> PartialResult 
+{
+    B3::Opcode loadOp = Load;
+    size_t byteSize = 8;
+    SIMDLane lane;
+    SIMDSignMode signMode;
+    switch (op) {
+    case SIMDLaneOperation::LoadExtend8U:
+        lane = SIMDLane::i16x8;
+        signMode = SIMDSignMode::Unsigned;
+        break;
+    case SIMDLaneOperation::LoadExtend8S:
+        lane = SIMDLane::i16x8;
+        signMode = SIMDSignMode::Signed;
+        break;
+    case SIMDLaneOperation::LoadExtend16U:
+        lane = SIMDLane::i32x4;
+        signMode = SIMDSignMode::Unsigned;
+        break;
+    case SIMDLaneOperation::LoadExtend16S:
+        lane = SIMDLane::i32x4;
+        signMode = SIMDSignMode::Signed;
+        break;
+    case SIMDLaneOperation::LoadExtend32U:
+        lane = SIMDLane::i64x2;
+        signMode = SIMDSignMode::Unsigned;
+        break;
+    case SIMDLaneOperation::LoadExtend32S:
+        lane = SIMDLane::i64x2;
+        signMode = SIMDSignMode::Signed;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, byteSize);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    Value* memLoad = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(loadOp), B3::Double, origin(), ptr, offset);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorExtendLow, B3::V128, SIMDInfo { lane, signMode }, memLoad));
+
+    return { };
+}
+
+auto B3IRGenerator::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointerVariable, uint32_t uoffset, ExpressionType& result) -> PartialResult 
+{
+    B3::Type loadType;
+    unsigned byteSize;
+    SIMDLane lane;
+    uint8_t idx = 0;
+    switch (op) {
+    case SIMDLaneOperation::LoadPad32:
+        loadType = B3::Float;
+        byteSize = 4;
+        lane = SIMDLane::f32x4;
+        break;
+    case SIMDLaneOperation::LoadPad64:
+        loadType = B3::Double;
+        byteSize = 8;
+        lane = SIMDLane::f64x2;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, byteSize);
+    int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
+    Value* memLoad = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), loadType, origin(), ptr, offset);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorReplaceLane, B3::V128, lane, SIMDSignMode::None, idx,
+        m_currentBlock->appendNew<Const128Value>(m_proc, origin(), v128_t { }), 
+        memLoad));
+
+    return { };
+}
+
 void B3IRGenerator::emitEntryTierUpCheck()
 {
     if (!m_tierUp)
@@ -3004,7 +3461,7 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     PatchpointValue* result = m_currentBlock->appendNew<PatchpointValue>(m_proc, m_proc.addTuple({ pointerType(), pointerType() }), origin());
     result->effects.exitsSideways = true;
     result->clobber(RegisterSetBuilder::macroClobberedRegisters());
-    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters());
+    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     result->clobberLate(clobberLate);
     result->append(instanceValue(), ValueRep::SomeRegister);
@@ -3048,7 +3505,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
     patch->append(framePointer(), ValueRep::reg(GPRInfo::argumentGPR1));
     for (unsigned i = 0; i < args.size(); ++i)
         patch->append(get(args[i]), ValueRep::stackArgument(i * sizeof(EncodedJSValue)));
-    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -3063,7 +3520,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
 auto B3IRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
-    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     patch->append(framePointer(), ValueRep::reg(GPRInfo::argumentGPR1));
@@ -3227,7 +3684,7 @@ B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin,
     B3::Type returnType = toB3ResultType(&signature);
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin);
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
-    patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
+    patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patchpointFunctor(patchpoint, exceptionHandle);
     patchpoint->appendVector(constrainedArguments);
 
@@ -3553,15 +4010,11 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
     auto result = makeUnique<InternalFunction>();
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
-    compilationContext.procedure = makeUnique<Procedure>();
+    compilationContext.procedure = makeUnique<Procedure>(info.isSIMDFunction(functionIndex));
 
     Procedure& procedure = *compilationContext.procedure;
     if (shouldDumpIRFor(functionIndex + info.importFunctionCount()))
         procedure.setShouldDumpIR();
-
-    bool usesSIMD = info.isSIMDFunction(functionIndex);
-    if (usesSIMD)
-        procedure.setUsessSIMD();
 
 
     if (Options::useSamplingProfiler()) {

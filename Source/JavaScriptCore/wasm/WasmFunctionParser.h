@@ -1119,7 +1119,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::And:
     case SIMDLaneOperation::Andnot:
     case SIMDLaneOperation::AvgRound:
-    case SIMDLaneOperation::DotProductInt32:
+    case SIMDLaneOperation::DotProduct:
     case SIMDLaneOperation::Add:
     case SIMDLaneOperation::Mul:
     case SIMDLaneOperation::MulSat:

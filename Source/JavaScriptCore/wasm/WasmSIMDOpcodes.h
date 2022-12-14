@@ -50,7 +50,7 @@ enum class SIMDLaneOperation : uint8_t {
     GreaterThanOrEqual,
     LoadLane8,
     Shl,
-    DotProductInt32,
+    DotProduct,
     Const,
     Demote,
     Convert,
@@ -255,7 +255,7 @@ macro(I32x4MinS,                  0xb6,  Min,                 SIMDLane::i32x4,  
 macro(I32x4MinU,                  0xb7,  Min,                 SIMDLane::i32x4,  SIMDSignMode::Unsigned) \
 macro(I32x4MaxS,                  0xb8,  Max,                 SIMDLane::i32x4,  SIMDSignMode::Signed) \
 macro(I32x4MaxU,                  0xb9,  Max,                 SIMDLane::i32x4,  SIMDSignMode::Unsigned) \
-macro(I32x4DotI16x8S,             0xba,  DotProductInt32,     SIMDLane::i32x4,  SIMDSignMode::None) \
+macro(I32x4DotI16x8S,             0xba,  DotProduct,          SIMDLane::i32x4,  SIMDSignMode::None) \
 macro(I64x2Abs,                   0xc0,  Abs,                 SIMDLane::i64x2,  SIMDSignMode::None) \
 macro(I64x2Neg,                   0xc1,  Neg,                 SIMDLane::i64x2,  SIMDSignMode::None) \
 macro(I64x2AllTrue,               0xc3,  AllTrue,             SIMDLane::i64x2,  SIMDSignMode::None) \
@@ -377,7 +377,7 @@ static void dumpSIMDLaneOperation(PrintStream& out, SIMDLaneOperation op)
     case SIMDLaneOperation::GreaterThanOrEqual: out.print("Ge"); break;
     case SIMDLaneOperation::LoadLane8: out.print("LoadLane8"); break;
     case SIMDLaneOperation::Shl: out.print("Shl"); break;
-    case SIMDLaneOperation::DotProductInt32: out.print("DotProduct"); break;
+    case SIMDLaneOperation::DotProduct: out.print("DotProduct"); break;
     case SIMDLaneOperation::Const: out.print("Const"); break;
     case SIMDLaneOperation::Demote: out.print("Demote"); break;
     case SIMDLaneOperation::Convert: out.print("Convert"); break;

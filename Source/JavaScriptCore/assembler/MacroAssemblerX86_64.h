@@ -3728,7 +3728,7 @@ public:
         }
     }
 
-    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
+    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVXForSIMD());
         m_assembler.vpmaddwd_rrr(b, a, dest);

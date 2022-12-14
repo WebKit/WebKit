@@ -48,8 +48,7 @@ void lowerStackArgs(Code& code)
                     // such an awesome assumption.
                     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150454
                     ASSERT(arg.offset() >= 0);
-                    ASSERT(!arg.canRepresent(V128));
-                    code.requestCallArgAreaSizeInBytes(arg.offset() + conservativeRegisterBytesWithoutVectors(arg.bank()));
+                    code.requestCallArgAreaSizeInBytes(arg.offset() + (code.usesSIMD() ? conservativeRegisterBytes(arg.bank()) : conservativeRegisterBytesWithoutVectors(arg.bank())));
                 }
             }
         }

@@ -5311,7 +5311,6 @@ public:
     
     void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
-        ASSERT(dest != a && dest != b);
         // (i_1 * i_2 + 2^14) >> 15
         // <=>
         // (i_1 * i_2 * 2 + 2^15) >> 16
@@ -5320,7 +5319,7 @@ public:
         m_assembler.sqrdmulhv(dest, a, b, SIMDLane::i16x8);
     }
 
-    void vectorDotProductInt32(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch) 
+    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch) 
     {
         m_assembler.smullv(scratch, a, b, SIMDLane::i16x8);
         m_assembler.smull2v(dest, a, b, SIMDLane::i16x8);

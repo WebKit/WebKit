@@ -127,6 +127,7 @@ b3/B3Commutativity.cpp
 b3/B3Compile.cpp
 b3/B3Const32Value.cpp
 b3/B3Const64Value.cpp
+b3/B3Const128Value.cpp
 b3/B3ConstDoubleValue.cpp
 b3/B3ConstFloatValue.cpp
 b3/B3ConstrainedValue.cpp
@@ -167,6 +168,7 @@ b3/B3PureCSE.cpp
 b3/B3ReduceDoubleToFloat.cpp
 b3/B3ReduceStrength.cpp
 b3/B3SSACalculator.cpp
+b3/B3SIMDValue.cpp
 b3/B3SlotBaseValue.cpp
 b3/B3StackmapGenerationParams.cpp
 b3/B3StackmapSpecial.cpp
