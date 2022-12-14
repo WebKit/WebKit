@@ -3278,6 +3278,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         logTextJson = self.log_observer_json.getStdout()
 
         first_results = LayoutTestFailures.results_from_string(logTextJson)
+        is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
 
         if first_results:
             self.setProperty('first_results_exceed_failure_limit', first_results.did_exceed_test_failure_limit)
@@ -3286,7 +3287,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             if first_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
 
-            if first_results.failing_tests and not first_results.did_exceed_test_failure_limit:
+            if is_main and first_results.failing_tests and not first_results.did_exceed_test_failure_limit:
                 yield self.filter_failures_using_results_db(first_results.failing_tests)
                 self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
@@ -3504,6 +3505,7 @@ class ReRunWebKitTests(RunWebKitTests):
         logTextJson = self.log_observer_json.getStdout()
 
         second_results = LayoutTestFailures.results_from_string(logTextJson)
+        is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
 
         if second_results:
             self.setProperty('second_results_exceed_failure_limit', second_results.did_exceed_test_failure_limit)
@@ -3512,7 +3514,7 @@ class ReRunWebKitTests(RunWebKitTests):
             if second_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
 
-            if second_results.failing_tests and not second_results.did_exceed_test_failure_limit:
+            if is_main and second_results.failing_tests and not second_results.did_exceed_test_failure_limit:
                 yield self.filter_failures_using_results_db(second_results.failing_tests)
                 self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))

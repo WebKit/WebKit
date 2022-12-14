@@ -96,18 +96,18 @@ class ResultsDatabase(object):
                 response.deliverBody(cls.JsonPrinter(finished))
                 data = yield finished
                 defer.returnValue(json.loads(data))
-            else:
-                logger(f'Failed to query results summary with status code {response.code}\n')
-                defer.returnValue({})
+                return
+            logger(f'Failed to query results summary with status code {response.code}\n')
         except error.ConnectError as e:
             logger(f'Failed to connect to {cls.HOSTNAME}: {e}\n')
-            defer.returnValue({})
         except ResponseFailed:
             logger(f'No response from {cls.HOSTNAME}\n')
-            defer.returnValue({})
         except json.decoder.JSONDecodeError:
             logger('Non-json response from results summary query\n')
-            defer.returnValue({})
+        except Exception as e:
+            logger(f'Unknown exception when consulting results database:\n{e}\n')
+
+        defer.returnValue({})
 
     @classmethod
     @defer.inlineCallbacks
