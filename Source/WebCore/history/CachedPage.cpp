@@ -78,7 +78,7 @@ CachedPage::~CachedPage()
         m_cachedMainFrame->destroy();
 }
 
-static void firePageShowAndPopStateEvents(Page& page)
+static void firePageShowEvent(Page& page)
 {
     // Dispatching JavaScript events can cause frame destruction.
     auto& mainFrame = page.mainFrame();
@@ -97,10 +97,6 @@ static void firePageShowAndPopStateEvents(Page& page)
         document->setVisibilityHiddenDueToDismissal(false);
 
         document->dispatchPageshowEvent(PageshowEventPersisted);
-
-        auto* historyItem = child->loader().history().currentItem();
-        if (historyItem && historyItem->stateObject())
-            document->dispatchPopstateEvent(historyItem->stateObject());
     }
 }
 
@@ -169,7 +165,7 @@ void CachedPage::restore(Page& page)
             frameView->updateContentsSize();
     }
 
-    firePageShowAndPopStateEvents(page);
+    firePageShowEvent(page);
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     for (auto& domain : m_loadedSubresourceDomains)

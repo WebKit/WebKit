@@ -469,9 +469,6 @@ private:
 
     PageDismissalType m_pageDismissalEventBeingDispatched { PageDismissalType::None };
     bool m_isComplete;
-
-    RefPtr<SerializedScriptValue> m_pendingStateObject;
-
     bool m_needsClear;
 
     URL m_submittedFormURL;
