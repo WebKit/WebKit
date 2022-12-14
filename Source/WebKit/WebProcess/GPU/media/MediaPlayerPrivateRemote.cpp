@@ -392,7 +392,7 @@ void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& med
         player->playbackStateChanged();
 }
 
-void MediaPlayerPrivateRemote::engineFailedToLoad(long platformErrorCode)
+void MediaPlayerPrivateRemote::engineFailedToLoad(int64_t platformErrorCode)
 {
     m_platformErrorCode = platformErrorCode;
     if (RefPtr player = m_player.get())

@@ -47,7 +47,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class LoadURL {
 public:
-    using Arguments = std::tuple<const String&>;
+    using Arguments = std::tuple<String>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_LoadURL; }
     static constexpr bool isSync = false;
@@ -57,13 +57,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 
 #if ENABLE(TEST_FEATURE)
@@ -82,13 +82,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<WebKit::TestTwoStateEnum> m_arguments;
 };
 #endif
 
@@ -103,13 +103,13 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<> m_arguments;
 };
 #endif
 
@@ -124,20 +124,20 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool, uint64_t>;
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<> m_arguments;
 };
 #endif
 
 #if ENABLE(TEST_FEATURE)
 class TestAsyncMessageWithConnection {
 public:
-    using Arguments = std::tuple<const int&>;
+    using Arguments = std::tuple<int>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection; }
     static constexpr bool isSync = false;
@@ -150,13 +150,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const int&> m_arguments;
 };
 #endif
 
@@ -174,13 +174,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<uint32_t> m_arguments;
 };
 
 class TestSynchronousMessage {
@@ -197,13 +197,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<bool> m_arguments;
 };
 
 } // namespace TestWithSuperclass

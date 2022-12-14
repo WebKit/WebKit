@@ -108,7 +108,7 @@ public:
     void durationChanged(RemoteMediaPlayerState&&);
     void rateChanged(double);
     void playbackStateChanged(bool, MediaTime&&, MonotonicTime&&);
-    void engineFailedToLoad(long);
+    void engineFailedToLoad(int64_t);
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(RemoteMediaPlayerState&&);
     void sizeChanged(WebCore::FloatSize);

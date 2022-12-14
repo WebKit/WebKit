@@ -62,7 +62,7 @@ public:
 private:
     // Messages.
     void startMessageTesting(IPC::Connection&, String&& driverName);
-    void stopMessageTesting(CompletionHandler<void()>);
+    void stopMessageTesting(CompletionHandler<void()>&&);
     void createStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
     void createConnectionTester(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);

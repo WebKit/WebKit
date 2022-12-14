@@ -318,11 +318,11 @@ void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(Qualified
     handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
 }
 
-void RemoteDisplayListRecorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+void RemoteDisplayListRecorder::drawSystemImage(Ref<SystemImage> systemImage, const FloatRect& destinationRect)
 {
 #if USE(SYSTEM_PREVIEW)
-    if (is<ARKitBadgeSystemImage>(systemImage)) {
-        ARKitBadgeSystemImage& badge = downcast<ARKitBadgeSystemImage>(systemImage);
+    if (is<ARKitBadgeSystemImage>(systemImage.get())) {
+        ARKitBadgeSystemImage& badge = downcast<ARKitBadgeSystemImage>(systemImage.get());
         RefPtr nativeImage = resourceCache().cachedNativeImage({ badge.imageIdentifier(), m_webProcessIdentifier });
         if (!nativeImage) {
             ASSERT_NOT_REACHED();

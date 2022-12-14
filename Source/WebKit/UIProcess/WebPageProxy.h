@@ -543,7 +543,7 @@ public:
     void resourceLoadDidReceiveResponse(ResourceLoadInfo&&, WebCore::ResourceResponse&&);
     void resourceLoadDidCompleteWithError(ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&);
 
-    void didChangeInspectorFrontendCount(unsigned count) { m_inspectorFrontendCount = count; }
+    void didChangeInspectorFrontendCount(uint32_t count) { m_inspectorFrontendCount = count; }
     unsigned inspectorFrontendCount() const { return m_inspectorFrontendCount; }
     bool hasInspectorFrontend() const { return m_inspectorFrontendCount > 0; }
 

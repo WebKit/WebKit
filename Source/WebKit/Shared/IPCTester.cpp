@@ -128,7 +128,7 @@ void IPCTester::startMessageTesting(IPC::Connection& connection, String&& driver
     });
 }
 
-void IPCTester::stopMessageTesting(CompletionHandler<void()> completionHandler)
+void IPCTester::stopMessageTesting(CompletionHandler<void()>&& completionHandler)
 {
     stopIfNeeded();
     completionHandler();

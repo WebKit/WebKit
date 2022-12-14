@@ -46,7 +46,7 @@ static inline IPC::ReceiverName messageReceiverName()
 #if USE(AVFOUNDATION)
 class SendCVPixelBuffer {
 public:
-    using Arguments = std::tuple<const RetainPtr<CVPixelBufferRef>&>;
+    using Arguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer; }
     static constexpr bool isSync = false;
@@ -56,13 +56,13 @@ public:
     {
     }
 
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<const RetainPtr<CVPixelBufferRef>&> m_arguments;
 };
 #endif
 
@@ -77,13 +77,13 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
-    const Arguments& arguments() const
+    const auto& arguments() const
     {
         return m_arguments;
     }
 
 private:
-    Arguments m_arguments;
+    std::tuple<> m_arguments;
 };
 #endif
 

@@ -32,11 +32,11 @@ messages -> WebPasteboardProxy NotRefCounted {
     WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
     TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> types) Synchronous WantsConnection
     AllPasteboardItemInfo(String pasteboardName, int64_t changeCount, std::optional<WebCore::PageIdentifier> pageID) -> (std::optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous WantsConnection
-    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount, std::optional<WebCore::PageIdentifier> pageID) -> (std::optional<WebCore::PasteboardItemInfo> info) Synchronous WantsConnection
+    InformationForItemAtIndex(size_t index, String pasteboardName, int64_t changeCount, std::optional<WebCore::PageIdentifier> pageID) -> (std::optional<WebCore::PasteboardItemInfo> info) Synchronous WantsConnection
     GetPasteboardItemsCount(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (uint64_t itemsCount) Synchronous WantsConnection
-    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
-    ReadURLFromPasteboard(uint64_t index, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
-    ReadBufferFromPasteboard(std::optional<uint64_t> index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous WantsConnection
+    ReadStringFromPasteboard(size_t index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
+    ReadURLFromPasteboard(size_t index, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
+    ReadBufferFromPasteboard(std::optional<size_t> index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous WantsConnection
     ContainsStringSafeForDOMToReadForType(String type, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
 
 #if PLATFORM(COCOA)
