@@ -109,6 +109,9 @@ void logReply(const Connection& connection, MessageName messageName, const T&...
     if (!sizeof...(T))
         return;
 
+    if (LOG_CHANNEL(IPCMessages).state != WTFLogChannelState::On)
+        return;
+
     auto stream = textStreamForLogging(connection, messageName, nullptr, ForReply::Yes);
 
     unsigned argIndex = 0;
