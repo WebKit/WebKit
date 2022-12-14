@@ -44,7 +44,7 @@ public:
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
     void atomCharacterClassEnd() { }
     void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt) { }
-    void atomParentheticalAssertionBegin(bool = false) { }
+    void atomParentheticalAssertionBegin(bool, MatchDirection) { }
     void atomParenthesesEnd() { }
     void atomBackReference(unsigned) { }
     void atomNamedBackReference(const String&) { }

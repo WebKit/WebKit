@@ -223,7 +223,7 @@ public:
         m_openGroups.append(Term(Term::GroupTerm));
     }
 
-    void atomParentheticalAssertionBegin(bool = false)
+    void atomParentheticalAssertionBegin(bool, MatchDirection)
     {
         fail(URLFilterParser::Group);
     }

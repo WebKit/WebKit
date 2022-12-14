@@ -631,12 +631,12 @@ private:
                 break;
             
             case '=':
-                m_delegate.atomParentheticalAssertionBegin();
+                m_delegate.atomParentheticalAssertionBegin(false, Forward);
                 type = ParenthesesType::Assertion;
                 break;
 
             case '!':
-                m_delegate.atomParentheticalAssertionBegin(true);
+                m_delegate.atomParentheticalAssertionBegin(true, Forward);
                 type = ParenthesesType::Assertion;
                 break;
 
@@ -656,8 +656,20 @@ private:
                         m_delegate.atomParenthesesSubpatternBegin(true, groupName);
                     else
                         m_errorCode = ErrorCode::DuplicateGroupName;
-                } else
+                } else {
+                    if (tryConsume('=')) {
+                        m_delegate.atomParentheticalAssertionBegin(false, Backward);
+                        type = ParenthesesType::Assertion;
+                        break;
+                    }
+
+                    if (tryConsume('!')) {
+                        m_delegate.atomParentheticalAssertionBegin(true, Backward);
+                        type = ParenthesesType::Assertion;
+                        break;
+                    }
                     m_errorCode = ErrorCode::InvalidGroupName;
+                }
 
                 break;
             }
@@ -1245,7 +1257,7 @@ private:
  *    void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
  *    void atomCharacterClassEnd()
  *    void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> groupName);
- *    void atomParentheticalAssertionBegin(bool invert = false);
+ *    void atomParentheticalAssertionBegin(bool invert, MatchDirection matchDirection);
  *    void atomParenthesesEnd();
  *    void atomBackReference(unsigned subpatternId);
  *    void atomNamedBackReference(const String& subpatternName);

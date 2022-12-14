@@ -249,6 +249,7 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize)
 #if !ENABLE(YARR_JIT_BACKREFERENCES)
         && !pattern.m_containsBackreferences
 #endif
+        && !pattern.m_containsLookbehinds
         ) {
         auto& jitCode = ensureRegExpJITCode();
         Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::JITCompileMode::IncludeSubpatterns);
@@ -261,8 +262,7 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize)
     UNUSED_PARAM(charSize);
 #endif
 
-    if (Options::dumpCompiledRegExpPatterns())
-        dataLog("Can't JIT this regular expression: \"", m_patternString, "\"\n");
+    dataLogLnIf(Options::dumpCompiledRegExpPatterns(), "Can't JIT this regular expression: \"/", m_patternString, "/\"");
 
     m_state = ByteCode;
     m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
@@ -313,6 +313,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize)
 #if !ENABLE(YARR_JIT_BACKREFERENCES)
         && !pattern.m_containsBackreferences
 #endif
+        && !pattern.m_containsLookbehinds
         ) {
         auto& jitCode = ensureRegExpJITCode();
         Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::JITCompileMode::MatchOnly);
@@ -325,8 +326,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize)
     UNUSED_PARAM(charSize);
 #endif
 
-    if (Options::dumpCompiledRegExpPatterns())
-        dataLog("Can't JIT this regular expression: \"", m_patternString, "\"\n");
+    dataLogLnIf(Options::dumpCompiledRegExpPatterns(), "Can't JIT this regular expression: \"/", m_patternString, "/\"");
 
     m_state = ByteCode;
     m_regExpBytecode = byteCodeCompilePattern(vm, pattern, m_constructionErrorCode);
