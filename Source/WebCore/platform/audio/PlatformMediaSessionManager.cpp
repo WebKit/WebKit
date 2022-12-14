@@ -443,8 +443,15 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
 void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    maybeActivateAudioSession();
-    updateSessionState();
+    if (m_alreadyScheduledSessionStatedUpdate)
+        return;
+
+    m_alreadyScheduledSessionStatedUpdate = true;
+    callOnMainThread([this] {
+        m_alreadyScheduledSessionStatedUpdate = false;
+        maybeActivateAudioSession();
+        updateSessionState();
+    });
 }
 
 void PlatformMediaSessionManager::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)

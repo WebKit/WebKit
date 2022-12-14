@@ -218,6 +218,7 @@ private:
     bool m_processIsSuspended { false };
     bool m_isPlayingToAutomotiveHeadUnit { false };
 
+    bool m_alreadyScheduledSessionStatedUpdate { false };
 #if USE(AUDIO_SESSION)
     bool m_becameActive { false };
 #endif
