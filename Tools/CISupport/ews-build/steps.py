@@ -4670,9 +4670,9 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '13': 'Ventura',
             '12': 'Monterey',
-            '11': 'Big Sur',
-            '10.15': 'Catalina',
+            '11': 'Big Sur'
         }
 
         for key, value in build_to_name_mapping.items():
