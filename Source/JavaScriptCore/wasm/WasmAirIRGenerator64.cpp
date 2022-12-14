@@ -281,11 +281,40 @@ public:
             return { };
         }
         else if (op == SIMDLaneOperation::Neg) {
-            // x86_64 has no vector negate instruction, so we expand vxv.neg v into vxv.sub 0, v
-            // here to give B3/Air a chance to optimize out repeated vector zeroing.
-            TypedTmp zero = addConstant(v128_t());
+            // x86_64 has no vector negate instruction. For integer vectors, we can replicate negation by
+            // subtracting from zero. For floating-point vectors, we need to toggle the sign using packed
+            // XOR.
             result = tmpForType(Types::V128);
-            append(VectorSub, Arg::simdInfo(info), zero, v, result);
+            switch (info.lane) {
+            case SIMDLane::i8x16:
+            case SIMDLane::i16x8:
+            case SIMDLane::i32x4:
+            case SIMDLane::i64x2: {
+                TypedTmp zero = addConstant(v128_t());
+                append(VectorSub, Arg::simdInfo(info), zero, v, result);
+                break;
+            }
+            case SIMDLane::f32x4: {
+                TypedTmp gptmp = tmpForType(Types::I32);
+                TypedTmp fptmp = tmpForType(Types::V128);
+                append(Move, Arg::bigImm(0x80000000), gptmp);
+                append(Move32ToFloat, gptmp, fptmp);
+                append(VectorSplatFloat32, fptmp, fptmp);
+                append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), v, fptmp, result);
+                break;
+            }
+            case SIMDLane::f64x2: {
+                TypedTmp gptmp = tmpForType(Types::I64);
+                TypedTmp fptmp = tmpForType(Types::V128);
+                append(Move, Arg::bigImm(0x8000000000000000), gptmp);
+                append(Move64ToDouble, gptmp, fptmp);
+                append(VectorSplatFloat64, fptmp, fptmp);
+                append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), v, fptmp, result);
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
             return { };
         }
 #else
@@ -1540,6 +1569,7 @@ auto AirIRGenerator64::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Express
     } else if (isX86()) {
         Tmp shiftAmount = newTmp(B3::GP);
         Tmp shiftVector = newTmp(B3::FP);
+        append(Move32, shift.tmp(), shiftAmount);
         append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
         append(VectorSplat8, shiftAmount, shiftVector);
 
