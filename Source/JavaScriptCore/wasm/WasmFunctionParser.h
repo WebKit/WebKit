@@ -1864,7 +1864,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Types::I32, result);
             return { };
         }
-        case GCOpType::StructNew: {
+        // The struct.new and struct.new_canon instructions are identical but with different opcodes for compatibility with both the spec & other implementations.
+        // FIXME: Remove this redundancy when the GC proposal's opcode numbering is finalized.
+        case GCOpType::StructNew:
+        case GCOpType::StructNewCanon: {
             uint32_t typeIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new"));
 
@@ -2883,7 +2886,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         }
         case GCOpType::ArrayLen:
             return { };
-        case GCOpType::StructNew: {
+        case GCOpType::StructNew:
+        case GCOpType::StructNewCanon: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new"));
             return { };
