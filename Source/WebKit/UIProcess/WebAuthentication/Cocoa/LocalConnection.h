@@ -38,7 +38,7 @@ OBJC_CLASS LAContext;
 namespace WebCore {
 class AuthenticatorAssertionResponse;
 enum class ClientDataType : bool;
-enum class UserVerificationRequirement;
+enum class UserVerificationRequirement : uint8_t;
 }
 
 namespace WebKit {

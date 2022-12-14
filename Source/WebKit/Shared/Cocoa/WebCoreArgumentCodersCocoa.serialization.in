@@ -39,3 +39,13 @@ struct WebCore::AttributedString {
     RetainPtr<NSAttributedString> string;
     RetainPtr<NSDictionary> documentAttributes;
 };
+#endif
+
+#if ENABLE(MEDIA_RECORDER)
+struct WebCore::MediaRecorderPrivateOptions {
+    String mimeType;
+    std::optional<unsigned> audioBitsPerSecond;
+    std::optional<unsigned> videoBitsPerSecond;
+    std::optional<unsigned> bitsPerSecond;
+};
+#endif // ENABLE(MEDIA_RECORDER)

@@ -36,6 +36,7 @@
 #include "IPCStreamTesterIdentifier.h"
 #include "IdentifierTypes.h"
 #include "JSIPCBinding.h"
+#include "LegacyCustomProtocolID.h"
 #include "LibWebRTCResolverIdentifier.h"
 #include "MDNSRegisterIdentifier.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
@@ -416,6 +417,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCConnectionTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCStreamTesterIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::LegacyCustomProtocolID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LibWebRTCResolverIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MDNSRegisterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MarkSurfacesAsVolatileRequestIdentifier));
@@ -493,6 +495,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::GraphicsContextGLIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,
+        "WebKit::LegacyCustomProtocolID"_s,
         "WebKit::LibWebRTCResolverIdentifier"_s,
         "WebKit::MDNSRegisterIdentifier"_s,
         "WebKit::MarkSurfacesAsVolatileRequestIdentifier"_s,

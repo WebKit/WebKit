@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum class ApplePayErrorContactField {
+enum class ApplePayErrorContactField : uint8_t {
     PhoneNumber,
     EmailAddress,
     Name,
@@ -48,28 +48,5 @@ enum class ApplePayErrorContactField {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePayErrorContactField> {
-    using values = EnumValues<
-        WebCore::ApplePayErrorContactField,
-        WebCore::ApplePayErrorContactField::PhoneNumber,
-        WebCore::ApplePayErrorContactField::EmailAddress,
-        WebCore::ApplePayErrorContactField::Name,
-        WebCore::ApplePayErrorContactField::PhoneticName,
-        WebCore::ApplePayErrorContactField::PostalAddress,
-        WebCore::ApplePayErrorContactField::AddressLines,
-        WebCore::ApplePayErrorContactField::SubLocality,
-        WebCore::ApplePayErrorContactField::Locality,
-        WebCore::ApplePayErrorContactField::PostalCode,
-        WebCore::ApplePayErrorContactField::SubAdministrativeArea,
-        WebCore::ApplePayErrorContactField::AdministrativeArea,
-        WebCore::ApplePayErrorContactField::Country,
-        WebCore::ApplePayErrorContactField::CountryCode
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY)
