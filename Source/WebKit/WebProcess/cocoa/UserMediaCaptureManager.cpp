@@ -82,7 +82,7 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
     m_videoFactory.setShouldCaptureInGPUProcess(shouldCaptureVideoInGPUProcess);
     m_displayFactory.setShouldCaptureInGPUProcess(shouldCaptureDisplayInGPUProcess);
 
-    if (shouldCaptureAudioInGPUProcess) {
+    if (shouldCaptureAudioInUIProcess || shouldCaptureAudioInGPUProcess) {
         WebCore::AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction([](auto&& renderCallback, auto&& resetCallback) {
             return WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().createRemoteInternalUnit(WTFMove(renderCallback), WTFMove(resetCallback));
         });
