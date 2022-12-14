@@ -2465,7 +2465,7 @@ static Node* resetNodeAndOffsetForReplacedNode(Node& replacedNode, int& offset, 
     return replacedNode.parentNode();
 }
 
-static std::optional<BoundaryPoint> boundaryPoint(const CharacterOffset& characterOffset, bool isStart)
+static std::optional<BoundaryPoint> boundaryPoint(const CharacterOffset& characterOffset)
 {
     if (characterOffset.isNull())
         return std::nullopt;
@@ -2473,25 +2473,17 @@ static std::optional<BoundaryPoint> boundaryPoint(const CharacterOffset& charact
     int offset = characterOffset.startIndex + characterOffset.offset;
     Node* node = characterOffset.node;
     ASSERT(node);
-
-    bool replacedNodeOrBR = isReplacedNodeOrBR(node);
-    // For the non text node that has no children, we should create the range with its parent, otherwise the range would be collapsed.
-    // Example: <div contenteditable="true"></div>, we want the range to include the div element.
-    bool noChildren = !replacedNodeOrBR && !node->isTextNode() && !node->hasChildNodes();
-    int characterCount = noChildren ? (isStart ? 0 : 1) : characterOffset.offset;
-
-    if (replacedNodeOrBR || noChildren)
-        node = resetNodeAndOffsetForReplacedNode(*node, offset, characterCount);
+    if (isReplacedNodeOrBR(node))
+        node = resetNodeAndOffsetForReplacedNode(*node, offset, characterOffset.offset);
 
     if (!node)
         return std::nullopt;
-
     return { { *node, static_cast<unsigned>(offset) } };
 }
 
 static bool setRangeStartOrEndWithCharacterOffset(SimpleRange& range, const CharacterOffset& characterOffset, bool isStart)
 {
-    auto point = boundaryPoint(characterOffset, isStart);
+    auto point = boundaryPoint(characterOffset);
     if (!point)
         return false;
     if (isStart)
@@ -2504,11 +2496,11 @@ static bool setRangeStartOrEndWithCharacterOffset(SimpleRange& range, const Char
 std::optional<SimpleRange> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOffset& characterOffset1, const CharacterOffset& characterOffset2)
 {
     bool alreadyInOrder = characterOffsetsInOrder(characterOffset1, characterOffset2);
-    auto start = boundaryPoint(alreadyInOrder ? characterOffset1 : characterOffset2, true);
-    auto end = boundaryPoint(alreadyInOrder ? characterOffset2 : characterOffset1, false);
+    auto start = boundaryPoint(alreadyInOrder ? characterOffset1 : characterOffset2);
+    auto end = boundaryPoint(alreadyInOrder ? characterOffset2 : characterOffset1);
     if (!start || !end)
         return std::nullopt;
-    return { { *start, * end } };
+    return { { *start, *end } };
 }
 
 void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
