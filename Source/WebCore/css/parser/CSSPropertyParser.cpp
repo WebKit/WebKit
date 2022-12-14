@@ -250,13 +250,13 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, con
     return value;
 }
 
-bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSPropertySyntax& syntax, const CSSParserTokenRange& tokens, const CSSParserContext& context)
+bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax& syntax, const CSSParserTokenRange& tokens, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr);
     return parser.canParseTypedCustomPropertyValue(syntax);
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax& syntax, const CSSParserTokenRange& tokens, Style::BuilderState& builderState, const CSSParserContext& context)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, const CSSParserTokenRange& tokens, Style::BuilderState& builderState, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr, false);
     RefPtr<CSSCustomPropertyValue> value = parser.parseTypedCustomPropertyValue(name, syntax, builderState);
@@ -265,7 +265,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     return value;
 }
 
-void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange& tokens, const CSSParserContext& context)
+void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange& tokens, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr);
     parser.collectParsedCustomPropertyValueDependencies(syntax, isRoot, dependencies);
@@ -326,7 +326,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     return CSSPropertyParsing::parse(m_range, property, currentShorthand, m_context);
 }
 
-std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeCustomPropertyValueWithSyntax(const CSSPropertySyntax& syntax)
+std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::consumeCustomPropertyValueWithSyntax(const CSSCustomPropertySyntax& syntax)
 {
     ASSERT(!syntax.isUniversal());
 
@@ -336,36 +336,36 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeC
 
     auto consumeSingleValue = [&](auto& range, auto& component) -> RefPtr<CSSValue> {
         switch (component.type) {
-        case CSSPropertySyntax::Type::Length:
+        case CSSCustomPropertySyntax::Type::Length:
             return consumeLength(range, m_context.mode, ValueRange::All);
-        case CSSPropertySyntax::Type::LengthPercentage:
+        case CSSCustomPropertySyntax::Type::LengthPercentage:
             return consumeLengthOrPercent(range, m_context.mode, ValueRange::All);
-        case CSSPropertySyntax::Type::CustomIdent:
+        case CSSCustomPropertySyntax::Type::CustomIdent:
             if (auto value = consumeCustomIdent(range)) {
                 if (component.ident.isNull() || value->stringValue() == component.ident)
                     return value;
                 range = rangeCopy;
             }
             return nullptr;
-        case CSSPropertySyntax::Type::Percentage:
+        case CSSCustomPropertySyntax::Type::Percentage:
             return consumePercent(range, ValueRange::All);
-        case CSSPropertySyntax::Type::Integer:
+        case CSSCustomPropertySyntax::Type::Integer:
             return consumeInteger(range);
-        case CSSPropertySyntax::Type::Number:
+        case CSSCustomPropertySyntax::Type::Number:
             return consumeNumber(range, ValueRange::All);
-        case CSSPropertySyntax::Type::Angle:
+        case CSSCustomPropertySyntax::Type::Angle:
             return consumeAngle(range, m_context.mode);
-        case CSSPropertySyntax::Type::Time:
+        case CSSCustomPropertySyntax::Type::Time:
             return consumeTime(range, m_context.mode, ValueRange::All);
-        case CSSPropertySyntax::Type::Resolution:
+        case CSSCustomPropertySyntax::Type::Resolution:
             return consumeResolution(range);
-        case CSSPropertySyntax::Type::Color:
+        case CSSCustomPropertySyntax::Type::Color:
             return consumeColor(range, m_context);
-        case CSSPropertySyntax::Type::Image:
+        case CSSCustomPropertySyntax::Type::Image:
             return consumeImage(range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
-        case CSSPropertySyntax::Type::URL:
+        case CSSCustomPropertySyntax::Type::URL:
             return consumeURL(range);
-        case CSSPropertySyntax::Type::Unknown:
+        case CSSCustomPropertySyntax::Type::Unknown:
             return nullptr;
         }
         ASSERT_NOT_REACHED();
@@ -374,14 +374,14 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeC
 
     auto consumeComponent = [&](auto& range, const auto& component) -> RefPtr<CSSValue> {
         switch (component.multiplier) {
-        case CSSPropertySyntax::Multiplier::Single:
+        case CSSCustomPropertySyntax::Multiplier::Single:
             return consumeSingleValue(range, component);
-        case CSSPropertySyntax::Multiplier::CommaList: {
+        case CSSCustomPropertySyntax::Multiplier::CommaList: {
             return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&](auto& range) {
                 return consumeSingleValue(range, component);
             });
         }
-        case CSSPropertySyntax::Multiplier::SpaceList: {
+        case CSSCustomPropertySyntax::Multiplier::SpaceList: {
             RefPtr<CSSValueList> valueList;
             while (auto value = consumeSingleValue(range, component)) {
                 if (!valueList)
@@ -402,10 +402,10 @@ std::pair<RefPtr<CSSValue>, CSSPropertySyntax::Type> CSSPropertyParser::consumeC
             return { value, component.type };
         }
     }
-    return { nullptr, CSSPropertySyntax::Type::Unknown };
+    return { nullptr, CSSCustomPropertySyntax::Type::Unknown };
 }
 
-bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSPropertySyntax& syntax)
+bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax& syntax)
 {
     if (syntax.isUniversal())
         return true;
@@ -414,7 +414,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSPropertySyntax
     return value && m_range.atEnd();
 }
 
-void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPropertySyntax& syntax, bool isInitial, HashSet<CSSPropertyID>& dependencies)
+void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax& syntax, bool isInitial, HashSet<CSSPropertyID>& dependencies)
 {
     if (syntax.isUniversal())
         return;
@@ -429,7 +429,7 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSPr
         value->collectDirectRootComputationalDependencies(dependencies);
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSPropertySyntax& syntax, Style::BuilderState& builderState)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, Style::BuilderState& builderState)
 {
     if (syntax.isUniversal()) {
         auto propertyValue = CSSCustomPropertyValue::createSyntaxAll(name, CSSVariableData::create(m_range));
@@ -442,42 +442,42 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     if (!value)
         return nullptr;
 
-    auto resolveSyntaxValue = [&](const CSSValue& value, CSSPropertySyntax::Type syntaxType) -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
+    auto resolveSyntaxValue = [&](const CSSValue& value, CSSCustomPropertySyntax::Type syntaxType) -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
         auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
 
         switch (syntaxType) {
-        case CSSPropertySyntax::Type::LengthPercentage:
-        case CSSPropertySyntax::Type::Length: {
+        case CSSCustomPropertySyntax::Type::LengthPercentage:
+        case CSSCustomPropertySyntax::Type::Length: {
             auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
             return { WTFMove(length) };
         }
-        case CSSPropertySyntax::Type::Percentage:
-        case CSSPropertySyntax::Type::Integer:
-        case CSSPropertySyntax::Type::Number:
-        case CSSPropertySyntax::Type::Angle:
-        case CSSPropertySyntax::Type::Time:
-        case CSSPropertySyntax::Type::Resolution: {
+        case CSSCustomPropertySyntax::Type::Percentage:
+        case CSSCustomPropertySyntax::Type::Integer:
+        case CSSCustomPropertySyntax::Type::Number:
+        case CSSCustomPropertySyntax::Type::Angle:
+        case CSSCustomPropertySyntax::Type::Time:
+        case CSSCustomPropertySyntax::Type::Resolution: {
             auto canonicalUnit = canonicalUnitTypeForUnitType(primitiveValue->primitiveType());
             auto doubleValue = primitiveValue->doubleValue(canonicalUnit);
             return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, canonicalUnit } };
         }
-        case CSSPropertySyntax::Type::Color: {
+        case CSSCustomPropertySyntax::Type::Color: {
             auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
             return { color };
         }
-        case CSSPropertySyntax::Type::Image: {
+        case CSSCustomPropertySyntax::Type::Image: {
             auto styleImage = builderState.createStyleImage(value);
             if (!styleImage)
                 return { };
             return { WTFMove(styleImage) };
         }
-        case CSSPropertySyntax::Type::URL: {
+        case CSSCustomPropertySyntax::Type::URL: {
             auto url = m_context.completeURL(primitiveValue->stringValue());
             return { url.resolvedURL };
         }
-        case CSSPropertySyntax::Type::CustomIdent:
+        case CSSCustomPropertySyntax::Type::CustomIdent:
             return { primitiveValue->stringValue() };
-        case CSSPropertySyntax::Type::Unknown:
+        case CSSCustomPropertySyntax::Type::Unknown:
             return { };
         }
         ASSERT_NOT_REACHED();

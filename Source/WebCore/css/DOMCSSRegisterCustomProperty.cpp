@@ -46,7 +46,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!isCustomPropertyName(descriptor.name))
         return Exception { SyntaxError, "The name of this property is not a custom property name."_s };
 
-    auto syntax = CSSPropertySyntax::parse(descriptor.syntax);
+    auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
     if (!syntax)
         return Exception { SyntaxError, "Invalid property syntax definition."_s };
 

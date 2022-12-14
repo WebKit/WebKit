@@ -1422,7 +1422,7 @@ bool MutableStyleProperties::setCustomProperty(const Document* document, const S
     auto propertyNameAtom = AtomString { propertyName };
     auto* registered = document ? document->registeredCSSCustomProperties().get(propertyNameAtom) : nullptr;
 
-    auto& syntax = registered ? registered->syntax : CSSPropertySyntax::universal();
+    auto& syntax = registered ? registered->syntax : CSSCustomPropertySyntax::universal();
 
     CSSTokenizer tokenizer(value);
     if (!CSSPropertyParser::canParseTypedCustomPropertyValue(syntax, tokenizer.tokenRange(), parserContext))

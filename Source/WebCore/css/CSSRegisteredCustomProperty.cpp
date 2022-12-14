@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-CSSRegisteredCustomProperty::CSSRegisteredCustomProperty(const AtomString& name, const CSSPropertySyntax& syntax, bool inherits, RefPtr<CSSCustomPropertyValue>&& initialValue)
+CSSRegisteredCustomProperty::CSSRegisteredCustomProperty(const AtomString& name, const CSSCustomPropertySyntax& syntax, bool inherits, RefPtr<CSSCustomPropertyValue>&& initialValue)
     : name(name)
     , syntax(syntax)
     , inherits(inherits)

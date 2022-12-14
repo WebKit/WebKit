@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-struct CSSPropertySyntax {
+struct CSSCustomPropertySyntax {
     enum class Type : uint8_t {
         Length,
         LengthPercentage,
@@ -64,8 +64,8 @@ struct CSSPropertySyntax {
 
     bool isUniversal() const { return definition.isEmpty(); }
 
-    static std::optional<CSSPropertySyntax> parse(StringView);
-    static CSSPropertySyntax universal() { return { }; }
+    static std::optional<CSSCustomPropertySyntax> parse(StringView);
+    static CSSCustomPropertySyntax universal() { return { }; }
 
 private:
     template<typename CharacterType> static std::optional<Component> parseComponent(StringParsingBuffer<CharacterType>);

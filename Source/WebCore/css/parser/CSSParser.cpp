@@ -229,7 +229,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
 
     auto& name = downcast<CSSCustomPropertyValue>(value).name();
     auto* registered = builderState.document().registeredCSSCustomProperties().get(name);
-    auto& syntax = registered ? registered->syntax : CSSPropertySyntax::universal();
+    auto& syntax = registered ? registered->syntax : CSSCustomPropertySyntax::universal();
     auto resolvedData = valueWithReferences.resolveVariableReferences(builderState);
     if (!resolvedData)
         return nullptr;

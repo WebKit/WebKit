@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "CSSPropertySyntax.h"
+#include "CSSCustomPropertySyntax.h"
 
 #include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
@@ -32,7 +32,7 @@
 namespace WebCore {
 
 template<typename CharacterType>
-auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer) -> std::optional<Component>
+auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer) -> std::optional<Component>
 {
     auto consumeMultiplier = [&] {
         if (skipExactly(buffer, '+'))
@@ -88,10 +88,10 @@ auto CSSPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> buffer
     return Component { Type::CustomIdent, multiplier, ident };
 }
 
-std::optional<CSSPropertySyntax> CSSPropertySyntax::parse(StringView syntax)
+std::optional<CSSCustomPropertySyntax> CSSCustomPropertySyntax::parse(StringView syntax)
 {
     // The format doesn't quite parse with CSSTokenizer.
-    return readCharactersForParsing(syntax, [&](auto buffer) -> std::optional<CSSPropertySyntax> {
+    return readCharactersForParsing(syntax, [&](auto buffer) -> std::optional<CSSCustomPropertySyntax> {
         skipWhile<isCSSSpace>(buffer);
 
         if (skipExactly(buffer, '*')) {
@@ -122,11 +122,11 @@ std::optional<CSSPropertySyntax> CSSPropertySyntax::parse(StringView syntax)
         if (definition.isEmpty())
             return { };
 
-        return CSSPropertySyntax { definition };
+        return CSSCustomPropertySyntax { definition };
     });
 }
 
-auto CSSPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
+auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
 {
     if (dataTypeName == "length"_s)
         return Type::Length;
