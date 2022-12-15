@@ -134,6 +134,8 @@ private:
     void prepareDataChannel(GstWebRTCDataChannel*, gboolean isLocal);
     void onDataChannel(GstWebRTCDataChannel*);
 
+    WARN_UNUSED_RETURN GRefPtr<GstElement> requestAuxiliarySender(GstWebRTCDTLSTransport*);
+
     MediaStream& mediaStreamFromRTCStream(String mediaStreamId);
 
     void addRemoteStream(GstPad*);
@@ -187,6 +189,8 @@ private:
 
     using DataChannelHandlerIdentifier = ObjectIdentifier<GstWebRTCDataChannel>;
     HashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
+
+    HashMap<unsigned, GRefPtr<GstElement>> m_auxiliarySenders;
 };
 
 } // namespace WebCore
