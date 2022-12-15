@@ -39,21 +39,21 @@ class WebKit_Survey {
         if (self::$post_update) {
             $post_id = get_the_ID();
             $Survey->status = $atts['closed'] == 'true' ? 'closed' : 'open';
+            $Survey->results = $atts['visible-results'] == 'true' ? 'visible' : 'hidden';
             if (!add_post_meta($post_id, 'webkit_survey_settings', $Survey, true))
                 update_post_meta($post_id, 'webkit_survey_settings', $Survey);
+            delete_transient(sha1(json_encode($Survey->survey)));
         }
 
         $survey_template = dirname(__FILE__) . '/survey.php';
         $results_template = dirname(__FILE__) . '/results.php';
-        $ui_template = $survey_template;
-        
-        if ($atts['closed'] == "true" || self::responded())
-            $ui_template = $results_template;
         
         ob_start();
-        if ($atts['visible-results'] == "true")
-            include($results_template);
-        include_once($ui_template);
+        echo '<div class="webkit-survey">';
+        include($results_template);
+        if ($atts['closed'] == "false" && !self::responded())
+            include($survey_template);
+        echo '</div';
         return ob_get_clean();
     }
 
@@ -82,9 +82,6 @@ class WebKit_Survey {
             :root {
                 --background-color: hsl(203.6, 100%, 12%);
                 --text-color-coolgray: hsl(240, 2.3%, 56.7%);
-            }
-            html {
-                font-size: 62.5%;
             }
         </style>
         <?php
@@ -124,17 +121,18 @@ class WebKit_Survey {
                 $data[$id] .= "::" . $posted_input['other'][$id];
         }
 
-        if (!is_null($data)) {
-            add_post_meta($post_id, $key, $data);
-            
-            // Same day, same device vote-stuffing protection
-            set_transient($post_id . '_' . self::voter_hash(), true, DAY_IN_SECONDS);
-            
-            // Ensure vote calculations get updated
-            delete_transient($key);
-        }
+        if (is_null($data))
+            return;
 
+        add_post_meta($post_id, $key, $data);
+
+        // Ensure vote calculations get updated
+        delete_transient($key);
+        
         self::$responded = true;
+
+        // Same day, same device vote-stuffing protection
+        set_transient($post_id . '_' . self::voter_hash(), true, DAY_IN_SECONDS);
 
         $post_url_parts = parse_url(get_permalink());
         setcookie(
