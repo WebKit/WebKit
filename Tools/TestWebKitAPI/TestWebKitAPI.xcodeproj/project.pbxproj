@@ -295,6 +295,8 @@
 		49D2E5C22731E3BC00BCCAED /* file-with-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 49D2E5C12731E37400BCCAED /* file-with-iframe.html */; };
 		49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 49D902B228209B0500E2C3B8 /* emptyTable.html */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
+		4C453A44294A469500D91D2B /* Ahem-10000A.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4C453A43294A468200D91D2B /* Ahem-10000A.ttf */; };
+		4CC961EC294A36CE00483F06 /* LockdownModeFonts.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4CC961E4294A36A000483F06 /* LockdownModeFonts.html */; };
 		510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */; };
 		510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */; };
 		510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */; };
@@ -1425,6 +1427,7 @@
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				F4A7CE7A2662D86C00228685 /* active-touch-events.html in Copy Resources */,
 				725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */,
+				4C453A44294A469500D91D2B /* Ahem-10000A.ttf in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
 				46C1EA9825758820005E409E /* alert.html in Copy Resources */,
 				1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */,
@@ -1698,6 +1701,7 @@
 				46C519E71D3563FD00DAA51A /* LocalStorageNullEntries.localstorage in Copy Resources */,
 				46C519E81D3563FD00DAA51A /* LocalStorageNullEntries.localstorage-shm in Copy Resources */,
 				7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */,
+				4CC961EC294A36CE00483F06 /* LockdownModeFonts.html in Copy Resources */,
 				7A33FF3027C82F8100D7E03E /* LockdownModePDF.html in Copy Resources */,
 				2D2FE8DA231745C900B2E9C9 /* long-email-viewport.html in Copy Resources */,
 				C9E8EE7521DED94300797765 /* long-test.mp4 in Copy Resources */,
@@ -2336,6 +2340,8 @@
 		4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementAtPointInWebFrame.mm; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
 		4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle.cpp; sourceTree = "<group>"; };
+		4C453A43294A468200D91D2B /* Ahem-10000A.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Ahem-10000A.ttf"; sourceTree = "<group>"; };
+		4CC961E4294A36A000483F06 /* LockdownModeFonts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = LockdownModeFonts.html; path = Tests/WebKitCocoa/LockdownModeFonts.html; sourceTree = SOURCE_ROOT; };
 		5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IDBDeleteRecovery.sqlite3; sourceTree = "<group>"; };
 		510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-shm"; sourceTree = "<group>"; };
 		510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-wal"; sourceTree = "<group>"; };
@@ -3782,6 +3788,7 @@
 				37E7DD661EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm */,
 				37E7DD651EA0715B009B396D /* AdditionalReadAccessAllowedURLsProtocol.h */,
 				55A817FB218100E00004A39A /* AdditionalSupportedImageTypes.mm */,
+				4C453A43294A468200D91D2B /* Ahem-10000A.ttf */,
 				A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */,
 				2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */,
 				A1798B8122431D65000764BD /* ApplePay.mm */,
@@ -4937,6 +4944,7 @@
 				33DC8910141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp */,
 				33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */,
 				8AA28C1916D2FA7B002FF4DB /* LoadPageOnCrash.cpp */,
+				4CC961E4294A36A000483F06 /* LockdownModeFonts.html */,
 				075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */,
 				CDC9442C1EF1FC080059C3C4 /* MediaStreamTrackDetached.mm */,
 				7A5623101AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp */,

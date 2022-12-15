@@ -1,0 +1,30 @@
+<html>
+<head>
+<style>
+    /* Ahem-100000A.ttf is listed as an allowed font in WebKit */
+    @font-face {
+        font-family: 'WebFont';
+        src: url('Ahem-10000A.ttf');
+    }
+    /* Ahem.ttf is not listed as an allowed font in WebKit */
+    @font-face {
+        font-family: 'WebFontNotAllowed';
+        src: url('Ahem.ttf');
+    }
+    #reference {
+        font-family: 'Helvetica';
+    }
+    #target {
+        font-family: 'WebFont', 'Helvetica';
+    }
+    #target-not-allowed {
+        font-family: 'WebFontNotAllowed', 'Helvetica';
+    }
+</style>
+</head>
+<body>
+    <div><span id="reference">Hello</span></div>
+    <div><span id="target">Hello</span></div>
+    <div><span id="target-not-allowed">Hello</span></div>
+</body>
+</html>

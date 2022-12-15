@@ -78,6 +78,9 @@ private:
 
     void allClientsRemoved() override;
 
+    bool shouldAllowCustomFont(const Ref<SharedBuffer>& data);
+    void setErrorAndDeleteData();
+
     bool m_loadInitiated;
     bool m_hasCreatedFontDataWrappingResource;
 

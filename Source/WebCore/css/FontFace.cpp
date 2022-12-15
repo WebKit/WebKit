@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FontFace.h"
 
+#include "AllowedFonts.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -68,7 +69,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
         return result;
     }
 
-    bool allowDownloading = context.settingsValues().downloadableBinaryFontsEnabled;
+    auto fontAllowedTypes = context.settingsValues().downloadableBinaryFontAllowedTypes;
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
             auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, is<Document>(context) ? CSSParserContext(downcast<Document>(context)) : HTMLStandardMode);
@@ -77,15 +78,15 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
             CSSFontFace::appendSources(result->backing(), *value, &context, false);
             return { };
         },
-        [&, allowDownloading] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
-            if (!allowDownloading)
+        [&, fontAllowedTypes] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
+            if (!arrayBufferView || !isFontBinaryAllowed(arrayBufferView->data(), arrayBufferView->byteLength(), fontAllowedTypes))
                 return { };
 
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
             return { };
         },
-        [&, allowDownloading] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
-            if (!allowDownloading)
+        [&, fontAllowedTypes] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
+            if (!arrayBuffer || !isFontBinaryAllowed(arrayBuffer->data(), arrayBuffer->byteLength(), fontAllowedTypes))
                 return { };
 
             unsigned byteLength = arrayBuffer->byteLength();

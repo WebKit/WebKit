@@ -4176,7 +4176,7 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(false);
 #endif
-    settings.setDownloadableBinaryFontsEnabled(false);
+    settings.setDownloadableBinaryFontAllowedTypes(DownloadableBinaryFontAllowedTypes::Restricted);
 #if ENABLE(WEB_RTC)
     settings.setPeerConnectionEnabled(false);
     settings.setWebRTCEncodedTransformEnabled(false);
@@ -4210,7 +4210,6 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     // FIXME: This seems like an odd place to put logic for setting global state in CoreGraphics.
 #if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
     CGEnterLockdownModeForPDF();
-    CGEnterLockdownModeForFonts();
 #endif
 }
 

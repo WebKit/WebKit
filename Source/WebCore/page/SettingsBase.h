@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "AllowedFonts.h"
 #include "ClipboardAccessPolicy.h"
 #include "ContentType.h"
 #include "EditableLinkBehavior.h"

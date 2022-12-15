@@ -1737,6 +1737,7 @@ loader/archive/ArchiveResource.cpp
 loader/archive/ArchiveResourceCollection.cpp
 loader/archive/mhtml/MHTMLArchive.cpp
 loader/archive/mhtml/MHTMLParser.cpp
+loader/cache/AllowedFonts.cpp
 loader/cache/CachedApplicationManifest.cpp
 loader/cache/CachedCSSStyleSheet.cpp
 loader/cache/CachedFont.cpp
