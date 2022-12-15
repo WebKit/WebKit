@@ -1176,26 +1176,26 @@ public:
 
     void loadVector(Address address, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vmovups_mr(address.offset, address.base, dest);
     }
 
     void loadVector(BaseIndex address, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vmovups_mr(address.offset, address.base, address.index, address.scale, dest);
     }
     
     void storeVector(FPRegisterID src, Address address)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         ASSERT(Options::useWebAssemblySIMD());
         m_assembler.vmovups_rm(src, address.offset, address.base);
     }
     
     void storeVector(FPRegisterID src, BaseIndex address)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         ASSERT(Options::useWebAssemblySIMD());
         m_assembler.vmovups_rm(src, address.offset, address.base, address.index, address.scale);
     }
@@ -2242,7 +2242,7 @@ public:
 
     void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, RegisterID src, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             return vectorReplaceLaneAVX(simdLane, lane, src, dest);
 
         switch (simdLane) {
@@ -2283,7 +2283,7 @@ public:
 
     void vectorReplaceLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             return vectorReplaceLaneAVX(simdLane, lane, src, dest);
 
         switch (simdLane) {
@@ -2311,25 +2311,25 @@ public:
     {
         switch (simdLane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpextrb_i8rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrb_i8rr(lane.m_value, src, dest);
             break;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpextrw_i8rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrw_i8rr(lane.m_value, src, dest);
             break;
         case SIMDLane::i32x4:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpextrd_i8rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrd_i8rr(lane.m_value, src, dest);
             break;
         case SIMDLane::i64x2:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpextrq_i8rr(lane.m_value, src, dest);
             else
                 m_assembler.pextrq_i8rr(lane.m_value, src, dest);
@@ -2382,7 +2382,7 @@ public:
 
     void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             return vectorExtractLaneAVX(simdLane, lane, src, dest);
 
         // For lane 0, we just move since we do not ensure the upper bits.
@@ -2426,7 +2426,7 @@ public:
 
     void compareFloatingPointVectorUnordered(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
 
         using PackedCompareCondition = X86Assembler::PackedCompareCondition;
@@ -2439,7 +2439,7 @@ public:
 
     void compareFloatingPointVector(DoubleCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
 
         using PackedCompareCondition = X86Assembler::PackedCompareCondition;
@@ -2488,7 +2488,7 @@ public:
 
     void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID scratch)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
 
         switch (cond) {
@@ -2657,7 +2657,7 @@ public:
     void compareIntegerVectorWithZero(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID vector, FPRegisterID dest, RegisterID scratch)
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(cond == RelationalCondition::Equal || cond == RelationalCondition::NotEqual);
 
         m_assembler.vptest_rr(vector, vector);
@@ -2667,7 +2667,7 @@ public:
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
 
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
@@ -2695,7 +2695,7 @@ public:
 
     void vectorSub(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
 
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
@@ -2723,7 +2723,7 @@ public:
 
     void vectorMul(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
 
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
@@ -2748,7 +2748,7 @@ public:
 
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         switch (simdInfo.lane) {
         case SIMDLane::f32x4:
@@ -2766,7 +2766,7 @@ public:
     {
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpmaxsb_rrr(right, left, dest);
                 else
@@ -2784,7 +2784,7 @@ public:
             }
             return;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpmaxsw_rrr(right, left, dest);
                 else
@@ -2803,7 +2803,7 @@ public:
             }
             return;
         case SIMDLane::i32x4:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpmaxsd_rrr(right, left, dest);
                 else
@@ -2833,7 +2833,7 @@ public:
     {
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpminsb_rrr(right, left, dest);
                 else
@@ -2851,7 +2851,7 @@ public:
             }
             return;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpminsw_rrr(right, left, dest);
                 else
@@ -2870,7 +2870,7 @@ public:
             }
             return;
         case SIMDLane::i32x4:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpminsd_rrr(right, left, dest);
                 else
@@ -2898,7 +2898,7 @@ public:
 
     void vectorPmin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vminps_rrr(right, left, dest);
@@ -2908,7 +2908,7 @@ public:
 
     void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vmaxps_rrr(right, left, dest);
@@ -2923,28 +2923,28 @@ public:
 
     void vectorAnd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
         m_assembler.vandps_rrr(right, left, dest);
     }
 
     void vectorAndnot(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
         m_assembler.vandnps_rrr(right, left, dest);
     }
 
     void vectorOr(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
         m_assembler.vorps_rrr(right, left, dest);
     }
 
     void vectorXor(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
         m_assembler.vxorps_rrr(right, left, dest);
     }
@@ -2957,7 +2957,7 @@ public:
     void vectorAbsInt64(FPRegisterID input, FPRegisterID dest, FPRegisterID scratch)
     {
         // https://github.com/WebAssembly/simd/pull/413
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpxor_rrr(scratch, scratch, scratch);
         m_assembler.vpsubq_rrr(input, scratch, scratch);
         m_assembler.vblendvpd_rrrr(input, scratch, input, dest);
@@ -2967,7 +2967,7 @@ public:
     {
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpabsb_rr(input, dest);
             else if (supportsSupplementalSSE3())
                 m_assembler.pabsb_rr(input, dest);
@@ -2975,7 +2975,7 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             return;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpabsw_rr(input, dest);
             else if (supportsSupplementalSSE3())
                 m_assembler.pabsw_rr(input, dest);
@@ -2983,7 +2983,7 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             return;
         case SIMDLane::i32x4:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpabsd_rr(input, dest);
             else if (supportsSupplementalSSE3())
                 m_assembler.pabsd_rr(input, dest);
@@ -3010,7 +3010,7 @@ public:
 
     void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vroundps_rr(input, dest, RoundingType::TowardInfiniti);
@@ -3020,7 +3020,7 @@ public:
 
     void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vroundps_rr(input, dest, RoundingType::TowardNegativeInfiniti);
@@ -3030,7 +3030,7 @@ public:
 
     void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vroundps_rr(input, dest, RoundingType::TowardZero);
@@ -3052,7 +3052,7 @@ public:
     void vectorTruncSatSignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
         // https://github.com/WebAssembly/simd/pull/383
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         alignas(16) static constexpr double masks[] = {
             2147483647.0,
             2147483647.0,
@@ -3070,7 +3070,7 @@ public:
     void vectorTruncSatUnsignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
         // https://github.com/WebAssembly/simd/pull/383
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
 
         alignas(16) static constexpr double masks[] = {
             4294967295.0,
@@ -3090,7 +3090,7 @@ public:
 
     void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vroundps_rr(input, dest, RoundingType::ToNearestWithTiesToEven);
@@ -3100,7 +3100,7 @@ public:
 
     void vectorSqrt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         if (simdInfo.lane == SIMDLane::f32x4)
             m_assembler.vsqrtps_rr(input, dest);
@@ -3113,14 +3113,14 @@ public:
         switch (simdInfo.lane) {
         case SIMDLane::i16x8:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpmovsxbw_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovsxbw(input, dest);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
             } else {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpmovzxbw_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovzxbw(input, dest);
@@ -3130,14 +3130,14 @@ public:
             return;
         case SIMDLane::i32x4:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpmovsxwd_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovsxwd(input, dest);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
             } else {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpmovzxwd_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovzxwd(input, dest);
@@ -3147,14 +3147,14 @@ public:
             return;
         case SIMDLane::i64x2:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpmovsxdq_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovsxdq(input, dest);
                 else
                     RELEASE_ASSERT_NOT_REACHED();
             } else {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpmovzxdq_rr(input, dest);
                 else if (supportsSSE4_1())
                     m_assembler.pmovzxdq(input, dest);
@@ -3169,7 +3169,7 @@ public:
 
     void vectorExtendHigh(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             m_assembler.vunpckhpd_rrr(dest, input, dest);
         else {
             if (input != dest)
@@ -3182,14 +3182,14 @@ public:
     void vectorPromote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::f32x4);
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vcvtps2pd_rr(input, dest);
     }
 
     void vectorDemote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::f64x2);
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vcvtpd2ps_rr(input, dest);
     }
 
@@ -3201,7 +3201,7 @@ public:
         switch (simdInfo.lane) {
         case SIMDLane::i16x8:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpacksswb_rrr(upper, lower, dest);
                 else {
                     if (lower != dest)
@@ -3209,7 +3209,7 @@ public:
                     m_assembler.packsswb_rr(upper, dest);
                 }
             } else {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpackuswb_rrr(upper, lower, dest);
                 else {
                     if (lower != dest)
@@ -3220,7 +3220,7 @@ public:
             return;
         case SIMDLane::i32x4:
             if (simdInfo.signMode == SIMDSignMode::Signed) {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpackssdw_rrr(upper, lower, dest);
                 else {
                     if (lower != dest)
@@ -3228,7 +3228,7 @@ public:
                     m_assembler.packssdw_rr(upper, dest);
                 }
             } else {
-                if (supportsAVXForSIMD())
+                if (supportsAVX())
                     m_assembler.vpackusdw_rrr(upper, lower, dest);
                 else if (supportsSSE4_1()) {
                     if (lower != dest)
@@ -3248,7 +3248,7 @@ public:
         ASSERT_UNUSED(simdInfo, scalarTypeIsIntegral(simdInfo.lane));
         ASSERT(elementByteSize(simdInfo.lane) == 4);
         ASSERT(simdInfo.signMode == SIMDSignMode::Signed);
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             m_assembler.vcvtdq2ps_rr(input, dest);
         else
             m_assembler.cvtdq2ps_rr(input, dest);
@@ -3262,7 +3262,7 @@ public:
     void vectorConvertLowUnsignedInt32(FPRegisterID input, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
         // https://github.com/WebAssembly/simd/pull/383
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         ASSERT(scratchFPR != dest);
         constexpr uint32_t high32Bits = 0x43300000;
         alignas(16) static constexpr double masks[] = {
@@ -3279,7 +3279,7 @@ public:
 
     void vectorConvertLowSignedInt32(FPRegisterID input, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             m_assembler.vcvtdq2pd_rr(input, dest);
         else
             m_assembler.cvtdq2pd_rr(input, dest);
@@ -3288,7 +3288,7 @@ public:
     void vectorUshl(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
             // FIXME: 8-bit shift is awful on intel.
@@ -3311,7 +3311,7 @@ public:
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
         RELEASE_ASSERT(simdInfo.lane != SIMDLane::i8x16);
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         switch (simdInfo.lane) {
         case SIMDLane::i16x8:
             m_assembler.vpsraw_i8rr(shift.m_value, input, dest);
@@ -3331,7 +3331,7 @@ public:
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
         RELEASE_ASSERT(simdInfo.lane != SIMDLane::i8x16);
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         switch (simdInfo.lane) {
         case SIMDLane::i16x8:
             m_assembler.vpsrlw_i8rr(shift.m_value, input, dest);
@@ -3350,7 +3350,7 @@ public:
     void vectorUshr(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
             // FIXME: 8-bit shift is awful on intel.
@@ -3372,7 +3372,7 @@ public:
     void vectorSshr(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsIntegral(simdInfo.lane));
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
             // FIXME: 8-bit shift is awful on intel.
@@ -3415,7 +3415,7 @@ public:
 
     void vectorSplat(SIMDLane lane, RegisterID src, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             return vectorSplatAVX(lane, src, dest);
 
         m_assembler.movq_rr(src, dest);
@@ -3462,7 +3462,7 @@ public:
 
     void vectorSplat(SIMDLane lane, FPRegisterID src, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             return vectorSplatAVX(lane, src, dest);
 
         switch (lane) {
@@ -3501,7 +3501,7 @@ public:
 
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpaddsb_rrr(right, left, dest);
                 else
@@ -3516,7 +3516,7 @@ public:
             }
             return;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpaddsw_rrr(right, left, dest);
                 else
@@ -3541,7 +3541,7 @@ public:
 
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpsubsb_rrr(right, left, dest);
                 else
@@ -3556,7 +3556,7 @@ public:
             }
             return;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD()) {
+            if (supportsAVX()) {
                 if (simdInfo.signMode == SIMDSignMode::Signed)
                     m_assembler.vpsubsw_rrr(right, left, dest);
                 else
@@ -3577,7 +3577,7 @@ public:
 
     void vectorLoad8Splat(Address address, FPRegisterID dest, FPRegisterID scratch)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpinsrb_i8mrr(0, address.offset, address.base, dest, dest);
         m_assembler.vpxor_rrr(scratch, scratch, scratch);
         m_assembler.vpshufb_rrr(scratch, dest, dest);
@@ -3585,7 +3585,7 @@ public:
 
     void vectorLoad16Splat(Address address, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpinsrw_i8mrr(0, address.offset, address.base, dest, dest);
         m_assembler.vpshuflw_i8rr(0, dest, dest);
         m_assembler.vpunpcklqdq_rrr(dest, dest, dest);
@@ -3593,67 +3593,67 @@ public:
 
     void vectorLoad32Splat(Address address, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vbroadcastss_mr(address.offset, address.base, dest);
     }
 
     void vectorLoad64Splat(Address address, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vmovddup_mr(address.offset, address.base, dest);
     }
 
     void vectorLoad8Lane(Address address, TrustedImm32 imm, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpinsrb_i8mrr(imm.m_value, address.offset, address.base, dest, dest);
     }
 
     void vectorLoad16Lane(Address address, TrustedImm32 imm, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpinsrw_i8mrr(imm.m_value, address.offset, address.base, dest, dest);
     }
 
     void vectorLoad32Lane(Address address, TrustedImm32 imm, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpinsrd_i8mrr(imm.m_value, address.offset, address.base, dest, dest);
     }
 
     void vectorLoad64Lane(Address address, TrustedImm32 imm, FPRegisterID dest)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpinsrq_i8mrr(imm.m_value, address.offset, address.base, dest, dest);
     }
 
     void vectorStore8Lane(FPRegisterID src, Address address, TrustedImm32 imm)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpextrb_i8rm(imm.m_value, src, address.base, address.offset);
     }
 
     void vectorStore16Lane(FPRegisterID src, Address address, TrustedImm32 imm)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpextrw_i8rm(imm.m_value, src, address.base, address.offset);
     }
 
     void vectorStore32Lane(FPRegisterID src, Address address, TrustedImm32 imm)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpextrd_i8rm(imm.m_value, src, address.base, address.offset);
     }
 
     void vectorStore64Lane(FPRegisterID src, Address address, TrustedImm32 imm)
     {
-        ASSERT(supportsAVXForSIMD());
+        ASSERT(supportsAVX());
         m_assembler.vpextrq_i8rm(imm.m_value, src, address.base, address.offset);
     }
 
     void vectorAnyTrue(FPRegisterID vec, RegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         m_assembler.vptest_rr(vec, vec);
         m_assembler.setCC_r(x86Condition(NonZero), dest);
         m_assembler.movzbl_rr(dest, dest);
@@ -3661,7 +3661,7 @@ public:
 
     void vectorAllTrue(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest, FPRegisterID scratch)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
 
         m_assembler.vpxor_rrr(scratch, scratch, scratch); // Zero scratch register.
         switch (simdInfo.lane) {
@@ -3687,7 +3687,7 @@ public:
 
     void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest, FPRegisterID tmp)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
 
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
@@ -3711,7 +3711,7 @@ public:
 
     void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
 
         // https://github.com/WebAssembly/simd/pull/380
         move(TrustedImm64(1), scratchGPR);
@@ -3737,7 +3737,7 @@ public:
 
     void vectorExtaddPairwiseUnsignedInt16(FPRegisterID src, FPRegisterID dest, FPRegisterID scratch)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         // It can be src == dest.
         ASSERT(dest != scratch);
         ASSERT(src != scratch);
@@ -3750,7 +3750,7 @@ public:
     {
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpavgb_rrr(b, a, dest);
             else {
                 if (a != dest)
@@ -3759,7 +3759,7 @@ public:
             }
             return;
         case SIMDLane::i16x8:
-            if (supportsAVXForSIMD())
+            if (supportsAVX())
                 m_assembler.vpavgw_rrr(b, a, dest);
             else {
                 if (a != dest)
@@ -3775,7 +3775,7 @@ public:
     void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
     {
         // https://github.com/WebAssembly/simd/pull/365
-        if (supportsAVXForSIMD()) {
+        if (supportsAVX()) {
             m_assembler.vpmulhrsw_rrr(b, a, dest);
             m_assembler.movq_i64r(0x8000, scratchGPR);
             vectorSplat(SIMDLane::i16x8, scratchGPR, scratchFPR);
@@ -3793,7 +3793,7 @@ public:
 
     void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
-        if (supportsAVXForSIMD())
+        if (supportsAVX())
             m_assembler.vpshufb_rrr(b, a, dest);
         else {
             if (a != dest)
@@ -3804,7 +3804,7 @@ public:
 
     void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
     {
-        RELEASE_ASSERT(supportsAVXForSIMD());
+        RELEASE_ASSERT(supportsAVX());
         m_assembler.vpmaddwd_rrr(b, a, dest);
     }
 
