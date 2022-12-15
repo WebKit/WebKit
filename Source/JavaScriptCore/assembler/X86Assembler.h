@@ -4791,7 +4791,7 @@ public:
         // https://www.felixcloutier.com/x86/maxps
         // VEX.128.NP.0F.WIG 5F /r VMAXPS xmm1, xmm2, xmm3/m128
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_00, OP2_MAXPS_VpsWps, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_00, OP2_MAXPS_VpsWps, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)xmm3);
     }
 
     void vmaxpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
@@ -4799,7 +4799,7 @@ public:
         // https://www.felixcloutier.com/x86/maxpd
         // VEX.128.66.0F.WIG 5F /r VMAXPD xmm1, xmm2, xmm3/m128
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_MAXPD_VpdWpd, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_MAXPD_VpdWpd, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)xmm3);
     }
 
     void vminps_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
@@ -4807,7 +4807,7 @@ public:
         // https://www.felixcloutier.com/x86/minps
         // VEX.128.NP.0F.WIG 5D /r VMINPS xmm1, xmm2, xmm3/m128
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_00, OP2_MINPS_VpsWps, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_00, OP2_MINPS_VpsWps, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)xmm3);
     }
 
     void vminpd_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
@@ -4815,7 +4815,7 @@ public:
         // https://www.felixcloutier.com/x86/minpd
         // VEX.128.66.0F.WIG 5D /r VMINPD xmm1, xmm2, xmm3/m128
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_MINPD_VpdWpd, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_MINPD_VpdWpd, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)xmm3);
     }
 
     void vpavgb_rrr(XMMRegisterID right, XMMRegisterID left, XMMRegisterID vd)

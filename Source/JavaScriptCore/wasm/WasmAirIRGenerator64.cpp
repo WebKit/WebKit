@@ -434,6 +434,7 @@ public:
                 default:
                     append(airOp, relOp, Arg::simdInfo(info), lhs, rhs, result, scratch);
                 }
+                return { };
             }
         }
 
