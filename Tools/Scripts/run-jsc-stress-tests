@@ -1897,7 +1897,7 @@ def runWebAssemblyEmscripten(mode)
     end
 end
 
-def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptions)
+def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpecificOptions)
     case mode
     when :skip
         return
@@ -1913,40 +1913,40 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptio
     prepareExtraRelativeFiles(harness.map { |f| ("../../" + specHarnessPath + "/") + f }, $collection)
 
     specHarnessJsPath = "../" + specHarnessPath + ".js"
-    runWithOutputHandler("default-wasm", noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
+    runWithOutputHandler("default-wasm" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
     if $mode != "quick"
-      runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, specHarnessJsPath,  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-      runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-      runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, specHarnessJsPath, "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
-      runWithOutputHandler("wasm-air", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-no-cjit-yes-tls-context" + (postfix || ''), noisyOutputHandler, specHarnessJsPath,  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-eager-jettison" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-no-tls-context" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-collect-continuously" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+      runWithOutputHandler("wasm-air" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
       if $isFTLPlatform
-          runWithOutputHandler("wasm-b3", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+          runWithOutputHandler("wasm-b3" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
       end
     end
 end
 
 def runWebAssemblySpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness")
+    runWebAssemblySpecTestBase(mode, "spec-harness", nil)
 end
 
 def runWebAssemblyReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "ref-spec-harness")
+    runWebAssemblySpecTestBase(mode, "ref-spec-harness", nil)
 end
 
 def runWebAssemblyFunctionReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", "--useWebAssemblyTypedFunctionReferences=true")
+    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil, "--useWebAssemblyTypedFunctionReferences=true")
 end
 
 def runWebAssemblyGCSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "gc-spec-harness", "--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
 end
 
 def runWebAssemblySIMDSpecTest(mode)
     return if !$isSIMDPlatform
-    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
+    runWebAssemblySpecTestBase(mode, "simd-spec-harness", nil, "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
     # fixme: temporary extra tests since the simd options don't play nicely without BBQ Air enabled
-    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
+    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "-eager", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
