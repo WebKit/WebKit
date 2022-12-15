@@ -182,7 +182,7 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
             ASSERT(existingImplicitKeyframeValue->style());
             auto keyframeStyle = RenderStyle::clonePtr(*existingImplicitKeyframeValue->style());
             for (auto cssPropertyId : implicitProperties) {
-                CSSPropertyAnimation::blendProperties(&effect, cssPropertyId, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace);
+                CSSPropertyAnimation::blendProperty(effect, cssPropertyId, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace);
                 existingImplicitKeyframeValue->addProperty(cssPropertyId);
             }
             existingImplicitKeyframeValue->setStyle(WTFMove(keyframeStyle));

@@ -40,6 +40,8 @@ class RenderStyle;
 
 class CSSPropertyAnimation {
 public:
+    using Property = std::variant<CSSPropertyID, AtomString>;
+
     static bool isPropertyAnimatable(CSSPropertyID);
     static bool isPropertyAdditiveOrCumulative(CSSPropertyID);
     static bool propertyRequiresBlendingForAccumulativeIteration(CSSPropertyID, const RenderStyle& a, const RenderStyle& b);
@@ -49,8 +51,7 @@ public:
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
     static int getNumProperties();
 
-    static void blendProperties(const CSSPropertyBlendingClient*, CSSPropertyID, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
-    static void blendCustomProperty(const CSSPropertyBlendingClient&, const AtomString&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
+    static void blendProperty(const CSSPropertyBlendingClient&, Property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
 };
 
 } // namespace WebCore

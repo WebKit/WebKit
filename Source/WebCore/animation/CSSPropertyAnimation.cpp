@@ -84,9 +84,9 @@ static TextStream& operator<<(TextStream& stream, CSSPropertyID property)
 #endif
 
 struct CSSPropertyBlendingContext : BlendingContext {
-    const CSSPropertyBlendingClient* client { nullptr };
+    const CSSPropertyBlendingClient& client;
 
-    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient* client, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
         : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration)
         , client(client)
     {
@@ -189,10 +189,10 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
         // in the initial keyframe list.
         if (context.compositeOperation == CompositeOperation::Accumulate)
             return std::nullopt;
-        return context.client->transformFunctionListPrefix();
+        return context.client.transformFunctionListPrefix();
     };
 
-    auto boxSize = is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize();
+    auto boxSize = is<RenderBox>(context.client.renderer()) ? downcast<RenderBox>(*context.client.renderer()).borderBoxRect().size() : LayoutSize();
     return to.blend(from, context, boxSize, prefix());
 }
 
@@ -404,7 +404,7 @@ static inline Visibility blendFunc(Visibility from, Visibility to, const CSSProp
     if (fromVal == toVal)
         return to;
     // The composite operation here is irrelevant.
-    double result = blendFunc(fromVal, toVal, { context.progress, false, CompositeOperation::Replace, nullptr });
+    double result = blendFunc(fromVal, toVal, { context.progress, false, CompositeOperation::Replace, context.client });
     return result > 0. ? Visibility::Visible : (to != Visibility::Visible ? to : from);
 }
 
@@ -537,7 +537,7 @@ static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePie
     if (from.imageSlices() != to.imageSlices() || from.borderSlices() != to.borderSlices() || from.outset() != to.outset() || from.fill() != to.fill() || from.overridesBorderWidths() != to.overridesBorderWidths() || from.horizontalRule() != to.horizontalRule() || from.verticalRule() != to.verticalRule())
         return to;
 
-    if (auto* renderer = context.client->renderer()) {
+    if (auto* renderer = context.client.renderer()) {
         if (from.image()->imageSize(renderer, 1.0) != to.image()->imageSize(renderer, 1.0))
             return to;
     }
@@ -3889,7 +3889,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
 }
 
-void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
+static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     ASSERT(property != CSSPropertyInvalid && property != CSSPropertyCustom);
 
@@ -3932,9 +3932,9 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const CSSCustom
     return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
 }
 
-void CSSPropertyAnimation::blendCustomProperty(const CSSPropertyBlendingClient& client, const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
+static void blendCustomProperty(const CSSPropertyBlendingClient& client, const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
-    CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, &client, iterationCompositeOperation, currentIteration };
+    CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, iterationCompositeOperation, currentIteration };
 
     {
         auto* fromValue = from.nonInheritedCustomProperties().get(customProperty);
@@ -3949,6 +3949,18 @@ void CSSPropertyAnimation::blendCustomProperty(const CSSPropertyBlendingClient& 
         if (fromValue && toValue)
             destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
     }
+}
+
+void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, Property property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
+{
+    WTF::switchOn(property,
+        [&] (CSSPropertyID propertyId) {
+            blendStandardProperty(client, propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
+        }, [&] (AtomString customProperty) {
+            // FIXME: we don't deal with compositeOperation or iterationCompositeOpertion for custom properties yet.
+            blendCustomProperty(client, customProperty, destination, from, to, progress, CompositeOperation::Replace, IterationCompositeOperation::Replace, 0);
+        }
+    );
 }
 
 bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)
