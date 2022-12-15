@@ -52,7 +52,8 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
 
-#if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && (PLATFORM(MAC) || PLATFORM(IOS))
+// FIXME: Work through enabling on iOS
+#if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && PLATFORM(MAC)
 
 using WebKit::WebPushD::MessageType;
 using WebKit::WebPushD::RawXPCMessageType;
@@ -1336,4 +1337,4 @@ TEST(WebPushD, InstallCoordinationBundles)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && (PLATFORM(MAC) || PLATFORM(IOS))
+#endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && (PLATFORM(MAC)

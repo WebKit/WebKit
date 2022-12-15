@@ -1616,10 +1616,13 @@ NotificationsEnabled:
   condition: ENABLE(NOTIFICATIONS)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": false
       default: true
     WebKit:
+      "PLATFORM(IOS_FAMILY)": false
       default: true
     WebCore:
+      "PLATFORM(IOS_FAMILY)": false
       default: true
 
 OfflineWebApplicationCacheEnabled:

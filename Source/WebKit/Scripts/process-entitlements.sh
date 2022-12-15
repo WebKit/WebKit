@@ -430,6 +430,9 @@ function ios_family_process_webpushd_entitlements()
     # FIXME: Add a sandbox profile for webpushd and add it to the seatbelt-profiles array.
     echo "webpushd sandbox has not been implemented yet"
     plistbuddy Add :aps-connection-initiate bool YES
+    plistbuddy Add :com.apple.private.launchservices.allowopenwithanyhandler bool YES
+    plistbuddy Add :com.apple.springboard.opensensitiveurl bool YES
+    plistbuddy Add :com.apple.private.launchservices.canspecifysourceapplication bool YES
 }
 
 function ios_family_process_network_entitlements()
