@@ -4193,9 +4193,10 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     settings.setServiceWorkersEnabled(false);
     settings.setServiceWorkerNavigationPreloadEnabled(false);
 #endif
+    settings.setWebLocksAPIEnabled(false);
 
     DeprecatedGlobalSettings::setCacheAPIEnabled(false);
-    
+
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInLockdownModeKey()));

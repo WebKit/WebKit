@@ -7896,6 +7896,7 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.PushManager"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
     EXPECT_EQ(runJSCheck("!!window.PushSubscription"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
     EXPECT_EQ(runJSCheck("!!window.PushSubscriptionOptions"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
+    EXPECT_EQ(runJSCheck("!!window.LockManager"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // WebLockManager API.
     String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement" : "Element", ".prototype");
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
     EXPECT_EQ(runJSCheck("!!window.ServiceWorker"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Service Workers API.
