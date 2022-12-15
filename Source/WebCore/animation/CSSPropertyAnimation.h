@@ -50,7 +50,7 @@ public:
     static int getNumProperties();
 
     static void blendProperties(const CSSPropertyBlendingClient*, CSSPropertyID, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
-    static void blendCustomProperty(const AtomString&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress);
+    static void blendCustomProperty(const CSSPropertyBlendingClient&, const AtomString&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
 };
 
 } // namespace WebCore

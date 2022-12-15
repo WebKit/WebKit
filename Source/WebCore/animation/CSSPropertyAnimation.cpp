@@ -31,6 +31,7 @@
 #include "CSSPropertyAnimation.h"
 
 #include "AnimationUtilities.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CSSPropertyNames.h"
@@ -3910,13 +3911,44 @@ void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* clie
     }
 }
 
-void CSSPropertyAnimation::blendCustomProperty(const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress)
+static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(const CSSCustomPropertyValue::SyntaxValue& from, const CSSCustomPropertyValue::SyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
-    const auto& source = progress < 0.5 ? from : to;
-    if (auto nonInheritedValue = source.nonInheritedCustomProperties().get(customProperty))
-        destination.setNonInheritedCustomPropertyValue(customProperty, CSSCustomPropertyValue::create(*nonInheritedValue));
-    else if (auto inheritedValue = source.inheritedCustomProperties().get(customProperty))
-        destination.setInheritedCustomPropertyValue(customProperty, CSSCustomPropertyValue::create(*inheritedValue));
+    if (std::holds_alternative<Length>(from) && std::holds_alternative<Length>(to))
+        return blendFunc(std::get<Length>(from), std::get<Length>(to), blendingContext);
+
+    return std::nullopt;
+}
+
+static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
+{
+    if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from.value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to.value())) {
+        auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from.value());
+        auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to.value());
+        if (auto blendedSyntaxValue = blendSyntaxValues(fromSyntaxValue, toSyntaxValue, blendingContext))
+            return CSSCustomPropertyValue::createForSyntaxValue(from.name(), WTFMove(*blendedSyntaxValue));
+    }
+
+    // Use a discrete interpolation for all other cases.
+    return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
+}
+
+void CSSPropertyAnimation::blendCustomProperty(const CSSPropertyBlendingClient& client, const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
+{
+    CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, &client, iterationCompositeOperation, currentIteration };
+
+    {
+        auto* fromValue = from.nonInheritedCustomProperties().get(customProperty);
+        auto* toValue = to.nonInheritedCustomProperties().get(customProperty);
+        if (fromValue && toValue)
+            destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
+    }
+
+    {
+        auto* fromValue = from.inheritedCustomProperties().get(customProperty);
+        auto* toValue = to.inheritedCustomProperties().get(customProperty);
+        if (fromValue && toValue)
+            destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
+    }
 }
 
 bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)

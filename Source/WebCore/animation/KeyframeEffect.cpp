@@ -1569,7 +1569,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         if (intervalEndpoints.size() == 1) {
             WTF::switchOn(property,
                 [&] (CSSPropertyID propertyId) { CSSPropertyAnimation::blendProperties(this, propertyId, targetStyle, startKeyframeStyle, startKeyframeStyle, 0, CompositeOperation::Replace); },
-                [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(customProperty, targetStyle, startKeyframeStyle, startKeyframeStyle, 0); }
+                [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(*this, customProperty, targetStyle, startKeyframeStyle, startKeyframeStyle, 0, CompositeOperation::Replace); }
             );
             return;
         }
@@ -1601,7 +1601,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
                 currentIteration = usedBlendingForAccumulativeIteration ? 0 : currentIteration;
                 CSSPropertyAnimation::blendProperties(this, propertyId, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace, iterationCompositeOperation, currentIteration);
             },
-            [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(customProperty, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance); }
+            [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(*this, customProperty, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace); }
         );
     };
 

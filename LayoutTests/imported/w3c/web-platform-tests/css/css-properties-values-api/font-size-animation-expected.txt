@@ -1,3 +1,3 @@
 
-FAIL Animating font-size handled identically for standard and custom properties assert_equals: expected "400px" but got "250px"
+PASS Animating font-size handled identically for standard and custom properties
 
