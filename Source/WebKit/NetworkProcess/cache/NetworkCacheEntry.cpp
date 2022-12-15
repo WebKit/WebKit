@@ -116,10 +116,11 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     auto entry = makeUnique<Entry>(storageEntry);
 
     WTF::Persistence::Decoder decoder(storageEntry.header.span());
-    WebCore::ResourceResponse response;
-    if (!WebCore::ResourceResponse::decode(decoder, response))
+    std::optional<WebCore::ResourceResponse> response;
+    decoder >> response;
+    if (!response)
         return nullptr;
-    entry->m_response = WTFMove(response);
+    entry->m_response = WTFMove(*response);
     entry->m_response.setSource(WebCore::ResourceResponse::Source::DiskCache);
 
     std::optional<bool> hasVaryingRequestHeaders;

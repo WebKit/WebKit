@@ -42,6 +42,12 @@ public:
     {
         m_initLevel = AllFields;
     }
+    
+    ResourceResponse(ResourceResponseBase&& base)
+        : ResourceResponseBase(WTFMove(base))
+    {
+        m_initLevel = AllFields;
+    }
 
 #if USE(CFURLCONNECTION)
     ResourceResponse(CFURLResponseRef cfResponse)

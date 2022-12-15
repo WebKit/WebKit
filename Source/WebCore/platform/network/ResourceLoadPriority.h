@@ -59,17 +59,6 @@ inline ResourceLoadPriority& operator--(ResourceLoadPriority& priority)
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::ResourceLoadPriority> {
-    using values = EnumValues<
-        WebCore::ResourceLoadPriority,
-        WebCore::ResourceLoadPriority::VeryLow,
-        WebCore::ResourceLoadPriority::Low,
-        WebCore::ResourceLoadPriority::Medium,
-        WebCore::ResourceLoadPriority::High,
-        WebCore::ResourceLoadPriority::VeryHigh
-    >;
-};
-
 template<> struct EnumTraitsForPersistence<WebCore::ResourceLoadPriority> {
     using values = EnumValues<
         WebCore::ResourceLoadPriority,

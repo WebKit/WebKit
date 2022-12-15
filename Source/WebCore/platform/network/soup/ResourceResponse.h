@@ -42,6 +42,11 @@ public:
     {
     }
 
+    ResourceResponse(ResourceResponseBase&& base)
+        : ResourceResponseBase(WTFMove(base))
+    {
+    }
+
     ResourceResponse(SoupMessage*, const CString& sniffedContentType = CString());
 
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;

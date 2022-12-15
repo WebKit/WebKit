@@ -47,6 +47,11 @@ public:
     }
 
     ResourceResponse(CurlResponse&);
+    
+    ResourceResponse(ResourceResponseBase&& base)
+        : ResourceResponseBase(WTFMove(base))
+    {
+    }
 
     void appendHTTPHeaderField(const String&);
 
