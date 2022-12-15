@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.css-houdini.org/css-properties-values-api-1">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../resources/utils.js"></script>
+<div id="target"></div>
+<script>
+
+animation_test({
+  syntax: "<color>",
+  inherits: false,
+  initialValue: "red"
+}, {
+  keyframes: ["blue", "green"],
+  expected: "rgb(0, 64, 128)"
+}, 'Animating a custom property of type <color>');
+
+// Need to test accumulation, iterationComposite, etc.
+
+</script>

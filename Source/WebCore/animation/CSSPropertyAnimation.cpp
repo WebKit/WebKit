@@ -3976,8 +3976,7 @@ void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client
         [&] (CSSPropertyID propertyId) {
             blendStandardProperty(client, propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }, [&] (AtomString customProperty) {
-            // FIXME: we don't deal with iterationCompositeOpertion for custom properties yet.
-            blendCustomProperty(client, customProperty, destination, from, to, progress, compositeOperation, IterationCompositeOperation::Replace, 0);
+            blendCustomProperty(client, customProperty, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }
     );
 }
@@ -3998,10 +3997,33 @@ bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(Property property)
     );
 }
 
-bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(CSSPropertyID property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient& client, Property property, const RenderStyle& a, const RenderStyle& b)
 {
-    auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
-    return wrapper && wrapper->requiresBlendingForAccumulativeIteration(a, b);
+    return WTF::switchOn(property,
+        [&] (CSSPropertyID propertyId) {
+            if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
+                return wrapper->requiresBlendingForAccumulativeIteration(a, b);
+            return false;
+        }, [&] (AtomString customProperty) {
+            auto [from, to] = customPropertyValuesForBlending(client, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            if (!from || !to)
+                return false;
+
+            if (!std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from->value()) || !std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to->value()))
+                return false;
+
+            auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from->value());
+            auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to->value());
+
+            // FIXME: we need to also ensure we blend for iterationComposite for <color>, <transform-list>, <filter-value-list> and <shadow>.
+            return WTF::switchOn(fromSyntaxValue, [toSyntaxValue](const Length& fromLength) {
+                ASSERT(std::holds_alternative<Length>(toSyntaxValue));
+                return lengthsRequireBlendingForAccumulativeIteration(fromLength, std::get<Length>(toSyntaxValue) );
+            }, [] (auto&) {
+                return false;
+            });
+        }
+    );
 }
 
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID property)

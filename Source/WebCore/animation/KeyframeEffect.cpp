@@ -1546,22 +1546,18 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
                     CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, targetStyle, *endKeyframe.style(), 1, endKeyframeCompositeOperation);
             }
 
-            // FIXME: handle custom properties here as well.
-            if (std::holds_alternative<CSSPropertyID>(property)) {
-                auto cssPropertyId = std::get<CSSPropertyID>(property);
-                // If this keyframe effect has an iteration composite operation of accumulate,
-                if (m_iterationCompositeOperation == IterationCompositeOperation::Accumulate && currentIteration && CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cssPropertyId, startKeyframeStyle, endKeyframeStyle)) {
-                    usedBlendingForAccumulativeIteration = true;
-                    // apply the following step current iteration times:
-                    for (auto i = 0; i < currentIteration; ++i) {
-                        // replace the property value of target property on keyframe with the result of combining the
-                        // property value on the final keyframe in property-specific keyframes (Va) with the property
-                        // value on keyframe (Vb) using the accumulation procedure defined for target property.
-                        if (!startKeyframe.key() && !hasImplicitZeroKeyframe)
-                            CSSPropertyAnimation::blendProperty(*this, cssPropertyId, startKeyframeStyle, *endKeyframe.style(), startKeyframeStyle, 1, CompositeOperation::Accumulate);
-                        if (endKeyframe.key() == 1 && !hasImplicitOneKeyframe)
-                            CSSPropertyAnimation::blendProperty(*this, cssPropertyId, endKeyframeStyle, *endKeyframe.style(), endKeyframeStyle, 1, CompositeOperation::Accumulate);
-                    }
+            // If this keyframe effect has an iteration composite operation of accumulate,
+            if (m_iterationCompositeOperation == IterationCompositeOperation::Accumulate && currentIteration && CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(*this, property, startKeyframeStyle, endKeyframeStyle)) {
+                usedBlendingForAccumulativeIteration = true;
+                // apply the following step current iteration times:
+                for (auto i = 0; i < currentIteration; ++i) {
+                    // replace the property value of target property on keyframe with the result of combining the
+                    // property value on the final keyframe in property-specific keyframes (Va) with the property
+                    // value on keyframe (Vb) using the accumulation procedure defined for target property.
+                    if (!startKeyframe.key() && !hasImplicitZeroKeyframe)
+                        CSSPropertyAnimation::blendProperty(*this, property, startKeyframeStyle, *endKeyframe.style(), startKeyframeStyle, 1, CompositeOperation::Accumulate);
+                    if (endKeyframe.key() == 1 && !hasImplicitOneKeyframe)
+                        CSSPropertyAnimation::blendProperty(*this, property, endKeyframeStyle, *endKeyframe.style(), endKeyframeStyle, 1, CompositeOperation::Accumulate);
                 }
             }
         }
