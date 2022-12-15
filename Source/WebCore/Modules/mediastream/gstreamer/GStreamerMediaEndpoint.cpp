@@ -146,6 +146,12 @@ bool GStreamerMediaEndpoint::initializePipeline()
         g_signal_connect_swapped(m_webrtcBin.get(), "prepare-data-channel", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDataChannel* channel, gboolean isLocal) {
             endPoint->prepareDataChannel(channel, isLocal);
         }), this);
+
+        g_signal_connect_swapped(m_webrtcBin.get(), "request-aux-sender", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDTLSTransport* transport) -> GstElement* {
+            if (auto sender = endPoint->requestAuxiliarySender(transport))
+                return sender.leakRef();
+            return nullptr;
+        }), this);
     }
 
     g_signal_connect_swapped(m_webrtcBin.get(), "on-data-channel", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDataChannel* channel) {
@@ -163,6 +169,10 @@ void GStreamerMediaEndpoint::teardownPipeline()
     stopLoggingStats();
 #endif
     m_statsCollector->setElement(nullptr);
+
+    for (auto& [sessionId, auxiliarySender] : m_auxiliarySenders)
+        g_signal_handlers_disconnect_by_data(auxiliarySender.get(), this);
+    m_auxiliarySenders.clear();
 
     g_signal_handlers_disconnect_by_data(m_webrtcBin.get(), this);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
@@ -1027,6 +1037,32 @@ void GStreamerMediaEndpoint::onDataChannel(GstWebRTCDataChannel* dataChannel)
         auto dataChannelInit = channelHandler->dataChannelInit();
         m_peerConnectionBackend.newDataChannel(WTFMove(channelHandler), WTFMove(label), WTFMove(dataChannelInit));
     });
+}
+
+GRefPtr<GstElement> GStreamerMediaEndpoint::requestAuxiliarySender(GstWebRTCDTLSTransport* transport)
+{
+    unsigned sessionId;
+    g_object_get(transport, "session-id", &sessionId, nullptr);
+
+    if (m_auxiliarySenders.contains(sessionId)) {
+        GST_WARNING_OBJECT(m_pipeline.get(), "Auxiliary sender already requested for session %u", sessionId);
+        return nullptr;
+    }
+
+    auto estimator = adoptGRef(makeGStreamerElement("rtpgccbwe", nullptr));
+    if (!estimator) {
+        GST_WARNING_OBJECT(m_pipeline.get(), "gst-plugins-rs is not installed, RTP bandwidth estimation now disabled");
+        return nullptr;
+    }
+
+    g_signal_connect(estimator.get(), "notify::estimated-bitrate", G_CALLBACK(+[](GstElement* estimator, GParamSpec*, GStreamerMediaEndpoint* endPoint) {
+        uint32_t estimatedBitrate;
+        g_object_get(estimator, "estimated-bitrate", &estimatedBitrate, nullptr);
+        gst_element_send_event(endPoint->pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, gst_structure_new("encoder-bitrate-change-request", "bitrate", G_TYPE_UINT, static_cast<uint32_t>(estimatedBitrate / 1000), nullptr)));
+    }), this);
+    m_auxiliarySenders.add(sessionId, WTFMove(estimator));
+
+    return GRefPtr<GstElement>(m_auxiliarySenders.get(sessionId));
 }
 
 void GStreamerMediaEndpoint::close()
