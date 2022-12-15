@@ -182,6 +182,12 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
             return nw_connection_privacy_stance_failed;
         case WebCore::PrivacyStance::Direct:
             return nw_connection_privacy_stance_direct;
+        case WebCore::PrivacyStance::FailedUnreachable:
+#if defined(NW_CONNECTION_HAS_PRIVACY_STANCE_FAILED_UNREACHABLE)
+            return nw_connection_privacy_stance_failed_unreachable;
+#else
+            return nw_connection_privacy_stance_unknown;
+#endif
         }
         ASSERT_NOT_REACHED();
         return nw_connection_privacy_stance_unknown;
