@@ -53,6 +53,7 @@ enum class PrivacyStance : uint8_t {
     Proxied,
     Failed,
     Direct,
+    FailedUnreachable,
 };
 
 constexpr MonotonicTime reusedTLSConnectionSentinel { MonotonicTime::fromRawSeconds(-1) };

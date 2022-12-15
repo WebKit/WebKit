@@ -159,6 +159,10 @@ static WebCore::PrivacyStance toPrivacyStance(nw_connection_privacy_stance_t sta
         return WebCore::PrivacyStance::Failed;
     case nw_connection_privacy_stance_direct:
         return WebCore::PrivacyStance::Direct;
+#if defined(NW_CONNECTION_HAS_PRIVACY_STANCE_FAILED_UNREACHABLE)
+    case nw_connection_privacy_stance_failed_unreachable:
+        return WebCore::PrivacyStance::FailedUnreachable;
+#endif
     }
     ASSERT_NOT_REACHED();
     return WebCore::PrivacyStance::Unknown;
@@ -177,6 +181,8 @@ static NSString* privacyStanceToString(WebCore::PrivacyStance stance)
         return @"Failed";
     case WebCore::PrivacyStance::Direct:
         return @"Direct";
+    case WebCore::PrivacyStance::FailedUnreachable:
+        return @"FailedUnreachable";
     }
     ASSERT_NOT_REACHED();
     return @"Unknown";
