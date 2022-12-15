@@ -1488,65 +1488,33 @@ auto AirIRGenerator64::addSIMDStore(ExpressionType value, ExpressionType pointer
 
 auto AirIRGenerator64::addSIMDSplat(SIMDLane lane, ExpressionType scalar, ExpressionType& result) -> PartialResult
 {
-    // FIXME: We should optimize this code.
-    if (isX86()) {
-        B3::Air::Opcode op;
-
-        switch (lane) {
-        case SIMDLane::i8x16:
-            op = VectorSplat8;
-            break;
-        case SIMDLane::i16x8:
-            op = VectorSplat16;
-            break;
-        case SIMDLane::i32x4:
-            op = VectorSplat32;
-            break;
-        case SIMDLane::i64x2:
-            op = VectorSplat64;
-            break;
-        case SIMDLane::f32x4:
-            op = VectorSplatFloat32;
-            break;
-        case SIMDLane::f64x2:
-            op = VectorSplatFloat64;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
-        result = v128();
-        append(op, scalar, result.tmp());
-        return { };
-    }
-
-    Tmp toSplat = scalar.tmp();
-    if (scalarTypeIsFloatingPoint(lane)) {
-        Tmp gpCast = newTmp(B3::GP);
-        append(elementByteSize(lane) == 4 ? MoveFloatTo32 : MoveDoubleTo64, toSplat, gpCast);
-        toSplat = gpCast;
-    }
-
     B3::Air::Opcode op;
-    switch (elementByteSize(lane)) {
-    case 1:
-        op = VectorSplat8;
+
+    switch (lane) {
+    case SIMDLane::i8x16:
+        op = VectorSplatInt8;
         break;
-    case 2:
-        op = VectorSplat16;
+    case SIMDLane::i16x8:
+        op = VectorSplatInt16;
         break;
-    case 4:
-        op = VectorSplat32;
+    case SIMDLane::i32x4:
+        op = VectorSplatInt32;
         break;
-    case 8:
-        op = VectorSplat64;
+    case SIMDLane::i64x2:
+        op = VectorSplatInt64;
+        break;
+    case SIMDLane::f32x4:
+        op = VectorSplatFloat32;
+        break;
+    case SIMDLane::f64x2:
+        op = VectorSplatFloat64;
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
     result = v128();
-    append(op, toSplat, result.tmp());
+    append(op, scalar, result.tmp());
     return { };
 }
 
@@ -1564,7 +1532,7 @@ auto AirIRGenerator64::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Express
             // left shift is negative, it's a right shift by the absolute value of that amount.
             append(Neg32, shiftAmount);
         }
-        append(VectorSplat8, shiftAmount, shiftVector);
+        append(VectorSplatInt8, shiftAmount, shiftVector);
         append(info.signMode == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());
 
         return { };
@@ -1573,7 +1541,7 @@ auto AirIRGenerator64::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Express
         Tmp shiftVector = newTmp(B3::FP);
         append(Move32, shift.tmp(), shiftAmount);
         append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
-        append(VectorSplat8, shiftAmount, shiftVector);
+        append(VectorSplatInt8, shiftAmount, shiftVector);
 
         if (op == SIMDLaneOperation::Shl)
             append(VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());

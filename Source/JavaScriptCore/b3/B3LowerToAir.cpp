@@ -3754,25 +3754,25 @@ private:
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
             Tmp scalar = tmp(value->child(0));
-            if (scalarTypeIsFloatingPoint(lane)) {
-                Tmp gpCast = m_code.newTmp(GP);
-                append(elementByteSize(lane) == 4 ? Air::MoveFloatTo32 : Air::MoveDoubleTo64, scalar, gpCast);
-                scalar = gpCast;
-            }
-
             Air::Opcode op;
-            switch (elementByteSize(lane)) {
-            case 1:
-                op = VectorSplat8;
+            switch (lane) {
+            case SIMDLane::i8x16:
+                op = VectorSplatInt8;
                 break;
-            case 2:
-                op = VectorSplat16;
+            case SIMDLane::i16x8:
+                op = VectorSplatInt16;
                 break;
-            case 4:
-                op = VectorSplat32;
+            case SIMDLane::i32x4:
+                op = VectorSplatInt32;
                 break;
-            case 8:
-                op = VectorSplat64;
+            case SIMDLane::i64x2:
+                op = VectorSplatInt64;
+                break;
+            case SIMDLane::f32x4:
+                op = VectorSplatFloat32;
+                break;
+            case SIMDLane::f64x2:
+                op = VectorSplatFloat64;
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -3801,14 +3801,14 @@ private:
                     // left shift is negative, it's a right shift by the absolute value of that amount.
                     append(Neg32, shiftAmount);
                 }
-                append(VectorSplat8, shiftAmount, shiftVector);
+                append(VectorSplatInt8, shiftAmount, shiftVector);
                 append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), v, shiftVector, tmp(value));
 
                 return;
             }
             
             if constexpr (isX86()) {
-                append(VectorSplat8, shiftAmount, shiftVector);
+                append(VectorSplatInt8, shiftAmount, shiftVector);
 
                 if (value->opcode() == VectorShl)
                     append(VectorUshl, Arg::simdInfo(value->simdInfo()), v, shiftVector, tmp(value));

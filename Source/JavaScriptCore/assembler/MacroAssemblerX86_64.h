@@ -2662,7 +2662,7 @@ public:
 
         m_assembler.vptest_rr(vector, vector);
         m_assembler.setCC_r(x86Condition(cond), scratch);
-        vectorSplat8(scratch, dest);
+        vectorSplatInt8(scratch, dest);
     }
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
@@ -3270,7 +3270,7 @@ public:
             0x1.0p+52,
         };
         move(TrustedImm32(high32Bits), scratchGPR);
-        vectorSplat32(scratchGPR, scratchFPR);
+        vectorSplatInt32(scratchGPR, scratchFPR);
         m_assembler.vunpcklps_rrr(scratchFPR, input, dest);
         move(TrustedImmPtr(masks), scratchGPR);
         loadVector(Address(scratchGPR), scratchFPR);
@@ -3488,10 +3488,10 @@ public:
         }
     }
 
-    void vectorSplat8(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i8x16, src, dest); }
-    void vectorSplat16(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i16x8, src, dest); }
-    void vectorSplat32(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i32x4, src, dest); }
-    void vectorSplat64(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i64x2, src, dest); }
+    void vectorSplatInt8(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i8x16, src, dest); }
+    void vectorSplatInt16(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i16x8, src, dest); }
+    void vectorSplatInt32(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i32x4, src, dest); }
+    void vectorSplatInt64(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i64x2, src, dest); }
     void vectorSplatFloat32(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f32x4, src, dest); }
     void vectorSplatFloat64(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f64x2, src, dest); }
 
@@ -3717,14 +3717,14 @@ public:
         move(TrustedImm64(1), scratchGPR);
         switch (simdInfo.lane) {
         case SIMDLane::i8x16:
-            vectorSplat8(scratchGPR, scratchFPR);
+            vectorSplatInt8(scratchGPR, scratchFPR);
             if (simdInfo.signMode == SIMDSignMode::Signed)
                 m_assembler.vpmaddubsw_rrr(vec, scratchFPR, dest);
             else
                 m_assembler.vpmaddubsw_rrr(scratchFPR, vec, dest);
             return;
         case SIMDLane::i16x8:
-            vectorSplat16(scratchGPR, scratchFPR);
+            vectorSplatInt16(scratchGPR, scratchFPR);
             if (simdInfo.signMode == SIMDSignMode::Signed)
                 m_assembler.vpmaddwd_rrr(vec, scratchFPR, dest);
             else
