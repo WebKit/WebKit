@@ -3,8 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -128,6 +128,22 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     RenderElement::styleDidChange(diff, oldStyle);
     updateFromStyle();
 
+    // When an out-of-flow-positioned element changes its display between block and inline-block,
+    // then an incremental layout on the element's containing block lays out the element through
+    // LayoutPositionedObjects, which skips laying out the element's parent.
+    // The element's parent needs to relayout so that it calls
+    // RenderBlockFlow::setStaticInlinePositionForChild with the out-of-flow-positioned child, so
+    // that when it's laid out, its RenderBox::computePositionedLogicalWidth/Height takes into
+    // account its new inline/block position rather than its old block/inline position.
+    // Position changes and other types of display changes are handled elsewhere.
+    if (oldStyle && isOutOfFlowPositioned() && parent() && (parent() != containingBlock())
+        && (style().position() == oldStyle->position())
+        && (style().isDisplayBlockType() == DisplayType::Block != oldStyle->isDisplayBlockType() == DisplayType::Block)
+        && (style().isDisplayInlineType() == DisplayType::InlineBlock != oldStyle->isDisplayInlineType() == DisplayType::InlineBlock)
+        && ((style().isDisplayBlockType() == DisplayType::Block) || (style().isDisplayInlineType() == DisplayType::InlineBlock))
+        && ((oldStyle->isDisplayBlockType() == DisplayType::Block) || (oldStyle->isDisplayInlineType() == DisplayType::InlineBlock)))
+    parent()->setNeedsLayout();
+    
     bool gainedOrLostLayer = false;
     if (requiresLayer()) {
         if (!layer() && layerCreationAllowedForSubtree()) {
