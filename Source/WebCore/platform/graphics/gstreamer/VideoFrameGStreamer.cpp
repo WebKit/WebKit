@@ -22,11 +22,14 @@
 
 #include "VideoFrameGStreamer.h"
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+
 #include "GStreamerCommon.h"
 #include "GraphicsContext.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
 #include "PixelBuffer.h"
+#include "VideoPixelFormat.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 
@@ -34,8 +37,6 @@
 #include <gst/gl/gstglcolorconvert.h>
 #include <gst/gl/gstglmemory.h>
 #endif
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 GST_DEBUG_CATEGORY(webkit_video_frame_debug);
 #define GST_CAT_DEFAULT webkit_video_frame_debug
@@ -269,6 +270,17 @@ void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& desti
     auto source = destinationImageOrientation.usesWidthAsHeight() ? FloatRect(imageRect.location(), imageRect.size().transposedSize()) : imageRect;
     auto compositeOperator = !shouldDiscardAlpha && image->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy;
     context.drawImage(image->image(), destination, source, { compositeOperator, destinationImageOrientation });
+}
+
+uint32_t VideoFrameGStreamer::pixelFormat() const
+{
+    if (m_cachedVideoFormat != GST_VIDEO_FORMAT_UNKNOWN)
+        return m_cachedVideoFormat;
+
+    GstVideoInfo inputInfo;
+    gst_video_info_from_caps(&inputInfo, gst_sample_get_caps(m_sample.get()));
+    m_cachedVideoFormat = GST_VIDEO_INFO_FORMAT(&inputInfo);
+    return m_cachedVideoFormat;
 }
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)
