@@ -866,3 +866,8 @@ void WKBundlePageLayoutIfNeeded(WKBundlePageRef page)
 {
     WebKit::toImpl(page)->layoutIfNeeded();
 }
+
+void WKBundlePageSetSkipDecidePolicyForResponseIfPossible(WKBundlePageRef page, bool skip)
+{
+    WebKit::toImpl(page)->setSkipDecidePolicyForResponseIfPossible(skip);
+}

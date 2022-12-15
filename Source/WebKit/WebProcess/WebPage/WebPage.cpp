@@ -201,6 +201,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextFormControlElement.h>
+#include <WebCore/HTTPParsers.h>
 #include <WebCore/Highlight.h>
 #include <WebCore/HighlightRegister.h>
 #include <WebCore/HistoryController.h>
@@ -8397,6 +8398,29 @@ void WebPage::updateLookalikeCharacterStringsIfNeeded()
 }
 
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+bool WebPage::shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request) const
+{
+    if (!m_skipDecidePolicyForResponseIfPossible)
+        return false;
+
+    constexpr auto noContent = 204;
+    constexpr auto smallestError = 400;
+    auto statusCode = response.httpStatusCode();
+    if (statusCode == noContent || statusCode >= smallestError)
+        return false;
+
+    if (!equalIgnoringASCIICase(response.mimeType(), "text/html"_s))
+        return false;
+
+    if (response.url().isLocalFile())
+        return false;
+
+    if (auto components = response.httpHeaderField(HTTPHeaderName::ContentDisposition).split(';'); !components.isEmpty() && equalIgnoringASCIICase(stripLeadingAndTrailingHTTPSpaces(components[0]), "attachment"_s))
+        return false;
+
+    return true;
+}
 
 } // namespace WebKit
 

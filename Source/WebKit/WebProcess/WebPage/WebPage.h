@@ -1596,6 +1596,9 @@ public:
     void updateImageAnimationEnabled();
 #endif
 
+    bool shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&) const;
+    void setSkipDecidePolicyForResponseIfPossible(bool value) { m_skipDecidePolicyForResponseIfPossible = value; }
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2517,6 +2520,7 @@ private:
 
     bool m_didUpdateRenderingAfterCommittingLoad { false };
     bool m_isStoppingLoadingDueToProcessSwap { false };
+    bool m_skipDecidePolicyForResponseIfPossible { false };
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     bool m_useARKitForModel { false };

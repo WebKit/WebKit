@@ -428,6 +428,7 @@
 		5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */; };
 		5C0BF8941DD599C900B00328 /* MenuTypesForMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */; };
 		5C121E8D2410704900486F9B /* ContentWorldPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */; };
+		5C24A00A294A75E300463E2B /* SkipDecidePolicyForResponsePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C24A002294A75DD00463E2B /* SkipDecidePolicyForResponsePlugIn.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
 		5C2C01A82734883600F89D37 /* CrossThreadCopierTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 278DE64B22B8D611004E0E7A /* CrossThreadCopierTests.cpp */; };
 		5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */; };
@@ -2531,6 +2532,7 @@
 		5C16F8FB230C942B0074C4A8 /* TextSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextSize.mm; sourceTree = "<group>"; };
 		5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookiePrivateBrowsing.mm; sourceTree = "<group>"; };
 		5C23DF0A2245C9D700F454B6 /* Challenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Challenge.mm; sourceTree = "<group>"; };
+		5C24A002294A75DD00463E2B /* SkipDecidePolicyForResponsePlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SkipDecidePolicyForResponsePlugIn.mm; sourceTree = "<group>"; };
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
 		5C29FE9128EE5F3D00D4FB00 /* SiteIsolation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SiteIsolation.mm; sourceTree = "<group>"; };
@@ -4004,6 +4006,7 @@
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
 				5C29FE9128EE5F3D00D4FB00 /* SiteIsolation.mm */,
+				5C24A002294A75DD00463E2B /* SkipDecidePolicyForResponsePlugIn.mm */,
 				2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */,
 				5774AA6721FBBF7800AF2A1B /* SOAuthorizationTests.mm */,
 				9342589B255B609A0059EEDD /* SpeechRecognition.mm */,
@@ -6623,6 +6626,7 @@
 				5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */,
 				5CC8B20626A2535F00909603 /* SchemeChangingPlugIn.mm in Sources */,
 				466AF38A26FE393600CE2EB8 /* ServiceWorkerPagePlugIn.mm in Sources */,
+				5C24A00A294A75E300463E2B /* SkipDecidePolicyForResponsePlugIn.mm in Sources */,
 				DFB80E38261512C1002D4771 /* TestAwakener.mm in Sources */,
 				7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */,
 				7C83E03D1D0A60D600FEBCF3 /* UtilitiesCocoa.mm in Sources */,
