@@ -3913,6 +3913,12 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
     }
 }
 
+static CSSCustomPropertyValue::NumericSyntaxValue blendFunc(const CSSCustomPropertyValue::NumericSyntaxValue& from, const CSSCustomPropertyValue::NumericSyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
+{
+    ASSERT(from.unitType == to.unitType);
+    return { blendFunc(from.value, to.value, blendingContext), from.unitType };
+}
+
 static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue::SyntaxValue& from, const CSSCustomPropertyValue::SyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<Length>(from) && std::holds_alternative<Length>(to))
@@ -3923,6 +3929,13 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
         auto& toStyleColor = std::get<StyleColor>(to);
         if (!RenderStyle::isCurrentColor(fromStyleColor) || !RenderStyle::isCurrentColor(toStyleColor))
             return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), blendingContext);
+    }
+
+    if (std::holds_alternative<CSSCustomPropertyValue::NumericSyntaxValue>(from) && std::holds_alternative<CSSCustomPropertyValue::NumericSyntaxValue>(to)) {
+        auto& fromNumeric = std::get<CSSCustomPropertyValue::NumericSyntaxValue>(from);
+        auto& toNumeric = std::get<CSSCustomPropertyValue::NumericSyntaxValue>(to);
+        if (fromNumeric.unitType == toNumeric.unitType)
+            return blendFunc(fromNumeric, toNumeric, blendingContext);
     }
 
     return std::nullopt;
