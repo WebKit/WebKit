@@ -3583,7 +3583,7 @@ private:
         }
 
         if (!m_videoFrames[index])
-            m_videoFrames[index] = WebCodecsVideoFrame::create(WTFMove(m_serializedVideoFrames.at(index)));
+            m_videoFrames[index] = WebCodecsVideoFrame::create(*executionContext(m_lexicalGlobalObject), WTFMove(m_serializedVideoFrames.at(index)));
 
         return getJSValue(m_videoFrames[index].get());
     }

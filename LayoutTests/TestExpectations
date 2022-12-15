@@ -6166,6 +6166,9 @@ imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.wi
 imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Skip ]
 
+imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageBitmap.any.html [ DumpJSConsoleLogInStdErr ]
+
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]

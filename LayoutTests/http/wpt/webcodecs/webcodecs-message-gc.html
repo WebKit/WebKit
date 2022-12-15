@@ -3,6 +3,7 @@
 <header>
 <script src='/resources/testharness.js'></script>
 <script src='/resources/testharnessreport.js'></script>
+<script src="../resources/gc.js"></script>
 </header>
 <body>
 <script>
@@ -15,30 +16,17 @@ function makeOffscreenCanvas(width, height) {
   return new VideoFrame(canvas, { timestamp: 1 });
 }
 
-async function doEncodeDecode(encoderConfig)
-{
-  let resolve, reject;
-  const promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
+let chunks = [];
+let config;
 
-  const decoder = new VideoDecoder({
-    output(frame) {
-      resolve(frame);
-    },
-    error(e) {
-      reject(e.message);
-    }
-  });
-
+async function createChunks(encoderConfig) {
+  chunks = [];
   const encoderInit = {
     output(chunk, metadata) {
-      let config = metadata.decoderConfig;
-      if (config) {
-        decoder.configure(config);
+      if (metadata.decoderConfig) {
+        config = metadata.decoderConfig;
       }
-      decoder.decode(chunk);
+      chunks.push(chunk);
     },
     error(e) {
       reject(e.message);
@@ -54,12 +42,44 @@ async function doEncodeDecode(encoderConfig)
   encoder.encode(frame, { keyFrame: true });
   frame.close();
 
+  const timer = setInterval(() => gc(), 100); 
   await encoder.flush();
-  await decoder.flush();
-  encoder.close();
-  decoder.close();
+  clearInterval(timer);
+}
 
-  return promise;
+async function doEncodeDecode(encoderConfig)
+{
+  await createChunks(encoderConfig);
+
+  let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  const decoder = new VideoDecoder({
+    // here, we do not do anything with the frame provided to output, so we will not call close.
+    output() {
+      resolve();
+    },
+    error(e) {
+      reject(e.message);
+    }
+  });
+
+  decoder.configure(config);
+
+  for (let chunk of chunks)
+    decoder.decode(chunk);
+
+  const timer = setInterval(() => gc(), 100); 
+  await decoder.flush();
+
+  await promise;
+
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  clearInterval(timer);
 }
 
 function doTest(codec, title)
@@ -71,16 +91,11 @@ function doTest(codec, title)
   config.framerate = 30;
 
   promise_test(async t => {
-    const frame = await doEncodeDecode(config);
-    t.add_cleanup(() => frame.close());
- 
-    assert_not_equals(frame.colorSpace.primaries, null, "primaries");
+    return doEncodeDecode(config);
   }, title);
 }
 
-doTest('vp8', "VP8 decoded frame color space");
-doTest('vp09.00.10.08', "VP9 decoded frame color space");
-doTest('avc1.42001E', "H.264 decoded frame color space");
+doTest('vp8', "VP8 codec GC without calling VideoFrame.close");
 </script>
 </body>
 </html>

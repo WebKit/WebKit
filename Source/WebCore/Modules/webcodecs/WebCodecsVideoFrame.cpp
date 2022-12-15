@@ -49,17 +49,26 @@
 
 namespace WebCore {
 
-WebCodecsVideoFrame::WebCodecsVideoFrame()
+WebCodecsVideoFrame::WebCodecsVideoFrame(ScriptExecutionContext& context)
+    : ContextDestructionObserver(&context)
 {
 }
 
-WebCodecsVideoFrame::WebCodecsVideoFrame(WebCodecsVideoFrameData&& data)
-    : m_data(WTFMove(data))
+WebCodecsVideoFrame::WebCodecsVideoFrame(ScriptExecutionContext& context, WebCodecsVideoFrameData&& data)
+    : ContextDestructionObserver(&context)
+    , m_data(WTFMove(data))
 {
 }
 
 WebCodecsVideoFrame::~WebCodecsVideoFrame()
 {
+    if (m_isDetached)
+        return;
+    if (auto* context = scriptExecutionContext()) {
+        context->postTask([](auto& context) {
+            context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A VideoFrame was destroyed without having been closed explicitly"_s);
+        });
+    }
 }
 
 // https://html.spec.whatwg.org/multipage/canvas.html#check-the-usability-of-the-image-argument
@@ -110,7 +119,7 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
     });
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSource&& source, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, CanvasImageSource&& source, Init&& init)
 {
     if (auto exception = checkImageUsability(source))
         return WTFMove(*exception);
@@ -124,7 +133,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         if (!image)
             return Exception { InvalidStateError,  "Image element has no video frame"_s };
 
-        return initializeFrameWithResourceAndSize(image.releaseNonNull(), WTFMove(init));
+        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
     },
     [&] (RefPtr<CSSStyleImageValue>& cssImage) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
@@ -134,14 +143,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         if (!image)
             return Exception { InvalidStateError,  "CSS Image has no video frame"_s };
 
-        return initializeFrameWithResourceAndSize(image.releaseNonNull(), WTFMove(init));
+        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
     },
 #if ENABLE(VIDEO)
     [&] (RefPtr<HTMLVideoElement>& video) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         RefPtr<VideoFrame> videoFrame = video->player() ? video->player()->videoFrameForCurrentTime() : nullptr;
         if (!videoFrame)
             return Exception { InvalidStateError,  "Video element has no video frame"_s };
-        return initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
+        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init));
     },
 #endif
     [&] (RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
@@ -154,7 +163,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         auto videoFrame = canvas->toVideoFrame();
         if (!videoFrame)
             return Exception { InvalidStateError,  "Canvas has no frame"_s };
-        return initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
+        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init));
     },
 #if ENABLE(OFFSCREEN_CANVAS)
     [&] (RefPtr<OffscreenCanvas>& canvas) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
@@ -168,7 +177,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         if (!imageBuffer)
             return Exception { InvalidStateError,  "Input canvas has no image buffer"_s };
 
-        return create(*imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
+        return create(context, *imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
     },
 #endif // ENABLE(OFFSCREEN_CANVAS)
     [&] (RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
@@ -182,11 +191,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(CanvasImageSou
         if (!imageBuffer)
             return Exception { InvalidStateError,  "Input image has no image buffer"_s };
 
-        return create(*imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
+        return create(context, *imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
     });
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
     IntRect region { IntPoint::zero(), size };
@@ -202,18 +211,18 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ImageBuffer& b
     if (!videoFrame)
         return Exception { InvalidStateError,  "Unable to create frame from buffer"_s };
 
-    return WebCodecsVideoFrame::initializeFrameFromOtherFrame(videoFrame.releaseNonNull(), WTFMove(init));
+    return WebCodecsVideoFrame::initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init));
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(Ref<WebCodecsVideoFrame>&& initFrame, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& initFrame, Init&& init)
 {
     if (initFrame->isDetached())
         return Exception { InvalidStateError,  "VideoFrame is detached"_s };
-    return initializeFrameFromOtherFrame(WTFMove(initFrame), WTFMove(init));
+    return initializeFrameFromOtherFrame(context, WTFMove(initFrame), WTFMove(init));
 }
 
 // https://w3c.github.io/webcodecs/#dom-videoframe-videoframe-data-init
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&& data, BufferInit&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, BufferSource&& data, BufferInit&& init)
 {
     if (!isValidVideoFrameBufferInit(init))
         return Exception { TypeError, "buffer init is not valid"_s };
@@ -256,14 +265,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&&
     if (!videoFrame)
         return Exception { TypeError, "Unable to create internal resource from data"_s };
     
-    return WebCodecsVideoFrame::create(videoFrame.releaseNonNull(), WTFMove(init));
+    return WebCodecsVideoFrame::create(context, videoFrame.releaseNonNull(), WTFMove(init));
 }
 
-Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&& videoFrame, BufferInit&& init)
+Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(ScriptExecutionContext& context, Ref<VideoFrame>&& videoFrame, BufferInit&& init)
 {
     ASSERT(isValidVideoFrameBufferInit(init));
 
-    auto result = adoptRef(*new WebCodecsVideoFrame);
+    auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = WTFMove(videoFrame);
     result->m_data.format = init.format;
 
@@ -312,7 +321,7 @@ static VideoPixelFormat computeVideoPixelFormat(VideoPixelFormat baseFormat, boo
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-from-other-frame
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init)
 {
     auto codedWidth = videoFrame->m_data.codedWidth;
     auto codedHeight = videoFrame->m_data.codedHeight;
@@ -320,7 +329,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
         return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
-    auto result = adoptRef(*new WebCodecsVideoFrame);
+    auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = videoFrame->m_data.internalFrame;
     if (videoFrame->m_data.format)
         result->m_data.format = format;
@@ -336,7 +345,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     return result;
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(Ref<VideoFrame>&& internalVideoFrame, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(ScriptExecutionContext& context, Ref<VideoFrame>&& internalVideoFrame, Init&& init)
 {
     auto codedWidth = internalVideoFrame->presentationSize().width();
     auto codedHeight = internalVideoFrame->presentationSize().height();
@@ -344,7 +353,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
         return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
-    auto result = adoptRef(*new WebCodecsVideoFrame);
+    auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = WTFMove(internalVideoFrame);
     result->m_data.format = format;
     result->m_data.codedWidth = codedWidth;
@@ -360,7 +369,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-with-resource-and-size
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithResourceAndSize(Ref<NativeImage>&& image, Init&& init)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithResourceAndSize(ScriptExecutionContext& context, Ref<NativeImage>&& image, Init&& init)
 {
     auto internalVideoFrame = VideoFrame::fromNativeImage(image.get());
     if (!internalVideoFrame)
@@ -372,7 +381,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
         return Exception { TypeError,  "VideoFrameInit is not valid"_s };
 
-    auto result = adoptRef(*new WebCodecsVideoFrame);
+    auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = WTFMove(internalVideoFrame);
     result->m_data.format = format;
     result->m_data.codedWidth = codedWidth;
@@ -435,12 +444,12 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
     });
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::clone()
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::clone(ScriptExecutionContext& context)
 {
     if (isDetached())
         return Exception { InvalidStateError,  "VideoFrame is detached"_s };
 
-    auto clone = adoptRef(*new WebCodecsVideoFrame(WebCodecsVideoFrameData { m_data }));
+    auto clone = adoptRef(*new WebCodecsVideoFrame(context, WebCodecsVideoFrameData { m_data }));
 
     clone->m_colorSpace = colorSpace();
     clone->m_codedRect = codedRect();
