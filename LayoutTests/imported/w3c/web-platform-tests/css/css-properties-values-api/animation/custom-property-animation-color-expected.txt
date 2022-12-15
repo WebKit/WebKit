@@ -1,0 +1,7 @@
+
+PASS Animating a custom property of type <color>
+PASS Animating a custom property of type <color> with a single keyframe
+PASS Animating a custom property of type <color> with additivity
+PASS Animating a custom property of type <color> with a single keyframe and additivity
+PASS Animating a custom property of type <color> with iterationComposite
+

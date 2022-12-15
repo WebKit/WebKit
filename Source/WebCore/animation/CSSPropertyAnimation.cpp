@@ -3913,20 +3913,27 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
     }
 }
 
-static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(const CSSCustomPropertyValue::SyntaxValue& from, const CSSCustomPropertyValue::SyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
+static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue::SyntaxValue& from, const CSSCustomPropertyValue::SyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<Length>(from) && std::holds_alternative<Length>(to))
         return blendFunc(std::get<Length>(from), std::get<Length>(to), blendingContext);
 
+    if (std::holds_alternative<StyleColor>(from) && std::holds_alternative<StyleColor>(to)) {
+        auto& fromStyleColor = std::get<StyleColor>(from);
+        auto& toStyleColor = std::get<StyleColor>(to);
+        if (!RenderStyle::isCurrentColor(fromStyleColor) || !RenderStyle::isCurrentColor(toStyleColor))
+            return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), blendingContext);
+    }
+
     return std::nullopt;
 }
 
-static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
+static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from.value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to.value())) {
         auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from.value());
         auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to.value());
-        if (auto blendedSyntaxValue = blendSyntaxValues(fromSyntaxValue, toSyntaxValue, blendingContext))
+        if (auto blendedSyntaxValue = blendSyntaxValues(fromStyle, toStyle, fromSyntaxValue, toSyntaxValue, blendingContext))
             return CSSCustomPropertyValue::createForSyntaxValue(from.name(), WTFMove(*blendedSyntaxValue));
     }
 
@@ -3960,13 +3967,13 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
     {
         auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
-            destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
+            destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
     }
 
     {
         auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.inheritedCustomProperties().get(customProperty), to.inheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
-            destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
+            destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
     }
 }
 
@@ -4015,10 +4022,12 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
             auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from->value());
             auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to->value());
 
-            // FIXME: we need to also ensure we blend for iterationComposite for <color>, <transform-list>, <filter-value-list> and <shadow>.
+            // FIXME: we need to also ensure we blend for iterationComposite for <transform-list>, <filter-value-list> and <shadow>.
             return WTF::switchOn(fromSyntaxValue, [toSyntaxValue](const Length& fromLength) {
                 ASSERT(std::holds_alternative<Length>(toSyntaxValue));
                 return lengthsRequireBlendingForAccumulativeIteration(fromLength, std::get<Length>(toSyntaxValue) );
+            }, [] (const StyleColor&) {
+                return true;
             }, [] (auto&) {
                 return false;
             });
