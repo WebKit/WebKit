@@ -436,7 +436,7 @@ private:
 
     bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
-    void setVideoSourceOrientation(ImageOrientation);
+    bool setVideoSourceOrientation(ImageOrientation);
     MediaTime platformDuration() const;
     bool isMuted() const;
     void commitLoad();

@@ -3391,18 +3391,21 @@ static ImageOrientation getVideoOrientation(const GstTagList* tagList)
 void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagList)
 {
     GST_DEBUG_OBJECT(pipeline(), "Updating orientation from %" GST_PTR_FORMAT, tagList);
-    setVideoSourceOrientation(getVideoOrientation(tagList));
+    auto sizeActuallyChanged = setVideoSourceOrientation(getVideoOrientation(tagList));
+
+    if (!sizeActuallyChanged)
+        return;
 
     // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
     if (m_videoSourceOrientation.usesWidthAsHeight())
         m_videoSize = m_videoSize.transposedSize();
 
-    GST_DEBUG("Enqueuing and waiting for main-thread task to call sizeChanged()...");
+    GST_DEBUG_OBJECT(pipeline(), "Enqueuing and waiting for main-thread task to call sizeChanged()...");
     bool sizeChangedProcessed = m_sinkTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this] {
         m_player->sizeChanged();
         return AbortableTaskQueue::Void();
     }).has_value();
-    GST_DEBUG("Finished waiting for main-thread task to call sizeChanged()... %s", sizeChangedProcessed ? "sizeChanged() was called." : "task queue aborted by flush");
+    GST_DEBUG_OBJECT(pipeline(), "Finished waiting for main-thread task to call sizeChanged()... %s", sizeChangedProcessed ? "sizeChanged() was called." : "task queue aborted by flush");
 }
 
 void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const GstCaps* caps)
@@ -3711,15 +3714,16 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
     return VideoFrameGStreamer::create(WTFMove(sample), size);
 }
 
-void MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)
+bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)
 {
     if (m_videoSourceOrientation == orientation)
-        return;
+        return false;
 
     m_videoSourceOrientation = orientation;
 #if USE(TEXTURE_MAPPER_GL)
     updateTextureMapperFlags();
 #endif
+    return true;
 }
 
 #if USE(TEXTURE_MAPPER_GL)
