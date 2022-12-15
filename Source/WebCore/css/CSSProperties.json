@@ -7489,8 +7489,8 @@
         "perspective": {
             "codegen-properties": {
                 "conditional-converter": "Perspective",
-                "custom-parser": true,
-                "parser-requires-context-mode": true
+                "parser-grammar": "none | <length [0,inf]>",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-transforms",

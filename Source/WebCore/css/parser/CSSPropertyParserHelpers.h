@@ -254,8 +254,7 @@ RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
 RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
-RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeTransform(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeTransform(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeScale(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange&, CSSParserMode);
@@ -268,7 +267,6 @@ RefPtr<CSSValue> consumeCursor(CSSParserTokenRange&, const CSSParserContext&, bo
 RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters);
 RefPtr<CSSValue> consumeContent(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumePerspective(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange&);
