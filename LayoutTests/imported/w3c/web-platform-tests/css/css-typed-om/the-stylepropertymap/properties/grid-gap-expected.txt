@@ -1,7 +1,7 @@
 
-PASS 'grid-gap' does not supported '20px'
-PASS 'grid-gap' does not supported '16%'
-PASS 'grid-gap' does not supported '20px 10px'
-PASS 'grid-gap' does not supported '15% 100%'
-PASS 'grid-gap' does not supported '21px 82%'
+PASS 'grid-gap' does not support '20px'
+PASS 'grid-gap' does not support '16%'
+PASS 'grid-gap' does not support '20px 10px'
+PASS 'grid-gap' does not support '15% 100%'
+PASS 'grid-gap' does not support '21px 82%'
 

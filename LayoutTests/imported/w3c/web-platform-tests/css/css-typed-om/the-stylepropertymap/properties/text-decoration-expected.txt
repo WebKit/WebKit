@@ -1,5 +1,5 @@
 
-PASS 'text-decoration' does not supported 'underline'
-FAIL 'text-decoration' does not supported 'underline dotted #ff3028' assert_not_equals: Unsupported value must not be null got disallowed value null
-FAIL 'text-decoration' does not supported 'green wavy underline' assert_not_equals: Unsupported value must not be null got disallowed value null
+PASS 'text-decoration' does not support 'underline'
+FAIL 'text-decoration' does not support 'underline dotted #ff3028' assert_not_equals: Unsupported value must not be null got disallowed value null
+FAIL 'text-decoration' does not support 'green wavy underline' assert_not_equals: Unsupported value must not be null got disallowed value null
 

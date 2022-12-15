@@ -1,5 +1,5 @@
 
-PASS 'grid' does not supported 'auto-flow / 1fr 1fr 1fr'
-PASS 'grid' does not supported 'auto-flow dense / 40px 40px 1fr'
-PASS 'grid' does not supported 'repeat(3, 80px) / auto-flow'
+PASS 'grid' does not support 'auto-flow / 1fr 1fr 1fr'
+PASS 'grid' does not support 'auto-flow dense / 40px 40px 1fr'
+PASS 'grid' does not support 'repeat(3, 80px) / auto-flow'
 

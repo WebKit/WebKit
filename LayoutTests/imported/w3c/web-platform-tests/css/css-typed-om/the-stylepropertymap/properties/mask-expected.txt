@@ -1,4 +1,4 @@
 
-PASS 'mask' does not supported 'none'
-PASS 'mask' does not supported 'url(mask.png)'
+PASS 'mask' does not support 'none'
+PASS 'mask' does not support 'url(mask.png)'
 

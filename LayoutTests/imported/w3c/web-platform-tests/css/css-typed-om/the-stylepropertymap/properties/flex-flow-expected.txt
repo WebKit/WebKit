@@ -1,5 +1,5 @@
 
-PASS 'flex-flow' does not supported 'row'
-PASS 'flex-flow' does not supported 'column wrap'
-PASS 'flex-flow' does not supported 'row-reverse wrap-reverse'
+PASS 'flex-flow' does not support 'row'
+PASS 'flex-flow' does not support 'column wrap'
+PASS 'flex-flow' does not support 'row-reverse wrap-reverse'
 
