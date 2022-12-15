@@ -1,7 +1,7 @@
 
 PASS Animating a custom property of type <length>
-FAIL Animating a custom property of type <length> with a single keyframe assert_equals: expected "150px" but got "100px"
+PASS Animating a custom property of type <length> with a single keyframe
 FAIL Animating a custom property of type <length> with additivity assert_equals: expected "350px" but got "250px"
-FAIL Animating a custom property of type <length> with a single keyframe and additivity assert_equals: expected "250px" but got "100px"
+FAIL Animating a custom property of type <length> with a single keyframe and additivity assert_equals: expected "250px" but got "200px"
 FAIL Animating a custom property of type <length> with iterationComposite assert_equals: expected "250px" but got "50px"
 

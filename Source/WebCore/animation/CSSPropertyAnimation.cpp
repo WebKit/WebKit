@@ -35,12 +35,14 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CSSPropertyNames.h"
+#include "CSSRegisteredCustomProperty.h"
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ColorBlending.h"
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CounterDirectives.h"
+#include "Document.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"
@@ -3932,20 +3934,37 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const CSSCustom
     return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
 }
 
+static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const CSSPropertyBlendingClient& client, const AtomString& customProperty, const CSSCustomPropertyValue* fromValue, const CSSCustomPropertyValue* toValue)
+{
+    // FIXME: it would be convenient if RenderStyle stored the initialValue
+    // for a custom property that was not explicitly set.
+    auto initialValue = [&]() -> const CSSCustomPropertyValue* {
+        if (auto* document = client.document()) {
+            if (auto registered = document->registeredCSSCustomProperties().get(customProperty))
+                return registered->initialValue();
+        }
+        return nullptr;
+    };
+
+    if (!!fromValue == !!toValue)
+        return { fromValue, toValue };
+    if (!fromValue)
+        return { initialValue(), toValue };
+    return { fromValue, initialValue() };
+}
+
 static void blendCustomProperty(const CSSPropertyBlendingClient& client, const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, iterationCompositeOperation, currentIteration };
 
     {
-        auto* fromValue = from.nonInheritedCustomProperties().get(customProperty);
-        auto* toValue = to.nonInheritedCustomProperties().get(customProperty);
+        auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
             destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
     }
 
     {
-        auto* fromValue = from.inheritedCustomProperties().get(customProperty);
-        auto* toValue = to.inheritedCustomProperties().get(customProperty);
+        auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.inheritedCustomProperties().get(customProperty), to.inheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
             destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
     }
