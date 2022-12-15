@@ -4153,6 +4153,9 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     settings.setPictureInPictureAPIEnabled(false);
 #endif
     settings.setSpeechRecognitionEnabled(false);
+#if ENABLE(SPEECH_SYNTHESIS)
+    settings.setSpeechSynthesisAPIEnabled(false);
+#endif
 #if ENABLE(NOTIFICATIONS)
     settings.setNotificationsEnabled(false);
 #endif
