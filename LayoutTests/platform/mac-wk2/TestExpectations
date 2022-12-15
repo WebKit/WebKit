@@ -1683,15 +1683,15 @@ webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/rep
 webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
 
 # NOTIFICATION_EVENT is Ventura+
-[ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
-[ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
-[ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
-[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
-[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Pass ]
-[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass ]
-[ Ventura+ ] http/tests/workers/service/getnotifications-stop.html [ Pass ]
-[ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass Failure ]
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
+[ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass Failure ]
+[ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass Failure ]
+[ Ventura+ ] http/tests/workers/service/getnotifications-stop.html [ Pass Timeout ]
+[ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass Timeout ]
 
 webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 
@@ -1810,3 +1810,10 @@ webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout 
 webkit.org/b/248997 [ BigSur+ ] http/tests/navigation/fragment-navigation-policy-ignore.html [ Pass Failure ]
 
 webkit.org/b/249407 [ BigSur+ ] media/audioSession/getUserMedia.html [ Failure ]
+
+# webkit.org/b/249417 [ Ventura EWS ] Garden Ventura EWS only failures
+[ Ventura arm64 ] http/tests/media/fairplay/fps-hls-update-reject.html [ Pass Timeout ]
+[ Ventura arm64 ] http/tests/media/fairplay/fps-hls.html [ Pass Timeout ]
+[ Ventura arm64 ] http/tests/media/fairplay/fps-init-data-skd.html [ Pass Timeout ]
+[ Ventura arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Pass Timeout ]
+[ Ventura arm64 ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Pass Failure ]
