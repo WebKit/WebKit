@@ -176,6 +176,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
         }
         switch (primitiveValue->primitiveType()) {
         case CSSUnitType::CSS_NUMBER:
+        case CSSUnitType::CSS_INTEGER:
             return Ref<CSSStyleValue> { CSSNumericFactory::number(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_PERCENTAGE:
             return Ref<CSSStyleValue> { CSSNumericFactory::percent(primitiveValue->doubleValue()) };

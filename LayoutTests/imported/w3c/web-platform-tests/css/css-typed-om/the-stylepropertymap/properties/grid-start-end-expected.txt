@@ -31,7 +31,7 @@ FAIL Setting 'grid-row-start' to a number: calc(2 + 3) throws TypeError assert_t
 PASS Setting 'grid-row-start' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'grid-row-start' to a transform: perspective(10em) throws TypeError
 PASS Setting 'grid-row-start' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-PASS 'grid-row-start' does not support '3'
+FAIL 'grid-row-start' does not support '3' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
 PASS 'grid-row-start' does not support 'span 2'
 PASS 'grid-row-start' does not support '5 somegridarea span'
 PASS Can set 'grid-row-end' to CSS-wide keywords: initial
@@ -66,7 +66,7 @@ FAIL Setting 'grid-row-end' to a number: calc(2 + 3) throws TypeError assert_thr
 PASS Setting 'grid-row-end' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'grid-row-end' to a transform: perspective(10em) throws TypeError
 PASS Setting 'grid-row-end' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-PASS 'grid-row-end' does not support '3'
+FAIL 'grid-row-end' does not support '3' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
 PASS 'grid-row-end' does not support 'span 2'
 PASS 'grid-row-end' does not support '5 somegridarea span'
 PASS Can set 'grid-column-start' to CSS-wide keywords: initial
@@ -101,7 +101,7 @@ FAIL Setting 'grid-column-start' to a number: calc(2 + 3) throws TypeError asser
 PASS Setting 'grid-column-start' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'grid-column-start' to a transform: perspective(10em) throws TypeError
 PASS Setting 'grid-column-start' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-PASS 'grid-column-start' does not support '3'
+FAIL 'grid-column-start' does not support '3' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
 PASS 'grid-column-start' does not support 'span 2'
 PASS 'grid-column-start' does not support '5 somegridarea span'
 PASS Can set 'grid-column-end' to CSS-wide keywords: initial
@@ -136,7 +136,7 @@ FAIL Setting 'grid-column-end' to a number: calc(2 + 3) throws TypeError assert_
 PASS Setting 'grid-column-end' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'grid-column-end' to a transform: perspective(10em) throws TypeError
 PASS Setting 'grid-column-end' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-PASS 'grid-column-end' does not support '3'
+FAIL 'grid-column-end' does not support '3' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
 PASS 'grid-column-end' does not support 'span 2'
 PASS 'grid-column-end' does not support '5 somegridarea span'
 
