@@ -235,8 +235,8 @@ private:
 
     bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
 
-    bool isMasonryRows() const;
-    bool isMasonryColumns() const;
+    bool areMasonryRows() const;
+    bool areMasonryColumns() const;
     AutoRepeatType autoRepeatColumnsType() const;
     AutoRepeatType autoRepeatRowsType() const;
 

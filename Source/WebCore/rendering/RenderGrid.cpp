@@ -698,8 +698,7 @@ static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& are
     return clamped;
 }
 
-// TODO: Update name of functions to 'areMasonryRows'.
-bool RenderGrid::isMasonryRows() const
+bool RenderGrid::areMasonryRows() const
 {
     return style().gridMasonryRows();
 }
@@ -707,9 +706,9 @@ bool RenderGrid::isMasonryRows() const
 // Masonry Spec Section 2
 // "If masonry is specified for both grid-template-columns and grid-template-rows, then the used value for grid-template-columns is none,
 // and thus the inline axis will be the grid axis."
-bool RenderGrid::isMasonryColumns() const
+bool RenderGrid::areMasonryColumns() const
 {
-    return !isMasonryRows() && style().gridMasonryColumns();
+    return !areMasonryRows() && style().gridMasonryColumns();
 }
 
 // Masonry Spec Section 2.3.1 repeat(auto-fit)
@@ -719,7 +718,7 @@ AutoRepeatType RenderGrid::autoRepeatColumnsType() const
 {
     auto autoRepeatColumns = style().gridAutoRepeatColumnsType();
 
-    if (isMasonryRows() && autoRepeatColumns == AutoRepeatType::Fit)
+    if (areMasonryRows() && autoRepeatColumns == AutoRepeatType::Fit)
         return AutoRepeatType::Fill;
 
     return autoRepeatColumns;
@@ -729,7 +728,7 @@ AutoRepeatType RenderGrid::autoRepeatRowsType() const
 {
     auto autoRepeatRow = style().gridAutoRepeatRowsType();
 
-    if (isMasonryColumns() && autoRepeatRow == AutoRepeatType::Fit)
+    if (areMasonryColumns() && autoRepeatRow == AutoRepeatType::Fit)
         return AutoRepeatType::Fill;
 
     return autoRepeatRow;
@@ -766,9 +765,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
         // Grid items should use the grid area sizes instead of the containing block (grid container)
         // sizes, we initialize the overrides here if needed to ensure it.
-        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !isMasonryColumns())
+        if (!child->hasOverridingContainingBlockContentLogicalWidth() && !areMasonryColumns())
             child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
-        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !isMasonryRows())
+        if (!child->hasOverridingContainingBlockContentLogicalHeight() && !areMasonryRows())
             child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = currentGrid().gridItemArea(*child);
@@ -818,9 +817,9 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
         m_masonryLayout.performMasonryPlacement(gridAxisTracksBeforeAutoPlacement, masonryAxisDirection);
     };
 
-    if (isMasonryRows())
+    if (areMasonryRows())
         performMasonryPlacement(ForRows);
-    else if (isMasonryColumns())
+    else if (areMasonryColumns())
         performMasonryPlacement(ForColumns);
     else
         performAutoPlacement();
@@ -1203,9 +1202,9 @@ void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren,
 LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox& child, GridTrackSizingDirection direction) const
 {
     if (direction == ForRows) {
-        if (isMasonryRows())
+        if (areMasonryRows())
             return isHorizontalWritingMode() ? child.height() + child.verticalMarginExtent() : child.width() + child.horizontalMarginExtent();
-    } else if (isMasonryColumns())
+    } else if (areMasonryColumns())
         return isHorizontalWritingMode() ? child.width() + child.horizontalMarginExtent() : child.height() + child.verticalMarginExtent();
 
     // We need the cached value when available because Content Distribution alignment properties
@@ -1735,7 +1734,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
     gridAreaPositionForChild(child, ForRows, startOfRow, endOfRow);
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(child);
     LayoutUnit columnAxisChildSize = GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalWidth() + child.marginLogicalWidth() : child.logicalHeight() + child.marginLogicalHeight();
-    LayoutUnit masonryOffset = isMasonryRows() ? m_masonryLayout.offsetForChild(child) : 0_lu;
+    LayoutUnit masonryOffset = areMasonryRows() ? m_masonryLayout.offsetForChild(child) : 0_lu;
     auto overflow = alignSelfForChild(child).overflow();
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, columnAxisChildSize);
     if (hasAutoMarginsInColumnAxis(child))
@@ -1760,7 +1759,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     LayoutUnit endOfColumn;
     gridAreaPositionForChild(child, ForColumns, startOfColumn, endOfColumn);
     LayoutUnit startPosition = startOfColumn + marginStartForChild(child);
-    LayoutUnit masonryOffset = isMasonryColumns() ? m_masonryLayout.offsetForChild(child) : 0_lu;
+    LayoutUnit masonryOffset = areMasonryColumns() ? m_masonryLayout.offsetForChild(child) : 0_lu;
     if (hasAutoMarginsInRowAxis(child))
         return startPosition;
     GridAxisPosition axisPosition = rowAxisPositionForChild(child);
