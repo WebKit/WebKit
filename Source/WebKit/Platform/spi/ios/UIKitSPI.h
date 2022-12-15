@@ -434,6 +434,7 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @end
 
 @interface UIKeyboard ()
++ (instancetype)activeKeyboard;
 + (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 - (void)activate;
 - (void)geometryChangeDone:(BOOL)keyboardVisible;

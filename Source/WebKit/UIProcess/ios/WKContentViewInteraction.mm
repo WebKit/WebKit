@@ -6322,6 +6322,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         // Mark to zoom to reveal the newly focused element on the next editor state update.
         // Then tell the web process to reveal the current selection, which will send us (the
         // UI process) an editor state update.
+        _revealFocusedElementDeferrer = WebKit::RevealFocusedElementDeferrer::create(self, WebKit::RevealFocusedElementDeferralReason::EditorState);
         _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
         _textInteractionDidChangeFocusedElement = NO;
     }
@@ -7047,6 +7048,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [self _showKeyboard];
         if (!self.window.keyWindow)
             [self.window makeKeyWindow];
+    }
+
+    if (!UIKeyboard.activeKeyboard) {
+        // The lack of keyboard here suggests that we're not running in a context where the keyboard can become visible
+        // (e.g. when running API tests outside of the context of a UI application). In this scenario, don't bother waiting
+        // for keyboard appearance notifications.
+        _waitingForKeyboardAppearanceAnimationToStart = NO;
     }
 
     // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
