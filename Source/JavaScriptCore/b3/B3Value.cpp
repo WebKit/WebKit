@@ -197,6 +197,12 @@ void Value::dump(PrintStream& out) const
         out.print("$", asInt64(), "(");
         isConstant = true;
         break;
+    case Const128: {
+        v128_t vector = asV128();
+        out.print("$", vector.u64x2[0], vector.u64x2[1], "(");
+        isConstant = true;
+        break;
+    }
     case ConstFloat:
         out.print("$", asFloat(), "(");
         isConstant = true;
@@ -848,6 +854,8 @@ ValueKey Value::key() const
         return ValueKey(Const32, type(), static_cast<int64_t>(asInt32()));
     case Const64:
         return ValueKey(Const64, type(), asInt64());
+    case Const128:
+        return ValueKey(Const128, type(), asV128());
     case ConstDouble:
         return ValueKey(ConstDouble, type(), asDouble());
     case ConstFloat:

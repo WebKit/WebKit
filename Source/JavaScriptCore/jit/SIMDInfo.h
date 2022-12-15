@@ -39,6 +39,12 @@ typedef union v128_u {
     v128_u() = default;
 } v128_t;
 
+// Comparing based on bits. Not using float/double comparison.
+inline bool bitEquals(const v128_t& lhs, const v128_t rhs)
+{
+    return lhs.u64x2[0] == rhs.u64x2[0] && lhs.u64x2[1] == rhs.u64x2[1];
+}
+
 enum class SIMDLane : uint8_t {
     v128,
     i8x16,

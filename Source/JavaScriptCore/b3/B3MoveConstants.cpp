@@ -52,10 +52,10 @@ public:
     {
         hoistConstants(
             [&] (const Value* value) -> bool {
-                return value->opcode() == ConstFloat || value->opcode() == ConstDouble;
+                return value->opcode() == ConstFloat || value->opcode() == ConstDouble || value->opcode() == Const128;
             });
 
-        lowerFPConstants();
+        lowerMaterializationCostHeavyConstants();
         
         hoistConstants(
             [&] (const Value* value) -> bool {
@@ -257,18 +257,65 @@ private:
         }
     }
 
-    void lowerFPConstants()
+    void lowerMaterializationCostHeavyConstants()
     {
+        unsigned floatSize = 0;
+        unsigned doubleSize = 0;
+        unsigned v128Size = 0;
+        HashMap<ValueKey, unsigned> constTable;
         for (Value* value : m_proc.values()) {
             if (!goesInTable(value))
                 continue;
+
             ValueKey key = value->key();
-            m_constTable.add(key, m_constTable.size());
+            switch (value->opcode()) {
+            case Const128:
+                constTable.add(key, v128Size++);
+                break;
+            case ConstDouble:
+                constTable.add(key, doubleSize++);
+                break;
+            case ConstFloat:
+                constTable.add(key, floatSize++);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
         }
-        
-        m_dataSection = static_cast<int64_t*>(m_proc.addDataSection(m_constTable.size() * sizeof(int64_t)));
-        for (auto& entry : m_constTable)
-            m_dataSection[entry.value] = entry.key.value();
+
+        auto getOffset = [&](Opcode opcode, unsigned indexInKind) -> size_t {
+            switch (opcode) {
+            case Const128:
+                return sizeof(v128_t) * indexInKind;
+            case ConstDouble:
+                return sizeof(v128_t) * v128Size + sizeof(double) * indexInKind;
+            case ConstFloat:
+                return sizeof(v128_t) * v128Size + sizeof(double) * doubleSize + sizeof(float) * indexInKind;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        };
+
+        uint8_t* dataSection = static_cast<uint8_t*>(m_proc.addDataSection(sizeof(v128_t) * v128Size + sizeof(double) * doubleSize + sizeof(float) * floatSize));
+        for (auto& entry : constTable) {
+            auto* pointer = dataSection + getOffset(entry.key.opcode(), entry.value);
+            switch (entry.key.opcode()) {
+            case Const128:
+                *bitwise_cast<v128_t*>(pointer) = entry.key.vectorValue();
+                break;
+            case ConstDouble:
+                *bitwise_cast<double*>(pointer) = entry.key.doubleValue();
+                break;
+            case ConstFloat:
+                *bitwise_cast<float*>(pointer) = entry.key.floatValue();
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
 
         IndexSet<Value*> offLimits;
         for (BasicBlock* block : m_proc) {
@@ -304,13 +351,13 @@ private:
                     continue;
 
                 ValueKey key = value->key();
-                auto offset = sizeof(int64_t) * m_constTable.get(key);
+                auto offset = getOffset(key.opcode(), constTable.get(key));
                 if (!isRepresentableAs<Value::OffsetType>(offset))
                     continue;
 
                 Value* tableBase = m_insertionSet.insertIntConstant(
                     valueIndex, value->origin(), pointerType(),
-                    bitwise_cast<intptr_t>(m_dataSection));
+                    bitwise_cast<intptr_t>(dataSection));
                 Value* result = m_insertionSet.insert<MemoryValue>(
                     valueIndex, Load, value->type(), value->origin(), tableBase,
                     static_cast<Value::OffsetType>(offset));
@@ -321,7 +368,7 @@ private:
         }
     }
 
-    bool goesInTable(const Value* value)
+    static bool goesInTable(const Value* value)
     {
         switch (value->opcode()) {
         case ConstDouble: {
@@ -332,6 +379,9 @@ private:
             float floatZero = 0.0;
             return bitwise_cast<uint32_t>(value->asFloat()) != bitwise_cast<uint32_t>(floatZero);
         }
+        case Const128: {
+            return !bitEquals(value->asV128(), v128_t { });
+        }
         default:
             break;
         }
@@ -339,8 +389,6 @@ private:
     }
 
     Procedure& m_proc;
-    HashMap<ValueKey, unsigned> m_constTable;
-    int64_t* m_dataSection;
     InsertionSet m_insertionSet;
 };
 

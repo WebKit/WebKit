@@ -4075,14 +4075,8 @@ private:
         }
 
         case Const128: {
-            auto value = m_value->as<Const128Value>()->value();
-            auto a = tmpForType(Int64);
-            auto result = tmp(m_value);
-            append(MoveZeroToVector, result);
-            append(Move, Arg::bigImm(value.u64x2[0]), a);
-            append(Air::VectorReplaceLaneInt64, Arg::imm(0), a, result);
-            append(Move, Arg::bigImm(value.u64x2[1]), a);
-            append(Air::VectorReplaceLaneInt64, Arg::imm(1), a, result);
+            // We expect that the moveConstants() phase has run, and any constant vector referenced from stackmaps get fused.
+            append(MoveZeroToVector, tmp(m_value));
             return;
         }
 

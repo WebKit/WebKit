@@ -765,6 +765,8 @@ void run(const char* filter)
     RUN(testTrappingStoreElimination());
     RUN(testMoveConstants());
     RUN(testMoveConstantsWithLargeOffsets());
+    if (Options::useWebAssemblySIMD())
+        RUN(testMoveConstantsSIMD());
     RUN(testPCOriginMapDoesntInsertNops());
     RUN(testPinRegisters());
     RUN(testReduceStrengthReassociation(true));
