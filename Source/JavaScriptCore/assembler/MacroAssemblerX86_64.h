@@ -3171,7 +3171,7 @@ public:
     void vectorExtendHigh(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         if (supportsAVXForSIMD())
-            m_assembler.vupckhpd_rrr(dest, input, dest);
+            m_assembler.vunpckhpd_rrr(dest, input, dest);
         else {
             if (input != dest)
                 m_assembler.movapd_rr(input, dest);
