@@ -43,7 +43,7 @@ public:
     using Property = std::variant<CSSPropertyID, AtomString>;
 
     static bool isPropertyAnimatable(CSSPropertyID);
-    static bool isPropertyAdditiveOrCumulative(CSSPropertyID);
+    static bool isPropertyAdditiveOrCumulative(Property);
     static bool propertyRequiresBlendingForAccumulativeIteration(CSSPropertyID, const RenderStyle& a, const RenderStyle& b);
     static bool animationOfPropertyIsAccelerated(CSSPropertyID);
     static bool propertiesEqual(CSSPropertyID, const RenderStyle& a, const RenderStyle& b);

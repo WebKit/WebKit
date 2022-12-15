@@ -3976,8 +3976,8 @@ void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client
         [&] (CSSPropertyID propertyId) {
             blendStandardProperty(client, propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }, [&] (AtomString customProperty) {
-            // FIXME: we don't deal with compositeOperation or iterationCompositeOpertion for custom properties yet.
-            blendCustomProperty(client, customProperty, destination, from, to, progress, CompositeOperation::Replace, IterationCompositeOperation::Replace, 0);
+            // FIXME: we don't deal with iterationCompositeOpertion for custom properties yet.
+            blendCustomProperty(client, customProperty, destination, from, to, progress, compositeOperation, IterationCompositeOperation::Replace, 0);
         }
     );
 }
@@ -3987,10 +3987,15 @@ bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)
     return property == CSSPropertyCustom || CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
 }
 
-bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(CSSPropertyID property)
+bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(Property property)
 {
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
-    return wrapper ? wrapper->isAdditiveOrCumulative() : false;
+    return WTF::switchOn(property,
+        [] (CSSPropertyID propertyId) {
+            if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
+                return wrapper->isAdditiveOrCumulative();
+            return false;
+        }, [] (AtomString) { return true; }
+    );
 }
 
 bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(CSSPropertyID property, const RenderStyle& a, const RenderStyle& b)
