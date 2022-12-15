@@ -854,7 +854,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
             functionValue->append(cssValuePool.createValue(downcast<SkewTransformOperation>(*operation).angleX(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::Type::SkewY:
-            functionValue = CSSFunctionValue::create(CSSValueSkewX);
+            functionValue = CSSFunctionValue::create(CSSValueSkewY);
             functionValue->append(cssValuePool.createValue(downcast<SkewTransformOperation>(*operation).angleY(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::Type::Skew: {
