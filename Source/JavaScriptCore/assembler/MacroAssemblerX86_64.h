@@ -2954,6 +2954,15 @@ public:
         vectorXor({ SIMDLane::v128, SIMDSignMode::None }, dest, dest, dest);
     }
 
+    void vectorAbsInt64(FPRegisterID input, FPRegisterID dest, FPRegisterID scratch)
+    {
+        // https://github.com/WebAssembly/simd/pull/413
+        ASSERT(supportsAVXForSIMD());
+        m_assembler.vpxor_rrr(scratch, scratch, scratch);
+        m_assembler.vpsubq_rrr(input, scratch, scratch);
+        m_assembler.vblendvpd_rrrr(input, scratch, input, dest);
+    }
+
     void vectorAbs(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
     {
         switch (simdInfo.lane) {
@@ -2982,19 +2991,9 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             return;
         case SIMDLane::i64x2:
-            // https://github.com/WebAssembly/simd/pull/413
-            if (supportsAVXForSIMD()) {
-                m_assembler.vpxor_rrr(dest, dest, dest);
-                m_assembler.vpsubq_rrr(input, dest, dest);
-                m_assembler.vblendvpd_rrrr(input, dest, input, dest);
-            } else if (supportsSSE4_1())
-                RELEASE_ASSERT_NOT_REACHED();
-            else
-                RELEASE_ASSERT_NOT_REACHED();
-            return;
         case SIMDLane::f32x4:
         case SIMDLane::f64x2:
-            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("f32 and f64 vector absolute value are not supported on x86, so this should have been expanded out prior to reaching the macro assembler.");
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("i64, f32, f64 vector absolute value are not supported on x86, so this should have been expanded out prior to reaching the macro assembler.");
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
