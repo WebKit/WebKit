@@ -1307,7 +1307,7 @@ TypedTmp AirIRGenerator64::appendGeneralAtomic(ExtAtomicOpType op, B3::Air::Opco
     }
 
     if (isX86()) {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         Tmp eax(X86Registers::eax);
         B3::Air::Opcode casOpcode = OPCODE_FOR_WIDTH(BranchAtomicStrongCAS, accessWidth);
         append(Move, oldValue, eax);
@@ -1348,7 +1348,7 @@ TypedTmp AirIRGenerator64::appendStrongCAS(ExtAtomicOpType op, TypedTmp expected
     Tmp newValueTmp = tmp(value);
 
     if (isX86()) {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         Tmp eax(X86Registers::eax);
         append(Move, expectedValueTmp, eax);
         appendEffectful(OPCODE_FOR_WIDTH(AtomicStrongCAS, accessWidth), eax, newValueTmp, address);

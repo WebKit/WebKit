@@ -2287,7 +2287,7 @@ void testFloorArgWithEffectfulDoubleConversion(float a)
 
 double correctSqrt(double value)
 {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     double result;
     asm ("sqrtsd %1, %0" : "=x"(result) : "x"(value));
     return result;
