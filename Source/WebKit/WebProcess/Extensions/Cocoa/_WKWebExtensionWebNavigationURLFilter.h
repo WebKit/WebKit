@@ -23,14 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
-
-#if ENABLE(WK_WEB_EXTENSIONS)
+#import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+WK_EXTERN
 @interface _WKWebExtensionWebNavigationURLFilter : NSObject
 
 - (nullable instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionary outErrorMessage:(NSString * _Nullable * _Nonnull)outErrorMessage;
@@ -40,5 +37,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
