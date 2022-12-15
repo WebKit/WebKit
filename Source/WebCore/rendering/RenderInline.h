@@ -56,6 +56,9 @@ public:
         return LayoutRect(LayoutPoint(), linesBoundingBox().size());
     }
 
+    LayoutUnit innerPaddingBoxWidth() const;
+    LayoutUnit innerPaddingBoxHeight() const;
+
     WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer*) const;

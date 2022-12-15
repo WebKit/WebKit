@@ -397,9 +397,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
                 return false;
             if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
                 return false;
-            // This simply checks the not-yet supported case when the out-of-flow positioned
-            // content has a relatively positioned inline containing block (has to call container to not skip RenderInlines).
-            return is<RenderBlockFlow>(child.container());
         }
         return true;
     };

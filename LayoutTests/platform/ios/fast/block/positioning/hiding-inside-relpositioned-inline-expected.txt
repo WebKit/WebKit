@@ -5,9 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 471x19
         text run at (0,0) width 471: "You should see the number 0 below, and the grey box should fit it snugly."
-layer at (8,8) size 1x19
-  RenderInline (relative positioned) {SPAN} at (0,0) size 1x19
-    RenderText {#text} at (0,0) size 0x0
 layer at (488,18) size 10x22
   RenderBlock (positioned) {DIV} at (10,10) size 10x22 [bgcolor=#808080]
     RenderBlock {DIV} at (0,0) size 10x22 [bgcolor=#ACACAC]

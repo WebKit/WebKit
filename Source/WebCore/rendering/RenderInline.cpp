@@ -454,6 +454,44 @@ private:
     FloatRect& m_rect;
 };
 
+LayoutUnit RenderInline::innerPaddingBoxWidth() const
+{
+    auto firstInlineBoxPaddingBoxLeft = LayoutUnit { };
+    auto lastInlineBoxPaddingBoxRight = LayoutUnit { };
+
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+        if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
+            firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeft() + borderStart();
+            for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+            ASSERT(inlineBox);
+            lastInlineBoxPaddingBoxRight = inlineBox->logicalRight() - borderEnd();
+            return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
+        }
+        return { };
+    }
+
+    auto* firstInlineBox = firstLineBox();
+    auto* lastInlineBox = lastLineBox();
+    if (!firstInlineBox || !lastInlineBox)
+        return { };
+
+    if (style().isLeftToRightDirection()) {
+        firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft() + firstInlineBox->borderLogicalLeft();
+        lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight() - lastInlineBox->borderLogicalRight();
+    } else {
+        lastInlineBoxPaddingBoxRight = firstInlineBox->logicalRight() - firstInlineBox->borderLogicalRight();
+        firstInlineBoxPaddingBoxLeft = lastInlineBox->logicalLeft() + lastInlineBox->borderLogicalLeft();
+    }
+    return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
+}
+
+LayoutUnit RenderInline::innerPaddingBoxHeight() const
+{
+    auto innerPaddingBoxLogicalHeight = LayoutUnit { isHorizontalWritingMode() ? linesBoundingBox().height() : linesBoundingBox().width() };
+    innerPaddingBoxLogicalHeight -= (borderBefore() + borderAfter());
+    return innerPaddingBoxLogicalHeight;
+}
+
 IntRect RenderInline::linesBoundingBox() const
 {
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
@@ -838,20 +876,21 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
     // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
     // box from the rest of the content, but only in the cases where we know we're positioned
     // relative to the inline itself.
-
-    LayoutSize logicalOffset;
-    LayoutUnit inlinePosition;
-    LayoutUnit blockPosition;
+    auto inlinePosition = layer()->staticInlinePosition();
+    auto blockPosition = layer()->staticBlockPosition();
     if (firstLineBox()) {
         inlinePosition = LayoutUnit::fromFloatRound(firstLineBox()->logicalLeft());
         blockPosition = firstLineBox()->logicalTop();
-    } else {
-        inlinePosition = layer()->staticInlinePosition();
-        blockPosition = layer()->staticBlockPosition();
+    } else if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+        if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
+            inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeft());
+            blockPosition = inlineBox->logicalTop();
+        }
     }
 
     // Per http://www.w3.org/TR/CSS2/visudet.html#abs-non-replaced-width an absolute positioned box with a static position
     // should locate itself as though it is a normal flow box in relation to its containing block.
+    LayoutSize logicalOffset;
     if (!child->style().hasStaticInlinePosition(style().isHorizontalWritingMode()))
         logicalOffset.setWidth(inlinePosition);
 
