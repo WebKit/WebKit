@@ -103,8 +103,10 @@ void BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
         const char* asmPrefix = "asm          ";
 
         auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
-            if (inst.origin)
-                dataLogLn("\033[1;37m", inst.origin->compilerConstructionSite(), "\033[0m");
+            if (inst.origin) {
+                if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
+                    dataLogLn("\033[1;37m", string, "\033[0m");
+            }
         });
 
         disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);

@@ -862,7 +862,7 @@ public:
 #if ASSERT_ENABLED
         return m_compilerConstructionSite;
 #endif
-        return "[(assertions are disabled)]"_s;
+        return nullString();
     }
 
     BasicBlock* owner { nullptr }; // computed by Procedure::resetValueOwners().
