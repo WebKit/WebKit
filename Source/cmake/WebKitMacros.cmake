@@ -369,28 +369,6 @@ macro(WEBKIT_WRAP_EXECUTABLE _target)
     set(${_target}_DEPENDENCIES ${_wrapped_target_name})
 endmacro()
 
-macro(WEBKIT_CREATE_FORWARDING_HEADER _target_directory _file)
-    get_filename_component(_source_path "${CMAKE_SOURCE_DIR}/Source/" ABSOLUTE)
-    get_filename_component(_absolute "${_file}" ABSOLUTE)
-    get_filename_component(_name "${_file}" NAME)
-    set(_target_filename "${_target_directory}/${_name}")
-
-    # Try to make the path in the forwarding header relative to the Source directory
-    # so that these forwarding headers are compatible with the ones created by the
-    # WebKit2 generate-forwarding-headers script.
-    string(REGEX REPLACE "${_source_path}/" "" _relative ${_absolute})
-
-    set(_content "#include \"${_relative}\"\n")
-
-    if (EXISTS "${_target_filename}")
-        file(READ "${_target_filename}" _old_content)
-    endif ()
-
-    if (NOT _old_content STREQUAL _content)
-        file(WRITE "${_target_filename}" "${_content}")
-    endif ()
-endmacro()
-
 function(WEBKIT_COPY_FILES target_name)
     set(options FLATTENED)
     set(oneValueArgs DESTINATION)
