@@ -286,6 +286,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
+        // Size in the masonry axis is the masonry content size
+        if (areMasonryColumns() && style().logicalWidth().isAuto())
+            setLogicalWidth(m_masonryLayout.gridContentSize() + borderAndPaddingLogicalWidth());
 
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
@@ -700,6 +703,9 @@ static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& are
 
 bool RenderGrid::areMasonryRows() const
 {
+    // isSubgridRows will return false if the masonry axis is rows. Need to check style if we are a subgrid
+    if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && style().gridSubgridRows())
+        return parentGrid->areMasonryRows();
     return style().gridMasonryRows();
 }
 
@@ -708,6 +714,9 @@ bool RenderGrid::areMasonryRows() const
 // and thus the inline axis will be the grid axis."
 bool RenderGrid::areMasonryColumns() const
 {
+    // isSubgridColumns will return false if the masonry axis is columns. Need to check style if we are a subgrid
+    if (auto* parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && style().gridSubgridColumns())
+        return parentGrid->areMasonryColumns();
     return !areMasonryRows() && style().gridMasonryColumns();
 }
 
@@ -1796,7 +1805,7 @@ bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
         return false;
     if (!is<RenderGrid>(parent()))
         return false;
-    return true;
+    return direction == ForRows ? !downcast<RenderGrid>(parent())->areMasonryRows() : !downcast<RenderGrid>(parent())->areMasonryColumns();
 }
 
 bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const
