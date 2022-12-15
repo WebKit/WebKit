@@ -74,8 +74,10 @@ public:
         MatchBidirectionally = 1 << 2, // Match two patterns in either direction (A matches B, or B matches A). Invalid for matching URLs.
     };
 
-    static const URLSchemeSet& validSchemes();
-    static const URLSchemeSet& supportedSchemes();
+    static URLSchemeSet& validSchemes();
+    static URLSchemeSet& supportedSchemes();
+
+    static void registerCustomURLScheme(String);
 
     bool operator==(const WebExtensionMatchPattern&) const;
     bool operator!=(const WebExtensionMatchPattern& other) const { return !(this == &other); }

@@ -74,6 +74,14 @@ NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
+/*!
+ @abstract Registers a custom URL scheme that can be used in match patterns.
+ @discussion This method should be used to register any custom URL schemes used by the app for the extension base URLs,
+ other than `webkit-extension`, or if extensions should have access to other supported URL schemes when using `<all_urls>`.
+ @param urlScheme The custom URL scheme to register.
+*/
++ (void)registerCustomURLScheme:(NSString *)urlScheme;
+
 /*! @abstract Returns a pattern object for `<all_urls>`. */
 + (instancetype)allURLsMatchPattern;
 

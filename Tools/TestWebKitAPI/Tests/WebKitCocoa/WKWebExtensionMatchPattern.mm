@@ -479,6 +479,49 @@ TEST(WKWebExtensionMatchPattern, PatternCacheAndEquality)
     }
 }
 
+TEST(WKWebExtensionMatchPattern, CustomURLScheme)
+{
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"foo", @"*", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"foo\" is invalid.");
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"bar", @"*", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"bar\" is invalid.");
+    }
+
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"foo"];
+
+    {
+        NSError *error;
+        EXPECT_NOT_NULL(toPatternAlloc(@"foo", @"*", @"/", &error));
+        EXPECT_NULL(error);
+    }
+
+    {
+        NSError *error;
+        EXPECT_NULL(toPatternAlloc(@"bar", @"*", @"/", &error));
+        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"bar\" is invalid.");
+    }
+
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"bar"];
+
+    {
+        NSError *error;
+        EXPECT_NOT_NULL(toPatternAlloc(@"foo", @"*", @"/", &error));
+        EXPECT_NULL(error);
+    }
+
+    {
+        NSError *error;
+        EXPECT_NOT_NULL(toPatternAlloc(@"bar", @"*", @"/", &error));
+        EXPECT_NULL(error);
+    }
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
