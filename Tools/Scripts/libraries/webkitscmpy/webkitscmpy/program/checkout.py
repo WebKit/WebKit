@@ -24,6 +24,7 @@ import re
 import sys
 
 from .command import Command
+from webkitcorepy import arguments
 from webkitscmpy import local, log, remote
 
 
@@ -44,6 +45,12 @@ class Checkout(Command):
         parser.add_argument(
             '--remote', dest='remote', type=str, default=None,
             help='Specify remote to search for pull request from.',
+        )
+        parser.add_argument(
+            '--prune', '--no-prune',
+            dest='prune', default=None,
+            help='Prune deleted branches on the tracking remote when fetching',
+            action=arguments.NoAction,
         )
 
     @classmethod
@@ -81,7 +88,13 @@ class Checkout(Command):
             return 1
 
         try:
-            commit = repository.checkout(target)
+            if isinstance(repository, local.Git):
+                commit = repository.checkout(target, prune=args.prune)
+            elif args.prune is not None:
+                sys.stderr.write("'prune' arguments only valid for 'git' checkouts\n")
+                return 1
+            else:
+                commit = repository.checkout(target)
         except (local.Scm.Exception, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error
