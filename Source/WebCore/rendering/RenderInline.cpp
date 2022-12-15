@@ -459,7 +459,7 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
     auto firstInlineBoxPaddingBoxLeft = LayoutUnit { };
     auto lastInlineBoxPaddingBoxRight = LayoutUnit { };
 
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+    if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
             firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeft() + borderStart();
             for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
@@ -881,7 +881,7 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
     if (firstLineBox()) {
         inlinePosition = LayoutUnit::fromFloatRound(firstLineBox()->logicalLeft());
         blockPosition = firstLineBox()->logicalTop();
-    } else if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+    } else if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
             inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeft());
             blockPosition = inlineBox->logicalTop();
