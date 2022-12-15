@@ -1809,3 +1809,4 @@ webkit.org/b/247982 [ Ventura+ ] fast/images/animated-heics-draw.html [ Timeout 
 
 webkit.org/b/248997 [ BigSur+ ] http/tests/navigation/fragment-navigation-policy-ignore.html [ Pass Failure ]
 
+webkit.org/b/249392 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https.html [ Pass Failure ]
