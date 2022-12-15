@@ -61,7 +61,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> MainThreadStylePropertyMapReadOnly::get(Scrip
         return nullptr;
 
     if (isCustomPropertyName(property))
-        return reifyValue(customPropertyValue(property), *document);
+        return reifyValue(customPropertyValue(property), std::nullopt, *document);
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, &document->settings()))
@@ -70,7 +70,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> MainThreadStylePropertyMapReadOnly::get(Scrip
     if (isShorthandCSSProperty(propertyID))
         return CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID));
 
-    return reifyValue(propertyValue(propertyID), *document);
+    return reifyValue(propertyValue(propertyID), propertyID, *document);
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-getall
@@ -81,7 +81,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::g
         return Vector<RefPtr<CSSStyleValue>> { };
 
     if (isCustomPropertyName(property))
-        return reifyValueToVector(customPropertyValue(property), *document);
+        return reifyValueToVector(customPropertyValue(property), std::nullopt, *document);
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, &document->settings()))
@@ -93,7 +93,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::g
         return Vector<RefPtr<CSSStyleValue>> { };
     }
 
-    return reifyValueToVector(propertyValue(propertyID), *document);
+    return reifyValueToVector(propertyValue(propertyID), propertyID, *document);
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-has

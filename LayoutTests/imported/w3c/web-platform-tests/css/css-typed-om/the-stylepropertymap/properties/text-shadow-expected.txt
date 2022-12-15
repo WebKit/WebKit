@@ -32,5 +32,5 @@ PASS Setting 'text-shadow' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'text-shadow' to a transform: perspective(10em) throws TypeError
 PASS Setting 'text-shadow' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
 PASS 'text-shadow' does not support '1px 1px 2px pink'
-FAIL 'text-shadow' does not support '1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue' assert_equals: Unsupported value can be set on different element expected "red 1px 1px 2px, blue 0px 0px 1em, blue 0px 0px 0.2em" but got "red 1px 1px 2px"
+PASS 'text-shadow' does not support '1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue'
 

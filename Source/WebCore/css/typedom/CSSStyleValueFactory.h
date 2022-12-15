@@ -43,7 +43,7 @@ class StylePropertyShorthand;
 
 class CSSStyleValueFactory {
 public:
-    static ExceptionOr<Ref<CSSStyleValue>> reifyValue(Ref<CSSValue>, Document* = nullptr);
+    static ExceptionOr<Ref<CSSStyleValue>> reifyValue(Ref<CSSValue>, std::optional<CSSPropertyID>, Document* = nullptr);
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const AtomString&, const String&, bool);
     static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(const String&);
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values);

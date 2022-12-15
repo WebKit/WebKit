@@ -83,7 +83,7 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFun
         return Exception { TypeError, "Unexpected number of values."_s };
     }
 
-    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0));
+    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
     if (keywordOrNumeric.hasException())
         return keywordOrNumeric.releaseException();
     auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();
