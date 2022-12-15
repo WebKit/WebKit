@@ -89,8 +89,6 @@ NetworkDataTaskBlob::~NetworkDataTaskBlob()
         fileReference->revokeFileAccess();
 
     clearStream();
-    if (m_session)
-        m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTaskBlob::clearStream()

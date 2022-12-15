@@ -74,7 +74,7 @@ private:
     WebCore::NotificationData m_data;
     RefPtr<API::SecurityOrigin> m_origin;
     WebPageProxyIdentifier m_pageIdentifier;
-    WeakPtr<IPC::Connection> m_sourceConnection;
+    ThreadSafeWeakPtr<IPC::Connection> m_sourceConnection;
 };
 
 inline bool isNotificationIDValid(uint64_t id)

@@ -95,9 +95,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
 NetworkDataTaskCurl::~NetworkDataTaskCurl()
 {
     invalidateAndCancel();
-
-    if (m_session)
-        m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTaskCurl::resume()

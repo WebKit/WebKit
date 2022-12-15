@@ -27,7 +27,7 @@
 
 #include "Test.h"
 #include <thread>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
@@ -2025,6 +2025,78 @@ TEST(WTF_ThreadSafeWeakPtr, UseAfterMoveResistance)
     EXPECT_NOT_NULL(movedTo.get());
     ThreadSafeWeakPtr<ThreadSafeInstanceCounter> emptyConstructor;
     EXPECT_NULL(emptyConstructor.get());
+}
+
+TEST(WTF_ThreadSafeWeakPtr, ThreadSafeWeakHashSet)
+{
+    RefPtr first = adoptRef(*new ThreadSafeInstanceCounter);
+    ThreadSafeWeakHashSet<ThreadSafeInstanceCounter> set;
+    EXPECT_FALSE(set.contains(*first));
+    set.add(*first);
+    EXPECT_TRUE(set.contains(*first));
+
+    std::atomic<size_t> readyThreads { 0 };
+    EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 1u);
+
+    std::array<std::thread, 3> threads { std::thread { [&] () mutable {
+        Vector<Ref<ThreadSafeInstanceCounter>> strongReferences;
+        strongReferences.reserveInitialCapacity(100);
+        for (size_t i = 0; i < 100; i++)
+            strongReferences.uncheckedAppend(adoptRef(*new ThreadSafeInstanceCounter));
+        readyThreads++;
+        while (readyThreads < 3) { }
+        for (size_t i = 0; i < 100; i++)
+            set.add(strongReferences.takeLast().get());
+    } }, std::thread { [&] () mutable {
+        readyThreads++;
+        while (readyThreads < 3) { }
+        for (size_t i = 0; i < 100; i++) {
+            size_t count { 0 };
+            bool foundFirst { false };
+            set.forEach([&] (auto& instance) {
+                if (&instance == first.get())
+                    foundFirst = true;
+                count++;
+            });
+            EXPECT_GT(count, 0u);
+            EXPECT_TRUE(foundFirst);
+        }
+    } }, std::thread { [&] () mutable {
+        Vector<Ref<ThreadSafeInstanceCounter>> strongReferences;
+        strongReferences.reserveInitialCapacity(101);
+        for (size_t i = 0; i < 101; i++)
+            strongReferences.uncheckedAppend(adoptRef(*new ThreadSafeInstanceCounter));
+        readyThreads++;
+        while (readyThreads < 3) { }
+        for (size_t i = 0; i < 100; i++) {
+            EXPECT_FALSE(set.contains(strongReferences[i].get()));
+            EXPECT_FALSE(set.contains(strongReferences[i + 1].get()));
+            set.add(strongReferences[i].get());
+            EXPECT_TRUE(set.contains(strongReferences[i].get()));
+            EXPECT_FALSE(set.contains(strongReferences[i + 1].get()));
+            set.add(strongReferences[i + 1].get());
+            EXPECT_TRUE(set.contains(strongReferences[i].get()));
+            EXPECT_TRUE(set.contains(strongReferences[i + 1].get()));
+            set.remove(strongReferences[i].get());
+            EXPECT_FALSE(set.contains(strongReferences[i].get()));
+            EXPECT_TRUE(set.contains(strongReferences[i + 1].get()));
+            set.remove(strongReferences[i + 1].get());
+            EXPECT_FALSE(set.contains(strongReferences[i].get()));
+            EXPECT_FALSE(set.contains(strongReferences[i + 1].get()));
+        }
+    } } };
+
+    for (auto& thread : threads)
+        thread.join();
+
+    EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 1u);
+    EXPECT_TRUE(set.contains(*first));
+    EXPECT_FALSE(set.computesEmpty());
+    set.clear();
+    EXPECT_FALSE(set.contains(*first));
+    EXPECT_TRUE(set.computesEmpty());
+    first = nullptr;
+    EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 0u);
 }
 
 } // namespace TestWebKitAPI

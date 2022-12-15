@@ -160,6 +160,8 @@ public:
             return WeakPtr<T, WeakPtrImpl> { pointer };
         });
         for (auto& item : items) {
+            // FIXME: This contains check is only necessary if the set is being mutated during iteration.
+            // Change it to an assertion, or make this function use begin() and end().
             if (item && m_set.contains(*item.m_impl))
                 callback(*item);
         }

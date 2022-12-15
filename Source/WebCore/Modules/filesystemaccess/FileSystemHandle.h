@@ -29,6 +29,7 @@
 #include "FileSystemHandleIdentifier.h"
 #include "IDLTypes.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ template<typename> class DOMPromiseDeferred;
 
 class FileSystemStorageConnection;
 
-class FileSystemHandle : public ActiveDOMObject, public CanMakeWeakPtr<FileSystemHandle>, public ThreadSafeRefCounted<FileSystemHandle> {
+class FileSystemHandle : public ActiveDOMObject, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<FileSystemHandle> {
     WTF_MAKE_ISO_ALLOCATED(FileSystemHandle);
 public:
     virtual ~FileSystemHandle();

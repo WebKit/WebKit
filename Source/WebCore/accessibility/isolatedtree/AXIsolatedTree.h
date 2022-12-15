@@ -278,7 +278,7 @@ struct AXPropertyChange {
     AXPropertyMap properties; // Changed properties.
 };
 
-class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree>, public CanMakeWeakPtr<AXIsolatedTree> {
+class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
     friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
