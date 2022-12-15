@@ -356,6 +356,7 @@
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events")
     (global-name "com.apple.lsd.mapdb")
+    (global-name "com.apple.mobileasset.autoasset") ;; <rdar://problem/101780002>
     (global-name "com.apple.nesessionmanager.flow-divert-token")
     (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/47598758>
     (global-name "com.apple.system.notification_center"))
