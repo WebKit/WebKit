@@ -29,6 +29,7 @@
 
 #include "pas_utils.h"
 #include "pas_large_heap.h"
+#include "pas_random.h"
 #include <stdbool.h>
 
 PAS_BEGIN_EXTERN_C;
@@ -53,13 +54,15 @@ struct pas_pgm_storage {
 // including guard pages and wasted memory
 #define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
 
-// Probability that we should call PGM in percentage (0-100)
+// Probability that we should call PGM (0-1000]
 #define PAS_PGM_PROBABILITY (1)
 
 /* We want a fast way to determine if we can call PGM or not.
  * It would be really wasteful to recompute this answer each time we try to allocate,
  * so just update this variable each time we allocate or deallocate. */
 extern PAS_API bool pas_pgm_can_use;
+
+extern PAS_API bool pas_pgm_is_initialized;
 
 pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
 void pas_probabilistic_guard_malloc_deallocate(void* memory);
@@ -68,6 +71,8 @@ size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void);
 size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
+
+bool pas_probabilistic_guard_malloc_should_call_pgm();
 
 PAS_END_EXTERN_C;
 

@@ -45,6 +45,7 @@ static size_t free_wasted_mem  = PAS_PGM_MAX_WASTED_MEMORY;
 static size_t free_virtual_mem = PAS_PGM_MAX_VIRTUAL_MEMORY;
 
 bool pas_pgm_can_use = true;
+bool pas_pgm_is_initialized = false;
 
 // the hash map is used to keep track of all pgm allocations
 // key   : user's starting memory address
@@ -211,6 +212,18 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void)
 {
     pas_heap_lock_assert_held();
     return free_wasted_mem;
+}
+
+bool pas_probabilistic_guard_malloc_should_call_pgm()
+{
+    if (!pas_pgm_is_initialized) {
+        pas_pgm_is_initialized = true;
+
+        if (PAS_LIKELY(pas_get_fast_random(1000) >= PAS_PGM_PROBABILITY))
+            pas_pgm_can_use = false;
+    }
+
+    return pas_pgm_can_use;
 }
 
 void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_storage* value, const char* operation)
