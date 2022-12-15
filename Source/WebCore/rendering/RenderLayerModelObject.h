@@ -110,10 +110,6 @@ protected:
 
     virtual void updateFromStyle() { }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    void updateHasSVGTransformFlags(bool hasSVGTransform);
-#endif
-
 private:
     std::unique_ptr<RenderLayer> m_layer;
 
