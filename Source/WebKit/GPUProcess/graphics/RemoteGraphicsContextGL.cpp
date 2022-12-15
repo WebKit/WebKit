@@ -74,7 +74,7 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), remoteGraphicsContextGLStreamWorkQueue()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), remoteGraphicsContextGLStreamWorkQueue(), &gpuConnectionToWebProcess.connection()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)
 #if ENABLE(VIDEO)
@@ -82,6 +82,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
 #endif
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
     , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
+    , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
 {
     assertIsMainRunLoop();
 }
@@ -312,12 +313,17 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
     m_context->simulateEventForTesting(event);
 }
 
-void RemoteGraphicsContextGL::readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&& completionHandler)
+void RemoteGraphicsContextGL::readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::TransferRegion&& data, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    Vector<uint8_t, 4> pixels(data);
-    m_context->readnPixels(x, y, width, height, format, type, pixels);
-    completionHandler(IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(pixels.data()), pixels.size()));
+    bool hadError = true;
+    if (auto pixels = m_streamConnection->mapTransferRegion(WTFMove(data), m_resourceOwner)) {
+        m_context->moveErrorsToSyntheticErrorList();
+        m_context->readnPixels(x, y, width, height, format, type, GCGLSpan<void> { pixels->data().data(), pixels->data().size() });
+        hadError = m_context->moveErrorsToSyntheticErrorList();
+    } else
+        m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+    completionHandler(hadError);
 }
 
 void RemoteGraphicsContextGL::readnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)

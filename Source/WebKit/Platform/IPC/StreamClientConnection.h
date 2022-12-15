@@ -64,7 +64,8 @@ public:
     };
 
     // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
-    static StreamConnectionPair create(size_t bufferSize);
+    // The optional main connection is used to inherit target process properties.
+    static StreamConnectionPair create(size_t bufferSize, Connection* mainConnection = nullptr);
 
     ~StreamClientConnection();
 
@@ -96,6 +97,16 @@ public:
 
     StreamConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
+
+    auto reserveTransferRegion(size_t size)
+    {
+        return m_connection->reserveTransferRegion(size);
+    }
+
+    void releaseUnusedMemory()
+    {
+        m_connection->releaseUnusedMemory();
+    }
 
 private:
     StreamClientConnection(Ref<Connection>, size_t bufferSize);

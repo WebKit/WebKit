@@ -91,7 +91,7 @@ Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebPro
 
 RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("RemoteRenderingBackend work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), m_workQueue.get()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), m_workQueue.get(), &gpuConnectionToWebProcess.connection()))
     , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())

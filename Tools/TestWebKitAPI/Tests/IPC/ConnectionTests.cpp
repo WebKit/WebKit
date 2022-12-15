@@ -27,8 +27,7 @@
 
 #include "IPCTestUtilities.h"
 #include "Test.h"
-#include <wtf/threads/BinarySemaphore.h>
-
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -264,78 +263,11 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
         EXPECT_EQ(message.destinationID, j);
     }
 }
-
-
-template<typename C>
-static void dispatchSync(RunLoop& runLoop, C&& function)
-{
-    BinarySemaphore semaphore;
-    runLoop.dispatch([&] () mutable {
-        function();
-        semaphore.signal();
-    });
-    semaphore.wait();
-}
-
-template<typename C>
-static void dispatchAndWait(RunLoop& runLoop, C&& function)
-{
-    std::atomic<bool> done = false;
-    runLoop.dispatch([&] () mutable {
-        function();
-        done = true;
-    });
-    while (!done)
-        RunLoop::current().cycle();
-}
-
 class ConnectionRunLoopTest : public ConnectionTestABBA {
 public:
-    void TearDown() override
-    {
-        ConnectionTestABBA::TearDown();
-        // Remember to call localReferenceBarrier() in test scope.
-        // Otherwise run loops might be executing code that uses variables
-        // that went out of scope.
-        EXPECT_EQ(m_runLoops.size(), 0u);
-    }
-
-    Ref<RunLoop> createRunLoop(const char* name)
-    {
-        auto runLoop = RunLoop::create(name, ThreadType::Unknown);
-        m_runLoops.append(runLoop);
-        return runLoop;
-    }
-
-    void localReferenceBarrier()
-    {
-        // Since we need to send sync to create a barrier to run loops,
-        // we might as well destroy the run loops in this function.
-        Vector<Ref<Thread>> threadsToWait;
-        // FIXME: Cannot wait for RunLoop to really exit.
-        for (auto& runLoop : std::exchange(m_runLoops, { })) {
-            dispatchSync(runLoop, [&] {
-                threadsToWait.append(Thread::current());
-                RunLoop::current().stop();
-            });
-        }
-        while (true) {
-            sleep(0.1_s);
-            Locker lock { Thread::allThreadsLock() };
-            for (auto& thread : threadsToWait) {
-                if (Thread::allThreads().contains(thread.ptr()))
-                    continue;
-            }
-            break;
-        }
-    }
-
-protected:
-    Vector<Ref<RunLoop>> m_runLoops;
 };
 
-#define LOCAL_STRINGIFY(x) #x
-#define RUN_LOOP_NAME "RunLoop at ConnectionTests.cpp:" LOCAL_STRINGIFY(__LINE__)
+#define RUN_LOOP_NAME "RunLoop at ConnectionTests.cpp:" STRINGIZE_VALUE_OF(__LINE__)
 
 TEST_P(ConnectionRunLoopTest, RunLoopOpen)
 {
@@ -509,7 +441,6 @@ TEST_P(ConnectionRunLoopTest, InvalidSendWithAsyncReplyDispatchesCancelHandlerOn
 }
 
 #undef RUN_LOOP_NAME
-#undef LOCAL_STRINGIFY
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionTestABBA,

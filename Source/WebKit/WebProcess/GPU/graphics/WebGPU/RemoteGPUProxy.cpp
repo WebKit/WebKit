@@ -47,7 +47,7 @@ RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, WebGP
     , m_convertToBackingContext(convertToBackingContext)
     , m_gpuProcessConnection(&gpuProcessConnection)
 {
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize, &gpuProcessConnection.connection());
     m_streamConnection = WTFMove(clientConnection);
     m_gpuProcessConnection->addClient(*this);
     m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(identifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);

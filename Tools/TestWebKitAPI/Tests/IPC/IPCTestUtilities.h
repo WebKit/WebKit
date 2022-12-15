@@ -29,6 +29,8 @@
 #include "Connection.h"
 #include "Utilities.h"
 #include <optional>
+#include <wtf/Scope.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
 
@@ -94,6 +96,10 @@ public:
     {
         m_asyncMessageHandler = WTFMove(handler);
     }
+    void setSyncMessageHandler(Function<bool(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
+    {
+        m_syncMessageHandler = WTFMove(handler);
+    }
 
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
@@ -104,8 +110,10 @@ public:
         m_continueWaitForMessage = true;
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
+    bool didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) override
     {
+        if (m_syncMessageHandler && m_syncMessageHandler(connection, decoder, encoder))
+            return true;
         return false;
     }
 
@@ -125,6 +133,7 @@ private:
     Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
     Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)> m_syncMessageHandler;
 };
 
 enum class ConnectionTestDirection {
@@ -196,6 +205,15 @@ public:
         m_connections[1].connection = nullptr;
     }
 
+    Ref<RunLoop> createRunLoop(const char* name);
+    void localReferenceBarrier();
+    auto makeLocalReferenceBarrier()
+    {
+        return makeScopeExit([&] {
+            localReferenceBarrier();
+        });
+    }
+
 protected:
     static void ensureConnectionWorkQueueEmpty(IPC::Connection&);
 
@@ -203,6 +221,8 @@ protected:
         RefPtr<IPC::Connection> connection;
         MockConnectionClient client;
     } m_connections[2];
+
+    Vector<Ref<RunLoop>> m_runLoops;
 };
 
 // Test fixture for tests that are run two times:
@@ -226,5 +246,28 @@ public:
         teardownBase();
     }
 };
+
+template<typename C>
+void dispatchSync(RunLoop& runLoop, C&& function)
+{
+    BinarySemaphore semaphore;
+    runLoop.dispatch([&] () mutable {
+        function();
+        semaphore.signal();
+    });
+    semaphore.wait();
+}
+
+template<typename C>
+void dispatchAndWait(RunLoop& runLoop, C&& function)
+{
+    std::atomic<bool> done = false;
+    runLoop.dispatch([&] () mutable {
+        function();
+        done = true;
+    });
+    while (!done)
+        RunLoop::current().cycle();
+}
 
 }

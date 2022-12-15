@@ -69,7 +69,7 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
     : GraphicsContextGL(attributes)
 {
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize, &connection);
     m_streamConnection = WTFMove(clientConnection);
     m_connection = &connection;
     m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
@@ -261,10 +261,17 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
 void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
     if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels0(x, y, width, height, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size())));
+        auto buffer = m_streamConnection->reserveTransferRegion(data.size());
+        if (!buffer) {
+            markContextLost();
+            return;
+        }
+        memcpy(buffer->data().data(), data.data(), data.size());
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels0(x, y, width, height, format, type, buffer->passRegion()));
         if (sendResult) {
-            auto [dataReply] = sendResult.takeReply();
-            memcpy(data.data(), dataReply.data(), data.size());
+            auto [hadError] = sendResult.takeReply();
+            if (!hadError)
+                memcpy(data.data(), buffer->data().data(), data.size());
         } else
             markContextLost();
     }

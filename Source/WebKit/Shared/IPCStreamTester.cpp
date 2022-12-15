@@ -40,16 +40,16 @@
 
 namespace WebKit {
 
-RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, IPC::Connection& otherConnection)
 {
-    auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle)));
+    auto tester = adoptRef(*new IPCStreamTester(identifier, WTFMove(connectionHandle), otherConnection));
     tester->initialize();
     return tester;
 }
 
-IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle, IPC::Connection& otherConnection)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("IPCStreamTester work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue(), &otherConnection))
     , m_identifier(identifier)
 {
 }

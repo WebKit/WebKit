@@ -560,6 +560,7 @@
 		7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */; };
 		7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AEAD47D1E20114E00416EFE /* CrossPartitionFileSchemeAccess.html */; };
 		7B18417C2673860200ED4F8D /* ImageBufferTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B18417B2673860200ED4F8D /* ImageBufferTests.cpp */; };
+		7B1F233D29478BAD00DF226C /* TransferRegionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1F233529478BAD00DF226C /* TransferRegionTests.cpp */; };
 		7B2739F32632AB640040F182 /* ThreadAssertionsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */; };
 		7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */; };
 		7B397C0828BE394B00239202 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
@@ -2727,6 +2728,7 @@
 		7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CrossPartitionFileSchemeAccess.mm; sourceTree = "<group>"; };
 		7AEAD47D1E20114E00416EFE /* CrossPartitionFileSchemeAccess.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = CrossPartitionFileSchemeAccess.html; path = Tests/mac/CrossPartitionFileSchemeAccess.html; sourceTree = SOURCE_ROOT; };
 		7B18417B2673860200ED4F8D /* ImageBufferTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferTests.cpp; sourceTree = "<group>"; };
+		7B1F233529478BAD00DF226C /* TransferRegionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransferRegionTests.cpp; sourceTree = "<group>"; };
 		7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadAssertionsTest.cpp; sourceTree = "<group>"; };
 		7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionTests.cpp; sourceTree = "<group>"; };
 		7B7392E128F849EC007297FC /* MessageSenderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSenderTests.cpp; sourceTree = "<group>"; };
@@ -4412,6 +4414,7 @@
 				7B7392E128F849EC007297FC /* MessageSenderTests.cpp */,
 				7B9FC58328A26792007570E7 /* StreamConnectionBufferTests.cpp */,
 				7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */,
+				7B1F233529478BAD00DF226C /* TransferRegionTests.cpp */,
 			);
 			path = IPC;
 			sourceTree = "<group>";
@@ -5984,6 +5987,7 @@
 				7B9FC58428A26792007570E7 /* StreamConnectionBufferTests.cpp in Sources */,
 				7BAA4A9028CA14AE004CE938 /* StreamConnectionTests.cpp in Sources */,
 				7B9FC58C28A2717D007570E7 /* TestsController.cpp in Sources */,
+				7B1F233D29478BAD00DF226C /* TransferRegionTests.cpp in Sources */,
 				7B397C0828BE394B00239202 /* UtilitiesCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

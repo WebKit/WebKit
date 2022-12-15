@@ -21,3 +21,4 @@ Platform/IPC/StreamConnectionBuffer.cpp
 Platform/IPC/StreamConnectionWorkQueue.cpp
 Platform/IPC/SharedFileHandle.cpp
 Platform/IPC/StreamServerConnection.cpp
+Platform/IPC/TransferRegion.cpp

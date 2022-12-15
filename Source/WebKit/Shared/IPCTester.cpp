@@ -134,10 +134,10 @@ void IPCTester::stopMessageTesting(CompletionHandler<void()>&& completionHandler
     completionHandler();
 }
 
-void IPCTester::createStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
+void IPCTester::createStreamTester(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
 {
     auto addResult = m_streamTesters.ensure(identifier, [&] {
-        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(identifier, WTFMove(serverConnection)) };
+        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(identifier, WTFMove(serverConnection), connection) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry || IPC::isTestingIPC());
 }
@@ -175,6 +175,12 @@ void IPCTester::sendAsyncMessageToReceiver(IPC::Connection& connection, uint32_t
     connection.sendWithAsyncReply(Messages::IPCTesterReceiver::AsyncMessage(arg0 + 1), [arg0](uint32_t newArg0) {
         ASSERT_UNUSED(arg0, newArg0 == arg0 + 2);
     }, 0);
+}
+
+void IPCTester::sendTransferRegion(IPC::TransferRegion&&, CompletionHandler<void()>&&)
+{
+    // Due to run-time isAllowedWhenWaitingForSyncReply validation, we cannot create a mock message in
+    // the TestIPC. Thus this message is here just to be able to send a mock message in the TransferRegionTests.
 }
 
 void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& testedConnectionIdentifier)

@@ -61,7 +61,7 @@ public:
         void encode(Encoder&) const;
         static std::optional<Handle> decode(Decoder&);
     };
-    static Ref<StreamServerConnection> create(Handle&&, StreamConnectionWorkQueue&);
+    static Ref<StreamServerConnection> create(Handle&&, StreamConnectionWorkQueue&, Connection* mainConnection);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
@@ -87,6 +87,11 @@ public:
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
+
+    auto mapTransferRegion(TransferRegion&& region, const WebCore::ProcessIdentity& resourceOwner)
+    {
+        return m_connection->mapTransferRegion(WTFMove(region), resourceOwner);
+    }
 
 private:
     StreamServerConnection(Ref<Connection>, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
