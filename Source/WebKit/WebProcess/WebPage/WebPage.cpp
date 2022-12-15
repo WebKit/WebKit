@@ -4190,6 +4190,8 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if USE(SYSTEM_PREVIEW)
     settings.setSystemPreviewEnabled(false);
 #endif
+    settings.setFetchAPIEnabled(false);
+    settings.setFetchMetadataEnabled(false);
     settings.setFileReaderAPIEnabled(false);
     settings.setFileSystemAccessEnabled(false);
     settings.setIndexedDBAPIEnabled(false);
@@ -4200,6 +4202,7 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     settings.setWebLocksAPIEnabled(false);
 
     DeprecatedGlobalSettings::setCacheAPIEnabled(false);
+    DeprecatedGlobalSettings::setFetchAPIKeepAliveEnabled(false);
 
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInLockdownModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInLockdownModeKey()));
