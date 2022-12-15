@@ -3019,7 +3019,7 @@ auto B3IRGenerator::addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointe
 
     Value* ptr = emitCheckAndPreparePointer(get(pointerVariable), uoffset, byteSize);
     int32_t offset = fixupPointerPlusOffset(ptr, uoffset);
-    Value* laneValue = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, type, lane, byteSize < 32 ? SIMDSignMode::Unsigned : SIMDSignMode::None, laneIndex, get(vectorVariable));
+    Value* laneValue = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, type, lane, byteSize < 4 ? SIMDSignMode::Unsigned : SIMDSignMode::None, laneIndex, get(vectorVariable));
     m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(storeOp), origin(), laneValue, ptr, offset);
 
     return { };
