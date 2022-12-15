@@ -1093,6 +1093,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/EmptyFrameLoaderClient.h
     loader/EphemeralNonce.h
     loader/FetchOptions.h
+    loader/FetchOptionsCache.h
+    loader/FetchOptionsCredentials.h
+    loader/FetchOptionsDestination.h
+    loader/FetchOptionsMode.h
+    loader/FetchOptionsRedirect.h
     loader/FontLoadRequest.h
     loader/FormState.h
     loader/FormSubmission.h

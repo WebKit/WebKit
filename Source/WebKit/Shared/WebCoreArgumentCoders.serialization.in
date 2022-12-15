@@ -2258,3 +2258,75 @@ enum class WebCore::ReferrerPolicy : uint8_t {
     StrictOriginWhenCrossOrigin,
     UnsafeUrl,
 };
+
+enum class WebCore::FetchOptionsDestination : uint8_t {
+    EmptyString,
+    Audio,
+    Audioworklet,
+    Document,
+    Embed,
+    Font,
+    Image,
+    Iframe,
+    Manifest,
+    Model,
+    Object,
+    Paintworklet,
+    Report,
+    Script,
+    Serviceworker,
+    Sharedworker,
+    Style,
+    Track,
+    Video,
+    Worker,
+    Xslt
+};
+
+enum class WebCore::FetchOptionsMode : uint8_t {
+    Navigate,
+    SameOrigin,
+    NoCors,
+    Cors
+};
+
+enum class WebCore::FetchOptionsCredentials : uint8_t {
+    Omit,
+    SameOrigin,
+    Include
+};
+
+enum class WebCore::FetchOptionsCache : uint8_t {
+    Default,
+    NoStore,
+    Reload,
+    NoCache,
+    ForceCache,
+    OnlyIfCached
+};
+
+enum class WebCore::FetchOptionsRedirect : uint8_t {
+    Follow,
+    Error,
+    Manual
+};
+
+struct WebCore::FetchOptions {
+    WebCore::FetchOptionsDestination destination;
+    WebCore::FetchOptionsMode mode;
+    WebCore::FetchOptionsCredentials credentials;
+    WebCore::FetchOptionsCache cache;
+    WebCore::FetchOptionsRedirect redirect;
+    WebCore::ReferrerPolicy referrerPolicy;
+    String integrity;
+    bool keepAlive;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
+}
+
+enum class WebCore::FetchHeadersGuard : uint8_t {
+    None,
+    Immutable,
+    Request,
+    RequestNoCors,
+    Response
+};
