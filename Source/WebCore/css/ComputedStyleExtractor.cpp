@@ -1473,10 +1473,19 @@ static Ref<CSSValue> fontVariantNumericPropertyValue(FontVariantNumericFigure fi
     return valueList;
 }
 
+static FontVariantAlternatesValues historicalFormsValues()
+{
+    FontVariantAlternatesValues values;
+    values.historicalForms = true;
+    return values;
+}
+
 static Ref<CSSValue> fontVariantAlternatesPropertyValue(FontVariantAlternates alternates)
 {
     if (alternates.isNormal())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    if (alternates.values() == historicalFormsValues())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueHistoricalForms);
 
     return CSSFontVariantAlternatesValue::create(WTFMove(alternates));
 }
