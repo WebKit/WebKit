@@ -4753,6 +4753,7 @@ ExceptionOr<Internals::MediaUsageState> Internals::mediaUsageState(HTMLMediaElem
         info.value().isMediaDocumentAndNotOwnerElement,
         info.value().pageExplicitlyAllowsElementToAutoplayInline,
         info.value().requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted,
+        info.value().hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture,
         info.value().isVideoAndRequiresUserGestureForVideoRateChange,
         info.value().isAudioAndRequiresUserGestureForAudioRateChange,
         info.value().isVideoAndRequiresUserGestureForVideoDueToLowPowerMode,

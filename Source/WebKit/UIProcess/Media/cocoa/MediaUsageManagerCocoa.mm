@@ -70,6 +70,7 @@ static bool usageTrackingAvailable()
             && PAL::canLoad_UsageTracking_USVideoMetadataKeyIsMediaDocumentAndNotOwnerElement()
             && PAL::canLoad_UsageTracking_USVideoMetadataKeyPageExplicitlyAllowsElementToAutoplayInline()
             && PAL::canLoad_UsageTracking_USVideoMetadataKeyRequiresFullscreenForVideoPlaybackAndFullscreenNotPermitted()
+            && PAL::canLoad_UsageTracking_USVideoMetadataKeyHasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture()
             && PAL::canLoad_UsageTracking_USVideoMetadataKeyIsVideoAndRequiresUserGestureForVideoRateChange()
             && PAL::canLoad_UsageTracking_USVideoMetadataKeyIsAudioAndRequiresUserGestureForAudioRateChange()
             && PAL::canLoad_UsageTracking_USVideoMetadataKeyIsVideoAndRequiresUserGestureForVideoDueToLowPowerMode()
@@ -170,6 +171,7 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
             USVideoMetadataKeyIsMediaDocumentAndNotOwnerElement: @(mediaUsageInfo.isMediaDocumentAndNotOwnerElement),
             USVideoMetadataKeyPageExplicitlyAllowsElementToAutoplayInline: @(mediaUsageInfo.pageExplicitlyAllowsElementToAutoplayInline),
             USVideoMetadataKeyRequiresFullscreenForVideoPlaybackAndFullscreenNotPermitted: @(mediaUsageInfo.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted),
+            USVideoMetadataKeyHasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture: @(mediaUsageInfo.hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture),
             USVideoMetadataKeyIsVideoAndRequiresUserGestureForVideoRateChange: @(mediaUsageInfo.isVideoAndRequiresUserGestureForVideoRateChange),
             USVideoMetadataKeyIsAudioAndRequiresUserGestureForAudioRateChange: @(mediaUsageInfo.isAudioAndRequiresUserGestureForAudioRateChange),
             USVideoMetadataKeyIsVideoAndRequiresUserGestureForVideoDueToLowPowerMode: @(mediaUsageInfo.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode),
