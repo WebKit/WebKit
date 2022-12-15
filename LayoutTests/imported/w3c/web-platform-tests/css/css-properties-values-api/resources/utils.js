@@ -147,3 +147,34 @@ function animation_test(property, values, description) {
     assert_equals(getComputedStyle(target).getPropertyValue(name), values.expected);
   }, description);
 };
+
+function discrete_animation_test(syntax, fromValue, toValue) {
+  test(() => {
+    const name = generate_name();
+
+    CSS.registerProperty({
+      name,
+      syntax,
+      inherits: false,
+      initialValue: fromValue
+    });
+
+    const duration = 1000;
+    const keyframes = [];
+    keyframes[name] = toValue;
+    const animation = target.animate(keyframes, duration);
+    animation.pause();
+
+    const checkAtProgress = (progress, expected) => {
+      animation.currentTime = duration * 0.25;
+      assert_equals(getComputedStyle(target).getPropertyValue(name), fromValue, `The correct value is used at progress = ${progress}`);
+    };
+
+    checkAtProgress(0, fromValue);
+    checkAtProgress(0.25, fromValue);
+    checkAtProgress(0.49, fromValue);
+    checkAtProgress(0.5, toValue);
+    checkAtProgress(0.75, toValue);
+    checkAtProgress(1, toValue);
+  }, `Animating a custom property of type ${syntax} is discrete`);
+}
