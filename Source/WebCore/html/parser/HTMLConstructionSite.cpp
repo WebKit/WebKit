@@ -534,8 +534,8 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
-    if (m_document.settings().streamingDeclarativeShadowDOMEnabled() && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowDOM)
-        && !currentElement().document().templateDocumentHost()) {
+    if (m_document.settings().declarativeShadowDOMEnabled() && m_document.settings().streamingDeclarativeShadowDOMEnabled()
+        && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowDOM) && !currentElement().document().templateDocumentHost()) {
         std::optional<ShadowRootMode> mode;
         bool delegatesFocus = false;
         for (auto& attribute : token.attributes()) {

@@ -5,13 +5,31 @@ FAIL Can set 'd' to CSS-wide keywords: unset Invalid property d
 FAIL Can set 'd' to CSS-wide keywords: revert Invalid property d
 FAIL Can set 'd' to var() references:  var(--A) Invalid property d
 FAIL Can set 'd' to the 'none' keyword: none Invalid property d
-PASS Setting 'd' to a length throws TypeError
-PASS Setting 'd' to a percent throws TypeError
-PASS Setting 'd' to a time throws TypeError
-PASS Setting 'd' to an angle throws TypeError
-PASS Setting 'd' to a flexible length throws TypeError
-PASS Setting 'd' to a number throws TypeError
-PASS Setting 'd' to a URL throws TypeError
-PASS Setting 'd' to a transform throws TypeError
-FAIL 'd' does not supported 'path("M 100 100 L 300 100 L 200 300 Z")' Invalid property d
+PASS Setting 'd' to a length: 0px throws TypeError
+PASS Setting 'd' to a length: -3.14em throws TypeError
+PASS Setting 'd' to a length: 3.14cm throws TypeError
+PASS Setting 'd' to a length: calc(0px + 0em) throws TypeError
+PASS Setting 'd' to a percent: 0% throws TypeError
+PASS Setting 'd' to a percent: -3.14% throws TypeError
+PASS Setting 'd' to a percent: 3.14% throws TypeError
+PASS Setting 'd' to a percent: calc(0% + 0%) throws TypeError
+PASS Setting 'd' to a time: 0s throws TypeError
+PASS Setting 'd' to a time: -3.14ms throws TypeError
+PASS Setting 'd' to a time: 3.14s throws TypeError
+PASS Setting 'd' to a time: calc(0s + 0ms) throws TypeError
+PASS Setting 'd' to an angle: 0deg throws TypeError
+PASS Setting 'd' to an angle: 3.14rad throws TypeError
+PASS Setting 'd' to an angle: -3.14deg throws TypeError
+PASS Setting 'd' to an angle: calc(0rad + 0deg) throws TypeError
+PASS Setting 'd' to a flexible length: 0fr throws TypeError
+PASS Setting 'd' to a flexible length: 1fr throws TypeError
+PASS Setting 'd' to a flexible length: -3.14fr throws TypeError
+PASS Setting 'd' to a number: 0 throws TypeError
+PASS Setting 'd' to a number: -3.14 throws TypeError
+PASS Setting 'd' to a number: 3.14 throws TypeError
+PASS Setting 'd' to a number: calc(2 + 3) throws TypeError
+PASS Setting 'd' to a transform: translate(50%, 50%) throws TypeError
+PASS Setting 'd' to a transform: perspective(10em) throws TypeError
+PASS Setting 'd' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
+FAIL 'd' does not support 'path("M 100 100 L 300 100 L 200 300 Z")' Invalid property d
 

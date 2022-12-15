@@ -37,6 +37,7 @@ OBJC_CLASS JSValue;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
+OBJC_CLASS _WKWebExtensionWebNavigationURLFilter;
 
 namespace WebKit {
 
@@ -44,7 +45,8 @@ class WebExtensionAPIWebNavigationEvent : public WebExtensionAPIObject, public J
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebNavigationEvent, webNavigationEvent);
 
 public:
-    using ListenerVector = Vector<RefPtr<WebExtensionCallbackHandler>>;
+    using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, RetainPtr<_WKWebExtensionWebNavigationURLFilter>>;
+    using ListenerVector = Vector<FilterAndCallbackPair>;
 
     void invokeListenersWithArgument(id argument, NSURL *targetURL);
 

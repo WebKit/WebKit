@@ -135,6 +135,7 @@ public:
 
     void willChangeRenderer();
 
+    Document* document() const override;
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
@@ -203,7 +204,6 @@ private:
         bool m_couldOriginallyPreventAcceleration;
     };
 
-    Document* document() const;
     void updateEffectStackMembership();
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     void didChangeTargetStyleable(const std::optional<const Styleable>&);

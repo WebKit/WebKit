@@ -47,6 +47,9 @@ public:
     DocumentFragment& content() const;
     DocumentFragment* contentIfAvailable() const;
 
+    const AtomString& shadowRootMode() const;
+    void setShadowRootMode(const AtomString&);
+
     void setDeclarativeShadowRoot(ShadowRoot&);
     void attachAsDeclarativeShadowRootIfNeeded(Element&);
 

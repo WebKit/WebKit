@@ -1,7 +1,4 @@
 set(WebKitTestRunner_DIR "${TOOLS_DIR}/WebKitTestRunner")
-set(WebKitTestRunner_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
-set(WebKitTestRunner_UISCRIPTCONTEXT_DIR "${WebKitTestRunner_SHARED_DIR}/UIScriptContext")
-set(WebKitTestRunner_BINDINGS_DIR "${WebKitTestRunner_SHARED_DIR}/Bindings")
 
 file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle)
 file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext)
@@ -19,11 +16,10 @@ set(WebKitTestRunner_SOURCES
     WorkQueueManager.cpp
 )
 
-set(WebKitTestRunner_LIBRARIES TestRunnerShared)
-
 set(WebKitTestRunner_FRAMEWORKS
     JavaScriptCore
     PAL
+    TestRunnerShared
     WTF
     WebCore
     WebCoreTestSupport
@@ -40,12 +36,9 @@ endif ()
 
 set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
-    ${WebKitTestRunner_SHARED_DIR}
-    ${WebKitTestRunner_BINDINGS_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
     ${WebKitTestRunner_DIR}
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
 )
 
 set(WebKitTestRunner_WEB_PREFERENCES_TEMPLATES
@@ -87,15 +80,13 @@ set(WebKitTestRunnerInjectedBundle_SOURCES
 
 set(WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
-    ${WebKitTestRunner_SHARED_DIR}
-    ${WebKitTestRunner_BINDINGS_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
     ${WebKitTestRunner_DIR}
     ${WebKitTestRunner_DIR}/InjectedBundle
 )
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES
-    TestRunnerShared
+    WebKit::TestRunnerShared
     WebKit::WebCore
     WebKit::WebCoreTestSupport
     WebKit::WebKit

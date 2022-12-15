@@ -37,6 +37,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/URLParser.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -45,16 +46,14 @@ static NSString * const allURLsPattern = @"<all_urls>";
 static NSString * const allHostsAndSchemesPattern = @"*://*/*";
 static NSString * const patternFormat = @"%@://%@%@";
 
-const WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
+WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
 {
-    // FIXME: Add custom extension schemes to this set.
     static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "file"_s, "ftp"_s, "webkit-extension"_s };
     return schemes;
 }
 
-const WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchemes()
+WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchemes()
 {
-    // FIXME: Add custom extension schemes to this set.
     static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "webkit-extension"_s };
     return schemes;
 }
@@ -63,6 +62,15 @@ static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
 {
     static MainThreadNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
     return cache;
+}
+
+void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
+{
+    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    ASSERT(canonicalScheme);
+
+    validSchemes().addVoid(canonicalScheme.value());
+    supportedSchemes().addVoid(canonicalScheme.value());
 }
 
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(NSString *pattern)

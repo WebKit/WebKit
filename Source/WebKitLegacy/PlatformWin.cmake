@@ -1,8 +1,5 @@
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1 -DWEBKIT_EXPORTS=1)
-    list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBKIT_LIBRARIES_DIR}/include"
-    )
     list(APPEND WebKitLegacy_SOURCES_Classes
         win/WebDownloadCURL.cpp
         win/WebURLAuthenticationChallengeSenderCURL.cpp
@@ -417,6 +414,7 @@ add_library(WebKitLegacyGUID STATIC
 )
 set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 
+list(APPEND WebKitLegacy_LIBRARIES WebKitLegacyGUID)
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     Comctl32
     Comsupp
@@ -470,16 +468,6 @@ set(WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS
     win/WebFrame.h
     win/WebKitCOMAPI.h
 )
-
-WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacyGUID
-    TARGET_NAME WebKitLegacyFrameworkHeaders
-    DESTINATION ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy
-    FILES ${WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS}
-    FLATTENED
-)
-if (NOT INTERNAL_BUILD)
-    add_dependencies(WebKitLegacyFrameworkHeaders WebCore_CopyPrivateHeaders)
-endif ()
 
 set(WebKitLegacy_OUTPUT_NAME
     WebKit${DEBUG_SUFFIX}

@@ -49,20 +49,6 @@ bool isScriptAllowedByNosniff(const ResourceResponse& response)
 }
 
 ResourceResponseBase::ResourceResponseBase()
-    : m_haveParsedCacheControlHeader(false)
-    , m_haveParsedAgeHeader(false)
-    , m_haveParsedDateHeader(false)
-    , m_haveParsedExpiresHeader(false)
-    , m_haveParsedLastModifiedHeader(false)
-    , m_haveParsedContentRangeHeader(false)
-    , m_isRedirected(false)
-    , m_isRangeRequested(false)
-    , m_isNull(true)
-    , m_usedLegacyTLS(UsedLegacyTLS::No)
-    , m_wasPrivateRelayed(WasPrivateRelayed::No)
-    , m_tainting(Tainting::Basic)
-    , m_source(Source::Unknown)
-    , m_type(Type::Default)
 {
 }
 
@@ -72,20 +58,29 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_expectedContentLength(expectedLength)
     , m_textEncodingName(textEncodingName)
     , m_certificateInfo(CertificateInfo()) // Empty but valid for synthetic responses.
-    , m_haveParsedCacheControlHeader(false)
-    , m_haveParsedAgeHeader(false)
-    , m_haveParsedDateHeader(false)
-    , m_haveParsedExpiresHeader(false)
-    , m_haveParsedLastModifiedHeader(false)
-    , m_haveParsedContentRangeHeader(false)
-    , m_isRedirected(false)
-    , m_isRangeRequested(false)
     , m_isNull(false)
-    , m_usedLegacyTLS(UsedLegacyTLS::No)
-    , m_wasPrivateRelayed(WasPrivateRelayed::No)
-    , m_tainting(Tainting::Basic)
-    , m_source(Source::Unknown)
-    , m_type(Type::Default)
+{
+}
+
+ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseBase::ResponseData> data)
+    : m_url(data ? data->m_url : URL { })
+    , m_mimeType(data ? data->m_mimeType : AtomString { })
+    , m_expectedContentLength(data ? data->m_expectedContentLength : 0)
+    , m_textEncodingName(data ? data->m_textEncodingName : AtomString { })
+    , m_httpStatusText(data ? data->m_httpStatusText : AtomString { })
+    , m_httpVersion(data ? data->m_httpVersion : AtomString { })
+    , m_httpHeaderFields(data ? data->m_httpHeaderFields : HTTPHeaderMap { })
+    , m_networkLoadMetrics(data ? data->m_networkLoadMetrics : Box<WebCore::NetworkLoadMetrics> { })
+    , m_certificateInfo(data ? data->m_certificateInfo : std::nullopt)
+    , m_isRedirected(data ? data->m_isRedirected : false)
+    , m_isRangeRequested(data ? data->m_isRangeRequested : false)
+    , m_isNull(data ? false : true)
+    , m_usedLegacyTLS(data ? data->m_usedLegacyTLS : UsedLegacyTLS::No)
+    , m_wasPrivateRelayed(data ? data->m_wasPrivateRelayed : WasPrivateRelayed::No)
+    , m_tainting(data ? data->m_tainting : Tainting::Basic)
+    , m_source(data ? data->m_source : Source::Unknown)
+    , m_type(data ? data->m_type : Type::Default)
+    , m_httpStatusCode(data ? data->m_httpStatusCode : 0)
 {
 }
 
@@ -844,6 +839,36 @@ bool ResourceResponseBase::containsInvalidHTTPHeaders() const
             return true;
     }
     return false;
+}
+
+std::optional<ResourceResponseBase::ResponseData> ResourceResponseBase::getResponseData() const
+{
+    if (m_isNull)
+        return std::nullopt;
+    lazyInit(AllFields);
+    
+    return { {
+        m_url,
+        m_mimeType,
+        m_expectedContentLength,
+        m_textEncodingName,
+        m_httpStatusText,
+        m_httpVersion,
+        m_httpHeaderFields,
+        m_networkLoadMetrics,
+        
+        m_httpStatusCode,
+        m_certificateInfo,
+        
+        m_source,
+        m_type,
+        m_tainting,
+        
+        m_isRedirected,
+        m_usedLegacyTLS,
+        m_wasPrivateRelayed,
+        m_isRangeRequested
+    } };
 }
 
 }

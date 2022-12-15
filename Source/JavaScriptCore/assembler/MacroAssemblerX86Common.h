@@ -4260,8 +4260,9 @@ public:
 
     static bool supportsAVX()
     {
-        // AVX still causes mysterious regressions and those regressions can be massive.
-        return false;
+        if (s_avxCheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_avxCheckState == CPUIDCheckState::Set;
     }
 
     static bool supportsAVXForSIMD()

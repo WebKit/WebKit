@@ -31,6 +31,10 @@
 #include <optional>
 #include <wtf/CompletionHandler.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebKit {
     
 static const Seconds processSuspensionTimeout { 20_s };
@@ -315,6 +319,10 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 
 void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
 {
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent))
+        shouldTakeSuspendedAssertion = true;
+#endif
     const bool shouldUpdateAssertion = m_shouldTakeSuspendedAssertion != shouldTakeSuspendedAssertion;
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
     if (shouldUpdateAssertion && m_state == ProcessThrottleState::Suspended)

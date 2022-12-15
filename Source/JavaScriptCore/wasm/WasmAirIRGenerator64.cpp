@@ -268,34 +268,65 @@ public:
         AIR_OP_CASE(ExtendHigh)
         AIR_OP_CASE(ExtendLow)
         AIR_OP_CASE(TruncSat)
-#if CPU(X86_64)
-        else if (op == SIMDLaneOperation::Not) {
-            // x86_64 has no vector bitwise NOT instruction, so we expand vxv.not v into vxv.xor -1, v
-            // here to give B3/Air a chance to optimize out repeated usage of the mask.
-            v128_t mask;
-            mask.u64x2[0] = 0xffffffffffffffff;
-            mask.u64x2[1] = 0xffffffffffffffff;
-            TypedTmp ones = addConstant(mask);
-            result = tmpForType(Types::V128);
-            append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), ones, v, result);
-            return { };
-        }
-        else if (op == SIMDLaneOperation::Neg) {
-            // x86_64 has no vector negate instruction, so we expand vxv.neg v into vxv.sub 0, v
-            // here to give B3/Air a chance to optimize out repeated vector zeroing.
-            TypedTmp zero = addConstant(v128_t());
-            result = tmpForType(Types::V128);
-            append(VectorSub, Arg::simdInfo(info), zero, v, result);
-            return { };
-        }
-#else
         AIR_OP_CASE(Not)
         AIR_OP_CASE(Neg)
-#endif
 
         result = tmpForType(Types::V128);
 
         if (isX86()) {
+            if (airOp == B3::Air::VectorNot) {
+                // x86_64 has no vector bitwise NOT instruction, so we expand vxv.not v into vxv.xor -1, v
+                // here to give B3/Air a chance to optimize out repeated usage of the mask.
+                v128_t mask;
+                mask.u64x2[0] = 0xffffffffffffffff;
+                mask.u64x2[1] = 0xffffffffffffffff;
+                TypedTmp ones = addConstant(mask);
+                append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), ones, v, result);
+                return { };
+            }
+
+            if (airOp == B3::Air::VectorNeg) {
+                // x86_64 has no vector negate instruction. For integer vectors, we can replicate negation by
+                // subtracting from zero. For floating-point vectors, we need to toggle the sign using packed
+                // XOR.
+                switch (info.lane) {
+                case SIMDLane::i8x16:
+                case SIMDLane::i16x8:
+                case SIMDLane::i32x4:
+                case SIMDLane::i64x2: {
+                    TypedTmp zero = addConstant(v128_t());
+                    append(VectorSub, Arg::simdInfo(info), zero, v, result);
+                    break;
+                }
+                case SIMDLane::f32x4: {
+                    TypedTmp gptmp = tmpForType(Types::I32);
+                    TypedTmp fptmp = tmpForType(Types::V128);
+                    append(Move, Arg::bigImm(0x80000000), gptmp);
+                    append(Move32ToFloat, gptmp, fptmp);
+                    append(VectorSplatFloat32, fptmp, fptmp);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), v, fptmp, result);
+                    break;
+                }
+                case SIMDLane::f64x2: {
+                    TypedTmp gptmp = tmpForType(Types::I64);
+                    TypedTmp fptmp = tmpForType(Types::V128);
+                    append(Move, Arg::bigImm(0x8000000000000000), gptmp);
+                    append(Move64ToDouble, gptmp, fptmp);
+                    append(VectorSplatFloat64, fptmp, fptmp);
+                    append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), v, fptmp, result);
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                return { };
+            }
+
+            if (airOp == B3::Air::VectorAbs && info.lane == SIMDLane::i64x2) {
+                append(VectorAbsInt64, v, result, tmpForType(Types::V128));
+                return { };
+            }
+
             if (airOp == B3::Air::VectorExtaddPairwise) {
                 if (info.lane == SIMDLane::i16x8 && info.signMode == SIMDSignMode::Unsigned)
                     append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128));
@@ -303,7 +334,6 @@ public:
                     append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
                 return { };
             }
-
 
             if (airOp == B3::Air::VectorConvert && info.signMode == SIMDSignMode::Unsigned) {
                 append(VectorConvertUnsigned, v, result, tmpForType(Types::V128));
@@ -1540,6 +1570,7 @@ auto AirIRGenerator64::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Express
     } else if (isX86()) {
         Tmp shiftAmount = newTmp(B3::GP);
         Tmp shiftVector = newTmp(B3::FP);
+        append(Move32, shift.tmp(), shiftAmount);
         append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
         append(VectorSplat8, shiftAmount, shiftVector);
 

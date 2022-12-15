@@ -3318,6 +3318,10 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
                 self.failing_tests_filtered.remove(test)
+            else:
+                # Optimization to skip consulting results-db for every failure if we encounter any new failure,
+                # since until there is atleast one failure which is not pre-existing, we will anayways have to continue with retry logic.
+                break
 
     def evaluateResult(self, cmd):
         result = SUCCESS
@@ -4670,9 +4674,9 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '13': 'Ventura',
             '12': 'Monterey',
-            '11': 'Big Sur',
-            '10.15': 'Catalina',
+            '11': 'Big Sur'
         }
 
         for key, value in build_to_name_mapping.items():

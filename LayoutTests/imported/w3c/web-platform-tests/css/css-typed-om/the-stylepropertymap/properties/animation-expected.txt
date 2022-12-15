@@ -1,4 +1,4 @@
 
-PASS 'animation' does not supported 'slidein 3s ease-in 1s infinite reverse both running'
-PASS 'animation' does not supported 'slidein .5s linear 1s infinite alternate'
+PASS 'animation' does not support 'slidein 3s ease-in 1s infinite reverse both running'
+PASS 'animation' does not support 'slidein .5s linear 1s infinite alternate'
 

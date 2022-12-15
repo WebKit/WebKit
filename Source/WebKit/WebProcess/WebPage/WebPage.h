@@ -1651,6 +1651,10 @@ private:
     void clearSelectionAfterTapIfNeeded();
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    void updateLookalikeCharacterStringsIfNeeded();
+#endif
+
 #if ENABLE(META_VIEWPORT)
     void resetViewportDefaultConfiguration(WebFrame* mainFrame, bool hasMobileDocType = false);
     enum class ZoomToInitialScale { No, Yes };
@@ -2553,6 +2557,8 @@ private:
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     bool m_sanitizeLookalikeCharactersInLinksEnabled { false };
+    bool m_shouldUpdateLookalikeCharacterStrings { true };
+    HashSet<String> m_lookalikeCharacterStrings;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

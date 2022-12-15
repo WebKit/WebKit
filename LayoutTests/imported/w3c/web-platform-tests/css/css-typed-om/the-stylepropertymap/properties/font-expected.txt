@@ -1,7 +1,7 @@
 
-PASS 'font' does not supported '1.2em "Fira Sans", sans-serif'
-PASS 'font' does not supported 'italic 1.2em "Fira Sans", serif'
-PASS 'font' does not supported 'italic small-caps bold 16px/2 cursive'
-PASS 'font' does not supported 'small-caps bold 24px/1 sans-serif'
-PASS 'font' does not supported 'caption'
+PASS 'font' does not support '1.2em "Fira Sans", sans-serif'
+PASS 'font' does not support 'italic 1.2em "Fira Sans", serif'
+PASS 'font' does not support 'italic small-caps bold 16px/2 cursive'
+PASS 'font' does not support 'small-caps bold 24px/1 sans-serif'
+PASS 'font' does not support 'caption'
 

@@ -119,7 +119,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
  @return `YES` if the tab is pinned, `NO` otherwise.
  @discussion Defaults to `NO` if not implemented.
  */
-- (BOOL)isPinnedTabForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (BOOL)isPinnedForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the ephemeral state of the tab is needed.
@@ -239,7 +239,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
  @discussion If the tab is already loading a page, calling this method should stop the current page from loading and start loading the new URL.
  Loads the URL in the main web view if not implemented.
  */
-- (void)loadURL:(NSURL *)url forWebExtensionContext:(_WKWebExtensionContext *)context NS_SWIFT_NAME(load(url:forWebExtensionContext:));
+- (void)loadURL:(NSURL *)url forWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called to reload the current page in the tab.

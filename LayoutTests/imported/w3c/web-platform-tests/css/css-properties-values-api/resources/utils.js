@@ -124,3 +124,26 @@ function test_with_at_property(desc, fn, description) {
 function test_with_style_node(text, fn, description) {
   test(() => with_style_node(text, fn), description);
 }
+
+function animation_test(property, values, description) {
+  const name = generate_name();
+  property.name = name;
+  CSS.registerProperty(property);
+
+  test(() => {
+    const duration = 1000;
+    const keyframes = {};
+    keyframes[name] = values.keyframes;
+
+    const iterations = 3;
+    const composite = values.composite || "replace";
+    const iterationComposite = values.iterationComposite || "replace";
+    const animation = target.animate(keyframes, { composite, iterationComposite, iterations, duration });
+    animation.pause();
+    // We seek to the middle of the third iteration which will allow to test cases where
+    // iterationComposite is set to something other than "replace".
+    animation.currentTime = duration * 2.5;
+
+    assert_equals(getComputedStyle(target).getPropertyValue(name), values.expected);
+  }, description);
+};

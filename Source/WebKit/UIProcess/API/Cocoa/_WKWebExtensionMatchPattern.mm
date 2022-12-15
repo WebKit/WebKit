@@ -32,6 +32,7 @@
 
 #import "WebExtensionMatchPattern.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/URLParser.h>
 
 static NSString * const stringCodingKey = @"string";
 
@@ -65,6 +66,13 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
++ (void)registerCustomURLScheme:(NSString *)urlScheme
+{
+    NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme)), @"Invalid parameter: '%@' is not a valid URL scheme", urlScheme);
+
+    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(urlScheme);
+}
 
 + (instancetype)allURLsMatchPattern
 {
@@ -246,6 +254,10 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 }
 
 #else // ENABLE(WK_WEB_EXTENSIONS)
+
++ (void)registerCustomURLScheme:(NSString *)urlScheme
+{
+}
 
 + (instancetype)allURLsMatchPattern
 {

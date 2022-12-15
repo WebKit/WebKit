@@ -240,21 +240,24 @@ if (ENABLE_WEBKIT_LEGACY)
     set(TestWebKitLegacy_LIBRARIES
         WebKit::gtest
     )
+
+    set(TestWebKitLegacy_FRAMEWORKS
+        JavaScriptCore
+        PAL
+        WTF
+        WebCore
+    )
+    if (NOT USE_SYSTEM_MALLOC)
+        list(APPEND TestWebKitLegacy_FRAMEWORKS bmalloc)
+    endif ()
     if (NOT APPLE)
-        list(APPEND TestWebKitLegacy_LIBRARIES
-            WebKitLegacy
-        )
+        list(APPEND TestWebKitLegacy_FRAMEWORKS WebKitLegacy)
     endif ()
 
     set(TestWebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
         ${TESTWEBKITAPI_DIR}
-        ${PAL_FRAMEWORK_HEADERS_DIR}
-        ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-        ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
     )
-
-    set(TestWebKitLegacy_DEPENDENCIES WebKitLegacyFrameworkHeaders)
 
     WEBKIT_EXECUTABLE_DECLARE(TestWebKitLegacy)
 endif ()

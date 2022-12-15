@@ -1559,14 +1559,14 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
-    auto effectAnimatesProperty = [](KeyframeEffect& effect, std::variant<CSSPropertyID, AtomString> property) {
+    auto effectAnimatesProperty = [](KeyframeEffect& effect, CSSPropertyAnimation::Property property) {
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) { return effect.animatedProperties().contains(propertyId); },
             [&] (AtomString customProperty) { return effect.animatedCustomProperties().contains(customProperty); }
         );
     };
 
-    auto commitProperty = [&](std::variant<CSSPropertyID, AtomString> property) {
+    auto commitProperty = [&](CSSPropertyAnimation::Property property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.

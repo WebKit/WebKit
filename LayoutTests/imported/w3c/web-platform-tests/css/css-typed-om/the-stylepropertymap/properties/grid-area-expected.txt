@@ -1,9 +1,9 @@
 
-PASS 'grid-area' does not supported 'a'
-PASS 'grid-area' does not supported 'a / a'
-PASS 'grid-area' does not supported 'auto'
-PASS 'grid-area' does not supported 'auto / auto'
-PASS 'grid-area' does not supported '2 / 1 / 2'
-PASS 'grid-area' does not supported 'span 3'
-PASS 'grid-area' does not supported '2 span / a span'
+PASS 'grid-area' does not support 'a'
+PASS 'grid-area' does not support 'a / a'
+PASS 'grid-area' does not support 'auto'
+PASS 'grid-area' does not support 'auto / auto'
+PASS 'grid-area' does not support '2 / 1 / 2'
+PASS 'grid-area' does not support 'span 3'
+PASS 'grid-area' does not support '2 span / a span'
 

@@ -1,6 +1,6 @@
 
-PASS 'flex' does not supported 'auto'
-PASS 'flex' does not supported '2'
-PASS 'flex' does not supported '1 30px'
-PASS 'flex' does not supported '2 2 10%'
+PASS 'flex' does not support 'auto'
+PASS 'flex' does not support '2'
+PASS 'flex' does not support '1 30px'
+PASS 'flex' does not support '2 2 10%'
 

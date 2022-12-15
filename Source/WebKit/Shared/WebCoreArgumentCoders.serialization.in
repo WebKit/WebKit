@@ -2151,3 +2151,110 @@ struct WebCore::MediaDecodingConfiguration : WebCore::MediaConfiguration {
     WebCore::MediaDecodingType type;
     bool canExposeVP9;
 };
+    
+enum class WebCore::ResourceRequestCachePolicy : uint8_t {
+    UseProtocolCachePolicy,
+    ReloadIgnoringCacheData,
+    ReturnCacheDataElseLoad,
+    ReturnCacheDataDontLoad,
+    DoNotUseAnyCache,
+    RefreshAnyCacheData,
+};
+
+[Nested] enum class WebCore::ResourceRequestBase::SameSiteDisposition : uint8_t {
+    Unspecified,
+    SameSite,
+    CrossSite
+};
+
+[Nested] enum class WebCore::ResourceRequestRequester : uint8_t {
+    Unspecified,
+    Main,
+    XHR,
+    Fetch,
+    Media,
+    Model,
+    ImportScripts,
+    Ping,
+    Beacon,
+    EventSource
+};
+
+enum class WebCore::ResourceLoadPriority : uint8_t {
+    VeryLow,
+    Low,
+    Medium,
+    High,
+    VeryHigh,
+};
+
+[Nested] enum class WebCore::ResourceResponseBase::Type : uint8_t {
+    Basic,
+    Cors,
+    Default,
+    Error,
+    Opaque,
+    Opaqueredirect
+};
+
+[Nested] enum class WebCore::ResourceResponseBase::Tainting : uint8_t {
+    Basic,
+    Cors,
+    Opaque,
+    Opaqueredirect
+};
+    
+[Nested] enum class WebCore::ResourceResponseBase::Source : uint8_t {
+    Unknown,
+    Network,
+    DiskCache,
+    DiskCacheAfterValidation,
+    MemoryCache,
+    MemoryCacheAfterValidation,
+    ServiceWorker,
+    ApplicationCache,
+    DOMCache,
+    InspectorOverride
+};
+
+[Nested] struct WebCore::ResourceResponseBase::ResponseData {
+    URL m_url;
+    AtomString m_mimeType;
+    long long m_expectedContentLength;
+    AtomString m_textEncodingName;
+    AtomString m_httpStatusText;
+    AtomString m_httpVersion;
+    WebCore::HTTPHeaderMap m_httpHeaderFields;
+    Box<WebCore::NetworkLoadMetrics> m_networkLoadMetrics;
+
+    short m_httpStatusCode;
+    std::optional<WebCore::CertificateInfo> m_certificateInfo;
+    
+    WebCore::ResourceResponseBase::Source m_source;
+    WebCore::ResourceResponseBase::Type m_type;
+    WebCore::ResourceResponseBase::Tainting m_tainting;
+
+    bool m_isRedirected;
+    WebCore::UsedLegacyTLS m_usedLegacyTLS;
+    WebCore::WasPrivateRelayed m_wasPrivateRelayed;
+    bool m_isRangeRequested;
+}
+
+class WebCore::ResourceResponseBase {
+    std::optional<WebCore::ResourceResponseBase::ResponseData> getResponseData()
+}
+
+class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
+}
+
+enum class WebCore::ReferrerPolicy : uint8_t {
+    EmptyString,
+    NoReferrer,
+    NoReferrerWhenDowngrade,
+    SameOrigin,
+    Origin,
+    StrictOrigin,
+    OriginWhenCrossOrigin,
+    StrictOriginWhenCrossOrigin,
+    UnsafeUrl,
+};

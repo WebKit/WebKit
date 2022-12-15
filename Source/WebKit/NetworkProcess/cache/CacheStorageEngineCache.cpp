@@ -603,8 +603,9 @@ static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::
     if (!responseHeadersGuard)
         return std::nullopt;
 
-    ResourceResponse response;
-    if (!ResourceResponse::decode(decoder, response))
+    std::optional<ResourceResponse> response;
+    decoder >> response;
+    if (!response)
         return std::nullopt;
     
     std::optional<uint64_t> responseBodySize;
@@ -623,7 +624,7 @@ static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::
         WTFMove(options),
         WTFMove(*referrer),
         WTFMove(*responseHeadersGuard),
-        WTFMove(response),
+        WTFMove(*response),
         { },
         WTFMove(*responseBodySize)
     }};

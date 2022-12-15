@@ -86,6 +86,27 @@ DocumentFragment& HTMLTemplateElement::content() const
     return *m_content;
 }
 
+const AtomString& HTMLTemplateElement::shadowRootMode() const
+{
+    static MainThreadNeverDestroyed<const AtomString> open("open"_s);
+    static MainThreadNeverDestroyed<const AtomString> closed("closed"_s);
+
+    auto modeString = attributeWithoutSynchronization(HTMLNames::shadowrootmodeAttr);
+    if (equalLettersIgnoringASCIICase(modeString, "closed"_s))
+        return closed;
+    if (equalLettersIgnoringASCIICase(modeString, "open"_s))
+        return open;
+    return nullAtom();
+}
+
+void HTMLTemplateElement::setShadowRootMode(const AtomString& value)
+{
+    if (value.isNull())
+        removeAttribute(HTMLNames::shadowrootmodeAttr);
+    else
+        setAttribute(HTMLNames::shadowrootmodeAttr, value);
+}
+
 void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
 {
     m_declarativeShadowRoot = shadowRoot;
