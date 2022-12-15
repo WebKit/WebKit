@@ -136,6 +136,12 @@ public:
         }
     }
 
+    void clearSIMDStatus()
+    {
+        if (supportsAVX())
+            m_assembler.vzeroupper();
+    }
+
     void addDouble(AbsoluteAddress address, FPRegisterID dest)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());

@@ -6941,7 +6941,6 @@ private:
                 writer.threeBytesVexNds(simdPrefix, VexImpliedBytes::TwoBytesOp, vexW, (RegisterID)0, (RegisterID)0, (RegisterID)0);
             else
                 writer.twoBytesVex(simdPrefix, (RegisterID)0, (RegisterID)0);
-            writer.twoBytesVex(simdPrefix, (RegisterID)0, (RegisterID)0);
             writer.putByteUnchecked(opcode);
         }
 
