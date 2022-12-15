@@ -1,7 +1,5 @@
 set(DumpRenderTree_DIR "${TOOLS_DIR}/DumpRenderTree")
 set(DumpRenderTree_BINDINGS_DIR "${TOOLS_DIR}/DumpRenderTree/Bindings")
-set(WebKitTestRunner_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
-set(WebKitTestRunner_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/TestRunnerShared/UIScriptContext")
 
 file(MAKE_DIRECTORY ${DumpRenderTree_DERIVED_SOURCES_DIR})
 
@@ -18,12 +16,10 @@ set(DumpRenderTree_SOURCES
     WorkQueue.cpp
 )
 
-set(DumpRenderTree_PRIVATE_LIBRARIES
-    TestRunnerShared
-)
 set(DumpRenderTree_FRAMEWORKS
     JavaScriptCore
     PAL
+    TestRunnerShared
     WTF
     WebCore
     WebCoreTestSupport
@@ -37,9 +33,6 @@ set(DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${DumpRenderTree_DERIVED_SOURCES_DIR}
     ${DumpRenderTree_DIR}
-    ${WebKitTestRunner_SHARED_DIR}
-    ${WebKitTestRunner_SHARED_DIR}/Bindings
-    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
 )
 
 set(DumpRenderTree_WEB_PREFERENCES_TEMPLATES

@@ -51,6 +51,17 @@ GENERATE_BINDINGS(TestRunnerSharedBindings
 set(TestRunnerShared_LIBRARY_TYPE OBJECT)
 set(TestRunnerShared_DEPENDENCIES TestRunnerSharedBindings)
 
+set(TestRunnerShared_INTERFACE_LIBRARIES
+    $<TARGET_OBJECTS:TestRunnerShared>
+    TestRunnerShared
+)
+set(TestRunnerShared_INTERFACE_INCLUDE_DIRECTORIES
+    ${TestRunnerShared_DIR}
+    ${TestRunnerShared_DIR}/Bindings
+    ${TestRunnerShared_DIR}/UIScriptContext
+)
+
 WEBKIT_FRAMEWORK_DECLARE(TestRunnerShared)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_FRAMEWORK(TestRunnerShared)
+WEBKIT_FRAMEWORK_TARGET(TestRunnerShared)
