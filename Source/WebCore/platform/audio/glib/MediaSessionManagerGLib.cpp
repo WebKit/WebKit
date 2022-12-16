@@ -134,7 +134,7 @@ void MediaSessionManagerGLib::beginInterruption(PlatformMediaSession::Interrupti
 {
     if (type == PlatformMediaSession::InterruptionType::SystemInterruption) {
         forEachSession([] (auto& session) {
-            session.clearHasPlayedSinceLastInterruption();
+            session.clearHasPlayedAudiblySinceLastInterruption();
         });
     }
 

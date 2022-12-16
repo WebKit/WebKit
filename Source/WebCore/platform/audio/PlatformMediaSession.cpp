@@ -160,8 +160,8 @@ void PlatformMediaSession::setState(State state)
 
     ALWAYS_LOG(LOGIDENTIFIER, state);
     m_state = state;
-    if (m_state == State::Playing)
-        m_hasPlayedSinceLastInterruption = true;
+    if (m_state == State::Playing && canProduceAudio())
+        m_hasPlayedAudiblySinceLastInterruption = true;
     PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
 }
 
