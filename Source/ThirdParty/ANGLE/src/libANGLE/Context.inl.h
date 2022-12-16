@@ -85,6 +85,11 @@ ANGLE_INLINE bool Context::noopDraw(PrimitiveMode mode, GLsizei count) const
     return count < kMinimumPrimitiveCounts[mode];
 }
 
+ANGLE_INLINE bool Context::noopMultiDraw(GLsizei drawcount) const
+{
+    return (!drawcount || !mStateCache.getCanDraw());
+}
+
 ANGLE_INLINE angle::Result Context::syncDirtyBits(Command command)
 {
     const State::DirtyBits &dirtyBits = mState.getDirtyBits();
