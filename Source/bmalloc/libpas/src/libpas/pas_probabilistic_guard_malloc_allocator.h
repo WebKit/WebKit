@@ -53,8 +53,14 @@ struct pas_pgm_storage {
 // including guard pages and wasted memory
 #define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
 
-// Probability that we should call PGM in percentage (0-100)
-#define PAS_PGM_PROBABILITY (1)
+// Probability that we should call PGM is 0.1%.
+// PGM is only enabled on macOS for now. Other platforms should be considered in the future.
+#if PAS_PLATFORM(MAC)
+#define PAS_SHOULD_ALLOC_USING_PGM (PAS_UNLIKELY(pas_get_fast_random(1000) < 1))
+#else
+#define PAS_SHOULD_ALLOC_USING_PGM (0)
+#endif
+
 
 /* We want a fast way to determine if we can call PGM or not.
  * It would be really wasteful to recompute this answer each time we try to allocate,
