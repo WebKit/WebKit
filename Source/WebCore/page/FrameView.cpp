@@ -2412,6 +2412,7 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, const ScrollPositionChangeOptions& options)
 {
+    WTFLogAlways("Chirag 1 - FrameView::setScrollPosition: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
     LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " animated " << (options.animated == ScrollIsAnimated::Yes) << ", clearing anchor");
 
     auto oldScrollType = currentScrollType();
@@ -2597,6 +2598,7 @@ void FrameView::cancelScheduledTextFragmentIndicatorTimer()
 
 bool FrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject& renderer, bool insideFixed, const ScrollRectToVisibleOptions& options)
 {
+    WTFLogAlways("FrameView::scrollRectToVisible: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
     if (options.revealMode == SelectionRevealMode::DoNotReveal)
         return false;
 
@@ -2633,6 +2635,7 @@ static ScrollPositionChangeOptions scrollPositionChangeOptionsForElement(const F
 
 void FrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options, const HTMLFrameOwnerElement* ownerElement)
 {
+    WTFLogAlways("FrameView::scrollRectToVisibleInChildView: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
     // If scrollbars aren't explicitly forbidden, permit scrolling.
     const HTMLFrameElementBase* frameElementBase = dynamicDowncast<HTMLFrameElementBase>(ownerElement);
     if (frameElementBase && frameElementBase->scrollingMode() == ScrollbarMode::AlwaysOff) {
@@ -2668,8 +2671,10 @@ void FrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRect, b
         return;
 
     // FIXME: ideally need to determine if this <iframe> is inside position:fixed.
-    if (auto* ownerRenderer = ownerElement->renderer())
+    if (auto* ownerRenderer = ownerElement->renderer()) {
+        WTFLogAlways("Chirag -- before calling: scrollRectToVisible: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
         scrollRectToVisible(contentsToContainingViewContents(enclosingIntRect(targetRect)), *ownerRenderer, false /* insideFixed */, options);
+    }
 }
 
 void FrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options)
@@ -3756,12 +3761,6 @@ void FrameView::performPostLayoutTasks()
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "FrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
-
-    if (auto& selection = frame().selection(); selection.isFocusedAndActive()) {
-        // FIXME (247041): We should be able to remove this appearance update altogether,
-        // and instead defer updates until the next rendering update.
-        selection.updateAppearanceAfterLayout();
-    }
 
     flushPostLayoutTasksQueue();
 
