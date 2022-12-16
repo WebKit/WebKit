@@ -21,6 +21,7 @@
 #include "config.h"
 #include "HTMLProgressElement.h"
 
+#include "AXObjectCache.h"
 #include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -138,6 +139,9 @@ void HTMLProgressElement::didElementStateChange()
     m_value->setWidthPercentage(position() * 100);
     if (RenderProgress* renderer = renderProgress())
         renderer->updateFromElement();
+
+    if (auto* cache = document().existingAXObjectCache())
+        cache->valueChanged(this);
 }
 
 void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
