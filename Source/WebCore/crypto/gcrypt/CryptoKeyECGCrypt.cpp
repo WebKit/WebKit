@@ -46,6 +46,9 @@ static const char* curveName(CryptoKeyEC::NamedCurve curve)
         return "NIST P-384";
     case CryptoKeyEC::NamedCurve::P521:
         return "NIST P-521";
+    case CryptoKeyEC::NamedCurve::Curve25519:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -61,6 +64,9 @@ static const uint8_t* curveIdentifier(CryptoKeyEC::NamedCurve curve)
         return CryptoConstants::s_secp384r1Identifier.data();
     case CryptoKeyEC::NamedCurve::P521:
         return CryptoConstants::s_secp521r1Identifier.data();
+    case CryptoKeyEC::NamedCurve::Curve25519:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -76,6 +82,9 @@ static size_t curveSize(CryptoKeyEC::NamedCurve curve)
         return 384;
     case CryptoKeyEC::NamedCurve::P521:
         return 521;
+    case CryptoKeyEC::NamedCurve::Curve25519:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -91,6 +100,9 @@ static unsigned curveUncompressedFieldElementSize(CryptoKeyEC::NamedCurve curve)
         return 48;
     case CryptoKeyEC::NamedCurve::P521:
         return 66;
+    case CryptoKeyEC::NamedCurve::Curve25519:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     ASSERT_NOT_REACHED();

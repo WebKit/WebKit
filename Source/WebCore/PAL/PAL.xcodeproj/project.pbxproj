@@ -82,7 +82,6 @@
 		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
 		41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */; };
 		41E9EE2328BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9EE2228BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h */; };
-		41E9EE2628BCA19E006A2298 /* SBSStatusBarSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */; };
 		4469328B28483EF700614F16 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4469328A2848321C00614F16 /* FoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
@@ -91,6 +90,7 @@
 		57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */; };
 		5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C787223AC3E770065F47E /* ManagedConfigurationSoftLink.mm */; };
 		5CB898B2286274FA00CA3485 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB898B1286274FA00CA3485 /* QuarantineSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CF873A728D390EF00DD8391 /* CoreCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CF873A628D390EF00DD8391 /* CoreCryptoSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B47F2A328587B9700E793C8 /* CoreGraphicsSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B47F2A128587B9700E793C8 /* CoreGraphicsSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B47F2A428587B9700E793C8 /* CoreGraphicsSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B47F2A228587B9700E793C8 /* CoreGraphicsSoftLink.cpp */; };
 		93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */; };
@@ -909,7 +909,6 @@
 		416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoToolboxSoftLink.h; sourceTree = "<group>"; };
 		41B99E4525DD70150007829A /* AVStreamDataParserSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVStreamDataParserSPI.h; sourceTree = "<group>"; };
 		41E9EE2228BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaExperienceAVSystemControllerSPI.h; sourceTree = "<group>"; };
-		41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBSStatusBarSPI.h; sourceTree = "<group>"; };
 		442956CC218A72DE0080DB54 /* RevealSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevealSPI.h; sourceTree = "<group>"; };
 		445097BB26EBF66D003EF771 /* CFNotificationCenterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNotificationCenterSPI.h; sourceTree = "<group>"; };
 		4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookSoftLink.mm; sourceTree = "<group>"; };
@@ -933,6 +932,7 @@
 		5C7C787223AC3E770065F47E /* ManagedConfigurationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ManagedConfigurationSoftLink.mm; sourceTree = "<group>"; };
 		5C7C787523AC3E850065F47E /* ManagedConfigurationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedConfigurationSPI.h; sourceTree = "<group>"; };
 		5CB898B1286274FA00CA3485 /* QuarantineSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuarantineSPI.h; sourceTree = "<group>"; };
+		5CF873A628D390EF00DD8391 /* CoreCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreCryptoSPI.h; sourceTree = "<group>"; };
 		63E369F921AFA83F001C14BC /* NSProgressSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSProgressSPI.h; sourceTree = "<group>"; };
 		71B1141F26823ACD004D6701 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
 		7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
@@ -1103,6 +1103,7 @@
 				29CDEB9E2548D055007C07B7 /* AXSpeechManagerSPI.h */,
 				0C2DA1231F3BEB4900DBC317 /* CFNSURLConnectionSPI.h */,
 				7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */,
+				5CF873A628D390EF00DD8391 /* CoreCryptoSPI.h */,
 				ABCA536724895DB900361BFF /* CoreMotionSPI.h */,
 				C138EA1A2436447200656DF1 /* CoreServicesSPI.h */,
 				DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */,
@@ -1170,7 +1171,6 @@
 				0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */,
 				0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */,
 				0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */,
-				41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */,
 				0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */,
 				31308B1320A21705003FB929 /* SystemPreviewSPI.h */,
 				0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */,
@@ -1771,6 +1771,7 @@
 				DD20DDE027BC90D70093D175 /* CommonCryptoSPI.h in Headers */,
 				DD20DE6527BC90F90093D175 /* config.h in Headers */,
 				DD20DDCE27BC90D70093D175 /* CoreAudioSPI.h in Headers */,
+				5CF873A728D390EF00DD8391 /* CoreCryptoSPI.h in Headers */,
 				7B47F2A328587B9700E793C8 /* CoreGraphicsSoftLink.h in Headers */,
 				DD20DDD327BC90D70093D175 /* CoreGraphicsSPI.h in Headers */,
 				DD20DD1627BC90D60093D175 /* CoreMediaSoftLink.h in Headers */,
@@ -1898,7 +1899,6 @@
 				DD20DDC227BC90D70093D175 /* ReplayKitSoftLink.h in Headers */,
 				DD20DD2327BC90D60093D175 /* RevealSoftLink.h in Headers */,
 				DD20DE0627BC90D80093D175 /* RevealSPI.h in Headers */,
-				41E9EE2628BCA19E006A2298 /* SBSStatusBarSPI.h in Headers */,
 				DD20DE0727BC90D80093D175 /* SceneKitSPI.h in Headers */,
 				DD20DDC827BC90D70093D175 /* ScreenCaptureKitSoftLink.h in Headers */,
 				DD20DE4027BC90D80093D175 /* ScreenCaptureKitSPI.h in Headers */,

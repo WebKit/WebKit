@@ -55,8 +55,8 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     // tag + length(1) + tag + length(1) + InitialOctet(?) + keyLength in bytes + tag + length(1) + InitialOctet(?) + keyLength in bytes
     Vector<uint8_t> signature(8 + keyLengthInBytes * 2);
     size_t signatureSize = signature.size();
-
-    CCCryptorStatus status = CCECCryptorSignHash(key, digestData.data(), digestData.size(), signature.data(), &signatureSize);
+    CCECCryptorRef ccecckey = std::get<CCECCryptorRef>(key);
+    CCCryptorStatus status = CCECCryptorSignHash(ccecckey, digestData.data(), digestData.size(), signature.data(), &signatureSize);
     if (status)
         return Exception { OperationError };
 
@@ -149,7 +149,8 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
     newSignature.append(signature.data() + sStart, keyLengthInBytes * 2 - sStart);
 
     uint32_t valid;
-    CCCryptorStatus status = CCECCryptorVerifyHash(key, digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);
+    CCECCryptorRef ccecckey = std::get<CCECCryptorRef>(key);
+    CCCryptorStatus status = CCECCryptorVerifyHash(ccecckey, digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);
     if (status) {
         WTFLogAlways("ERROR: CCECCryptorVerifyHash() returns error=%d", status);
         return false;

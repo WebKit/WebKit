@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test X25519 deriveBits operation with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var rawPrivateKey = new Uint8Array([2,0,0,0,7,0,0,0,6,69,12,57,1,0,0,0,4,255,28,168,2,0,0,0,120,0,0,0,44,32,48,41]);
+var rawPublicKey = new Uint8Array([2,0,0,0,4,0,0,0,95,176,234,133,2,0,0,0,4,153,228,133,0,0,0,0,192,164,13,7,1,0,0,0]);
+var rawFakeKey = new Uint8Array([2,0,0,0,4,0,1,0,95,176,234,133,2,0,0,0,4,153,228,133,0,0,0,0,192,164,13,7,1,0,0,0]);
+
+
+crypto.subtle.importKey("raw", rawPrivateKey, { name: "X25519" }, extractable, []).then(function(result) {
+    privateKey = result;
+    extractable = true;
+    return crypto.subtle.importKey("raw", rawPublicKey, { name: "X25519" }, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+    // Malformed AlgorithmIdentifiers
+    shouldReject('crypto.subtle.deriveBits("X25519", privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519"}, privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519", public: true}, privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519", public: null}, privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519", public: undefined}, privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519", public: Symbol()}, privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519", public: { }}, privateKey, null)');
+    shouldReject('crypto.subtle.deriveBits({name: "X25519", public: 1}, privateKey, null)');
+    // base key is public
+    shouldReject('crypto.subtle.deriveBits({ name:"X25519", public:publicKey }, publicKey, null)');
+    // public key is private
+    shouldReject('crypto.subtle.deriveBits({ name:"X25519", public:privateKey }, privateKey, null)');
+    // Wrong length
+    return shouldReject('crypto.subtle.deriveBits({ name:"X25519", public:publicKey }, privateKey, 384)');
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -47,6 +47,7 @@
 #include "CryptoAlgorithmSHA256.h"
 #include "CryptoAlgorithmSHA384.h"
 #include "CryptoAlgorithmSHA512.h"
+#include "CryptoAlgorithmX25519.h"
 
 namespace WebCore {
 
@@ -65,6 +66,7 @@ void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
     registerAlgorithm<CryptoAlgorithmRSAES_PKCS1_v1_5>();
     registerAlgorithm<CryptoAlgorithmRSASSA_PKCS1_v1_5>();
     registerAlgorithm<CryptoAlgorithmRSA_OAEP>();
+    registerAlgorithm<CryptoAlgorithmX25519>();
 #if HAVE(RSA_PSS)
     registerAlgorithm<CryptoAlgorithmRSA_PSS>();
 #endif

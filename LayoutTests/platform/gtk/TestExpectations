@@ -571,6 +571,15 @@ webkit.org/b/175199 crypto/subtle/ecdsa-import-key-sign-p521.html [ Skip ]
 webkit.org/b/175199 crypto/subtle/ecdsa-import-key-verify-p521.html [ Skip ]
 webkit.org/b/175199 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Skip ]
 
+#Missing support for the X25519 algorithm
+webkit.org/b/249017 crypto/subtle/X25519-derive-bits-length-limits.html [ Skip ]
+webkit.org/b/249017 crypto/subtle/X25519-derive-bits-malformed-parameters.html [ Skip ]
+webkit.org/b/249017 crypto/subtle/X25519-generate-export-key-raw.html [ Skip ]
+webkit.org/b/249017 crypto/subtle/X25519-generate-key-derive-bits.html [ Skip ]
+webkit.org/b/249017 crypto/subtle/X25519-generate-key-exctractable.html [ Skip ]
+webkit.org/b/249017 crypto/subtle/X25519-generate-key.html [ Skip ]
+webkit.org/b/249017 crypto/subtle/X25519-generate-single-usage.html [ Skip ]
+
 # GTK does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]

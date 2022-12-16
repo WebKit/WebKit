@@ -1,0 +1,233 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+#include "config.h"
+#include "CryptoAlgorithmX25519.h"
+
+#if ENABLE(WEB_CRYPTO)
+
+#include "CryptoAlgorithmEcKeyParams.h"
+#include "CryptoAlgorithmX25519Params.h"
+#include "CryptoKeyEC.h"
+#include "ScriptExecutionContext.h"
+
+
+namespace WebCore {
+
+Ref<CryptoAlgorithm> CryptoAlgorithmX25519::create()
+{
+    return adoptRef(*new CryptoAlgorithmX25519);
+}
+
+CryptoAlgorithmIdentifier CryptoAlgorithmX25519::identifier() const
+{
+    return s_identifier;
+}
+
+void CryptoAlgorithmX25519::generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+{
+    if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
+        exceptionCallback(SyntaxError);
+        return;
+    }
+
+    auto result = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::X25519, "Curve25519"_s, extractable, usages);
+    if (result.hasException()) {
+        exceptionCallback(result.releaseException().code());
+        return;
+    }
+
+    auto pair = result.releaseReturnValue();
+    pair.publicKey->setUsagesBitmap(0);
+    pair.privateKey->setUsagesBitmap(pair.privateKey->usagesBitmap() & (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits));
+    callback(WTFMove(pair));
+}
+
+void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    if (baseKey->type() != CryptoKey::Type::Private) {
+        exceptionCallback(InvalidAccessError);
+        return;
+    }
+    auto& ecParameters = downcast<CryptoAlgorithmX25519Params>(parameters);
+    ASSERT(ecParameters.publicKey);
+    if (ecParameters.publicKey->type() != CryptoKey::Type::Public) {
+        exceptionCallback(InvalidAccessError);
+        return;
+    }
+    if (baseKey->algorithmIdentifier() != ecParameters.publicKey->algorithmIdentifier()) {
+        exceptionCallback(InvalidAccessError);
+        return;
+    }
+    auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey.get());
+    auto& ecPublicKey = downcast<CryptoKeyEC>(*(ecParameters.publicKey.get()));
+    if (ecBaseKey.namedCurve() != ecPublicKey.namedCurve()) {
+        exceptionCallback(InvalidAccessError);
+        return;
+    }
+
+    auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, size_t length) mutable {
+        if (!derivedKey) {
+            exceptionCallback(OperationError);
+            return;
+        }
+        if (!length) {
+            callback(WTFMove(*derivedKey));
+            return;
+        }
+        auto lengthInBytes = std::ceil(length / 8.);
+        if (lengthInBytes > (*derivedKey).size()) {
+            exceptionCallback(OperationError);
+            return;
+        }
+        (*derivedKey).shrink(lengthInBytes);
+        callback(WTFMove(*derivedKey));
+    };
+
+    // This is a special case that can't use dispatchOperation() because it bundles
+    // the result validation and callback dispatch into unifiedCallback.
+    workQueue.dispatch(
+        [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey, length, unifiedCallback = WTFMove(unifiedCallback), contextIdentifier = context.identifier()]() mutable {
+            auto derivedKey = platformDeriveBits(downcast<CryptoKeyEC>(baseKey.get()), downcast<CryptoKeyEC>(*publicKey));
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [derivedKey = WTFMove(derivedKey), length, unifiedCallback = WTFMove(unifiedCallback)](auto&) mutable {
+                unifiedCallback(WTFMove(derivedKey), length);
+            });
+        });
+}
+
+void CryptoAlgorithmX25519::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    RefPtr<CryptoKeyEC> result;
+    switch (format) {
+    case CryptoKeyFormat::Jwk: {
+        JsonWebKey key = WTFMove(std::get<JsonWebKey>(data));
+
+        bool isUsagesAllowed = false;
+        if (!key.d.isNull()) {
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDeriveKey);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDeriveBits);
+            isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits));
+        }
+        isUsagesAllowed = isUsagesAllowed || !usages;
+        if (!isUsagesAllowed) {
+            exceptionCallback(SyntaxError);
+            return;
+        }
+
+        if (usages && !key.use.isNull() && key.use != "enc"_s) {
+            exceptionCallback(DataError);
+            return;
+        }
+
+        result = CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier::X25519, "Curve25519"_s, WTFMove(key), extractable, usages);
+        break;
+    }
+    case CryptoKeyFormat::Raw:
+        if (usages) {
+            exceptionCallback(SyntaxError);
+            return;
+        }
+            
+        if (!extractable)
+            usages = CryptoKeyUsageDeriveBits;
+        result = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::X25519, "Curve25519"_s, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    case CryptoKeyFormat::Spki:
+        if (usages) {
+            exceptionCallback(SyntaxError);
+            return;
+        }
+        result = CryptoKeyEC::importSpki(CryptoAlgorithmIdentifier::X25519, "Curve25519"_s, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    case CryptoKeyFormat::Pkcs8:
+        if (usages && (usages ^ CryptoKeyUsageDeriveKey) && (usages ^ CryptoKeyUsageDeriveBits) && (usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits))) {
+            exceptionCallback(SyntaxError);
+            return;
+        }
+        result = CryptoKeyEC::importPkcs8(CryptoAlgorithmIdentifier::X25519, "Curve25519"_s, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    }
+    if (!result) {
+        exceptionCallback(DataError);
+        return;
+    }
+
+    callback(*result);
+}
+
+void CryptoAlgorithmX25519::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+{
+    const auto& ecKey = downcast<CryptoKeyEC>(key.get());
+
+    if (!ecKey.keySizeInBits()) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    KeyData result;
+    switch (format) {
+    case CryptoKeyFormat::Jwk: {
+        auto jwk = ecKey.exportJwk();
+        if (jwk.hasException()) {
+            exceptionCallback(jwk.releaseException().code());
+            return;
+        }
+        result = jwk.releaseReturnValue();
+        break;
+    }
+    case CryptoKeyFormat::Raw: {
+        auto raw = ecKey.exportRaw();
+        if (raw.hasException()) {
+            exceptionCallback(raw.releaseException().code());
+            return;
+        }
+        result = raw.releaseReturnValue();
+        break;
+    }
+    case CryptoKeyFormat::Spki: {
+        auto spki = ecKey.exportSpki();
+        if (spki.hasException()) {
+            exceptionCallback(spki.releaseException().code());
+            return;
+        }
+        result = spki.releaseReturnValue();
+        break;
+    }
+    case CryptoKeyFormat::Pkcs8: {
+        auto pkcs8 = ecKey.exportPkcs8();
+        if (pkcs8.hasException()) {
+            exceptionCallback(pkcs8.releaseException().code());
+            return;
+        }
+        result = pkcs8.releaseReturnValue();
+        break;
+    }
+    }
+
+    callback(format, WTFMove(result));
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_CRYPTO)
