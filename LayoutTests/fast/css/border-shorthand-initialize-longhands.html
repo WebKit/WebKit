@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
 
 description("This test ensures border shorthand property initializes longhand properties such as border-top-style and border-right-color.");
 
 var div = document.createElement('div');
-shouldBe("div.setAttribute('style', 'border: 1px');div.style.borderTopStyle", "'initial'");
-shouldBe("div.style.borderTopStyle", "'initial'");
-shouldBe("div.style.borderRightStyle", "'initial'");
-shouldBe("div.style.borderBottomStyle", "'initial'");
-shouldBe("div.style.borderLeftStyle", "'initial'");
+shouldBeEqualToString("div.setAttribute('style', 'border: 1px');div.style.borderTopStyle", "none");
+shouldBeEqualToString("div.style.borderRightStyle", "none");
+shouldBeEqualToString("div.style.borderBottomStyle", "none");
+shouldBeEqualToString("div.style.borderLeftStyle", "none");
 
-shouldBe("div.style.borderTopColor", "'initial'");
-shouldBe("div.style.borderRightColor", "'initial'");
-shouldBe("div.style.borderBottomColor", "'initial'");
-shouldBe("div.style.borderLeftColor", "'initial'");
+shouldBeEqualToString("div.style.borderTopColor", "currentcolor");
+shouldBeEqualToString("div.style.borderRightColor", "currentcolor");
+shouldBeEqualToString("div.style.borderBottomColor", "currentcolor");
+shouldBeEqualToString("div.style.borderLeftColor", "currentcolor");
 
-shouldBe("div.setAttribute('style', 'border: solid');div.style.borderTopWidth", "'initial'");
-shouldBe("div.style.borderRightWidth", "'initial'");
-shouldBe("div.style.borderBottomWidth", "'initial'");
-shouldBe("div.style.borderLeftWidth", "'initial'");
+shouldBeEqualToString("div.setAttribute('style', 'border: solid');div.style.borderTopWidth", "medium");
+shouldBeEqualToString("div.style.borderRightWidth", "medium");
+shouldBeEqualToString("div.style.borderBottomWidth", "medium");
+shouldBeEqualToString("div.style.borderLeftWidth", "medium");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

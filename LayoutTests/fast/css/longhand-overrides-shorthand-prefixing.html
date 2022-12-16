@@ -1,4 +1,4 @@
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <body>
 <script>
 
@@ -63,10 +63,7 @@ function testProperty(shorthandProperty, unprefixedShorthandProperty, longhandPr
     debug("");
 }
 
-testPropertyVariants("animation", "animation-duration", "2s move", "10s ease 0s 1 normal none running move", "10s");
-
-successfullyParsed = true;
+testPropertyVariants("animation", "animation-duration", "2s move", "10s move", "10s");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>

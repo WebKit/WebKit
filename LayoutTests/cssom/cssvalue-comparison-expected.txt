@@ -1,107 +1,338 @@
 This test verifies that CSSValue objects comparison works correctly.
 
 
-PASS Two CSSValues "20%" for property "width" are equal.
-PASS Two CSSValues "2em" for property "width" are equal.
-PASS Two CSSValues "2rem" for property "width" are equal.
-PASS Two CSSValues "20px" for property "width" are equal.
-PASS Two CSSValues "2cm" for property "width" are equal.
-PASS Two CSSValues "20mm" for property "width" are equal.
-PASS Two CSSValues "4in" for property "width" are equal.
-PASS Two CSSValues "20pt" for property "width" are equal.
-PASS Two CSSValues "10pc" for property "width" are equal.
-PASS Two CSSValues "6vw" for property "width" are equal.
-PASS Two CSSValues "6vh" for property "width" are equal.
-PASS Two CSSValues "4vmin" for property "width" are equal.
-PASS Two CSSValues "-webkit-calc(-100px + 100%)" for property "width" are equal.
-PASS Two CSSValues "20%" and "2em" for property "width" are not equal.
-PASS Two CSSValues "rotate(15deg)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "rotate(1.55rad)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "rotate(200grad)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "rotate(0.5turn)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "rotate(15deg)" and "rotate(1.55rad)" for property "-webkit-transform" are not equal.
-PASS Two CSSValues "url(dummy://test.png)" for property "background-image" are equal.
-PASS Two CSSValues "url(dummy://green.png)" for property "background-image" are equal.
-PASS Two CSSValues "url(dummy://test.png)" and "url(dummy://green.png)" for property "background-image" are not equal.
-PASS Two CSSValues "bold" for property "font-weight" are equal.
-PASS Two CSSValues "inherit" for property "font-weight" are equal.
-PASS Two CSSValues "bold" and "inherit" for property "font-weight" are not equal.
-PASS Two CSSValues "counter(a)" for property "content" are equal.
-PASS Two CSSValues "counters(a, '.')" for property "content" are equal.
-PASS Two CSSValues "counter(a)" and "counters(a, '.')" for property "content" are not equal.
-PASS Two CSSValues "attr(a)" for property "content" are equal.
-PASS Two CSSValues "attr(p)" for property "content" are equal.
-PASS Two CSSValues "attr(a)" and "attr(p)" for property "content" are not equal.
-PASS Two CSSValues "rect(40px, 0, 45px, -5px)" for property "clip" are equal.
-PASS Two CSSValues "rect(10px, 5px, 15px, -10px)" for property "clip" are equal.
-PASS Two CSSValues "rect(40px, 0, 45px, -5px)" and "rect(10px, 5px, 15px, -10px)" for property "clip" are not equal.
-PASS Two CSSValues "30px 75px 15px 15px" for property "border-radius" are equal.
-PASS Two CSSValues "164px / 82px" for property "border-radius" are equal.
-PASS Two CSSValues "40px" for property "border-radius" are equal.
-PASS Two CSSValues "30px 75px 15px 15px" and "164px / 82px" for property "border-radius" are not equal.
-PASS Two CSSValues "rgb(255,0,0)" for property "stop-color" are equal.
-PASS Two CSSValues "#FF5566" for property "stop-color" are equal.
-PASS Two CSSValues "rgb(255,0,0)" and "#FF5566" for property "stop-color" are not equal.
-PASS Two CSSValues "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" for property "-webkit-clip-path" are equal.
-PASS Two CSSValues "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "-webkit-clip-path" are equal.
-PASS Two CSSValues "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" and "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "-webkit-clip-path" are not equal.
-PASS Two CSSValues "10s" for property "-webkit-animation-duration" are equal.
-PASS Two CSSValues "100ms" for property "-webkit-animation-duration" are equal.
-PASS Two CSSValues "10s" and "100ms" for property "-webkit-animation-duration" are not equal.
-PASS Two CSSValues "red" for property "color" are equal.
-PASS Two CSSValues "blue" for property "color" are equal.
-PASS Two CSSValues "red" and "blue" for property "color" are not equal.
-PASS Two CSSValues "url(resources/greenbox.png)" for property "border-image-source" are equal.
-PASS Two CSSValues "url(resources/redbox.png)" for property "border-image-source" are equal.
-PASS Two CSSValues "url(resources/greenbox.png)" and "url(resources/redbox.png)" for property "border-image-source" are not equal.
-PASS Two CSSValues "1 2 3 4" for property "border-image-slice" are equal.
-PASS Two CSSValues "2 3 4 5" for property "border-image-slice" are equal.
-PASS Two CSSValues "1 2 3 4" and "2 3 4 5" for property "border-image-slice" are not equal.
-PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" for property "cursor" are equal.
-PASS Two CSSValues "url(resources/cursor.png) 1 1, wait" for property "cursor" are equal.
-PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" and "url(resources/cursor.png) 1 1, wait" for property "cursor" are not equal.
-PASS Two CSSValues "italic bold 12px/30px arial" for property "font" are equal.
-PASS Two CSSValues "italic bold 8px/16px helvetica" for property "font" are equal.
-PASS Two CSSValues "italic bold 12px/30px arial" and "italic bold 8px/16px helvetica" for property "font" are not equal.
-PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background-image" are equal.
-PASS Two CSSValues "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are equal.
-PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" and "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are not equal.
-PASS Two CSSValues "radial-gradient(circle, #ccc, #000)" for property "background-image" are equal.
-PASS Two CSSValues "linear-gradient(#000, #234)" for property "background-image" are equal.
-PASS Two CSSValues "linear-gradient(to top, #000, #234)" for property "background-image" are equal.
-PASS Two CSSValues "linear-gradient(#000, #234)" and "linear-gradient(to top, #000, #234)" for property "background-image" are not equal.
-PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" for property "background-image" are equal.
-PASS Two CSSValues "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are equal.
-PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" and "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are not equal.
-PASS Two CSSValues "below 10px" for property "-webkit-box-reflect" are equal.
-PASS Two CSSValues "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" are equal.
-PASS Two CSSValues "below 10px" and "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" are not equal.
-PASS Two CSSValues "0 -20px 10px red, 0 20px 10px blue" for property "-webkit-box-shadow" are equal.
-PASS Two CSSValues "0 20px 10px blue" for property "-webkit-box-shadow" are equal.
-PASS Two CSSValues "5px 5px 5px rgba(0, 0, 0, 0.3)" for property "-webkit-box-shadow" are equal.
-PASS Two CSSValues "0 -20px 10px red, 0 20px 10px blue" and "0 20px 10px blue" for property "-webkit-box-shadow" are not equal.
-PASS Two CSSValues "cubic-bezier(0.25, 0.1, 0.25, 1)" for property "-webkit-transition-timing-function" are equal.
-PASS Two CSSValues "linear" for property "-webkit-transition-timing-function" are equal.
-PASS Two CSSValues "steps(3, end)" for property "-webkit-transition-timing-function" are equal.
-PASS Two CSSValues "cubic-bezier(0.25, 0.1, 0.25, 1)" and "linear" for property "-webkit-transition-timing-function" are not equal.
-PASS Two CSSValues "rotate(30deg)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "translate(50px,50px)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "scale(2,4)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "skew(30deg,20deg)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "-webkit-transform" are equal.
-PASS Two CSSValues "rotate(30deg)" and "translate(50px,50px)" for property "-webkit-transform" are not equal.
-PASS Two CSSValues "inline-box" for property "-webkit-line-box-contain" are equal.
-PASS Two CSSValues "font" for property "-webkit-line-box-contain" are equal.
-PASS Two CSSValues "glyphs" for property "-webkit-line-box-contain" are equal.
-PASS Two CSSValues "replaced" for property "-webkit-line-box-contain" are equal.
-PASS Two CSSValues "inline-box" and "font" for property "-webkit-line-box-contain" are not equal.
-PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal.
-PASS Two CSSValues "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal.
-PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal.
-PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal.
-PASS Two CSSValues "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal.
-PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal.
-PASS Two CSSValues "grayscale(100%) sepia(100%)" for property "-webkit-filter" are equal.
-PASS Two CSSValues "sepia(10%) grayscale(50%)" for property "-webkit-filter" are equal.
-PASS Two CSSValues "grayscale(100%) sepia(100%)" and "sepia(10%) grayscale(50%)" for property "-webkit-filter" are not equal.
+PASS Adding "20%" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "2em" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "2rem" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "20px" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "2cm" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "20mm" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "4in" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "20pt" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "10pc" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "6vw" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "6vh" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "4vmin" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "20%" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20%" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2em" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2rem" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20px" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2cm" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20mm" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4in" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "20pt" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "10pc" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vw" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "6vh" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "4vmin" and adding "-webkit-calc(-100px + 100%)" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "20%" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "2em" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "2rem" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "20px" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "2cm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "20mm" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "4in" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "20pt" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "10pc" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "6vw" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "6vh" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-calc(-100px + 100%)" and adding "4vmin" for property "width" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "rotate(15deg)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "rotate(1.55rad)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "rotate(200grad)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "rotate(0.5turn)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "rotate(15deg)" and adding "rotate(1.55rad)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(15deg)" and adding "rotate(200grad)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(15deg)" and adding "rotate(0.5turn)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(1.55rad)" and adding "rotate(15deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(1.55rad)" and adding "rotate(200grad)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(1.55rad)" and adding "rotate(0.5turn)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(200grad)" and adding "rotate(15deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(200grad)" and adding "rotate(1.55rad)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(200grad)" and adding "rotate(0.5turn)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(0.5turn)" and adding "rotate(15deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(0.5turn)" and adding "rotate(1.55rad)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(0.5turn)" and adding "rotate(200grad)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "url(dummy://test.png)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "url(dummy://green.png)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "url(dummy://test.png)" and adding "url(dummy://green.png)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "url(dummy://green.png)" and adding "url(dummy://test.png)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "bold" for property "font-weight" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "inherit" for property "font-weight" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "bold" and adding "inherit" for property "font-weight" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "inherit" and adding "bold" for property "font-weight" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "counter(a)" for property "content" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "counters(a, '.')" for property "content" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "counter(a)" and adding "counters(a, '.')" for property "content" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "counters(a, '.')" and adding "counter(a)" for property "content" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "attr(a)" for property "content" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "attr(p)" for property "content" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "attr(a)" and adding "attr(p)" for property "content" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "attr(p)" and adding "attr(a)" for property "content" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "rect(40px, 0, 45px, -5px)" for property "clip" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "rect(10px, 5px, 15px, -10px)" for property "clip" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "rect(40px, 0, 45px, -5px)" and adding "rect(10px, 5px, 15px, -10px)" for property "clip" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rect(10px, 5px, 15px, -10px)" and adding "rect(40px, 0, 45px, -5px)" for property "clip" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "30px 75px 15px 15px" for property "border-radius" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "164px / 82px" for property "border-radius" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "40px" for property "border-radius" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "30px 75px 15px 15px" and adding "164px / 82px" for property "border-radius" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "30px 75px 15px 15px" and adding "40px" for property "border-radius" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "164px / 82px" and adding "30px 75px 15px 15px" for property "border-radius" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "164px / 82px" and adding "40px" for property "border-radius" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "40px" and adding "30px 75px 15px 15px" for property "border-radius" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "40px" and adding "164px / 82px" for property "border-radius" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "rgb(255,0,0)" for property "stop-color" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "#FF5566" for property "stop-color" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "rgb(255,0,0)" and adding "#FF5566" for property "stop-color" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "#FF5566" and adding "rgb(255,0,0)" for property "stop-color" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" for property "clip-path" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "clip-path" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" and adding "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "clip-path" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" and adding "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" for property "clip-path" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "10s" for property "animation-duration" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "100ms" for property "animation-duration" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "10s" and adding "100ms" for property "animation-duration" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "100ms" and adding "10s" for property "animation-duration" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "red" for property "color" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "blue" for property "color" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "red" and adding "blue" for property "color" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "blue" and adding "red" for property "color" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "url(resources/greenbox.png)" for property "border-image-source" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "url(resources/redbox.png)" for property "border-image-source" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "url(resources/greenbox.png)" and adding "url(resources/redbox.png)" for property "border-image-source" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "url(resources/redbox.png)" and adding "url(resources/greenbox.png)" for property "border-image-source" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "1 2 3 4" for property "border-image-slice" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "2 3 4 5" for property "border-image-slice" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "1 2 3 4" and adding "2 3 4 5" for property "border-image-slice" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "2 3 4 5" and adding "1 2 3 4" for property "border-image-slice" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "url(resources/greenbox.png) 0 0, pointer" for property "cursor" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "url(resources/cursor.png) 1 1, wait" for property "cursor" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "url(resources/greenbox.png) 0 0, pointer" and adding "url(resources/cursor.png) 1 1, wait" for property "cursor" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "url(resources/cursor.png) 1 1, wait" and adding "url(resources/greenbox.png) 0 0, pointer" for property "cursor" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "italic bold 12px/30px arial" for property "font" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "italic bold 8px/16px helvetica" for property "font" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "italic bold 12px/30px arial" and adding "italic bold 8px/16px helvetica" for property "font" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "italic bold 8px/16px helvetica" and adding "italic bold 12px/30px arial" for property "font" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" and adding "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" and adding "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "radial-gradient(circle, #ccc, #000)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "linear-gradient(#000, #234)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "linear-gradient(to top, #000, #234)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "linear-gradient(#000, #234)" and adding "linear-gradient(to top, #000, #234)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "linear-gradient(to top, #000, #234)" and adding "linear-gradient(#000, #234)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" and adding "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" and adding "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "below 10px" for property "-webkit-box-reflect" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "below 10px" and adding "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" and adding "below 10px" for property "-webkit-box-reflect" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "0 -20px 10px red, 0 20px 10px blue" for property "-webkit-box-shadow" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "0 20px 10px blue" for property "-webkit-box-shadow" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "5px 5px 5px rgba(0, 0, 0, 0.3)" for property "-webkit-box-shadow" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "0 -20px 10px red, 0 20px 10px blue" and adding "0 20px 10px blue" for property "-webkit-box-shadow" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "0 -20px 10px red, 0 20px 10px blue" and adding "5px 5px 5px rgba(0, 0, 0, 0.3)" for property "-webkit-box-shadow" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "0 20px 10px blue" and adding "0 -20px 10px red, 0 20px 10px blue" for property "-webkit-box-shadow" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "0 20px 10px blue" and adding "5px 5px 5px rgba(0, 0, 0, 0.3)" for property "-webkit-box-shadow" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "5px 5px 5px rgba(0, 0, 0, 0.3)" and adding "0 -20px 10px red, 0 20px 10px blue" for property "-webkit-box-shadow" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "5px 5px 5px rgba(0, 0, 0, 0.3)" and adding "0 20px 10px blue" for property "-webkit-box-shadow" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "cubic-bezier(0.25, 0.1, 0.25, 1)" for property "transition-timing-function" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "linear" for property "transition-timing-function" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "steps(3, end)" for property "transition-timing-function" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "cubic-bezier(0.25, 0.1, 0.25, 1)" and adding "linear" for property "transition-timing-function" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "cubic-bezier(0.25, 0.1, 0.25, 1)" and adding "steps(3, end)" for property "transition-timing-function" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "linear" and adding "cubic-bezier(0.25, 0.1, 0.25, 1)" for property "transition-timing-function" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "linear" and adding "steps(3, end)" for property "transition-timing-function" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "steps(3, end)" and adding "cubic-bezier(0.25, 0.1, 0.25, 1)" for property "transition-timing-function" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "steps(3, end)" and adding "linear" for property "transition-timing-function" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "rotate(30deg)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "translate(50px,50px)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "scale(2,4)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "skew(30deg,20deg)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "transform" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "rotate(30deg)" and adding "translate(50px,50px)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(30deg)" and adding "scale(2,4)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(30deg)" and adding "skew(30deg,20deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "rotate(30deg)" and adding "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "translate(50px,50px)" and adding "rotate(30deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "translate(50px,50px)" and adding "scale(2,4)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "translate(50px,50px)" and adding "skew(30deg,20deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "translate(50px,50px)" and adding "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "scale(2,4)" and adding "rotate(30deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "scale(2,4)" and adding "translate(50px,50px)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "scale(2,4)" and adding "skew(30deg,20deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "scale(2,4)" and adding "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "skew(30deg,20deg)" and adding "rotate(30deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "skew(30deg,20deg)" and adding "translate(50px,50px)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "skew(30deg,20deg)" and adding "scale(2,4)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "skew(30deg,20deg)" and adding "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "matrix(0.4,0.5,-0.5,0.4,0,0)" and adding "rotate(30deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "matrix(0.4,0.5,-0.5,0.4,0,0)" and adding "translate(50px,50px)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "matrix(0.4,0.5,-0.5,0.4,0,0)" and adding "scale(2,4)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "matrix(0.4,0.5,-0.5,0.4,0,0)" and adding "skew(30deg,20deg)" for property "transform" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "inline-box" for property "-webkit-line-box-contain" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "font" for property "-webkit-line-box-contain" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "glyphs" for property "-webkit-line-box-contain" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "replaced" for property "-webkit-line-box-contain" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "inline-box" and adding "font" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "inline-box" and adding "glyphs" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "inline-box" and adding "replaced" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "font" and adding "inline-box" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "font" and adding "glyphs" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "font" and adding "replaced" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "glyphs" and adding "inline-box" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "glyphs" and adding "font" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "glyphs" and adding "replaced" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "replaced" and adding "inline-box" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "replaced" and adding "font" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "replaced" and adding "glyphs" for property "-webkit-line-box-contain" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and adding "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" and adding "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and adding "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" and adding "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Adding "grayscale(100%) sepia(100%)" for property "filter" with editing code and checking it did not add properties because they compared as equal.
+PASS Adding "sepia(10%) grayscale(50%)" for property "filter" with editing code and checking it did not add properties because they compared as equal.
+PASS Starting with "grayscale(100%) sepia(100%)" and adding "sepia(10%) grayscale(50%)" for property "filter" with editing code and checking it did add expected properties because they compared as not equal.
+PASS Starting with "sepia(10%) grayscale(50%)" and adding "grayscale(100%) sepia(100%)" for property "filter" with editing code and checking it did add expected properties because they compared as not equal.
 

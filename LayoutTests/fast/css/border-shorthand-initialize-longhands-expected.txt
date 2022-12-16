@@ -3,20 +3,20 @@ This test ensures border shorthand property initializes longhand properties such
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS div.setAttribute('style', 'border: 1px');div.style.borderTopStyle is 'initial'
-PASS div.style.borderTopStyle is 'initial'
-PASS div.style.borderRightStyle is 'initial'
-PASS div.style.borderBottomStyle is 'initial'
-PASS div.style.borderLeftStyle is 'initial'
-PASS div.style.borderTopColor is 'initial'
-PASS div.style.borderRightColor is 'initial'
-PASS div.style.borderBottomColor is 'initial'
-PASS div.style.borderLeftColor is 'initial'
-PASS div.setAttribute('style', 'border: solid');div.style.borderTopWidth is 'initial'
-PASS div.style.borderRightWidth is 'initial'
-PASS div.style.borderBottomWidth is 'initial'
-PASS div.style.borderLeftWidth is 'initial'
+FAIL div.setAttribute('style', 'border: 1px');div.style.borderTopStyle should be none. Was initial.
+FAIL div.style.borderRightStyle should be none. Was initial.
+FAIL div.style.borderBottomStyle should be none. Was initial.
+FAIL div.style.borderLeftStyle should be none. Was initial.
+FAIL div.style.borderTopColor should be currentcolor. Was initial.
+FAIL div.style.borderRightColor should be currentcolor. Was initial.
+FAIL div.style.borderBottomColor should be currentcolor. Was initial.
+FAIL div.style.borderLeftColor should be currentcolor. Was initial.
+FAIL div.setAttribute('style', 'border: solid');div.style.borderTopWidth should be medium. Was initial.
+FAIL div.style.borderRightWidth should be medium. Was initial.
+FAIL div.style.borderBottomWidth should be medium. Was initial.
+FAIL div.style.borderLeftWidth should be medium. Was initial.
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

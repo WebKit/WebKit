@@ -12,7 +12,7 @@ if (window.internals) {
 
     e.style.backgroundSize = "cover";
     e.style.background = "center red url(dummy://test.png) no-repeat border-box";
-    shouldBe("e.style.background", "'url(\"dummy://test.png\") center center / cover no-repeat border-box border-box red'")
+    shouldBe("e.style.background", "'url(\"dummy://test.png\") center center / cover no-repeat border-box red'")
     shouldBe("e.style.backgroundSize", "'cover'");
     debug("")
 

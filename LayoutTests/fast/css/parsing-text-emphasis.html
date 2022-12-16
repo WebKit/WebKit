@@ -79,8 +79,8 @@
     log("");
     test('-webkit-text-emphasis: initial', 'initial', '', 'initial', 'initial');
     test('-webkit-text-emphasis: inherit', 'inherit', '', 'inherit', 'inherit');
-    test('-webkit-text-emphasis: red', 'red', '', 'initial', 'red');
-    test('-webkit-text-emphasis: "cheese"', 'initial', '', '"cheese"', '"cheese"');
+    test('-webkit-text-emphasis: red', 'red', '', 'none', 'red');
+    test('-webkit-text-emphasis: "cheese"', 'currentcolor', '', '"cheese"', '"cheese"');
     test('-webkit-text-emphasis: red "cheese"', 'red', '', '"cheese"', '"cheese" red');
     test('-webkit-text-emphasis: "cheese" red', 'red', '', '"cheese"', '"cheese" red');
     test('-webkit-text-emphasis: filled sesame red', 'red', '', 'filled sesame', 'filled sesame red');

@@ -1,28 +1,10 @@
-This test ensures WebKit uses shorthand notations for cssText
+This test ensures WebKit uses shorthand notations for cssText; most of what was originally in this test is now covered by Web Platform Tests
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS normalizeCssText(element.style.cssText) is "border: 1px"
-PASS normalizeCssText(element.style.cssText) is "border: 1px solid red"
-PASS normalizeCssText(element.style.cssText) is "border: 1px red"
-PASS normalizeCssText(element.style.cssText) is "border: red"
-PASS normalizeCssText(element.style.cssText) is "border: 1px"
-PASS normalizeCssText(element.style.cssText) is "border-width: 1px 2px 3px 4px"
-PASS normalizeCssText(element.style.cssText) is "border-width: 2px 1px 1px"
-PASS normalizeCssText(element.style.cssText) is "border-bottom-width: 1px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px !important"
-PASS normalizeCssText(element.style.cssText) is "border-top-color: red; border-width: 1px"
-PASS normalizeCssText(element.style.cssText) is "border: dotted"
-PASS normalizeCssText(element.style.cssText) is "border-width: 1px"
 PASS normalizeCssText(element.style.cssText) is "border-spacing: 1px 2px"
 PASS normalizeCssText(element.style.cssText) is "font-family: sans-serif; font-size: 3em; font-style: italic; font-weight: bold; line-height: 2em"
-FAIL normalizeCssText(element.style.cssText) should be list-style: inside circle. Was list-style-image: initial; list-style-position: inside; list-style-type: circle.
-PASS normalizeCssText(element.style.cssText) is "margin: 1px 2px 3px 4px"
-PASS normalizeCssText(element.style.cssText) is "outline: blue dotted 2px"
-PASS normalizeCssText(element.style.cssText) is "overflow: scroll hidden"
-PASS normalizeCssText(element.style.cssText) is "overflow: scroll"
-PASS normalizeCssText(element.style.cssText) is "padding: 1px 2px 3px 4px"
-PASS normalizeCssText(element.style.cssText) is "list-style-type: lower-alpha"
 PASS successfullyParsed is true
 
 TEST COMPLETE

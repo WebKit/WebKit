@@ -16,7 +16,7 @@ PASS test("-webkit-background-clip: text", "background-clip") is ""
 PASS test("-webkit-background-clip: text", "-webkit-background-clip") is "text"
 PASS test("background: url() padding-box", "-webkit-background-clip") is ""
 PASS test("-webkit-mask: url() ", "background-clip") is ""
-PASS test("background: url() ", "background-clip") is "initial"
+FAIL test("background: url() ", "background-clip") should be border-box. Was initial.
 PASS test("background: url() padding-box", "background-clip") is "padding-box"
 PASS test("background: url() text", "background-clip") is "text"
 PASS test("background: url() padding-box border-box", "background-clip") is "border-box"

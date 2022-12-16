@@ -34,11 +34,14 @@ function checkFontStyleValue() {
 }
 
 style.fontSize = "20px";
+
 // We need at least the font-family to build the shorthand.
 shouldBe("style.font", "''");
 shouldBe("computedStyle.font", "'20px foobar'");
 shouldBe("computedStyle.fontSize", "'20px'");
 shouldBe("checkFontStyleValue()", "true");
+
+style.font = "16px foobar";
 
 style.fontSize = "20px";
 style.fontFamily = "sans-serif";
@@ -75,11 +78,12 @@ style.font = "";
 shouldBe("style.font", "''");
 shouldBe("computedStyle.font", "'16px foobar'");
 shouldBe("checkFontStyleValue()", "true");
+style.font = "16px foobar";
 
 style.fontWeight = "bold";
-// It is normal to return null as the font-size is mandatory to build the shorthand.
-shouldBe("style.font", "''");
-shouldBe("computedStyle.font", "'bold 16px foobar'");
+
+shouldBe("style.font", "'bold 16px foobar'");
+shouldBe("computedStyle.font", "'700 16px foobar'");
 shouldBe("computedStyle.fontWeight", "'700'");
 shouldBe("checkFontStyleValue()", "true");
 
