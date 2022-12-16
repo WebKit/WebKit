@@ -43,7 +43,7 @@
 }
 
 .webkit-survey-form input[type=radio] + span {
-    color: var(--text-color-coolgray);
+    color: var(--text-color-medium);
     transition: color 500ms ease;
 }
 

@@ -131,9 +131,6 @@ class WebKit_Survey {
         
         self::$responded = true;
 
-        // Same day, same device vote-stuffing protection
-        set_transient($post_id . '_' . self::voter_hash(), true, DAY_IN_SECONDS);
-
         $post_url_parts = parse_url(get_permalink());
         setcookie(
             self::cookie_name($post_id),     // name
@@ -203,19 +200,12 @@ class WebKit_Survey {
     }
 
     public static function responded() {
-        $voter_hash_transient = get_transient(get_the_ID() . '_' . self::voter_hash());
         $voted_cookie = filter_input(INPUT_COOKIE, self::cookie_name(get_the_ID()));
-        return self::$responded || $voter_hash_transient || $voted_cookie;
+        return self::$responded || $voted_cookie;
     }
 
     private static function cookie_name($key) {
         return $key . COOKIEHASH;
-    }
-    
-    private static function voter_hash() {
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-        $ua = filter_input(INPUT_SERVER, 'HTTP_USER_AGENT');
-        return sha1($ip . $ua);
     }
 }
 
