@@ -1578,6 +1578,18 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     return BackgroundBleedUseTransparencyLayer;
 }
 
+ControlPart* RenderBox::ensureControlPart()
+{
+    if (!theme().canCreateControlPartForRenderer(*this))
+        return nullptr;
+
+    auto& rareData = ensureRareData();
+    if (!rareData.controlPart)
+        rareData.controlPart = theme().createControlPartForRenderer(*this);
+
+    return rareData.controlPart.get();
+}
+
 void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(*this))
@@ -1611,10 +1623,14 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // The theme will tell us whether or not we should also paint the CSS background.
     bool borderOrBackgroundPaintingIsNeeded = true;
     if (style().hasEffectiveAppearance()) {
-        ControlStates* controlStates = controlStatesForRenderer(*this);
-        borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *controlStates, paintInfo, paintRect);
-        if (controlStates->needsRepaint())
-            view().scheduleLazyRepaint(*this);
+        if (auto* control = ensureControlPart())
+            borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *control, paintInfo, paintRect);
+        else {
+            ControlStates* controlStates = controlStatesForRenderer(*this);
+            borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *controlStates, paintInfo, paintRect);
+            if (controlStates->needsRepaint())
+                view().scheduleLazyRepaint(*this);
+        }
     }
 
     BorderPainter borderPainter { *this, paintInfo };

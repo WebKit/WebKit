@@ -462,6 +462,10 @@ platform/graphics/mac/SimpleFontDataCoreText.cpp
 platform/graphics/mac/SwitchingGPUClient.cpp
 platform/graphics/mac/WebKitNSImageExtras.mm
 platform/graphics/mac/WebLayer.mm
+platform/graphics/mac/controls/ControlFactoryMac.mm
+platform/graphics/mac/controls/ControlMac.mm
+platform/graphics/mac/controls/MeterMac.mm
+platform/graphics/mac/controls/WebControlView.mm
 platform/graphics/opentype/OpenTypeCG.cpp
 platform/image-decoders/avif/AVIFImageDecoder.cpp
 platform/image-decoders/avif/AVIFImageReader.cpp

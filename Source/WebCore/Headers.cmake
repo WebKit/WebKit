@@ -1730,6 +1730,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ANGLEUtilities.h
     platform/graphics/angle/GraphicsContextGLANGLE.h
 
+    platform/graphics/controls/ControlFactory.h
+    platform/graphics/controls/ControlPart.h
+    platform/graphics/controls/ControlPartType.h
+    platform/graphics/controls/ControlStyle.h
+    platform/graphics/controls/MeterPart.h
+    platform/graphics/controls/PlatformControl.h
+
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawingContext.h
     platform/graphics/displaylists/DisplayListImageBuffer.h
@@ -1783,8 +1790,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/filters/SourceAlpha.h
     platform/graphics/filters/SourceGraphic.h
     platform/graphics/filters/SpotLightSource.h
-
-    platform/graphics/formcontrols/ControlPartType.h
 
     platform/graphics/iso/ISOBox.h
     platform/graphics/iso/ISOOriginalFormatBox.h

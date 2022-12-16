@@ -279,6 +279,26 @@ RenderThemeMac::RenderThemeMac()
 {
 }
 
+bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& renderer) const
+{
+    ControlPartType type = renderer.style().effectiveAppearance();
+    return type == ControlPartType::Meter;
+}
+
+bool RenderThemeMac::useFormSemanticContext() const
+{
+    return ThemeMac::useFormSemanticContext();
+}
+
+bool RenderThemeMac::supportsLargeFormControls() const
+{
+#if HAVE(LARGE_CONTROL_SIZE)
+    return ThemeMac::supportsLargeFormControls();
+#else
+    return false;
+#endif
+}
+
 NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
 {
     LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
@@ -1245,77 +1265,19 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
     return false;
 }
 
-IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const IntRect& bounds) const
+FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const FloatRect& bounds) const
 {
-    if (ControlPartType::NoControl == renderMeter.style().effectiveAppearance())
+    auto* control = const_cast<RenderMeter&>(renderMeter).ensureControlPart();
+    if (!control)
         return bounds.size();
 
-    NSLevelIndicatorCell* cell = levelIndicatorFor(renderMeter);
-    // Makes enough room for cell's intrinsic size.
-    NSSize cellSize = [cell cellSizeForBounds:IntRect(IntPoint(), bounds.size())];
-    return IntSize(bounds.width() < cellSize.width ? cellSize.width : bounds.width(),
-                   bounds.height() < cellSize.height ? cellSize.height : bounds.height());
-}
-
-bool RenderThemeMac::paintMeter(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    if (!is<RenderMeter>(renderObject))
-        return true;
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-
-    NSLevelIndicatorCell* cell = levelIndicatorFor(downcast<RenderMeter>(renderObject));
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(cell, renderObject, paintInfo, rect);
-    [cell setControlView:nil];
-    return false;
+    auto controlStyle = extractControlStyleForRenderer(renderMeter);
+    return control->sizeForBounds(bounds, controlStyle);
 }
 
 bool RenderThemeMac::supportsMeter(ControlPartType type, const HTMLMeterElement&) const
 {
     return type == ControlPartType::Meter;
-}
-
-NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& renderMeter) const
-{
-    const RenderStyle& style = renderMeter.style();
-    ASSERT(style.effectiveAppearance() != ControlPartType::NoControl);
-
-    if (!m_levelIndicator)
-        m_levelIndicator = adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSLevelIndicatorStyleContinuousCapacity]);
-    NSLevelIndicatorCell* cell = m_levelIndicator.get();
-
-    HTMLMeterElement* element = renderMeter.meterElement();
-    double value = element->value();
-
-    // Because NSLevelIndicatorCell does not support optimum-in-the-middle type coloring,
-    // we explicitly control the color instead giving low and high value to NSLevelIndicatorCell as is.
-    switch (element->gaugeRegion()) {
-    case HTMLMeterElement::GaugeRegionOptimum:
-        // Make meter the green
-        [cell setWarningValue:value + 1];
-        [cell setCriticalValue:value + 2];
-        break;
-    case HTMLMeterElement::GaugeRegionSuboptimal:
-        // Make the meter yellow
-        [cell setWarningValue:value - 1];
-        [cell setCriticalValue:value + 1];
-        break;
-    case HTMLMeterElement::GaugeRegionEvenLessGood:
-        // Make the meter red
-        [cell setWarningValue:value - 2];
-        [cell setCriticalValue:value - 1];
-        break;
-    }
-
-    [cell setLevelIndicatorStyle:NSLevelIndicatorStyleContinuousCapacity];
-    [cell setUserInterfaceLayoutDirection:style.isLeftToRightDirection() ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-    [cell setMinValue:element->min()];
-    [cell setMaxValue:element->max()];
-    [cell setObjectValue:@(value)];
-
-    return cell;
 }
 
 const IntSize* RenderThemeMac::progressBarSizes() const

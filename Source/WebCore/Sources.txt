@@ -2196,6 +2196,10 @@ platform/graphics/VelocityData.cpp
 platform/graphics/WebMResourceClient.cpp
 platform/graphics/WOFFFileFormat.cpp
 platform/graphics/WidthIterator.cpp
+platform/graphics/controls/ControlFactory.cpp
+platform/graphics/controls/ControlPart.cpp
+platform/graphics/controls/ControlPartType.cpp
+platform/graphics/controls/MeterPart.cpp
 platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
@@ -2258,7 +2262,6 @@ platform/graphics/filters/software/FETileSoftwareApplier.cpp
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
 platform/graphics/filters/software/SourceAlphaSoftwareApplier.cpp
 platform/graphics/filters/software/SourceGraphicSoftwareApplier.cpp
-platform/graphics/formcontrols/ControlPartType.cpp
 platform/graphics/iso/ISOBox.cpp
 platform/graphics/iso/ISOOriginalFormatBox.cpp
 platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp
