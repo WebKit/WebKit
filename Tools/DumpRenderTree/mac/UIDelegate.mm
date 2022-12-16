@@ -190,11 +190,15 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
 - (void)webViewClose:(WebView *)sender
 {
     NSWindow* window = [sender window];
- 
+
     if (gTestRunner->callCloseOnWebViews())
         [sender close];
-    
+
+#if !PLATFORM(MACCATALYST)
     [window close];
+#else
+    UNUSED_PARAM(window);
+#endif
 }
 
 - (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
