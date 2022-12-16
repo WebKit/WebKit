@@ -231,7 +231,7 @@ WK_MIGRATED_HEADER_OUTPUT_DIR_ = $(HEADER_OUTPUT_DIR);
 // On non-Mac platforms, all migrated headers go to PrivateHeaders.
 WK_MIGRATED_HEADER_OUTPUT_DIR_cocoatouch = $(HEADER_OUTPUT_DIR:dir)PrivateHeaders;
 
-EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.webpushd.sb com.apple.WebProcess.sb;
+EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.webpushd.mac.sb com.apple.WebProcess.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 APPLY_RULES_IN_COPY_HEADERS = $(WK_USE_NEW_BUILD_SYSTEM);
