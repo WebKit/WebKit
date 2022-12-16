@@ -523,22 +523,22 @@ void ScrollingTree::receivedWheelEvent(const PlatformWheelEvent& event)
         m_wheelEventTestMonitor->receivedWheelEvent(event);
 }
 
-void ScrollingTree::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
+void ScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     if (!m_wheelEventTestMonitor)
         return;
 
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) ScrollingTree::deferForReason: Deferring on " << identifier << " for reason " << reason);
-    m_wheelEventTestMonitor->deferForReason(identifier, reason);
+    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) ScrollingTree::deferForReason: Deferring on " << nodeID << " for reason " << reason);
+    m_wheelEventTestMonitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
 }
 
-void ScrollingTree::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
+void ScrollingTree::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     if (!m_wheelEventTestMonitor)
         return;
 
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) ScrollingTree::removeDeferralForReason: Removing deferral on " << identifier << " for reason " << reason);
-    m_wheelEventTestMonitor->removeDeferralForReason(identifier, reason);
+    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) ScrollingTree::removeDeferralForReason: Removing deferral on " << nodeID << " for reason " << reason);
+    m_wheelEventTestMonitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
 }
 
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
