@@ -148,9 +148,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasInitialLetter:
         stream << "intial letter";
         break;
-    case AvoidanceReason::FlowIsVTTCue:
-        stream << "media track";
-        break;
     default:
         break;
     }
@@ -482,12 +479,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-#if ENABLE(VIDEO)
-    if (is<RenderVTTCue>(flow) || is<RenderVTTCue>(flow.parent())) {
-        // First child of the RenderVTTCue is the backdropBox.
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsVTTCue, reasons, includeReasons);
-    }
-#endif
 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
