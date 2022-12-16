@@ -152,7 +152,7 @@ struct WindowStateEvent {
 
     Type type;
     CompletionHandler<void()> completionHandler;
-    RunLoop::Timer<WindowStateEvent> completeTimer;
+    RunLoop::Timer completeTimer;
 };
 
 static const char* gWindowStateEventID = "wk-window-state-event";

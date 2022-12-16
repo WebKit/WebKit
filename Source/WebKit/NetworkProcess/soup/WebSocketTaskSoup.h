@@ -70,7 +70,7 @@ private:
     bool m_receivedDidFail { false };
     bool m_receivedDidClose { false };
     String m_delayErrorMessage;
-    RunLoop::Timer<WebSocketTask> m_delayFailTimer;
+    RunLoop::Timer m_delayFailTimer;
 };
 
 } // namespace WebKit

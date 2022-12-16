@@ -40,7 +40,7 @@ private:
     void timerFired();
 
     WebProcessPool& m_webProcessPool;
-    RunLoop::Timer<HighPerformanceGraphicsUsageSampler> m_timer;
+    RunLoop::Timer m_timer;
 };
 
 } // namespace WebKit

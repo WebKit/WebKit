@@ -177,7 +177,7 @@ private:
     std::optional<WebCore::FrameIdentifier> m_frameID;
     AutomationCompletionHandler m_runCompletionHandler;
     AutomationCompletionHandler m_keyFrameTransitionCompletionHandler;
-    RunLoop::Timer<SimulatedInputDispatcher> m_keyFrameTransitionDurationTimer;
+    RunLoop::Timer m_keyFrameTransitionDurationTimer;
 
     Vector<SimulatedInputKeyFrame> m_keyframes;
 

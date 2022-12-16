@@ -60,7 +60,7 @@ private:
 
     RetainPtr<TKSmartCard> m_smartCard;
     WeakPtr<CcidService> m_service;
-    RunLoop::Timer<CcidConnection> m_retryTimer;
+    RunLoop::Timer m_retryTimer;
     bool m_contactless { false };
 };
 

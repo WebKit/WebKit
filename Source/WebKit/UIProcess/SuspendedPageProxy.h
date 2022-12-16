@@ -112,7 +112,7 @@ private:
 
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
-    RunLoop::Timer<SuspendedPageProxy> m_suspensionTimeoutTimer;
+    RunLoop::Timer m_suspensionTimeoutTimer;
 #if USE(RUNNINGBOARD)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_suspensionActivity;
 #endif

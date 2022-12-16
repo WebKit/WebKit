@@ -71,7 +71,7 @@ private:
     void continueBogusCommandNoCredentialsAfterResponseReceived(apdu::ApduResponse&&);
     void continueSignCommandAfterResponseReceived(apdu::ApduResponse&&);
 
-    RunLoop::Timer<U2fAuthenticator> m_retryTimer;
+    RunLoop::Timer m_retryTimer;
     Vector<uint8_t> m_lastCommand;
     CommandType m_lastCommandType;
     size_t m_nextListIndex { 0 };

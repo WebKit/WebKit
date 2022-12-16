@@ -53,7 +53,7 @@ private:
     void tick();
 
     Ref<WorkQueue> m_workQueue;
-    RunLoop::Timer<MockAudioDestinationCocoa> m_timer;
+    RunLoop::Timer m_timer;
     size_t m_numberOfFramesToProcess { 384 };
 };
 

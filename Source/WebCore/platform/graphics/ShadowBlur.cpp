@@ -152,7 +152,7 @@ private:
     static Lock s_lock;
 
     RefPtr<ImageBuffer> m_imageBuffer;
-    RunLoop::Timer<ScratchBuffer> m_purgeTimer;
+    RunLoop::Timer m_purgeTimer;
 
     FloatRect m_lastInsetBounds;
     FloatRect m_lastShadowRect;

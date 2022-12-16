@@ -124,7 +124,7 @@ private:
     };
     bool computeUserGesturePriviledge(GestureAllowedRequest);
 
-    RunLoop::Timer<MediaDevices> m_scheduledEventTimer;
+    RunLoop::Timer m_scheduledEventTimer;
     UserMediaClient::DeviceChangeObserverToken m_deviceChangeToken;
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
     bool m_listeningForDeviceChanges { false };

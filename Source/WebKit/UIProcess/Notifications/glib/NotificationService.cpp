@@ -215,7 +215,7 @@ public:
 
 private:
     HashMap<String, std::pair<uint32_t, std::variant<CString, GRefPtr<GBytes>>>> m_iconCache;
-    RunLoop::Timer<IconCache> m_timer;
+    RunLoop::Timer m_timer;
 };
 
 static IconCache& iconCache()

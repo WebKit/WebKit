@@ -109,7 +109,7 @@ private:
 
     MediaPlayer* m_player;
     IntSize m_size;
-    RunLoop::Timer<MediaPlayerPrivateHolePunch> m_readyTimer;
+    RunLoop::Timer m_readyTimer;
     MediaPlayer::NetworkState m_networkState;
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)

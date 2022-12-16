@@ -731,10 +731,10 @@ private:
     UserObservablePageCounter m_userObservablePageCounter;
     ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;
     HiddenPageThrottlingAutoIncreasesCounter m_hiddenPageThrottlingAutoIncreasesCounter;
-    RunLoop::Timer<WebProcessPool> m_hiddenPageThrottlingTimer;
+    RunLoop::Timer m_hiddenPageThrottlingTimer;
 
 #if ENABLE(GPU_PROCESS)
-    RunLoop::Timer<WebProcessPool> m_resetGPUProcessCrashCountTimer;
+    RunLoop::Timer m_resetGPUProcessCrashCountTimer;
     unsigned m_recentGPUProcessCrashCount { 0 };
 #endif
 

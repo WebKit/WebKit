@@ -234,7 +234,7 @@ private:
     RefPtr<NativeImage> m_compositedNativeImage;
 
     Timer m_animationStartedTimer;
-    RunLoop::Timer<CoordinatedGraphicsLayer> m_requestPendingTileCreationTimer;
+    RunLoop::Timer m_requestPendingTileCreationTimer;
     Nicosia::Animations m_animations;
     MonotonicTime m_lastAnimationStartTime;
 

@@ -56,8 +56,8 @@ private:
 
     WebProcessProxy& m_webProcessProxy;
     Seconds m_checkingInterval;
-    RunLoop::Timer<BackgroundProcessResponsivenessTimer> m_responsivenessCheckTimer;
-    RunLoop::Timer<BackgroundProcessResponsivenessTimer> m_timeoutTimer;
+    RunLoop::Timer m_responsivenessCheckTimer;
+    RunLoop::Timer m_timeoutTimer;
     bool m_isResponsive { true };
 };
 

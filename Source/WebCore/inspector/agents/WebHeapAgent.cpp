@@ -53,7 +53,7 @@ private:
     WebHeapAgent& m_agent;
     Lock m_collectionsLock;
     Vector<GarbageCollectionData> m_collections WTF_GUARDED_BY_LOCK(m_collectionsLock);
-    RunLoop::Timer<SendGarbageCollectionEventsTask> m_timer;
+    RunLoop::Timer m_timer;
 };
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(WebHeapAgent& agent)

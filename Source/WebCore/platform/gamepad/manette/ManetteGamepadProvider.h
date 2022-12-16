@@ -70,8 +70,8 @@ private:
     bool m_initialGamepadsConnected { false };
 
     GRefPtr<ManetteMonitor> m_monitor;
-    RunLoop::Timer<ManetteGamepadProvider> m_initialGamepadsConnectedTimer;
-    RunLoop::Timer<ManetteGamepadProvider> m_inputNotificationTimer;
+    RunLoop::Timer m_initialGamepadsConnectedTimer;
+    RunLoop::Timer m_inputNotificationTimer;
 };
 
 } // namespace WebCore

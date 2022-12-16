@@ -150,7 +150,7 @@ private:
     bool m_hasAudioUnit { false };
     Ref<MockAudioSharedInternalUnitState> m_internalState;
     bool m_enableEchoCancellation { true };
-    RunLoop::Timer<MockAudioSharedInternalUnit> m_timer;
+    RunLoop::Timer m_timer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
     MonotonicTime m_delayUntil;
 

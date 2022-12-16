@@ -57,7 +57,7 @@ private:
 
     virtual void platformStartDiscovery();
 
-    RunLoop::Timer<CcidService> m_restartTimer;
+    RunLoop::Timer m_restartTimer;
     RefPtr<CcidConnection> m_connection;
     HashSet<String> m_slotNames;
 };

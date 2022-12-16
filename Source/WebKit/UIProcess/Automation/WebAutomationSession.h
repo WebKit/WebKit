@@ -339,7 +339,7 @@ private:
     };
     Function<void(WindowTransitionedToState)> m_windowStateTransitionCallback { };
 
-    RunLoop::Timer<WebAutomationSession> m_loadTimer;
+    RunLoop::Timer m_loadTimer;
     Vector<String> m_filesToSelectForFileUpload;
 
     bool m_permissionForGetUserMedia { true };

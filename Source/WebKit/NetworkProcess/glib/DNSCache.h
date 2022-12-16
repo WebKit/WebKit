@@ -66,7 +66,7 @@ private:
     DNSCacheMap m_ipv4Map;
     DNSCacheMap m_ipv6Map;
 #endif
-    RunLoop::Timer<DNSCache> m_expiredTimer;
+    RunLoop::Timer m_expiredTimer;
 };
 
 } // namespace WebKit

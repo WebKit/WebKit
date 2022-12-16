@@ -123,7 +123,7 @@ PlatformImage PlatformWebView::windowSnapshotImage()
             }
 
             void fired() { RunLoop::main().stop(); }
-            RunLoop::Timer<TimeoutTimer> timer;
+            RunLoop::Timer timer;
         } timeoutTimer;
 
         RunLoop::main().run();

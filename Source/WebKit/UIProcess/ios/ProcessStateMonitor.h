@@ -50,7 +50,7 @@ private:
     enum class State : uint8_t { Running, WillSuspend, Suspended };
     State m_state { State::Running };
     Function<void(bool)> m_becomeSuspendedHandler;
-    RunLoop::Timer<ProcessStateMonitor> m_suspendTimer;
+    RunLoop::Timer m_suspendTimer;
     RetainPtr<RBSProcessMonitor> m_rbsMonitor;
 };
 

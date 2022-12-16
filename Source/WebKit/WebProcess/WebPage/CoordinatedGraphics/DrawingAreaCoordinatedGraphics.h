@@ -134,13 +134,13 @@ private:
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended { false };
 
-    RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_exitCompositingTimer;
+    RunLoop::Timer m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     std::unique_ptr<LayerTreeHost> m_layerTreeHost;
 
     std::unique_ptr<LayerTreeHost> m_previousLayerTreeHost;
-    RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_discardPreviousLayerTreeHostTimer;
+    RunLoop::Timer m_discardPreviousLayerTreeHostTimer;
 
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
@@ -155,7 +155,7 @@ private:
     bool m_supportsAsyncScrolling { true };
     bool m_forceRepaintAfterBackingStoreStateUpdate { false };
 
-    RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_displayTimer;
+    RunLoop::Timer m_displayTimer;
 
 #if PLATFORM(GTK)
     bool m_transientZoom { false };

@@ -129,7 +129,7 @@ private:
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
-    RunLoop::Timer<RealtimeMediaSourceCenter> m_debounceTimer;
+    RunLoop::Timer m_debounceTimer;
     void triggerDevicesChangedObservers();
 
     WeakHashSet<Observer> m_observers;

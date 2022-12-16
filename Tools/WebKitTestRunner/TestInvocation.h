@@ -149,8 +149,8 @@ private:
     
     WKRetainPtr<WKURLRef> m_url;
     String m_urlString;
-    RunLoop::Timer<TestInvocation> m_waitToDumpWatchdogTimer;
-    RunLoop::Timer<TestInvocation> m_waitForPostDumpWatchdogTimer;
+    RunLoop::Timer m_waitToDumpWatchdogTimer;
+    RunLoop::Timer m_waitForPostDumpWatchdogTimer;
 
     std::string m_expectedPixelHash;
 

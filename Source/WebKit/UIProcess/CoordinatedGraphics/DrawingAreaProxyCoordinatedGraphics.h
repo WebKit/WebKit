@@ -107,7 +107,7 @@ private:
 
         MonotonicTime m_startTime;
         WTF::Function<void(CallbackBase::Error)> m_callback;
-        RunLoop::Timer<DrawingMonitor> m_timer;
+        RunLoop::Timer m_timer;
 #if PLATFORM(GTK)
         WebPageProxy& m_webPage;
 #endif
@@ -135,7 +135,7 @@ private:
 #if !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };
     std::unique_ptr<BackingStore> m_backingStore;
-    RunLoop::Timer<DrawingAreaProxyCoordinatedGraphics> m_discardBackingStoreTimer;
+    RunLoop::Timer m_discardBackingStoreTimer;
 #endif
     std::unique_ptr<DrawingMonitor> m_drawingMonitor;
 };

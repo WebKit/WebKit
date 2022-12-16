@@ -54,7 +54,7 @@ private:
     void timerFired();
 
     WeakObjCPtr<WKContentView> m_view;
-    RunLoop::Timer<GestureRecognizerConsistencyEnforcer> m_timer;
+    RunLoop::Timer m_timer;
     HashSet<RetainPtr<WKDeferringGestureRecognizer>> m_deferringGestureRecognizersWithTouches;
 };
 

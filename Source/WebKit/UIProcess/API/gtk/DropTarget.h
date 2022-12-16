@@ -86,7 +86,7 @@ private:
 #if USE(GTK4)
     GRefPtr<GCancellable> m_cancellable;
 #else
-    RunLoop::Timer<DropTarget> m_leaveTimer;
+    RunLoop::Timer m_leaveTimer;
 #endif
 };
 

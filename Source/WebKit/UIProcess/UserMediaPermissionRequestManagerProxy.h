@@ -176,7 +176,7 @@ private:
 
     WebPageProxy& m_page;
 
-    RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_rejectionTimer;
+    RunLoop::Timer m_rejectionTimer;
     Deque<Ref<UserMediaPermissionRequestProxy>> m_pendingRejections;
 
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
@@ -186,7 +186,7 @@ private:
     Vector<DeniedRequest> m_deniedRequests;
 
     WebCore::MediaProducerMediaStateFlags m_captureState;
-    RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_watchdogTimer;
+    RunLoop::Timer m_watchdogTimer;
     Seconds m_currentWatchdogInterval;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
