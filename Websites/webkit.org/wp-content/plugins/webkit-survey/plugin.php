@@ -86,6 +86,7 @@ class WebKit_Survey {
         </style>
         <?php
         include(dirname(__FILE__) . '/results.php');
+        echo "$total Total Votes";
     }
 
     public function process_vote() {
