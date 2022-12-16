@@ -80,7 +80,7 @@ void RenderLayerModelObject::willBeDestroyed()
 
 void RenderLayerModelObject::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
-    if (auto* layer = this->layer(); layer && layer->needsFullRepaint() && isInternalMove == IsInternalMove::No)
+    if (auto* layer = this->layer(); layer && layer->needsFullRepaint() && isInternalMove == IsInternalMove::No && containingBlock())
         issueRepaint(std::nullopt, ClipRepaintToLayer::No, ForceRepaint::Yes);
 
     RenderElement::willBeRemovedFromTree(isInternalMove);

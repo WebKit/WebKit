@@ -1,0 +1,20 @@
+<style>
+  tr { transform: rotate(0); }
+  td { list-style: url(about:blank); }
+  body:focus-within { display: contents; }
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+function runTest() {
+  document.body.offsetTop;
+  document.body.remove();
+  document.write('PASS if no crash.');
+}
+</script>
+<body onload="runTest()">
+  <div contenteditable autofocus></div>
+  <table>
+    <tr><td></td></tr>
+  </table>
+</body>
