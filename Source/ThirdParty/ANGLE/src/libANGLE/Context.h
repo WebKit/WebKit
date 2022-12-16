@@ -631,6 +631,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     bool noopDraw(PrimitiveMode mode, GLsizei count) const;
     bool noopDrawInstanced(PrimitiveMode mode, GLsizei count, GLsizei instanceCount) const;
+    bool noopMultiDraw(GLsizei drawcount) const;
 
     bool isClearBufferMaskedOut(GLenum buffer, GLint drawbuffer) const;
     bool noopClearBuffer(GLenum buffer, GLint drawbuffer) const;
