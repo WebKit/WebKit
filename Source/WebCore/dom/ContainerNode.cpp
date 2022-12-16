@@ -330,7 +330,7 @@ void ContainerNode::removeDetachedChildren()
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     auto childAsElement = dynamicDowncast<Element>(child);
-    auto hasDisplayContents = childAsElement && childAsElement->hasDisplayContents();
+    auto hasDisplayContents = childAsElement && (childAsElement->hasDisplayContents() || childAsElement->displayContentsChanged());
     if (!child.renderer() && !hasDisplayContents)
         return;
     if (childAsElement)
