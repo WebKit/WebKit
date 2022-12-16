@@ -23,8 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WKFoundation.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
+WK_EXTERN
 @interface _WKWebExtensionUtilities : NSObject
 
 /// Verifies that a dictionary:

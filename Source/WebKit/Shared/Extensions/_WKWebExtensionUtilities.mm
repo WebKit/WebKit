@@ -27,14 +27,14 @@
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #import "config.h"
 #import "_WKWebExtensionUtilities.h"
 
 #import "CocoaHelpers.h"
 
 @implementation _WKWebExtensionUtilities
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 static NSString *classToClassString(Class classType, BOOL plural = NO)
 {
@@ -129,5 +129,14 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
     return !errorString;
 }
 
-@end
+
+#else
+
++ (BOOL)validateContentsOfDictionary:(NSDictionary<NSString *, id> *)dictionary requiredKeys:(NSArray<NSString *> *)requiredKeys optionalKeys:(NSArray<NSString *> *)optionalKeys keyToExpectedValueType:(NSDictionary<NSString *, id> *)keyTypes outExceptionString:(NSString **)outExceptionString
+{
+    return NO;
+}
+
 #endif // ENABLE(WEB_EXTENSIONS)
+
+@end

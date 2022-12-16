@@ -818,7 +818,7 @@
 		3375A3772942A19D0028536D /* JSWebExtensionAPIWebNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3375A3762942A19C0028536D /* JSWebExtensionAPIWebNavigation.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		337822432947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		337822442947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 337822422947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		337822472947FBA5002106BB /* _WKWebExtensionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */; };
+		337822472947FBA5002106BB /* _WKWebExtensionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		337822482947FBA5002106BB /* _WKWebExtensionUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 337822462947FBA4002106BB /* _WKWebExtensionUtilities.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		33F68338293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		33F6833E293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */; };
