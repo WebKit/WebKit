@@ -306,6 +306,13 @@ static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation
     return nullptr;
 }
 
+static RefPtr<TransformOperation> blendFunc(TransformOperation* from, TransformOperation* to, const CSSPropertyBlendingContext& context)
+{
+    if (from && to)
+        return to->blend(from, context);
+    return nullptr;
+}
+
 static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation* to, const CSSPropertyBlendingContext& context)
 {
     if (is<ShapePathOperation>(from) && is<ShapePathOperation>(to)) {
@@ -3937,6 +3944,12 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
         auto& toNumeric = std::get<CSSCustomPropertyValue::NumericSyntaxValue>(to);
         if (fromNumeric.unitType == toNumeric.unitType)
             return blendFunc(fromNumeric, toNumeric, blendingContext);
+    }
+
+    if (std::holds_alternative<RefPtr<TransformOperation>>(from) && std::holds_alternative<RefPtr<TransformOperation>>(to)) {
+        auto& fromTransformOperation = std::get<RefPtr<TransformOperation>>(from);
+        auto& toTransformOperation = std::get<RefPtr<TransformOperation>>(to);
+        return blendFunc(fromTransformOperation.get(), toTransformOperation.get(), blendingContext);
     }
 
     return std::nullopt;

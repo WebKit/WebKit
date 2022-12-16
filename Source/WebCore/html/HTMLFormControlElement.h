@@ -68,6 +68,9 @@ public:
     bool wasChangedSinceLastFormControlChangeEvent() const { return m_wasChangedSinceLastFormControlChangeEvent; }
     void setChangedSinceLastFormControlChangeEvent(bool);
 
+    bool wasInteractedWithSinceLastFormSubmitEvent() const { return m_wasInteractedWithSinceLastFormSubmitEvent; }
+    void setInteractedWithSinceLastFormSubmitEvent(bool);
+
     virtual void dispatchFormControlChangeEvent();
     void dispatchChangeEvent();
     void dispatchCancelEvent();
@@ -113,6 +116,9 @@ public:
     // This must be called when a validation constraint or control value is changed.
     void updateValidity();
     void setCustomValidity(const String&) override;
+
+    bool matchesUserInvalidPseudoClass() const;
+    bool matchesUserValidPseudoClass() const;
 
     virtual bool supportsReadOnly() const { return false; }
     bool isReadOnly() const { return supportsReadOnly() && m_hasReadOnlyAttribute; }
@@ -218,6 +224,7 @@ private:
     unsigned m_isValid : 1;
 
     unsigned m_wasChangedSinceLastFormControlChangeEvent : 1;
+    unsigned m_wasInteractedWithSinceLastFormSubmitEvent : 1;
 };
 
 class DelayedUpdateValidityScope {

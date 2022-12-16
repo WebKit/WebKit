@@ -1,4 +1,4 @@
 
 
-FAIL :user-valid selector should be supported The string did not match the expected pattern.
+PASS :user-valid selector should be supported
 

@@ -147,9 +147,6 @@
 #include "RuntimeApplicationChecks.h"
 #include "VideoFullscreenInterfaceAVKit.h"
 #endif
-#if HAVE(PIP_CONTROLLER)
-#include "VideoFullscreenInterfacePiP.h"
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "RemotePlayback.h"

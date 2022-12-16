@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-session-category</title>
+    <script src='video-test.js'></script>
+    <script src='media-file.js'></script>
+    <script>
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest(`<br>This test requires internals!`);
+                return;
+            }
+
+            consoleWrite('Test that silent, autoplaying videos with audio tracks do not interrupt other system audio')
+
+            internals.settings.setShouldManageAudioSessionCategory(true);
+
+            video = document.getElementsByTagName('video')[0];
+
+            run('video.muted = true');
+            run('video.src = findMediaFile("video", "content/audio-tracks")');
+
+            await waitFor(video, 'loadedmetadata')
+
+            // Avoid a console warning in test output about a unhandled rejected play() promise:
+            try {
+                let playPromise = run('video.play()');
+                run('video.pause()');
+                await playPromise;
+            } catch(e) { }
+
+            run('video.muted = false');
+            await sleepFor(0);
+            run('video.muted = true');
+            await sleepFor(0);
+
+            await run('video.play()');
+
+            testExpected('internals.audioSessionCategory()', 'None')
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

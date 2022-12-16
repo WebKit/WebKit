@@ -1972,3 +1972,5 @@ webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-a
 
 # vertical form controls
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]
+
+webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]

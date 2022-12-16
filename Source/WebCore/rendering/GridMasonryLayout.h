@@ -28,8 +28,10 @@
 #include "GridPositionsResolver.h"
 #include "LayoutUnit.h"
 #include "RenderBox.h"
-#include "RenderGrid.h"
+
 namespace WebCore {
+
+class RenderGrid;
 
 class GridMasonryLayout {
 public:

@@ -32,6 +32,7 @@
 #include "CatchScope.h"
 #include "DeferredWorkTimer.h"
 #include "Exception.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSCBuiltins.h"
 #include "JSGlobalObjectInlines.h"
 #include "JSModuleNamespaceObject.h"

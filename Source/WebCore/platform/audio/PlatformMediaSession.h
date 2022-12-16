@@ -185,8 +185,8 @@ public:
     virtual void resetPlaybackSessionState() { }
     String sourceApplicationIdentifier() const;
 
-    bool hasPlayedSinceLastInterruption() const { return m_hasPlayedSinceLastInterruption; }
-    void clearHasPlayedSinceLastInterruption() { m_hasPlayedSinceLastInterruption = false; }
+    bool hasPlayedAudiblySinceLastInterruption() const { return m_hasPlayedAudiblySinceLastInterruption; }
+    void clearHasPlayedAudiblySinceLastInterruption() { m_hasPlayedAudiblySinceLastInterruption = false; }
 
     bool preparingToPlay() const { return m_preparingToPlay; }
 
@@ -227,7 +227,7 @@ private:
     bool m_active { false };
     bool m_notifyingClient { false };
     bool m_isPlayingToWirelessPlaybackTarget { false };
-    bool m_hasPlayedSinceLastInterruption { false };
+    bool m_hasPlayedAudiblySinceLastInterruption { false };
     bool m_preparingToPlay { false };
 
 #if !RELEASE_LOG_DISABLED

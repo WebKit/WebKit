@@ -50,7 +50,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 namespace WebCore {
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
-    : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
+    : m_playerController(createWebAVPlayerController())
     , m_playbackSessionModel(&model)
 {
     ASSERT(isUIThread());

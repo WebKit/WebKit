@@ -39,6 +39,7 @@
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "Page.h"
 #include "RenderAncestorIterator.h"

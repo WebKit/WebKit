@@ -34,6 +34,8 @@
 
 #import "WKWebViewInternal.h"
 #import "WebExtensionController.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
 
@@ -41,14 +43,36 @@ namespace WebKit {
 
 void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
 {
+    auto page = WebProcessProxy::webPage(identifier);
+    if (!page)
+        return;
+
     if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
-        m_backgroundPageListeners.add(type);
+        m_backgroundContentEventListeners.add(type);
+
+    auto result = m_eventListenerPages.add(type, WeakPageCountedSet { });
+    result.iterator->value.add(*page);
 }
 
 void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebExtensionEventListenerType type)
 {
+    auto page = WebProcessProxy::webPage(identifier);
+    if (!page)
+        return;
+
     if (!extension().backgroundContentIsPersistent() && m_backgroundWebView.get()._page->identifier() == identifier)
-        m_backgroundPageListeners.remove(type);
+        m_backgroundContentEventListeners.remove(type);
+
+    auto iterator = m_eventListenerPages.find(type);
+    if (iterator == m_eventListenerPages.end())
+        return;
+
+    iterator->value.remove(*page);
+
+    if (!iterator->value.isEmptyIgnoringNullReferences())
+        return;
+
+    m_eventListenerPages.remove(iterator);
 }
 
 } // namespace WebKit

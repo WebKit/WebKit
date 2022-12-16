@@ -185,6 +185,8 @@ struct PossiblyQuotedIdentifier {
             PseudoClassHasAttachment,
 #endif
             PseudoClassModal,
+            PseudoClassUserInvalid,
+            PseudoClassUserValid,
         };
 
         enum PseudoElementType {

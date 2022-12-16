@@ -28,6 +28,7 @@
 #include "CSSMarkup.h"
 #include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
+#include "CommonAtomStrings.h"
 #include "GenericMediaQuerySerialization.h"
 #include "MediaQueryFeatures.h"
 

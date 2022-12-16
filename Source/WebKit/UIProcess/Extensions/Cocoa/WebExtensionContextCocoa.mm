@@ -57,7 +57,7 @@
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
 
-static constexpr NSString *backgroundPageListenersStateKey = @"BackgroundPageListenersState";
+static constexpr NSString *backgroundContentEventListenersKey = @"BackgroundContentEventListeners";
 static constexpr NSString *lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static constexpr NSString *lastSeenVersionStateKey = @"LastSeenVersion";
 
@@ -1158,7 +1158,7 @@ void WebExtensionContext::loadBackgroundWebViewDuringLoad()
         loadBackgroundPageListenersFromStorage();
 
         // FIXME: <https://webkit.org/b/248889> Check to see if the extension is being loaded as part of startup.
-        if (m_backgroundPageListeners.isEmpty() || savedVersionNumberDoesNotMatchCurrentVersionNumber || backgroundPageListensToOnStartup)
+        if (m_backgroundContentEventListeners.isEmpty() || savedVersionNumberDoesNotMatchCurrentVersionNumber || backgroundPageListensToOnStartup)
             loadBackgroundWebView();
         else
             m_shouldFireStartupEvent = false;
@@ -1272,7 +1272,7 @@ void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
 
     if (extensionVersionDidChange) {
         // FIXME: Remove declarative net request modified rulesets.
-        [m_state removeObjectForKey:backgroundPageListenersStateKey];
+        [m_state removeObjectForKey:backgroundContentEventListenersKey];
 
         // FIXME: <https://webkit.org/b/248889> Set queued install event details.
     } else if (!didQueueStartupEvent) {
@@ -1284,12 +1284,12 @@ void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
 
 void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 {
-    NSData *listenersData = [m_state objectForKey:backgroundPageListenersStateKey];
+    NSData *listenersData = [m_state objectForKey:backgroundContentEventListenersKey];
     NSCountedSet *savedListeners = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[ NSCountedSet.class, NSNumber.class ]] fromData:listenersData error:nil];
 
-    m_backgroundPageListeners.clear();
+    m_backgroundContentEventListeners.clear();
     for (NSNumber *entry in savedListeners)
-        m_backgroundPageListeners.add(static_cast<WebExtensionEventListenerType>(entry.unsignedIntValue), [savedListeners countForObject:entry]);
+        m_backgroundContentEventListeners.add(static_cast<WebExtensionEventListenerType>(entry.unsignedIntValue), [savedListeners countForObject:entry]);
 }
 
 void WebExtensionContext::saveBackgroundPageListenersToStorage()
@@ -1298,12 +1298,12 @@ void WebExtensionContext::saveBackgroundPageListenersToStorage()
         return;
 
     NSCountedSet *listeners = [NSCountedSet set];
-    for (auto& entry : m_backgroundPageListeners)
-        [listeners addObject:@(static_cast<uint8_t>(entry.key))];
+    for (auto& entry : m_backgroundContentEventListeners)
+        [listeners addObject:@(static_cast<unsigned>(entry.key))];
 
     NSData *newBackgroundPageListenersAsData = [NSKeyedArchiver archivedDataWithRootObject:listeners requiringSecureCoding:YES error:nil];
-    NSData *savedBackgroundPageListenersAsData = [m_state objectForKey:backgroundPageListenersStateKey];
-    [m_state setObject:newBackgroundPageListenersAsData forKey:backgroundPageListenersStateKey];
+    NSData *savedBackgroundPageListenersAsData = [m_state objectForKey:backgroundContentEventListenersKey];
+    [m_state setObject:newBackgroundPageListenersAsData forKey:backgroundContentEventListenersKey];
 
     NSNumber *savedListenerVersionNumber = [m_state objectForKey:lastSeenVersionStateKey];
     [m_state setObject:@(currentBackgroundPageListenerStateVersion) forKey:lastSeenVersionStateKey];
@@ -1341,7 +1341,7 @@ void WebExtensionContext::fireEvents(EventListenerTypeSet types, CompletionHandl
 
     bool backgroundContentListensToAtLeastOneEvent = false;
     for (auto& type : types) {
-        if (m_backgroundPageListeners.contains(type)) {
+        if (m_backgroundContentEventListeners.contains(type)) {
             backgroundContentListensToAtLeastOneEvent = true;
             break;
         }

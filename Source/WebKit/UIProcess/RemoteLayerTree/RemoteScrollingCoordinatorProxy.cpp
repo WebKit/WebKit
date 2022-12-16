@@ -286,6 +286,11 @@ void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(M
     m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), timestamp, reasons.toRaw());
 }
 
+void RemoteScrollingCoordinatorProxy::startMonitoringWheelEventsForTesting()
+{
+    m_scrollingTree->setIsMonitoringWheelEvents(true);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

@@ -29,6 +29,7 @@
 #include "AnimationEffect.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
+#include "CSSPropertyAnimation.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"

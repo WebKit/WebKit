@@ -34,6 +34,7 @@
 #import "Download.h"
 #import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
+#import "NetworkConnectionIntegrityHelpers.h"
 #import "NetworkDataTaskCocoa.h"
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
@@ -468,14 +469,6 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 #undef STRINGIFY_CIPHER
 }
 #endif // HAVE(CFNETWORK_METRICS_APIS_V4)
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/NetworkSessionCocoaAdditions.mm>)
-#import <WebKitAdditions/NetworkSessionCocoaAdditions.mm>
-#else
-namespace WebKit {
-inline static void applyAdditionalSettings(NSURLSession *) { }
-}
-#endif
 
 @interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate
 #if HAVE(NSURLSESSION_WEBSOCKET)
@@ -1114,7 +1107,9 @@ namespace WebKit {
 static RetainPtr<NSURLSession> createURLSession(NSURLSessionConfiguration *configuration, id<NSURLSessionDelegate> delegate)
 {
     RetainPtr session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue];
-    applyAdditionalSettings(session.get());
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    configureForNetworkConnectionIntegrity(session.get());
+#endif
     return session;
 }
 

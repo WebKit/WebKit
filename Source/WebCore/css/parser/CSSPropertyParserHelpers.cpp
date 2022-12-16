@@ -29,6 +29,8 @@
 
 #include "config.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParser.h"
+#include "CSSPropertyParsing.h"
 
 #include "CSSBackgroundRepeatValue.h"
 #include "CSSBasicShapes.h"

@@ -405,6 +405,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
         protectedInputElement->dispatchCancelEvent();
 
     protectedInputElement->setChangedSinceLastFormControlChangeEvent(false);
+    protectedInputElement->setInteractedWithSinceLastFormSubmitEvent(true);
 }
 
 void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const String& displayString, Icon* icon)

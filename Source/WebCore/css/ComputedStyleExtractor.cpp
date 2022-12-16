@@ -43,6 +43,7 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
+#include "CSSRegisteredCustomProperty.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"

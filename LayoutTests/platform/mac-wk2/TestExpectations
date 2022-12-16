@@ -1817,3 +1817,5 @@ webkit.org/b/249407 [ BigSur+ ] media/audioSession/getUserMedia.html [ Failure ]
 [ Ventura arm64 ] http/tests/media/fairplay/fps-init-data-skd.html [ Pass Timeout ]
 [ Ventura arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Pass Timeout ]
 [ Ventura arm64 ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Pass Failure ]
+
+webkit.org/b/249486 [ BigSur+ ] media/audioSession/audioSessionType.html [ Failure ]

@@ -516,6 +516,10 @@ void EventSendingController::monitorWheelEvents(MonitorWheelEventsOptions* optio
     m_sentWheelPhaseEndOrCancel = false;
     m_sentWheelMomentumPhaseEnd = false;
     WKBundlePageStartMonitoringScrollOperations(page, options ? options->resetLatching : true);
+
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "MonitorWheelEvents");
+    postPageMessage("EventSender", body);
 }
 
 struct ScrollCompletionCallbackData {

@@ -40,12 +40,7 @@ class PlaybackSessionInterfaceAVKit;
 
 @end
 
-WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
-    WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
-    WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
-    BOOL _pictureInPictureInterrupted;
-    BOOL _muted;
-}
+@interface WebAVPlayerController : NSObject
 
 - (void)setAllowsPictureInPicture:(BOOL)allowsPictureInPicture;
 
@@ -112,6 +107,10 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
 
 - (void)setDefaultPlaybackRate:(double)defaultPlaybackRate fromJavaScript:(BOOL)fromJavaScript;
 - (void)setRate:(double)rate fromJavaScript:(BOOL)fromJavaScript;
+
 @end
+
+Class webAVPlayerControllerClass();
+RetainPtr<WebAVPlayerController> createWebAVPlayerController();
 
 #endif

@@ -63,6 +63,8 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
     if (namespaceObject && JSValueIsObject(context, namespaceObject))
         return;
 
+    extension->addFrameWithExtensionContent(frame);
+
     if (!isMainWorld)
         extension->setContentScriptWorld(&world);
 
@@ -89,6 +91,8 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
     auto namespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
     if (namespaceObject && JSValueIsObject(context, namespaceObject))
         return;
+
+    extension->addFrameWithExtensionContent(frame);
 
     namespaceObject = toJS(context, WebExtensionAPINamespace::create(WebExtensionAPINamespace::ForMainWorld::Yes, *extension).ptr());
 

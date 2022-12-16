@@ -27,7 +27,11 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "UserData.h"
+#include "VisitedLinkStore.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PageIdentifier.h>

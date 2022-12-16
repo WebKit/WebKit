@@ -39,6 +39,7 @@
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -821,6 +822,11 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
         NSPoint windowLocation = [event locationInWindow];
         WTFLogAlways("EventSenderProxy::sendWheelEvent failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
+}
+
+void EventSenderProxy::monitorWheelEvents()
+{
+    [m_testController->mainWebView()->platformView() _startMonitoringWheelEvents];
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
