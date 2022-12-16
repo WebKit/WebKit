@@ -165,7 +165,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static constexpr NSTimeInterval kAnimationDuration = 0.2;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
 static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
-static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
 #endif
 
 #pragma mark -
@@ -564,14 +563,16 @@ static constexpr CGFloat kTargetWindowAspectRatio = 1.7778;
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    CGFloat preferredWidth = page->preferences().mediaPreferredFullscreenWidth();
-    CGFloat preferredHeight = preferredWidth / kTargetWindowAspectRatio;
-    CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : kTargetWindowAspectRatio;
+    auto screenSize = page->overrideScreenSize();
+    CGFloat preferredWidth = screenSize.width();
+    CGFloat preferredHeight = screenSize.height();
+    CGFloat preferredAspectRatio = preferredWidth / preferredHeight;
+    CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : preferredAspectRatio;
 
     CGFloat targetWidth = preferredWidth;
     CGFloat targetHeight = preferredHeight;
     if (videoDimensions.height && videoDimensions.width) {
-        if (videoAspectRatio > kTargetWindowAspectRatio)
+        if (videoAspectRatio > preferredAspectRatio)
             targetHeight = videoDimensions.height * preferredWidth / videoDimensions.width;
         else
             targetWidth = videoDimensions.width * preferredHeight / videoDimensions.height;

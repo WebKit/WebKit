@@ -857,6 +857,8 @@ public:
     void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID);
     void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID);
 
+    WebCore::FloatSize overrideScreenSize();
+
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID);
 
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
@@ -2529,7 +2531,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize();
     WebCore::FloatSize availableScreenSize();
-    WebCore::FloatSize overrideScreenSize();
     float textAutosizingWidth();
 
     void couldNotRestorePageState();
