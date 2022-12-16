@@ -9192,6 +9192,18 @@ HTMLVideoElement* Document::pictureInPictureElement() const
 
 void Document::setPictureInPictureElement(HTMLVideoElement* element)
 {
+    auto* oldElement = m_pictureInPictureElement.get();
+    if (oldElement == element)
+        return;
+
+    std::optional<Style::PseudoClassChangeInvalidation> oldInvalidation;
+    if (oldElement)
+        emplace(oldInvalidation, *oldElement, { { CSSSelector::PseudoClassPictureInPicture, false } });
+
+    std::optional<Style::PseudoClassChangeInvalidation> newInvalidation;
+    if (element)
+        emplace(newInvalidation, *element, { { CSSSelector::PseudoClassPictureInPicture, true } });
+
     m_pictureInPictureElement = element;
 }
 #endif

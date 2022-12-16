@@ -5,9 +5,12 @@ RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 EXPECTED (getComputedStyle(video).color == 'rgb(0, 0, 255)') OK
+EXPECTED (getComputedStyle(subject).backgroundColor == 'rgb(255, 0, 0)') OK
 EVENT(enterpictureinpicture)
 EXPECTED (getComputedStyle(video).color == 'rgb(0, 255, 0)') OK
+EXPECTED (getComputedStyle(subject).backgroundColor == 'rgb(0, 128, 0)') OK
 EVENT(leavepictureinpicture)
 EXPECTED (getComputedStyle(video).color == 'rgb(0, 0, 255)') OK
+EXPECTED (getComputedStyle(subject).backgroundColor == 'rgb(255, 0, 0)') OK
 END OF TEST
 
