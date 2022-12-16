@@ -52,7 +52,7 @@ private:
     void start(WebCore::RealtimeMediaSourceIdentifier);
     void stop(WebCore::RealtimeMediaSourceIdentifier);
 #if ENABLE(SANDBOX_EXTENSIONS)
-    void grantSandboxExtensions(SandboxExtension::Handle&&, SandboxExtension::Handle&&);
+    void grantSandboxExtensions(SandboxExtension::Handle&&, SandboxExtension::Handle&&, SandboxExtension::Handle&&);
     void revokeSandboxExtensions();
 #endif
 
@@ -70,6 +70,7 @@ private:
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<Source>> m_sources;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
+    RefPtr<SandboxExtension> m_machBootstrapExtension;
     RefPtr<SandboxExtension> m_sandboxExtensionForTCCD;
     RefPtr<SandboxExtension> m_sandboxExtensionForMicrophone;
 #endif

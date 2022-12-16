@@ -183,7 +183,7 @@ struct WebPageCreationParameters {
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    std::optional<SandboxExtension::Handle> fontMachExtensionHandle;
+    Vector<SandboxExtension::Handle> fontMachExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
@@ -280,6 +280,10 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+    
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    SandboxExtension::Handle machBootstrapHandle;
+#endif
 };
 
 } // namespace WebKit
