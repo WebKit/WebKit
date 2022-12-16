@@ -1014,7 +1014,7 @@ static std::optional<std::pair<RenderElement*, LayoutRect>> listBoxElementScroll
 
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
-    WTFLogAlways("Chirag - Element::scrollIntoView: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    // WTFLogAlways("Chirag - Element::scrollIntoView: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderElement* renderer = nullptr;

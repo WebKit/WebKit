@@ -2672,7 +2672,7 @@ void FrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRect, b
 
     // FIXME: ideally need to determine if this <iframe> is inside position:fixed.
     if (auto* ownerRenderer = ownerElement->renderer()) {
-        WTFLogAlways("Chirag -- before calling: scrollRectToVisible: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
+        // WTFLogAlways("Chirag -- before calling: scrollRectToVisible: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
         scrollRectToVisible(contentsToContainingViewContents(enclosingIntRect(targetRect)), *ownerRenderer, false /* insideFixed */, options);
     }
 }
