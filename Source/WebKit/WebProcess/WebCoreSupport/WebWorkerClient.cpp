@@ -29,6 +29,7 @@
 #include "ImageBufferShareableBitmapBackend.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "WebPage.h"
 
 #if ENABLE(WEBGL) && ENABLE(GPU_PROCESS)
 #include "RemoteGraphicsContextGLProxy.h"

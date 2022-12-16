@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ServiceWorkerNotificationHandler.h"
 
+#include "Logging.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
 #include <wtf/Scope.h>

@@ -35,6 +35,8 @@
 #include <wtf/DataLog.h>
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/OSAllocator.h>
 #include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SafeStrerror.h>

@@ -76,6 +76,7 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 #include "EventTarget.h"
+#include "Rect.h"
 
 namespace WebCore {
 

@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/InterferenceGraph.h>
+#include <wtf/ListDump.h>
 #include <wtf/SmallSet.h>
 #include <wtf/Vector.h>
 

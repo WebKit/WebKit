@@ -41,6 +41,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
+#include "Page.h"
 #include "PlaceholderRenderingContext.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"

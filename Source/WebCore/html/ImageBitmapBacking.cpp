@@ -27,6 +27,7 @@
 #include "ImageBitmapBacking.h"
 
 #include "Chrome.h"
+#include "Page.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 

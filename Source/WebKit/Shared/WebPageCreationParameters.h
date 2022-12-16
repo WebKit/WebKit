@@ -40,6 +40,7 @@
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/LayoutMilestone.h>

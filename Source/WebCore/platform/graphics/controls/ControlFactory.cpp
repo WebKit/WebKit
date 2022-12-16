@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ControlFactory.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 #if !PLATFORM(MAC)

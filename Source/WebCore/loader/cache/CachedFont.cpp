@@ -35,6 +35,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "MemoryCache.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"

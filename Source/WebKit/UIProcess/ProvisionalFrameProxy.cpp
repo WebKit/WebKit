@@ -32,8 +32,11 @@
 #include "LoadParameters.h"
 #include "WebFrameProxy.h"
 #include "WebFrameProxyMessages.h"
+#include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 

@@ -27,9 +27,13 @@
 #include "CSSCustomPropertyValue.h"
 
 #include "CSSCalcValue.h"
+#include "CSSFunctionValue.h"
+#include "CSSMarkup.h"
 #include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
 #include "ColorSerialization.h"
+#include "ComputedStyleExtractor.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
