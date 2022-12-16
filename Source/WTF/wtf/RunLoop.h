@@ -56,6 +56,10 @@
 #include <wtf/RedBlackTree.h>
 #endif
 
+#if USE(COCOA_EVENT_LOOP)
+#include <wtf/BlockPtr.h>
+#endif
+
 namespace WTF {
 
 #if USE(COCOA_EVENT_LOOP)
@@ -197,25 +201,9 @@ public:
         Function<void()> m_function;
     };
 
-    class DispatchTimer final : public TimerBase, public ThreadSafeRefCounted<DispatchTimer> {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        DispatchTimer(RunLoop& runLoop)
-            : TimerBase(runLoop)
-        {
-        }
-
-        void setFunction(Function<void()>&& function)
-        {
-            m_function = WTFMove(function);
-        }
-    private:
-        void fired() final { m_function(); }
-
-        Function<void()> m_function;
-    };
-
-    WTF_EXPORT_PRIVATE Ref<RunLoop::DispatchTimer> dispatchAfter(Seconds, Function<void()>&&);
+    class DelayedDispatch;
+    template<typename F>
+    Ref<DelayedDispatch> dispatchAfter(Seconds, F&&);
 
 private:
     class Holder;
@@ -224,7 +212,11 @@ private:
     RunLoop();
 
     void performWork();
-
+#if USE(COCOA_EVENT_LOOP)
+    WTF_EXPORT_PRIVATE Ref<DelayedDispatch> dispatchBlockAfter(Seconds, BlockPtr<void(CFRunLoopTimerRef)>&&);
+#else
+    WTF_EXPORT_PRIVATE Ref<DelayedDispatch> dispatchFunctionAfter(Seconds, Function<void()>&&);
+#endif
     Deque<Function<void()>> m_currentIteration;
 
     Lock m_nextIterationLock;
@@ -283,6 +275,62 @@ private:
     Function<void()> m_wakeUpCallback;
 #endif
 };
+
+#if USE(COCOA_EVENT_LOOP)
+
+class RunLoop::DelayedDispatch final : public ThreadSafeRefCounted<DelayedDispatch> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    // Cancels the delayed dispatch if it is not yet running.
+    void invalidate();
+private:
+    Lock m_lock;
+    DelayedDispatch(RetainPtr<CFRunLoopTimerRef> timer)
+        : m_timer(WTFMove(timer))
+    {
+    }
+    RetainPtr<CFRunLoopTimerRef> m_timer WTF_GUARDED_BY_LOCK(m_lock);
+    friend class RunLoop;
+};
+
+#else
+
+// FIXME: this leaks and is not thread safe.
+class RunLoop::DelayedDispatch final : private TimerBase, public ThreadSafeRefCounted<DelayedDispatch> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    // Cancels the delayed dispatch if it is not yet running.
+    void invalidate()
+    {
+        stop();
+    }
+private:
+    using TimerBase::TimerBase;
+
+    void setFunction(Function<void()>&& function)
+    {
+        m_function = WTFMove(function);
+    }
+    void fired() final { m_function(); }
+
+    Function<void()> m_function;
+    friend class RunLoop;
+};
+
+#endif
+
+template<typename F>
+inline Ref<RunLoop::DelayedDispatch> RunLoop::dispatchAfter(Seconds delay, F&& function)
+{
+#if USE(COCOA_EVENT_LOOP)
+    return dispatchBlockAfter(delay, makeBlockPtr([function = WTFMove(function)](CFRunLoopTimerRef timer) mutable {
+        function();
+        CFRunLoopTimerInvalidate(timer); // Frees the block.
+    }));
+#else
+    return dispatchFunctionAfter(delay, WTFMove(function));
+#endif
+}
 
 inline void assertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABILITY(runLoop)
 {

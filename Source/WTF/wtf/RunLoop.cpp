@@ -170,19 +170,6 @@ void RunLoop::dispatch(Function<void()>&& function)
         wakeUp();
 }
 
-Ref<RunLoop::DispatchTimer> RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
-{
-    RELEASE_ASSERT(function);
-    Ref<DispatchTimer> timer = adoptRef(*new DispatchTimer(*this));
-    timer->setFunction([timer = timer.copyRef(), function = WTFMove(function)]() mutable {
-        Ref<DispatchTimer> protectedTimer { WTFMove(timer) };
-        function();
-        protectedTimer->stop();
-    });
-    timer->startOneShot(delay);
-    return timer;
-}
-
 void RunLoop::suspendFunctionDispatchForCurrentCycle()
 {
     // Don't suspend if there are already suspended functions to avoid unexecuted function pile-up.
@@ -208,6 +195,23 @@ void RunLoop::assertIsCurrent() const
 {
     ASSERT(this == &current());
 }
+#endif
+
+#if !USE(COCOA_EVENT_LOOP)
+
+Ref<RunLoop::DelayedDispatch> RunLoop::dispatchFunctionAfter(Seconds delay, Function<void()>&& function)
+{
+    RELEASE_ASSERT(function);
+    Ref<DelayedDispatch> timer = adoptRef(*new DelayedDispatch(*this));
+    timer->setFunction([timer = timer.copyRef(), function = WTFMove(function)]() mutable {
+        Ref<DelayedDispatch> protectedTimer { WTFMove(timer) };
+        function();
+        protectedTimer->stop();
+    });
+    timer->startOneShot(delay);
+    return timer;
+}
+
 #endif
 
 } // namespace WTF
