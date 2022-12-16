@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2021 Apple Inc. All right reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All right reserved.
+ * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2013 Adobe Systems Inc. All right reserved.
  *
@@ -221,10 +221,11 @@ inline void BreakingContext::initializeForCurrentObject()
     m_currWS = renderer.isReplacedOrInlineBlock() ? renderer.parent()->style().whiteSpace() : renderer.style().whiteSpace();
     m_lastWS = m_lastObject->isReplacedOrInlineBlock() ? m_lastObject->parent()->style().whiteSpace() : m_lastObject->style().whiteSpace();
 
-    m_autoWrap = RenderStyle::autoWrap(m_currWS);
+    bool isSVGText = renderer.isSVGInlineText();
+    m_autoWrap = !isSVGText && RenderStyle::autoWrap(m_currWS);
     m_autoWrapWasEverTrueOnLine = m_autoWrapWasEverTrueOnLine || m_autoWrap;
 
-    m_preservesNewline = renderer.isSVGInlineText() ? false : RenderStyle::preserveNewline(m_currWS);
+    m_preservesNewline = !isSVGText && RenderStyle::preserveNewline(m_currWS);
 
     m_collapseWhiteSpace = RenderStyle::collapseWhiteSpace(m_currWS);
 }
