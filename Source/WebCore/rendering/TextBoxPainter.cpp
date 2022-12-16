@@ -594,10 +594,52 @@ void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPaint
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/TextBoxPainterAdditions.cpp>
+#else
+static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline&, size_t, size_t)
+{
+    return FloatRoundedRect::Radii { 0 };
+}
+
+template<typename TextBoxPath>
+void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const FloatRoundedRect::Radii&, bool) const
+{
+    // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
+    // All other marked text underlines are 1px thick.
+    // If there's not enough space the underline will touch or overlap characters.
+    int lineThickness = 1;
+    int baseline = m_style.metricsOfPrimaryFont().ascent();
+    if (underline.thick && m_logicalRect.height() - baseline >= 2)
+        lineThickness = 2;
+
+    // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
+    // We make each line shorter, which has a harmless side effect of shortening the first and last clauses, too.
+    start += 1;
+    width -= 2;
+
+    auto& style = m_renderer.style();
+    auto underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : style.colorByApplyingColorFilter(underline.color);
+
+    auto& context = m_paintInfo.context();
+    context.setStrokeColor(underlineColor);
+    context.setStrokeThickness(lineThickness);
+    context.drawLineForText(FloatRect(m_paintRect.x() + start, m_paintRect.y() + m_logicalRect.height() - lineThickness, width, lineThickness), m_isPrinting);
+}
+#endif
+
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
-{
-    for (auto& underline : m_renderer.frame().editor().customCompositionUnderlines()) {
+{        
+    auto& underlines = m_renderer.frame().editor().customCompositionUnderlines();
+    auto underlineCount = underlines.size();
+
+    auto hasLiveConversion = std::find_if(underlines.begin(), underlines.end(), [](const auto& underline) {
+        return underline.thick;
+    }) != underlines.end();
+
+    for (size_t i = 0; i < underlineCount; ++i) {
+        auto& underline = underlines[i];
         if (underline.endOffset <= textBox().start()) {
             // Underline is completely before this run. This might be an underline that sits
             // before the first run we draw, or underlines that were within runs we skipped
@@ -608,8 +650,10 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
         if (underline.startOffset >= textBox().end())
             break; // Underline is completely after this run, bail. A later run will paint it.
 
+        auto underlineRadii = radiiForUnderline(underline, underlineCount, i);
+
         // Underline intersects this run. Paint it.
-        paintCompositionUnderline(underline);
+        paintCompositionUnderline(underline, underlineRadii, hasLiveConversion);
 
         if (underline.endOffset > textBox().end())
             break; // Underline also runs into the next run. Bail now, no more marker advancement.
@@ -634,7 +678,7 @@ float TextBoxPainter<TextBoxPath>::textPosition()
 }
 
 template<typename TextBoxPath>
-void TextBoxPainter<TextBoxPath>::paintCompositionUnderline(const CompositionUnderline& underline)
+void TextBoxPainter<TextBoxPath>::paintCompositionUnderline(const CompositionUnderline& underline, const FloatRoundedRect::Radii& radii, bool hasLiveConversion)
 {
     float start = 0; // start of line to draw, relative to tx
     float width = m_logicalRect.width(); // how much line to draw
@@ -659,26 +703,7 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderline(const CompositionUnd
         mirrorRTLSegment(m_logicalRect.width(), textBox().direction(), start, width);
     }
 
-    // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
-    // All other marked text underlines are 1px thick.
-    // If there's not enough space the underline will touch or overlap characters.
-    int lineThickness = 1;
-    int baseline = m_style.metricsOfPrimaryFont().ascent();
-    if (underline.thick && m_logicalRect.height() - baseline >= 2)
-        lineThickness = 2;
-
-    // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
-    // We make each line shorter, which has a harmless side effect of shortening the first and last clauses, too.
-    start += 1;
-    width -= 2;
-
-    auto& style = m_renderer.style();
-    Color underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : style.colorByApplyingColorFilter(underline.color);
-
-    GraphicsContext& context = m_paintInfo.context();
-    context.setStrokeColor(underlineColor);
-    context.setStrokeThickness(lineThickness);
-    context.drawLineForText(FloatRect(m_paintRect.x() + start, m_paintRect.y() + m_logicalRect.height() - lineThickness, width, lineThickness), m_isPrinting);
+    fillCompositionUnderline(start, width, underline, radii, hasLiveConversion);
 }
 
 template<typename TextBoxPath>

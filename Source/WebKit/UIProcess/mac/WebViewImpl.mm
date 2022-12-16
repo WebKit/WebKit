@@ -4633,6 +4633,9 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
     return validAttributes.get().get();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebViewImplAdditions.mm>
+#else
 static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
 {
     Vector<WebCore::CompositionUnderline> result;
@@ -4657,6 +4660,7 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
 
     return result;
 }
+#endif
 
 static bool eventKeyCodeIsZeroOrNumLockOrFn(NSEvent *event)
 {
