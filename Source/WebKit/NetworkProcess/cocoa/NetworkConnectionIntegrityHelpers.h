@@ -29,10 +29,13 @@
 #import <wtf/HashSet.h>
 #import <wtf/text/WTFString.h>
 
+OBJC_CLASS NSURLSession;
+
 namespace WebKit {
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
+void configureForNetworkConnectionIntegrity(NSURLSession *);
 void requestLookalikeCharacterStrings(CompletionHandler<void(const HashSet<String>&)>&&);
 
 #endif
