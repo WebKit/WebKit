@@ -414,11 +414,11 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const Inspector::Prot
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    exitFullscreenWindowForPage(*page, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = WTFMove(page), width, height, x, y]() mutable {
+    exitFullscreenWindowForPage(*page, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = RefPtr { page }, width, height, x, y]() mutable {
         auto& webPage = *page;
-        this->restoreWindowForPage(webPage, [callback = WTFMove(callback), page = WTFMove(page), width, height, x, y]() mutable {
+        this->restoreWindowForPage(webPage, [callback = WTFMove(callback), page = RefPtr { page }, width, height, x, y]() mutable {
             auto& webPage = *page;
-            webPage.getWindowFrameWithCallback([callback = WTFMove(callback), page = WTFMove(page), width, height, x, y](WebCore::FloatRect originalFrame) mutable {
+            webPage.getWindowFrameWithCallback([callback = WTFMove(callback), page = RefPtr { page }, width, height, x, y](WebCore::FloatRect originalFrame) mutable {
                 WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x.value_or(originalFrame.location().x()), y.value_or(originalFrame.location().y())), WebCore::FloatSize(width.value_or(originalFrame.size().width()), height.value_or(originalFrame.size().height())));
                 if (newFrame != originalFrame)
                     page->setWindowFrame(newFrame);
@@ -560,9 +560,9 @@ void WebAutomationSession::maximizeWindowOfBrowsingContext(const Inspector::Prot
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    exitFullscreenWindowForPage(*page, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = WTFMove(page)]() mutable {
+    exitFullscreenWindowForPage(*page, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = RefPtr { page }]() mutable {
         auto& webPage = *page;
-        restoreWindowForPage(webPage, [this, callback = WTFMove(callback), page = WTFMove(page)]() mutable {
+        restoreWindowForPage(webPage, [this, callback = WTFMove(callback), page = RefPtr { page }]() mutable {
             maximizeWindowForPage(*page, [callback = WTFMove(callback)]() {
                 callback->sendSuccess();
             });
@@ -576,7 +576,7 @@ void WebAutomationSession::hideWindowOfBrowsingContext(const Inspector::Protocol
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
     
-    exitFullscreenWindowForPage(*page, [protectedThis = Ref { *this }, callback = WTFMove(callback), page = WTFMove(page)]() mutable {
+    exitFullscreenWindowForPage(*page, [protectedThis = Ref { *this }, callback = WTFMove(callback), page = RefPtr { page }]() mutable {
         protectedThis->hideWindowForPage(*page, [callback = WTFMove(callback)]() mutable {
             callback->sendSuccess();
         });
