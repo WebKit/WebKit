@@ -87,6 +87,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , translate(RenderStyle::initialTranslate())
     , offsetPath(RenderStyle::initialOffsetPath())
     , touchActions(RenderStyle::initialTouchActions())
+    , marginTrim(RenderStyle::initialMarginTrim())
     , pageSizeType(PAGE_SIZE_AUTO)
     , transformStyle3D(static_cast<unsigned>(RenderStyle::initialTransformStyle3D()))
     , transformStyleForcedToFlat(false)
@@ -199,6 +200,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , translate(o.translate)
     , offsetPath(o.offsetPath)
     , touchActions(o.touchActions)
+    , marginTrim(o.marginTrim)
     , pageSizeType(o.pageSizeType)
     , transformStyle3D(o.transformStyle3D)
     , transformStyleForcedToFlat(o.transformStyleForcedToFlat)
@@ -359,7 +361,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && offsetAnchor == o.offsetAnchor
         && offsetRotate == o.offsetRotate
         && overflowAnchor == o.overflowAnchor
-        && leadingTrim == o.leadingTrim;
+        && leadingTrim == o.leadingTrim
+        && marginTrim == o.marginTrim;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const

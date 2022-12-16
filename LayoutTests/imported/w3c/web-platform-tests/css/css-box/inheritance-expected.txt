@@ -11,8 +11,8 @@ PASS Property margin-right has initial value 0px
 PASS Property margin-right does not inherit
 PASS Property margin-top has initial value 0px
 PASS Property margin-top does not inherit
-FAIL Property margin-trim has initial value none assert_true: margin-trim doesn't seem to be supported in the computed style expected true got false
-FAIL Property margin-trim does not inherit assert_true: expected true got false
+PASS Property margin-trim has initial value none
+PASS Property margin-trim does not inherit
 PASS Property padding-bottom has initial value 0px
 PASS Property padding-bottom does not inherit
 PASS Property padding-left has initial value 0px

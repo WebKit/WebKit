@@ -5587,6 +5587,32 @@ RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange& range, CSSPropertyID cur
     return consumeAutoOrLengthOrPercent(range, cssParserMode, unitless);
 }
 
+RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range)
+{
+    auto firstValue = range.peek().id();
+    if (firstValue == CSSValueBlock || firstValue == CSSValueInline || firstValue == CSSValueNone)
+        return consumeIdent(range).releaseNonNull();
+
+    auto list = CSSValueList::createSpaceSeparated();
+    while (true) {
+        auto ident = consumeIdent<CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd>(range);
+        if (!ident)
+            break;
+        if (list->hasValue(*ident))
+            return nullptr;
+        list->append(ident.releaseNonNull());
+    }
+
+    // Try to serialize into either block or inline form
+    if (list->size() == 2) {
+        if (list->hasValue(CSSValueBlockStart) && list->hasValue(CSSValueBlockEnd))
+            return CSSValuePool::singleton().createValue(CSSValueBlock);
+        if (list->hasValue(CSSValueInlineStart) && list->hasValue(CSSValueInlineEnd))
+            return CSSValuePool::singleton().createValue(CSSValueInline);
+    }
+    return list;
+}
+
 RefPtr<CSSValue> consumeSide(CSSParserTokenRange& range, CSSPropertyID currentShorthand, CSSParserMode cssParserMode)
 {
     UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;

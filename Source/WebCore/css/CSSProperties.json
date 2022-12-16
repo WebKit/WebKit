@@ -3700,6 +3700,17 @@
                 "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin-top"
             }
         },
+        "margin-trim": {
+            "codegen-properties": {
+                "settings-flag": "cssMarginTrimEnabled",
+                "converter": "MarginTrim",
+                "custom-parser": true
+            },
+            "specification": {
+                "category": "css-box-4",
+                "url": "https://www.w3.org/TR/css-box-4/#margin-trim"
+            }
+        },
         "marker": {
             "inherited": true,
             "codegen-properties": {
@@ -8772,6 +8783,11 @@
             "shortname": "CSS Backgrounds and Borders",
             "longname": "CSS Backgrounds and Borders Module",
             "url": "https://www.w3.org/TR/css3-background/"
+        },
+        "css-box-4": {
+            "shortname": "CSS Box 4",
+            "longname": "CSS Box Model Module Level 4",
+            "url": "https://www.w3.org/TR/css-box-4/"
         },
         "css-break": {
             "shortname": "CSS Fragmentation",

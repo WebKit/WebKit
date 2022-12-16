@@ -1,0 +1,18 @@
+
+PASS Property margin-trim value 'none'
+PASS Property margin-trim value 'block'
+PASS Property margin-trim value 'inline'
+PASS Property margin-trim value 'block-start block-end'
+PASS Property margin-trim value 'inline-start inline-end'
+PASS Property margin-trim value 'block-start'
+PASS Property margin-trim value 'block-end'
+PASS Property margin-trim value 'inline-start'
+PASS Property margin-trim value 'inline-end'
+PASS Property margin-trim value 'block-start inline-start'
+PASS Property margin-trim value 'inline-start block-start'
+PASS Property margin-trim value 'inline-end block-start'
+PASS Property margin-trim value 'inline-end block-end'
+PASS Property margin-trim value 'block-start block-end inline-start'
+PASS Property margin-trim value 'inline-start block-start inline-end block-end'
+PASS Property margin-trim value 'inline-start inline-end block-start'
+

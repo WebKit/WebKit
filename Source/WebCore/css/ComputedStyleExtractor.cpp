@@ -3418,6 +3418,28 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style, renderer);
     case CSSPropertyMarginLeft:
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style, renderer);
+    case CSSPropertyMarginTrim: {
+        auto marginTrim = style.marginTrim();
+        if (marginTrim.isEmpty())
+            return cssValuePool.createIdentifierValue(CSSValueNone);
+
+        // Try to serialize into one of the "block" or "inline" shorthands
+        if (marginTrim.containsAll({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }) && !marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }))
+            return cssValuePool.createIdentifierValue(CSSValueBlock);
+        if (marginTrim.containsAll({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) && !marginTrim.containsAny({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }))
+            return cssValuePool.createIdentifierValue(CSSValueInline);
+
+        auto list = CSSValueList::createSpaceSeparated();
+        if (marginTrim.contains(MarginTrimType::BlockStart))
+            list->append(cssValuePool.createIdentifierValue(CSSValueBlockStart));
+        if (marginTrim.contains(MarginTrimType::InlineStart))
+            list->append(cssValuePool.createIdentifierValue(CSSValueInlineStart));
+        if (marginTrim.contains(MarginTrimType::BlockEnd))
+            list->append(cssValuePool.createIdentifierValue(CSSValueBlockEnd));
+        if (marginTrim.contains(MarginTrimType::InlineEnd))
+            list->append(cssValuePool.createIdentifierValue(CSSValueInlineEnd));
+        return list;
+    }
     case CSSPropertyWebkitUserModify:
         return cssValuePool.createValue(style.userModify());
     case CSSPropertyMaxHeight: {
