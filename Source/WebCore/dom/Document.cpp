@@ -2227,6 +2227,8 @@ bool Document::needsStyleRecalc() const
 
 static bool isSafeToUpdateStyleOrLayout()
 {
+    WTFLogAlways("Chirag - ScriptDisallowedScope::InMainThread::isScriptAllowed(): %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    WTFLogAlways("Chirag - !isInWebProcess(): %d", !isInWebProcess());
     return ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess();
 }
 
