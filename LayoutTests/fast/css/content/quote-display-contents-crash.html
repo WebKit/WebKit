@@ -1,0 +1,18 @@
+<style>
+  q { border-image: url(about:blank); }
+  label:focus-within { display: contents; }
+</style>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+function runTest() {
+   label.remove();
+   document.write("Pass if no crash.");
+}
+</script>
+<body onload="runTest()">
+  <label id="label" >
+    <textarea autofocus></textarea>
+    <q></q>
+  </label>
+</body>

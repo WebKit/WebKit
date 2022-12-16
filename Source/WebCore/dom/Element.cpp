@@ -3995,7 +3995,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         rareData.setComputedStyle(WTFMove(style));
         element->clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
         if (hadDisplayContents && computedStyle->display() != DisplayType::Contents)
-            setDisplayContentsChanged();
+            element->setDisplayContentsChanged();
 
         if (mode == ResolveComputedStyleMode::RenderedOnly && computedStyle->display() == DisplayType::None)
             return nullptr;
