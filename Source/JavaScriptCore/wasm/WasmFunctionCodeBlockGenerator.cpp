@@ -69,12 +69,6 @@ unsigned FunctionCodeBlockGenerator::numberOfJumpTables() const
     return m_jumpTables.size();
 }
 
-void FunctionCodeBlockGenerator::setTailCall(uint32_t functionIndex, bool isImportedFunctionFromFunctionIndexSpace)
-{
-    m_tailCallSuccessors.set(functionIndex);
-    setTailCallClobbersInstance(isImportedFunctionFromFunctionIndexSpace);
-}
-
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

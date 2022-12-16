@@ -2624,11 +2624,6 @@ public:
         return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
     }
 
-    ALWAYS_INLINE Call threadSafePatchableNearTailCall()
-    {
-        return Call(m_assembler.b(), Call::LinkableNearTail);
-    }
-
     ALWAYS_INLINE Call call(PtrTag)
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);

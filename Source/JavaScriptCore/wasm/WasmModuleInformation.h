@@ -115,10 +115,6 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
             : it->value.getBranchHint(branchOffset);
     }
 
-    const BitVector& clobberingTailCalls() const { return m_clobberingTailCalls; }
-    bool callCanClobberInstance(uint32_t index) const { return m_clobberingTailCalls.contains(index); }
-    void addClobberingTailCall(uint32_t index) { m_clobberingTailCalls.set(index); }
-
     Vector<Import> imports;
     Vector<TypeIndex> importFunctionTypeIndices;
     Vector<TypeIndex> internalFunctionTypeIndices;
@@ -146,7 +142,6 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;
     mutable BitVector m_referencedFunctions;
-    BitVector m_clobberingTailCalls;
 };
 
     

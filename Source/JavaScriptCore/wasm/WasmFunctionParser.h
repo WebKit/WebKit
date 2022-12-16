@@ -62,11 +62,10 @@ void splitStack(BlockSignature originalSignature, EnclosingStack& enclosingStack
     enclosingStack.shrink(offset);
 }
 
-template<typename Control, typename Expression, typename Call>
+template<typename Control, typename Expression>
 struct FunctionParserTypes {
     using ControlType = Control;
     using ExpressionType = Expression;
-    using CallType = Call;
 
     class TypedExpression {
     public:
@@ -110,9 +109,8 @@ struct FunctionParserTypes {
 };
 
 template<typename Context>
-class FunctionParser : public Parser<void>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType, typename Context::CallType> {
+class FunctionParser : public Parser<void>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType> {
 public:
-    using CallType = typename FunctionParser::CallType;
     using ControlType = typename FunctionParser::ControlType;
     using ControlEntry = typename FunctionParser::ControlEntry;
     using ControlStack = typename FunctionParser::ControlStack;
@@ -2090,9 +2088,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
-    case TailCall:
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
     case Call: {
         uint32_t functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
@@ -2116,24 +2111,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         RELEASE_ASSERT(calleeSignature.argumentCount() == args.size());
 
         ResultList results;
-
-        if (m_currentOpcode == TailCall) {
-
-            const auto& callerSignature = *m_signature.as<FunctionSignature>();
-
-            WASM_PARSER_FAIL_IF(calleeSignature.returnCount() != callerSignature.returnCount(), "tail call function index ", functionIndex, " with return count ", calleeSignature.returnCount(), ", but the caller's signature has ", callerSignature.returnCount(), " return values");
-
-            for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
-                WASM_VALIDATOR_FAIL_IF(calleeSignature.returnType(i) != callerSignature.returnType(i), "tail call function index ", functionIndex, " return type mismatch: " , "expected ", callerSignature.returnType(i), ", got ", calleeSignature.returnType(i));
-
-            WASM_TRY_ADD_TO_CONTEXT(addCall(functionIndex, typeDefinition, args, results, CallType::TailCall));
-
-            m_unreachableBlocks = 1;
-
-            return { };
-        }
-
         WASM_TRY_ADD_TO_CONTEXT(addCall(functionIndex, typeDefinition, args, results));
+
         RELEASE_ASSERT(calleeSignature.returnCount() == results.size());
 
         for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
@@ -2142,9 +2121,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
-    case TailCallIndirect:
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
     case CallIndirect: {
         uint32_t signatureIndex;
         uint32_t tableIndex;
@@ -2175,23 +2151,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         m_expressionStack.shrink(firstArgumentIndex);
 
         ResultList results;
-
-        if (m_currentOpcode == TailCallIndirect) {
-
-            const auto& callerSignature = *m_signature.as<FunctionSignature>();
-
-            WASM_PARSER_FAIL_IF(calleeSignature.returnCount() != callerSignature.returnCount(), "tail call indirect function with return count ", calleeSignature.returnCount(), ", but the caller's signature has ", callerSignature.returnCount(), " return values");
-
-            for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
-                WASM_VALIDATOR_FAIL_IF(calleeSignature.returnType(i) != callerSignature.returnType(i), "tail call indirect return type mismatch: " , "expected ", callerSignature.returnType(i), ", got ", calleeSignature.returnType(i));
-
-            WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(tableIndex, typeDefinition, args, results, CallType::TailCall));
-
-            m_unreachableBlocks = 1;
-
-            return { };
-        }
-
         WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(tableIndex, typeDefinition, args, results));
 
         for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
@@ -2722,9 +2681,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    case TailCallIndirect:
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
     case CallIndirect: {
         uint32_t unused;
         uint32_t unused2;
@@ -2776,9 +2732,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    case TailCall:
-        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
     case Call: {
         uint32_t functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
