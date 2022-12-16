@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HashMapStylePropertyMapReadOnly.h"
 
+#include "CSSPropertyParser.h"
+
 namespace WebCore {
 
 Ref<HashMapStylePropertyMapReadOnly> HashMapStylePropertyMapReadOnly::create(HashMap<AtomString, RefPtr<CSSValue>>&& map)

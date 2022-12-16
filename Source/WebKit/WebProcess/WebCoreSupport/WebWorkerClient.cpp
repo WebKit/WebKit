@@ -30,6 +30,7 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebProcess.h"
+#include "WebPage.h"
 
 #if ENABLE(WEBGL) && ENABLE(GPU_PROCESS)
 #include "RemoteGraphicsContextGLProxy.h"

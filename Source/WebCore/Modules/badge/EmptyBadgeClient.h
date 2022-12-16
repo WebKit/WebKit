@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BadgeClient.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

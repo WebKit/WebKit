@@ -38,6 +38,7 @@
 #include "CCallHelpers.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "Reg.h"
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

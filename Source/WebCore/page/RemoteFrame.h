@@ -28,6 +28,7 @@
 #include "AbstractFrame.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 

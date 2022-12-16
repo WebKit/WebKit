@@ -26,6 +26,7 @@
 #ifndef WebEventConversion_h
 #define WebEventConversion_h
 
+#include "WebEventModifier.h"
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>

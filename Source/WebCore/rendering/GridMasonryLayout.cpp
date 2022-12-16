@@ -27,6 +27,7 @@
 
 #include "GridLayoutFunctions.h"
 #include "GridPositionsResolver.h"
+#include "RenderGrid.h"
 #include "WritingMode.h"
 
 namespace WebCore {

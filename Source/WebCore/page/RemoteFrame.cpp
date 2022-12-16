@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteFrame.h"
 
+#include "Document.h"
+#include "HTMLFrameOwnerElement.h"
 #include "RemoteDOMWindow.h"
 #include "RemoteFrameClient.h"
 
