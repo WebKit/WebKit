@@ -31,6 +31,7 @@
 #include "Length.h"
 #include "StyleColor.h"
 #include "StyleImage.h"
+#include "TransformOperation.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -45,8 +46,8 @@ public:
 
         bool operator==(const NumericSyntaxValue& other) const { return value == other.value && unitType == other.unitType; }
     };
-    
-    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String>;
+
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, RefPtr<TransformOperation>>;
 
     struct SyntaxValueList {
         Vector<SyntaxValue> values;

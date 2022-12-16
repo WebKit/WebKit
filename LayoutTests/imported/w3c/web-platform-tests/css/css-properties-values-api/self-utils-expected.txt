@@ -1,5 +1,5 @@
 
-FAIL Default initial values of generated properties are valid (self-test). The given initial value does not parse for the given syntax.
+PASS Default initial values of generated properties are valid (self-test).
 PASS Generated properties respect inherits flag
 PASS Can't generate property with unknown fields
 

@@ -27,10 +27,10 @@ PASS <length>+ values are computed correctly [10px 3em]
 PASS <length>+ values are computed correctly [4em 9px]
 PASS <length-percentage>+ values are computed correctly [3% 10vmax 22px]
 PASS <length-percentage>+ values are computed correctly [calc(50% + 1em) 4px]
-FAIL <transform-function> values are computed correctly [translateX(2px)] The given initial value does not parse for the given syntax.
-FAIL <transform-function> values are computed correctly [translateX(10em)] The given initial value does not parse for the given syntax.
-FAIL <transform-function> values are computed correctly [translateX(calc(11em + 10%))] The given initial value does not parse for the given syntax.
-FAIL <transform-function>+ values are computed correctly [translateX(10%) scale(2)] The given initial value does not parse for the given syntax.
+PASS <transform-function> values are computed correctly [translateX(2px)]
+PASS <transform-function> values are computed correctly [translateX(10em)]
+PASS <transform-function> values are computed correctly [translateX(calc(11em + 10%))]
+PASS <transform-function>+ values are computed correctly [translateX(10%) scale(2)]
 PASS <integer> values are computed correctly [15]
 PASS <integer> values are computed correctly [calc(15 + 15)]
 PASS <integer> values are computed correctly [calc(2.4)]

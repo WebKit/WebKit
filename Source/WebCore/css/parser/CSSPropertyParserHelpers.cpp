@@ -6055,7 +6055,7 @@ static bool consumePerspectiveFunctionArgument(CSSParserTokenRange& range, const
     return false;
 }
 
-static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSValueID functionId = range.peek().functionId();
     if (functionId == CSSValueInvalid)
@@ -6160,7 +6160,7 @@ RefPtr<CSSValue> consumeTransform(CSSParserTokenRange& range, const CSSParserCon
 
     RefPtr<CSSTransformListValue> list = CSSTransformListValue::create();
     do {
-        auto parsedTransformValue = consumeTransformValue(range, context);
+        auto parsedTransformValue = consumeTransformFunction(range, context);
         if (!parsedTransformValue)
             return nullptr;
         list->append(parsedTransformValue.releaseNonNull());

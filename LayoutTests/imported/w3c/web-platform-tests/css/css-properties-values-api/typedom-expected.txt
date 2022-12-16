@@ -45,10 +45,10 @@ PASS Specified <resolution> is reified as CSSUnparsedValue from get/getAll [attr
 PASS Specified <resolution> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <time> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified <time> is reified as CSSUnparsedValue from get/getAll [styleMap]
-FAIL Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <transform-function> is reified as CSSUnparsedValue from get/getAll [styleMap]
+PASS Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
+PASS Specified <transform-list> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <url> is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
 PASS Specified <url> is reified as CSSUnparsedValue from get/getAll [styleMap]
 PASS Specified <length>+ is reified as CSSUnparsedValue from get/getAll [attributeStyleMap]
@@ -81,10 +81,10 @@ PASS Specified string "10dpi" accepted by set() for syntax <resolution> [attribu
 PASS Specified string "10dpi" accepted by set() for syntax <resolution> [styleMap]
 PASS Specified string "1s" accepted by set() for syntax <time> [attributeStyleMap]
 PASS Specified string "1s" accepted by set() for syntax <time> [styleMap]
-FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [attributeStyleMap]
+PASS Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-function> [styleMap]
+PASS Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [attributeStyleMap]
+PASS Specified string "matrix(0, 0, 0, 0, 0, 0)" accepted by set() for syntax <transform-list> [styleMap]
 PASS Specified string "url("a")" accepted by set() for syntax <url> [attributeStyleMap]
 PASS Specified string "url("a")" accepted by set() for syntax <url> [styleMap]
 PASS Specified string "10px 11px" accepted by set() for syntax <length>+ [attributeStyleMap]
@@ -115,10 +115,10 @@ PASS Specified string "blue" accepted by set() for syntax <resolution> [attribut
 PASS Specified string "blue" accepted by set() for syntax <resolution> [styleMap]
 PASS Specified string "1meter" accepted by set() for syntax <time> [attributeStyleMap]
 PASS Specified string "1meter" accepted by set() for syntax <time> [styleMap]
-FAIL Specified string "foo(0)" accepted by set() for syntax <transform-function> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "foo(0)" accepted by set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified string "bar(1)" accepted by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified string "foo(0)" accepted by set() for syntax <transform-function> [attributeStyleMap]
+PASS Specified string "foo(0)" accepted by set() for syntax <transform-function> [styleMap]
+PASS Specified string "bar(1)" accepted by set() for syntax <transform-list> [attributeStyleMap]
+PASS Specified string "bar(1)" accepted by set() for syntax <transform-list> [styleMap]
 PASS Specified string "a" accepted by set() for syntax <url> [attributeStyleMap]
 PASS Specified string "a" accepted by set() for syntax <url> [styleMap]
 PASS Specified string "a b" accepted by set() for syntax <length>+ [attributeStyleMap]
@@ -151,10 +151,10 @@ PASS CSSUnparsedValue is accepted via set() for syntax <resolution> [attributeSt
 PASS CSSUnparsedValue is accepted via set() for syntax <resolution> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <time> [attributeStyleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <time> [styleMap]
-FAIL CSSUnparsedValue is accepted via set() for syntax <transform-function> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <transform-function> [styleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSUnparsedValue is accepted via set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSUnparsedValue is accepted via set() for syntax <transform-function> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <transform-function> [styleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <transform-list> [attributeStyleMap]
+PASS CSSUnparsedValue is accepted via set() for syntax <transform-list> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <url> [attributeStyleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <url> [styleMap]
 PASS CSSUnparsedValue is accepted via set() for syntax <length>+ [attributeStyleMap]
@@ -185,8 +185,8 @@ PASS CSSUnitValue rejected by set() for syntax <resolution> [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <resolution> [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <time> [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <time> [styleMap]
-FAIL CSSTransformValue rejected by set() for syntax <transform-list> [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL CSSTransformValue rejected by set() for syntax <transform-list> [styleMap] The given initial value does not parse for the given syntax.
+PASS CSSTransformValue rejected by set() for syntax <transform-list> [attributeStyleMap]
+PASS CSSTransformValue rejected by set() for syntax <transform-list> [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <length>+ [attributeStyleMap]
 PASS CSSUnitValue rejected by set() for syntax <length>+ [styleMap]
 PASS CSSUnitValue rejected by set() for syntax <length># [attributeStyleMap]
@@ -217,10 +217,10 @@ PASS Appending a string to <resolution>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <resolution>+ is not allowed [styleMap]
 PASS Appending a string to <time>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <time>+ is not allowed [styleMap]
-FAIL Appending a string to <transform-function>+ is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <transform-function>+ is not allowed [styleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <transform-list> is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a string to <transform-list> is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a string to <transform-function>+ is not allowed [attributeStyleMap]
+PASS Appending a string to <transform-function>+ is not allowed [styleMap]
+PASS Appending a string to <transform-list> is not allowed [attributeStyleMap]
+PASS Appending a string to <transform-list> is not allowed [styleMap]
 PASS Appending a string to <url>+ is not allowed [attributeStyleMap]
 PASS Appending a string to <url>+ is not allowed [styleMap]
 PASS Appending a string to <length># is not allowed [attributeStyleMap]
@@ -249,8 +249,8 @@ PASS Appending a CSSUnitValue to <resolution>+ is not allowed [attributeStyleMap
 PASS Appending a CSSUnitValue to <resolution>+ is not allowed [styleMap]
 PASS Appending a CSSUnitValue to <time>+ is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <time>+ is not allowed [styleMap]
-FAIL Appending a CSSKeywordValue to <transform-list> is not allowed [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Appending a CSSKeywordValue to <transform-list> is not allowed [styleMap] The given initial value does not parse for the given syntax.
+PASS Appending a CSSKeywordValue to <transform-list> is not allowed [attributeStyleMap]
+PASS Appending a CSSKeywordValue to <transform-list> is not allowed [styleMap]
 PASS Appending a CSSUnitValue to <length># is not allowed [attributeStyleMap]
 PASS Appending a CSSUnitValue to <length># is not allowed [styleMap]
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax *
@@ -267,14 +267,14 @@ PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <number>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <percentage>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <resolution>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <time>
-FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-function> The given initial value does not parse for the given syntax.
-FAIL CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-list> The given initial value does not parse for the given syntax.
+PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-function>
+PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <transform-list>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <url>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax thing1 | THING2 | <url>
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>+
 PASS CSSStyleValue.parse[All] returns CSSUnparsedValue for syntax <length>#
-FAIL Direct CSSStyleValue may not be set [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Direct CSSStyleValue may not be set [styleMap] The given initial value does not parse for the given syntax.
+PASS Direct CSSStyleValue may not be set [attributeStyleMap]
+PASS Direct CSSStyleValue may not be set [styleMap]
 PASS Specified * is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified * is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified foo is reified CSSUnparsedValue by iterator [attributeStyleMap]
@@ -301,10 +301,10 @@ PASS Specified <resolution> is reified CSSUnparsedValue by iterator [attributeSt
 PASS Specified <resolution> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <time> is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <time> is reified CSSUnparsedValue by iterator [styleMap]
-FAIL Specified <transform-function> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <transform-function> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [attributeStyleMap] The given initial value does not parse for the given syntax.
-FAIL Specified <transform-list> is reified CSSUnparsedValue by iterator [styleMap] The given initial value does not parse for the given syntax.
+PASS Specified <transform-function> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <transform-function> is reified CSSUnparsedValue by iterator [styleMap]
+PASS Specified <transform-list> is reified CSSUnparsedValue by iterator [attributeStyleMap]
+PASS Specified <transform-list> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <url> is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <url> is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <length>+ is reified CSSUnparsedValue by iterator [attributeStyleMap]

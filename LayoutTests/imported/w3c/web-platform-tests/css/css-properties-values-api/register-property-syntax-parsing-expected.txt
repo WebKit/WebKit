@@ -47,12 +47,12 @@ PASS syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid
 PASS syntax:'<resolution>', initialValue:'10dpi' is valid
 PASS syntax:'<resolution>', initialValue:'3dPpX' is valid
 PASS syntax:'<resolution>', initialValue:'-5.3dpcm' is valid
-FAIL syntax:'<transform-function>', initialValue:'translateX(2px)' is valid The given initial value does not parse for the given syntax.
+PASS syntax:'<transform-function>', initialValue:'translateX(2px)' is valid
 PASS syntax:'<transform-function>|<integer>', initialValue:'5' is valid
-FAIL syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<transform-function>+', initialValue:'translateX(2px) rotate(42deg)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<transform-list>', initialValue:'scale(2)' is valid The given initial value does not parse for the given syntax.
-FAIL syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid The given initial value does not parse for the given syntax.
+PASS syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid
+PASS syntax:'<transform-function>+', initialValue:'translateX(2px) rotate(42deg)' is valid
+PASS syntax:'<transform-list>', initialValue:'scale(2)' is valid
+PASS syntax:'<transform-list>', initialValue:'translateX(2px) rotate(20deg)' is valid
 PASS syntax:'<color>', initialValue:'rgb(12, 34, 56)' is valid
 PASS syntax:'<color>', initialValue:'lightgoldenrodyellow' is valid
 PASS syntax:'<image>', initialValue:'url(a)' is valid
