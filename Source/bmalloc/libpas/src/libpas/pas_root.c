@@ -436,10 +436,14 @@ kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_range(ta
     if (!is_compact_pointer_enabled())
         return KERN_SUCCESS;
 
+    root = NULL;
     result = reader(task, (vm_address_t)((malloc_zone_t*)zone_address + 1), sizeof(pas_root), &pointer);
-    if (result != KERN_SUCCESS)
-        return result;
-    root = (pas_root*)pointer;
+    if (result == KERN_SUCCESS) {
+        /* This function can be called with non libpas memory (WebKit System Malloc Zone). So in that case, let's make it NULL for now. */
+        root = (pas_root*)pointer;
+        if (root->magic != PAS_ROOT_MAGIC)
+            root = NULL;
+    }
 
     result = reader(task, address, size, &pointer);
     if (result != KERN_SUCCESS)
@@ -470,9 +474,15 @@ kern_return_t pas_root_visit_conservative_candidate_pointers_in_address_range(ta
             continue;
 #endif
 
-        /* First 4GB on 64bit process is unmapped. */
+#if PAS_ARM
+        /* First 4GB on ARM64 process is unused for mmap (This is hard guarantee). */
         if (candidate_pointer < (4ULL << 30))
             continue;
+#else
+        /* First page on x64 process is unmapped. */
+        if (candidate_pointer < (4ULL << 10))
+            continue;
+#endif
 #endif
 
         /* FIXME: We can add more filtering via pas_root information later. */
