@@ -47,7 +47,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 7,
     // Unused                                    = 1LLU  << 8,
     FlowHasNonSupportedChild                     = 1LLU  << 9,
-    FlowHasUnsupportedFloat                      = 1LLU  << 10,
+    FloatIsShapeOutside                          = 1LLU  << 10,
     // Unused                                    = 1LLU  << 11,
     // Unused                                    = 1LLU  << 12,
     // Unused                                    = 1LLU  << 13,
