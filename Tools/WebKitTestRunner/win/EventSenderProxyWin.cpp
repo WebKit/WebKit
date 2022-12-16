@@ -149,6 +149,10 @@ void EventSenderProxy::continuousMouseScrollBy(int, int, bool)
 {
 }
 
+void EventSenderProxy::monitorWheelEvents()
+{
+}
+
 void EventSenderProxy::leapForward(int milliseconds)
 {
     Sleep(milliseconds);

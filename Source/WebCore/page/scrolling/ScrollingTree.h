@@ -213,6 +213,7 @@ public:
     WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { });
 
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
+    void setIsMonitoringWheelEvents(bool b) { m_isMonitoringWheelEvents = b; }
     bool inCommitTreeState() const { return m_inCommitTreeState; }
 
     void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize);

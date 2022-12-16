@@ -3072,6 +3072,14 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     }
 }
 
+void WebPageProxy::startMonitoringWheelEventsForTesting()
+{
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->startMonitoringWheelEventsForTesting();
+#endif
+}
+
 #if HAVE(CVDISPLAYLINK)
 void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState)
 {

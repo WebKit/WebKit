@@ -312,6 +312,10 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
         horizontal / pixelsPerScrollTick, vertical / pixelsPerScrollTick, m_position.x, m_position.y, WheelEventPhase::NoPhase, WheelEventPhase::NoPhase, m_hasPreciseDeltas);
 }
 
+void EventSenderProxy::monitorWheelEvents()
+{
+}
+
 void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int horizontal, int vertical, int phase, int momentum)
 {
     WheelEventPhase eventPhase = WheelEventPhase::NoPhase;

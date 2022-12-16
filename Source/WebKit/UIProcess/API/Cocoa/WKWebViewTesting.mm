@@ -293,6 +293,11 @@
     });
 }
 
+- (void)_startMonitoringWheelEvents
+{
+    _page->startMonitoringWheelEventsForTesting();
+}
+
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier
 {
     WebCore::setApplicationBundleIdentifierOverride(String(bundleIdentifier));
