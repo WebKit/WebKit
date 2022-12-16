@@ -37,11 +37,9 @@ SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCContentFilter, API_AVAILABLE
 SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCStreamConfiguration, API_AVAILABLE(macos(12.3)))
 SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCStream, API_AVAILABLE(macos(12.3)))
 SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingSession)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentPicker)
 
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *)
-#define SCStreamFrameInfoStatus get_ScreenCaptureKit_SCStreamFrameInfoStatus()
-
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatusKey, NSString *)
-#define SCStreamFrameInfoStatusKey get_ScreenCaptureKit_SCStreamFrameInfoStatusKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *)
+#define SCStreamFrameInfoStatus PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatus()
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)

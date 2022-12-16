@@ -71,8 +71,7 @@ public:
 
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamFailedWithError(RetainPtr<NSError>&&, const String&);
-    enum class SampleType { Video };
-    void streamDidOutputSampleBuffer(RetainPtr<CMSampleBufferRef>, SampleType);
+    void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
     void sessionDidChangeContent(RetainPtr<SCContentSharingSession>);
     void sessionDidEnd(RetainPtr<SCContentSharingSession>);
 
@@ -95,9 +94,6 @@ private:
     RetainPtr<SCStreamConfiguration> streamConfiguration();
     void updateStreamConfiguration();
 
-    using SCContentStreamUpdateCallback = void (^)(SCStream *, CMSampleBufferRef);
-    SCContentStreamUpdateCallback frameAvailableHandler();
-
     dispatch_queue_t captureQueue();
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)
@@ -111,7 +107,6 @@ private:
     RetainPtr<SCStream> m_contentStream;
     RetainPtr<SCStreamConfiguration> m_streamConfiguration;
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
-    BlockPtr<void(SCStream *, CMSampleBufferRef)> m_frameAvailableHandler;
     CaptureDevice m_captureDevice;
     uint32_t m_deviceID { 0 };
     std::optional<IntSize> m_intrinsicSize;

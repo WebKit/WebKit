@@ -33,33 +33,13 @@
 #import <ScreenCaptureKit/SCContentSharingSession.h>
 #import <ScreenCaptureKit/SCStream_Private.h>
 
+#if HAVE(SC_CONTENT_PICKER)
+#import <ScreenCaptureKit/SCContentPicker.h>
+#endif
+
 #else // USE(APPLE_INTERNAL_SDK)
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef NS_ENUM(NSInteger, SCContentFilterType) {
-    SCContentFilterTypeNothing,
-    SCContentFilterTypeDisplay,
-    SCContentFilterTypeAppsAndWindowsPinnedToDisplay,
-    SCContentFilterTypeDesktopIndependentWindow,
-    SCContentFilterTypeClientShouldImplementDefault
-};
-
-@interface SCContentFilterDesktopIndependentWindowInformation : NSObject
-@property (nonatomic, readonly) SCWindow *window;
-@end
-
-@interface SCContentFilterDisplayInformation : NSObject
-@property (nonatomic, readonly) SCDisplay *display;
-@end
-
-@interface SCContentFilter ()
-@property (nonatomic, strong) SCWindow *window;
-@property (nonatomic, strong) SCDisplay *display;
-@property (nonatomic, assign) SCContentFilterType type;
-@property (nullable, nonatomic, readonly) SCContentFilterDesktopIndependentWindowInformation *desktopIndependentWindowInfo;
-@property (nullable, nonatomic, readonly) SCContentFilterDisplayInformation *displayInfo;
-@end
 
 @class SCContentSharingSession;
 
@@ -76,9 +56,7 @@ typedef NS_ENUM(NSInteger, SCContentFilterType) {
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTitle:(NSString *)title;
-- (BOOL)isEqualToSharingSession:(SCContentSharingSession *)other;
 - (void)showPickerForType:(SCContentFilterType)type;
-- (void)updateContent:(SCContentFilter *)content;
 - (void)end;
 @end
 
