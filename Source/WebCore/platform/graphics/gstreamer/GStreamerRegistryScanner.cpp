@@ -172,6 +172,8 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
         padDirection = GST_PAD_SRC;
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string(capsString));
+    if (!caps)
+        return { };
     GList* candidates = gst_element_factory_list_filter(elementFactories, caps.get(), padDirection, false);
     bool isSupported = candidates;
     bool isUsingHardware = false;
