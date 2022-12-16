@@ -60,6 +60,7 @@ class TestCommit(unittest.TestCase):
         self.assertEqual(None, Commit._parse_revision('-1'))
         self.assertEqual(None, Commit._parse_revision('3.141592'))
         self.assertEqual(None, Commit._parse_revision(3.141592))
+        self.assertEqual(None, Commit._parse_revision('12345678901'))
 
     def test_parse_identifier(self):
         self.assertEqual((None, 1234, None), Commit._parse_identifier('1234'))
@@ -80,6 +81,7 @@ class TestCommit(unittest.TestCase):
         self.assertEqual(None, Commit._parse_identifier('r266896'))
         self.assertEqual(None, Commit._parse_identifier('c3bd784f8b88bd03'))
         self.assertEqual(None, Commit._parse_identifier(3.141592))
+        self.assertEqual(None, Commit._parse_identifier('12345678901'))
 
     def test_parse(self):
         self.assertEqual(Commit.parse('123@main'), Commit(identifier=123, branch='main'))
@@ -90,6 +92,10 @@ class TestCommit(unittest.TestCase):
         self.assertEqual(
             Commit.parse('c3bd784f8b88bd03f64467ddd3304ed8be28acbe'),
             Commit(hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe'),
+        )
+        self.assertEqual(
+            Commit.parse('12345678901'),
+            Commit(hash='12345678901'),
         )
 
     def test_pretty_print(self):
