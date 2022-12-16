@@ -172,6 +172,8 @@ public:
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
     const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
 
+    WEBCORE_EXPORT static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
+
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
@@ -227,10 +229,30 @@ protected:
     WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread();
+    WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
+
     ImageBufferBackend::Parameters m_parameters;
     ImageBufferBackend::Info m_backendInfo;
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
+};
+
+class SerializedImageBuffer {
+    WTF_MAKE_NONCOPYABLE(SerializedImageBuffer);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+
+    SerializedImageBuffer() = default;
+    virtual ~SerializedImageBuffer() = default;
+
+    virtual size_t memoryCost() = 0;
+
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>);
+
+    virtual bool isRemoteSerializedImageBufferProxy() const { return false; }
+
+protected:
+    virtual RefPtr<ImageBuffer> sinkIntoImageBuffer() = 0;
 };
 
 inline OptionSet<ImageBufferOptions> bufferOptionsForRendingMode(RenderingMode renderingMode)

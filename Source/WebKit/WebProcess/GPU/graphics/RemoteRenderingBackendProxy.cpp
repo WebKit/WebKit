@@ -73,6 +73,7 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     ensureOnMainRunLoop([ident = renderingBackendIdentifier()]() {
         WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(ident), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     });
+    m_remoteResourceCacheProxy.clear();
     disconnectGPUProcess();
 }
 
@@ -84,8 +85,9 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_streamConnection = WTFMove(streamConnection);
         m_streamConnection->open(*this, m_dispatcher);
 
-        ensureOnMainRunLoop([params = m_parameters, serverHandle = WTFMove(serverHandle)]() mutable {
-            WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(params, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        callOnMainRunLoopAndWait([this, serverHandle = WTFMove(serverHandle)]() mutable {
+            m_connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
+            m_connection->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         });
     }
 }
@@ -153,6 +155,16 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     }
 
     return nullptr;
+}
+
+void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
+{
+    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier, reference));
+}
+
+void RemoteRenderingBackendProxy::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(reference, identifier));
 }
 
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)

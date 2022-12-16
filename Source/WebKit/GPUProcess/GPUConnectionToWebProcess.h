@@ -33,9 +33,12 @@
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
 #include "RemoteGPU.h"
+#include "RemoteImageBuffer.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
+#include "ThreadSafeObjectHeap.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
@@ -203,6 +206,8 @@ public:
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
+    ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteSerializedImageBuffer>>& serializedImageBufferHeap() { return m_remoteSerializedImageBufferObjectHeap; }
+
 #if ENABLE(WEBGL)
     void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
 #endif
@@ -234,6 +239,7 @@ private:
 
     void createRenderingBackend(RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
+    void releaseSerializedImageBuffer(RemoteSerializedImageBufferWriteReference&&);
 
 #if ENABLE(WEBGL)
     void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
@@ -341,6 +347,7 @@ private:
 #endif
     using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
     RemoteGPUMap m_remoteGPUMap;
+    ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteSerializedImageBuffer>> m_remoteSerializedImageBufferObjectHeap;
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif

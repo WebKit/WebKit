@@ -24,7 +24,6 @@
 
 messages -> RemoteRenderingBackend NotRefCounted Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    TransferImageBuffer(WebKit::RenderingBackendIdentifier existingBackendIdentifier, WebCore::RenderingResourceIdentifier existingIdentifier, WebCore::RenderingResourceIdentifier newIdentifier) -> (bool success) Synchronous
     GetPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous
     GetPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier imageBuffer, WebKit::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous NotStreamEncodable
     DestroyGetPixelBufferSharedMemory()
@@ -41,6 +40,9 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
 
     MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<WebCore::RenderingResourceIdentifier> renderingResourceIdentifiers)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
+
+    MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer, WebKit::RemoteSerializedImageBufferWriteReference destination)
+    MoveToImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference source, WebCore::RenderingResourceIdentifier destinationImageBuffer)
 }
 
 #endif // ENABLE(GPU_PROCESS)

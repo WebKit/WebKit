@@ -32,6 +32,7 @@ namespace WebCore {
 class DestinationColorSpace;
 class GraphicsContextGL;
 class ImageBuffer;
+class SerializedImageBuffer;
 
 struct GraphicsContextGLAttributes;
 
@@ -52,6 +53,7 @@ public:
     virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const = 0;
 #endif
 
+    virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;
 };
 
 } // namespace WebCore

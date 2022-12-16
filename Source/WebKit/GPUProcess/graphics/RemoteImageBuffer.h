@@ -60,7 +60,7 @@ public:
         return imageBuffer;
     }
 
-    static RefPtr<RemoteImageBuffer> createTransfer(Ref<RemoteImageBuffer>&&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
+    static RefPtr<RemoteImageBuffer> createTransfer(std::unique_ptr<WebCore::ImageBufferBackend>&&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
 
     RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, std::unique_ptr<WebCore::ImageBufferBackend>&&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
     ~RemoteImageBuffer();
@@ -71,6 +71,16 @@ private:
     QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
     IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_remoteDisplayList;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
+};
+
+struct RemoteSerializedImageBuffer : public ThreadSafeRefCounted<RemoteSerializedImageBuffer> {
+    RemoteSerializedImageBuffer(std::unique_ptr<WebCore::ImageBufferBackend>&& backend, const WebCore::ImageBufferBackend::Info& info)
+        : m_backend(WTFMove(backend))
+        , m_info(info)
+    { }
+
+    std::unique_ptr<WebCore::ImageBufferBackend> m_backend;
+    WebCore::ImageBufferBackend::Info m_info;
 };
 
 } // namespace WebKit

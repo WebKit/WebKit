@@ -175,29 +175,29 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     createImageBufferWithQualifiedIdentifier(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, { imageBufferResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
 }
 
-void RemoteRenderingBackend::transferImageBuffer(RenderingBackendIdentifier existingBackendIdentifier, RenderingResourceIdentifier existingIdentifier, RenderingResourceIdentifier newIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
 {
-    auto handler = CompletionHandlerWithFinalizer<void(bool)>(WTFMove(completionHandler), [] (Function<void(bool)>& completionHandler) {
-        completionHandler(false);
-    });
-    QualifiedRenderingResourceIdentifier existingQualified { existingIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
-    QualifiedRenderingResourceIdentifier newQualified = { newIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    // This transfers onwership of the ImageBufferBackend to the GPUConnectionToWebProcess's heap, and lets the RemoteImageBuffer be released.
+    // That's because the RemoteImageBuffer also has a RemoteDisplayList, which is an IPC object and can't easily be transferred to a different
+    // WorkQueue/StreamServerConnection.
+    QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    auto imageBuffer = m_remoteResourceCache.takeImageBuffer(qualifiedIdentifier);
+    auto data = imageBuffer ? adoptRef(new RemoteSerializedImageBuffer(imageBuffer->takeBackend(), imageBuffer->backendInfo())) : nullptr;
+    m_gpuConnectionToWebProcess->serializedImageBufferHeap().retire(WTFMove(reference), WTFMove(data), std::nullopt);
+}
 
-    callOnMainRunLoop([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, existingBackendIdentifier, existingQualified, newBackend = Ref { *this }, newQualified, completionHandler = WTFMove(handler)] () mutable {
-        auto* existingBackend = gpuConnectionToWebProcess->remoteRenderingBackend(existingBackendIdentifier);
-        if (!existingBackend)
-            return;
+void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+{
+    QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    RemoteSerializedImageBufferReadReference readReference(reference.reference());
+    auto data = m_gpuConnectionToWebProcess->serializedImageBufferHeap().retire(WTFMove(readReference), IPC::Timeout::infinity());
+    m_gpuConnectionToWebProcess->serializedImageBufferHeap().retireRemove(WTFMove(reference));
 
-        existingBackend->dispatch([existingBackend = Ref { *existingBackend }, existingQualified, newBackend, newQualified, completionHandler = WTFMove(completionHandler)] () mutable {
-            if (auto existingBuffer = existingBackend->m_remoteResourceCache.takeImageBuffer(existingQualified)) {
-                newBackend->dispatch([existingBuffer = existingBuffer.releaseNonNull(), newBackend, newQualified, completionHandler = WTFMove(completionHandler)] () mutable {
-                    auto newBuffer = RemoteImageBuffer::createTransfer(WTFMove(existingBuffer), newBackend.get(), newQualified);
-                    newBackend->m_remoteResourceCache.cacheImageBuffer(*newBuffer, newQualified);
-                    completionHandler(true);
-                });
-            }
-        });
-    });
+    if (!data)
+        return;
+
+    auto imageBuffer = RemoteImageBuffer::createTransfer(WTFMove(data->m_backend), data->m_info, *this, qualifiedIdentifier);
+    m_remoteResourceCache.cacheImageBuffer(*imageBuffer, qualifiedIdentifier);
 }
 
 void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, QualifiedRenderingResourceIdentifier imageBufferResourceIdentifier)

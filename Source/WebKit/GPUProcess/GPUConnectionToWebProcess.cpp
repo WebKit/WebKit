@@ -577,6 +577,11 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
+void GPUConnectionToWebProcess::releaseSerializedImageBuffer(RemoteSerializedImageBufferWriteReference&& reference)
+{
+    m_remoteSerializedImageBufferObjectHeap.retireRemove(WTFMove(reference));
+}
+
 #if ENABLE(WEBGL)
 void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {

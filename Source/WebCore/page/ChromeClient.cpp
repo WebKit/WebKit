@@ -43,4 +43,9 @@ RefPtr<GraphicsContextGL> ChromeClient::createGraphicsContextGL(const GraphicsCo
 }
 #endif
 
+RefPtr<ImageBuffer> ChromeClient::sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer> imageBuffer)
+{
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+}
+
 }

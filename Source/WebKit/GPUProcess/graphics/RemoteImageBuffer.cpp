@@ -61,22 +61,20 @@ void RemoteImageBuffer::setOwnershipIdentity(const ProcessIdentity& resourceOwne
         m_backend->setOwnershipIdentity(resourceOwner);
 }
 
-RefPtr<RemoteImageBuffer> RemoteImageBuffer::createTransfer(Ref<RemoteImageBuffer>&& existing, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+RefPtr<RemoteImageBuffer> RemoteImageBuffer::createTransfer(std::unique_ptr<ImageBufferBackend>&& backend, const ImageBufferBackend::Info& backendInfo, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
-    ASSERT(existing->hasOneRef());
     auto context = WebCore::ImageBufferCreationContext { nullptr
 #if HAVE(IOSURFACE)
         , &remoteRenderingBackend.ioSurfacePool()
 #endif
     };
-    auto backend = existing->takeBackend();
     backend->transferToNewContext(context);
     auto* sharing = backend->toBackendSharing();
     ASSERT(sharing && is<ImageBufferBackendHandleSharing>(sharing));
 
     auto backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
 
-    auto imageBuffer = adoptRef(new RemoteImageBuffer(backend->parameters() , existing->backendInfo(), WTFMove(backend), remoteRenderingBackend, renderingResourceIdentifier));
+    auto imageBuffer = adoptRef(new RemoteImageBuffer(backend->parameters() , backendInfo, WTFMove(backend), remoteRenderingBackend, renderingResourceIdentifier));
 
     remoteRenderingBackend.didCreateImageBufferBackend(WTFMove(backendHandle), renderingResourceIdentifier, *imageBuffer->m_remoteDisplayList.get());
     return imageBuffer;

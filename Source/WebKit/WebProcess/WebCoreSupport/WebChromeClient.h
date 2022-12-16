@@ -250,6 +250,7 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false) const final;
+    RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
 #endif
     std::unique_ptr<WebCore::WorkerClient> createWorkerClient(SerialFunctionDispatcher&) final;
 

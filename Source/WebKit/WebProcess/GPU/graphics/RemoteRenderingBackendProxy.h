@@ -37,6 +37,7 @@
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteResourceCacheProxy.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "SharedMemory.h"
@@ -64,6 +65,7 @@ namespace WebKit {
 
 class WebPage;
 class RemoteImageBufferProxy;
+class RemoteSerializedImageBufferProxy;
 
 class RemoteImageBufferProxyFlushState;
 
@@ -76,6 +78,10 @@ public:
     ~RemoteRenderingBackendProxy();
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
+
+    void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
+    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferWriteReference&&);
+    void moveToImageBuffer(RemoteSerializedImageBufferWriteReference&&, WebCore::RenderingResourceIdentifier);
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
     bool isCached(const WebCore::ImageBuffer&) const;
@@ -137,6 +143,7 @@ public:
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
     IPC::StreamClientConnection& streamConnection();
+    IPC::Connection* connection() { return m_connection.get(); }
 
     template<typename T, typename C>
     void sendToStreamWithAsyncReply(T&& message, C&& completionHandler)

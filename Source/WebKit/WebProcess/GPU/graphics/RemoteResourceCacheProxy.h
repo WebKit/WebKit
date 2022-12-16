@@ -51,6 +51,7 @@ public:
     void cacheImageBuffer(RemoteImageBufferProxy&);
     RemoteImageBufferProxy* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
     void releaseImageBuffer(RemoteImageBufferProxy&);
+    void forgetImageBuffer(WebCore::RenderingResourceIdentifier);
 
     void recordNativeImageUse(WebCore::NativeImage&);
     void recordFontUse(WebCore::Font&);
@@ -63,6 +64,8 @@ public:
     void releaseMemory();
     
     unsigned imagesCount() const { return m_nativeImages.size(); }
+
+    void clear();
 
 private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<RemoteImageBufferProxy>>;
