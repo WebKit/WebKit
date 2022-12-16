@@ -6167,6 +6167,8 @@ imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Ski
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageBitmap.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.worker.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.html [ DumpJSConsoleLogInStdErr ]
 
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
