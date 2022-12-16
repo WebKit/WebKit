@@ -125,7 +125,8 @@ int testPingPongStackOverflow()
     // Normally, we want to disable the LLINT to force the use of JITted code which is necessary for
     // reproducing the regression in https://bugs.webkit.org/show_bug.cgi?id=148749. However, we only
     // want to do this if the LLINT isn't the only available execution engine.
-    Options::useLLInt() = false;
+    if (Options::useJIT())
+        Options::useLLInt() = false;
 #endif
 
     const char* scriptString =
