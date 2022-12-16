@@ -29,6 +29,7 @@
 #include "APIData.h"
 #include "SessionState.h"
 #include <mutex>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/StringView.h>
@@ -224,11 +225,14 @@ private:
     {
         size_t alignedSize = ((m_bufferSize + alignment - 1) / alignment) * alignment;
 
-        growCapacity(alignedSize + size);
+        Checked<size_t> bufferSize = size;
+        bufferSize += alignedSize;
+
+        growCapacity(bufferSize.value());
 
         std::memset(m_buffer.get() + m_bufferSize, 0, alignedSize - m_bufferSize);
 
-        m_bufferSize = alignedSize + size;
+        m_bufferSize = bufferSize.value();
         m_bufferPointer = m_buffer.get() + m_bufferSize;
 
         return m_buffer.get() + alignedSize;
@@ -239,12 +243,12 @@ private:
         if (newSize <= m_bufferCapacity)
             return;
 
-        size_t newCapacity = m_bufferCapacity * 2;
+        Checked<size_t> newCapacity = m_bufferCapacity;
         while (newCapacity < newSize)
-            newCapacity *= 2;
+            newCapacity *= 2U;
 
-        m_buffer.realloc(newCapacity);
-        m_bufferCapacity = newCapacity;
+        m_buffer.realloc(newCapacity.value());
+        m_bufferCapacity = newCapacity.value();
     }
 
     size_t m_bufferSize;
