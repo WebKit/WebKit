@@ -696,7 +696,6 @@ WEBKIT_COPY_FILES(bmalloc_CopyHeaders
 )
 
 WEBKIT_FRAMEWORK(bmalloc)
-WEBKIT_FRAMEWORK_TARGET(bmalloc)
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc
     -Wno-missing-field-initializers

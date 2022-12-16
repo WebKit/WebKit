@@ -302,10 +302,7 @@ macro(WEBKIT_FRAMEWORK _target)
         set_target_properties(${_target} PROPERTIES FRAMEWORK TRUE)
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
     endif ()
-endmacro()
 
-# FIXME Move into WEBKIT_FRAMEWORK after all libraries are using this macro
-macro(WEBKIT_FRAMEWORK_TARGET _target)
     add_library(${_target}_PostBuild INTERFACE)
     target_link_libraries(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_LIBRARIES})
     target_include_directories(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_INCLUDE_DIRECTORIES})

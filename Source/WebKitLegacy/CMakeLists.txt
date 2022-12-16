@@ -56,7 +56,6 @@ if (MSVC)
 endif ()
 
 WEBKIT_FRAMEWORK(WebKitLegacy)
-WEBKIT_FRAMEWORK_TARGET(WebKitLegacy)
 
 WEBKIT_COPY_FILES(WebKitLegacy_CopyHeaders
     DESTINATION ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy
