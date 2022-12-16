@@ -1,0 +1,7 @@
+
+PASS Animating a custom property of type <transform-function>
+PASS Animating a custom property of type <transform-function> with a single keyframe
+PASS Animating a custom property of type <transform-function> with additivity
+PASS Animating a custom property of type <transform-function> with a single keyframe and additivity
+PASS Animating a custom property of type <transform-function> with iterationComposite
+
