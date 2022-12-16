@@ -284,7 +284,8 @@ union constexpr_storage<void, E> {
     constexpr constexpr_storage() : dummy() { }
     constexpr constexpr_storage(value_tag_t) : dummy() { }
     constexpr constexpr_storage(error_tag_t) : err() { }
-    constexpr constexpr_storage(error_tag_t, const error_type& e) : err(e) { }
+    constexpr constexpr_storage(error_tag_t, const error_type& err) : err(err) { }
+    constexpr constexpr_storage(error_tag_t, error_type&& err) : err(std::forward<error_type>(err)) { }
     ~constexpr_storage() = default;
 };
 
@@ -317,6 +318,22 @@ struct constexpr_base {
     constexpr constexpr_base(value_tag_t tag, U&& val) : s(tag, std::forward<U>(val)), has(true) { }
     template<typename U = E>
     constexpr constexpr_base(error_tag_t tag, U&& err) : s(tag, std::forward<U>(err)), has(false) { }
+    constexpr constexpr_base(const constexpr_base& o)
+        : has(o.has)
+    {
+        if (has)
+            ::new (std::addressof(s.val)) value_type(o.s.val);
+        else
+            ::new (std::addressof(s.err)) error_type(o.s.err);
+    }
+    constexpr constexpr_base(constexpr_base&& o)
+        : has(o.has)
+    {
+        if (has)
+            ::new (std::addressof(s.val)) value_type(std::move(o.s.val));
+        else
+            ::new (std::addressof(s.err)) error_type(std::move(o.s.err));
+    }
     ~constexpr_base() = default;
 };
 
@@ -371,6 +388,18 @@ struct constexpr_base<void, E> {
     constexpr constexpr_base(error_tag_t tag) : s(tag), has(false) { }
     constexpr constexpr_base(error_tag_t tag, const error_type& err) : s(tag, err), has(false) { }
     constexpr constexpr_base(error_tag_t tag, error_type&& err) : s(tag, std::forward<error_type>(err)), has(false) { }
+    constexpr constexpr_base(const constexpr_base& o)
+        : has(o.has)
+    {
+        if (!has)
+            ::new (std::addressof(s.err)) error_type(o.s.err);
+    }
+    constexpr constexpr_base(constexpr_base&& o)
+        : has(o.has)
+    {
+        if (!has)
+            ::new (std::addressof(s.err)) error_type(std::move(o.s.err));
+    }
     ~constexpr_base() = default;
 };
 
@@ -540,8 +569,7 @@ public:
         if (base::has && o.has) {
             // Do nothing.
         } else if (base::has && !o.has) {
-            error_type e(std::move(o.s.err));
-            ::new (std::addressof(base::s.err)) error_type(e);
+            ::new (std::addressof(base::s.err)) error_type(std::move(o.s.err));
             swap(base::has, o.has);
         } else if (!base::has && o.has) {
             ::new (std::addressof(o.s.err)) error_type(std::move(base::s.err));

@@ -40,7 +40,6 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
 #include <wtf/SHA1.h>
-#include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
 #if OS(DARWIN)
@@ -635,16 +634,18 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 };
 
 template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<ValueType, ErrorType>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const Expected<ValueType, ErrorType>& expected)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& expected)
     {
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, Expected<ValueType, ErrorType>>);
+
         if (!expected.has_value()) {
             encoder << false;
-            encoder << expected.error();
+            encoder << std::forward<T>(expected).error();
             return;
         }
         encoder << true;
-        encoder << expected.value();
+        encoder << std::forward<T>(expected).value();
     }
 
     template<typename Decoder>
@@ -665,16 +666,20 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
         auto error = decoder.template decode<ErrorType>();
         if (!error)
             return std::nullopt;
+        // return std::make_optional<Expected<ValueType, ErrorType>>(Unexpect, WTFMove(*error));
         return std::make_optional<Expected<ValueType, ErrorType>>(makeUnexpected(WTFMove(*error)));
     }
 };
 
 template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
-    template<typename Encoder> static void encode(Encoder& encoder, const Expected<void, ErrorType>& expected)
+    template<typename Encoder, typename T>
+    static void encode(Encoder& encoder, T&& expected)
     {
+        static_assert(std::is_same_v<std::remove_cvref_t<T>, Expected<void, ErrorType>>);
+
         if (!expected.has_value()) {
             encoder << false;
-            encoder << expected.error();
+            encoder << std::forward<T>(expected).error();
             return;
         }
 
@@ -693,6 +698,7 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
         auto error = decoder.template decode<ErrorType>();
         if (!error)
             return std::nullopt;
+        //return std::make_optional<Expected<void, ErrorType>>(Unexpect, WTFMove(*error));
         return std::make_optional<Expected<void, ErrorType>>(makeUnexpected(WTFMove(*error)));
     }
 };

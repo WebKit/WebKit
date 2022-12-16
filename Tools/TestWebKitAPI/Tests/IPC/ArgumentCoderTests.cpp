@@ -217,6 +217,25 @@ TEST_P(ArgumentCoderEncodingCounterTest, EncodeUniquePtr)
         });
 }
 
+TEST_P(ArgumentCoderEncodingCounterTest, EncodeExpected)
+{
+    testEncoding(1,
+        [](auto& counterValues)
+        {
+            return Expected<EncodingCounter, unsigned> { EncodingCounter { counterValues } };
+        });
+    testEncoding(1,
+        [](auto& counterValues)
+        {
+            return Expected<unsigned, EncodingCounter> { makeUnexpected(EncodingCounter { counterValues }) };
+        });
+    testEncoding(1,
+        [](auto& counterValues)
+        {
+            return Expected<void, EncodingCounter> { makeUnexpected(EncodingCounter { counterValues }) };
+        });
+}
+
 INSTANTIATE_TEST_SUITE_P(ArgumentCoderTest,
     ArgumentCoderEncodingCounterTest,
     testing::Values(EncodingCounterTestType::LValue, EncodingCounterTestType::RValue, EncodingCounterTestType::MovedRValue),
@@ -468,6 +487,57 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeUniquePtr)
         auto& counter = *pointer;
         ASSERT_TRUE(!!counter);
         ASSERT_EQ(counter->moveCounter, 1u);
+    }
+}
+
+TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeExpected)
+{
+    encoder() << Expected<DecodingMoveCounter, unsigned> { DecodingMoveCounter { } }
+        << Expected<unsigned, DecodingMoveCounter> { makeUnexpected(DecodingMoveCounter { }) }
+        << Expected<void, DecodingMoveCounter> { makeUnexpected(DecodingMoveCounter { }) };
+    encoder() << Expected<DecodingMoveCounter, unsigned> { DecodingMoveCounter { } }
+        << Expected<unsigned, DecodingMoveCounter> { makeUnexpected(DecodingMoveCounter { }) }
+        << Expected<void, DecodingMoveCounter> { makeUnexpected(DecodingMoveCounter { }) };
+
+    auto decoder = createDecoder();
+    {
+        std::optional<Expected<DecodingMoveCounter, unsigned>> expected;
+        *decoder >> expected;
+        ASSERT_TRUE(!!expected);
+        ASSERT_TRUE(expected->has_value());
+        ASSERT_EQ(expected->value().moveCounter, 2u);
+    }
+    {
+        std::optional<Expected<unsigned, DecodingMoveCounter>> expected;
+        *decoder >> expected;
+        ASSERT_TRUE(!!expected);
+        ASSERT_TRUE(!expected->has_value());
+        ASSERT_EQ(expected->error().moveCounter, 3u);
+    }
+    {
+        std::optional<Expected<void, DecodingMoveCounter>> expected;
+        *decoder >> expected;
+        ASSERT_TRUE(!!expected);
+        ASSERT_TRUE(!expected->has_value());
+        ASSERT_EQ(expected->error().moveCounter, 3u);
+    }
+    {
+        auto expected = decoder->decode<Expected<DecodingMoveCounter, unsigned>>();
+        ASSERT_TRUE(!!expected);
+        ASSERT_TRUE(expected->has_value());
+        ASSERT_EQ(expected->value().moveCounter, 1u);
+    }
+    {
+        auto expected = decoder->decode<Expected<unsigned, DecodingMoveCounter>>();
+        ASSERT_TRUE(!!expected);
+        ASSERT_TRUE(!expected->has_value());
+        ASSERT_EQ(expected->error().moveCounter, 2u);
+    }
+    {
+        auto expected = decoder->decode<Expected<void, DecodingMoveCounter>>();
+        ASSERT_TRUE(!!expected);
+        ASSERT_TRUE(!expected->has_value());
+        ASSERT_EQ(expected->error().moveCounter, 2u);
     }
 }
 
