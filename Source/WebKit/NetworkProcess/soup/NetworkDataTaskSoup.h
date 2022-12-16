@@ -209,7 +209,7 @@ private:
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     bool m_isBlockingCookies { false };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
-    RunLoop::Timer<NetworkDataTaskSoup> m_timeoutSource;
+    RunLoop::Timer m_timeoutSource;
 };
 
 } // namespace WebKit

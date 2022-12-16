@@ -1348,6 +1348,8 @@ imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/ass
 # Console logs are flaky.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity.html [ DumpJSConsoleLogInStdErr ]
 
+imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ DumpJSConsoleLogInStdErr ]
+
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]

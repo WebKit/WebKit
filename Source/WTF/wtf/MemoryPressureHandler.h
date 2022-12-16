@@ -265,7 +265,7 @@ private:
     
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
 
-    std::unique_ptr<RunLoop::Timer<MemoryPressureHandler>> m_measurementTimer;
+    std::unique_ptr<RunLoop::Timer>m_measurementTimer;
     WTF::Function<void()> m_memoryKillCallback;
     WTF::Function<void(MemoryPressureStatus)> m_memoryPressureStatusChangedCallback;
     WTF::Function<void()> m_didExceedInactiveLimitWhileActiveCallback;
@@ -275,12 +275,12 @@ private:
 
 #if OS(WINDOWS)
     void windowsMeasurementTimerFired();
-    RunLoop::Timer<MemoryPressureHandler> m_windowsMeasurementTimer;
+    RunLoop::Timer m_windowsMeasurementTimer;
     Win32Handle m_lowMemoryHandle;
 #endif
 
 #if OS(LINUX) || OS(FREEBSD)
-    RunLoop::Timer<MemoryPressureHandler> m_holdOffTimer;
+    RunLoop::Timer m_holdOffTimer;
     void holdOffTimerFired();
 #endif
 

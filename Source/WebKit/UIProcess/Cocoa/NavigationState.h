@@ -273,7 +273,7 @@ private:
 
 #if USE(RUNNINGBOARD)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_networkActivity;
-    RunLoop::Timer<NavigationState> m_releaseNetworkActivityTimer;
+    RunLoop::Timer m_releaseNetworkActivityTimer;
 #endif
 };
 

@@ -4,6 +4,13 @@
     <script src="../video-test.js"></script>
     <script src="../media-file.js"></script>
     <style>
+        #subject {
+            background-color: red;
+        }
+        #subject:has(:picture-in-picture) {
+            background-color: green;
+        }
+
         video {
             color: rgb(0, 0, 255);
         }
@@ -30,17 +37,19 @@
             run('video.src = findMediaFile("video", "../content/test")');
             await waitFor(video, 'canplaythrough');
             testExpected('getComputedStyle(video).color', 'rgb(0, 0, 255)');
-
+            testExpected('getComputedStyle(subject).backgroundColor', 'rgb(255, 0, 0)');
             runWithKeyDown(() => {
                 video.requestPictureInPicture();
             });
 
             await waitFor(video, 'enterpictureinpicture');
             testExpected('getComputedStyle(video).color', 'rgb(0, 255, 0)');
+            testExpected('getComputedStyle(subject).backgroundColor', 'rgb(0, 128, 0)');
 
             document.exitPictureInPicture();
             await waitFor(video, 'leavepictureinpicture');
             testExpected('getComputedStyle(video).color', 'rgb(0, 0, 255)');
+            testExpected('getComputedStyle(subject).backgroundColor', 'rgb(255, 0, 0)');
 
             endTest();
         });
@@ -48,6 +57,8 @@
 </head>
 <body>
     <div>This tests that entering and leaving Picture-in-Picture toggles CSS selector.</div>
-    <video controls></video>
+    <div id="subject">
+        <video controls></video>
+    </div>
 </body>
 </html>

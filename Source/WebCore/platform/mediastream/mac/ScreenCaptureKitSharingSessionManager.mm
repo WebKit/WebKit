@@ -285,7 +285,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(PromptType 
     [session showPickerForType:promptType == PromptType::Window ? SCContentFilterTypeDesktopIndependentWindow : SCContentFilterTypeDisplay];
 
     constexpr Seconds userPromptWatchdogInterval = 60_s;
-    m_promptWatchdogTimer = makeUnique<RunLoop::Timer<ScreenCaptureKitSharingSessionManager>>(RunLoop::main(), [this, weakThis = WeakPtr { *this }, session = RetainPtr { session }, interval = userPromptWatchdogInterval]() mutable {
+    m_promptWatchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::main(), [this, weakThis = WeakPtr { *this }, session = RetainPtr { session }, interval = userPromptWatchdogInterval]() mutable {
         if (!weakThis)
             return;
 

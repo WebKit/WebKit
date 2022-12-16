@@ -77,8 +77,8 @@ private:
     std::unique_ptr<struct wpe_gamepad_provider, void (*)(struct wpe_gamepad_provider*)> m_provider;
     struct wpe_gamepad* m_lastActiveGamepad { nullptr };
 
-    RunLoop::Timer<GamepadProviderLibWPE> m_initialGamepadsConnectedTimer;
-    RunLoop::Timer<GamepadProviderLibWPE> m_inputNotificationTimer;
+    RunLoop::Timer m_initialGamepadsConnectedTimer;
+    RunLoop::Timer m_inputNotificationTimer;
 };
 
 } // namespace WebCore

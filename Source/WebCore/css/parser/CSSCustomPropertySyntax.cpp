@@ -28,6 +28,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
 #include "ParsingUtilities.h"
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -59,6 +60,12 @@ auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> 
             return { };
 
         auto type = typeForTypeName(dataTypeName);
+
+        // <transform-list> is a pre-multiplied data type.
+        // https://drafts.css-houdini.org/css-properties-values-api/#multipliers
+        if (type == Type::TransformList && multiplier != Multiplier::Single)
+            type = Type::Unknown;
+
         return Component { type, multiplier };
     }
 
@@ -128,32 +135,25 @@ std::optional<CSSCustomPropertySyntax> CSSCustomPropertySyntax::parse(StringView
 
 auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
 {
-    if (dataTypeName == "length"_s)
-        return Type::Length;
-    if (dataTypeName == "length-percentage"_s)
-        return Type::LengthPercentage;
-    if (dataTypeName == "custom-ident"_s)
-        return Type::CustomIdent;
-    if (dataTypeName == "percentage"_s)
-        return Type::Percentage;
-    if (dataTypeName == "integer"_s)
-        return Type::Integer;
-    if (dataTypeName == "number"_s)
-        return Type::Number;
-    if (dataTypeName == "angle"_s)
-        return Type::Angle;
-    if (dataTypeName == "time"_s)
-        return Type::Time;
-    if (dataTypeName == "resolution"_s)
-        return Type::Resolution;
-    if (dataTypeName == "color"_s)
-        return Type::Color;
-    if (dataTypeName == "image"_s)
-        return Type::Image;
-    if (dataTypeName == "url"_s)
-        return Type::URL;
+    static constexpr std::pair<ComparableASCIILiteral, Type> mappings[] = {
+        { "angle", Type::Angle },
+        { "color", Type::Color },
+        { "custom-ident", Type::CustomIdent },
+        { "image", Type::Image },
+        { "integer", Type::Integer },
+        { "length", Type::Length },
+        { "length-percentage", Type::LengthPercentage },
+        { "number", Type::Number },
+        { "percentage", Type::Percentage },
+        { "resolution", Type::Resolution },
+        { "time", Type::Time },
+        { "transform-function", Type::TransformFunction },
+        { "transform-list", Type::TransformList },
+        { "url", Type::URL },
+    };
 
-    return Type::Unknown;
+    static constexpr SortedArrayMap typeMap { mappings };
+    return typeMap.get(dataTypeName, Type::Unknown);
 }
 
 }

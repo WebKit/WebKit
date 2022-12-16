@@ -77,7 +77,7 @@ public:
 
 private:
     RetainPtr<JSContext> m_context;
-    RunLoop::Timer<SharedJSContext> m_timer;
+    RunLoop::Timer m_timer;
     MonotonicTime m_lastUseTime;
 };
 

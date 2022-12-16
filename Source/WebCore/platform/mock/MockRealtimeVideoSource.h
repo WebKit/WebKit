@@ -115,7 +115,7 @@ private:
     MonotonicTime m_delayUntil;
 
     unsigned m_frameNumber { 0 };
-    RunLoop::Timer<MockRealtimeVideoSource> m_emitFrameTimer;
+    RunLoop::Timer m_emitFrameTimer;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;

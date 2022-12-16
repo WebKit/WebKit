@@ -51,7 +51,7 @@ private:
     void watchdogTimerFired();
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
-    RunLoop::Timer<XPCConnectionTerminationWatchdog> m_watchdogTimer;
+    RunLoop::Timer m_watchdogTimer;
 #if PLATFORM(IOS_FAMILY)
     Ref<ProcessAndUIAssertion> m_assertion;
 #endif

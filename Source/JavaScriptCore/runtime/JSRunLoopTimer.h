@@ -72,7 +72,7 @@ public:
             ~PerVMData();
 
             Ref<WTF::RunLoop> runLoop;
-            std::unique_ptr<RunLoop::Timer<Manager>> timer;
+            std::unique_ptr<RunLoop::Timer> timer;
             Vector<std::pair<Ref<JSRunLoopTimer>, MonotonicTime>> timers;
         };
 

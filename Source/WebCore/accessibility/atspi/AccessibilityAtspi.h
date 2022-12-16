@@ -135,8 +135,8 @@ private:
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
     ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;
-    RunLoop::Timer<AccessibilityAtspi> m_cacheUpdateTimer;
-    RunLoop::Timer<AccessibilityAtspi> m_cacheClearTimer;
+    RunLoop::Timer m_cacheUpdateTimer;
+    RunLoop::Timer m_cacheClearTimer;
 #if ENABLE(DEVELOPER_MODE)
     HashMap<void*, NotificationObserver> m_notificationObservers;
 #endif

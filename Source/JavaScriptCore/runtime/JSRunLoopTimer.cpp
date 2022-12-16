@@ -40,7 +40,7 @@ namespace JSC {
 
 JSRunLoopTimer::Manager::PerVMData::PerVMData(Manager& manager, RunLoop& runLoop)
     : runLoop(runLoop)
-    , timer(makeUnique<RunLoop::Timer<Manager>>(runLoop, &manager, &JSRunLoopTimer::Manager::timerDidFireCallback))
+    , timer(makeUnique<RunLoop::Timer>(runLoop, &manager, &JSRunLoopTimer::Manager::timerDidFireCallback))
 {
 #if USE(GLIB_EVENT_LOOP)
     timer->setPriority(RunLoopSourcePriority::JavascriptTimer);

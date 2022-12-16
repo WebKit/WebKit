@@ -83,6 +83,12 @@ AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setTransports(Vector
     return *this;
 }
 
+AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setRemainingDiscoverableCredentials(uint32_t remainingDiscoverableCredentials)
+{
+    m_remainingDiscoverableCredentials = remainingDiscoverableCredentials;
+    return *this;
+}
+
 static String toString(WebCore::AuthenticatorTransport transport)
 {
     switch (transport) {
@@ -138,6 +144,9 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
         auto transports = *response.transports();
         deviceInfoMap.emplace(CBORValue(7), toArrayValue(transports.map(toString)));
     }
+
+    if (response.remainingDiscoverableCredentials())
+        deviceInfoMap.emplace(CBORValue(8), CBORValue(static_cast<int64_t>(*response.maxMsgSize())));
 
     auto encodedBytes = CBORWriter::write(CBORValue(WTFMove(deviceInfoMap)));
     ASSERT(encodedBytes);

@@ -152,7 +152,7 @@ private:
     MonotonicTime m_startTime { MonotonicTime::nan() };
     Seconds m_elapsedTime { 0_s };
 
-    RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
+    RunLoop::Timer m_timer;
     UserActivity m_userActivity;
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;

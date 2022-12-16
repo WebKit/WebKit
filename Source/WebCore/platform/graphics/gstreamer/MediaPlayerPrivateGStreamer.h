@@ -527,8 +527,8 @@ private:
     bool m_hasAudio { false };
     Condition m_drawCondition;
     Lock m_drawLock;
-    RunLoop::Timer<MediaPlayerPrivateGStreamer> m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
-    RunLoop::Timer<MediaPlayerPrivateGStreamer> m_readyTimerHandler;
+    RunLoop::Timer m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
+    RunLoop::Timer m_readyTimerHandler;
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)
     RefPtr<Nicosia::ContentLayer> m_nicosiaLayer;

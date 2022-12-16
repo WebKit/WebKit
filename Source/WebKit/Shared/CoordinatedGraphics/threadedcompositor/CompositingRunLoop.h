@@ -71,7 +71,7 @@ private:
     void updateTimerFired();
 
     Ref<RunLoop> m_runLoop;
-    RunLoop::Timer<CompositingRunLoop> m_updateTimer;
+    RunLoop::Timer m_updateTimer;
     Function<void ()> m_updateFunction;
     Lock m_dispatchSyncConditionLock;
     Condition m_dispatchSyncCondition;

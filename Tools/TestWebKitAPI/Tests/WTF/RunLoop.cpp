@@ -119,10 +119,10 @@ TEST(WTF_RunLoop, CallOnMainCrossThreadWhileNested)
     Util::run(&done);
 }
 
-class DerivedOneShotTimer : public RunLoop::Timer<DerivedOneShotTimer> {
+class DerivedOneShotTimer : public RunLoop::Timer {
 public:
     DerivedOneShotTimer(bool& testFinished)
-        : RunLoop::Timer<DerivedOneShotTimer>(RunLoop::current(), this, &DerivedOneShotTimer::fired)
+        : RunLoop::Timer(RunLoop::current(), this, &DerivedOneShotTimer::fired)
         , m_testFinished(testFinished)
     {
     }
@@ -151,10 +151,10 @@ TEST(WTF_RunLoop, OneShotTimer)
     Util::run(&testFinished);
 }
 
-class DerivedRepeatingTimer : public RunLoop::Timer<DerivedRepeatingTimer> {
+class DerivedRepeatingTimer : public RunLoop::Timer {
 public:
     DerivedRepeatingTimer(bool& testFinished)
-        : RunLoop::Timer<DerivedRepeatingTimer>(RunLoop::current(), this, &DerivedRepeatingTimer::fired)
+        : RunLoop::Timer(RunLoop::current(), this, &DerivedRepeatingTimer::fired)
         , m_testFinished(testFinished)
     {
     }

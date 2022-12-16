@@ -131,7 +131,7 @@ private:
     }
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
-    RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
+    RunLoop::Timer m_internallyFailedLoadTimer;
     
     HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebResourceLoader>> m_webResourceLoaders;
     HashMap<WebCore::ResourceLoaderIdentifier, WebURLSchemeTaskProxy*> m_urlSchemeTasks;

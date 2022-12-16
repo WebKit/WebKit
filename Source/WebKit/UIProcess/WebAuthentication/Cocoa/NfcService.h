@@ -64,7 +64,7 @@ private:
     // Keep the reader session alive here when it tries to connect to a tag.
     RefPtr<NfcConnection> m_connection;
 #endif
-    RunLoop::Timer<NfcService> m_restartTimer;
+    RunLoop::Timer m_restartTimer;
 };
 
 } // namespace WebKit

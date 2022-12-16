@@ -58,6 +58,7 @@
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "TimingFunction.h"
+#include "TransformFunctions.h"
 #include <memory>
 #include <wtf/text/StringBuilder.h>
 
@@ -363,6 +364,10 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
             return consumeImage(range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
         case CSSCustomPropertySyntax::Type::URL:
             return consumeURL(range);
+        case CSSCustomPropertySyntax::Type::TransformFunction:
+            return consumeTransformFunction(m_range, m_context);
+        case CSSCustomPropertySyntax::Type::TransformList:
+            return consumeTransform(m_range, m_context);
         case CSSCustomPropertySyntax::Type::Unknown:
             return nullptr;
         }
@@ -482,6 +487,17 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         }
         case CSSCustomPropertySyntax::Type::CustomIdent:
             return { primitiveValue->stringValue() };
+
+        case CSSCustomPropertySyntax::Type::TransformFunction:
+        case CSSCustomPropertySyntax::Type::TransformList: {
+            auto listValue = CSSValueList::createSpaceSeparated();
+            listValue->append(const_cast<CSSValue&>(value));
+            TransformOperations operations;
+            transformsForValue(listValue, builderState.cssToLengthConversionData(), operations);
+            if (operations.operations().size() != 1)
+                return { };
+            return { operations.operations()[0] };
+        }
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };
         }

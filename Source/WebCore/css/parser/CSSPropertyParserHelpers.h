@@ -256,6 +256,7 @@ RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
 RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
 RefPtr<CSSValue> consumeTransform(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeScale(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange&, CSSParserMode);

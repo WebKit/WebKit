@@ -98,6 +98,13 @@ void CtapAuthenticator::makeCredential()
     auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     auto residentKeyAvailability = m_info.options().residentKeyAvailability();
+    if (m_isKeyStoreFull || (m_info.remainingDiscoverableCredentials() && !m_info.remainingDiscoverableCredentials())) {
+        if (options.authenticatorSelection && (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required)) {
+            observer()->authenticatorStatusUpdated(WebAuthenticationStatus::KeyStoreFull);
+            return;
+        }
+        residentKeyAvailability = AuthenticatorSupportedOptions::ResidentKeyAvailability::kNotSupported;
+    }
     // If UV is required, then either built-in uv or a pin will work.
     if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged) && m_pinAuth.isEmpty())
         cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, residentKeyAvailability);
@@ -128,6 +135,16 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
             receiveRespond(ExceptionData { InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
             return;
         }
+        if (error == CtapDeviceResponseCode::kCtap2ErrKeyStoreFull) {
+            auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
+            if (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required) {
+                observer()->authenticatorStatusUpdated(WebAuthenticationStatus::KeyStoreFull);
+            } else if (!m_isKeyStoreFull) {
+                m_isKeyStoreFull = true;
+                makeCredential();
+            }
+            return;
+        }
 
         if (isPinError(error)) {
             if (!m_pinAuth.isEmpty() && observer()) // Skip the very first command that acts like wink.
@@ -145,7 +162,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         
         auto rkSupported = m_info.options().residentKeyAvailability() == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported;
         auto rkRequested = options.authenticatorSelection && ((options.authenticatorSelection->residentKey && options.authenticatorSelection->residentKey != ResidentKeyRequirement::Discouraged) || options.authenticatorSelection->requireResidentKey);
-        extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { rkSupported && rkRequested };
+        extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { rkSupported && rkRequested && !m_isKeyStoreFull };
         response->setExtensions(WTFMove(extensionOutputs));
     }
     receiveRespond(response.releaseNonNull());

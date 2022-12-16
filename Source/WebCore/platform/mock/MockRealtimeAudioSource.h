@@ -81,7 +81,7 @@ private:
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
-    RunLoop::Timer<MockRealtimeAudioSource> m_timer;
+    RunLoop::Timer m_timer;
     MonotonicTime m_startTime { MonotonicTime::nan() };
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
     Seconds m_elapsedTime { 0_s };

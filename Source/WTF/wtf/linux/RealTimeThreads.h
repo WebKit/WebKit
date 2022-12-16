@@ -59,7 +59,7 @@ private:
     bool m_enabled { true };
 #if USE(GLIB)
     std::optional<GRefPtr<GDBusProxy>> m_realTimeKitProxy;
-    RunLoop::Timer<RealTimeThreads> m_discardRealTimeKitProxyTimer;
+    RunLoop::Timer m_discardRealTimeKitProxyTimer;
 #endif
 };
 

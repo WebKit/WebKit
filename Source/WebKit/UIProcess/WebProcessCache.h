@@ -85,9 +85,9 @@ private:
 #endif
 
         RefPtr<WebProcessProxy> m_process;
-        RunLoop::Timer<CachedProcess> m_evictionTimer;
+        RunLoop::Timer m_evictionTimer;
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
-        RunLoop::Timer<CachedProcess> m_suspensionTimer;
+        RunLoop::Timer m_suspensionTimer;
 #endif
     };
 
@@ -99,7 +99,7 @@ private:
 
     HashMap<uint64_t, std::unique_ptr<CachedProcess>> m_pendingAddRequests;
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<CachedProcess>> m_processesPerRegistrableDomain;
-    RunLoop::Timer<WebProcessCache> m_evictionTimer;
+    RunLoop::Timer m_evictionTimer;
 };
 
 } // namespace WebKit

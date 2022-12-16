@@ -2905,7 +2905,7 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isCapturingActivity;
-    RunLoop::Timer<WebPageProxy> m_audibleActivityTimer;
+    RunLoop::Timer m_audibleActivityTimer;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_openingAppLinkActivity;
 #endif
     bool m_initialCapitalizationEnabled { false };
@@ -3173,7 +3173,7 @@ private:
 
     // To make sure capture indicators are visible long enough, m_reportedMediaCaptureState is the same as m_mediaState except that we might delay a bit transition from capturing to not-capturing.
     WebCore::MediaProducerMediaStateFlags m_reportedMediaCaptureState;
-    RunLoop::Timer<WebPageProxy> m_updateReportedMediaCaptureStateTimer;
+    RunLoop::Timer m_updateReportedMediaCaptureStateTimer;
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
     Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };
 
@@ -3233,7 +3233,7 @@ private:
     std::optional<MonotonicTime> m_pageLoadStart;
     HashSet<String> m_previouslyVisitedPaths;
 
-    RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
+    RunLoop::Timer m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };
 
     bool m_needsFontAttributes { false };
@@ -3244,7 +3244,7 @@ private:
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>)> m_serviceWorkerOpenWindowCompletionCallback;
 #endif
 
-    RunLoop::Timer<WebPageProxy> m_tryCloseTimeoutTimer;
+    RunLoop::Timer m_tryCloseTimeoutTimer;
 
     std::unique_ptr<ProvisionalPageProxy> m_provisionalPage;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;
@@ -3348,7 +3348,7 @@ private:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     std::optional<PlaybackSessionContextIdentifier> m_currentFullscreenVideoSessionIdentifier;
-    RunLoop::Timer<WebPageProxy> m_fullscreenVideoTextRecognitionTimer;
+    RunLoop::Timer m_fullscreenVideoTextRecognitionTimer;
 #endif
     bool m_isPerformingTextRecognitionInElementFullScreen { false };
 };

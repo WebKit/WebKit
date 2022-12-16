@@ -173,9 +173,27 @@ struct ScrollUpdate {
     }
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SynchronousScrollingReason);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingNodeType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingLayerPositionAction);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollableAreaParameters);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ViewportRectStability);
+
 } // namespace WebCore
 
 namespace WTF {
+
+template<> struct EnumTraits<WebCore::SynchronousScrollingReason> {
+    using values = EnumValues<
+        WebCore::SynchronousScrollingReason,
+        WebCore::SynchronousScrollingReason::ForcedOnMainThread,
+        WebCore::SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers,
+        WebCore::SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects,
+        WebCore::SynchronousScrollingReason::IsImageDocument,
+        WebCore::SynchronousScrollingReason::HasSlowRepaintObjects,
+        WebCore::SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling
+    >;
+};
 
 template<> struct EnumTraits<WebCore::ScrollRequestType> {
     using values = EnumValues<

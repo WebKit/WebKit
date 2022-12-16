@@ -74,7 +74,7 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
             RunLoop::main().stop();
         }
 
-        RunLoop::Timer<TimeoutTimer> timer;
+        RunLoop::Timer timer;
         bool timedOut { false };
     } timeoutTimer;
 

@@ -86,7 +86,7 @@ private:
     RetainPtr<NSObject> m_connectObserver;
     RetainPtr<NSObject> m_disconnectObserver;
 
-    RunLoop::Timer<GameControllerGamepadProvider> m_inputNotificationTimer;
+    RunLoop::Timer m_inputNotificationTimer;
     bool m_shouldMakeInvisibleGamepadsVisible { false };
 };
 

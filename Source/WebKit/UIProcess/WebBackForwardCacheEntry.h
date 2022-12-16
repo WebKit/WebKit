@@ -56,7 +56,7 @@ private:
     WebCore::ProcessIdentifier m_processIdentifier;
     WebCore::BackForwardItemIdentifier m_backForwardItemID;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
-    RunLoop::Timer<WebBackForwardCacheEntry> m_expirationTimer;
+    RunLoop::Timer m_expirationTimer;
 };
 
 } // namespace WebKit

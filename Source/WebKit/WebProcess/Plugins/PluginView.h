@@ -153,7 +153,7 @@ private:
 
     // Pending request that the plug-in has made.
     std::unique_ptr<const WebCore::ResourceRequest> m_pendingResourceRequest;
-    RunLoop::Timer<PluginView> m_pendingResourceRequestTimer;
+    RunLoop::Timer m_pendingResourceRequestTimer;
 
     // Stream that the plug-in has requested to load.
     class Stream;

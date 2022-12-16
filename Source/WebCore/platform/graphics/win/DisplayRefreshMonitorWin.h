@@ -42,7 +42,7 @@ private:
     
     void displayLinkCallbackFired();
 
-    RunLoop::Timer<DisplayRefreshMonitorWin> m_timer;
+    RunLoop::Timer m_timer;
     DisplayUpdate m_currentUpdate;
 };
 

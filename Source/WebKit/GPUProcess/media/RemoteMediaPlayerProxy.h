@@ -376,7 +376,7 @@ private:
     WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
-    RunLoop::Timer<RemoteMediaPlayerProxy> m_updateCachedStateMessageTimer;
+    RunLoop::Timer m_updateCachedStateMessageTimer;
     RemoteMediaPlayerState m_cachedState;
     RemoteMediaPlayerProxyConfiguration m_configuration;
     PerformTaskAtMediaTimeCompletionHandler m_performTaskAtMediaTimeCompletionHandler;

@@ -176,15 +176,12 @@ public:
 #endif
     };
 
-    template <typename TimerFiredClass>
     class Timer : public TimerBase {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        typedef void (TimerFiredClass::*TimerFiredFunction)();
-
-        Timer(RunLoop& runLoop, TimerFiredClass* o, TimerFiredFunction f)
-            : TimerBase(runLoop)
-            , m_function(std::bind(f, o))
+        template <typename TimerFiredClass>
+        Timer(RunLoop& runLoop, TimerFiredClass* o, void (TimerFiredClass::*f)())
+            : Timer(runLoop, std::bind(f, o))
         {
         }
 

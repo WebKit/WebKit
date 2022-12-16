@@ -177,10 +177,10 @@ void RunLoop::runImpl(RunMode runMode)
     ASSERT(this == &RunLoop::current());
 
     if constexpr (report) {
-        static NeverDestroyed<DispatchTimer> reporter { *this };
+        static LazyNeverDestroyed<Timer> reporter;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            reporter->setFunction([this] {
+            reporter.construct(*this, [this] {
                 unsigned count = 0;
                 unsigned active = 0;
                 for (auto task = m_schedules.first(); task; task = task->successor()) {

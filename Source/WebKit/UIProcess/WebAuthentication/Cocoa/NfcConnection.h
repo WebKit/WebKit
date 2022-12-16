@@ -60,7 +60,7 @@ private:
     RetainPtr<NFReaderSession> m_session;
     RetainPtr<WKNFReaderSessionDelegate> m_delegate;
     WeakPtr<NfcService> m_service;
-    RunLoop::Timer<NfcConnection> m_retryTimer;
+    RunLoop::Timer m_retryTimer;
 };
 
 } // namespace WebKit

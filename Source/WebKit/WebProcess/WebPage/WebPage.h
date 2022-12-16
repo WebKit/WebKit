@@ -2181,7 +2181,7 @@ private:
     RefPtr<PageBanner> m_footerBanner;
 #endif
 
-    RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
+    RunLoop::Timer m_setCanStartMediaTimer;
     bool m_mayStartMediaWhenInWindow { false };
 
     HashMap<WebUndoStepID, RefPtr<WebUndoStep>> m_undoStepMap;

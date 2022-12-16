@@ -100,7 +100,7 @@ private:
     Lock m_lock;
     HashCountedSet<CGImageRef> m_imageCounts WTF_GUARDED_BY_LOCK(m_lock);
     SubimageCacheHashSet m_cache WTF_GUARDED_BY_LOCK(m_lock);
-    RunLoop::Timer<SubimageCacheWithTimer> m_timer WTF_GUARDED_BY_LOCK(m_lock);
+    RunLoop::Timer m_timer WTF_GUARDED_BY_LOCK(m_lock);
 
     static SubimageCacheWithTimer& subimageCache();
     static bool subimageCacheExists();

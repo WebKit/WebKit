@@ -63,7 +63,7 @@ private:
     void stopNotificationMechanism() final { }
 
     void displayRefreshCallback();
-    RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;
+    RunLoop::Timer m_displayRefreshTimer;
     Client* m_client;
     unsigned m_targetRefreshRate;
     WebCore::DisplayUpdate m_currentUpdate;

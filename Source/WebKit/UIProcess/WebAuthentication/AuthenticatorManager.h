@@ -75,7 +75,7 @@ public:
     void enableNativeSupport();
 
 protected:
-    RunLoop::Timer<AuthenticatorManager>& requestTimeOutTimer() { return m_requestTimeOutTimer; }
+    RunLoop::Timer& requestTimeOutTimer() { return m_requestTimeOutTimer; }
     void clearStateAsync(); // To void cyclic dependence.
     void clearState();
     void invokePendingCompletionHandler(Respond&&);
@@ -120,7 +120,7 @@ private:
     // Request: We only allow one request per time. A new request will cancel any pending ones.
     WebAuthenticationRequestData m_pendingRequestData;
     Callback m_pendingCompletionHandler; // Should not be invoked directly, use invokePendingCompletionHandler.
-    RunLoop::Timer<AuthenticatorManager> m_requestTimeOutTimer;
+    RunLoop::Timer m_requestTimeOutTimer;
     std::unique_ptr<AuthenticatorPresenterCoordinator> m_presenter;
 
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;

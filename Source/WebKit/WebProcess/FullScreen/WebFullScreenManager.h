@@ -118,7 +118,7 @@ private:
     void setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&&);
 
     WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_mainVideoElement;
-    RunLoop::Timer<WebFullScreenManager> m_mainVideoElementTextRecognitionTimer;
+    RunLoop::Timer m_mainVideoElementTextRecognitionTimer;
     bool m_isPerformingTextRecognitionInMainVideo { false };
 #endif // ENABLE(VIDEO)
 

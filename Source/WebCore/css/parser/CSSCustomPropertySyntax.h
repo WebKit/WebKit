@@ -43,6 +43,8 @@ struct CSSCustomPropertySyntax {
         Image,
         URL,
         CustomIdent,
+        TransformFunction,
+        TransformList,
         Unknown
     };
 

@@ -66,7 +66,7 @@ private:
     Vector<RetainPtr<SCContentSharingSession>> m_pendingCaptureSessions;
     RetainPtr<WebDisplayMediaPromptHelper> m_promptHelper;
     CompletionHandler<void(std::optional<CaptureDevice>)> m_completionHandler;
-    std::unique_ptr<RunLoop::Timer<ScreenCaptureKitSharingSessionManager>> m_promptWatchdogTimer;
+    std::unique_ptr<RunLoop::Timer> m_promptWatchdogTimer;
 };
 
 } // namespace WebCore

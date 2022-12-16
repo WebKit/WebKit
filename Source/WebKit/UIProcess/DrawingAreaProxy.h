@@ -165,7 +165,7 @@ private:
     virtual void didUpdateGeometry() { }
 
 #if PLATFORM(MAC)
-    RunLoop::Timer<DrawingAreaProxy> m_viewExposedRectChangedTimer;
+    RunLoop::Timer m_viewExposedRectChangedTimer;
     std::optional<WebCore::FloatRect> m_lastSentViewExposedRect;
 #endif // PLATFORM(MAC)
 #endif

@@ -108,7 +108,7 @@ private:
     String poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
-    RunLoop::Timer<IOSurfacePool> m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
+    RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceDetailsMap m_surfaceDetails WTF_GUARDED_BY_LOCK(m_lock);

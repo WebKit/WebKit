@@ -1208,8 +1208,11 @@ void DocumentLoader::commitLoad(const SharedBuffer& data)
 
 ResourceError DocumentLoader::interruptedForPolicyChangeError() const
 {
-    if (!frameLoader())
-        return {};
+    if (!frameLoader()) {
+        ResourceError error;
+        error.setType(ResourceError::Type::Cancellation);
+        return error;
+    }
 
     auto error = frameLoader()->client().interruptedForPolicyChangeError(request());
     error.setType(ResourceError::Type::Cancellation);

@@ -4,8 +4,10 @@ EVENT(canplay)
 RUN(internals.setMediaElementVolumeLocked(video, false))
 EXPECTED (document.querySelector("video:volume-locked") == 'null') OK
 EXPECTED (document.querySelector("video:not(:volume-locked)") == '[object HTMLVideoElement]') OK
+EXPECTED (getComputedStyle(subject).backgroundColor == 'rgb(255, 0, 0)') OK
 RUN(internals.setMediaElementVolumeLocked(video, true))
 EXPECTED (document.querySelector("video:volume-locked") == '[object HTMLVideoElement]') OK
 EXPECTED (document.querySelector("video:not(:volume-locked)") == 'null') OK
+EXPECTED (getComputedStyle(subject).backgroundColor == 'rgb(0, 128, 0)') OK
 END OF TEST
 

@@ -82,7 +82,7 @@ private:
 
     ResponsivenessTimer::Client& m_client;
 
-    RunLoop::Timer<ResponsivenessTimer> m_timer;
+    RunLoop::Timer m_timer;
     MonotonicTime m_restartFireTime;
 
     bool m_isResponsive { true };

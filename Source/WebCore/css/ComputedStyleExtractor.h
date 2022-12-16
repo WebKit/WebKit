@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class Animation;
+class CSSFunctionValue;
 class CSSPrimitiveValue;
 class CSSValueList;
 class Element;
@@ -38,6 +39,7 @@ class RenderElement;
 class RenderStyle;
 class ShadowData;
 class StylePropertyShorthand;
+class TransformOperation;
 
 class ComputedStyleExtractor {
     WTF_MAKE_FAST_ALLOCATED;
@@ -91,5 +93,7 @@ private:
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
 };
+
+RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation&, const RenderStyle&);
 
 } // namespace WebCore

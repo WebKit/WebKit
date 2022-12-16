@@ -133,7 +133,7 @@ public:
         void activityTimedOut();
         void updateTimer();
 
-        RunLoop::Timer<TimedActivity> m_timer;
+        RunLoop::Timer m_timer;
         Seconds m_timeout;
         ActivityVariant m_activity;
     };
@@ -171,7 +171,7 @@ private:
     ProcessThrottlerClient& m_process;
     ProcessID m_processIdentifier { 0 };
     RefPtr<ProcessAssertion> m_assertion;
-    RunLoop::Timer<ProcessThrottler> m_prepareToSuspendTimeoutTimer;
+    RunLoop::Timer m_prepareToSuspendTimeoutTimer;
     HashSet<ForegroundActivity*> m_foregroundActivities;
     HashSet<BackgroundActivity*> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;

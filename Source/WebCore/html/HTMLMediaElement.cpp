@@ -94,6 +94,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "PlatformTextTrack.h"
 #include "ProgressTracker.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RegistrableDomain.h"
 #include "RenderLayerCompositor.h"
@@ -3430,7 +3431,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
 
     // 4 - Set the seeking IDL attribute to true.
     // The flag will be cleared when the engine tells us the time has actually changed.
-    m_seeking = true;
+    setSeeking(true);
     if (m_playing) {
         if (m_lastSeekTime < now)
             addPlayedRange(m_lastSeekTime, now);
@@ -3533,7 +3534,7 @@ void HTMLMediaElement::seekTask()
     m_sentEndEvent = false;
     m_lastSeekTime = time;
     m_pendingSeekType = thisSeekType;
-    m_seeking = true;
+    setSeeking(true);
 
     // 10 - Queue a task to fire a simple event named seeking at the element.
     scheduleEvent(eventNames().seekingEvent);
@@ -3552,7 +3553,7 @@ void HTMLMediaElement::seekTask()
 
 void HTMLMediaElement::clearSeeking()
 {
-    m_seeking = false;
+    setSeeking(false);
     m_seekRequested = false;
     m_pendingSeekType = NoSeek;
     m_wasPlayingBeforeSeeking = false;
@@ -3623,6 +3624,14 @@ bool HTMLMediaElement::hasAudio() const
 bool HTMLMediaElement::seeking() const
 {
     return m_seeking;
+}
+
+void HTMLMediaElement::setSeeking(bool seeking)
+{
+    if (m_seeking == seeking)
+        return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassSeeking, seeking);
+    m_seeking = seeking;
 }
 
 void HTMLMediaElement::refreshCachedTime() const
@@ -3784,7 +3793,12 @@ void HTMLMediaElement::setPaused(bool paused)
 {
     if (m_paused == paused)
         return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassPaused, paused },
+        { CSSSelector::PseudoClassPlaying, !paused },
+    });
     m_paused = paused;
+    // FIXME: Use PseudoClassChangeInvalidation for :buffering/:stalling and remove the line below.
     invalidateStyle();
 }
 
@@ -4231,7 +4245,7 @@ void HTMLMediaElement::setMuted(bool muted)
             if (hasAudio() && muted)
                 userDidInterfereWithAutoplay();
         }
-
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassMuted, muted);
         m_muted = muted;
         m_explicitlyMuted = true;
 
@@ -4254,8 +4268,6 @@ void HTMLMediaElement::setMuted(bool muted)
 #endif
         mediaSession().canProduceAudioChanged();
         updateSleepDisabling();
-
-        invalidateStyle();
     }
 
     schedulePlaybackControlsManagerUpdate();
@@ -4266,8 +4278,8 @@ void HTMLMediaElement::setVolumeLocked(bool locked)
     if (m_volumeLocked == locked)
         return;
 
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassVolumeLocked, locked);
     m_volumeLocked = locked;
-    invalidateStyle();
 }
 
 bool HTMLMediaElement::buffering() const

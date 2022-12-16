@@ -88,7 +88,7 @@ private:
     bool debugModeEnabled() const;
     Seconds randomlyBetweenFifteenAndThirtyMinutes() const;
 
-    RunLoop::Timer<PrivateClickMeasurementManager> m_firePendingAttributionRequestsTimer;
+    RunLoop::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
     std::optional<URL> m_tokenPublicKeyURLForTesting;
     std::optional<URL> m_tokenSignatureURLForTesting;
