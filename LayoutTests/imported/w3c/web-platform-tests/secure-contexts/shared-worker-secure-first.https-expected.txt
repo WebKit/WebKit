@@ -1,0 +1,10 @@
+Blocked access to external URL https://www2.localhost:9443/secure-contexts/support/https-subframe-shared.html
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Shared worker in subframe
+NOTRUN Nested worker in shared worker in subframe
+NOTRUN Shared worker in popup
+NOTRUN Nested worker from shared worker in popup
+

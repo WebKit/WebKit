@@ -1,0 +1,9 @@
+
+
+FAIL HTTP worker assert_false: expected false got true
+PASS HTTPS worker
+FAIL HTTP nested worker assert_false: expected false got true
+PASS HTTPS nested worker
+PASS HTTP worker from HTTPS subframe
+FAIL HTTPS worker from HTTPS subframe assert_false: isSecureContext expected false got true
+
