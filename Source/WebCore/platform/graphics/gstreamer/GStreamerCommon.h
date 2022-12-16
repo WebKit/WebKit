@@ -24,6 +24,7 @@
 #include "GRefPtrGStreamer.h"
 #include "GUniquePtrGStreamer.h"
 #include "PlatformVideoColorSpace.h"
+#include "VideoPixelFormat.h"
 #include <gst/gst.h>
 #include <gst/video/video-format.h>
 #include <gst/video/video-info.h>
@@ -342,6 +343,8 @@ GstClockTime webkitGstElementGetCurrentRunningTime(GstElement*);
 PlatformVideoColorSpace videoColorSpaceFromCaps(const GstCaps*);
 PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo&);
 void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo*, const PlatformVideoColorSpace&);
+
+GstVideoFormat gstVideoFormatFromVideoPixelFormat(VideoPixelFormat);
 
 } // namespace WebCore
 

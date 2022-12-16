@@ -1003,6 +1003,33 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
         GST_VIDEO_INFO_COLORIMETRY(info).range = GST_VIDEO_COLOR_RANGE_UNKNOWN;
 }
 
+GstVideoFormat gstVideoFormatFromVideoPixelFormat(VideoPixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case VideoPixelFormat::I420:
+        return GST_VIDEO_FORMAT_I420;
+    case VideoPixelFormat::I420A:
+        return GST_VIDEO_FORMAT_A420;
+    case VideoPixelFormat::I422:
+        return GST_VIDEO_FORMAT_Y42B;
+    case VideoPixelFormat::I444:
+        return GST_VIDEO_FORMAT_Y444;
+    case VideoPixelFormat::NV12:
+        return GST_VIDEO_FORMAT_NV12;
+    case VideoPixelFormat::RGBA:
+        return GST_VIDEO_FORMAT_RGBA;
+    case VideoPixelFormat::RGBX:
+        return GST_VIDEO_FORMAT_RGBx;
+    case VideoPixelFormat::BGRA:
+        return GST_VIDEO_FORMAT_BGRA;
+    case VideoPixelFormat::BGRX:
+        return GST_VIDEO_FORMAT_BGRx;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return GST_VIDEO_FORMAT_UNKNOWN;
+}
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER)
