@@ -688,19 +688,26 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node& startNode, No
 
         Vector<Node*, 8> exitedAncestors;
         next = nullptr;
-        if (auto* child = firstChild(*n))
-            next = child;
-        else if (auto* sibling = nextSibling(*n))
-            next = sibling;
-        else {
+
+        auto advanceToAncestorSibling = [&]() {
+            if (auto* sibling = nextSibling(*n)) {
+                next = sibling;
+                return;
+            }
             for (auto* ancestor = parentNode(*n); ancestor; ancestor = parentNode(*ancestor)) {
                 exitedAncestors.append(ancestor);
                 if (auto* sibling = nextSibling(*ancestor)) {
                     next = sibling;
-                    break;
+                    return;
                 }
             }
-        }
+        };
+
+        if (auto* child = firstChild(*n))
+            next = child;
+        else
+            advanceToAncestorSibling();
+
         ASSERT(next || !pastEnd || n->containsIncludingShadowDOM(pastEnd));
 
         if (isBlock(n) && canHaveChildrenForEditing(*n) && next == pastEnd) {
@@ -709,9 +716,10 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node& startNode, No
         }
 
         bool didEnterNode = false;
-        if (!enterNode(*n))
-            next = nextSkippingChildren(*n);
-        else if (!hasChildNodes(*n))
+        if (!enterNode(*n)) {
+            exitedAncestors.clear();
+            advanceToAncestorSibling();
+        } else if (!hasChildNodes(*n))
             exitNode(*n);
         else
             didEnterNode = true;
