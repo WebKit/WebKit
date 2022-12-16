@@ -31,8 +31,12 @@
 #include "WebExtensionContextParameters.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
+
+class WebExtensionAPINamespace;
+class WebFrame;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -44,12 +48,13 @@ public:
 
     ~WebExtensionContextProxy();
 
+    using WeakFrameSet = WeakHashSet<WebFrame>;
+
     WebExtensionContextIdentifier identifier() { return m_identifier; }
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
     bool operator!=(const WebExtensionContextProxy& other) const { return !(this == &other); }
 
-#if PLATFORM(COCOA)
     const URL& baseURL() { return m_baseURL; }
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
 
@@ -62,7 +67,11 @@ public:
 
     WebCore::DOMWrapperWorld* contentScriptWorld() { return m_contentScriptWorld.get(); }
     void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
-#endif
+
+    void addFrameWithExtensionContent(WebFrame&);
+
+    void enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>&, WebCore::DOMWrapperWorld& = WebCore::mainThreadNormalWorld());
+    void enumerateContentScriptNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function) { ASSERT(contentScriptWorld()); enumerateNamespaceObjects(function, *contentScriptWorld()); };
 
 private:
     explicit WebExtensionContextProxy(WebExtensionContextParameters);
@@ -71,15 +80,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebExtensionContextIdentifier m_identifier;
-
-#if PLATFORM(COCOA)
     URL m_baseURL;
     String m_uniqueIdentifier;
     RetainPtr<NSDictionary> m_manifest;
     double m_manifestVersion { 0 };
     bool m_testingMode { false };
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
-#endif
+    WeakFrameSet m_extensionContentFrames;
 };
 
 } // namespace WebKit

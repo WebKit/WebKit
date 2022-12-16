@@ -28,6 +28,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "JSWebExtensionAPINamespace.h"
+#include "JSWebExtensionWrapper.h"
 #include "WebExtensionContextMessages.h"
 #include "WebExtensionContextProxyMessages.h"
 #include <wtf/HashMap.h>
@@ -80,6 +82,32 @@ WebExtensionContextProxy::WebExtensionContextProxy(WebExtensionContextParameters
 WebExtensionContextProxy::~WebExtensionContextProxy()
 {
     WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
+}
+
+void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
+{
+    m_extensionContentFrames.add(frame);
+}
+
+void WebExtensionContextProxy::enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
+{
+    for (auto& frame : m_extensionContentFrames) {
+        auto* page = frame.page() ? frame.page()->corePage() : nullptr;
+        if (!page)
+            continue;
+
+        auto context = page->isServiceWorkerPage() ? frame.jsContextForServiceWorkerWorld(world) : frame.jsContextForWorld(world);
+        auto globalObject = JSContextGetGlobalObject(context);
+        auto namespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
+        if (!namespaceObject || !JSValueIsObject(context, namespaceObject))
+            continue;
+
+        auto* namespaceObjectImpl = toWebExtensionAPINamespace(context, namespaceObject);
+        if (!namespaceObjectImpl)
+            continue;
+
+        function(*namespaceObjectImpl);
+    }
 }
 
 } // namespace WebKit

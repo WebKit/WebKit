@@ -37,7 +37,9 @@
 #include "WebExtensionController.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionMatchPattern.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebProcessProxy.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
@@ -48,6 +50,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
 #include <wtf/UUID.h>
+#include <wtf/WeakHashCountedSet.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSDate;
@@ -68,7 +71,6 @@ OBJC_PROTOCOL(_WKWebExtensionTab);
 namespace WebKit {
 
 class WebExtension;
-class WebExtensionController;
 class WebUserContentControllerProxy;
 struct WebExtensionContextParameters;
 
@@ -97,7 +99,9 @@ public:
     using InjectedContentData = WebExtension::InjectedContentData;
     using InjectedContentVector = WebExtension::InjectedContentVector;
 
+    using WeakPageCountedSet = WeakHashCountedSet<WebPageProxy>;
     using EventListenterTypeCountedSet = HashCountedSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
+    using EventListenterTypePageMap = HashMap<WebExtensionEventListenerType, WeakPageCountedSet, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
@@ -221,6 +225,9 @@ public:
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
+    template<typename T>
+    void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
+
 #ifdef __OBJC__
     _WKWebExtensionContext *wrapper() const { return (_WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
 #endif
@@ -322,7 +329,8 @@ private:
 #endif
 
     VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
-    EventListenterTypeCountedSet m_backgroundPageListeners;
+    EventListenterTypeCountedSet m_backgroundContentEventListeners;
+    EventListenterTypePageMap m_eventListenerPages;
     bool m_shouldFireStartupEvent { false };
 
     RetainPtr<NSDate> m_lastBackgroundContentLoadDate;
@@ -333,6 +341,24 @@ private:
     HashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
 };
+
+template<typename T>
+void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message)
+{
+    auto iterator = m_eventListenerPages.find(type);
+    if (iterator == m_eventListenerPages.end())
+        return;
+
+    HashSet<WebProcessProxy> processes;
+    for (auto entry : iterator->value) {
+        auto& process = entry.key.process();
+        if (process.canSendMessage())
+            processes.add(process);
+    }
+
+    for (auto& process : processes)
+        process.send(T(message), identifier());
+}
 
 } // namespace WebKit
 
