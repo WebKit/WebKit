@@ -46,8 +46,8 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 else ()
     list(APPEND DumpRenderTree_LIBRARIES
-        CFNetwork
-        CoreText
+        Apple::CFNetwork
+        Apple::CoreText
     )
     list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
         ${DumpRenderTree_DIR}/cg
@@ -56,7 +56,7 @@ else ()
         cg/PixelDumpSupportCG.cpp
     )
     list(APPEND DumpRenderTree_LIBRARIES
-        CoreGraphics
+        Apple::CoreGraphics
     )
 endif ()
 

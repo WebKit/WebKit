@@ -15,10 +15,10 @@ else ()
         Apple::CoreText
         Apple::QuartzCore
         Apple::libdispatch
-        libxml2${DEBUG_SUFFIX}
-        libxslt${DEBUG_SUFFIX}
-        zdll${DEBUG_SUFFIX}
-        SQLite3${DEBUG_SUFFIX}
+        LibXml2::LibXml2
+        LibXslt::LibXslt
+        SQLite::SQLite3
+        ZLIB::ZLIB
     )
 endif ()
 
