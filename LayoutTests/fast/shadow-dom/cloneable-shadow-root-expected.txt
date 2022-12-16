@@ -1,0 +1,18 @@
+
+PASS ShadowRoot in "open" mode is not cloneable by default
+PASS ShadowRoot in "closed" mode is not cloneable by default
+PASS ShadowRoot in "open" mode is cloneable if cloneable flag is set
+PASS ShadowRoot in "closed" mode is cloneable if cloneable flag is set
+PASS Cloning ShadowRoot in "open" mode clones shadow root mode
+PASS Cloning ShadowRoot in "closed" mode clones shadow root mode
+PASS Cloning ShadowRoot in "open" mode clones delegatesFocus flag set to true
+PASS Cloning ShadowRoot in "open" mode clones delegatesFocus flag set to false
+PASS Cloning ShadowRoot in "closed" mode clones delegatesFocus flag set to true
+PASS Cloning ShadowRoot in "closed" mode clones delegatesFocus flag set to false
+PASS Cloning ShadowRoot in "open" mode clones slot assignment mode set to manual
+PASS Cloning ShadowRoot in "open" mode clones slot assignment mode set to named
+PASS Cloning ShadowRoot in "closed" mode clones slot assignment mode set to manual
+PASS Cloning ShadowRoot in "closed" mode clones slot assignment mode set to named
+PASS Cloning ShadowRoot in "open" mode clones shadow descendants
+PASS Cloning ShadowRoot in "closed" mode clones shadow descendants
+

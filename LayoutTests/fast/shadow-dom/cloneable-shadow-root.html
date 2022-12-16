@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function testShadowRootIsNotCloneableByDefault(mode) {
+    test(() => {
+        const host = document.createElement('div');
+        const shadowRoot = host.attachShadow({mode});
+
+        const clonedHost = host.cloneNode(true);
+        assert_true(!!clonedHost.attachShadow({mode}));
+        assert_throws_dom('NotSupportedError', () => {
+            shadowRoot.cloneNode(true);
+        });
+    }, `ShadowRoot in "${mode}" mode is not cloneable by default`);
+}
+
+testShadowRootIsNotCloneableByDefault('open');
+testShadowRootIsNotCloneableByDefault('closed');
+
+function testShadowRootIsCloneable(mode) {
+    test(() => {
+        const host = document.createElement('div');
+        const shadowRoot = host.attachShadow({mode, cloneable: true});
+
+        const clonedHost = host.cloneNode(true);
+        assert_throws_dom('NotSupportedError', () => {
+            clonedHost.attachShadow({mode});
+        });
+        assert_equals(!!clonedHost.shadowRoot, mode == 'open');
+    }, `ShadowRoot in "${mode}" mode is cloneable if cloneable flag is set`);
+}
+
+testShadowRootIsCloneable('open');
+testShadowRootIsCloneable('closed');
+
+function testShadowRootClonesShadowRootMode(mode) {
+    test(() => {
+        const host = document.createElement('div');
+        const shadowRoot = host.attachShadow({mode, cloneable: true});
+        const clonedHost = host.cloneNode(true);
+        assert_equals(!!clonedHost.shadowRoot, mode == 'open');
+    }, `Cloning ShadowRoot in "${mode}" mode clones shadow root mode`);
+}
+testShadowRootClonesShadowRootMode('open');
+testShadowRootClonesShadowRootMode('closed');
+
+window.didFocusInputElement = false;
+function testShadowRootClonesDelegatesFocus(mode, delegatesFocus) {
+    test(() => {
+        const host = document.createElement('div');
+        const shadowRoot = host.attachShadow({mode, cloneable: true, delegatesFocus});
+        shadowRoot.innerHTML = '<input onfocus="window.didFocusInputElement = true">';
+
+        const clonedHost = host.cloneNode(true);
+        window.didFocusInputElement = false;
+        document.body.appendChild(clonedHost);
+        clonedHost.focus();
+        if (mode == 'open')
+            assert_equals(clonedHost.shadowRoot.delegatesFocus, delegatesFocus);
+        assert_equals(didFocusInputElement, delegatesFocus);
+        clonedHost.remove();
+    }, `Cloning ShadowRoot in "${mode}" mode clones delegatesFocus flag set to ${delegatesFocus}`);
+}
+
+testShadowRootClonesDelegatesFocus('open', true);
+testShadowRootClonesDelegatesFocus('open', false);
+testShadowRootClonesDelegatesFocus('closed', true);
+testShadowRootClonesDelegatesFocus('closed', false);
+
+function testShadowRootClonesSlotAssignment(mode) {
+    test(() => {
+        const host = document.createElement('span');
+        host.innerHTML = '<div style="width: 100px; height: 100px; display: inline-block;"></div>';
+        const shadowRoot = host.attachShadow({mode, cloneable: true, slotAssignment: 'manual'});
+        shadowRoot.innerHTML = '<slot></slot>';
+        const clonedHost = host.cloneNode(true);
+        if (mode == 'open')
+            assert_equals(clonedHost.shadowRoot.slotAssignment, 'manual');
+        document.body.appendChild(clonedHost);
+        assert_equals(clonedHost.offsetWidth, 0);
+        clonedHost.remove();
+    }, `Cloning ShadowRoot in "${mode}" mode clones slot assignment mode set to manual`);
+
+    test(() => {
+        const host = document.createElement('span');
+        host.innerHTML = '<div style="width: 100px; height: 100px; display: inline-block;"></div>';
+        const shadowRoot = host.attachShadow({mode, cloneable: true, slotAssignment: 'named'});
+        shadowRoot.innerHTML = '<slot></slot>';
+        const clonedHost = host.cloneNode(true);
+        if (mode == 'open')
+            assert_equals(clonedHost.shadowRoot.slotAssignment, 'named');
+        document.body.appendChild(clonedHost);
+        assert_equals(clonedHost.offsetWidth, 100);
+        clonedHost.remove();
+    }, `Cloning ShadowRoot in "${mode}" mode clones slot assignment mode set to named`);
+}
+
+testShadowRootClonesSlotAssignment('open');
+testShadowRootClonesSlotAssignment('closed');
+
+function testShadowRootClonesShadowDescendants(mode) {
+    test(() => {
+        const host = document.createElement('span');
+        const shadowRoot = host.attachShadow({mode, cloneable: true});
+        shadowRoot.innerHTML = '<div style="width: 100px; height: 100px; display: inline-block;"><div></div></div>';
+        const clonedHost = host.cloneNode(true);
+        if (mode == 'open')
+            assert_equals(clonedHost.shadowRoot.innerHTML, '<div style="width: 100px; height: 100px; display: inline-block;"><div></div></div>');
+        document.body.appendChild(clonedHost);
+        assert_equals(clonedHost.offsetWidth, 100);
+        clonedHost.remove();
+    }, `Cloning ShadowRoot in "${mode}" mode clones shadow descendants`);
+}
+testShadowRootClonesShadowDescendants('open');
+testShadowRootClonesShadowDescendants('closed');
+
+</script>
+</body>
+</html>

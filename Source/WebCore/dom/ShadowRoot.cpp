@@ -51,11 +51,10 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
-    bool flags[4];
-    uint8_t mode;
-    void* styleScope;
-    void* styleSheetList;
+    uint8_t flagsAndModes[3];
     WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
+    void* styleSheetList;
+    void* styleScope;
     void* slotAssignment;
     std::optional<HashMap<AtomString, AtomString>> partMappings;
 };
@@ -65,16 +64,17 @@ static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot sh
 static_assert(sizeof(WeakPtr<Element, WeakPtrImplWithEventTargetData>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
-ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, AvailableToElementInternals availableToElementInternals)
+ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, Cloneable cloneable, AvailableToElementInternals availableToElementInternals)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_delegatesFocus(delegatesFocus == DelegatesFocus::Yes)
+    , m_isCloneable(cloneable == Cloneable::Yes)
     , m_availableToElementInternals(availableToElementInternals == AvailableToElementInternals::Yes)
-    , m_type(type)
+    , m_mode(mode)
     , m_slotAssignmentMode(assignmentMode)
     , m_styleScope(makeUnique<Style::Scope>(*this))
 {
-    if (type == ShadowRootMode::UserAgent)
+    if (m_mode == ShadowRootMode::UserAgent)
         setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
 }
 
@@ -82,7 +82,7 @@ ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type, SlotAssignmentMo
 ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slotAssignment)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
-    , m_type(ShadowRootMode::UserAgent)
+    , m_mode(ShadowRootMode::UserAgent)
     , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_slotAssignment(WTFMove(slotAssignment))
 {
@@ -134,7 +134,7 @@ void ShadowRoot::childrenChanged(const ChildChange& childChange)
 {
     DocumentFragment::childrenChanged(childChange);
 
-    if (!m_host || m_type == ShadowRootMode::UserAgent)
+    if (!m_host || m_mode == ShadowRootMode::UserAgent)
         return; // Don't support first-child, nth-of-type, etc... in UA shadow roots as an optimization.
 
     // FIXME: Avoid always invalidating style just for first-child, etc... as done in Element::childrenChanged.
@@ -225,10 +225,20 @@ void ShadowRoot::setResetStyleInheritance(bool value)
     m_resetStyleInheritance = value;
 }
 
-Ref<Node> ShadowRoot::cloneNodeInternal(Document&, CloningOperation)
+Ref<Node> ShadowRoot::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return *static_cast<Node*>(nullptr); // ShadowRoots should never be cloned.
+    RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);
+    switch (type) {
+    case CloningOperation::SelfWithTemplateContent:
+        return create(targetDocument, m_mode, m_slotAssignmentMode, m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
+            m_isCloneable ? Cloneable::Yes : Cloneable::No, m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
+    case CloningOperation::OnlySelf:
+    case CloningOperation::Everything:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED(); // ShadowRoot is never cloned directly on its own.
+    return *this;
 }
 
 void ShadowRoot::removeAllEventListeners()
