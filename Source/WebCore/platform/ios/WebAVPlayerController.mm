@@ -57,6 +57,140 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeDurationHysteresis
 static double WebAVPlayerControllerLiveStreamMinimumTargetDuration = 1.0; // Minimum segment duration to be considered valid.
 static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 30.0;
 
+@interface WebAVPlayerControllerForwarder : NSObject
+@end
+
+@implementation WebAVPlayerControllerForwarder {
+    RetainPtr<WebAVPlayerController> _playerController;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _playerController = adoptNS([[WebAVPlayerController alloc] init]);
+
+    return self;
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    return [_playerController respondsToSelector:aSelector];
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    return _playerController.get();
+}
+
+- (id)valueForKey:(NSString *)key
+{
+    return [[self _forwardingTargetForKeyPath:key] valueForKey:key];
+}
+
+- (id)valueForKeyPath:(NSString *)keyPath
+{
+    return [[self _forwardingTargetForKeyPath:keyPath] valueForKeyPath:keyPath];
+}
+
+- (id)valueForUndefinedKey:(NSString *)key
+{
+    return [[self _forwardingTargetForKeyPath:key] valueForUndefinedKey:key];
+}
+
+- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+{
+    [[self _forwardingTargetForKeyPath:keyPath] addObserver:observer forKeyPath:keyPath options:options context:context];
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(void *)context
+{
+    [[self _forwardingTargetForKeyPath:keyPath] removeObserver:observer forKeyPath:keyPath context:context];
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
+{
+    [[self _forwardingTargetForKeyPath:keyPath] removeObserver:observer forKeyPath:keyPath];
+}
+
+- (NSObject *)_forwardingTargetForKeyPath:(NSString *)keyPath
+{
+    // Only use the proxy object for key paths identifying undefined properties on WebAVPlayerController.
+
+    NSObject *target = [_playerController playerControllerProxy];
+
+    NSString *propertyNameFromKeyPath = [[keyPath componentsSeparatedByString:@"."] firstObject];
+    if (!propertyNameFromKeyPath.length)
+        return target;
+
+    unsigned count;
+    objc_property_t *properties = class_copyPropertyList([_playerController class], &count);
+
+    for (unsigned i = 0; i < count; i++) {
+        objc_property_t property = properties[i];
+        NSString *propertyName = [NSString stringWithUTF8String:property_getName(property)];
+        if ([propertyNameFromKeyPath isEqualToString:propertyName]) {
+            target = _playerController.get();
+            break;
+        }
+    }
+
+    free(properties);
+    return target;
+}
+
+@end
+
+static Class createWebAVPlayerControllerForwarderClass()
+{
+    // Re-parent WebAVPlayerControllerForwarder methods under a subclass of AVPlayerController,
+    // so that the resulting type can be safely cast to AVPlayerController via Swift's `as!`,
+    // which strictly requires the castee to derive from the destination type.
+
+    Class superClass = getAVPlayerControllerClass();
+    Class implClass = [WebAVPlayerControllerForwarder class];
+    Class newClass = objc_allocateClassPair(superClass, "WebAVPlayerControllerForwarder_AVKitCompatible", 0);
+    objc_registerClassPair(newClass);
+
+    // Remove all of AVPlayerController's methods.
+    unsigned methodCount = 0;
+    Method *methods = class_copyMethodList(superClass, &methodCount);
+    IMP unknownMethodImp = class_getMethodImplementation(superClass, NSSelectorFromString(@"_web_unknownMethod"));
+    for (unsigned i = 0; i < methodCount; i++)
+        class_addMethod(newClass, method_getName(methods[i]), unknownMethodImp, method_getTypeEncoding(methods[i]));
+    free(methods);
+
+    // Copy methods from WebAVPlayerControllerForwarder.
+    methods = class_copyMethodList(implClass, &methodCount);
+    for (unsigned i = 0; i < methodCount; i++) {
+        SEL selector = method_getName(methods[i]);
+        if ([NSStringFromSelector(selector) hasPrefix:@"."])
+            continue;
+        class_replaceMethod(newClass, selector, method_getImplementation(methods[i]), method_getTypeEncoding(methods[i]));
+    }
+    free(methods);
+
+    class_addIvar(newClass, "_playerController", sizeof(RetainPtr<WebAVPlayerController>), log2(sizeof(RetainPtr<WebAVPlayerController>)), @encode(RetainPtr<WebAVPlayerController>));
+
+    return newClass;
+}
+
+RetainPtr<WebAVPlayerController> createWebAVPlayerController()
+{
+    return adoptNS((WebAVPlayerController *)[[webAVPlayerControllerClass() alloc] init]);
+}
+
+Class webAVPlayerControllerClass()
+{
+    ASSERT(isMainThread());
+    static Class webAVPlayerControllerForwarderClass;
+    if (!webAVPlayerControllerForwarderClass)
+        webAVPlayerControllerForwarderClass = createWebAVPlayerControllerForwarderClass();
+    return webAVPlayerControllerForwarderClass;
+}
+
 @implementation WebAVPlayerController {
     WeakPtr<WebCore::PlaybackSessionModel> _delegate;
     WeakPtr<WebCore::PlaybackSessionInterfaceAVKit> _playbackSessionInterface;
@@ -65,7 +199,11 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     BOOL _liveStreamEventModePossible;
     BOOL _isScrubbing;
     BOOL _allowsPictureInPicture;
+    BOOL _pictureInPictureInterrupted;
+    BOOL _muted;
     NSTimeInterval _seekToTime;
+    WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
+    WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
 }
 
 - (instancetype)init

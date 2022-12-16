@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if (PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)) || HAVE(PIP_CONTROLLER)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "FloatRect.h"
 #include <CoreGraphics/CGGeometry.h>
@@ -38,17 +38,12 @@ OBJC_CLASS NSString;
 namespace WebCore {
 class VideoFullscreenModel;
 class VideoFullscreenInterfaceAVKit;
-class VideoFullscreenInterfacePiP;
 }
 
-#if HAVE(PIP_CONTROLLER)
-typedef WebCore::VideoFullscreenInterfacePiP PlatformVideoFullscreenInterface;
-#else
 #if PLATFORM(IOS_FAMILY)
 typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
 #else
 typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
-#endif
 #endif
 
 @interface WebAVPlayerLayer : CALayer
@@ -63,5 +58,5 @@ typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
 - (WebCore::FloatRect)calculateTargetVideoFrame;
 @end
 
-#endif // (PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)) || HAVE(PIP_CONTROLLER)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 

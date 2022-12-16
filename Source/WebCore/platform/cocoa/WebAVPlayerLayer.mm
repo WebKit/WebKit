@@ -26,24 +26,19 @@
 #import "config.h"
 #import "WebAVPlayerLayer.h"
 
-#if (PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)) || HAVE(PIP_CONTROLLER)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "GeometryUtilities.h"
+#import "VideoFullscreenInterfaceAVKit.h"
 #import "WebAVPlayerController.h"
 
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-using namespace WebCore;
-
-#if HAVE(PIP_CONTROLLER)
-#include "VideoFullscreenInterfacePiP.h"
-#else
-#include "VideoFullscreenInterfaceAVKit.h"
-#endif
-
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+
+using namespace WebCore;
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
@@ -93,7 +88,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 - (void)setPlayerController:(AVPlayerController *)playerController
 {
-    ASSERT(!playerController || [playerController isKindOfClass:[WebAVPlayerController class]]);
+    ASSERT(!playerController || [playerController isKindOfClass:webAVPlayerControllerClass()]);
     _playerController = (WebAVPlayerController *)playerController;
 }
 
@@ -247,5 +242,5 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 @end
 
-#endif // (PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)) || HAVE(PIP_CONTROLLER)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
