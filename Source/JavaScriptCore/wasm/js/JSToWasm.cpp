@@ -405,6 +405,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
         unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace });
     });
 
+    // Restore stack pointer after call
+    jit.addPtr(MacroAssembler::TrustedImm32(-static_cast<int32_t>(totalFrameSize)), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+
     JIT_COMMENT(jit, "marshallJSResult");
     marshallJSResult(jit, typeDefinition, wasmFrameConvention, savedResultRegisters);
 

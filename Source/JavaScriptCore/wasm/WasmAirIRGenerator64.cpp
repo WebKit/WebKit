@@ -531,7 +531,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
 
     // Calls
-    std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const TypeDefinition&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
+    CallPatchpointData WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, B3::Type, const ResultList&, const Vector<TypedTmp>& tmpArgs, const CallInformation&, Vector<ConstrainedTmp> patchArgs = { });
+    CallPatchpointData WARN_UNUSED_RETURN emitTailCallPatchpoint(BasicBlock*, const Checked<int32_t>& tailCallStackOffsetFromFP, const Vector<ArgumentLocation>&, const Vector<TypedTmp>& tmpArgs, Vector<ConstrainedTmp> patchArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
@@ -1856,6 +1857,11 @@ auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnVal
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
+
+        // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
+        // the macro assembler might assert scratch register usage on load operations emitted by emitRestore.
+        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM64E());
+
         jit.emitRestore(calleeSaves);
         jit.emitFunctionEpilogue();
         jit.ret();
@@ -1932,29 +1938,28 @@ auto AirIRGenerator64::addRethrow(unsigned, ControlType& data) -> PartialResult
     return { };
 }
 
-std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, const TypeDefinition& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> patchArgs)
+auto AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, B3::Type returnType, const ResultList& results, const Vector<TypedTmp>& tmpArgs, const CallInformation& wasmCalleeInfo, Vector<ConstrainedTmp> patchArgs) -> CallPatchpointData
 {
-    auto* patchpoint = addPatchpoint(toB3ResultType(&signature));
+    auto* patchpoint = addPatchpoint(returnType);
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
-    CallInformation locations = wasmCallingConvention().callInformationFor(signature);
-    m_code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), locations.headerAndArgumentStackSizeInBytes));
-
     size_t offset = patchArgs.size();
-    Checked<size_t> newSize = checkedSum<size_t>(patchArgs.size(), args.size());
+    Checked<size_t> newSize = checkedSum<size_t>(patchArgs.size(), tmpArgs.size());
     RELEASE_ASSERT(!newSize.hasOverflowed());
 
     patchArgs.grow(newSize);
-    for (unsigned i = 0; i < args.size(); ++i)
-        patchArgs[i + offset] = ConstrainedTmp(args[i], locations.params[i].location);
+    const Vector<ArgumentLocation> &constrainedArgLocations = wasmCalleeInfo.params;
+    for (unsigned i = 0; i < tmpArgs.size(); ++i)
+        patchArgs[i + offset] = ConstrainedTmp(tmpArgs[i], constrainedArgLocations[i]);
 
+    const Vector<ArgumentLocation, 1> &constrainedResultLocations = wasmCalleeInfo.results;
     if (patchpoint->type() != B3::Void) {
         Vector<B3::ValueRep, 1> resultConstraints;
-        for (auto valueLocation : locations.results)
-            resultConstraints.append(B3::ValueRep(valueLocation.location));
+        for (auto resultLocation : constrainedResultLocations)
+            resultConstraints.append(B3::ValueRep(resultLocation.location));
         patchpoint->resultConstraints = WTFMove(resultConstraints);
     }
     PatchpointExceptionHandle exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
@@ -1962,7 +1967,95 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator64::emi
     return { patchpoint, exceptionHandle };
 }
 
-template <typename IntType>
+auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<int32_t>& tailCallStackOffsetFromFP, const Vector<ArgumentLocation>& constrainedArgLocations, const Vector<TypedTmp>& tmpArgs, Vector<ConstrainedTmp> patchArgs) -> CallPatchpointData
+{
+    //    Layout of stack right before tail call F -> G
+    //
+    //
+    //    |          ......            |                                                                      |          ......            |
+    //    +----------------------------+ <-- 0x5501ff4ff0                                                     +----------------------------+ <-- 0x5501ff4ff0
+    //    |           F.argN           |    |                                    +-------------------->       |           G.argM           |    |
+    //    +----------------------------+    | lower address                      |                            +----------------------------+    | lower address
+    //    |           F.arg1           |    v                                    |                            |           arg1             |    v
+    //    +----------------------------+                                         |                            +----------------------------+
+    //    |           F.arg0           |                                         |                            |           arg0             |
+    //    +----------------------------+                                         |                            +----------------------------+
+    //    |           F.this           |                                         |                            |           this'            |
+    //    +----------------------------+                                         |                            +----------------------------+
+    //    | argumentCountIncludingThis |                                         |                            |          A.C.I.T.'         |
+    //    +----------------------------+                                         |                            +----------------------------+
+    //    |  F.callee (aka F, unused in wasm) |                                  |                            |        G.callee            |
+    //    +----------------------------+                                         |                            +----------------------------+
+    //    |        F.codeBlock         |                               (shuffleStackArgs...)                  |        G.codeBlock         |
+    //    +----------------------------+                                         |                            +----------------------------+
+    //    | return-address after F     |                                         |                            |   return-address after F   |
+    //    +----------------------------+                                         |        SP at G prologue -> +----------------------------+
+    //    |          F.caller.FP       |                                         |                            |          F.caller.FP       |
+    //    +----------------------------+  <- F.FP                                |    G.FP after G prologue-> +----------------------------+
+    //    |          callee saves      |                                         |                            |          callee saves      |
+    //    +----------------------------+   <----+   argM to G  ------------------+                            +----------------------------+
+    //    |          F.local0          |        |   ....                                                      |          G.local0          |
+    //    +----------------------------+        |   arg0 to G                                                 +----------------------------+
+    //    |          F.local1          |        |                                                             |          G.local1          |
+    //    +----------------------------+        |                                                             +----------------------------+
+    //    |          F.localN          |        |                                                             |          G.localM          |
+    //    +----------------------------|        |                                                             +----------------------------+
+    //    |          ......            |        |                                                             |          ......            |
+    //    +----------------------------|  <- SP |                                       SP after G prologue-> +----------------------------+
+    //                                          |
+    //                                          +- New tmp stack slots are eventually allocated here
+    //
+    //  See https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/ for a more in-depth explanation.
+
+    auto shuffleStackArg = [this, block, tailCallStackOffsetFromFP] (Tmp tmp, int32_t offsetFromSP) -> void {
+        Checked<int32_t> offsetFromFP = tailCallStackOffsetFromFP + offsetFromSP;
+
+        if (offsetFromFP < 0) {
+            StackSlot* stackSlot = m_code.addStackSlot(sizeof(Register), StackSlotKind::Locked);
+            stackSlot->setOffsetFromFP(offsetFromFP);
+            append(block, tmp.isGP() ? Move : MoveDouble, tmp, Arg::stack(stackSlot));
+            return;
+        }
+
+        append(block, tmp.isGP() ? Move : MoveDouble, tmp, Arg::addr(Tmp(GPRInfo::callFrameRegister), offsetFromFP));
+    };
+
+    auto tmp = g64();
+
+    append(block, Move, Arg::addr(Tmp(MacroAssembler::framePointerRegister), CallFrame::returnPCOffset()), tmp);
+    shuffleStackArg(tmp, -static_cast<int32_t>(sizeof(Register)));
+
+    append(block, Move, Arg::addr(Tmp(MacroAssembler::framePointerRegister)), tmp);
+
+    auto* patchpoint = addPatchpoint(B3::Void);
+    patchpoint->effects.terminal = true;
+    patchpoint->effects.readsPinned = true;
+    patchpoint->effects.writesPinned = true;
+
+    RegisterSetBuilder clobbers;
+    clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
+    clobbers.exclude(RegisterSetBuilder::stackRegisters());
+    patchpoint->clobber(clobbers);
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+
+    for (unsigned i = 0; i < tmpArgs.size(); ++i) {
+        TypedTmp tmp = tmpArgs[i];
+        if (constrainedArgLocations[i].location.isStackArgument()) {
+            shuffleStackArg(tmp, constrainedArgLocations[i].location.offsetFromSP());
+            continue;
+        }
+        patchArgs.append(ConstrainedTmp(tmp, constrainedArgLocations[i]));
+    }
+    PatchpointExceptionHandle exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
+
+    patchArgs.append({ tmp, B3::ValueRep(MacroAssembler::framePointerRegister) });
+
+    emitPatchpoint(block, patchpoint, Tmp { }, WTFMove(patchArgs));
+
+    return { patchpoint, exceptionHandle };
+}
+
+template<typename IntType>
 void AirIRGenerator64::emitModOrDiv(bool isDiv, ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
 {
     static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8);

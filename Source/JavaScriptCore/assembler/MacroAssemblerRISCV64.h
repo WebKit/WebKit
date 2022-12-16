@@ -1996,6 +1996,16 @@ public:
         return Call(label, Call::LinkableNear);
     }
 
+    Call threadSafePatchableNearTailCall()
+    {
+        auto label = m_assembler.label();
+        m_assembler.nearCallPlaceholder(
+            [&] {
+                m_assembler.jalInsn(RISCV64Registers::zero, Imm::J<0>());
+            });
+        return Call(label, Call::LinkableNearTail);
+    }
+
     void ret()
     {
         m_assembler.jalrInsn(RISCV64Registers::zero, RISCV64Registers::x1, Imm::I<0>());

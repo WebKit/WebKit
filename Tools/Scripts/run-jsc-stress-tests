@@ -1955,6 +1955,10 @@ def runWebAssemblySIMDSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "simd-spec-harness", "-eager", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
 end
 
+def runWebAssemblyTailCallSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "tail-call-spec-harness", nil, "--useWebAssemblyTailCalls=true")
+end
+
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     return if !$jitTests
     return if !$isWasmPlatform

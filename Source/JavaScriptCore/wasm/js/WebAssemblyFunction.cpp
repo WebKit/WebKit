@@ -425,6 +425,9 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     jit.loadPtr(entrypointLoadLocation(), scratchJSR.payloadGPR());
     jit.call(scratchJSR.payloadGPR(), WasmEntryPtrTag);
 
+    // Restore stack pointer after call
+    jit.addPtr(MacroAssembler::TrustedImm32(-static_cast<int32_t>(totalFrameSize)), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+
     marshallJSResult(jit, typeDefinition, wasmCallInfo, savedResultRegisters);
 
     ASSERT(!RegisterSetBuilder::runtimeTagRegisters().contains(GPRInfo::nonPreservedNonReturnGPR, IgnoreVectors));

@@ -220,6 +220,35 @@ static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& ji
     jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 }
 
+static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGenerationParams& params, const Checked<int32_t>& tailCallStackOffsetFromFP)
+{
+    Checked<int32_t> frameSize = params.code().frameSize();
+    Checked<int32_t> newStackOffset = frameSize + tailCallStackOffsetFromFP;
+
+    RegisterAtOffsetList calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
+
+    // We will use sp-based offsets since the frame pointer is already pointing to the previous frame.
+    calleeSaves.adjustOffsets(frameSize);
+    jit.emitRestore(calleeSaves, MacroAssembler::stackPointerRegister);
+
+    // The return PC was saved on the stack in the tail call patchpoint.
+#if CPU(X86_64)
+    newStackOffset -= Checked<int32_t>(sizeof(Register));
+#elif CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
+    jit.loadPtr(CCallHelpers::Address(MacroAssembler::stackPointerRegister, newStackOffset - Checked<int32_t>(sizeof(Register))), MacroAssembler::linkRegister);
+#if CPU(ARM64E)
+    GPRReg callerSP = jit.scratchRegister();
+    jit.addPtr(MacroAssembler::TrustedImm32(frameSize + Checked<int32_t>(sizeof(CallerFrameAndPC))), MacroAssembler::stackPointerRegister, callerSP);
+    jit.untagPtr(callerSP, MacroAssembler::linkRegister);
+    jit.validateUntaggedPtr(MacroAssembler::linkRegister);
+#endif
+#else
+    UNREACHABLE_FOR_PLATFORM();
+#endif
+
+    jit.addPtr(MacroAssembler::TrustedImm32(newStackOffset), MacroAssembler::stackPointerRegister);
+}
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY_B3JIT)

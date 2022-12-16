@@ -1287,10 +1287,10 @@ void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
     spooler.finalizeFPR();
 }
 
-void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list)
+void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list, GPRReg baseGPR)
 {
     JIT_COMMENT(*this, "emitRestore ", list);
-    LoadRegSpooler spooler(*this, framePointerRegister);
+    LoadRegSpooler spooler(*this, baseGPR);
 
     size_t registerCount = list.registerCount();
     size_t i = 0;

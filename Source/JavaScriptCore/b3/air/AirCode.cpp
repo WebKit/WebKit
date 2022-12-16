@@ -45,8 +45,12 @@ const char* const tierName = "Air ";
 static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 {
     jit.emitFunctionPrologue();
+
+    // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
+    // the macro assembler might assert scratch register usage on store operations emitted by emitSave.
+    AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM64E() || isARM());
+
     if (code.frameSize()) {
-        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM());
         jit.subPtr(MacroAssembler::TrustedImm32(code.frameSize()), MacroAssembler::stackPointerRegister);
     }
     

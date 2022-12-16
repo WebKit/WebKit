@@ -32,6 +32,7 @@
 #include "LinkBuffer.h"
 #include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
+#include "StackAlignment.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -145,6 +146,95 @@ private:
     }
 
 public:
+    uint32_t numberOfStackResults(const FunctionSignature& signature) const
+    {
+        const uint32_t gprCount = jsrArgs.size();
+        const uint32_t fprCount = fprArgs.size();
+        uint32_t gprIndex = 0;
+        uint32_t fprIndex = 0;
+        uint32_t stackCount = 0;
+        for (uint32_t i = 0; i < signature.returnCount(); i++) {
+            switch (signature.returnType(i).kind) {
+            case TypeKind::I32:
+            case TypeKind::I64:
+            case TypeKind::Externref:
+            case TypeKind::Funcref:
+            case TypeKind::RefNull:
+            case TypeKind::Ref:
+                if (gprIndex < gprCount)
+                    ++gprIndex;
+                else
+                    ++stackCount;
+                break;
+            case TypeKind::F32:
+            case TypeKind::F64:
+            case TypeKind::V128:
+                if (fprIndex < fprCount)
+                    ++fprIndex;
+                else
+                    ++stackCount;
+                break;
+            case TypeKind::Void:
+            case TypeKind::Func:
+            case TypeKind::Struct:
+            case TypeKind::Array:
+            case TypeKind::Arrayref:
+            case TypeKind::I31ref:
+            case TypeKind::Sub:
+            case TypeKind::Rec:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        return stackCount;
+    }
+
+    uint32_t numberOfStackArguments(const FunctionSignature& signature) const
+    {
+        const uint32_t gprCount = jsrArgs.size();
+        const uint32_t fprCount = fprArgs.size();
+        uint32_t gprIndex = 0;
+        uint32_t fprIndex = 0;
+        uint32_t stackCount = 0;
+        for (uint32_t i = 0; i < signature.argumentCount(); i++) {
+            switch (signature.argumentType(i).kind) {
+            case TypeKind::I32:
+            case TypeKind::I64:
+            case TypeKind::Externref:
+            case TypeKind::Funcref:
+            case TypeKind::RefNull:
+            case TypeKind::Ref:
+                if (gprIndex < gprCount)
+                    ++gprIndex;
+                else
+                    ++stackCount;
+                break;
+            case TypeKind::F32:
+            case TypeKind::F64:
+            case TypeKind::V128:
+                if (fprIndex < fprCount)
+                    ++fprIndex;
+                else
+                    ++stackCount;
+                break;
+            case TypeKind::Void:
+            case TypeKind::Func:
+            case TypeKind::Struct:
+            case TypeKind::Array:
+            case TypeKind::Arrayref:
+            case TypeKind::I31ref:
+            case TypeKind::Sub:
+            case TypeKind::Rec:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        return stackCount;
+    }
+
+    uint32_t numberOfStackValues(const FunctionSignature& signature) const
+    {
+        return std::max(numberOfStackArguments(signature), numberOfStackResults(signature));
+    }
+
     CallInformation callInformationFor(const TypeDefinition& type, CallRole role = CallRole::Caller) const
     {
         const auto& signature = *type.as<FunctionSignature>();
@@ -155,10 +245,11 @@ public:
         bool argumentsOrResultsIncludeV128 = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
-        size_t argStackOffset = headerSizeInBytes + sizeof(Register);
+        size_t headerSize = headerSizeInBytes + sizeof(Register);
         if (role == CallRole::Caller)
-            argStackOffset -= sizeof(CallerFrameAndPC);
+            headerSize -= sizeof(CallerFrameAndPC);
 
+        size_t argStackOffset = headerSize;
         Vector<ArgumentLocation> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
             argumentsIncludeI64 |= signature.argumentType(i).isI64();
@@ -166,12 +257,13 @@ public:
             argumentsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.argumentType(i)) && !TypeInformation::get(signature.argumentType(i).index).is<FunctionSignature>();
             params[i] = marshallLocation(role, signature.argumentType(i), gpArgumentCount, fpArgumentCount, argStackOffset);
         }
+        uint32_t stackArgs = argStackOffset - headerSize;
         gpArgumentCount = 0;
         fpArgumentCount = 0;
-        size_t resultStackOffset = headerSizeInBytes + sizeof(Register);
-        if (role == CallRole::Caller)
-            resultStackOffset -= sizeof(CallerFrameAndPC);
 
+        uint32_t stackResults = numberOfStackResults(signature) * sizeof(Register);
+        uint32_t stackCountAligned = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max(stackArgs, stackResults));
+        size_t resultStackOffset = headerSize + stackCountAligned - stackResults;
         Vector<ArgumentLocation, 1> results(signature.returnCount());
         for (size_t i = 0; i < signature.returnCount(); ++i) {
             resultsIncludeI64 |= signature.returnType(i).isI64();
