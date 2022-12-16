@@ -30,7 +30,7 @@ messages -> SpeechRecognitionRealtimeMediaSourceManager NotRefCounted {
     Stop(WebCore::RealtimeMediaSourceIdentifier identifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    GrantSandboxExtensions(WebKit::SandboxExtension::Handle sandboxExtensionHandleForTCCD, WebKit::SandboxExtension::Handle sandboxExtensionHandleForMicrophone)
+    GrantSandboxExtensions(WebKit::SandboxExtension::Handle bootstrapHandle, WebKit::SandboxExtension::Handle sandboxExtensionHandleForTCCD, WebKit::SandboxExtension::Handle sandboxExtensionHandleForMicrophone)
     RevokeSandboxExtensions()
 #endif
 }

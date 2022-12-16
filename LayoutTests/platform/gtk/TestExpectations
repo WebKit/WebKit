@@ -882,6 +882,8 @@ webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-003.html [ Failure ]
 webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-004.html [ Failure ]
 
+webkit.org/b/249364 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-006.html [ ImageOnlyFailure ]
+
 webkit.org/b/243466 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-001.html [ ImageOnlyFailure ]
 webkit.org/b/243466 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.html [ ImageOnlyFailure ]
 

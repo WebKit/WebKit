@@ -83,8 +83,7 @@ public:
 
     bool popsMenuByArrowKeys() const final { return true; }
 
-    IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const final;
-    bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
+    FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const final;
     bool supportsMeter(ControlPartType, const HTMLMeterElement&) const final;
 
     // Returns the repeat interval of the animation for the progress bar.
@@ -102,6 +101,10 @@ private:
     RenderThemeMac();
 
     bool canPaint(const PaintInfo&, const Settings&, ControlPartType) const final;
+    bool canCreateControlPartForRenderer(const RenderObject&) const final;
+
+    bool useFormSemanticContext() const final;
+    bool supportsLargeFormControls() const final;
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
@@ -201,8 +204,6 @@ private:
     NSCell *listButton() const;
 #endif
 
-    NSLevelIndicatorCell *levelIndicatorFor(const RenderMeter&) const;
-
     int minimumProgressBarHeight(const RenderStyle&) const;
     const IntSize* progressBarSizes() const;
     const int* progressBarMargins(NSControlSize) const;
@@ -220,7 +221,6 @@ private:
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
-    mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicator;
     mutable RetainPtr<NSTextFieldCell> m_textField;
 #if ENABLE(SERVICE_CONTROLS)
     mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;

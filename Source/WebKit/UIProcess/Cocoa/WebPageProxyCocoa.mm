@@ -820,7 +820,8 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
         process.markHasNetworkExtensionSandboxAccess();
         constexpr ASCIILiteral neHelperService { "com.apple.nehelper"_s };
         constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager.content-filter"_s };
-        return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, std::nullopt);
+        auto auditToken = process.hasConnection() ? process.connection()->getAuditToken();
+        return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, auditToken, );
     }
 #endif
     return { };
@@ -867,10 +868,8 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 
 void WebPageProxy::grantAccessToAssetServices()
 {
-    SandboxExtension::Handle mobileAssetHandleV2;
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
-        mobileAssetHandleV2 = WTFMove(*handle);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
+    auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.mobileassetd.v2"_s }, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+    process().send(Messages::WebProcess::GrantAccessToAssetServices(handles), 0);
 }
 
 void WebPageProxy::revokeAccessToAssetServices()
@@ -885,7 +884,7 @@ void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
 
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
-    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
+    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
 }
 
 NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)

@@ -1,0 +1,7 @@
+
+PASS Animating a custom property of type <resolution>
+PASS Animating a custom property of type <resolution> with a single keyframe
+PASS Animating a custom property of type <resolution> with additivity
+PASS Animating a custom property of type <resolution> with a single keyframe and additivity
+PASS Animating a custom property of type <resolution> with iterationComposite
+

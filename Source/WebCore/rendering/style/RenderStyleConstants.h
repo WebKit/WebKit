@@ -788,6 +788,13 @@ enum class LeadingTrim : uint8_t {
     Both
 };
 
+enum class MarginTrimType : uint8_t {
+    BlockStart = 1 << 0,
+    BlockEnd = 1 << 1,
+    InlineStart = 1 << 2,
+    InlineEnd = 1 << 3
+};
+
 enum class TextEdgeType : uint8_t {
     Leading,
     Text,
@@ -1303,6 +1310,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, LineBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, LineSnap);
 WTF::TextStream& operator<<(WTF::TextStream&, ListStylePosition);
 WTF::TextStream& operator<<(WTF::TextStream&, ListStyleType);
+WTF::TextStream& operator<<(WTF::TextStream&, MarginTrimType);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, MaskMode);

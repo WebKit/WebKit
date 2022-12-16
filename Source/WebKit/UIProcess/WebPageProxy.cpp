@@ -7502,14 +7502,15 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
 
     SandboxExtension::Handle frontboardServicesSandboxExtension, iconServicesSandboxExtension;
     auto auditToken = m_process->auditToken();
+    auto machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #if HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, auditToken))
         frontboardServicesSandboxExtension = WTFMove(*handle);
 #endif
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, auditToken))
         iconServicesSandboxExtension = WTFMove(*handle);
 
-    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference(), frontboardServicesSandboxExtension, iconServicesSandboxExtension));
+    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference(), machBootstrapHandle, frontboardServicesSandboxExtension, iconServicesSandboxExtension));
 
     m_openPanelResultListener->invalidate();
     m_openPanelResultListener = nullptr;
@@ -8682,7 +8683,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if HAVE(STATIC_FONT_REGISTRY)
     if (preferences().shouldAllowUserInstalledFonts())
-        parameters.fontMachExtensionHandle = process.fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::DoNotEnableMachBootstrap);
+        parameters.fontMachExtensionHandles = process.fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions::DoNotEnableMachBootstrap);
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     parameters.accentColor = pageClient().accentColor();
@@ -8800,6 +8801,11 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     parameters.hasResizableWindows = pageClient().hasResizableWindows();
+#endif
+
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    if (!preferences().experimentalSandboxEnabled())
+        parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #endif
 
     return parameters;

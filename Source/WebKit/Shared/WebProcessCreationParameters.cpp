@@ -53,7 +53,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << additionalSandboxExtensionHandles;
     encoder << initializationUserData;
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    encoder << enableRemoteWebInspectorExtensionHandle;
+    encoder << enableRemoteWebInspectorExtensionHandles;
 #endif
 #if ENABLE(MEDIA_STREAM)
     encoder << audioCaptureExtensionHandle;
@@ -245,11 +245,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.initializationUserData))
         return false;
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    std::optional<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandle;
-    decoder >> enableRemoteWebInspectorExtensionHandle;
-    if (!enableRemoteWebInspectorExtensionHandle)
+    std::optional<Vector<SandboxExtension::Handle>> enableRemoteWebInspectorExtensionHandles;
+    decoder >> enableRemoteWebInspectorExtensionHandles;
+    if (!enableRemoteWebInspectorExtensionHandles)
         return false;
-    parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(*enableRemoteWebInspectorExtensionHandle);
+    parameters.enableRemoteWebInspectorExtensionHandles = WTFMove(*enableRemoteWebInspectorExtensionHandles);
 #endif
 #if ENABLE(MEDIA_STREAM)
     std::optional<SandboxExtension::Handle> audioCaptureExtensionHandle;

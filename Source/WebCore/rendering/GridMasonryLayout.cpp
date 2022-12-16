@@ -140,8 +140,9 @@ void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition()
         ASSERT(!itemSpan.isIndefinite());
 
         itemSpan.translate(m_renderGrid.currentGrid().explicitGridStart(gridAxisDirection()));
-
-        insertIntoGridAndLayoutItem(*item, gridAreaForDefiniteGridAxisItem(*item));
+        auto gridArea = gridAreaForDefiniteGridAxisItem(*item);
+        m_renderGrid.currentGrid().clampAreaToSubgridIfNeeded(gridArea);
+        insertIntoGridAndLayoutItem(*item, gridArea);
     }
 }
 
@@ -169,6 +170,8 @@ void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(RenderBox& chil
         child.setOverridingContainingBlockContentLogicalWidth(m_renderGrid.m_trackSizingAlgorithm.estimatedGridAreaBreadthForChild(child, ForColumns));
     else
         child.setOverridingContainingBlockContentLogicalHeight(m_renderGrid.m_trackSizingAlgorithm.estimatedGridAreaBreadthForChild(child, ForRows));
+    // FIXME(249230): Try to cache masonry layout sizes
+    child.setChildNeedsLayout(MarkOnlyThis);
 }
 
 void GridMasonryLayout::insertIntoGridAndLayoutItem(RenderBox& child, const GridArea& area)

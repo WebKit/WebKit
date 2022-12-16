@@ -1,0 +1,11 @@
+This test ensures accessibility properly responds to dynamic changes in a textarea element's value.
+
+#textarea AXValue: Foo
+
+Updating #textarea value to 'Bar'.
+#textarea AXValue: Bar
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

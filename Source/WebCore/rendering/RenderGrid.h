@@ -103,6 +103,9 @@ public:
     // nested subgrids, where ancestor may not be our direct parent.
     bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor);
 
+    bool areMasonryRows() const;
+    bool areMasonryColumns() const;
+
     const Grid& currentGrid() const;
     Grid& currentGrid();
 
@@ -235,8 +238,6 @@ private:
 
     bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
 
-    bool areMasonryRows() const;
-    bool areMasonryColumns() const;
     AutoRepeatType autoRepeatColumnsType() const;
     AutoRepeatType autoRepeatRowsType() const;
 

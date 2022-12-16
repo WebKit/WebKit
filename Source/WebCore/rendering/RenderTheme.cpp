@@ -44,6 +44,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "LocalizedStrings.h"
+#include "MeterPart.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderMeter.h"
@@ -454,6 +455,160 @@ ControlPartType RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
     }
 
     return ControlPartType::NoControl;
+}
+
+static RefPtr<ControlPart> createMeterPartForRenderer(const RenderObject& renderer)
+{
+    ASSERT(is<RenderMeter>(renderer));
+    const auto& renderMeter = downcast<RenderMeter>(renderer);
+
+    auto element = renderMeter.meterElement();
+    MeterPart::GaugeRegion gaugeRegion;
+
+    switch (element->gaugeRegion()) {
+    case HTMLMeterElement::GaugeRegionOptimum:
+        gaugeRegion = MeterPart::GaugeRegion::Optimum;
+        break;
+    case HTMLMeterElement::GaugeRegionSuboptimal:
+        gaugeRegion = MeterPart::GaugeRegion::Suboptimal;
+        break;
+    case HTMLMeterElement::GaugeRegionEvenLessGood:
+        gaugeRegion = MeterPart::GaugeRegion::EvenLessGood;
+        break;
+    }
+
+    return MeterPart::create(gaugeRegion, element->value(), element->min(), element->max());
+}
+
+RefPtr<ControlPart> RenderTheme::createControlPartForRenderer(const RenderObject& renderer) const
+{
+    ControlPartType type = renderer.style().effectiveAppearance();
+
+    switch (type) {
+    case ControlPartType::NoControl:
+    case ControlPartType::Auto:
+        break;
+
+    case ControlPartType::Checkbox:
+    case ControlPartType::Radio:
+    case ControlPartType::PushButton:
+    case ControlPartType::SquareButton:
+    case ControlPartType::Button:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::Listbox:
+    case ControlPartType::Menulist:
+    case ControlPartType::MenulistButton:
+        break;
+
+    case ControlPartType::Meter:
+        return createMeterPartForRenderer(renderer);
+
+    case ControlPartType::ProgressBar:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
+    case ControlPartType::SearchField:
+#if ENABLE(APPLE_PAY)
+    case ControlPartType::ApplePayButton:
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case ControlPartType::Attachment:
+    case ControlPartType::BorderlessAttachment:
+#endif
+    case ControlPartType::TextArea:
+    case ControlPartType::TextField:
+    case ControlPartType::CapsLockIndicator:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ControlPartType::ColorWell:
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    case ControlPartType::ImageControlsButton:
+#endif
+    case ControlPartType::InnerSpinButton:
+#if ENABLE(DATALIST_ELEMENT)
+    case ControlPartType::ListButton:
+#endif
+    case ControlPartType::SearchFieldDecoration:
+    case ControlPartType::SearchFieldResultsDecoration:
+    case ControlPartType::SearchFieldResultsButton:
+    case ControlPartType::SearchFieldCancelButton:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer(const RenderObject& renderer) const
+{
+    OptionSet<ControlStyle::State> states;
+    if (isHovered(renderer)) {
+        states.add(ControlStyle::State::Hovered);
+        if (isSpinUpButtonPartHovered(renderer))
+            states.add(ControlStyle::State::SpinUp);
+    }
+    if (isPressed(renderer)) {
+        states.add(ControlStyle::State::Pressed);
+        if (isSpinUpButtonPartPressed(renderer))
+            states.add(ControlStyle::State::SpinUp);
+    }
+    if (isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On)
+        states.add(ControlStyle::State::Focused);
+    if (isEnabled(renderer))
+        states.add(ControlStyle::State::Enabled);
+    if (isChecked(renderer))
+        states.add(ControlStyle::State::Checked);
+    if (isDefault(renderer))
+        states.add(ControlStyle::State::Default);
+    if (!isActive(renderer))
+        states.add(ControlStyle::State::WindowInactive);
+    if (isIndeterminate(renderer))
+        states.add(ControlStyle::State::Indeterminate);
+    if (isPresenting(renderer))
+        states.add(ControlStyle::State::Presenting);
+    if (useFormSemanticContext())
+        states.add(ControlStyle::State::FormSemanticContext);
+    if (renderer.useDarkAppearance())
+        states.add(ControlStyle::State::DarkAppearance);
+    if (!renderer.style().isLeftToRightDirection())
+        states.add(ControlStyle::State::RightToLeft);
+    if (supportsLargeFormControls())
+        states.add(ControlStyle::State::LargeControls);
+    return states;
+}
+
+ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& renderer) const
+{
+    return {
+        extractControlStyleStatesForRenderer(renderer),
+        renderer.style().computedFontPixelSize(),
+        renderer.style().effectiveZoom(),
+        renderer.style().effectiveAccentColor()
+    };
+}
+
+bool RenderTheme::paint(const RenderBox& box, const ControlPart& part, const PaintInfo& paintInfo, const LayoutRect& rect)
+{
+    // If painting is disabled, but we aren't updating control tints, then just bail.
+    // If we are updating control tints, just schedule a repaint if the theme supports tinting
+    // for that control.
+    if (paintInfo.context().invalidatingControlTints()) {
+        if (controlSupportsTints(box))
+            box.repaint();
+        return false;
+    }
+
+    if (paintInfo.context().paintingDisabled())
+        return false;
+
+    float deviceScaleFactor = box.document().deviceScaleFactor();
+    auto zoomedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
+    auto controlStyle = extractControlStyleForRenderer(box);
+    auto& context = paintInfo.context();
+
+    context.drawControlPart(part, zoomedRect, deviceScaleFactor, controlStyle);
+    return false;
 }
 
 bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& rect)
@@ -1089,7 +1244,7 @@ void RenderTheme::adjustMeterStyle(RenderStyle& style, const Element*) const
     style.setBoxShadow(nullptr);
 }
 
-IntSize RenderTheme::meterSizeForBounds(const RenderMeter&, const IntRect& bounds) const
+FloatSize RenderTheme::meterSizeForBounds(const RenderMeter&, const FloatRect& bounds) const
 {
     return bounds.size();
 }

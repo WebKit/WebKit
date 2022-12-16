@@ -48,13 +48,14 @@ class ShadowRoot final : public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
 public:
 
-    enum class DelegatesFocus : uint8_t { Yes, No };
-    enum class AvailableToElementInternals : uint8_t { Yes, No };
+    enum class DelegatesFocus : bool { No, Yes };
+    enum class Cloneable : bool { No, Yes };
+    enum class AvailableToElementInternals : bool { No, Yes };
 
-    static Ref<ShadowRoot> create(Document& document, ShadowRootMode type,
-        SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named, DelegatesFocus delegatesFocus = DelegatesFocus::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
+    static Ref<ShadowRoot> create(Document& document, ShadowRootMode type, SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named,
+        DelegatesFocus delegatesFocus = DelegatesFocus::No, Cloneable cloneable = Cloneable::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, availableToElementInternals));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, cloneable, availableToElementInternals));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
@@ -77,6 +78,8 @@ public:
     bool containsFocusedElement() const { return m_containsFocusedElement; }
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
 
+    bool isCloneable() const { return m_isCloneable; }
+
     bool isAvailableToElementInternals() const { return m_availableToElementInternals; }
     bool isDeclarativeShadowRoot() const { return m_isDeclarativeShadowRoot; }
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
@@ -87,10 +90,12 @@ public:
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(const String&);
 
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+
     Element* activeElement() const;
 
-    ShadowRootMode mode() const { return m_type; }
-    bool shouldFireSlotchangeEvent() const { return m_type != ShadowRootMode::UserAgent && !m_hasBegunDeletingDetachedChildren; }
+    ShadowRootMode mode() const { return m_mode; }
+    bool shouldFireSlotchangeEvent() const { return m_mode != ShadowRootMode::UserAgent && !m_hasBegunDeletingDetachedChildren; }
 
     void removeAllEventListeners() override;
 
@@ -128,25 +133,24 @@ public:
     Vector<RefPtr<WebAnimation>> getAnimations();
 
 private:
-    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, AvailableToElementInternals);
+    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, Cloneable, AvailableToElementInternals);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
     bool childTypeAllowed(NodeType) const override;
-
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode& insertionPoint) override;
 
     void childrenChanged(const ChildChange&) override;
 
-    bool m_resetStyleInheritance { false };
-    bool m_hasBegunDeletingDetachedChildren { false };
-    bool m_delegatesFocus { false };
-    bool m_containsFocusedElement { false };
-    bool m_availableToElementInternals { false };
-    bool m_isDeclarativeShadowRoot { false };
-    ShadowRootMode m_type { ShadowRootMode::UserAgent };
+    bool m_resetStyleInheritance : 1 { false };
+    bool m_hasBegunDeletingDetachedChildren : 1 { false };
+    bool m_delegatesFocus : 1 { false };
+    bool m_isCloneable : 1 { false };
+    bool m_containsFocusedElement : 1 { false };
+    bool m_availableToElementInternals : 1 { false };
+    bool m_isDeclarativeShadowRoot : 1 { false };
+    ShadowRootMode m_mode { ShadowRootMode::UserAgent };
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;

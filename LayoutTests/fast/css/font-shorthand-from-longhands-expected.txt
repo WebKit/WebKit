@@ -30,8 +30,8 @@ PASS checkFontStyleValue() is true
 PASS style.font is ''
 PASS computedStyle.font is '16px foobar'
 PASS checkFontStyleValue() is true
-PASS style.font is ''
-FAIL computedStyle.font should be bold 16px foobar. Was 700 16px foobar.
+PASS style.font is 'bold 16px foobar'
+PASS computedStyle.font is '700 16px foobar'
 PASS computedStyle.fontWeight is '700'
 PASS checkFontStyleValue() is true
 PASS style.font is 'bold 40px sans-serif'
@@ -40,7 +40,6 @@ PASS computedStyle.fontSize is '40px'
 PASS computedStyle.fontFamily is 'sans-serif'
 PASS checkFontStyleValue() is true
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 

@@ -500,6 +500,11 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(con
     return GraphicsContext::createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode, renderingMethod);
 }
 
+void RemoteDisplayListRecorderProxy::disconnect()
+{
+    m_renderingBackend = nullptr;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(GPU_PROCESS)

@@ -293,7 +293,7 @@ public:
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
 
-    TypeIndex& getType(RecursionGroupCount i) { ASSERT(i < typeCount());; return *storage(i); }
+    TypeIndex& getType(RecursionGroupCount i) { ASSERT(i < typeCount()); return *storage(i); }
     TypeIndex* storage(RecursionGroupCount i) { return i + m_payload; }
     const TypeIndex* storage(RecursionGroupCount i) const { return const_cast<RecursionGroup*>(this)->storage(i); }
 
@@ -343,19 +343,14 @@ private:
 static_assert(sizeof(ProjectionIndex) <= sizeof(TypeIndex));
 
 // A Subtype represents a type that is declared to be a subtype of another type
-// definition. It contains a display data structure that allows subtyping of
-// references to be checked in constant time.
-//
-// See https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#runtime-types
-// for an explanation of displays.
+// definition.
 //
 // The representation assumes a single supertype. The binary format is designed to allow
 // multiple supertypes, but these are not supported in the initial GC proposal.
 class Subtype {
 public:
-    Subtype(TypeIndex* payload, DisplayCount displaySize)
+    Subtype(TypeIndex* payload)
         : m_payload(payload)
-        , m_displaySize(displaySize)
     {
     }
 
@@ -363,21 +358,52 @@ public:
 
     TypeIndex superType() const { return const_cast<Subtype*>(this)->getSuperType(); }
     TypeIndex underlyingType() const { return const_cast<Subtype*>(this)->getUnderlyingType(); }
-    TypeIndex displayType(DisplayCount i) const { return const_cast<Subtype*>(this)->getDisplayType(i); }
-    DisplayCount displaySize() const { return m_displaySize; }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
 
     TypeIndex& getSuperType() { return *storage(1); }
     TypeIndex& getUnderlyingType() { return *storage(0); }
-    TypeIndex& getDisplayType(DisplayCount i) { return *storage(i + 2); }
     TypeIndex* storage(uint32_t i) { return i + m_payload; }
     TypeIndex* storage(uint32_t i) const { return const_cast<Subtype*>(this)->storage(i); }
 
 private:
     TypeIndex* m_payload;
-    uint32_t m_displaySize;
+};
+
+// An RTT encodes subtyping information in a way that is suitable for executing
+// runtime subtyping checks, e.g., for ref.cast and related operations. RTTs are also
+// used to facilitate static subtyping checks for references.
+//
+// It contains a display data structure that allows subtyping of references to be checked in constant time.
+//
+// See https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#runtime-types for an explanation of displays.
+class RTT : public ThreadSafeRefCounted<RTT> {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    RTT() = delete;
+    RTT(const RTT&) = delete;
+
+    explicit RTT(DisplayCount displaySize)
+        : m_displaySize(displaySize)
+    {
+    }
+
+    static RefPtr<RTT> tryCreateRTT(DisplayCount);
+
+    DisplayCount displaySize() const { return m_displaySize; }
+    const RTT* displayEntry(DisplayCount i) const { ASSERT(i < displaySize()); return const_cast<RTT*>(this)->payload()[i]; }
+    void setDisplayEntry(DisplayCount i, const RTT* entry) { ASSERT(i < displaySize()); payload()[i] = entry; }
+
+    bool isSubRTT(const RTT& other) const;
+    static size_t allocatedRTTSize(Checked<DisplayCount> count) { return sizeof(RTT) + count * sizeof(TypeIndex); }
+
+private:
+    // Payload starts past end of this object.
+    const RTT** payload() { return static_cast<const RTT**>(static_cast<void*>(this + 1)); }
+
+    DisplayCount m_displaySize;
 };
 
 enum class TypeDefinitionKind : uint8_t {
@@ -410,10 +436,7 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     TypeDefinition(TypeDefinitionKind kind, uint32_t fieldCount)
         : m_typeHeader { RecursionGroup { static_cast<TypeIndex*>(payload()), static_cast<RecursionGroupCount>(fieldCount) } }
     {
-        if (kind == TypeDefinitionKind::Subtype)
-            m_typeHeader = { Subtype { static_cast<TypeIndex*>(payload()), static_cast<DisplayCount>(fieldCount) } };
-        else
-            RELEASE_ASSERT(kind == TypeDefinitionKind::RecursionGroup);
+        RELEASE_ASSERT(kind == TypeDefinitionKind::RecursionGroup);
     }
 
     TypeDefinition(TypeDefinitionKind kind)
@@ -421,6 +444,8 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     {
         if (kind == TypeDefinitionKind::Projection)
             m_typeHeader = { Projection { static_cast<TypeIndex*>(payload()) } };
+        else if (kind == TypeDefinitionKind::Subtype)
+            m_typeHeader = { Subtype { static_cast<TypeIndex*>(payload()) } };
         else
             RELEASE_ASSERT(kind == TypeDefinitionKind::ArrayType);
     }
@@ -433,7 +458,7 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     static size_t allocatedArraySize() { return sizeof(TypeDefinition) + sizeof(FieldType); }
     static size_t allocatedRecursionGroupSize(Checked<RecursionGroupCount> typeCount) { return sizeof(TypeDefinition) + typeCount * sizeof(TypeIndex); }
     static size_t allocatedProjectionSize() { return sizeof(TypeDefinition) + 2 * sizeof(TypeIndex); }
-    static size_t allocatedSubtypeSize(Checked<DisplayCount> displayCount) { return sizeof(TypeDefinition) + (displayCount + 2) * sizeof(TypeIndex); }
+    static size_t allocatedSubtypeSize() { return sizeof(TypeDefinition) + 2 * sizeof(TypeIndex); }
 
 public:
     template <typename T>
@@ -480,7 +505,7 @@ private:
     static RefPtr<TypeDefinition> tryCreateArrayType();
     static RefPtr<TypeDefinition> tryCreateRecursionGroup(RecursionGroupCount);
     static RefPtr<TypeDefinition> tryCreateProjection();
-    static RefPtr<TypeDefinition> tryCreateSubtype(DisplayCount);
+    static RefPtr<TypeDefinition> tryCreateSubtype();
 
     static Type substitute(Type, TypeIndex);
 
@@ -567,6 +592,12 @@ public:
     static void addCachedUnrolling(TypeIndex, TypeIndex);
     static std::optional<TypeIndex> tryGetCachedUnrolling(TypeIndex);
 
+    // Every type definition that is in a module's signature list should have a canonical RTT registered for subtyping checks.
+    static void registerCanonicalRTTForType(TypeIndex);
+    static RefPtr<RTT> canonicalRTTForType(TypeIndex);
+    // This will only return valid results for types in the type signature list and that have a registered canonical RTT.
+    static std::optional<const RTT*> tryGetCanonicalRTT(TypeIndex);
+
     static const TypeDefinition& get(TypeIndex);
     static TypeIndex get(const TypeDefinition&);
 
@@ -576,6 +607,7 @@ public:
 private:
     HashSet<Wasm::TypeHash> m_typeSet;
     HashMap<TypeIndex, TypeIndex> m_unrollingCache;
+    HashMap<TypeIndex, RefPtr<RTT>> m_rttMap;
     const TypeDefinition* thunkTypes[numTypes];
     Lock m_lock;
 };

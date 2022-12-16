@@ -55,6 +55,7 @@
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -436,6 +437,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMSessionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaResourceIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSerializedImageBufferIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
@@ -514,6 +516,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteLegacyCDMIdentifier"_s,
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
         "WebKit::RemoteMediaResourceIdentifier"_s,
+        "WebKit::RemoteSerializedImageBufferIdentifier"_s,
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,

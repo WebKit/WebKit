@@ -1,0 +1,7 @@
+
+PASS Animating a custom property of type <number>
+PASS Animating a custom property of type <number> with a single keyframe
+PASS Animating a custom property of type <number> with additivity
+PASS Animating a custom property of type <number> with a single keyframe and additivity
+PASS Animating a custom property of type <number> with iterationComposite
+

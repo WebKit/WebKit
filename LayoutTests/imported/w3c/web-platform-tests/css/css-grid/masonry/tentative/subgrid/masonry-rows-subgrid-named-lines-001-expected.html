@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Masonry rows subgrid line names 001</title>
+    <link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+    <link rel="help" href="https://drafts.csswg.org/css-grid-3/#subgrids">
+    <meta name="assert" content="Subgrid with definite grid axis position should inherit line names">
+    <link rel="match" href="masonry-rows-subgrid-named-lines-001-ref.html">
+<style>
+grid {
+    display: inline-grid;
+    grid-template-columns: [one] 50px [two] 50px [three] 50px;
+    grid-template-rows: none;
+    gap: 4px 2px;
+    padding: 1px 3px 5px 7px;
+    border: solid;
+    border-width: 3px 5px 1px 1px;
+    background: lightgrey;
+}
+item {
+    background: grey;
+    width: 3ch;
+    position: relative;
+}
+subgrid {
+    display: grid;
+    grid: none / subgrid;
+    grid-column: 1 / span 3;
+    background: yellow;
+}
+</style>
+</head>
+<body>
+<grid>
+<item>1</item>
+<item>2</item>
+<item>3</item>
+<subgrid>
+    <item>4c</item>
+    <item>4a</item>
+    <item>4b</item>
+</subgrid>
+</grid>
+</body>
+</html>

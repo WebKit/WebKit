@@ -233,6 +233,9 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
     while (isRowAxis ? grid->isSubgridColumns() : grid->isSubgridRows()) {
         const auto* parent = downcast<RenderGrid>(grid->parent());
 
+        // auto-placed subgrids inside a masonry grid do not inherit any line names
+        if ((parent->areMasonryRows() && (grid->style().gridItemColumnStart().isAuto() || grid->style().gridItemColumnStart().isSpan())) || (parent->areMasonryColumns() && (grid->style().gridItemRowStart().isAuto() || grid->style().gridItemRowStart().isSpan())))
+            return; 
         // Translate our explicit grid set of lines into the coordinate space of the
         // parent grid, adjusting direction/side as needed.
         if (grid->isHorizontalWritingMode() != parent->isHorizontalWritingMode()) {

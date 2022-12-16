@@ -52,6 +52,7 @@ async function doEncodeDecode(encoderConfig)
   const h = encoderConfig.height;
   const frame = makeOffscreenCanvas(w, h);
   encoder.encode(frame, { keyFrame: true });
+  frame.close();
 
   await encoder.flush();
   await decoder.flush();

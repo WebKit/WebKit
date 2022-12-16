@@ -63,7 +63,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(CSSFunctionValue& cssFunctio
     auto makeTranslate = [&](const Function<ExceptionOr<Ref<CSSTranslate>>(Vector<Ref<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSTranslate>> {
         Vector<Ref<CSSNumericValue>> components;
         for (auto componentCSSValue : cssFunctionValue) {
-            auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue);
+            auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             if (!is<CSSNumericValue>(valueOrException.returnValue()))

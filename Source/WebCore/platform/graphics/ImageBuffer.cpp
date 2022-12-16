@@ -103,6 +103,47 @@ bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
     return floorf(size.height()) * floorf(size.width()) > MaxClampedArea;
 }
 
+RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> buffer)
+{
+    return buffer->sinkIntoImageBuffer();
+}
+
+// The default serialization of an ImageBuffer just assumes that we can
+// pass it as-is, as long as this is the only reference.
+class DefaultSerializedImageBuffer : public SerializedImageBuffer {
+public:
+    DefaultSerializedImageBuffer(ImageBuffer* image)
+        : m_buffer(image)
+    { }
+
+    RefPtr<ImageBuffer> sinkIntoImageBuffer() final
+    {
+        return m_buffer;
+    }
+
+    size_t memoryCost() final
+    {
+        return m_buffer->memoryCost();
+    }
+
+private:
+    RefPtr<ImageBuffer> m_buffer;
+};
+
+std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer()
+{
+    ASSERT(hasOneRef());
+    ASSERT(!weakPtrFactory().weakPtrCount());
+    return makeUnique<DefaultSerializedImageBuffer>(this);
+}
+
+std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&& image)
+{
+    ASSERT(image->hasOneRef());
+    RefPtr<ImageBuffer> move = WTFMove(image);
+    return move->sinkIntoSerializedImageBuffer();
+}
+
 bool ImageBuffer::sizeNeedsClamping(const FloatSize& size, FloatSize& scale)
 {
     FloatSize scaledSize(size);

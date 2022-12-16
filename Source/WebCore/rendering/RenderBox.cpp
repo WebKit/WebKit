@@ -284,7 +284,13 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         // When a layout hint happens and an object's position style changes, we have to do a layout
         // to dirty the render tree using the old position value now.
         if (diff == StyleDifference::Layout && parent() && oldStyle->position() != newStyle.position()) {
-            markContainingBlocksForLayout();
+            if (!oldStyle->hasOutOfFlowPosition() && newStyle.hasOutOfFlowPosition()) {
+                // We are about to go out of flow. Before that takes place, we need to mark the
+                // current containing block chain for preferred widths recalculation.
+                setNeedsLayoutAndPrefWidthsRecalc();
+            } else
+                markContainingBlocksForLayout();
+            
             if (oldStyle->position() != PositionType::Static && newStyle.hasOutOfFlowPosition())
                 parent()->setChildNeedsLayout();
             if (isFloating() && !isOutOfFlowPositioned() && newStyle.hasOutOfFlowPosition())
@@ -1572,6 +1578,18 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     return BackgroundBleedUseTransparencyLayer;
 }
 
+ControlPart* RenderBox::ensureControlPart()
+{
+    if (!theme().canCreateControlPartForRenderer(*this))
+        return nullptr;
+
+    auto& rareData = ensureRareData();
+    if (!rareData.controlPart)
+        rareData.controlPart = theme().createControlPartForRenderer(*this);
+
+    return rareData.controlPart.get();
+}
+
 void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(*this))
@@ -1605,10 +1623,14 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // The theme will tell us whether or not we should also paint the CSS background.
     bool borderOrBackgroundPaintingIsNeeded = true;
     if (style().hasEffectiveAppearance()) {
-        ControlStates* controlStates = controlStatesForRenderer(*this);
-        borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *controlStates, paintInfo, paintRect);
-        if (controlStates->needsRepaint())
-            view().scheduleLazyRepaint(*this);
+        if (auto* control = ensureControlPart())
+            borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *control, paintInfo, paintRect);
+        else {
+            ControlStates* controlStates = controlStatesForRenderer(*this);
+            borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *controlStates, paintInfo, paintRect);
+            if (controlStates->needsRepaint())
+                view().scheduleLazyRepaint(*this);
+        }
     }
 
     BorderPainter borderPainter { *this, paintInfo };
@@ -2812,7 +2834,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
         return true;
 
     if (isGridItem())
-        return !hasStretchedLogicalWidth();
+        return downcast<RenderGrid>(parent())->areMasonryColumns() || !hasStretchedLogicalWidth();
 
     // This code may look a bit strange.  Basically width:intrinsic should clamp the size when testing both
     // min-width and width.  max-width is only clamped if it is also intrinsic.
@@ -3656,25 +3678,7 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
 
     ASSERT(containingBlock.isInFlowPositioned());
 
-    const auto& flow = downcast<RenderInline>(containingBlock);
-    LegacyInlineFlowBox* first = flow.firstLineBox();
-    LegacyInlineFlowBox* last = flow.lastLineBox();
-
-    // If the containing block is empty, return a width of 0.
-    if (!first || !last)
-        return 0;
-
-    LayoutUnit fromLeft;
-    LayoutUnit fromRight;
-    if (containingBlock.style().isLeftToRightDirection()) {
-        fromLeft = first->logicalLeft() + first->borderLogicalLeft();
-        fromRight = last->logicalLeft() + last->logicalWidth() - last->borderLogicalRight();
-    } else {
-        fromRight = first->logicalLeft() + first->logicalWidth() - first->borderLogicalRight();
-        fromLeft = last->logicalLeft() + last->borderLogicalLeft();
-    }
-
-    return std::max<LayoutUnit>(0, fromRight - fromLeft);
+    return downcast<RenderInline>(containingBlock).innerPaddingBoxWidth();
 }
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject& containingBlock, bool checkForPerpendicularWritingMode) const
@@ -3702,23 +3706,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
     }
         
     ASSERT(containingBlock.isInFlowPositioned());
-
-    const auto& flow = downcast<RenderInline>(containingBlock);
-    LegacyInlineFlowBox* first = flow.firstLineBox();
-    LegacyInlineFlowBox* last = flow.lastLineBox();
-
-    // If the containing block is empty, return a height of 0.
-    if (!first || !last)
-        return 0;
-
-    LayoutUnit heightResult;
-    LayoutRect boundingBox = flow.linesBoundingBox();
-    if (containingBlock.isHorizontalWritingMode())
-        heightResult = boundingBox.height();
-    else
-        heightResult = boundingBox.width();
-    heightResult -= (containingBlock.borderBefore() + containingBlock.borderAfter());
-    return heightResult;
+    return downcast<RenderInline>(containingBlock).innerPaddingBoxHeight();
 }
 
 static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRight, const RenderBox* child, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalWidth, RenderFragmentContainer* fragment)

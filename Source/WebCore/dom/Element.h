@@ -792,6 +792,7 @@ private:
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    void cloneShadowTreeIfPossible(Element& newHost);
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
     void removeShadowRoot();

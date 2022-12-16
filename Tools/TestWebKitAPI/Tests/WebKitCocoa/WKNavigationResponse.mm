@@ -28,7 +28,9 @@
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "Utilities.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
@@ -240,3 +242,42 @@ TEST(WebKit, WKNavigationResponseDownloadAttribute)
     EXPECT_NOT_NULL([shouldBeEmpty _downloadAttribute]);
     EXPECT_NULL([shouldBeNull _downloadAttribute]);
 }
+
+#if WK_HAVE_C_SPI
+TEST(WebKit, SkipDecidePolicyForResponse)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/1"_s, { { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/2"_s, { { { "Content-Type"_s, "text/plain"_s } }, "hi"_s } },
+        { "/3"_s, { "hi"_s } },
+        { "/4"_s, { 204, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/5"_s, { 404, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/6"_s, { 503, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/7"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Disposition"_s, "attachment ; other stuff"_s } }, "hi"_s } },
+    });
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"SkipDecidePolicyForResponsePlugIn"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    __block bool responseDelegateCalled { false };
+    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        responseDelegateCalled = true;
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request("/1"_s)];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_FALSE(responseDelegateCalled);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
+
+    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s, "/7"_s }) {
+        [webView loadRequest:server.request(path)];
+        [delegate waitForDidFinishNavigation];
+        EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
+    }
+}
+#endif

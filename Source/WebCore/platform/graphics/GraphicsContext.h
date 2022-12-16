@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ControlPart.h"
 #include "DashArray.h"
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
@@ -233,7 +234,7 @@ public:
     virtual void setLineJoin(LineJoin) = 0;
     virtual void setMiterLimit(float) = 0;
 
-    // Images, Patterns, and Media
+    // Images, Patterns, ControlParts, and Media
 
     IntSize compatibleImageBufferSize(const FloatSize&) const;
 
@@ -268,6 +269,8 @@ public:
 
     virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
     WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
+
+    WEBCORE_EXPORT virtual void drawControlPart(const ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);

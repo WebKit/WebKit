@@ -38,7 +38,7 @@ shouldBe('test("-webkit-background-clip: text", "-webkit-background-clip")', '"t
 shouldBeEqualToString('test("background: url() padding-box", "-webkit-background-clip")', '');
 
 shouldBeEqualToString('test("-webkit-mask: url() ", "background-clip")', '');
-shouldBe('test("background: url() ", "background-clip")', '"initial"');
+shouldBe('test("background: url() ", "background-clip")', '"border-box"');
 
 shouldBe('test("background: url() padding-box", "background-clip")', '"padding-box"');
 shouldBe('test("background: url() text", "background-clip")', '"text"');

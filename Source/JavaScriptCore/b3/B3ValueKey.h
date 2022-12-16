@@ -86,6 +86,13 @@ public:
         u.floatValue = value;
     }
 
+    ValueKey(Kind kind, Type type, v128_t value)
+        : m_kind(kind)
+        , m_type(type)
+    {
+        u.vectorValue = value;
+    }
+
     static ValueKey intConstant(Type type, int64_t value);
 
     Kind kind() const { return m_kind; }
@@ -96,6 +103,7 @@ public:
     int64_t value() const { return u.value; }
     double doubleValue() const { return u.doubleValue; }
     float floatValue() const { return u.floatValue; }
+    v128_t vectorValue() const { return u.vectorValue; }
 
     bool operator==(const ValueKey& other) const
     {
@@ -111,7 +119,7 @@ public:
 
     unsigned hash() const
     {
-        return m_kind.hash() + m_type.hash() + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2];
+        return m_kind.hash() + m_type.hash() + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2] + u.indices[3];
     }
 
     explicit operator bool() const { return *this != ValueKey(); }
@@ -156,23 +164,26 @@ private:
     Kind m_kind;
     Type m_type { Void };
     union U {
-        unsigned indices[3];
+        unsigned indices[4];
         int64_t value;
         double doubleValue;
         float floatValue;
+        v128_t vectorValue;
 
         U()
         {
             indices[0] = 0;
             indices[1] = 0;
             indices[2] = 0;
+            indices[3] = 0;
         }
 
         bool operator==(const U& other) const
         {
             return indices[0] == other.indices[0]
                 && indices[1] == other.indices[1]
-                && indices[2] == other.indices[2];
+                && indices[2] == other.indices[2]
+                && indices[3] == other.indices[3];
         }
     } u;
 };

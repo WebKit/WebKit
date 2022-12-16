@@ -50,6 +50,7 @@ namespace WebCore {
 
 class AffineTransform;
 class Color;
+class ControlPart;
 class Cursor;
 class Document;
 class HitTestLocation;
@@ -99,6 +100,7 @@ class RenderObject : public CachedImageClient {
     WTF_MAKE_ISO_ALLOCATED(RenderObject);
     friend class RenderBlock;
     friend class RenderBlockFlow;
+    friend class RenderBox;
     friend class RenderElement;
     friend class RenderLayer;
     friend class RenderLayerScrollableArea;
@@ -1004,6 +1006,9 @@ private:
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;
         WeakPtr<RenderBlockFlow> backdropRenderer;
+
+        // From RenderBox
+        RefPtr<ControlPart> controlPart;
     };
     
     WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;

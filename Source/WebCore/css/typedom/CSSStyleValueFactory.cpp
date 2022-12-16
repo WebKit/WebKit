@@ -150,7 +150,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
     Vector<Ref<CSSStyleValue>> results;
 
     for (auto& cssValue : cssValues) {
-        auto reifiedValue = reifyValue(WTFMove(cssValue));
+        auto reifiedValue = reifyValue(WTFMove(cssValue), propertyID);
         if (reifiedValue.hasException())
             return reifiedValue.releaseException();
 
@@ -163,7 +163,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
     return results;
 }
 
-ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> cssValue, Document* document)
+ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> cssValue, std::optional<CSSPropertyID> propertyID, Document* document)
 {
     if (is<CSSPrimitiveValue>(cssValue)) {
         auto primitiveValue = downcast<CSSPrimitiveValue>(cssValue.ptr());
@@ -176,6 +176,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
         }
         switch (primitiveValue->primitiveType()) {
         case CSSUnitType::CSS_NUMBER:
+        case CSSUnitType::CSS_INTEGER:
             return Ref<CSSStyleValue> { CSSNumericFactory::number(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_PERCENTAGE:
             return Ref<CSSStyleValue> { CSSNumericFactory::percent(primitiveValue->doubleValue()) };
@@ -251,9 +252,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmin(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_CQMAX:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmax(primitiveValue->doubleValue()) };
-        
         case CSSUnitType::CSS_IDENT:
-        case CSSUnitType::CSS_STRING:
             return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(primitiveValue->stringValue()));
         default:
             break;
@@ -269,9 +268,9 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
         return WTF::switchOn(downcast<CSSCustomPropertyValue>(cssValue.get()).value(), [&](const std::monostate&) {
             return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(WTFMove(cssValue)) };
         }, [&](const Ref<CSSVariableReferenceValue>& value) {
-            return reifyValue(value, document);
+            return reifyValue(value, propertyID, document);
         }, [&](Ref<CSSVariableData>& value) {
-            return reifyValue(CSSVariableReferenceValue::create(WTFMove(value)));
+            return reifyValue(CSSVariableReferenceValue::create(WTFMove(value)), propertyID);
         }, [&](const CSSValueID&) {
             return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(WTFMove(cssValue)) };
         }, [&](auto&) {
@@ -291,8 +290,8 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
         auto valueList = downcast<CSSValueList>(cssValue.ptr());
         if (!valueList->length())
             return Exception { TypeError, "The CSSValueList should not be empty."_s };
-        
-        return reifyValue(*valueList->begin(), document);
+        if (valueList->length() == 1 || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
+            return reifyValue(*valueList->begin(), propertyID, document);
     }
     
     return CSSStyleValue::create(WTFMove(cssValue));

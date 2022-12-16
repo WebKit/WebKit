@@ -2416,6 +2416,7 @@ private:
 
         case Const32:
         case Const64:
+        case Const128:
         case ConstFloat:
         case ConstDouble: {
             ValueKey key = m_value->key();

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests copying excludes content with user-select: none.<br>
+To manually test, copy "hello world foo bar" below then paste. The pasted content should look identical</p>
+<div id="source"><i>hello </i><b>world <span style="display: none">foo </span></b><span>bar </span></div>
+<div id="destination" contenteditable></div>
+<pre id="output"></pre>
+</body>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+jsTestIsAsync = true;
+getSelection().setBaseAndExtent(source, 0, source, source.childNodes.length);
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    testRunner.execCommand("Copy");
+    destination.focus();
+    testRunner.execCommand("Paste");
+    Markup.dump(destination);
+} else {
+    Markup.noAutoDump();
+    source.addEventListener("copy", () => {
+        setTimeout(() => destination.focus(), 0);
+    });
+    destination.addEventListener("paste", () => {
+        setTimeout(() => {
+            Markup.dump(destination);
+            Markup.notifyDone();
+        }, 0);
+    });
+}
+
+</script>
+</html>

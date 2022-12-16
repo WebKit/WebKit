@@ -367,6 +367,7 @@ public:
     virtual DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const { return nullptr; }
 
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float, const DestinationColorSpace&, PixelFormat, bool avoidBackendSizeCheck = false) const { UNUSED_PARAM(avoidBackendSizeCheck); return nullptr; }
+    WEBCORE_EXPORT virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>);
 
 #if ENABLE(WEBGL)
     WEBCORE_EXPORT virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const;

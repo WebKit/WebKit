@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Masonry rows subgrid line names 003</title>
+    <link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+    <link rel="help" href="https://drafts.csswg.org/css-grid-3/#subgrids">
+    <meta name="assert" content="Auto-placed subgrid should be able to use their own named lines">
+    <link rel="match" href="masonry-rows-subgrid-named-lines-003-ref.html">
+<style>
+grid {
+    display: inline-grid;
+    grid-template-columns: 50px 80px 30px;
+    grid-template-rows: auto;
+    gap: 4px 2px;
+    padding: 1px 3px 5px 7px;
+    border: solid;
+    border-width: 3px 5px 1px 1px;
+    background: lightgrey;
+}
+item {
+    background: grey;
+    width: 3ch;
+    position: relative;
+}
+subgrid {
+    display: grid;
+    grid: none / subgrid [sub-one] [sub-two];
+    grid-column: auto / span 2;
+    background: yellow;
+}
+.column-one {
+    grid-column-start: sub-one;
+}
+.column-two {
+    grid-column-start: sub-two;
+}
+.row-one {
+    grid-row-start: 1;
+}
+</style>
+</head>
+<body>
+<grid>
+<item>1</item>
+<item>2</item>
+<item>3</item>
+<subgrid>
+    <item class="column-two">4a</item>
+    <item class="column-one row-one"> 4b </item>
+    <item class="column-two">4c</item>
+</subgrid>
+</grid>
+</body>
+</html>

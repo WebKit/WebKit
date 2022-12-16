@@ -49,7 +49,7 @@
 
 static NSRect focusRingClipRect;
 static BOOL themeWindowHasKeyAppearance;
-static bool useFormSemanticContext;
+static bool _useFormSemanticContext;
 
 @interface WebCoreThemeWindow : NSWindow
 @end
@@ -700,7 +700,7 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
     ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if USE(NSVIEW_SEMANTICCONTEXT)
-    if (useFormSemanticContext)
+    if (_useFormSemanticContext)
         [themeView _setSemanticContext:NSViewSemanticContextForm];
 #endif
 
@@ -709,9 +709,14 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
     return themeView;
 }
 
+bool ThemeMac::useFormSemanticContext()
+{
+    return _useFormSemanticContext;
+}
+
 void ThemeMac::setUseFormSemanticContext(bool use)
 {
-    useFormSemanticContext = use;
+    _useFormSemanticContext = use;
 }
 
 void ThemeMac::setFocusRingClipRect(const FloatRect& rect)

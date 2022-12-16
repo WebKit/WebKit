@@ -34,6 +34,7 @@
 #import "WebProcessPool.h"
 #import <wtf/HashMap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/ThreadSafeWeakHashSet.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakObjCPtr.h>
@@ -77,7 +78,7 @@ static bool processHasActiveRunTimeLimitation()
 {
     RetainPtr<RBSAssertion> _backgroundTask;
     std::atomic<bool> _backgroundTaskWasInvalidated;
-    WeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
+    ThreadSafeWeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
     dispatch_block_t _pendingTaskReleaseTask;
     std::unique_ptr<WebKit::ProcessStateMonitor> m_processStateMonitor;
 }
@@ -124,23 +125,17 @@ static bool processHasActiveRunTimeLimitation()
 - (void)removeAssertionNeedingBackgroundTask:(ProcessAndUIAssertion&)assertion
 {
     _assertionsNeedingBackgroundTask.remove(assertion);
-    [self _updateBackgroundTask];
 }
 
 - (void)_notifyAssertionsOfImminentSuspension
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<WeakPtr<ProcessAndUIAssertion>> assertionsNeedingBackgroundTask;
-    for (auto& assertion : _assertionsNeedingBackgroundTask)
-        assertionsNeedingBackgroundTask.append(assertion);
-
     // Note that we don't expect clients to register new assertions when getting notified that the UI assertion will expire imminently.
     // If clients were to do so, then those new assertions would not get notified of the imminent suspension.
-    for (auto assertion : assertionsNeedingBackgroundTask) {
-        if (assertion)
-            assertion->uiAssertionWillExpireImminently();
-    }
+    _assertionsNeedingBackgroundTask.forEach([] (auto& assertion) {
+        assertion.uiAssertionWillExpireImminently();
+    });
 }
 
 
@@ -417,9 +412,9 @@ void ProcessAssertion::acquireSync()
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
-        RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                weakThis->processAssertionWasInvalidated();
+        RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+            if (auto strongThis = weakThis.get())
+                strongThis->processAssertionWasInvalidated();
         });
     } else
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
@@ -474,7 +469,7 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion()
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_isHoldingBackgroundTask)
-        [[WKProcessAssertionBackgroundTaskManager shared] removeAssertionNeedingBackgroundTask:*this];
+        [[WKProcessAssertionBackgroundTaskManager shared] _updateBackgroundTask];
 #endif
 }
 
@@ -487,8 +482,10 @@ void ProcessAndUIAssertion::updateRunInBackgroundCount()
 
     if (shouldHoldBackgroundTask)
         [[WKProcessAssertionBackgroundTaskManager shared] addAssertionNeedingBackgroundTask:*this];
-    else
+    else {
         [[WKProcessAssertionBackgroundTaskManager shared] removeAssertionNeedingBackgroundTask:*this];
+        [[WKProcessAssertionBackgroundTaskManager shared] _updateBackgroundTask];
+    }
 
     m_isHoldingBackgroundTask = shouldHoldBackgroundTask;
 }
@@ -508,11 +505,11 @@ void ProcessAndUIAssertion::processAssertionWasInvalidated()
 {
     ASSERT(RunLoop::isMain());
 
-    WeakPtr weakThis { *this };
+    ThreadSafeWeakPtr weakThis { *this };
     ProcessAssertion::processAssertionWasInvalidated();
 
     // Calling ProcessAssertion::processAssertionWasInvalidated() may have destroyed |this|.
-    if (weakThis)
+    if (auto strongThis = weakThis.get())
         updateRunInBackgroundCount();
 }
 

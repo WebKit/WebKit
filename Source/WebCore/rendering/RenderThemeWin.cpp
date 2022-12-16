@@ -1016,11 +1016,6 @@ bool RenderThemeWin::supportsMeter(ControlPartType type, const HTMLMeterElement&
     }
 }
 
-IntSize RenderThemeWin::meterSizeForBounds(const RenderMeter&, const IntRect& bounds) const
-{
-    return bounds.size();
-}
-
 bool RenderThemeWin::paintMeter(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!is<RenderMeter>(renderObject))

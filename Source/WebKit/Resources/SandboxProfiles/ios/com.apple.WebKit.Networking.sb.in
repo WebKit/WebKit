@@ -587,6 +587,10 @@
 (allow mach-lookup 
     (global-name "com.apple.nesessionmanager.content-filter"))
 
+ ;; <rdar://problem/101780002>
+(allow mach-lookup 
+    (global-name "com.apple.mobileasset.autoasset"))
+
 ;; Access to ContainerManager
 (allow mach-lookup 
     (global-name

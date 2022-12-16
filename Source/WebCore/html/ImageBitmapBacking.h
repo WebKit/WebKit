@@ -58,8 +58,12 @@ public:
 
     OptionSet<SerializationState> serializationState() const { return m_serializationState; }
 
+    void disconnect();
+    void connect(ScriptExecutionContext&);
+
 private:
     RefPtr<ImageBuffer> m_bitmapData;
+    std::unique_ptr<SerializedImageBuffer> m_serializedBitmap;
     OptionSet<SerializationState> m_serializationState;
 };
 

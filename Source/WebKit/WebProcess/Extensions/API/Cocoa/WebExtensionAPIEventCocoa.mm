@@ -86,7 +86,7 @@ void WebExtensionAPIEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbac
     if (!page)
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page->webPageProxyIdentifier(), m_type));
+    WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page->webPageProxyIdentifier(), m_type), extensionContext().identifier());
 }
 
 void WebExtensionAPIEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
@@ -98,7 +98,7 @@ void WebExtensionAPIEvent::removeListener(WebPage* page, RefPtr<WebExtensionCall
     if (!page)
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(page->webPageProxyIdentifier(), m_type));
+    WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(page->webPageProxyIdentifier(), m_type), extensionContext().identifier());
 }
 
 bool WebExtensionAPIEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)

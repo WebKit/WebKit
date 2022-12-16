@@ -151,7 +151,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/displaylists"
     "${WEBCORE_DIR}/platform/graphics/filters"
     "${WEBCORE_DIR}/platform/graphics/filters/software"
-    "${WEBCORE_DIR}/platform/graphics/formcontrols"
+    "${WEBCORE_DIR}/platform/graphics/controls"
     "${WEBCORE_DIR}/platform/graphics/iso"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/transforms"
@@ -2621,7 +2621,6 @@ if (NOT INTERNAL_BUILD)
 endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
-WEBKIT_FRAMEWORK_TARGET(WebCore)
 
 if (APPLE)
     set_target_properties(WebCore PROPERTIES LINK_FLAGS "-sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
@@ -2657,7 +2656,6 @@ else ()
 endif ()
 
 WEBKIT_FRAMEWORK(WebCoreTestSupport)
-WEBKIT_FRAMEWORK_TARGET(WebCoreTestSupport)
 
 if (${WebCore_LIBRARY_TYPE} MATCHES "SHARED")
     set_target_properties(WebCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})

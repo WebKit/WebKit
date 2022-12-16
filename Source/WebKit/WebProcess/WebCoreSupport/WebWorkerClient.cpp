@@ -96,6 +96,18 @@ PlatformDisplayID WebWorkerClient::displayID() const
     return m_displayID;
 }
 
+RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
+{
+#if ENABLE(GPU_PROCESS)
+    if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
+        return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+    auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
+    return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTFMove(remote), ensureRenderingBackend());
+#else
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+#endif
+}
+
 RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck) const
 {
     assertIsCurrent(m_dispatcher);

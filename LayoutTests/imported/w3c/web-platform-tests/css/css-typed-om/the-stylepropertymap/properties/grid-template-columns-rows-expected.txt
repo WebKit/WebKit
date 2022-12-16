@@ -31,8 +31,8 @@ PASS Setting 'grid-template-columns' to a number: calc(2 + 3) throws TypeError
 PASS Setting 'grid-template-columns' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'grid-template-columns' to a transform: perspective(10em) throws TypeError
 PASS Setting 'grid-template-columns' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-FAIL 'grid-template-columns' does not support '[linename1] 100px [linename2 linename3]' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
-FAIL 'grid-template-columns' does not support '200px repeat(auto-fill, 100px) 300px' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+PASS 'grid-template-columns' does not support '[linename1] 100px [linename2 linename3]'
+PASS 'grid-template-columns' does not support '200px repeat(auto-fill, 100px) 300px'
 PASS Can set 'grid-template-rows' to CSS-wide keywords: initial
 PASS Can set 'grid-template-rows' to CSS-wide keywords: inherit
 PASS Can set 'grid-template-rows' to CSS-wide keywords: unset
@@ -65,6 +65,6 @@ PASS Setting 'grid-template-rows' to a number: calc(2 + 3) throws TypeError
 PASS Setting 'grid-template-rows' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'grid-template-rows' to a transform: perspective(10em) throws TypeError
 PASS Setting 'grid-template-rows' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-FAIL 'grid-template-rows' does not support '[linename1] 100px [linename2 linename3]' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
-FAIL 'grid-template-rows' does not support '200px repeat(auto-fill, 100px) 300px' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSUnitValue]"
+PASS 'grid-template-rows' does not support '[linename1] 100px [linename2 linename3]'
+PASS 'grid-template-rows' does not support '200px repeat(auto-fill, 100px) 300px'
 

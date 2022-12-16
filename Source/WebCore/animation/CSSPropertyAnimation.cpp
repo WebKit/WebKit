@@ -3294,6 +3294,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyMarginRight, &RenderStyle::marginRight, &RenderStyle::setMarginRight, { LengthPropertyWrapper::Flags::IsLengthPercentage }),
         new LengthPropertyWrapper(CSSPropertyMarginTop, &RenderStyle::marginTop, &RenderStyle::setMarginTop, { LengthPropertyWrapper::Flags::IsLengthPercentage }),
         new LengthPropertyWrapper(CSSPropertyMarginBottom, &RenderStyle::marginBottom, &RenderStyle::setMarginBottom, { LengthPropertyWrapper::Flags::IsLengthPercentage }),
+        new DiscretePropertyWrapper<OptionSet<MarginTrimType>>(CSSPropertyMarginTrim, &RenderStyle::marginTrim, &RenderStyle::setMarginTrim),
         new LengthPropertyWrapper(CSSPropertyPaddingLeft, &RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new LengthPropertyWrapper(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new LengthPropertyWrapper(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
@@ -3913,20 +3914,40 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
     }
 }
 
-static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(const CSSCustomPropertyValue::SyntaxValue& from, const CSSCustomPropertyValue::SyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
+static CSSCustomPropertyValue::NumericSyntaxValue blendFunc(const CSSCustomPropertyValue::NumericSyntaxValue& from, const CSSCustomPropertyValue::NumericSyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
+{
+    ASSERT(from.unitType == to.unitType);
+    return { blendFunc(from.value, to.value, blendingContext), from.unitType };
+}
+
+static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue::SyntaxValue& from, const CSSCustomPropertyValue::SyntaxValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<Length>(from) && std::holds_alternative<Length>(to))
         return blendFunc(std::get<Length>(from), std::get<Length>(to), blendingContext);
 
+    if (std::holds_alternative<StyleColor>(from) && std::holds_alternative<StyleColor>(to)) {
+        auto& fromStyleColor = std::get<StyleColor>(from);
+        auto& toStyleColor = std::get<StyleColor>(to);
+        if (!RenderStyle::isCurrentColor(fromStyleColor) || !RenderStyle::isCurrentColor(toStyleColor))
+            return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), blendingContext);
+    }
+
+    if (std::holds_alternative<CSSCustomPropertyValue::NumericSyntaxValue>(from) && std::holds_alternative<CSSCustomPropertyValue::NumericSyntaxValue>(to)) {
+        auto& fromNumeric = std::get<CSSCustomPropertyValue::NumericSyntaxValue>(from);
+        auto& toNumeric = std::get<CSSCustomPropertyValue::NumericSyntaxValue>(to);
+        if (fromNumeric.unitType == toNumeric.unitType)
+            return blendFunc(fromNumeric, toNumeric, blendingContext);
+    }
+
     return std::nullopt;
 }
 
-static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
+static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from.value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to.value())) {
         auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from.value());
         auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to.value());
-        if (auto blendedSyntaxValue = blendSyntaxValues(fromSyntaxValue, toSyntaxValue, blendingContext))
+        if (auto blendedSyntaxValue = blendSyntaxValues(fromStyle, toStyle, fromSyntaxValue, toSyntaxValue, blendingContext))
             return CSSCustomPropertyValue::createForSyntaxValue(from.name(), WTFMove(*blendedSyntaxValue));
     }
 
@@ -3960,13 +3981,13 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
     {
         auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
-            destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
+            destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
     }
 
     {
         auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.inheritedCustomProperties().get(customProperty), to.inheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
-            destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(*fromValue, *toValue, blendingContext));
+            destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
     }
 }
 
@@ -3976,8 +3997,7 @@ void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client
         [&] (CSSPropertyID propertyId) {
             blendStandardProperty(client, propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }, [&] (AtomString customProperty) {
-            // FIXME: we don't deal with compositeOperation or iterationCompositeOpertion for custom properties yet.
-            blendCustomProperty(client, customProperty, destination, from, to, progress, CompositeOperation::Replace, IterationCompositeOperation::Replace, 0);
+            blendCustomProperty(client, customProperty, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }
     );
 }
@@ -3987,16 +4007,46 @@ bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)
     return property == CSSPropertyCustom || CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
 }
 
-bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(CSSPropertyID property)
+bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(Property property)
 {
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
-    return wrapper ? wrapper->isAdditiveOrCumulative() : false;
+    return WTF::switchOn(property,
+        [] (CSSPropertyID propertyId) {
+            if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
+                return wrapper->isAdditiveOrCumulative();
+            return false;
+        }, [] (AtomString) { return true; }
+    );
 }
 
-bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(CSSPropertyID property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient& client, Property property, const RenderStyle& a, const RenderStyle& b)
 {
-    auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
-    return wrapper && wrapper->requiresBlendingForAccumulativeIteration(a, b);
+    return WTF::switchOn(property,
+        [&] (CSSPropertyID propertyId) {
+            if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
+                return wrapper->requiresBlendingForAccumulativeIteration(a, b);
+            return false;
+        }, [&] (AtomString customProperty) {
+            auto [from, to] = customPropertyValuesForBlending(client, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            if (!from || !to)
+                return false;
+
+            if (!std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from->value()) || !std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to->value()))
+                return false;
+
+            auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from->value());
+            auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to->value());
+
+            // FIXME: we need to also ensure we blend for iterationComposite for <transform-list>, <filter-value-list> and <shadow>.
+            return WTF::switchOn(fromSyntaxValue, [toSyntaxValue](const Length& fromLength) {
+                ASSERT(std::holds_alternative<Length>(toSyntaxValue));
+                return lengthsRequireBlendingForAccumulativeIteration(fromLength, std::get<Length>(toSyntaxValue) );
+            }, [] (const StyleColor&) {
+                return true;
+            }, [] (auto&) {
+                return false;
+            });
+        }
+    );
 }
 
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID property)

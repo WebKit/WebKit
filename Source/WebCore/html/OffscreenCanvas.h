@@ -79,9 +79,9 @@ class DetachedOffscreenCanvas {
     friend class OffscreenCanvas;
 
 public:
-    DetachedOffscreenCanvas(RefPtr<ImageBuffer>&&, const IntSize&, bool originClean);
+    DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer>, const IntSize&, bool originClean);
 
-    RefPtr<ImageBuffer> takeImageBuffer();
+    RefPtr<ImageBuffer> takeImageBuffer(ScriptExecutionContext&);
     const IntSize& size() const { return m_size; }
     bool originClean() const { return m_originClean; }
     size_t memoryCost() const
@@ -94,7 +94,7 @@ public:
     WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> takePlaceholderCanvas();
 
 private:
-    RefPtr<ImageBuffer> m_buffer;
+    std::unique_ptr<SerializedImageBuffer> m_buffer;
     IntSize m_size;
     bool m_originClean;
     WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_placeholderCanvas;
@@ -178,7 +178,7 @@ private:
 #endif
 
     void createImageBuffer() const final;
-    RefPtr<ImageBuffer> takeImageBufferForDifferentThread() const;
+    std::unique_ptr<SerializedImageBuffer> takeImageBuffer() const;
 
     void reset();
 
@@ -206,7 +206,7 @@ private:
 
         WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> canvas;
         RefPtr<ImageBufferPipe::Source> bufferPipeSource;
-        RefPtr<ImageBuffer> pendingCommitBuffer;
+        std::unique_ptr<SerializedImageBuffer> pendingCommitBuffer;
         mutable Lock bufferLock;
     };
 

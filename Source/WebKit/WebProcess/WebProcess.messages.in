@@ -165,9 +165,9 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SendResourceLoadStatisticsDataImmediately() -> ()
 #endif
 
-    GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetV2Handle)
+    GrantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle> assetServicesHandles)
     RevokeAccessToAssetServices()
-    SwitchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle fontMachExtensionHandle)
+    SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles)
 
 #if PLATFORM(COCOA)
     DisableURLSchemeCheckInDataDetectors()
@@ -209,6 +209,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(MAC)
-    OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle, WebKit::SandboxExtension::Handle machBootstrapHandle)
 #endif
 }

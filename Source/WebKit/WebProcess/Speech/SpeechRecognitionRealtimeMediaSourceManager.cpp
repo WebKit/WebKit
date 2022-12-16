@@ -151,8 +151,14 @@ SpeechRecognitionRealtimeMediaSourceManager::~SpeechRecognitionRealtimeMediaSour
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
-void SpeechRecognitionRealtimeMediaSourceManager::grantSandboxExtensions(SandboxExtension::Handle&& sandboxHandleForTCCD, SandboxExtension::Handle&& sandboxHandleForMicrophone)
+void SpeechRecognitionRealtimeMediaSourceManager::grantSandboxExtensions(SandboxExtension::Handle&& machBootstrapHandle,  SandboxExtension::Handle&& sandboxHandleForTCCD, SandboxExtension::Handle&& sandboxHandleForMicrophone)
 {
+    m_machBootstrapExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
+    if (!m_machBootstrapExtension)
+        RELEASE_LOG_ERROR(Media, "Failed to create Mach bootstrap sandbox extension");
+    else
+        m_machBootstrapExtension->consume();
+
     m_sandboxExtensionForTCCD = SandboxExtension::create(WTFMove(sandboxHandleForTCCD));
     if (!m_sandboxExtensionForTCCD)
         RELEASE_LOG_ERROR(Media, "Failed to create sandbox extension for tccd");
@@ -176,6 +182,11 @@ void SpeechRecognitionRealtimeMediaSourceManager::revokeSandboxExtensions()
     if (m_sandboxExtensionForMicrophone) {
         m_sandboxExtensionForMicrophone->revoke();
         m_sandboxExtensionForMicrophone = nullptr;
+    }
+
+    if (m_machBootstrapExtension) {
+        m_machBootstrapExtension->revoke();
+        m_machBootstrapExtension = nullptr;
     }
 }
 

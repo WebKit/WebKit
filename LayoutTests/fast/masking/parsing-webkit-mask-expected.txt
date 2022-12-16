@@ -12,18 +12,18 @@ PASS innerStyle("-webkit-mask", "top left") is "left top"
 PASS innerStyle("-webkit-mask", "bottom right") is "right bottom"
 PASS innerStyle("-webkit-mask", "left bottom") is "left bottom"
 PASS innerStyle("-webkit-mask", "right top") is "right top"
-PASS innerStyle("-webkit-mask", "center") is "center center"
-PASS innerStyle("-webkit-mask", "none top") is "none center top"
-PASS innerStyle("-webkit-mask", "none bottom") is "none center bottom"
-PASS innerStyle("-webkit-mask", "none right") is "none right center"
-PASS innerStyle("-webkit-mask", "none top right") is "none right top"
-PASS innerStyle("-webkit-mask", "none bottom left") is "none left bottom"
-PASS innerStyle("-webkit-mask", "none right") is "none right center"
-PASS innerStyle("-webkit-mask", "none left") is "none left center"
+FAIL innerStyle("-webkit-mask", "center") should be center. Was center center.
+FAIL innerStyle("-webkit-mask", "none top") should be top. Was none center top.
+FAIL innerStyle("-webkit-mask", "none bottom") should be bottom. Was none center bottom.
+FAIL innerStyle("-webkit-mask", "none right") should be right. Was none right center.
+FAIL innerStyle("-webkit-mask", "none top right") should be right top. Was none right top.
+FAIL innerStyle("-webkit-mask", "none bottom left") should be left bottom. Was none left bottom.
+FAIL innerStyle("-webkit-mask", "none right") should be right. Was none right center.
+FAIL innerStyle("-webkit-mask", "none left") should be left. Was none left center.
 PASS innerStyle("-webkit-mask", "center 50%") is "center 50%"
 PASS innerStyle("-webkit-mask", "50px 50%") is "50px 50%"
-PASS innerStyle("-webkit-mask", "center left") is "left center"
-PASS innerStyle("-webkit-mask", "top center") is "center top"
+FAIL innerStyle("-webkit-mask", "center left") should be left. Was left center.
+FAIL innerStyle("-webkit-mask", "top center") should be top. Was center top.
 PASS innerStyle("-webkit-mask", "left 10px top 15px") is "left 10px top 15px"
 PASS innerStyle("-webkit-mask", "left 10% top 30%") is "left 10% top 30%"
 PASS innerStyle("-webkit-mask", "right top 15px") is "right top 15px"
@@ -31,7 +31,7 @@ PASS innerStyle("-webkit-mask", "left 10px center") is "left 10px center"
 PASS innerStyle("-webkit-mask", "center top 20px") is "center top 20px"
 PASS innerStyle("-webkit-mask", "center left 30px") is "left 30px center"
 PASS innerStyle("-webkit-mask", "left 20% top") is "left 20% top"
-PASS innerStyle("-webkit-mask", "center center") is "center center"
+FAIL innerStyle("-webkit-mask", "center center") should be center. Was center center.
 PASS innerStyle("-webkit-mask-position", "left 10px top 15px") is "left 10px top 15px"
 PASS innerStyle("-webkit-mask-position", "left 10% top 30%") is "left 10% top 30%"
 PASS innerStyle("-webkit-mask-position", "right top 15px") is "right top 15px"
@@ -41,9 +41,9 @@ PASS innerStyle("-webkit-mask-position", "center left 30px") is "left 30px cente
 PASS innerStyle("-webkit-mask-position", "left 20% top") is "left 20% top"
 PASS innerStyle("-webkit-mask-position-x", "left") is "left"
 PASS innerStyle("-webkit-mask-position-y", "top") is "top"
-PASS innerStyle("-webkit-mask", "none alpha") is "none alpha"
-PASS innerStyle("-webkit-mask", "none luminance, none alpha") is "none luminance, none alpha"
-PASS innerStyle("-webkit-mask", "none auto, none, none luminance") is "none auto, none, none luminance"
+FAIL innerStyle("-webkit-mask", "none alpha") should be alpha. Was none alpha.
+FAIL innerStyle("-webkit-mask", "none luminance, none alpha") should be luminance, alpha. Was none luminance, none alpha.
+FAIL innerStyle("-webkit-mask", "none auto, none, none luminance") should be none, none, luminance. Was none auto, none, none luminance.
 PASS innerStyle("-webkit-mask-source-type", "alpha") is "alpha"
 PASS innerStyle("-webkit-mask-source-type", "luminance") is "luminance"
 PASS innerStyle("-webkit-mask-source-type", "auto") is "auto"
@@ -60,37 +60,37 @@ PASS innerStyle("-webkit-mask", "repeat space") is "repeat space"
 PASS innerStyle("-webkit-mask", "repeat round") is "repeat round"
 PASS innerStyle("-webkit-mask", "repeat no-repeat") is "repeat-x"
 PASS innerStyle("-webkit-mask", "repeat space, repeat-x") is "repeat space, repeat-x"
-PASS innerStyle("-webkit-mask", "repeat none") is "none repeat"
-PASS innerStyle("-webkit-mask", "none repeat") is "none repeat"
-PASS innerStyle("-webkit-mask", "padding-box") is "padding-box padding-box"
-PASS innerStyle("-webkit-mask", "border-box") is "border-box border-box"
-PASS innerStyle("-webkit-mask", "content-box") is "content-box content-box"
-PASS innerStyle("-webkit-mask", "padding-box none") is "none padding-box padding-box"
-PASS innerStyle("-webkit-mask", "none padding-box") is "none padding-box padding-box"
+FAIL innerStyle("-webkit-mask", "repeat none") should be repeat. Was none repeat.
+FAIL innerStyle("-webkit-mask", "none repeat") should be repeat. Was none repeat.
+FAIL innerStyle("-webkit-mask", "padding-box") should be padding-box. Was padding-box padding-box.
+FAIL innerStyle("-webkit-mask", "border-box") should be none. Was border-box border-box.
+FAIL innerStyle("-webkit-mask", "content-box") should be content-box. Was content-box content-box.
+FAIL innerStyle("-webkit-mask", "padding-box none") should be padding-box. Was none padding-box padding-box.
+FAIL innerStyle("-webkit-mask", "none padding-box") should be padding-box. Was none padding-box padding-box.
 PASS innerStyle("-webkit-mask", "padding-box content-box") is "padding-box content-box"
-PASS innerStyle("-webkit-mask", "content-box content-box") is "content-box content-box"
+FAIL innerStyle("-webkit-mask", "content-box content-box") should be content-box. Was content-box content-box.
 PASS innerStyle("-webkit-mask", "padding-box border-box") is "padding-box border-box"
-PASS innerStyle("-webkit-mask", "padding-box border-box none") is "none padding-box border-box"
-PASS innerStyle("-webkit-mask", "none padding-box border-box") is "none padding-box border-box"
-PASS innerStyle("-webkit-mask", "none left top / auto") is "none left top / auto"
-PASS innerStyle("-webkit-mask", "none left top / auto auto") is "none left top / auto"
-PASS innerStyle("-webkit-mask", "none left top / 100%") is "none left top / 100%"
-PASS innerStyle("-webkit-mask", "none left top / 100% 100%") is "none left top / 100% 100%"
-PASS innerStyle("-webkit-mask", "none left top / 0%") is "none left top / 0%"
-PASS innerStyle("-webkit-mask", "none left top / auto 0%") is "none left top / auto 0%"
-PASS innerStyle("-webkit-mask", "none left top / cover") is "none left top / cover"
-PASS innerStyle("-webkit-mask", "none left top / contain") is "none left top / contain"
-PASS innerStyle("-webkit-mask", "none left 20px top 10px / contain") is "none left 20px top 10px / contain"
-PASS innerStyle("-webkit-mask", "none left 20px top / contain") is "none left 20px top / contain"
-PASS innerStyle("-webkit-mask", "none padding-box content-box") is "none padding-box content-box"
-PASS innerStyle("-webkit-mask", "none padding-box") is "none padding-box padding-box"
-PASS innerStyle("-webkit-mask", "none top") is "none center top"
-PASS innerStyle("-webkit-mask", "none center right 20px") is "none right 20px center"
-PASS innerStyle("-webkit-mask", "none border-box left top") is "none left top border-box border-box"
-PASS innerStyle("-webkit-mask", "none border-box left top 20px") is "none left top 20px border-box border-box"
-PASS innerStyle("-webkit-mask", "none border-box content-box left top repeat-x") is "none left top repeat-x border-box content-box"
-PASS innerStyle("-webkit-mask", "none border-box content-box left top / auto repeat-x") is "none left top / auto repeat-x border-box content-box"
-PASS innerStyle("-webkit-mask", "none border-box content-box right 0px center / auto repeat-x") is "none right 0px center / auto repeat-x border-box content-box"
+FAIL innerStyle("-webkit-mask", "padding-box border-box none") should be padding-box border-box. Was none padding-box border-box.
+FAIL innerStyle("-webkit-mask", "none padding-box border-box") should be padding-box border-box. Was none padding-box border-box.
+FAIL innerStyle("-webkit-mask", "none left top / auto") should be left top. Was none left top / auto.
+FAIL innerStyle("-webkit-mask", "none left top / auto auto") should be left top. Was none left top / auto.
+FAIL innerStyle("-webkit-mask", "none left top / 100%") should be left top / 100%. Was none left top / 100%.
+FAIL innerStyle("-webkit-mask", "none left top / 100% 100%") should be left top / 100% 100%. Was none left top / 100% 100%.
+FAIL innerStyle("-webkit-mask", "none left top / 0%") should be left top / 0%. Was none left top / 0%.
+FAIL innerStyle("-webkit-mask", "none left top / auto 0%") should be left top / auto 0%. Was none left top / auto 0%.
+FAIL innerStyle("-webkit-mask", "none left top / cover") should be left top / cover. Was none left top / cover.
+FAIL innerStyle("-webkit-mask", "none left top / contain") should be left top / contain. Was none left top / contain.
+FAIL innerStyle("-webkit-mask", "none left 20px top 10px / contain") should be left 20px top 10px / contain. Was none left 20px top 10px / contain.
+FAIL innerStyle("-webkit-mask", "none left 20px top / contain") should be left 20px top / contain. Was none left 20px top / contain.
+FAIL innerStyle("-webkit-mask", "none padding-box content-box") should be padding-box content-box. Was none padding-box content-box.
+FAIL innerStyle("-webkit-mask", "none padding-box") should be padding-box. Was none padding-box padding-box.
+FAIL innerStyle("-webkit-mask", "none top") should be top. Was none center top.
+FAIL innerStyle("-webkit-mask", "none center right 20px") should be right 20px center. Was none right 20px center.
+FAIL innerStyle("-webkit-mask", "none border-box left top") should be left top. Was none left top border-box border-box.
+FAIL innerStyle("-webkit-mask", "none border-box left top 20px") should be left top 20px. Was none left top 20px border-box border-box.
+FAIL innerStyle("-webkit-mask", "none border-box content-box left top repeat-x") should be left top repeat-x border-box content-box. Was none left top repeat-x border-box content-box.
+FAIL innerStyle("-webkit-mask", "none border-box content-box left top repeat-x") should be left top repeat-x border-box content-box. Was none left top repeat-x border-box content-box.
+FAIL innerStyle("-webkit-mask", "none border-box content-box right 0px center repeat-x") should be right 0px center repeat-x border-box content-box. Was none right 0px center repeat-x border-box content-box.
 PASS innerStyle("-webkit-mask", "top none left") is ""
 PASS innerStyle("-webkit-mask", "right none bottom") is ""
 PASS innerStyle("-webkit-mask", "right right") is ""

@@ -394,6 +394,18 @@ CSSLeadingTrimEnabled:
     WebCore:
       default: false
 
+CSSMarginTrimEnabled:
+  type: bool
+  humanReadableName: "CSS margin-trim property"
+  humanReadableDescription: "Enable margin-trim CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSMotionPathEnabled:
   type: bool
   humanReadableName: "CSS Motion Path"

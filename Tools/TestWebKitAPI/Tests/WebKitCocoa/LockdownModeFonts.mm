@@ -47,7 +47,7 @@ TEST(LockdownMode, SVGFonts)
     EXPECT_EQ(target2Result, referenceResult);
 }
 
-TEST(LockdownMode, FontLoadingAPI)
+TEST(LockdownMode, NotAllowedFontLoadingAPI)
 {
     @autoreleasepool {
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
@@ -84,4 +84,80 @@ TEST(LockdownMode, FontLoadingAPI)
     }
 }
 
+TEST(LockdownMode, AllowedFontLoadingAPI)
+{
+    @autoreleasepool {
+        auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        NSURL *url = [[NSBundle mainBundle] URLForResource:@"ImmediateFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        [webView loadRequest:[NSURLRequest requestWithURL:url]];
+        [webView _test_waitForDidFinishNavigation];
+
+        NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+        NSData *fontData = [NSData dataWithContentsOfURL:fontURL];
+        NSError *error = nil;
+        NSMutableArray<NSNumber *> *array = [NSMutableArray arrayWithCapacity:fontData.length];
+        const auto* fontBytes = static_cast<const uint8_t*>(fontData.bytes);
+        for (NSUInteger i = 0; i < fontData.length; ++i)
+            [array addObject:[NSNumber numberWithUnsignedChar:fontBytes[i]]];
+        NSData *json = [NSJSONSerialization dataWithJSONObject:array options:0 error:&error];
+        auto encoded = adoptNS([[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]);
+
+        [webView objectByEvaluatingJavaScript:@""
+            "let target = document.getElementById('target');"
+            "let reference = document.getElementById('reference');"];
+        auto beforeTargetResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"target.offsetWidth"]).intValue;
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@""
+            "let fontData = new Uint8Array(%@);"
+            "let font = new FontFace('WebFont', fontData);"
+            "document.fonts.add(font);"
+            "target.style.setProperty('font-family', 'WebFont, Helvetica');", encoded.get()]];
+        auto targetResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"target.offsetWidth"]).intValue;
+        auto referenceResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"reference.offsetWidth"]).intValue;
+
+        EXPECT_NE(beforeTargetResult, targetResult);
+        EXPECT_NE(targetResult, referenceResult);
+    }
+}
+
+TEST(LockdownMode, AllowedFont)
+{
+    @autoreleasepool {
+        auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        NSURL *url = [[NSBundle mainBundle] URLForResource:@"LockdownModeFonts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        [webView loadRequest:[NSURLRequest requestWithURL:url]];
+        [webView _test_waitForDidFinishNavigation];
+
+        [webView objectByEvaluatingJavaScript:@""
+            "let target = document.getElementById('target');"
+            "let reference = document.getElementById('reference');"];
+        auto targetResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"target.offsetWidth"]).intValue;
+        auto referenceResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"reference.offsetWidth"]).intValue;
+
+        EXPECT_NE(targetResult, referenceResult);
+    }
+}
+
+TEST(LockdownMode, NotAllowedFont)
+{
+    @autoreleasepool {
+        auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        NSURL *url = [[NSBundle mainBundle] URLForResource:@"LockdownModeFonts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        [webView loadRequest:[NSURLRequest requestWithURL:url]];
+        [webView _test_waitForDidFinishNavigation];
+
+        [webView objectByEvaluatingJavaScript:@""
+            "let target = document.getElementById('target-not-allowed');"
+            "let reference = document.getElementById('reference');"];
+        auto targetResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"target.offsetWidth"]).intValue;
+        auto referenceResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"reference.offsetWidth"]).intValue;
+
+        EXPECT_EQ(targetResult, referenceResult);
+    }
+}
 }

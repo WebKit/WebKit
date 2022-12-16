@@ -38,6 +38,7 @@
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionMatchPattern.h"
 #include "WebPageProxyIdentifier.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
@@ -49,6 +50,7 @@
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMapTable;
 OBJC_CLASS NSMutableDictionary;
@@ -96,6 +98,8 @@ public:
     using InjectedContentVector = WebExtension::InjectedContentVector;
 
     using EventListenterTypeCountedSet = HashCountedSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
+    using EventListenerTypeSet = HashSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
+    using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
     enum class EqualityOnly : bool { No, Yes };
 
@@ -245,10 +249,15 @@ private:
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebView();
     void unloadBackgroundWebView();
+    void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
+    void queueStartupAndInstallEventsForExtensionIfNecessary();
+    void scheduleBackgroundContentToUnload();
 
     uint64_t loadBackgroundPageListenersVersionNumberFromStorage();
     void loadBackgroundPageListenersFromStorage();
     void saveBackgroundPageListenersToStorage();
+    void fireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
+    void queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()>&&);
 
     void performTasksAfterBackgroundContentLoads();
 
@@ -312,8 +321,11 @@ private:
     bool m_testingMode { true };
 #endif
 
+    VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenterTypeCountedSet m_backgroundPageListeners;
     bool m_shouldFireStartupEvent { false };
+
+    RetainPtr<NSDate> m_lastBackgroundContentLoadDate;
 
     RetainPtr<WKWebView> m_backgroundWebView;
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;

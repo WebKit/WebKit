@@ -2,8 +2,8 @@
 PASS target1
 PASS target2
 PASS target3
-FAIL target4 assert_equals: expected "margin: var(--prop)  !important;" but got "margin: var(--prop) !important;"
-FAIL target5 assert_equals: expected "background: var(--prop)  !important;" but got "background: var(--prop) !important;"
+PASS target4
+PASS target5
 FAIL target6 assert_equals: expected "background: green;" but got "background-color: green;"
 PASS target7
 PASS target8

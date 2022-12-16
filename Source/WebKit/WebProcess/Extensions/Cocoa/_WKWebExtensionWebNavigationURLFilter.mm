@@ -27,10 +27,10 @@
 #error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #import "config.h"
 #import "_WKWebExtensionWebNavigationURLFilter.h"
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "_WKWebExtensionUtilities.h"
 #import <WebKit/WebNSURLExtras.h>
@@ -398,6 +398,22 @@ static NSString *portsKey = @"ports";
             return YES;
     }
 
+    return NO;
+}
+
+@end
+
+#else
+
+@implementation _WKWebExtensionWebNavigationURLFilter
+
+- (nullable instancetype)initWithDictionary:(NSDictionary<NSString *, id> *)dictionary outErrorMessage:(NSString **)outErrorMessage
+{
+    return nil;
+}
+
+- (BOOL)matchesURL:(NSURL *)url
+{
     return NO;
 }
 

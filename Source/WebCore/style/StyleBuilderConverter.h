@@ -181,6 +181,8 @@ public:
 
     static OffsetRotation convertOffsetRotate(BuilderState&, const CSSValue&);
     static Vector<AtomString> convertContainerName(BuilderState&, const CSSValue&);
+
+    static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
     
 private:
     friend class BuilderCustom;
@@ -1789,6 +1791,34 @@ inline Vector<AtomString> BuilderConverter::convertContainerName(BuilderState&, 
     return WTF::map(downcast<CSSValueList>(value), [](auto& item) {
         return AtomString { downcast<CSSPrimitiveValue>(item.get()).stringValue() };
     });
+}
+
+inline OptionSet<MarginTrimType> BuilderConverter::convertMarginTrim(BuilderState&, const CSSValue& value)
+{
+    // See if value is "block" or "inline" before trying to parse a list
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueBlock)
+            return { MarginTrimType::BlockStart, MarginTrimType::BlockEnd };
+        if (primitiveValue->valueID() == CSSValueInline)
+            return { MarginTrimType::InlineStart, MarginTrimType::InlineEnd };
+    }
+    auto list = dynamicDowncast<CSSValueList>(value);
+    if (!list || !list->size())
+        return RenderStyle::initialMarginTrim();
+    OptionSet<MarginTrimType> marginTrim;
+    ASSERT(list->size() <= 4);
+    for (auto item : *list) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+        if (primitiveValue.valueID() == CSSValueBlockStart)
+            marginTrim.add(MarginTrimType::BlockStart);
+        if (primitiveValue.valueID() == CSSValueBlockEnd)
+            marginTrim.add(MarginTrimType::BlockEnd);
+        if (primitiveValue.valueID() == CSSValueInlineStart)
+            marginTrim.add(MarginTrimType::InlineStart);
+        if (primitiveValue.valueID() == CSSValueInlineEnd)
+            marginTrim.add(MarginTrimType::InlineEnd);
+    }
+    return marginTrim;
 }
 
 } // namespace Style

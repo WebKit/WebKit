@@ -850,6 +850,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
         return;
     }
 
+    if (webPage->shouldSkipDecidePolicyForResponse(response, request)) {
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: continuing because injected bundle says so");
+        function(PolicyAction::Use, identifier);
+        return;
+    }
+
     bool canShowResponse = webPage->canShowResponse(response);
 
     auto* coreFrame = m_frame->coreFrame();

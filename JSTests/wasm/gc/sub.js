@@ -416,6 +416,62 @@ function testSubDeclaration() {
       "imported global m:g must be a same type"
     );
   }
+
+  // Test subtyping between references where the parent is recursive and the subtyping depth is greater than one.
+  instantiate(`
+    (module
+      (rec (type (func (result (ref 0)))))
+      (rec (type (sub 0 (func (result (ref 1))))))
+      (type (sub 1 (func (result (ref 1)))))
+
+      (func (result (ref null 0))
+        (ref.null 2))
+    )
+  `);
+
+  // This is an excerpt from the spec tests, which tests interactions between subtyping and recursion.
+  instantiate(`
+    (module
+      (rec
+        (type $t1 (func (param i32 (ref $t3))))
+        (type $t2 (sub $t1 (func (param i32 (ref $t2)))))
+        (type $t3 (sub $t2 (func (param i32 (ref $t1)))))
+      )
+
+      (func $f1 (param $r (ref $t1))
+        (call $f1 (local.get $r)))
+    )
+  `);
+
+  // Ensure a singleton recursive sub clause triggers structural subtype checking.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (struct (field i32)))
+        (type (sub 0 (struct (field (ref 1)))))
+      )
+    `),
+    WebAssembly.CompileError,
+    "structural type is not a subtype"
+  );
+
+  // Ensure recursion group identity matters for subtyping.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (rec (type $f1 (func))
+             (type (struct))
+             (type $s1 (sub $f1 (func))))
+        (rec (type $f2 (func))
+             (type $s2 (sub $f2 (func))))
+
+        (func (param (ref null $f1)))
+        (func (call 0 (ref.null $s2)))
+      )
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got ((() -> [], ((<current-rec-group>.0)() -> [])).1), expected ((() -> [], (), ((<current-rec-group>.0)() -> [])).0), in function at index 1"
+  );
 }
 
 testSubDeclaration();

@@ -123,13 +123,11 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
 
 Vector<std::optional<ImageBitmapBacking>> ImageBitmap::detachBitmaps(Vector<RefPtr<ImageBitmap>>&& bitmaps)
 {
-    return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) -> std::optional<ImageBitmapBacking> {
+    return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) {
         std::optional<ImageBitmapBacking> backing = bitmap->takeImageBitmapBacking();
-        if (!backing)
-            return std::nullopt;
-        if (auto copyBuffer = backing->takeImageBufferForDifferentThread())
-            return ImageBitmapBacking(WTFMove(copyBuffer), backing->serializationState());
-        return std::nullopt;
+        if (backing)
+            backing->disconnect();
+        return backing;
     });
 }
 

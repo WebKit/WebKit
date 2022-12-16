@@ -290,17 +290,16 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
 
         ++m_hasPendingCapture;
 
-        SandboxExtension::Handle handle;
+        Vector<SandboxExtension::Handle> handles;
 #if PLATFORM(COCOA)
         if (!m_hasCreatedSandboxExtensionForTCCD && doesPageNeedTCCD(m_page)) {
-            if (auto createdHandle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_page.process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
-                handle = WTFMove(*createdHandle);
+            handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.tccd"_s }, m_page.process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
             m_hasCreatedSandboxExtensionForTCCD = true;
         }
 #endif
 
         auto& request = strongRequest.get();
-        m_page.sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalts(), handle }, [this, weakThis = WTFMove(weakThis)] {
+        m_page.sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalts(), handles }, [this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;
             if (!--m_hasPendingCapture)

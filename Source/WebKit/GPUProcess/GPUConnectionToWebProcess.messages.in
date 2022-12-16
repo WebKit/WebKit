@@ -25,6 +25,7 @@
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(struct WebKit::RemoteRenderingBackendCreationParameters creationParameters, IPC::StreamServerConnection::Handle connectionHandle) AllowedWhenWaitingForSyncReply
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier) AllowedWhenWaitingForSyncReply
+    void ReleaseSerializedImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference reference)
 #if ENABLE(WEBGL)
     void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply
     void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier) AllowedWhenWaitingForSyncReply

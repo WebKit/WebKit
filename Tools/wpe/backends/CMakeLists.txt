@@ -42,4 +42,3 @@ WEBKIT_COPY_FILES(WPEToolingBackends_CopyHeaders
 )
 
 WEBKIT_FRAMEWORK(WPEToolingBackends)
-WEBKIT_FRAMEWORK_TARGET(WPEToolingBackends)

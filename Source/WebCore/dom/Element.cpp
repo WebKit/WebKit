@@ -560,18 +560,37 @@ Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation 
 {
     switch (type) {
     case CloningOperation::OnlySelf:
-    case CloningOperation::SelfWithTemplateContent:
         return cloneElementWithoutChildren(targetDocument);
+    case CloningOperation::SelfWithTemplateContent: {
+        Ref clone = cloneElementWithoutChildren(targetDocument);
+        ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
+        cloneShadowTreeIfPossible(clone);
+        return clone;
+    }
     case CloningOperation::Everything:
         break;
     }
     return cloneElementWithChildren(targetDocument);
 }
 
+void Element::cloneShadowTreeIfPossible(Element& newHost)
+{
+    RefPtr oldShadowRoot = this->shadowRoot();
+    if (!oldShadowRoot || !oldShadowRoot->isCloneable())
+        return;
+
+    Ref clone = oldShadowRoot->cloneNodeInternal(newHost.document(), Node::CloningOperation::SelfWithTemplateContent);
+    RELEASE_ASSERT(is<ShadowRoot>(clone));
+    auto& clonedShadowRoot = downcast<ShadowRoot>(clone.get());
+    newHost.addShadowRoot(clonedShadowRoot);
+    oldShadowRoot->cloneChildNodes(clonedShadowRoot);
+}
+
 Ref<Element> Element::cloneElementWithChildren(Document& targetDocument)
 {
     Ref<Element> clone = cloneElementWithoutChildren(targetDocument);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
+    cloneShadowTreeIfPossible(clone);
     cloneChildNodes(clone);
     return clone;
 }
@@ -2741,7 +2760,10 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
     }
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
-    auto shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment, init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No, isPrecustomizedOrDefinedCustomElement() ? ShadowRoot::AvailableToElementInternals::Yes : ShadowRoot::AvailableToElementInternals::No);
+    auto shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment,
+        init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No,
+        init.cloneable ? ShadowRoot::Cloneable::Yes : ShadowRoot::Cloneable::No,
+        isPrecustomizedOrDefinedCustomElement() ? ShadowRoot::AvailableToElementInternals::Yes : ShadowRoot::AvailableToElementInternals::No);
     auto& result = shadow.get();
     addShadowRoot(WTFMove(shadow));
     return result;
@@ -2749,7 +2771,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 
 ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, bool delegatesFocus)
 {
-    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus });
+    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus, /* cloneable */ true });
     if (exceptionOrShadowRoot.hasException())
         return exceptionOrShadowRoot.releaseException();
     auto& shadowRoot = exceptionOrShadowRoot.releaseReturnValue();

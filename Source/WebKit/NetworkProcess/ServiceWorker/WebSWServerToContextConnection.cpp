@@ -61,8 +61,10 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
         fetch->contextClosed();
 
     auto downloads = WTFMove(m_ongoingDownloads);
-    for (auto& download : downloads.values())
-        download->contextClosed();
+    for (auto& weakPtr : downloads.values()) {
+        if (auto download = weakPtr.get())
+            download->contextClosed();
+    }
 
     if (auto* server = this->server(); server && server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
         server->removeContextConnection(*this);

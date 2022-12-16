@@ -61,7 +61,7 @@ ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(CSSFunctionValue& cssFunctionValue)
         return Exception { TypeError, "Unexpected number of values."_s };
     }
 
-    auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0));
+    auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
     if (valueOrException.hasException())
         return valueOrException.releaseException();
     if (!is<CSSNumericValue>(valueOrException.returnValue()))

@@ -675,6 +675,17 @@ TextStream& operator<<(TextStream& ts, ListStyleType styleType)
     return ts << nameLiteral(toCSSValueID(styleType)).characters();
 }
 
+TextStream& operator<<(TextStream& ts, MarginTrimType marginTrimType)
+{
+    switch (marginTrimType) {
+    case MarginTrimType::BlockStart: ts << "block-start"; break;
+    case MarginTrimType::BlockEnd: ts << "block-end"; break;
+    case MarginTrimType::InlineStart: ts << "inline-start"; break;
+    case MarginTrimType::InlineEnd: ts << "inline-end"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, MarqueeBehavior marqueeBehavior)
 {
     switch (marqueeBehavior) {

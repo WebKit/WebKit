@@ -48,13 +48,14 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognit
     if (!captureDevice.isMockDevice()) {
         m_sourcesNeedingSandboxExtension.add(identifier);
         if (m_sourcesNeedingSandboxExtension.size() == 1) {
+            auto machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
             SandboxExtension::Handle handleForTCCD;
-            if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_connection->getAuditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+            if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_connection->getAuditToken()))
                 handleForTCCD = WTFMove(*handle);
             SandboxExtension::Handle handleForMicrophone;
             if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
                 handleForMicrophone = WTFMove(*handle);
-            send(Messages::SpeechRecognitionRealtimeMediaSourceManager::GrantSandboxExtensions(handleForTCCD, handleForMicrophone));
+            send(Messages::SpeechRecognitionRealtimeMediaSourceManager::GrantSandboxExtensions(machBootstrapHandle, handleForTCCD, handleForMicrophone));
         }
     }
 #endif

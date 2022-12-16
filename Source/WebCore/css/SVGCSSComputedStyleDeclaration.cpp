@@ -154,8 +154,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return CSSPrimitiveValue::createIdentifier(CSSValueSuper);
         case BaselineShift::Sub:
             return CSSPrimitiveValue::createIdentifier(CSSValueSub);
-        case BaselineShift::Length:
-            return svgStyle.baselineShiftValue().toCSSPrimitiveValue(m_element.get());
+        case BaselineShift::Length: {
+            auto computedValue = svgStyle.baselineShiftValue().toCSSPrimitiveValue(m_element.get());
+            if (computedValue->isLength() && computedValue->primitiveType() != CSSUnitType::CSS_PX)
+                return CSSPrimitiveValue::create(computedValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX);
+            return computedValue;
+        }
         }
         ASSERT_NOT_REACHED();
         return nullptr;

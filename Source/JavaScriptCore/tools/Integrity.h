@@ -99,8 +99,12 @@ ALWAYS_INLINE static bool isSanePointer(const void* pointer)
 #if CPU(ADDRESS64)
     uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
 #if OS(DARWIN)
-    constexpr uintptr_t oneAbove4G = (static_cast<uintptr_t>(1) << 32);
-    if (pointerAsInt < oneAbove4G)
+#if CPU(X86_64)
+    constexpr uintptr_t boundary = (static_cast<uintptr_t>(4) << 10); // 4KB
+#else
+    constexpr uintptr_t boundary = (static_cast<uintptr_t>(4) << 30); // 4GB
+#endif
+    if (pointerAsInt < boundary)
         return false;
 #endif
     uintptr_t canonicalPointerBits = pointerAsInt << (64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH));

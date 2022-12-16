@@ -288,7 +288,18 @@ public:
         RELEASE_ASSERT(Options::useWebAssemblySIMD());
         m_usesSIMD = true;
     }
-    bool usesSIMD() const { return m_usesSIMD; }
+    bool usesSIMD() const
+    {
+        if (!Options::useWebAssemblySIMD())
+            return false;
+        // The LLInt is responsible for discovering this.
+        // If we can't run using it, then we should be conservative.
+        if (!Options::useWasmLLInt())
+            return true;
+        if (Options::forceAllFunctionsToUseSIMD())
+            return true;
+        return m_usesSIMD;
+    }
 
 private:
     friend class BlockInsertionSet;

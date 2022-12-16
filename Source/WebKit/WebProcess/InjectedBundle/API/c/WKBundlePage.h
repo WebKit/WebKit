@@ -118,6 +118,8 @@ WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef page,
 
 WK_EXPORT WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef page);
 
+WK_EXPORT void WKBundlePageSetSkipDecidePolicyForResponseIfPossible(WKBundlePageRef page, bool skip);
+
 typedef void (*WKBundlePageTestNotificationCallback)(void* context);
 // Returns true  if the callback function will be called, else false.
 WK_EXPORT bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef, WKBundlePageTestNotificationCallback, bool expectWheelEndOrCancel, bool expectMomentumEnd, void* context);

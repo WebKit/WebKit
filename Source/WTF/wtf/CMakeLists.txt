@@ -293,6 +293,7 @@ set(WTF_PUBLIC_HEADERS
     ThreadMessage.h
     ThreadSafetyAnalysis.h
     ThreadSafeRefCounted.h
+    ThreadSafeWeakHashSet.h
     ThreadSafeWeakPtr.h
     ThreadSanitizerSupport.h
     ThreadSpecific.h
@@ -614,7 +615,6 @@ WEBKIT_COPY_FILES(WTF_CopyHeaders
 )
 
 WEBKIT_FRAMEWORK(WTF)
-WEBKIT_FRAMEWORK_TARGET(WTF)
 
 if (MSVC)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")

@@ -26,6 +26,10 @@
 #include "config.h"
 #include "ImageBitmapBacking.h"
 
+#include "Chrome.h"
+#include "WorkerClient.h"
+#include "WorkerGlobalScope.h"
+
 namespace WebCore {
 
 ImageBitmapBacking::ImageBitmapBacking(RefPtr<ImageBuffer>&& bitmapData, OptionSet<SerializationState> serializationState)
@@ -60,6 +64,32 @@ unsigned ImageBitmapBacking::height() const
 {
     // FIXME: Is this the right height?
     return m_bitmapData ? m_bitmapData->truncatedLogicalSize().height() : 0;
+}
+
+void ImageBitmapBacking::disconnect()
+{
+    // FIXME: Rather than storing both the ImageBuffer and the
+    // SerializedImageBuffer here, with only one valid at a time,
+    // we should have a separate object for the serialized state
+    if (m_bitmapData)
+        m_serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(m_bitmapData));
+    ASSERT(!m_bitmapData);
+}
+
+void ImageBitmapBacking::connect(ScriptExecutionContext& context)
+{
+    ASSERT(!m_bitmapData);
+    if (!m_serializedBitmap)
+        return;
+
+    if (is<WorkerGlobalScope>(context) && downcast<WorkerGlobalScope>(context).workerClient()) {
+        auto* client = downcast<WorkerGlobalScope>(context).workerClient();
+        m_bitmapData = client->sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
+    } else if (is<Document>(context)) {
+        ASSERT(downcast<Document>(context).page());
+        m_bitmapData = downcast<Document>(context).page()->chrome().sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
+    } else
+        m_bitmapData = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
 }
 
 } // namespace WebCore

@@ -36,6 +36,7 @@
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteResourceCache.h"
+#include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "ScopedRenderingResourcesRequest.h"
@@ -100,6 +101,8 @@ public:
 #endif
 
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
+
+    void releaseResource(WebCore::RenderingResourceIdentifier);
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void startListeningForIPC();
@@ -110,7 +113,8 @@ private:
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingResourceIdentifier);
-    void transferImageBuffer(RenderingBackendIdentifier, WebCore::RenderingResourceIdentifier, WebCore::RenderingResourceIdentifier, CompletionHandler<void(bool)>&&);
+    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferWriteReference&&);
+    void moveToImageBuffer(RemoteSerializedImageBufferWriteReference&&, WebCore::RenderingResourceIdentifier);
     void getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::PixelBufferFormat&&, WebCore::IntRect&& srcRect, CompletionHandler<void()>&&);
     void getPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier, SharedMemory::Handle&&, WebCore::PixelBufferFormat&& destinationFormat, WebCore::IntRect&& srcRect, CompletionHandler<void()>&&);
     void destroyGetPixelBufferSharedMemory();
@@ -121,7 +125,6 @@ private:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheFont(Ref<WebCore::Font>&&);
     void releaseAllResources();
-    void releaseResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
     void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);

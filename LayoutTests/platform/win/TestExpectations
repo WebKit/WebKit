@@ -492,6 +492,10 @@ fast/events/mouseover-button.html [ Skip ]
 # TODO Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html [ Skip ]
 
+# Failing since added in https://bugs.webkit.org/show_bug.cgi?id=249283.
+accessibility/color-input-value-changes.html [ Skip ]
+accessibility/progress-element-value-changes.html [ Skip ]
+
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244126.
 accessibility/dynamically-unignored-contenteditable.html [ Skip ]
 
@@ -3400,6 +3404,9 @@ webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 # Imperative slot API isn't enabled on Windows yet.
 fast/shadow-dom/manual-assignment-multiple-shadow-roots.html [ Failure ]
 fast/shadow-dom/imperative-named-slot-mixture.html [ Failure ]
+
+# Declarative shadow DOM isn't enabled on Windows yet.
+fast/shadow-dom/cloneable-shadow-root.html [ Failure ]
 
 # The SVG -> OTF Font converter outputs 'kern' tables instead of 'GPOS' tables.
 webkit.org/b/137204 fast/text/svg-font-face-with-kerning.html [ Failure ]

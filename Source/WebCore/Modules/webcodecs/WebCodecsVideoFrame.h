@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserver.h"
 #include "DOMRectReadOnly.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PlaneLayout.h"
@@ -47,7 +48,7 @@ class NativeImage;
 class OffscreenCanvas;
 class VideoColorSpace;
 
-class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame> {
+class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public ContextDestructionObserver {
 public:
     ~WebCodecsVideoFrame();
 
@@ -89,12 +90,12 @@ public:
         std::optional<VideoColorSpaceInit> colorSpace;
     };
 
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(CanvasImageSource&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(Ref<WebCodecsVideoFrame>&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(BufferSource&&, BufferInit&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ImageBuffer&, IntSize, Init&&);
-    static Ref<WebCodecsVideoFrame> create(Ref<VideoFrame>&&, BufferInit&&);
-    static Ref<WebCodecsVideoFrame> create(WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(WTFMove(data))); }
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, CanvasImageSource&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, BufferSource&&, BufferInit&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageBuffer&, IntSize, Init&&);
+    static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext&, Ref<VideoFrame>&&, BufferInit&&);
+    static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext& context, WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(context, WTFMove(data))); }
 
     std::optional<VideoPixelFormat> format() const { return m_data.format; }
     size_t codedWidth() const { return m_data.codedWidth; }
@@ -117,7 +118,7 @@ public:
 
     using CopyToPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<PlaneLayout>>>;
     void copyTo(BufferSource&&, CopyToOptions&&, CopyToPromise&&);
-    ExceptionOr<Ref<WebCodecsVideoFrame>> clone();
+    ExceptionOr<Ref<WebCodecsVideoFrame>> clone(ScriptExecutionContext&);
     void close();
 
     bool isDetached() const { return m_isDetached; }
@@ -132,12 +133,12 @@ public:
     size_t memoryCost() const { return m_data.memoryCost(); }
 
 private:
-    WebCodecsVideoFrame();
-    explicit WebCodecsVideoFrame(WebCodecsVideoFrameData&&);
+    explicit WebCodecsVideoFrame(ScriptExecutionContext&);
+    WebCodecsVideoFrame(ScriptExecutionContext&, WebCodecsVideoFrameData&&);
 
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<WebCodecsVideoFrame>&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(Ref<VideoFrame>&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(Ref<NativeImage>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&);
 
     WebCodecsVideoFrameData m_data;
     mutable RefPtr<VideoColorSpace> m_colorSpace;

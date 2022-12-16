@@ -4,8 +4,8 @@ PASS Can set 'offset-rotate' to CSS-wide keywords: inherit
 PASS Can set 'offset-rotate' to CSS-wide keywords: unset
 PASS Can set 'offset-rotate' to CSS-wide keywords: revert
 PASS Can set 'offset-rotate' to var() references:  var(--A)
-PASS Can set 'offset-rotate' to the 'auto' keyword: auto
-FAIL Can set 'offset-rotate' to the 'reverse' keyword: reverse assert_equals: expected "reverse" but got "auto"
+FAIL Can set 'offset-rotate' to the 'auto' keyword: auto assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL Can set 'offset-rotate' to the 'reverse' keyword: reverse assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
 PASS Can set 'offset-rotate' to an angle: 0deg
 PASS Can set 'offset-rotate' to an angle: 3.14rad
 PASS Can set 'offset-rotate' to an angle: -3.14deg

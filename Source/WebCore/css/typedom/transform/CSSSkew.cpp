@@ -60,7 +60,7 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(CSSFunctionValue& cssFunctionValue)
 
     Vector<Ref<CSSNumericValue>> components;
     for (auto componentCSSValue : cssFunctionValue) {
-        auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue);
+        auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
         if (valueOrException.hasException())
             return valueOrException.releaseException();
         if (!is<CSSNumericValue>(valueOrException.returnValue()))

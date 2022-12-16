@@ -211,7 +211,7 @@ const GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingD
 
 LayoutUnit GridTrackSizingAlgorithm::computeTrackBasedSize() const
 {
-    if (m_renderGrid->style().gridMasonryRows() || m_renderGrid->style().gridMasonryColumns())
+    if (isDirectionInMasonryDirection())
         return m_renderGrid->masonryContentSize();
     
     LayoutUnit size;
@@ -1681,6 +1681,11 @@ GridTrackSizingAlgorithm::StateMachine::~StateMachine()
 {
     m_algorithm.advanceNextState();
     m_algorithm.m_needsSetup = true;
+}
+
+bool GridTrackSizingAlgorithm::isDirectionInMasonryDirection() const
+{
+    return (m_renderGrid->areMasonryRows() && m_direction == ForRows) || (m_renderGrid->areMasonryColumns() && m_direction == ForColumns);
 }
 
 } // namespace WebCore

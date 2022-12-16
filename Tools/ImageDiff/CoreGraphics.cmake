@@ -3,7 +3,7 @@ list(APPEND ImageDiff_SOURCES
 )
 
 list(APPEND ImageDiff_LIBRARIES
-    CoreFoundation
-    CoreGraphics
-    CoreText
+    Apple::CoreFoundation
+    Apple::CoreGraphics
+    Apple::CoreText
 )

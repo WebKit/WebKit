@@ -124,7 +124,6 @@ public:
     Vector<String, 2> mediaControlsScripts() override;
 #endif
 
-    IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const override;
     bool supportsMeter(ControlPartType, const HTMLMeterElement&) const override;
     void adjustMeterStyle(RenderStyle&, const Element*) const override;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;

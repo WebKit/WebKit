@@ -42,7 +42,7 @@ class ScrollingStateScrollingNode;
 class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
-class ScrollingTreeScrollingNodeDelegateMac : public ThreadedScrollingTreeScrollingNodeDelegate {
+class ScrollingTreeScrollingNodeDelegateMac final : public ThreadedScrollingTreeScrollingNodeDelegate {
 public:
     explicit ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode&);
     virtual ~ScrollingTreeScrollingNodeDelegateMac();
@@ -57,9 +57,6 @@ public:
     bool isRubberBandInProgress() const;
 
     void updateScrollbarPainters();
-
-    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
-    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 
 private:
     void updateFromStateNode(const ScrollingStateScrollingNode&) final;

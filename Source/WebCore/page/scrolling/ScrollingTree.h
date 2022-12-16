@@ -161,8 +161,8 @@ public:
 
     WheelEventTestMonitor* wheelEventTestMonitor() { return m_wheelEventTestMonitor.get(); }
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& monitor) { m_wheelEventTestMonitor = WTFMove(monitor); }
-    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason);
-    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason);
+    void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
+    void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
 
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) = 0;

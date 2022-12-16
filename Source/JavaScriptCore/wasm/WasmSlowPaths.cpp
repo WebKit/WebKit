@@ -184,7 +184,11 @@ inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* in
 
     uint32_t functionIndex = callee->functionIndex();
     ASSERT(instance->module().moduleInformation().isSIMDFunction(functionIndex));
-    RefPtr<Wasm::Plan> plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+    RefPtr<Wasm::Plan> plan;
+    if (Options::wasmLLIntTiersUpToBBQ())
+        plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+    else
+        plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), instance->memory()->mode(), Wasm::Plan::dontFinalize()));
 
     Wasm::ensureWorklist().enqueue(*plan);
     plan->waitForCompletion();

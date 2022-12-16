@@ -659,15 +659,11 @@ void Options::notifyOptionsChanged()
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) > 0);
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
 
-        // FIXME: This should be removed when we add LLint/OMG support for WASM SIMD
-        if (Options::useWebAssemblySIMD()) {
-            bool isValid = true;
-            isValid &= Options::useBBQJIT();
-            isValid &= Options::useWasmLLInt();
-            isValid &= Options::wasmLLIntTiersUpToBBQ();
-            if (!isValid)
-                Options::useWebAssemblySIMD() = false;
-        }
+        if (!Options::useBBQJIT() && Options::useOMGJIT())
+            Options::wasmLLIntTiersUpToBBQ() = false;
+
+        if (Options::forceAllFunctionsToUseSIMD() && !Options::useWebAssemblySIMD())
+            Options::forceAllFunctionsToUseSIMD() = false;
     }
 
     if (Options::dumpFuzzerAgentPredictions())

@@ -5587,6 +5587,32 @@ RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange& range, CSSPropertyID cur
     return consumeAutoOrLengthOrPercent(range, cssParserMode, unitless);
 }
 
+RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range)
+{
+    auto firstValue = range.peek().id();
+    if (firstValue == CSSValueBlock || firstValue == CSSValueInline || firstValue == CSSValueNone)
+        return consumeIdent(range).releaseNonNull();
+
+    auto list = CSSValueList::createSpaceSeparated();
+    while (true) {
+        auto ident = consumeIdent<CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd>(range);
+        if (!ident)
+            break;
+        if (list->hasValue(*ident))
+            return nullptr;
+        list->append(ident.releaseNonNull());
+    }
+
+    // Try to serialize into either block or inline form
+    if (list->size() == 2) {
+        if (list->hasValue(CSSValueBlockStart) && list->hasValue(CSSValueBlockEnd))
+            return CSSValuePool::singleton().createValue(CSSValueBlock);
+        if (list->hasValue(CSSValueInlineStart) && list->hasValue(CSSValueInlineEnd))
+            return CSSValuePool::singleton().createValue(CSSValueInline);
+    }
+    return list;
+}
+
 RefPtr<CSSValue> consumeSide(CSSParserTokenRange& range, CSSPropertyID currentShorthand, CSSParserMode cssParserMode)
 {
     UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
@@ -6014,19 +6040,14 @@ static bool consumeNumbersOrPercents(CSSParserTokenRange& args, RefPtr<CSSFuncti
     return true;
 }
 
-static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<CSSFunctionValue>& transformValue)
+static bool consumePerspectiveFunctionArgument(CSSParserTokenRange& range, const CSSParserContext& context, RefPtr<CSSFunctionValue>& transformValue)
 {
-    if (args.peek().id() == CSSValueNone) {
-        transformValue->append(consumeIdent(args).releaseNonNull());
+    if (auto perspective = CSSPropertyParsing::consumePerspective(range, context)) {
+        transformValue->append(perspective.releaseNonNull());
         return true;
     }
 
-    if (auto parsedValue = consumeLength(args, cssParserMode, ValueRange::NonNegative)) {
-        transformValue->append(parsedValue.releaseNonNull());
-        return true;
-    }
-
-    if (auto perspective = consumeNumberRaw(args, ValueRange::NonNegative)) {
+    if (auto perspective = consumeNumberRaw(range, ValueRange::NonNegative)) {
         transformValue->append(CSSPrimitiveValue::create(perspective->value, CSSUnitType::CSS_PX));
         return true;
     }
@@ -6034,7 +6055,7 @@ static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParse
     return false;
 }
 
-RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSValueID functionId = range.peek().functionId();
     if (functionId == CSSValueInvalid)
@@ -6053,12 +6074,12 @@ RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode
     case CSSValueSkewX:
     case CSSValueSkewY:
     case CSSValueSkew:
-        parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+        parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (!parsedValue)
             return nullptr;
         if (functionId == CSSValueSkew && consumeCommaIncludingWhitespace(args)) {
             transformValue->append(*parsedValue);
-            parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+            parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
             if (!parsedValue)
                 return nullptr;
         }
@@ -6078,18 +6099,18 @@ RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode
         }
         break;
     case CSSValuePerspective:
-        if (!consumePerspective(args, cssParserMode, transformValue))
+        if (!consumePerspectiveFunctionArgument(args, context, transformValue))
             return nullptr;
         break;
     case CSSValueTranslateX:
     case CSSValueTranslateY:
     case CSSValueTranslate:
-        parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRange::All);
+        parsedValue = consumeLengthOrPercent(args, context.mode, ValueRange::All);
         if (!parsedValue)
             return nullptr;
         if (functionId == CSSValueTranslate && consumeCommaIncludingWhitespace(args)) {
             transformValue->append(*parsedValue);
-            parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRange::All);
+            parsedValue = consumeLengthOrPercent(args, context.mode, ValueRange::All);
             if (!parsedValue)
                 return nullptr;
             if (is<CSSPrimitiveValue>(parsedValue)) {
@@ -6100,7 +6121,7 @@ RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode
         }
         break;
     case CSSValueTranslateZ:
-        parsedValue = consumeLength(args, cssParserMode, ValueRange::All);
+        parsedValue = consumeLength(args, context.mode, ValueRange::All);
         break;
     case CSSValueMatrix:
     case CSSValueMatrix3d:
@@ -6114,12 +6135,12 @@ RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode
     case CSSValueRotate3d:
         if (!consumeNumbers(args, transformValue, 3) || !consumeCommaIncludingWhitespace(args))
             return nullptr;
-        parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+        parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (!parsedValue)
             return nullptr;
         break;
     case CSSValueTranslate3d:
-        if (!consumeTranslate3d(args, cssParserMode, transformValue))
+        if (!consumeTranslate3d(args, context.mode, transformValue))
             return nullptr;
         break;
     default:
@@ -6132,14 +6153,14 @@ RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode
     return transformValue;
 }
 
-RefPtr<CSSValue> consumeTransform(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+RefPtr<CSSValue> consumeTransform(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
     RefPtr<CSSTransformListValue> list = CSSTransformListValue::create();
     do {
-        RefPtr<CSSValue> parsedTransformValue = consumeTransformValue(range, cssParserMode);
+        auto parsedTransformValue = consumeTransformValue(range, context);
         if (!parsedTransformValue)
             return nullptr;
         list->append(parsedTransformValue.releaseNonNull());
@@ -6559,13 +6580,6 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserConte
     } while (!range.atEnd());
 
     return values;
-}
-
-RefPtr<CSSValue> consumePerspective(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-    return consumeLength(range, cssParserMode, ValueRange::NonNegative);
 }
 
 RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range)

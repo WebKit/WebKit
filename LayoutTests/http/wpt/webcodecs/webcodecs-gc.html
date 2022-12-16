@@ -40,6 +40,7 @@ async function createChunks(encoderConfig) {
   const h = encoderConfig.height;
   const frame = makeOffscreenCanvas(w, h);
   encoder.encode(frame, { keyFrame: true });
+  frame.close();
 
   const timer = setInterval(() => gc(), 100); 
   await encoder.flush();

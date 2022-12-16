@@ -87,12 +87,12 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
     for (auto propertyID : exposedComputedCSSPropertyIDs) {
         auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
-        values.uncheckedAppend(makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), m_element->document())));
+        values.uncheckedAppend(makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), propertyID, m_element->document())));
     }
 
     for (auto* map : { &nonInheritedCustomProperties, &inheritedCustomProperties }) {
         for (const auto& it : *map)
-            values.uncheckedAppend(makeKeyValuePair(it.key, StylePropertyMapReadOnly::reifyValueToVector(it.value.copyRef(), m_element->document())));
+            values.uncheckedAppend(makeKeyValuePair(it.key, StylePropertyMapReadOnly::reifyValueToVector(it.value.copyRef(), std::nullopt, m_element->document())));
     }
 
     std::sort(values.begin(), values.end(), [](const auto& a, const auto& b) {

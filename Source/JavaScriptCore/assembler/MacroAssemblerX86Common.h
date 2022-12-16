@@ -4265,13 +4265,6 @@ public:
         return s_avxCheckState == CPUIDCheckState::Set;
     }
 
-    static bool supportsAVXForSIMD()
-    {
-        if (s_avxCheckState == CPUIDCheckState::NotChecked)
-            collectCPUFeatures();
-        return s_avxCheckState == CPUIDCheckState::Set;
-    }
-
     static bool supportsAVX2()
     {
         if (s_avx2CheckState == CPUIDCheckState::NotChecked)

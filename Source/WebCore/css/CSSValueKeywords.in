@@ -379,8 +379,8 @@ distribute
 // none
 // left
 // right
-inline-start
-inline-end
+// inline-start
+// inline-end
 //
 // CSS_PROP_LIST_STYLE_POSITION:
 //
@@ -731,6 +731,14 @@ column-reverse
 // nowrap
 // wrap
 wrap-reverse
+
+// CSS_PROP_MARGIN_TRIM
+// block
+block-start
+block-end
+// inline
+inline-start
+inline-end
 
 // CSS_PROP_MARQUEE_DIRECTION
 forwards

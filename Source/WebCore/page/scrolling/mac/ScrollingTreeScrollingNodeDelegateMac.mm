@@ -265,22 +265,6 @@ void ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged(bool inRub
     scrollingTree().setRubberBandingInProgressForNode(scrollingNode().scrollingNodeID(), inRubberBand);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
-{
-    if (!scrollingTree().isMonitoringWheelEvents())
-        return;
-
-    scrollingTree().deferWheelEventTestCompletionForReason(identifier, reason);
-}
-
-void ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
-{
-    if (!scrollingTree().isMonitoringWheelEvents())
-        return;
-    
-    scrollingTree().removeWheelEventTestCompletionDeferralForReason(identifier, reason);
-}
-
 void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()
 {
     if (m_inMomentumPhase && (m_verticalScrollerImp || m_horizontalScrollerImp)) {

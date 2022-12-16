@@ -454,6 +454,7 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-h
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/named_targeting.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ DumpJSConsoleLogInStdErr ]
@@ -1547,9 +1548,7 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/align-content/mas
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-003.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-004.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-005.html [ ImageOnlyFailure ]
- imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-006.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-item-placement-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-columns-item-placement-auto-flow-next-001.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/justify-content/masonry-justify-content-003.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/justify-content/masonry-justify-content-004.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/justify-tracks/masonry-justify-tracks-001.html [ ImageOnlyFailure ]
@@ -1558,7 +1557,7 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/ma
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/justify-tracks/masonry-justify-tracks-stretch-002.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-subgrid-001.html [ ImageOnlyFailure ]
  imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-subgrid-002.html [ ImageOnlyFailure ]
-
+imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-columns-subgrid-named-lines-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
 
@@ -6157,6 +6156,9 @@ imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url-cr
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.window.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Skip ]
+
+imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageBitmap.any.html [ DumpJSConsoleLogInStdErr ]
 
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]

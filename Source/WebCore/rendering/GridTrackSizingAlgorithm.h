@@ -205,6 +205,8 @@ private:
     void advanceNextState();
     bool isValidTransition() const;
 
+    bool isDirectionInMasonryDirection() const;
+
     // Data.
     bool wasSetup() const { return !!m_strategy; }
     bool m_needsSetup { true };

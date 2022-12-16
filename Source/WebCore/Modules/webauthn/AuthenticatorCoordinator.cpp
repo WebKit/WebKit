@@ -107,7 +107,7 @@ void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinato
     m_client = WTFMove(client);
 }
 
-void AuthenticatorCoordinator::create(const Document& document, const PublicKeyCredentialCreationOptions& options, WebAuthn::Scope scope, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
+void AuthenticatorCoordinator::create(const Document& document, const PublicKeyCredentialCreationOptions& options, WebAuthn::Scope scope, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
@@ -174,13 +174,15 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
+            if (weakThis)
+                weakThis->resetUserGestureRequirement();
             response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
@@ -192,7 +194,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     m_client->makeCredential(*frame, callerOrigin, clientDataJsonHash, options, WTFMove(callback));
 }
 
-void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise) const
+void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
@@ -247,13 +249,15 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
+            if (weakThis)
+                weakThis->resetUserGestureRequirement();
             response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;

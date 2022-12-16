@@ -3469,8 +3469,10 @@ private:
             return JSValue();
         }
 
-        if (!m_imageBitmaps[index])
+        if (!m_imageBitmaps[index]) {
+            m_backingStores.at(index)->connect(*executionContext(m_lexicalGlobalObject));
             m_imageBitmaps[index] = ImageBitmap::create(WTFMove(m_backingStores.at(index)));
+        }
 
         auto bitmap = m_imageBitmaps[index].get();
         return getJSValue(bitmap);
@@ -3583,7 +3585,7 @@ private:
         }
 
         if (!m_videoFrames[index])
-            m_videoFrames[index] = WebCodecsVideoFrame::create(WTFMove(m_serializedVideoFrames.at(index)));
+            m_videoFrames[index] = WebCodecsVideoFrame::create(*executionContext(m_lexicalGlobalObject), WTFMove(m_serializedVideoFrames.at(index)));
 
         return getJSValue(m_videoFrames[index].get());
     }

@@ -351,11 +351,13 @@ static void webrtcVideoEncoderSetProperty(GObject* object, guint prop_id, const 
 
 static void setBitrateKbitPerSec(GObject* encoder, const char* propertyName, int bitrate)
 {
+    GST_INFO_OBJECT(encoder, "Setting bitrate to %d Kbits/sec", bitrate);
     g_object_set(encoder, propertyName, bitrate, nullptr);
 }
 
 static void setBitrateBitPerSec(GObject* encoder, const char* propertyName, int bitrate)
 {
+    GST_INFO_OBJECT(encoder, "Setting bitrate to %d bits/sec", bitrate);
     g_object_set(encoder, propertyName, bitrate * KBIT_TO_BIT, nullptr);
 }
 
@@ -378,7 +380,23 @@ static void webrtcVideoEncoderConstructed(GObject* encoder)
 {
     auto* self = WEBKIT_WEBRTC_VIDEO_ENCODER(encoder);
     self->priv->encoderId = None;
-    gst_element_add_pad(GST_ELEMENT_CAST(self), webkitGstGhostPadFromStaticTemplate(&sinkTemplate, "sink", nullptr));
+
+    auto* sinkPad = webkitGstGhostPadFromStaticTemplate(&sinkTemplate, "sink", nullptr);
+    GST_OBJECT_FLAG_SET(sinkPad, GST_PAD_FLAG_NEED_PARENT);
+    gst_pad_set_event_function(sinkPad, reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject* parent, GstEvent* event) -> gboolean {
+        if (GST_EVENT_TYPE(event) == GST_EVENT_CUSTOM_DOWNSTREAM_OOB) {
+            const auto* structure = gst_event_get_structure(event);
+            if (gst_structure_has_name(structure, "encoder-bitrate-change-request")) {
+                uint32_t bitrate;
+                gst_structure_get_uint(structure, "bitrate", &bitrate);
+                g_object_set(parent, "target-bitrate", bitrate, nullptr);
+                return TRUE;
+            }
+        }
+        return gst_pad_event_default(pad, parent, event);
+    }));
+    gst_element_add_pad(GST_ELEMENT_CAST(self), sinkPad);
+
     gst_element_add_pad(GST_ELEMENT_CAST(self), webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr));
 }
 

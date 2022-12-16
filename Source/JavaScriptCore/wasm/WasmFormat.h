@@ -183,20 +183,11 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
     if (sub == parent)
         return true;
 
-    const TypeDefinition& sig = TypeInformation::get(sub).unroll();
-    if (sig.is<Subtype>()) {
-        const Subtype& subtype = *sig.as<Subtype>();
-        const TypeDefinition& parentSig = TypeInformation::get(parent).unroll();
-        if (parentSig.is<Subtype>()) {
-            if (subtype.displaySize() < parentSig.as<Subtype>()->displaySize())
-                return false;
-            return parent == subtype.displayType(subtype.displaySize() - parentSig.as<Subtype>()->displaySize() - 1);
-        }
-        // If not a subtype itself, the parent must be at the top of the display.
-        return parent == subtype.displayType(subtype.displaySize() - 1);
-    }
+    auto subRTT = TypeInformation::tryGetCanonicalRTT(sub);
+    auto parentRTT = TypeInformation::tryGetCanonicalRTT(parent);
+    ASSERT(subRTT.has_value() && parentRTT.has_value());
 
-    return false;
+    return subRTT.value()->isSubRTT(*parentRTT.value());
 }
 
 inline bool isSubtype(Type sub, Type parent)

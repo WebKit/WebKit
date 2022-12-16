@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events.
-CONSOLE MESSAGE: User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events.
-CONSOLE MESSAGE: User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events.
-CONSOLE MESSAGE: User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events.
 
 PASS CTAP HID with keep alive message in a mock hid authenticator.
 PASS CTAP HID with fast data arrival in a mock hid authenticator.

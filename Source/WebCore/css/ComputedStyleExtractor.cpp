@@ -854,7 +854,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
             functionValue->append(cssValuePool.createValue(downcast<SkewTransformOperation>(*operation).angleX(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::Type::SkewY:
-            functionValue = CSSFunctionValue::create(CSSValueSkewX);
+            functionValue = CSSFunctionValue::create(CSSValueSkewY);
             functionValue->append(cssValuePool.createValue(downcast<SkewTransformOperation>(*operation).angleY(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::Type::Skew: {
@@ -1473,10 +1473,19 @@ static Ref<CSSValue> fontVariantNumericPropertyValue(FontVariantNumericFigure fi
     return valueList;
 }
 
+static FontVariantAlternatesValues historicalFormsValues()
+{
+    FontVariantAlternatesValues values;
+    values.historicalForms = true;
+    return values;
+}
+
 static Ref<CSSValue> fontVariantAlternatesPropertyValue(FontVariantAlternates alternates)
 {
     if (alternates.isNormal())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    if (alternates.values() == historicalFormsValues())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueHistoricalForms);
 
     return CSSFontVariantAlternatesValue::create(WTFMove(alternates));
 }
@@ -3409,6 +3418,28 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style, renderer);
     case CSSPropertyMarginLeft:
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style, renderer);
+    case CSSPropertyMarginTrim: {
+        auto marginTrim = style.marginTrim();
+        if (marginTrim.isEmpty())
+            return cssValuePool.createIdentifierValue(CSSValueNone);
+
+        // Try to serialize into one of the "block" or "inline" shorthands
+        if (marginTrim.containsAll({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }) && !marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }))
+            return cssValuePool.createIdentifierValue(CSSValueBlock);
+        if (marginTrim.containsAll({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) && !marginTrim.containsAny({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }))
+            return cssValuePool.createIdentifierValue(CSSValueInline);
+
+        auto list = CSSValueList::createSpaceSeparated();
+        if (marginTrim.contains(MarginTrimType::BlockStart))
+            list->append(cssValuePool.createIdentifierValue(CSSValueBlockStart));
+        if (marginTrim.contains(MarginTrimType::InlineStart))
+            list->append(cssValuePool.createIdentifierValue(CSSValueInlineStart));
+        if (marginTrim.contains(MarginTrimType::BlockEnd))
+            list->append(cssValuePool.createIdentifierValue(CSSValueBlockEnd));
+        if (marginTrim.contains(MarginTrimType::InlineEnd))
+            list->append(cssValuePool.createIdentifierValue(CSSValueInlineEnd));
+        return list;
+    }
     case CSSPropertyWebkitUserModify:
         return cssValuePool.createValue(style.userModify());
     case CSSPropertyMaxHeight: {

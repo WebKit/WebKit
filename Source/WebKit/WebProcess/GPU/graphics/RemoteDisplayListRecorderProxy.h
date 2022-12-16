@@ -50,6 +50,7 @@ public:
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
     void flushContext(DisplayListRecorderFlushIdentifier);
+    void disconnect();
 
 private:
     template<typename T> void send(T&& message);

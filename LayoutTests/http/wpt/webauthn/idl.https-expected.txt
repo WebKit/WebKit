@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events.
 Description
 
 This test verifies that the implementations of the WebAuthN API match with its WebIDL definition.

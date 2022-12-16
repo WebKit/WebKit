@@ -32,5 +32,5 @@ PASS Setting 'filter' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'filter' to a transform: perspective(10em) throws TypeError
 PASS Setting 'filter' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
 PASS 'filter' does not support 'blur(2px)'
-FAIL 'filter' does not support 'url(filters.svg) blur(4px) saturate(150%)' assert_equals: Unsupported value can be set on different element expected "url(\"filters.svg\") blur(4px) saturate(150%)" but got "url(\"filters.svg\")"
+PASS 'filter' does not support 'url(filters.svg) blur(4px) saturate(150%)'
 

@@ -33,8 +33,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 #include <CoreAudio/CoreAudioTypes.h>
@@ -62,7 +61,7 @@ class VideoFrame;
 class VideoSampleBufferCompressor;
 struct MediaRecorderPrivateOptions;
 
-class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter, WeakPtrFactoryInitialization::Eager> {
+class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateWriter, WTF::DestructionThread::Main> {
 public:
     static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateWriter();

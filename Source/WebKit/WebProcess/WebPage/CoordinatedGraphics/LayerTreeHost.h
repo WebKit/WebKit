@@ -33,6 +33,7 @@
 #include "SimpleViewportController.h"
 #include "ThreadedCompositor.h"
 #include "ThreadedDisplayRefreshMonitor.h"
+#include <WebCore/FloatPoint.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>

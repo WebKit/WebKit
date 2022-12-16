@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Quirks.h"
 
+#include "AllowedFonts.h"
 #include "Attr.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
@@ -1424,7 +1425,7 @@ bool Quirks::shouldEnableApplicationCacheQuirk() const
 
 bool Quirks::shouldEnableFontLoadingAPIQuirk() const
 {
-    if (!needsQuirks() || m_document->settings().downloadableBinaryFontsEnabled())
+    if (!needsQuirks() || m_document->settings().downloadableBinaryFontAllowedTypes() == DownloadableBinaryFontAllowedTypes::Any)
         return false;
 
     if (!m_shouldEnableFontLoadingAPIQuirk)

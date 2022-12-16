@@ -29,6 +29,8 @@
 
 #import "WebExtensionUtilities.h"
 
+#import <WebKit/_WKWebExtensionWebNavigationURLFilter.h>
+
 namespace TestWebKitAPI {
 
 TEST(WKWebExtensionAPIWebNavigation, EventListenerTest)
@@ -109,6 +111,94 @@ TEST(WKWebExtensionAPIWebNavigation, DeniedFilterTest)
     ]);
 
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIWebNavigation, URLFilterTestMatchAllPredicates)
+{
+    NSString *errorString = nil;
+    NSDictionary *filterDictionary = @{
+        @"url": @[
+            @{
+                @"schemes": @[ @"https" ],
+                @"hostEquals": @"apple.com",
+            }
+        ]
+    };
+
+    _WKWebExtensionWebNavigationURLFilter *filter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filterDictionary outErrorMessage:&errorString];
+    EXPECT_NULL(errorString);
+
+    EXPECT_TRUE([filter matchesURL:[NSURL URLWithString:@"https://apple.com"]]);
+    EXPECT_FALSE([filter matchesURL:[NSURL URLWithString:@"http://apple.com"]]);
+    EXPECT_FALSE([filter matchesURL:[NSURL URLWithString:@"https://example.com"]]);
+
+    [filter release];
+}
+
+
+TEST(WKWebExtensionAPIWebNavigation, URLFilterMatchesOnePredicate)
+{
+    NSString *errorString = nil;
+    NSDictionary *filterDictionary = @{
+        @"url": @[
+            @{ @"hostEquals": @"apple.com" },
+            @{ @"hostEquals": @"example.com" },
+        ]
+    };
+
+    _WKWebExtensionWebNavigationURLFilter *filter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filterDictionary outErrorMessage:&errorString];
+    EXPECT_NULL(errorString);
+
+    EXPECT_TRUE([filter matchesURL:[NSURL URLWithString:@"http://apple.com"]]);
+    EXPECT_TRUE([filter matchesURL:[NSURL URLWithString:@"http://example.com"]]);
+    EXPECT_FALSE([filter matchesURL:[NSURL URLWithString:@"about:blank"]]);
+    EXPECT_FALSE([filter matchesURL:[NSURL URLWithString:@"file:///dev/null"]]);
+
+    [filter release];
+}
+
+TEST(WKWebExtensionAPIWebNavigation, EmptyFilterMatchesEverything)
+{
+    NSString *errorString = nil;
+    NSDictionary *filterDictionary = @{
+        @"url": @[ ]
+    };
+
+    _WKWebExtensionWebNavigationURLFilter *filter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filterDictionary outErrorMessage:&errorString];
+    EXPECT_NULL(errorString);
+
+    EXPECT_TRUE([filter matchesURL:[NSURL URLWithString:@"about:blank"]]);
+    EXPECT_TRUE([filter matchesURL:[NSURL URLWithString:@"http://example.com"]]);
+    EXPECT_TRUE([filter matchesURL:[NSURL URLWithString:@"file:///dev/null"]]);
+
+    [filter release];
+}
+
+TEST(WKWebExtensionAPIWebNavigation, URLKeyTypeChecking)
+{
+    __auto_type test = ^(NSDictionary *inputDictionary, NSString *expectedError) {
+        _WKWebExtensionWebNavigationURLFilter *filter;
+        NSString *error = nil;
+        filter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:inputDictionary outErrorMessage:&error];
+        if (expectedError) {
+            EXPECT_NS_EQUAL(error, expectedError);
+            EXPECT_NULL(filter);
+        } else {
+            EXPECT_NULL(error);
+            EXPECT_NOT_NULL(filter);
+        }
+
+        [filter release];
+    };
+
+    test(@{ }, @"Missing required keys: url.");
+    test(@{ @"a": @"b" }, @"Missing required keys: url.");
+    test(@{ @"a": @"b", @"url": @[ ] }, nil);
+    test(@{ @"url": [NSNull null] }, @"Expected an array for 'url'.");
+    test(@{ @"url": @[ ] }, nil);
+    test(@{ @"url": @[ @"A" ] }, @"Expected objects in the array for 'url', found a string value instead.");
+    test(@{ @"url": @[ @[ ] ] }, @"Expected objects in the array for 'url', found an array instead.");
+    test(@{ @"url": @[ @{ } ] }, nil);
 }
 
 } // namespace TestWebKitAPI

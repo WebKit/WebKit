@@ -189,6 +189,7 @@ PASS margin-inline-start
 PASS margin-left
 PASS margin-right
 PASS margin-top
+PASS margin-trim
 PASS marker-end
 PASS marker-mid
 PASS marker-start

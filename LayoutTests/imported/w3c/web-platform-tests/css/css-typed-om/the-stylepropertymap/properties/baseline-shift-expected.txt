@@ -11,8 +11,8 @@ PASS Can set 'baseline-shift' to a percent: -3.14%
 PASS Can set 'baseline-shift' to a percent: 3.14%
 PASS Can set 'baseline-shift' to a percent: calc(0% + 0%)
 PASS Can set 'baseline-shift' to a length: 0px
-FAIL Can set 'baseline-shift' to a length: -3.14em assert_equals: unit expected "px" but got "em"
-FAIL Can set 'baseline-shift' to a length: 3.14cm assert_equals: unit expected "px" but got "cm"
+PASS Can set 'baseline-shift' to a length: -3.14em
+PASS Can set 'baseline-shift' to a length: 3.14cm
 PASS Can set 'baseline-shift' to a length: calc(0px + 0em)
 PASS Setting 'baseline-shift' to a time: 0s throws TypeError
 PASS Setting 'baseline-shift' to a time: -3.14ms throws TypeError

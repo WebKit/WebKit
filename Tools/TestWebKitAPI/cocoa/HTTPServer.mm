@@ -303,12 +303,16 @@ static ASCIILiteral statusText(unsigned statusCode)
         return "Switching Protocols"_s;
     case 200:
         return "OK"_s;
+    case 204:
+        return "No Content"_s;
     case 301:
         return "Moved Permanently"_s;
     case 302:
         return "Found"_s;
     case 404:
         return "Not Found"_s;
+    case 503:
+        return "Service Unavailable"_s;
     }
     ASSERT_NOT_REACHED();
     return "Unknown Status Code"_s;

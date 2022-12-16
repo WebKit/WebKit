@@ -160,7 +160,10 @@ void Projection::dump(PrintStream& out) const
 {
     out.print("(");
     CommaPrinter comma;
-    TypeInformation::get(recursionGroup()).dump(out);
+    if (isPlaceholder())
+        out.print("<current-rec-group>");
+    else
+        TypeInformation::get(recursionGroup()).dump(out);
     out.print(".", index());
     out.print(")");
 }
@@ -354,14 +357,14 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
     return adoptRef(signature);
 }
 
-RefPtr<TypeDefinition> TypeDefinition::tryCreateSubtype(DisplayCount displaySize)
+RefPtr<TypeDefinition> TypeDefinition::tryCreateSubtype()
 {
     // We use WTF_MAKE_FAST_ALLOCATED for this class.
-    auto result = tryFastMalloc(allocatedSubtypeSize(displaySize));
+    auto result = tryFastMalloc(allocatedSubtypeSize());
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::Subtype, displaySize);
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::Subtype);
     return adoptRef(signature);
 }
 
@@ -385,6 +388,18 @@ Type TypeDefinition::substitute(Type type, TypeIndex projectee)
     }
 
     return type;
+}
+
+// Perform a substitution as above but for a Subtype's parent type.
+static TypeIndex substituteParent(TypeIndex parent, TypeIndex projectee)
+{
+    if (TypeInformation::get(parent).is<Projection>()) {
+        const Projection* projection = TypeInformation::get(parent).as<Projection>();
+        if (projection->isPlaceholder())
+            return TypeInformation::typeDefinitionForProjection(projectee, projection->index())->index();
+    }
+
+    return parent;
 }
 
 // This operation is a helper for expand() that calls substitute() in order
@@ -429,7 +444,7 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
     if (is<Subtype>()) {
         const Subtype* subtype = as<Subtype>();
         const TypeDefinition& newUnderlyingType = TypeInformation::get(subtype->underlyingType()).replacePlaceholders(projectee);
-        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForSubtype(subtype->superType(), newUnderlyingType.index());
+        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForSubtype(substituteParent(subtype->superType(), projectee), newUnderlyingType.index());
         return *def;
     }
 
@@ -492,7 +507,33 @@ bool TypeDefinition::hasRecursiveReference() const
         return as<ArrayType>()->hasRecursiveReference();
 
     ASSERT(is<Subtype>());
-    return TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
+    const TypeDefinition& supertype = TypeInformation::get(as<Subtype>()->superType());
+    const bool hasRecGroupSupertype = supertype.is<Projection>() && supertype.as<Projection>()->isPlaceholder();
+    return hasRecGroupSupertype || TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
+}
+
+RefPtr<RTT> RTT::tryCreateRTT(DisplayCount displaySize)
+{
+    auto result = tryFastMalloc(allocatedRTTSize(displaySize));
+    void* memory = nullptr;
+    if (!result.getValue(memory))
+        return nullptr;
+    return new (NotNull, memory) RTT(displaySize);
+}
+
+bool RTT::isSubRTT(const RTT& parent) const
+{
+    if (displaySize() > 0) {
+        if (parent.displaySize() > 0) {
+            if (displaySize() <= parent.displaySize())
+                return false;
+            return &parent == displayEntry(displaySize() - parent.displaySize() - 1);
+        }
+        // If not a subtype itself, the parent must be at the top of the display.
+        return &parent == displayEntry(displaySize() - 1);
+    }
+
+    return false;
 }
 
 TypeInformation::TypeInformation()
@@ -753,29 +794,15 @@ struct SubtypeParameterTypes {
 
     static void translate(TypeHash& entry, const SubtypeParameterTypes& params, unsigned)
     {
-        uint32_t displaySize;
-        const TypeDefinition& parent = TypeInformation::get(params.superType);
-        parent.ref();
-        if (parent.is<Subtype>())
-            displaySize = parent.as<Subtype>()->displaySize() + 1;
-        else
-            displaySize = 1;
-
-        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateSubtype(displaySize);
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateSubtype();
         RELEASE_ASSERT(signature);
 
         Subtype* subtype = signature->as<Subtype>();
         subtype->getSuperType() = params.superType;
         subtype->getUnderlyingType() = params.underlyingType;
 
+        TypeInformation::get(params.superType).ref();
         TypeInformation::get(params.underlyingType).ref();
-
-        const TypeDefinition* currentParent = &parent;
-        for (uint32_t i = 0; i < displaySize; i++) {
-            subtype->getDisplayType(i) = currentParent->index();
-            if (currentParent->is<Subtype>())
-                currentParent = &TypeInformation::get(currentParent->as<Subtype>()->superType());
-        }
 
         entry.key = WTFMove(signature);
     }
@@ -858,12 +885,68 @@ std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
     return std::optional<TypeIndex>(iterator->value);
 }
 
+void TypeInformation::registerCanonicalRTTForType(TypeIndex type)
+{
+    TypeInformation& info = singleton();
+
+    auto registered = tryGetCanonicalRTT(type);
+
+    if (!registered.has_value()) {
+        RefPtr<RTT> rtt = TypeInformation::canonicalRTTForType(type);
+        {
+            Locker locker { info.m_lock };
+            info.m_rttMap.add(type, rtt.releaseNonNull());
+        }
+    }
+}
+
+RefPtr<RTT> TypeInformation::canonicalRTTForType(TypeIndex type)
+{
+    const TypeDefinition& signature = TypeInformation::get(type).unroll();
+    RefPtr<RTT> protector = nullptr;
+
+    if (signature.is<Subtype>()) {
+        auto superRTT = TypeInformation::tryGetCanonicalRTT(signature.as<Subtype>()->superType());
+        ASSERT(superRTT.has_value());
+        DisplayCount displaySize = superRTT.value()->displaySize() + 1;
+
+        protector = RTT::tryCreateRTT(displaySize);
+        RELEASE_ASSERT(protector);
+
+        protector->setDisplayEntry(0, superRTT.value());
+        for (DisplayCount i = 1; i < displaySize; i++)
+            protector->setDisplayEntry(i, superRTT.value()->displayEntry(i - 1));
+
+        return protector;
+    }
+
+    protector = RTT::tryCreateRTT(0);
+    RELEASE_ASSERT(protector);
+    return protector;
+}
+
+std::optional<const RTT*> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    const auto iterator = info.m_rttMap.find(type);
+    if (iterator == info.m_rttMap.end())
+        return std::nullopt;
+    return std::optional<const RTT*>(iterator->value.get());
+}
+
 void TypeInformation::tryCleanup()
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
     info.m_unrollingCache.removeIf([&] (auto& keyValuePair) {
+        const TypeDefinition& type = TypeInformation::get(keyValuePair.key);
+        return type.refCount() == 1;
+    });
+
+    info.m_rttMap.removeIf([&] (auto& keyValuePair) {
         const TypeDefinition& type = TypeInformation::get(keyValuePair.key);
         return type.refCount() == 1;
     });
