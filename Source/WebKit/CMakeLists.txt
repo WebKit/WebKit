@@ -77,7 +77,6 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/Mock"
     "${WEBKIT_DIR}/UIProcess/WebsiteData"
     "${WEBKIT_DIR}/UIProcess/XR"
-    "${WEBKIT_DIR}/WebAuthnProcess"
     "${WEBKIT_DIR}/WebProcess"
     "${WEBKIT_DIR}/WebProcess/ApplePay"
     "${WEBKIT_DIR}/WebProcess/ApplicationCache"
@@ -355,7 +354,6 @@ set(WebProcess_LIBRARIES WebKit)
 set(NetworkProcess_LIBRARIES WebKit)
 set(GPUProcess_LIBRARIES WebKit)
 set(PluginProcess_LIBRARIES WebKit)
-set(WebAuthnProcess_LIBRARIES WebKit)
 
 if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_OPENCDM)
   list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
@@ -450,11 +448,6 @@ endif ()
 if (ENABLE_PLUGIN_PROCESS)
     WEBKIT_EXECUTABLE_DECLARE(PluginProcess)
     list(APPEND WebKit_INTERFACE_DEPENDENCIES PluginProcess)
-endif ()
-
-if (ENABLE_WEB_AUTHN)
-    WEBKIT_EXECUTABLE_DECLARE(WebAuthnProcess)
-    list(APPEND WebKit_INTERFACE_DEPENDENCIES WebAuthnProcess)
 endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
@@ -763,12 +756,6 @@ if (ENABLE_PLUGIN_PROCESS)
     ADD_WEBKIT_PREFIX_HEADER(PluginProcess)
 endif ()
 
-if (ENABLE_WEB_AUTHN)
-    list(APPEND WebAuthnProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
-    WEBKIT_EXECUTABLE(WebAuthnProcess)
-    ADD_WEBKIT_PREFIX_HEADER(WebAuthnProcess)
-endif ()
-
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
@@ -778,9 +765,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
     endif ()
     if (ENABLE_PLUGIN_PROCESS)
         WEBKIT_ADD_TARGET_CXX_FLAGS(PluginProcess -Wno-unused-parameter)
-    endif ()
-    if (ENABLE_WEB_AUTHN)
-        WEBKIT_ADD_TARGET_CXX_FLAGS(WebAuthnProcess -Wno-unused-parameter)
     endif ()
 endif ()
 
