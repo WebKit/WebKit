@@ -402,8 +402,6 @@ sub determineBaseProductDir
             $baseProductDir = join '', readXcodeUserDefault("IDEApplicationwideBuildSettings");
             $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
         }
-
-        undef $baseProductDir unless $baseProductDir =~ /^\//;
     }
 
     if (!defined($baseProductDir)) { # Port-specific checks failed, use default
