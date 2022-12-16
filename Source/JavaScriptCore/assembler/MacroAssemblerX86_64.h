@@ -3038,15 +3038,75 @@ public:
             m_assembler.vroundpd_rr(input, dest, RoundingType::TowardZero);
     }
 
-    void vectorTruncSat(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorTruncSat(SIMDInfo simdInfo, FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR1, FPRegisterID scratchFPR2)
     {
-        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
-        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        ASSERT(supportsAVX());
+        ASSERT_UNUSED(simdInfo, simdInfo.signMode == SIMDSignMode::Signed);
         ASSERT(simdInfo.lane == SIMDLane::f32x4);
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
-        // FIXME: Need to support
-        // i32x4.trunc_sat_f32x4_s(a: v128) -> v128
-        // i32x4.trunc_sat_f32x4_u(a: v128) -> v128
+
+        // The instruction cvttps2dq only saturates overflows to 0x80000000 and cannot handle NaN.
+        // However, i32x4.nearest_sat_f32x4_s requires:
+        //     1. saturate positive-overflow integer to 0x7FFFFFFF
+        //     2. saturate negative-overflow integer to 0x80000000
+        //     3. convert NaN or -0 to 0.
+
+        m_assembler.vmovaps_rr(src, scratchFPR1);                               // scratchFPR1 = src
+        m_assembler.vcmpunordps_rrr(scratchFPR1, scratchFPR1, scratchFPR1);     // scratchFPR1 = NaN mask by unordered comparison
+        m_assembler.vandnps_rrr(src, scratchFPR1, scratchFPR1);                 // scratchFPR1 = src with NaN lanes cleared
+
+        alignas(16) static constexpr float masks[] = {
+            0x1.0p+31f,
+            0x1.0p+31f,
+            0x1.0p+31f,
+            0x1.0p+31f,
+        };
+        move(TrustedImmPtr(masks), scratchGPR);                                 // scratchGPR = minimum positive-overflow integer 0x80000000
+        m_assembler.vcmpnltps_mrr(0, scratchGPR, scratchFPR1, scratchFPR2);     // scratchFPR2 = positive-overflow mask by checking src >= 0x80000000
+
+        m_assembler.vcvttps2dq_rr(scratchFPR1, scratchFPR1);                    // convert scratchFPR1 to integer with overflow saturated to 0x80000000
+
+        m_assembler.vpxor_rrr(scratchFPR2, scratchFPR1, dest);                  // convert positive-overflow lane to 0x7FFFFFFF
+    }
+
+    void vectorTruncSatUnsignedFloat32(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR1, FPRegisterID scratchFPR2)
+    {
+        ASSERT(supportsAVX());
+
+        // https://github.com/WebAssembly/simd/pull/247
+        // https://github.com/WebAssembly/relaxed-simd/issues/21
+
+        // The instruction cvttps2dq only saturates overflows to 0x80000000 and cannot handle NaN.
+        // However, i32x4.nearest_sat_f32x4_u requires:
+        //     1. saturate positive-overflow integer to 0xFFFFFFFF
+        //     2. saturate negative-overflow integer to 0
+        //     3. convert NaN or -0 to 0.    
+        
+        m_assembler.vxorps_rrr(scratchFPR1, scratchFPR1, scratchFPR1);
+        m_assembler.vmaxps_rrr(scratchFPR1, src, dest);                     // dest = f[lane]x4 = src with NaN and negatives cleared
+
+        alignas(16) static constexpr float masks[] = {
+            2147483647.0f,
+            2147483647.0f,
+            2147483647.0f,
+            2147483647.0f,
+        };
+        move(TrustedImmPtr(masks), scratchGPR);                             // scratchGPR = f[0x80000000]x4
+
+        m_assembler.vmovaps_rr(dest, scratchFPR2);
+        m_assembler.vsubps_mrr(0, scratchGPR, scratchFPR2, scratchFPR2);    // scratchFPR2 = f[lane - 0x80000000]x4
+
+        m_assembler.vcmpnltps_mrr(0, scratchGPR, scratchFPR2, scratchFPR1); // scratchFPR1 = mask for [lane >= 0xFFFFFFFF]x4
+
+        m_assembler.vcvttps2dq_rr(scratchFPR2, scratchFPR2);                // scratchFPR2 = i[lane - 0x80000000]x4 with satruated lane 0x80000000 for int32 overflow
+
+        m_assembler.vpxor_rrr(scratchFPR1, scratchFPR2, scratchFPR2);       // scratchFPR2 = i[lane - 0x80000000]x4 with satruated lane 0x7FFFFFFF for int32 positive-overflow and 0x80000000 for int32 negative-overflow
+
+        m_assembler.vpxor_rrr(scratchFPR1, scratchFPR1, scratchFPR1);
+        m_assembler.vpmaxsd_rrr(scratchFPR1, scratchFPR2, scratchFPR2);     // scratchFPR2 = i[lane - 0x80000000]x4 with satruated lane 0x7FFFFFFF for int32 positive-overflow and negatives cleared
+
+        m_assembler.vcvttps2dq_rr(dest, dest);                              // dest = i[lane]x4 with satruated lane 0x80000000 for int32 positive-overflow
+
+        m_assembler.vpaddd_rrr(scratchFPR2, dest, dest);                    // dest = dest + scratchFPR2 = i[lane]x4 with satruated 0xFFFFFFFF for int32 positive-overflow    
     }
 
     void vectorTruncSatSignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
@@ -3254,9 +3314,17 @@ public:
             m_assembler.cvtdq2ps_rr(input, dest);
     }
 
-    void vectorConvertUnsigned(FPRegisterID input, FPRegisterID dest, FPRegisterID scratch)
+    void vectorConvertUnsigned(FPRegisterID src, FPRegisterID dst, FPRegisterID scratch)
     {
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(scratch);
+        ASSERT(supportsAVX());
+        m_assembler.vpxor_rrr(scratch, scratch, scratch);           // clear scratch
+        m_assembler.vpblendw_i8rrr(0x55, src, scratch, scratch);    // i_low = low 16 bits of src
+        m_assembler.vpsubd_rrr(scratch, src, dst);                  // i_high = high 16 bits of src
+        m_assembler.vcvtdq2ps_rr(scratch, scratch);                 // f_low = convertToF32(i_low)
+        m_assembler.vpsrld_i8rr(1, dst, dst);                       // i_half_high = i_high / 2
+        m_assembler.vcvtdq2ps_rr(dst, dst);                         // f_half_high = convertToF32(i_half_high)
+        m_assembler.vaddps_rrr(dst, dst, dst);                      // dst = f_half_high + f_half_high + f_low
+        m_assembler.vaddps_rrr(scratch, dst, dst);
     }
 
     void vectorConvertLowUnsignedInt32(FPRegisterID input, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
@@ -3781,14 +3849,10 @@ public:
             vectorSplat(SIMDLane::i16x8, scratchGPR, scratchFPR);
             m_assembler.vpcmpeqw_rrr(scratchFPR, dest, scratchFPR);
             m_assembler.vpxor_rrr(scratchFPR, dest, dest);
-        } else if (supportsSupplementalSSE3()) {
-            // FIXME: SSSE3
+        } else if (supportsSupplementalSSE3())
             RELEASE_ASSERT_NOT_REACHED();
-        } else {
-            // FIXME: SSE2
+        else
             RELEASE_ASSERT_NOT_REACHED();
-        }
-
     }
 
     void vectorSwizzle(FPRegisterID a, FPRegisterID b, FPRegisterID dest)

@@ -349,13 +349,22 @@ public:
             }
 
             if (airOp == B3::Air::VectorTruncSat) {
-                if (info.lane == SIMDLane::f64x2) {
+                switch (info.lane) {
+                case SIMDLane::f64x2:
                     if (info.signMode == SIMDSignMode::Signed)
                         append(VectorTruncSatSignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128));
                     else
                         append(VectorTruncSatUnsignedFloat64, v, result, tmpForType(Types::I64), tmpForType(Types::V128));
+                    return { };
+                case SIMDLane::f32x4:
+                    if (info.signMode == SIMDSignMode::Signed)
+                        append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128), tmpForType(Types::V128));
+                    else
+                        append(VectorTruncSatUnsignedFloat32, v, result, tmpForType(Types::I64), tmpForType(Types::V128), tmpForType(Types::V128));
+                    return { };
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
                 }
-                return { };
             }
         }
 
