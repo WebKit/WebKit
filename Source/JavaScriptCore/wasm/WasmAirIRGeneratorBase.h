@@ -296,6 +296,11 @@ struct AirIRGeneratorBase {
 
         explicit operator bool() const { return !!tmp; }
 
+        void dump(PrintStream& out) const
+        {
+            out.print("ConstrainedTmp { ", tmp, ", ", rep, " }");
+        }
+
         ExpressionType tmp;
         B3::ValueRep rep;
     };
@@ -674,7 +679,7 @@ protected:
             // validation. We should abstract Patch enough so ValueRep's don't need to be
             // backed by Values.
             // https://bugs.webkit.org/show_bug.cgi?id=194040
-            B3::Value* dummyValue = m_proc.addConstant(B3::Origin(), tmp.tmp.tmp().isGP() ? B3::pointerType() : B3::Double, 0);
+            B3::Value* dummyValue = m_proc.addConstant(B3::Origin(), tmp.tmp.tmp().isGP() ? B3::pointerType() : (m_proc.usesSIMD() ? B3::V128 : B3::Double), 0);
             patch->append(dummyValue, tmp.rep);
             switch (tmp.rep.kind()) {
             // B3::Value propagates (Late)ColdAny information and later Air will allocate appropriate stack.

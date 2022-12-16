@@ -176,8 +176,9 @@ const asyncTestImpl = (promise, thenFunc, catchFunc) => {
 };
 
 const printExn = (e) => {
-    print("Failed: ", e);
+    print("Test failed with exception: ", e);
     print(e.stack);
+    print(typeof e);
     $vm.abort();
 };
 

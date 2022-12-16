@@ -1,4 +1,4 @@
-//@ requireOptions("--useWebAssemblySIMD=1", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
+//@ requireOptions("--useWebAssemblySIMD=1")
 //@ skip if $architecture != "arm64"
 // Copyright 2018 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -24,7 +24,8 @@ load("exceptions-utils.js");
   var instance = builder.instantiate();
 
   // NOTE: changed from original test since this part of the spec is still in flux.
-  assertThrows(() => instance.exports.throw_simd());
+  for (let i = 0; i < 1000; ++i)
+    assertThrows(() => instance.exports.throw_simd());
 })();
 
 (function TestThrowCatchS128Default() {
@@ -47,7 +48,8 @@ load("exceptions-utils.js");
       .exportFunc();
   var instance = builder.instantiate();
 
-  assertThrows(() => instance.exports.throw_catch_simd());
+  for (let i = 0; i < 1000; ++i)
+    assertThrows(() => instance.exports.throw_catch_simd());
 })();
 
 (function TestThrowCatchS128WithValue() {
@@ -77,6 +79,7 @@ load("exceptions-utils.js");
              0x89, 0x9a, 0xab, 0xbc, 0xcd, 0xde, 0xef, 0xf0];
   var array = new Uint8Array(memory.buffer);
   array.set(ref, in_idx);  // Store reference value in memory.
-  assertThrows(() => instance.exports.throw_catch_simd());
+  for (let i = 0; i < 1000; ++i)
+    assertThrows(() => instance.exports.throw_catch_simd());
   // assertArrayEquals(ref, array.slice(out_idx, out_idx + 0x10));
 })();

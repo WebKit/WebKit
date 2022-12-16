@@ -146,6 +146,9 @@ Value* Procedure::addConstant(Origin origin, Type type, uint64_t bits)
         return add<ConstFloatValue>(origin, bitwise_cast<float>(static_cast<int32_t>(bits)));
     case Double:
         return add<ConstDoubleValue>(origin, bitwise_cast<double>(bits));
+    case V128:
+        RELEASE_ASSERT(!bits);
+        return addConstant(origin, type, v128_t { });
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
