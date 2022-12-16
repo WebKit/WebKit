@@ -86,7 +86,7 @@ void RenderLayerModelObject::willBeDestroyed()
 void RenderLayerModelObject::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     bool shouldNotRepaint = is<RenderMultiColumnSet>(this->previousSibling());
-    if (auto* layer = this->layer(); layer && layer->needsFullRepaint() && isInternalMove == IsInternalMove::No && !shouldNotRepaint)
+    if (auto* layer = this->layer(); layer && layer->needsFullRepaint() && isInternalMove == IsInternalMove::No && !shouldNotRepaint && containingBlock())
         issueRepaint(std::nullopt, ClipRepaintToLayer::No, ForceRepaint::Yes);
 
     RenderElement::willBeRemovedFromTree(isInternalMove);
