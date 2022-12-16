@@ -1,0 +1,11 @@
+This test ensures accessibility properly responds to dynamic changes in a progress element's value.
+
+#progress AXValue: 70
+
+Updating #progress value to 50.
+#progress AXValue: 50
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

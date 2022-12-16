@@ -894,6 +894,7 @@ http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip 
 
 # Color well is turned off.
 accessibility/color-well.html [ Skip ]
+accessibility/color-input-value-changes.html [ Skip ]
 accessibility/mac/media-query-values-change.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input.html [ Skip ]

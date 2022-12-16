@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<progress id="progress" max="100" value="70"></progress>
+
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures accessibility properly responds to dynamic changes in a progress element's value.\n\n";
+
+// There are a few layouts that happen when the page loads — run the test in window.onload to wait them out before changing
+// the progress value. If we change the progress value before these layouts occur, we pass the test no matter
+// what (even if our implementation is wrong). This is because a top-level children changed notification causes
+// the progress to be re-built with the correct value, making us pass the test on accident.
+window.onload = () => {
+    if (!window.accessibilityController)
+        return;
+
+    var progress = accessibilityController.accessibleElementById("progress");
+    output += `#progress ${progress.stringValue}\n`;
+    setTimeout(async function() {
+        output += "\nUpdating #progress value to 50.\n";
+        document.getElementById("progress").value = "50";
+
+        await waitFor(() => progress.stringValue.includes("50"));
+        output += `#progress ${progress.stringValue}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+};
+</script>
+</body>
+</html>
+

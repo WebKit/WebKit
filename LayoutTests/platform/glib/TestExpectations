@@ -348,6 +348,9 @@ webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass
 # Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=249283.
+accessibility/progress-element-value-changes.html [ Skip ]
+
 accessibility/svg-font-face.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::insertText.
