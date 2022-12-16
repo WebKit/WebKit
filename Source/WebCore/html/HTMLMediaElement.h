@@ -241,6 +241,7 @@ public:
     using HTMLMediaElementEnums::ReadyState;
     ReadyState readyState() const override;
     WEBCORE_EXPORT bool seeking() const;
+    void setSeeking(bool);
 
 // playback state
     WEBCORE_EXPORT double currentTime() const override;

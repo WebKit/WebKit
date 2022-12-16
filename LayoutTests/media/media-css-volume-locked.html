@@ -1,7 +1,15 @@
 <!doctype HTML>
 <html>
 <head>
-    <title>media-css-muted</title>
+    <title>Test :volume-locked pseudo-class</title>
+    <style>
+        #subject {
+            background-color: red;
+        }
+        #subject:has(:volume-locked) {
+            background-color: green;
+        }
+    </style>
     <script src="video-test.js"></script>
     <script src="media-file.js"></script>
     <script>
@@ -12,14 +20,18 @@
         run('internals.setMediaElementVolumeLocked(video, false)');
         testExpected('document.querySelector("video:volume-locked")', null);
         testExpected('document.querySelector("video:not(:volume-locked)")', video);
+        testExpected('getComputedStyle(subject).backgroundColor', "rgb(255, 0, 0)");
         run('internals.setMediaElementVolumeLocked(video, true)');
         testExpected('document.querySelector("video:volume-locked")', video);
         testExpected('document.querySelector("video:not(:volume-locked)")', null);
+        testExpected('getComputedStyle(subject).backgroundColor', "rgb(0, 128, 0)");
         endTest();
     });
     </script>
 <head>
 <body>
-    <video></video>
+    <div id="subject">
+        <video></video>
+    </div>
 </body>
 </html>

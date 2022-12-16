@@ -1,0 +1,6 @@
+Test media pseudo-classes invalidation with :has()
+
+PASS Test :playing pseudo-classes
+PASS Test :seeking pseudo-class
+PASS Test :muted pseudo-class
+

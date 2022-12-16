@@ -1,0 +1,8 @@
+Test media pseudo-classes invalidation with :has()
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test :playing pseudo-classes
+TIMEOUT Test :seeking pseudo-class Test timed out
+NOTRUN Test :muted pseudo-class
+
