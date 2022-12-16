@@ -3952,6 +3952,31 @@ static void computeLogicalLeftPositionedOffset(LayoutUnit& logicalLeftPos, const
         logicalLeftPos += (child->isHorizontalWritingMode() ? containerBlock.borderLeft() : containerBlock.borderTop());
 }
 
+static std::optional<float> positionWithRTLInlineBoxContainingBlock(const RenderElement& containingBlock, LayoutUnit logicalLeftValue, LayoutUnit marginLogicalLeftValue)
+{
+    if (!is<RenderInline>(containingBlock) || containingBlock.style().isLeftToRightDirection())
+        return { };
+
+    auto& renderInline = downcast<RenderInline>(containingBlock);
+    auto firstInlineBox = InlineIterator::firstInlineBoxFor(renderInline);
+    if (!firstInlineBox)
+        return { };
+
+    auto lastInlineBox = [&] {
+        auto inlineBox = firstInlineBox;
+        for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+        return inlineBox;
+    }();
+    if (firstInlineBox == lastInlineBox)
+        return { };
+
+    auto lastInlineBoxPaddingBoxVisualRight = lastInlineBox->logicalLeft() + renderInline.borderLogicalLeft();
+    // FIXME: This does not work with decoration break clone.
+    auto firstInlineBoxPaddingBoxVisualRight = firstInlineBox->logicalLeft();
+    auto distance = lastInlineBoxPaddingBoxVisualRight - firstInlineBoxPaddingBoxVisualRight;
+    return logicalLeftValue + marginLogicalLeftValue + distance;
+}
+
 void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length logicalWidth, const RenderBoxModelObject& containerBlock, TextDirection containerDirection,
                                                    LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding,
                                                    Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
@@ -4128,18 +4153,13 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 
     // Use computed values to calculate the horizontal position.
 
-    // FIXME: This hack is needed to calculate the  logical left position for a 'rtl' relatively
+    // FIXME: This hack is needed to calculate the logical left position for a 'rtl' relatively
     // positioned, inline because right now, it is using the logical left position
-    // of the first line box when really it should use the last line box.  When
+    // of the first line box when really it should use the last line box. When
     // this is fixed elsewhere, this block should be removed.
-    if (is<RenderInline>(containerBlock) && !containerBlock.style().isLeftToRightDirection()) {
-        const auto& flow = downcast<RenderInline>(containerBlock);
-        LegacyInlineFlowBox* firstLine = flow.firstLineBox();
-        LegacyInlineFlowBox* lastLine = flow.lastLineBox();
-        if (firstLine && lastLine && firstLine != lastLine) {
-            computedValues.m_position = logicalLeftValue + marginLogicalLeftValue + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
-            return;
-        }
+    if (auto position = positionWithRTLInlineBoxContainingBlock(containerBlock, logicalLeftValue, marginLogicalLeftValue)) {
+        computedValues.m_position = *position;
+        return;
     }
 
     computedValues.m_position = logicalLeftValue + marginLogicalLeftValue;
@@ -4622,16 +4642,11 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
 
     // FIXME: This hack is needed to calculate the logical left position for a 'rtl' relatively
     // positioned, inline containing block because right now, it is using the logical left position
-    // of the first line box when really it should use the last line box.  When
+    // of the first line box when really it should use the last line box. When
     // this is fixed elsewhere, this block should be removed.
-    if (is<RenderInline>(containerBlock) && !containerBlock.style().isLeftToRightDirection()) {
-        const auto& flow = downcast<RenderInline>(containerBlock);
-        LegacyInlineFlowBox* firstLine = flow.firstLineBox();
-        LegacyInlineFlowBox* lastLine = flow.lastLineBox();
-        if (firstLine && lastLine && firstLine != lastLine) {
-            computedValues.m_position = logicalLeftValue + marginLogicalLeftAlias + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
-            return;
-        }
+    if (auto position = positionWithRTLInlineBoxContainingBlock(containerBlock, logicalLeftValue, marginLogicalLeftAlias)) {
+        computedValues.m_position = *position;
+        return;
     }
 
     LayoutUnit logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
