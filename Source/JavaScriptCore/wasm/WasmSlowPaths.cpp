@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -367,11 +367,11 @@ WASM_SLOW_PATH_DECL(trace)
         pc->name(),
         pc);
     if (opcodeID == wasm_enter) {
-        dataLogF("Frame will eventually return to %p\n", callFrame->returnPC().value());
-        *removeCodePtrTag<volatile char*>(callFrame->returnPC().value());
+        dataLogF("Frame will eventually return to %p\n", callFrame->returnPCForInspection());
+        *bitwise_cast<volatile char*>(callFrame->returnPCForInspection());
     }
     if (opcodeID == wasm_ret) {
-        dataLogF("Will be returning to %p\n", callFrame->returnPC().value());
+        dataLogF("Will be returning to %p\n", callFrame->returnPCForInspection());
         dataLogF("The new cfr will be %p\n", callFrame->callerFrame());
     }
     WASM_END_IMPL();
