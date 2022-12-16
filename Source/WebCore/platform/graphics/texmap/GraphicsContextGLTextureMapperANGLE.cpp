@@ -52,8 +52,9 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    if (!makeContextCurrent())
+        return;
+
     if (m_texture)
         GL_DeleteTextures(1, &m_texture);
 
@@ -121,8 +122,8 @@ GraphicsContextGLTextureMapperANGLE::GraphicsContextGLTextureMapperANGLE(Graphic
 
 GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
 {
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
+    if (!makeContextCurrent())
+        return;
 
     if (m_compositorTexture)
         GL_DeleteTextures(1, &m_compositorTexture);
