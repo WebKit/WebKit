@@ -138,6 +138,9 @@ def parse_parameters_string(parameters_string):
             parameter_kind = split[0][:split[0].find(' ')]
             split[0] = split[0][split[0].find(' ') + 1:]
 
+        if len(split) != 2:
+            raise Exception("ERROR: Argument '%s' in parameter list '%s' is missing either type or name" % (type_and_name_string, parameter_string))
+
         parameter_type = split[0]
         parameter_name = split[1]
 
