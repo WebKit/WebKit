@@ -2598,7 +2598,7 @@ void FrameView::cancelScheduledTextFragmentIndicatorTimer()
 
 bool FrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject& renderer, bool insideFixed, const ScrollRectToVisibleOptions& options)
 {
-    WTFLogAlways("FrameView::scrollRectToVisible: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    // WTFLogAlways("FrameView::scrollRectToVisible: %d", ScriptDisallowedScope::InMainThread::isScriptAllowed());
     if (options.revealMode == SelectionRevealMode::DoNotReveal)
         return false;
 
