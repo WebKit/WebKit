@@ -1379,6 +1379,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     domjit/DOMJITHeapRange.h
     runtime/JSModuleNamespaceObject.h
     runtime/SamplingProfiler.h
+    runtime/GeneratorFunctionPrototype.h
+    runtime/AsyncFunctionPrototype.h
 )
 
 
