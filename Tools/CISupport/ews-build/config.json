@@ -159,6 +159,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-16",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["ios-16-sim-build-ews"],
+      "additionalArguments": ["--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
@@ -187,6 +188,7 @@
       "factory": "macOSWK1Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
+      "additionalArguments": ["--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
       "workernames": ["ews100", "ews101", "ews103", "ews112", "ews117", "ews129"]
     },
     {

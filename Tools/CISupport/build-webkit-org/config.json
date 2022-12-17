@@ -157,7 +157,7 @@
                     },
                     { "name": "Apple-Ventura-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                     "workernames": ["bot212"]
                     },
                     { "name": "Apple-Ventura-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -167,7 +167,7 @@
                     },
                     { "name": "Apple-Ventura-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                     "workernames": ["bot257"]
                     },
                     { "name": "Apple-Ventura-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -185,7 +185,7 @@
                     },
                     { "name": "Apple-Ventura-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                     "workernames": ["bot216"]
                     },
                     { "name": "Apple-Ventura-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -195,7 +195,7 @@
                     },
                     { "name": "Apple-Ventura-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                     "workernames": ["bot260"]
                     },
                     { "name": "Apple-Ventura-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -227,7 +227,7 @@
                     },
                     { "name": "Apple-Monterey-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot1021"]
                     },
                     { "name": "Apple-Monterey-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -237,7 +237,7 @@
                     },
                     { "name": "Apple-Monterey-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot138"]
                     },
                     { "name": "Apple-Monterey-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -264,7 +264,7 @@
                     },
                     { "name": "Apple-Monterey-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot1025"]
                     },
                     { "name": "Apple-Monterey-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -274,7 +274,7 @@
                     },
                     { "name": "Apple-Monterey-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot139"]
                     },
                     { "name": "Apple-Monterey-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -300,7 +300,7 @@
                     },
                     { "name": "Apple-BigSur-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot1020"]
                     },
                     { "name": "Apple-BigSur-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -322,7 +322,7 @@
                     },
                     { "name": "Apple-BigSur-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                       "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot1024"]
                     },
                     { "name": "Apple-BigSur-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
@@ -372,37 +372,37 @@
                     {
                       "name": "Apple-iOS-16-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/ios/TestExpectations"],
                       "workernames": ["bot210"]
                     },
                     {
                       "name": "Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot600"]
                     },
                     {
                       "name": "Apple-iOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/ios/TestExpectations"],
                       "workernames": ["bot651", "bot652"]
                     },
                     {
                       "name": "Apple-iOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot653"]
                     },
                     {
                       "name": "Apple-iPadOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
-                      "additionalArguments": ["--no-retry-failures"],
+                      "additionalArguments": ["--no-retry-failures", "--additional-expectations=LayoutTests/continuous-integration/ios/TestExpectations"],
                       "workernames": ["bot667"]
                     },
                     {
                       "name": "Apple-iPadOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                       "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--additional-expectations=LayoutTests/continuous-integration/TestExpectations"],
                       "workernames": ["bot664"]
                     },
                     {
