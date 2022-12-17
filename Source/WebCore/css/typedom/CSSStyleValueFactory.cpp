@@ -253,7 +253,10 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
         case CSSUnitType::CSS_CQMAX:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmax(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_IDENT:
-            return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(primitiveValue->stringValue()));
+            // Per the specification, the CSSKeywordValue's value slot should be set to the serialization
+            // of the identifier. As a result, the identifier will be lowercase:
+            // https://drafts.css-houdini.org/css-typed-om-1/#reify-ident
+            return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(primitiveValue->cssText()));
         default:
             break;
         }

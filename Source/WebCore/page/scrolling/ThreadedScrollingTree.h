@@ -116,6 +116,10 @@ private:
     
     bool scrollingThreadIsActive();
 
+    void receivedWheelEventWithPhases(PlatformWheelEventPhase, PlatformWheelEventPhase) final;
+    void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) final;
+    void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) final;
+
     void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
     void unlockLayersForHitTesting() final WTF_RELEASES_LOCK(m_layerHitTestMutex);
 

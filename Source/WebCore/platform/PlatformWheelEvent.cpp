@@ -85,44 +85,28 @@ PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEv
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)
 
-#if ENABLE(KINETIC_SCROLLING)
-
 TextStream& operator<<(TextStream& ts, PlatformWheelEventPhase phase)
 {
     switch (phase) {
     case PlatformWheelEventPhase::None: ts << "none"; break;
+#if ENABLE(KINETIC_SCROLLING)
     case PlatformWheelEventPhase::Began: ts << "began"; break;
     case PlatformWheelEventPhase::Stationary: ts << "stationary"; break;
     case PlatformWheelEventPhase::Changed: ts << "changed"; break;
     case PlatformWheelEventPhase::Ended: ts << "ended"; break;
     case PlatformWheelEventPhase::Cancelled: ts << "cancelled"; break;
     case PlatformWheelEventPhase::MayBegin: ts << "mayBegin"; break;
+#endif
     }
     return ts;
 }
-
-#endif
 
 TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
 {
     ts << "PlatformWheelEvent " << &event << " at " << event.position() << " deltaX " << event.deltaX() << " deltaY " << event.deltaY();
-
-#if ENABLE(KINETIC_SCROLLING)
     ts << " phase \"" << event.phase() << "\" momentum phase \"" << event.momentumPhase() << "\"";
-#endif
     ts << " velocity " << event.scrollingVelocity();
 
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
-{
-    switch (steps) {
-    case WheelEventProcessingSteps::ScrollingThread: ts << "scrolling thread"; break;
-    case WheelEventProcessingSteps::MainThreadForScrolling: ts << "main thread scrolling"; break;
-    case WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch: ts << "main thread non-blocking DOM event dispatch"; break;
-    case WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch: ts << "main thread blocking DOM event dispatch"; break;
-    }
     return ts;
 }
 

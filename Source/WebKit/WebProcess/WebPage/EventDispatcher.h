@@ -30,6 +30,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/RectEdges.h>
+#include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <memory>
 #include <wtf/HashMap.h>

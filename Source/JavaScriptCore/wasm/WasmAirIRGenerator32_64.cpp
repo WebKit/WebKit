@@ -191,6 +191,7 @@ private:
     Tmp extractJSValuePointer(const TypedTmp& tmp) const { return tmp.lo(); }
 
     void emitZeroInitialize(ExpressionType value);
+    void emitZeroInitialize(BasicBlock*, ExpressionType value);
     template <typename Taken>
     void emitCheckI64Zero(ExpressionType value, Taken&&);
     template<typename Taken>
@@ -235,6 +236,8 @@ public:
     ExpressionType addConstant(Type, uint64_t);
     ExpressionType addConstant(v128_t) { RELEASE_ASSERT_NOT_REACHED(); }
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
+    ExpressionType addConstantZero(Type);
+    ExpressionType addConstantZero(BasicBlock*, Type);
     static ExpressionType emptyExpression() { return { }; }
 
     // References
@@ -326,6 +329,11 @@ B3::Air::Opcode AirIRGenerator32::moveOpForValueType(Type type)
 
 void AirIRGenerator32::emitZeroInitialize(ExpressionType value)
 {
+    emitZeroInitialize(m_currentBlock, value);
+}
+
+void AirIRGenerator32::emitZeroInitialize(BasicBlock* block, ExpressionType value)
+{
     const auto type = value.type();
     switch (type.kind) {
     case TypeKind::Externref:
@@ -333,26 +341,26 @@ void AirIRGenerator32::emitZeroInitialize(ExpressionType value)
     case TypeKind::Ref:
     case TypeKind::RefNull: {
         auto const immValue = JSValue::encode(jsNull());
-        append(Move, Arg::bigImmLo32(immValue), value.lo());
-        append(Move, Arg::bigImmHi32(immValue), value.hi());
+        append(block, Move, Arg::bigImmLo32(immValue), value.lo());
+        append(block, Move, Arg::bigImmHi32(immValue), value.hi());
         break;
     }
     case TypeKind::I32:
-        append(Move, Arg::imm(0), value);
+        append(block, Move, Arg::imm(0), value);
         break;
     case TypeKind::I64:
-        append(Move, Arg::imm(0), value.lo());
-        append(Move, Arg::imm(0), value.hi());
+        append(block, Move, Arg::imm(0), value.lo());
+        append(block, Move, Arg::imm(0), value.hi());
         break;
     case TypeKind::F32: {
         auto temp = g32();
         // IEEE 754 "0" is just int32/64 zero.
-        append(Move, Arg::imm(0), temp);
-        append(Move32ToFloat, temp, value);
+        append(block, Move, Arg::imm(0), temp);
+        append(block, Move32ToFloat, temp, value);
         break;
     }
     case TypeKind::F64:
-        append(MoveZeroToDouble, value);
+        append(block, MoveZeroToDouble, value);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -960,6 +968,18 @@ auto AirIRGenerator32::addConstant(BasicBlock* block, Type type, uint64_t value)
 {
     auto result = tmpForType(type);
     emitMaterializeConstant(block, type, value, result);
+    return result;
+}
+
+auto AirIRGenerator32::addConstantZero(Type type) -> ExpressionType
+{
+    return addConstantZero(m_currentBlock, type);
+}
+
+auto AirIRGenerator32::addConstantZero(BasicBlock* block, Type type) -> ExpressionType
+{
+    auto result = tmpForType(type);
+    emitZeroInitialize(block, result);
     return result;
 }
 

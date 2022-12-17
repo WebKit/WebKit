@@ -31,7 +31,7 @@ namespace WebKit::WebPushD {
 constexpr unsigned maxSilentPushCount = 3;
 
 constexpr const char* protocolVersionKey = "protocol version";
-constexpr uint64_t protocolVersionValue = 1;
+constexpr uint64_t protocolVersionValue = 2;
 constexpr const char* protocolEncodedMessageKey = "encoded message";
 
 constexpr const char* protocolDebugMessageKey { "debug message" };

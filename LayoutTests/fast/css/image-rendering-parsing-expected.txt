@@ -19,11 +19,11 @@ PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.C
 PASS div.style.getPropertyValue('image-rendering') is "-webkit-optimize-contrast"
 PASS getComputedStyle(div).getPropertyValue('image-rendering') is "crisp-edges"
 PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
-PASS div.style.getPropertyValue('image-rendering') is "optimizeSpeed"
-PASS getComputedStyle(div).getPropertyValue('image-rendering') is "optimizeSpeed"
+PASS div.style.getPropertyValue('image-rendering') is "optimizespeed"
+PASS getComputedStyle(div).getPropertyValue('image-rendering') is "optimizespeed"
 PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
-PASS div.style.getPropertyValue('image-rendering') is "optimizeQuality"
-PASS getComputedStyle(div).getPropertyValue('image-rendering') is "optimizeQuality"
+PASS div.style.getPropertyValue('image-rendering') is "optimizequality"
+PASS getComputedStyle(div).getPropertyValue('image-rendering') is "optimizequality"
 PASS successfullyParsed is true
 
 TEST COMPLETE

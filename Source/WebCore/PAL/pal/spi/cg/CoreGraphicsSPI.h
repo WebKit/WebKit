@@ -290,6 +290,7 @@ void CGFontSetShouldUseMulticache(bool);
 
 void CGImageSetCachingFlags(CGImageRef, CGImageCachingFlags);
 CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
+void CGImageSetProperty(CGImageRef, CFStringRef, CFTypeRef);
 
 CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
 

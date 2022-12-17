@@ -1218,6 +1218,10 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
 
     if (message->shouldUseFullySynchronousModeForTesting()) {
         if (!m_fullySynchronousModeIsAllowedForTesting) {
+#if ENABLE(IPC_TESTING_API)
+            if (m_ignoreInvalidMessageForTesting)
+                return;
+#endif
             m_client->didReceiveInvalidMessage(*this, message->messageName());
             return;
         }
@@ -1251,7 +1255,11 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
     if (message->shouldUseFullySynchronousModeForTesting())
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting--;
 
-    if (m_didReceiveInvalidMessage && isValid())
+    if (m_didReceiveInvalidMessage
+#if ENABLE(IPC_TESTING_API)
+        && !m_ignoreInvalidMessageForTesting
+#endif
+        && isValid())
         m_client->didReceiveInvalidMessage(*this, message->messageName());
 
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;

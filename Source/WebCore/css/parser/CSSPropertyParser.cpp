@@ -490,15 +490,11 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
             return { primitiveValue->stringValue() };
 
         case CSSCustomPropertySyntax::Type::TransformFunction:
-        case CSSCustomPropertySyntax::Type::TransformList: {
-            auto listValue = CSSValueList::createSpaceSeparated();
-            listValue->append(const_cast<CSSValue&>(value));
-            TransformOperations operations;
-            transformsForValue(listValue, builderState.cssToLengthConversionData(), operations);
-            if (operations.operations().size() != 1)
-                return { };
-            return { operations.operations()[0] };
-        }
+        case CSSCustomPropertySyntax::Type::TransformList:
+            if (auto transform = transformForValue(value, builderState.cssToLengthConversionData()))
+                return { transform };
+            return { };
+    
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };
         }

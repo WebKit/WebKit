@@ -2398,7 +2398,7 @@
 		E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */; };
 		EB36B16827A7B4500050E00D /* PushService.h in Headers */ = {isa = PBXBuildFile; fileRef = EB36B16627A7B4500050E00D /* PushService.h */; };
 		EB36B16927A7B4500050E00D /* PushService.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB36B16727A7B4500050E00D /* PushService.mm */; };
-		EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.sb in Resources */ = {isa = PBXBuildFile; fileRef = EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */; };
+		EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.mac.sb in Resources */ = {isa = PBXBuildFile; fileRef = EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */; };
 		EBA8D3AB27A5E31300CB7900 /* ApplePushServiceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */; };
 		EBA8D3B227A5E33F00CB7900 /* ApplePushServiceConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */; };
 		EBA8D3B327A5E33F00CB7900 /* MockPushServiceConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA8D3AD27A5E33E00CB7900 /* MockPushServiceConnection.h */; };
@@ -7533,8 +7533,8 @@
 		EB0D312E275AE13300863D8F /* com.apple.webkit.webpushd.ios.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.ios.plist; sourceTree = "<group>"; };
 		EB36B16627A7B4500050E00D /* PushService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushService.h; sourceTree = "<group>"; };
 		EB36B16727A7B4500050E00D /* PushService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushService.mm; sourceTree = "<group>"; };
-		EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.sb.in; sourceTree = "<group>"; };
-		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.sb; sourceTree = "<group>"; };
+		EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.mac.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.mac.sb.in; sourceTree = "<group>"; };
+		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.mac.sb; sourceTree = "<group>"; };
 		EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePushServiceSPI.h; sourceTree = "<group>"; };
 		EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePushServiceConnection.mm; sourceTree = "<group>"; };
 		EBA8D3AD27A5E33E00CB7900 /* MockPushServiceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPushServiceConnection.h; sourceTree = "<group>"; };
@@ -7542,6 +7542,7 @@
 		EBA8D3AF27A5E33F00CB7900 /* PushServiceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushServiceConnection.h; sourceTree = "<group>"; };
 		EBA8D3B027A5E33F00CB7900 /* MockPushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockPushServiceConnection.mm; sourceTree = "<group>"; };
 		EBA8D3B127A5E33F00CB7900 /* PushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushServiceConnection.mm; sourceTree = "<group>"; };
+		EBE0B837294BDD65004FA3BE /* com.apple.WebKit.webpushd.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.sb.in; sourceTree = "<group>"; };
 		EBE4D2AE28A2F44700C0FAE7 /* LoggingPreferences.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = LoggingPreferences.plist; path = Resources/LoggingPreferences.plist; sourceTree = "<group>"; };
 		ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraPrivateSymbolsForTAPI.h; sourceTree = "<group>"; };
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
@@ -12086,6 +12087,7 @@
 				2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb.in */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb.in */,
 				E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */,
+				EBE0B837294BDD65004FA3BE /* com.apple.WebKit.webpushd.sb.in */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -13462,7 +13464,7 @@
 				E17AE2C216B9C63A001C42F2 /* com.apple.WebKit.GPUProcess.sb */,
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
 				E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */,
-				EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */,
+				EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */,
 				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
@@ -14396,7 +14398,7 @@
 		EB7D252827B316A6009CB586 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.sb.in */,
+				EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.mac.sb.in */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -16673,7 +16675,7 @@
 			files = (
 				E17AE2C316B9C63A001C42F2 /* com.apple.WebKit.GPUProcess.sb in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
-				EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.sb in Resources */,
+				EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.mac.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
@@ -16838,6 +16840,7 @@
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.webpushd.sb",
 			);
 			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
 			outputPaths = (
@@ -17699,7 +17702,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Preprocessing sandbox\"\nScripts/generate-derived-sources.sh sandbox-profiles-ios\nmkdir -p ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.adattributiond.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.GPU.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.Networking.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebAuthn.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebContent.sb ${DSTROOT}/${INSTALL_PATH}\n";
+			shellScript = "echo \"Preprocessing sandbox\"\nScripts/generate-derived-sources.sh sandbox-profiles-ios\nmkdir -p ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.adattributiond.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.GPU.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.Networking.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebAuthn.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebContent.sb ${DSTROOT}/${INSTALL_PATH}\n";
 		};
 		EBE4D2AD28A2F3BD00C0FAE7 /* Copy Signpost Plists */ = {
 			isa = PBXShellScriptBuildPhase;

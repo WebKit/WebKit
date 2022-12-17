@@ -5,9 +5,9 @@ PASS Can set 'pointer-events' to CSS-wide keywords: unset
 PASS Can set 'pointer-events' to CSS-wide keywords: revert
 PASS Can set 'pointer-events' to var() references:  var(--A)
 PASS Can set 'pointer-events' to the 'bounding-box' keyword: bounding-box
-FAIL Can set 'pointer-events' to the 'visiblepainted' keyword: visiblepainted assert_equals: expected "visiblepainted" but got "visiblePainted"
-FAIL Can set 'pointer-events' to the 'visiblefill' keyword: visiblefill assert_equals: expected "visiblefill" but got "visibleFill"
-FAIL Can set 'pointer-events' to the 'visiblestroke' keyword: visiblestroke assert_equals: expected "visiblestroke" but got "visibleStroke"
+PASS Can set 'pointer-events' to the 'visiblepainted' keyword: visiblepainted
+PASS Can set 'pointer-events' to the 'visiblefill' keyword: visiblefill
+PASS Can set 'pointer-events' to the 'visiblestroke' keyword: visiblestroke
 PASS Can set 'pointer-events' to the 'visible' keyword: visible
 PASS Can set 'pointer-events' to the 'painted' keyword: painted
 PASS Can set 'pointer-events' to the 'fill' keyword: fill

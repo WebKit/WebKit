@@ -129,6 +129,7 @@ $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in
 $(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb.in
+$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.webpushd.sb.in
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb
@@ -394,7 +395,7 @@ $(PROJECT_DIR)/WebProcess/cocoa/RemoteCaptureSampleManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/UserMediaCaptureManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/VideoFullscreenManager.messages.in
 $(PROJECT_DIR)/WebProcess/com.apple.WebProcess.sb.in
-$(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.sb.in
+$(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.mac.sb.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/CodeGenerator.pm
 $(WEBCORE_PRIVATE_HEADERS_DIR)/IDLParser.pm
 $(WEBCORE_PRIVATE_HEADERS_DIR)/generate-bindings.pl

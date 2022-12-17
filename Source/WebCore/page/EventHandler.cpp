@@ -3016,7 +3016,7 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
     LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEvent " << event << " processing steps " << processingSteps);
     auto monitor = m_frame.page()->wheelEventTestMonitor();
     if (monitor)
-        monitor->receivedWheelEvent(event);
+        monitor->receivedWheelEventWithPhases(event.phase(), event.momentumPhase());
 
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { monitor.get(), this, WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread };
 #endif

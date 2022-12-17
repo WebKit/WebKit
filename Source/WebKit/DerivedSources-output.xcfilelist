@@ -488,5 +488,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.WebAuthnProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.WebContent.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.adattributiond.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.plugin-common.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebProcess.sb

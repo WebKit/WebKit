@@ -87,10 +87,12 @@ static TextStream& operator<<(TextStream& stream, CSSPropertyID property)
 
 struct CSSPropertyBlendingContext : BlendingContext {
     const CSSPropertyBlendingClient& client;
+    CSSPropertyAnimation::Property property;
 
-    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, CSSPropertyAnimation::Property property, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
         : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration)
         , client(client)
+        , property(property)
     {
     }
 };
@@ -188,8 +190,10 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
     auto prefix = [&]() -> std::optional<unsigned> {
         // We cannot use the pre-computed prefix when dealing with accumulation
         // since the values used to accumulate may be different than those held
-        // in the initial keyframe list.
-        if (context.compositeOperation == CompositeOperation::Accumulate)
+        // in the initial keyframe list. We must do the same with any property
+        // other than "transform" since we only pre-compute the prefix for that
+        // property.
+        if (context.compositeOperation == CompositeOperation::Accumulate || std::holds_alternative<AtomString>(context.property) || std::get<CSSPropertyID>(context.property) != CSSPropertyTransform)
             return std::nullopt;
         return context.client.transformFunctionListPrefix();
     };
@@ -413,7 +417,7 @@ static inline Visibility blendFunc(Visibility from, Visibility to, const CSSProp
     if (fromVal == toVal)
         return to;
     // The composite operation here is irrelevant.
-    double result = blendFunc(fromVal, toVal, { context.progress, false, CompositeOperation::Replace, context.client });
+    double result = blendFunc(fromVal, toVal, { context.progress, false, CompositeOperation::Replace, context.client, context.property });
     return result > 0. ? Visibility::Visible : (to != Visibility::Visible ? to : from);
 }
 
@@ -3914,7 +3918,7 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
             progress = progress < 0.5 ? 0 : 1;
             compositeOperation = CompositeOperation::Replace;
         }
-        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client, iterationCompositeOperation, currentIteration });
+        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client, property, iterationCompositeOperation, currentIteration });
 #if !LOG_DISABLED
         wrapper->logBlend(from, to, destination, progress);
 #endif
@@ -3955,6 +3959,56 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
     return std::nullopt;
 }
 
+static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLists(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue::SyntaxValueList& from, const CSSCustomPropertyValue::SyntaxValueList& to, const CSSPropertyBlendingContext& blendingContext)
+{
+    // https://drafts.css-houdini.org/css-properties-values-api-1/#animation-behavior-of-custom-properties
+
+    auto firstValue = [&]() -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
+        if (!from.values.isEmpty())
+            return from.values[0];
+        if (!to.values.isEmpty())
+            return to.values[0];
+        return std::nullopt;
+    }();
+
+    if (!firstValue)
+        return std::nullopt;
+
+    // <transform-function> lists are special in that they don't require matching numbers of items.
+    if (std::holds_alternative<RefPtr<TransformOperation>>(*firstValue)) {
+        auto transformOperationsFromSyntaxValueList = [](const CSSCustomPropertyValue::SyntaxValueList& src) {
+            TransformOperations transformOperations;
+            for (auto& syntaxValue : src.values) {
+                ASSERT(std::holds_alternative<RefPtr<TransformOperation>>(syntaxValue));
+                transformOperations.operations().append(std::get<RefPtr<TransformOperation>>(syntaxValue));
+            }
+            return transformOperations;
+        };
+
+        auto fromTransformOperations = transformOperationsFromSyntaxValueList(from);
+        auto toTransformOperations = transformOperationsFromSyntaxValueList(to);
+        auto blendedTransformOperations = blendFunc(fromTransformOperations, toTransformOperations, blendingContext);
+        auto blendedSyntaxValues = blendedTransformOperations.operations().map([](auto& transformOperation) -> CSSCustomPropertyValue::SyntaxValue {
+            return transformOperation;
+        });
+        return CSSCustomPropertyValue::SyntaxValueList { blendedSyntaxValues, from.separator };
+    }
+
+    // Other lists must have matching sizes.
+    if (from.values.size() != to.values.size())
+        return std::nullopt;
+
+    Vector<CSSCustomPropertyValue::SyntaxValue> blendedSyntaxValues;
+    for (size_t i = 0; i < from.values.size(); ++i) {
+        auto blendedSyntaxValue = blendSyntaxValues(fromStyle, toStyle, from.values[i], to.values[i], blendingContext);
+        if (!blendedSyntaxValue)
+            return std::nullopt;
+        blendedSyntaxValues.append(*blendedSyntaxValue);
+    }
+
+    return CSSCustomPropertyValue::SyntaxValueList { blendedSyntaxValues, from.separator };
+}
+
 static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from.value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to.value())) {
@@ -3962,6 +4016,13 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderSty
         auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to.value());
         if (auto blendedSyntaxValue = blendSyntaxValues(fromStyle, toStyle, fromSyntaxValue, toSyntaxValue, blendingContext))
             return CSSCustomPropertyValue::createForSyntaxValue(from.name(), WTFMove(*blendedSyntaxValue));
+    }
+
+    if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(from.value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(to.value())) {
+        auto& fromSyntaxValueList = std::get<CSSCustomPropertyValue::SyntaxValueList>(from.value());
+        auto& toSyntaxValueList = std::get<CSSCustomPropertyValue::SyntaxValueList>(to.value());
+        if (auto blendedSyntaxValueList = blendSyntaxValueLists(fromStyle, toStyle, fromSyntaxValueList, toSyntaxValueList, blendingContext))
+            return CSSCustomPropertyValue::createForSyntaxValueList(from.name(), WTFMove(*blendedSyntaxValueList));
     }
 
     // Use a discrete interpolation for all other cases.
@@ -3989,7 +4050,7 @@ static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> c
 
 static void blendCustomProperty(const CSSPropertyBlendingClient& client, const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
-    CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, iterationCompositeOperation, currentIteration };
+    CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, customProperty, iterationCompositeOperation, currentIteration };
 
     {
         auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));

@@ -861,7 +861,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/RemoteInspectionTarget.h
     inspector/remote/RemoteInspector.h
 
-    interpreter/AbstractPC.h
     interpreter/CLoopStack.h
     interpreter/CallFrame.h
     interpreter/CallFrameInlines.h

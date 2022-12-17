@@ -195,7 +195,7 @@ private:
     String get4Values(const StylePropertyShorthand&) const;
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue(const StylePropertyShorthand&) const;
-    String fontVariantValue(const StylePropertyShorthand&) const;
+    String fontVariantValue() const;
     String fontSynthesisValue() const;
     String offsetValue() const;
     String commonShorthandChecks(const StylePropertyShorthand&) const;

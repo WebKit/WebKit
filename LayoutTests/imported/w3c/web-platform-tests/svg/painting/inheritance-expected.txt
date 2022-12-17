@@ -29,12 +29,12 @@ PASS Property marker-end has initial value none
 FAIL Property marker-end inherits assert_equals: expected "url(\"https://example/com/diagram.svg#marker\")" but got "none"
 PASS Property paint-order has initial value normal
 FAIL Property paint-order inherits assert_equals: expected "markers stroke" but got "normal"
-FAIL Property color-interpolation has initial value srgb assert_equals: expected "srgb" but got "sRGB"
-FAIL Property color-interpolation inherits assert_equals: expected "linearrgb" but got "linearRGB"
+PASS Property color-interpolation has initial value srgb
+PASS Property color-interpolation inherits
 PASS Property shape-rendering has initial value auto
-FAIL Property shape-rendering inherits assert_equals: expected "optimizespeed" but got "optimizeSpeed"
+PASS Property shape-rendering inherits
 PASS Property text-rendering has initial value auto
-FAIL Property text-rendering inherits assert_equals: expected "optimizespeed" but got "optimizeSpeed"
+PASS Property text-rendering inherits
 PASS Property image-rendering has initial value auto
-FAIL Property image-rendering inherits assert_equals: expected "optimizequality" but got "optimizeQuality"
+PASS Property image-rendering inherits
 

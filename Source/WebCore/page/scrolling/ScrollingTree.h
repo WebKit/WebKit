@@ -58,25 +58,6 @@ enum class EventListenerRegionType : uint8_t;
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 
-struct WheelEventHandlingResult {
-    OptionSet<WheelEventProcessingSteps> steps;
-    bool wasHandled { false };
-    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }); }
-
-    static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
-    {
-        return { steps, true };
-    }
-    static WheelEventHandlingResult unhandled(OptionSet<WheelEventProcessingSteps> steps = { })
-    {
-        return { steps, false };
-    }
-    static WheelEventHandlingResult result(bool handled)
-    {
-        return { { }, handled };
-    }
-};
-
 enum class EventTargeting : uint8_t { NodeOnly, Propagate };
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
@@ -159,10 +140,9 @@ public:
 
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegions::EventType, IntPoint);
 
-    WheelEventTestMonitor* wheelEventTestMonitor() { return m_wheelEventTestMonitor.get(); }
-    void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& monitor) { m_wheelEventTestMonitor = WTFMove(monitor); }
-    void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
-    void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
+    virtual void receivedWheelEventWithPhases(PlatformWheelEventPhase /* phase */, PlatformWheelEventPhase /* momentumPhase */) { }
+    virtual void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) { }
+    virtual void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) { }
 
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) = 0;
@@ -280,8 +260,6 @@ private:
 
     OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
 
-    void receivedWheelEvent(const PlatformWheelEvent&);
-
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
@@ -330,8 +308,6 @@ private:
     Lock m_lastWheelEventTimeLock;
     MonotonicTime m_lastWheelEventTime WTF_GUARDED_BY_LOCK(m_lastWheelEventTimeLock);
 
-    RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
-
 protected:
     bool m_allowLatching { true };
 
@@ -344,6 +320,27 @@ private:
     bool m_wheelEventGesturesBecomeNonBlocking { false };
     bool m_needsApplyLayerPositionsAfterCommit { false };
     bool m_inCommitTreeState { false };
+};
+
+class ScrollingTreeWheelEventTestMonitorCompletionDeferrer {
+public:
+    ScrollingTreeWheelEventTestMonitorCompletionDeferrer(ScrollingTree& scrollingTree, ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+        : m_scrollingTree(scrollingTree)
+        , m_scrollingNodeID(nodeID)
+        , m_deferReason(reason)
+    {
+        m_scrollingTree->deferWheelEventTestCompletionForReason(m_scrollingNodeID, m_deferReason);
+    }
+    
+    ~ScrollingTreeWheelEventTestMonitorCompletionDeferrer()
+    {
+        m_scrollingTree->removeWheelEventTestCompletionDeferralForReason(m_scrollingNodeID, m_deferReason);
+    }
+
+private:
+    Ref<ScrollingTree> m_scrollingTree;
+    ScrollingNodeID m_scrollingNodeID;
+    WheelEventTestMonitor::DeferReason m_deferReason;
 };
 
 } // namespace WebCore

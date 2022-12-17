@@ -412,9 +412,10 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogLn(codeBlock);
     --it;
 #if ENABLE(JIT)
-    AbstractPC pc = callFrame->abstractReturnPC(vm);
-    if (pc.hasJITReturnAddress())
-        dataLogF("[ReturnPC]                 | %10p | %p \n", it, pc.jitReturnAddress().value());
+    if (Options::useJIT()) {
+        void* pc = callFrame->returnPCForInspection();
+        dataLogF("[ReturnPC]                 | %10p | %p \n", it, pc);
+    }
     --it;
 #endif
     dataLogF("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());

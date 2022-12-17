@@ -28,11 +28,13 @@ from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from datetime import date
 from requests.auth import HTTPBasicAuth
-from twisted.internet import defer
+
+from twisted.internet import defer, reactor, task
 
 from layout_test_failures import LayoutTestFailures
 from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
 from results_db import ResultsDatabase
+from twisted_additions import TwistedAdditions
 
 import json
 import mock
@@ -4885,7 +4887,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         return None
 
 
-class DetermineLandedIdentifier(shell.ShellCommand):
+class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
     name = 'determine-landed-identifier'
     descriptionDone = ['Determined landed identifier']
     command = ['git', 'log', '-1', '--no-decorate']
@@ -4896,11 +4898,6 @@ class DetermineLandedIdentifier(shell.ShellCommand):
         self.identifier = None
         super(DetermineLandedIdentifier, self).__init__(logEnviron=False, timeout=300, **kwargs)
 
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        self.log_observer = BufferLogObserverClass(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-        return super(DetermineLandedIdentifier, self).start()
-
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': f'Identifier: {self.identifier}'}
@@ -4908,8 +4905,12 @@ class DetermineLandedIdentifier(shell.ShellCommand):
             return {'step': 'Failed to determine identifier'}
         return super(DetermineLandedIdentifier, self).getResultSummary()
 
-    def evaluateCommand(self, cmd):
-        rc = super(DetermineLandedIdentifier, self).evaluateCommand(cmd)
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super(DetermineLandedIdentifier, self).run()
 
         loglines = self.log_observer.getStdout().splitlines()
 
@@ -4921,9 +4922,9 @@ class DetermineLandedIdentifier(shell.ShellCommand):
 
         landed_hash = self.getProperty('landed_hash')
         if not self.identifier:
-            time.sleep(60)  # It takes time for commits.webkit.org to digest commits
-            self.identifier = self.identifier_for_hash(landed_hash)
-            if '@' not in self.identifier:
+            yield task.deferLater(reactor, 60, lambda: None)  # It takes time for commits.webkit.org to digest commits
+            self.identifier = yield self.identifier_for_hash(landed_hash)
+            if not self.identifier or '@' not in self.identifier:
                 rc = FAILURE
 
         self.setProperty('comment_text', self.comment_text_for_bug(landed_hash, self.identifier))
@@ -4932,25 +4933,29 @@ class DetermineLandedIdentifier(shell.ShellCommand):
         self.setProperty('build_summary', commit_summary)
         self.addURL(self.identifier, self.url_for_identifier(self.identifier))
 
-        return rc
-
-    def url_for_hash_details(self, hash):
-        return '{}{}/json'.format(COMMITS_INFO_URL, hash)
+        defer.returnValue(rc)
 
     def url_for_identifier(self, identifier):
         return '{}{}'.format(COMMITS_INFO_URL, identifier)
 
+    @defer.inlineCallbacks
     def identifier_for_hash(self, hash):
         try:
-            response = requests.get(self.url_for_hash_details(hash), timeout=60)
+            response = yield TwistedAdditions.request(
+                url=f'{COMMITS_INFO_URL}{hash}/json', logger=print,
+            )
             if response and response.status_code == 200:
-                return response.json().get('identifier', '{}'.format(hash)).replace('@trunk', '@main')
-            else:
-                print('Non-200 status code received from {}: {}'.format(COMMITS_INFO_URL, response.status_code))
+                defer.returnValue(response.json().get('identifier', hash).replace('@trunk', '@main'))
+                return
+            elif response:
+                print(f'Non-200 status code received from {COMMITS_INFO_URL}: {response.status_code}')
                 print(response.text)
-        except Exception as e:
-            print(e)
-        return hash
+                defer.returnValue(hash)
+                return
+        except json.decoder.JSONDecodeError:
+            print(f'Response from {COMMITS_INFO_URL} was not JSON')
+            print(response.text)
+        defer.returnValue(hash)
 
     def comment_text_for_bug(self, hash=None, identifier=None):
         identifier_str = identifier if identifier and '@' in identifier else '?'

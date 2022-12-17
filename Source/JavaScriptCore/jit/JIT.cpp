@@ -61,13 +61,6 @@ Seconds totalFTLCompileTime;
 Seconds totalFTLDFGCompileTime;
 Seconds totalFTLB3CompileTime;
 
-void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, CodePtr<CFunctionPtrTag> newCalleeFunction)
-{
-    MacroAssembler::repatchCall(
-        CodeLocationCall<ReturnAddressPtrTag>(CodePtr<ReturnAddressPtrTag>::fromTaggedPtr(const_cast<void*>(returnAddress.value()))),
-        newCalleeFunction.retagged<OperationPtrTag>());
-}
-
 JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     : JSInterfaceJIT(&vm, nullptr)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)

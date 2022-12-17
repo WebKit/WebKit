@@ -170,7 +170,7 @@ Value* Procedure::addBottom(Origin origin, Type type)
 {
     if (type.isTuple())
         return add<BottomTupleValue>(origin, type);
-    return addIntConstant(origin, type, 0);
+    return addConstant(origin, type, 0);
 }
 
 Value* Procedure::addBottom(Value* value)

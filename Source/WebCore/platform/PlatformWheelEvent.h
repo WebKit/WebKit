@@ -38,13 +38,6 @@ namespace WebCore {
 
 class PlatformGestureEvent;
 
-enum class WheelEventProcessingSteps : uint8_t {
-    ScrollingThread                             = 1 << 0,
-    MainThreadForScrolling                      = 1 << 1,
-    MainThreadForNonBlockingDOMEventDispatch    = 1 << 2,
-    MainThreadForBlockingDOMEventDispatch       = 1 << 3,
-};
-
 enum class WheelScrollGestureState : uint8_t {
     Blocking,
     NonBlocking
@@ -62,21 +55,20 @@ enum PlatformWheelEventGranularity : uint8_t {
     ScrollByPixelWheelEvent,
 };
 
-#if ENABLE(KINETIC_SCROLLING)
-
 enum class PlatformWheelEventPhase : uint8_t {
     None        = 0,
+#if ENABLE(KINETIC_SCROLLING)
     Began       = 1 << 0,
     Stationary  = 1 << 1,
     Changed     = 1 << 2,
     Ended       = 1 << 3,
     Cancelled   = 1 << 4,
     MayBegin    = 1 << 5,
+#endif
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, PlatformWheelEventPhase);
 
-#endif
 
 #if PLATFORM(WIN)
 // How many pixels should we scroll per line? Gecko uses the height of the
@@ -173,10 +165,10 @@ public:
     bool useLatchedEventElement() const { return false; }
 #endif
 
-#if ENABLE(KINETIC_SCROLLING)
     PlatformWheelEventPhase phase() const { return m_phase; }
     PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
 
+#if ENABLE(KINETIC_SCROLLING)
     bool isGestureStart() const;
     bool isGestureCancel() const;
 
@@ -207,10 +199,9 @@ protected:
     // Scrolling velocity in pixels per second.
     FloatSize m_scrollingVelocity;
 
-#if ENABLE(KINETIC_SCROLLING)
     PlatformWheelEventPhase m_phase { PlatformWheelEventPhase::None };
     PlatformWheelEventPhase m_momentumPhase { PlatformWheelEventPhase::None };
-#endif
+
 #if PLATFORM(COCOA)
     WallTime m_ioHIDEventTimestamp;
     std::optional<FloatSize> m_rawPlatformDelta;
@@ -290,7 +281,6 @@ inline FloatSize PlatformWheelEvent::swipeVelocity() const
 #endif // ENABLE(KINETIC_SCROLLING)
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, EventHandling);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelScrollGestureState);
 

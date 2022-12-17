@@ -30,6 +30,7 @@
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
@@ -186,7 +187,18 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(RetainP
     CGDataProviderDirectCallbacks providerCallbacks = { 0, CVPixelBufferGetBytePointerCallback, CVPixelBufferReleaseBytePointerCallback, 0, CVPixelBufferReleaseInfoCallback };
     RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateDirect(info, byteLength, &providerCallbacks));
 
-    return adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, colorSpace, bitmapInfo, provider.get(), nullptr, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, colorSpace, bitmapInfo, provider.get(), nullptr, false, kCGRenderingIntentDefault));
+
+    // For historical reasons, CoreAnimation will adjust certain video color
+    // spaces when displaying the video. If the video frame derived image we
+    // create here is drawn to an accelerated image buffer (e.g. for a canvas),
+    // CA may not do this same adjustment, resulting in the canvas pixels not
+    // matching the source video. Setting this CGImage property (despite the
+    // image not being IOSurface backed), avoids this non-adjustment of the
+    // image color space. <rdar://88804270>
+    CGImageSetProperty(image.get(), CFSTR("CA_IOSURFACE_IMAGE"), kCFBooleanTrue);
+
+    return image;
 }
 
 }

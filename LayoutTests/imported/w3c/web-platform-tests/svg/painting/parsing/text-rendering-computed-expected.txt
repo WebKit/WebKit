@@ -1,6 +1,6 @@
 
 PASS Property text-rendering value 'auto'
-FAIL Property text-rendering value 'optimizespeed' assert_equals: expected "optimizespeed" but got "optimizeSpeed"
-FAIL Property text-rendering value 'optimizelegibility' assert_equals: expected "optimizelegibility" but got "optimizeLegibility"
-FAIL Property text-rendering value 'geometricprecision' assert_equals: expected "geometricprecision" but got "geometricPrecision"
+PASS Property text-rendering value 'optimizespeed'
+PASS Property text-rendering value 'optimizelegibility'
+PASS Property text-rendering value 'geometricprecision'
 

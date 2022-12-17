@@ -139,13 +139,6 @@ void ThreadedScrollingCoordinator::startMonitoringWheelEvents(bool clearLatching
 {
     if (clearLatchingState)
         scrollingTree()->clearLatchedNode();
-    auto monitor = m_page->wheelEventTestMonitor();
-    scrollingTree()->setWheelEventTestMonitor(WTFMove(monitor));
-}
-
-void ThreadedScrollingCoordinator::stopMonitoringWheelEvents()
-{
-    scrollingTree()->setWheelEventTestMonitor(nullptr);
 }
 
 } // namespace WebCore

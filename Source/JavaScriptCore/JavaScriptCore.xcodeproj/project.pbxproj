@@ -349,7 +349,6 @@
 		0F5193F7266C432D00483A2C /* ExecutableMemoryHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193F6266C432D00483A2C /* ExecutableMemoryHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5513A61D5A682C00C32BD8 /* FreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5513A51D5A682A00C32BD8 /* FreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55989717C86C5600A1E543 /* ToNativeFromValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55F0F214D1063600AC7649 /* AbstractPC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56A1D115000F31002992B1 /* ExecutionCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5780A118FE1E98001E72D9 /* PureNaN.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2902,8 +2901,6 @@
 		0F5513A71D5A68CB00C32BD8 /* FreeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FreeList.cpp; sourceTree = "<group>"; };
 		0F55989717C86C5600A1E543 /* ToNativeFromValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToNativeFromValue.h; sourceTree = "<group>"; };
 		0F55C19317276E4600CEABFD /* DFGAbstractValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractValue.cpp; path = dfg/DFGAbstractValue.cpp; sourceTree = "<group>"; };
-		0F55F0F114D1063600AC7649 /* AbstractPC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPC.cpp; sourceTree = "<group>"; };
-		0F55F0F214D1063600AC7649 /* AbstractPC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPC.h; sourceTree = "<group>"; };
 		0F56A1D115000F31002992B1 /* ExecutionCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionCounter.h; sourceTree = "<group>"; };
 		0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionCounter.cpp; sourceTree = "<group>"; };
 		0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunkGenerator.h; sourceTree = "<group>"; };
@@ -6597,8 +6594,6 @@
 		1429D77A0ED20D7300B89619 /* interpreter */ = {
 			isa = PBXGroup;
 			children = (
-				0F55F0F114D1063600AC7649 /* AbstractPC.cpp */,
-				0F55F0F214D1063600AC7649 /* AbstractPC.h */,
 				A7F8690E0F9584A100558697 /* CachedCall.h */,
 				796DAA2A1E89CCD6005DF24A /* CalleeBits.h */,
 				1429D8DB0ED2205B00B89619 /* CallFrame.cpp */,
@@ -9808,7 +9803,6 @@
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
 				AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */,
-				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
 				FE912B4F2531193300FABDDF /* AbstractSlotVisitor.h in Headers */,
 				FE912B5125311AD100FABDDF /* AbstractSlotVisitorInlines.h in Headers */,
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,

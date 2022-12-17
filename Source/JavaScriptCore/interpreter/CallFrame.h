@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "AbstractPC.h"
 #include "CPU.h"
 #include "CalleeBits.h"
 #include "MacroAssemblerCodeRef.h"
@@ -205,11 +204,10 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
-        ReturnAddressPtr returnPC() const { return ReturnAddressPtr::fromTaggedPC(callerFrameAndPC().returnPC, this + CallerFrameAndPC::sizeInRegisters); }
+        void* returnPCForInspection() const { return removeCodePtrTag(callerFrameAndPC().returnPC); }
         bool hasReturnPC() const { return !!callerFrameAndPC().returnPC; }
         void clearReturnPC() { callerFrameAndPC().returnPC = nullptr; }
         static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }
-        AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
 
         bool callSiteBitsAreBytecodeOffset() const;
         bool callSiteBitsAreCodeOriginIndex() const;
