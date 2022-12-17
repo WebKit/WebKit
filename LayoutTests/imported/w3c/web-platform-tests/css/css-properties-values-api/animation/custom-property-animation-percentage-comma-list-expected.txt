@@ -1,0 +1,8 @@
+
+PASS Animating a custom property of type <percentage>#
+PASS Animating a custom property of type <percentage># with a single keyframe
+PASS Animating a custom property of type <percentage># with additivity
+PASS Animating a custom property of type <percentage># with a single keyframe and additivity
+PASS Animating a custom property of type <percentage># with iterationComposite
+PASS Animating a custom property of type <percentage># with different lengths is discrete
+

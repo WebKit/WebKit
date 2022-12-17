@@ -1,0 +1,8 @@
+
+PASS Animating a custom property of type <transform-list> containing multiple values
+PASS Animating a custom property of type <transform-list> containing multiple values with a single keyframe
+PASS Animating a custom property of type <transform-list> containing multiple values with additivity
+PASS Animating a custom property of type <transform-list> containing multiple values with a single keyframe and additivity
+PASS Animating a custom property of type <transform-list> containing multiple values with iterationComposite
+PASS Animating a custom property of type <transform-list> containing multiple values and with mismatching list lengths
+
