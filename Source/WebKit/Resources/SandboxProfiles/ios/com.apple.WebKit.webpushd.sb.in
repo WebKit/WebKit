@@ -1,0 +1,212 @@
+; Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(version 1)
+; FIXME: tighten sandbox after we get enough internal reports.
+; (deny default (with partial-symbolication))
+(allow (with report) default)
+(allow system-audit file-read-metadata)
+
+(import "util.sb")
+
+(define (allow-read-write-directory-contents path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-read* file-write*
+                (regex (string-append "^" (regex-quote path) "/")))
+            (allow file-write-create
+                file-write-data
+                (require-all (vnode-type DIRECTORY) (literal path))))))
+
+(define (allow-read-directory-and-issue-read-extensions path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
+
+(allow file-read* file-map-executable
+    (subpath "/usr/lib")
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/PrivateFrameworks"))
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+
+(deny sysctl* (with telemetry))
+(allow sysctl-read
+    (sysctl-name
+        "hw.activecpu"
+        "hw.osenvironment"
+        "hw.target"
+        "hw.machine"
+        "hw.memsize"
+        "hw.ncpu"
+        "hw.pagesize_compat"
+        "kern.bootargs"
+        "kern.hostname"
+        "kern.maxfilesperproc"
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
+        "kern.osversion"
+        "kern.secure_kernel"
+        "kern.version"
+        "vm.footprint_suspend")
+    (sysctl-name-prefix "kern.proc.pid.")
+)
+
+(with-filter (system-attribute apple-internal)
+    (allow sysctl-read sysctl-write
+        (sysctl-name
+            "vm.footprint_suspend"
+        )
+    )
+)
+
+(allow-read-write-directory-contents (param "DARWIN_USER_CACHE_DIR"))
+(allow-read-write-directory-contents (param "DARWIN_USER_TEMP_DIR"))
+
+(allow-read-directory-and-issue-read-extensions (param "FRAMEWORKS_DIR"))
+
+;; AWD
+(allow mach-lookup
+    (global-name
+        "com.apple.analyticsd"
+        "com.apple.awdd"))
+
+;; Note this does not allow subpaths of "/"
+(allow file-read* file-test-existence
+       (literal "/"))
+
+(allow file-read-data
+    (literal "/System/Library/CoreServices/SystemVersion.plist")
+    (literal "/usr/lib/log")
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
+
+;; Security framework
+(allow mach-lookup (global-name "com.apple.SecurityServer")
+    (global-name "com.apple.ocspd"))
+(allow file-read*
+    (literal "/dev/urandom")
+    (literal "/private/etc/master.passwd")
+    (subpath "/private/var/preferences/Logging")
+    (subpath "/Library/Keychains")
+    (subpath "/private/var/db/mds")
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (home-literal "/Library/Preferences/com.apple.security.plist"))
+
+;;; Allow reading internal profiles on development builds
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (subpath "/AppleInternal/Library/Preferences/Logging")
+    (system-attribute apple-internal)))
+
+(allow file-read* (subpath "/usr/share"))
+
+(allow file-read* (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains"))
+
+(allow ipc-posix-shm-read-data
+    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(allow ipc-posix-shm-write-data
+    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
+
+;; Read-only preferences and data
+(allow file-read*
+    ;; Basic system paths
+    (subpath "/Library/Managed Preferences")
+
+    ;; System and user preferences
+    (literal "/Library/Preferences/.GlobalPreferences.plist")
+    (home-literal "/Library/Preferences/.GlobalPreferences.plist")
+    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\."))
+
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+#endif
+
+;; Standard paths.
+(define required-etc-files
+  (literal "/private/etc/hosts"
+           "/private/etc/passwd"
+           "/private/etc/services"))
+
+(allow file-read*
+    required-etc-files)
+
+;; Various services required by CFNetwork and other frameworks.
+(allow mach-lookup
+    (global-name "com.apple.logd")
+    (global-name "com.apple.system.notification_center"))
+
+;; Daemon prefs.
+(allow user-preference-read user-preference-write
+    (preference-domain "com.apple.webkit.webpushd"))
+
+;; Push notification registration.
+(allow mach-lookup
+    (global-name "com.apple.apsd"))
+
+;; Allow webpushd to launch UI processes in response to a push via LaunchServices.
+(allow lsopen)
+
+(allow mach-lookup
+    (global-name "com.apple.coreservices.launchservicesd")
+    (global-name "com.apple.coreservices.quarantine-resolver")
+    (global-name "com.apple.lsd.mapdb"))
+
+(allow user-preference-read
+    (preference-domain
+         "com.apple.inputmethodkit"
+         "com.apple.inputsources"
+         "com.apple.LaunchServices"
+         "kCFPreferencesAnyApplication"))
+
+;; We might need to create ~/Library/WebKit and ~/Library/WebKit/WebPush on a clean install.
+(allow file-write-create
+    (require-all (vnode-type DIRECTORY) (home-literal "/Library/WebKit"))
+    (require-all (vnode-type DIRECTORY) (home-literal "/Library/WebKit/WebPush")))
+
+;; Push database.
+(allow file*
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-shm")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-wal")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-lock")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-journal"))
+
+;; Let SQLite open the parent directory of the database for fsync purposes.
+(allow file-read-data (require-all (vnode-type DIRECTORY) (home-prefix "/Library/WebKit/WebPush")))

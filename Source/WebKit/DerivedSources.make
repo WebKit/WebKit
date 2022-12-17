@@ -375,6 +375,7 @@ SANDBOX_PROFILES = \
 	
 SANDBOX_PROFILES_IOS = \
 	com.apple.WebKit.adattributiond.sb \
+	com.apple.WebKit.webpushd.sb \
 	com.apple.WebKit.GPU.sb \
 	com.apple.WebKit.Networking.sb \
 	com.apple.WebKit.WebContent.sb
