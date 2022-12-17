@@ -25,38 +25,25 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include <wtf/RefPtr.h>
+#if ENABLE(WEBASSEMBLY)
 
-namespace WebCore {
+#include <cstdint>
 
-class CSSBackgroundRepeatValue final : public CSSValue {
-public:
-    static Ref<CSSBackgroundRepeatValue> create(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue)
-    {
-        return adoptRef(*new CSSBackgroundRepeatValue(WTFMove(repeatXValue), WTFMove(repeatYValue)));
-    }
+namespace JSC {
 
-    static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue)
-    {
-        return adoptRef(*new CSSBackgroundRepeatValue(repeatXValue, repeatYValue));
-    }
+namespace Wasm {
 
-    String customCSSText() const;
-
-    bool equals(const CSSBackgroundRepeatValue&) const;
-
-    const CSSPrimitiveValue& xValue() const { return m_xValue.get(); }
-    const CSSPrimitiveValue& yValue() const { return m_yValue.get(); }
-
-private:
-    CSSBackgroundRepeatValue(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue);
-    CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
-
-    Ref<CSSPrimitiveValue> m_xValue;
-    Ref<CSSPrimitiveValue> m_yValue;
+enum class LLIntBuiltin : uint8_t {
+    CurrentMemory = 0,
+    MemoryFill,
+    MemoryCopy,
+    MemoryInit,
+    TableSize,
+    TableCopy,
+    DataDrop,
+    ElemDrop,
 };
 
-} // namespace WebCore
+} } // namespace JSC::Wasm
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSBackgroundRepeatValue, isBackgroundRepeatValue())
+#endif // ENABLE(WEBASSEMBLY)

@@ -26,7 +26,7 @@
             // We need to use the selection or we cannot reproduce this bug!
             var selection = window.getSelection();
             var container = document.getElementById("container");
-            selection.setPosition(container, 0);
+            selection.setPosition(container.firstChild.firstChild, 0);
             if (selection.rangeCount > 0) {
                 var newElement = document.createElement('div');
                 newElement.id = 'div' + i;

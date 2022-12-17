@@ -381,9 +381,11 @@ To do that, turn on the target membership in respective framework as set the mem
 This will ensure the relevant header file is exported from WTF / WebCore to other downstream projects like WebKitLegacy.
 ![Screenshot of exporting a header file](resources/xcode-export-header.png)
 
+Non-cocoa ports, like WPE and GTK, use CMake for building the project. If the header is not platform-specific, you might want to add an entry for it into
+the relevant Headers.cmake. For example, if a WebCore header is included by WebKit, you will need to list the header in Source/WebCore/Headers.cmake.
+
 FIXME: Mention WTF_EXPORT_PRIVATE and WEBCORE_EXPORT.
 
-FIXME: Add instructions on how to add files to CMake.
 
 ### Build Failures with Unified Sources
 

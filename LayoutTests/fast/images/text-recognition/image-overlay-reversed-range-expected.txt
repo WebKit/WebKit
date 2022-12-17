@@ -1,5 +1,5 @@
 
-PASS getSelection().toString() is "foo bar"
+PASS textarea.value is "foo bar"
 PASS successfullyParsed is true
 
 TEST COMPLETE

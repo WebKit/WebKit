@@ -1417,9 +1417,7 @@
             "codegen-properties": {
                 "name-for-methods": "XPosition",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-position-x>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1430,9 +1428,7 @@
             "codegen-properties": {
                 "name-for-methods": "YPosition",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-position-y>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1443,9 +1439,7 @@
             "codegen-properties": {
                 "name-for-methods": "Repeat",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-repeat>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1457,9 +1451,7 @@
                 "name-for-methods": "Size",
                 "fill-layer-property": true,
                 "separator": " ",
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-background-size>#"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -3882,9 +3874,7 @@
             "codegen-properties": {
                 "name-for-methods": "XPosition",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-mask-position-x>#"
             },
             "status": {
                 "status": "experimental",
@@ -3899,9 +3889,7 @@
             "codegen-properties": {
                 "name-for-methods": "YPosition",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-webkit-mask-position-y>#"
             },
             "status": {
                 "status": "experimental",
@@ -3919,9 +3907,7 @@
                 ],
                 "name-for-methods": "Repeat",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-repeat>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -3935,9 +3921,7 @@
                 ],
                 "name-for-methods": "Size",
                 "fill-layer-property": true,
-                "parser-function": "consumeCommaSeparatedBackgroundComponent",
-                "parser-requires-current-property": true,
-                "parser-requires-context": true
+                "parser-grammar": "<single-mask-size>#"
             },
             "specification": {
                 "category": "css-masking",
@@ -6080,7 +6064,7 @@
                 "longhands": [
                     "background-size"
                 ],
-                "custom-parser": true
+                "parser-grammar": "<single-webkit-background-size>#"
             },
             "status": {
                 "comment": "Differs from background-size only in the interpretation of a single value: '-webkit-background-size: l;' is equivalent to 'background-size: l l;' whereas 'background-size: l;' is equivalent to 'background-size: l auto;'"
@@ -7546,8 +7530,7 @@
                 ],
                 "computable": false,
                 "converter": "PositionComponentX",
-                "parser-function": "consumePositionX",
-                "parser-requires-context-mode": true
+                "parser-grammar": "<position-x>"
             },
             "specification": {
                 "category": "css-transforms",
@@ -7561,8 +7544,7 @@
                 ],
                 "computable": false,
                 "converter": "PositionComponentY",
-                "parser-function": "consumePositionY",
-                "parser-requires-context-mode": true
+                "parser-grammar": "<position-y>"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8015,8 +7997,7 @@
                 ],
                 "computable": false,
                 "converter": "PositionComponentX",
-                "parser-function": "consumePositionX",
-                "parser-requires-context-mode": true
+                "parser-grammar": "<position-x>"
             },
             "specification": {
                 "category": "css-transforms",
@@ -8030,8 +8011,7 @@
                 ],
                 "computable": false,
                 "converter": "PositionComponentY",
-                "parser-function": "consumePositionY",
-                "parser-requires-context-mode": true
+                "parser-grammar": "<position-y>"
             },
             "specification": {
                 "category": "css-transforms",
@@ -9252,6 +9232,26 @@
                 "url": "https://www.w3.org/TR/css-backgrounds-3/#background-image"
             }
         },
+        "<single-background-repeat>": {
+            "grammar": "<repeat-style>",
+            "exported": true,
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#background-repeat"
+            }
+        },
+        "<single-background-position-x>": {
+            "grammar": "<position-x>",
+            "exported": true,
+            "status": "non-standard",
+            "comment": "Internally used to represent horizontal part of standard <bg-position>"
+        },
+        "<single-background-position-y>": {
+            "grammar": "<position-y>",
+            "exported": true,
+            "status": "non-standard",
+            "comment": "Internally used to represent vertical part of standard <bg-position>"
+        },
         "<single-mask-clip>": {
             "grammar": "<box> | no-clip",
             "exported": true,
@@ -9269,6 +9269,14 @@
                 "url": "https://www.w3.org/TR/css-masking-1/#the-mask-origin"
             },
             "comment": "Out of spec. 'mask-origin' is currently defined to '<geometry-box>#'."
+        },
+        "<single-mask-repeat>": {
+            "grammar": "<repeat-style>",
+            "exported": true,
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#the-mask-repeat"
+            }
         },
         "<single-mask-image>": {
             "grammar": "<mask-reference>",
@@ -9311,6 +9319,16 @@
         },
         "<single-webkit-mask-clip>": {
             "grammar": "<-webkit-clip-box>",
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-position-x>": {
+            "grammar": "<position-x>",
+            "exported": true,
+            "status": "non-standard"
+        },
+        "<single-webkit-mask-position-y>": {
+            "grammar": "<position-y>",
             "exported": true,
             "status": "non-standard"
         },

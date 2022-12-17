@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "SIMDInfo.h"
+#include "WasmLLIntBuiltin.h"
 #include "WasmOps.h"
 #include "WasmSIMDOpcodes.h"
 #include "Width.h"
@@ -581,6 +582,8 @@ class TypeInformation {
 public:
     static TypeInformation& singleton();
 
+    static const TypeDefinition& signatureForLLIntBuiltin(LLIntBuiltin);
+
     static RefPtr<TypeDefinition> typeDefinitionForFunction(const Vector<Type, 1>& returnTypes, const Vector<Type>& argumentTypes);
     static RefPtr<TypeDefinition> typeDefinitionForStruct(const Vector<FieldType>& fields);
     static RefPtr<TypeDefinition> typeDefinitionForArray(FieldType);
@@ -609,6 +612,12 @@ private:
     HashMap<TypeIndex, TypeIndex> m_unrollingCache;
     HashMap<TypeIndex, RefPtr<RTT>> m_rttMap;
     const TypeDefinition* thunkTypes[numTypes];
+    RefPtr<TypeDefinition> m_I64_Void;
+    RefPtr<TypeDefinition> m_Void_I32;
+    RefPtr<TypeDefinition> m_Void_I32I32I32;
+    RefPtr<TypeDefinition> m_Void_I32I32I32I32;
+    RefPtr<TypeDefinition> m_Void_I32I32I32I32I32;
+    RefPtr<TypeDefinition> m_I32_I32;
     Lock m_lock;
 };
 

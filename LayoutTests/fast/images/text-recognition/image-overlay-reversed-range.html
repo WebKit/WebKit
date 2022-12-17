@@ -13,7 +13,7 @@ img {
 </style>
 </head>
 <body>
-<textarea></textarea>
+<textarea id="textarea"></textarea>
 <img src="../resources/green-400x400.png"></img>
 <pre id="console"></pre>
 <script>
@@ -52,8 +52,14 @@ addEventListener("load", () => {
         }
     ]);
 
-    getSelection().selectAllChildren(internals.shadowRoot(image).getElementById("image-overlay"));
-    shouldBeEqualToString("getSelection().toString()", "foo bar")
+    const imageOverlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
+    document.execCommand("Copy");
+
+    textarea.focus();
+    document.execCommand("Paste");
+
+    shouldBeEqualToString("textarea.value", "foo bar")
 });
 </script>
 </body>

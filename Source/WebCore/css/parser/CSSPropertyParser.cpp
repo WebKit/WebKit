@@ -1579,6 +1579,72 @@ static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParse
     return true;
 }
 
+static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    switch (property) {
+    // background-*
+    case CSSPropertyBackgroundClip:
+        return CSSPropertyParsing::consumeSingleBackgroundClip(range);
+    case CSSPropertyBackgroundBlendMode:
+        return CSSPropertyParsing::consumeSingleBackgroundBlendMode(range);
+    case CSSPropertyBackgroundAttachment:
+        return CSSPropertyParsing::consumeSingleBackgroundAttachment(range);
+    case CSSPropertyBackgroundOrigin:
+        return CSSPropertyParsing::consumeSingleBackgroundOrigin(range);
+    case CSSPropertyBackgroundImage:
+        return CSSPropertyParsing::consumeSingleBackgroundImage(range, context);
+    case CSSPropertyBackgroundRepeat:
+        return CSSPropertyParsing::consumeSingleBackgroundRepeat(range, context);
+    case CSSPropertyBackgroundPositionX:
+        return CSSPropertyParsing::consumeSingleBackgroundPositionX(range, context);
+    case CSSPropertyBackgroundPositionY:
+        return CSSPropertyParsing::consumeSingleBackgroundPositionY(range, context);
+    case CSSPropertyBackgroundSize:
+        return consumeSingleBackgroundSize(range, context);
+    case CSSPropertyBackgroundColor:
+        return consumeColor(range, context);
+
+    // mask-*
+    case CSSPropertyMaskComposite:
+        return CSSPropertyParsing::consumeSingleMaskComposite(range);
+    case CSSPropertyMaskOrigin:
+        return CSSPropertyParsing::consumeSingleMaskOrigin(range);
+    case CSSPropertyMaskClip:
+        return CSSPropertyParsing::consumeSingleMaskClip(range);
+    case CSSPropertyMaskImage:
+        return CSSPropertyParsing::consumeSingleMaskImage(range, context);
+    case CSSPropertyMaskMode:
+        return CSSPropertyParsing::consumeSingleMaskMode(range);
+    case CSSPropertyMaskRepeat:
+        return CSSPropertyParsing::consumeSingleMaskRepeat(range, context);
+    case CSSPropertyMaskSize:
+        return consumeSingleMaskSize(range, context);
+
+    // -webkit-background-*
+    case CSSPropertyWebkitBackgroundSize:
+        return consumeSingleWebkitBackgroundSize(range, context);
+    case CSSPropertyWebkitBackgroundClip:
+        return CSSPropertyParsing::consumeSingleWebkitBackgroundClip(range);
+    case CSSPropertyWebkitBackgroundOrigin:
+        return CSSPropertyParsing::consumeSingleWebkitBackgroundOrigin(range);
+
+    // -webkit-mask-*
+    case CSSPropertyWebkitMaskClip:
+        return CSSPropertyParsing::consumeSingleWebkitMaskClip(range);
+    case CSSPropertyWebkitMaskComposite:
+        return CSSPropertyParsing::consumeSingleWebkitMaskComposite(range);
+    case CSSPropertyWebkitMaskSourceType:
+        return CSSPropertyParsing::consumeSingleWebkitMaskSourceType(range);
+    case CSSPropertyWebkitMaskPositionX:
+        return CSSPropertyParsing::consumeSingleWebkitMaskPositionX(range, context);
+    case CSSPropertyWebkitMaskPositionY:
+        return CSSPropertyParsing::consumeSingleWebkitMaskPositionY(range, context);
+
+    default:
+        return nullptr;
+    };
+}
+
 // Note: consumeBackgroundShorthand assumes y properties (for example background-position-y) follow
 // the x properties in the shorthand array.
 bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand& shorthand, bool important)
@@ -2469,7 +2535,9 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyBackground:
         return consumeBackgroundShorthand(backgroundShorthand(), important);
     case CSSPropertyWebkitBackgroundSize: {
-        auto backgroundSize = consumeCommaSeparatedBackgroundComponent(CSSPropertyWebkitBackgroundSize, m_range, m_context.mode);
+        auto backgroundSize = consumeCommaSeparatedListWithSingleValueOptimization(m_range, [] (auto& range, auto& context) {
+            return consumeSingleWebkitBackgroundSize(range, context);
+        }, m_context);
         if (!backgroundSize || !m_range.atEnd())
             return false;
         addProperty(CSSPropertyBackgroundSize, CSSPropertyWebkitBackgroundSize, backgroundSize.releaseNonNull(), important);

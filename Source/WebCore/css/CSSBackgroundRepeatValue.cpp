@@ -38,6 +38,13 @@ CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(Ref<CSSPrimitiveValue>&& repe
 {
 }
 
+CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue)
+    : CSSValue(BackgroundRepeatClass)
+    , m_xValue(CSSValuePool::singleton().createIdentifierValue(repeatXValue))
+    , m_yValue(CSSValuePool::singleton().createIdentifierValue(repeatYValue))
+{
+}
+
 String CSSBackgroundRepeatValue::customCSSText() const
 {
     // background-repeat/mask-repeat behave a little like a shorthand, but `repeat no-repeat` is transformed to `repeat-x`.
