@@ -1270,20 +1270,14 @@ wasmOp(i31_new, WasmI31New, macro(ctx)
     returnq(ctx, t0)
 end)
 
-wasmOp(i31_get_s, WasmI31GetS, macro(ctx)
+wasmOp(i31_get, WasmI31Get, macro(ctx)
     mloadp(ctx, m_ref, t0)
     bqeq t0, ValueNull, .throw
+    wgetu(ctx, m_isSigned, t1)
+    btiz t1, .unsigned
     lshifti 0x1, t0
     rshifti 0x1, t0
-    returni(ctx, t0)
-
-.throw:
-    throwException(NullI31Get)
-end)
-
-wasmOp(i31_get_u, WasmI31GetU, macro(ctx)
-    mloadp(ctx, m_ref, t0)
-    bqeq t0, ValueNull, .throw
+.unsigned:
     returni(ctx, t0)
 
 .throw:

@@ -397,22 +397,18 @@ WASM_SLOW_PATH_DECL(array_new)
 {
     auto instruction = pc->as<WasmArrayNew>();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
-    EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
-    WASM_RETURN(Wasm::operationWasmArrayNew(instance, instruction.m_typeIndex, size, value));
-}
-
-WASM_SLOW_PATH_DECL(array_new_default)
-{
-    auto instruction = pc->as<WasmArrayNewDefault>();
-    uint32_t size = READ(instruction.m_size).unboxedUInt32();
+    bool useDefault = instruction.m_useDefault;
 
     Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
     ASSERT(arraySignature.is<Wasm::ArrayType>());
     Wasm::Type elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 
     EncodedJSValue value = 0;
-    if (Wasm::isRefType(elementType))
-        value = JSValue::encode(jsNull());
+    if (useDefault) {
+        if (Wasm::isRefType(elementType))
+            value = JSValue::encode(jsNull());
+    } else
+        value = READ(instruction.m_value).encodedJSValue();
 
     WASM_RETURN(Wasm::operationWasmArrayNew(instance, instruction.m_typeIndex, size, value));
 }

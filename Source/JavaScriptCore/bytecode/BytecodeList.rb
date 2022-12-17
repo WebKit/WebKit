@@ -1871,16 +1871,11 @@ op :i31_new,
         value: VirtualRegister,
     }
 
-op :i31_get_s,
+op :i31_get,
     args: {
         dst: VirtualRegister,
         ref: VirtualRegister,
-    }
-
-op :i31_get_u,
-    args: {
-        dst: VirtualRegister,
-        ref: VirtualRegister,
+        isSigned: bool,
     }
 
 op :array_new,
@@ -1889,13 +1884,7 @@ op :array_new,
         size: VirtualRegister,
         value: VirtualRegister,
         typeIndex: unsigned,
-    }
-
-op :array_new_default,
-    args: {
-        dst: VirtualRegister,
-        size: VirtualRegister,
-        typeIndex: unsigned,
+        useDefault: bool,
     }
 
 op :array_get,

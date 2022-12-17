@@ -1947,7 +1947,7 @@ auto LLIntGenerator::addI31New(ExpressionType value, ExpressionType& result) -> 
 auto LLIntGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmI31GetS::emit(this, result, ref);
+    WasmI31Get::emit(this, result, ref, true /* isSigned */);
 
     return { };
 }
@@ -1955,7 +1955,7 @@ auto LLIntGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> P
 auto LLIntGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmI31GetU::emit(this, result, ref);
+    WasmI31Get::emit(this, result, ref, false /* isSigned */);
 
     return { };
 }
@@ -1963,7 +1963,7 @@ auto LLIntGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
 auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, value, index);
+    WasmArrayNew::emit(this, result, size, value, index, false /* useDefault */);
 
     return { };
 }
@@ -1971,7 +1971,7 @@ auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, Expression
 auto LLIntGenerator::addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNewDefault::emit(this, result, size, index);
+    WasmArrayNew::emit(this, result, size, ExpressionType(), index, true /* useDefault */);
 
     return { };
 }
