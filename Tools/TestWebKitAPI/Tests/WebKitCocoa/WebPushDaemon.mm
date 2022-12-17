@@ -306,9 +306,9 @@ TEST(WebPushD, BasicCommunication)
     // Echo and wait for a reply
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     auto encodedString = encodeString("hello"_s);
-    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-    xpc_dictionary_set_uint64(dictionary.get(), "message type", 1);
-    xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedString.data(), encodedString.size());
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(MessageType::EchoTwice));
+    xpc_dictionary_set_data(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encodedString.data(), encodedString.size());
 
     done = false;
     xpc_connection_send_message_with_reply(connection.get(), dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {

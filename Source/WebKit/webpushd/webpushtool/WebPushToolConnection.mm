@@ -159,9 +159,9 @@ void Connection::startDebugStreamAction()
 {
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     std::array<uint8_t, 1> encodedMessage { 1 };
-    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-    xpc_dictionary_set_uint64(dictionary.get(), "message type", 5);
-    xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedMessage.data(), encodedMessage.size());
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(WebKit::WebPushD::MessageType::SetDebugModeIsEnabled));
+    xpc_dictionary_set_data(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encodedMessage.data(), encodedMessage.size());
 
     xpc_connection_send_message(m_connection.get(), dictionary.get());
 
