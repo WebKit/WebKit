@@ -223,6 +223,76 @@ String sanitizeMarkup(const String& rawHTML, MSOListQuirks msoListQuirks, std::o
     return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, rawHTML);
 }
 
+UserSelectNoneStateCache::UserSelectNoneStateCache(TreeType treeType)
+    : m_useComposedTree(treeType == ComposedTree)
+{
+    ASSERT(treeType == Tree || treeType == ComposedTree);
+}
+
+ContainerNode* UserSelectNoneStateCache::parentNode(Node& node)
+{
+    if (m_useComposedTree)
+        return node.parentInComposedTree();
+    return node.parentOrShadowHostNode();
+}
+
+Node* UserSelectNoneStateCache::firstChild(Node& node)
+{
+    if (m_useComposedTree)
+        return firstChildInComposedTreeIgnoringUserAgentShadow(node);
+    return node.firstChild();
+}
+
+Node* UserSelectNoneStateCache::nextSibling(Node& node)
+{
+    if (m_useComposedTree)
+        return nextSiblingInComposedTreeIgnoringUserAgentShadow(node);
+    return node.nextSibling();
+}
+
+auto UserSelectNoneStateCache::computeState(Node& targetNode) -> State
+{
+    auto it = m_cache.find(targetNode);
+    if (it != m_cache.end())
+        return it->value;
+    if (!Position::nodeIsUserSelectNone(&targetNode))
+        return State::NotUserSelectNone;
+    auto state = State::OnlyUserSelectNone;
+    Node* currentNode = &targetNode;
+    bool foundMixed = false;
+    while (currentNode) {
+        if (!Position::nodeIsUserSelectNone(currentNode)) {
+            state = State::Mixed;
+            // Only traverse upward once any mixed content is found
+            // since inner element may only contain user-select: none but we won't be able to tell apart.
+            foundMixed = true;
+        }
+        if (auto* child = firstChild(*currentNode); child && !foundMixed)
+            currentNode = child;
+        else if (currentNode == &targetNode)
+            break;
+        else if (auto* sibling = nextSibling(*currentNode); sibling && !foundMixed)
+            currentNode = sibling;
+        else {
+            Node* ancestor = nullptr;
+            for (ancestor = parentNode(*currentNode); ancestor; ancestor = parentNode(*ancestor)) {
+                m_cache.set(*ancestor, state);
+                if (ancestor == &targetNode) {
+                    currentNode = nullptr;
+                    break;
+                }
+                if (auto* sibling = nextSibling(*ancestor); sibling && !foundMixed) {
+                    currentNode = sibling;
+                    break;
+                }
+            }
+            if (!ancestor)
+                currentNode = nullptr;
+        }
+    }
+    return state;
+}
+
 enum class MSOListMode { Preserve, DoNotPreserve };
 class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
@@ -652,6 +722,7 @@ Node* StyledMarkupAccumulator::serializeNodes(const Position& start, const Posit
 Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node& startNode, Node* pastEnd, NodeTraversalMode traversalMode)
 {
     const bool shouldEmit = traversalMode == NodeTraversalMode::EmitString;
+    UserSelectNoneStateCache userSelectNoneStateCache(m_useComposedTree ? ComposedTree : Tree);
 
     m_inMSOList = false;
 
@@ -666,7 +737,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node& startNode, No
         if (!node.renderer() && !isDisplayContents && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
             return false;
 
-        if (m_ignoresUserSelectNone && Position::nodeIsUserSelectNone(&node))
+        if (m_ignoresUserSelectNone && userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(node))
             return false;
 
         ++depth;
