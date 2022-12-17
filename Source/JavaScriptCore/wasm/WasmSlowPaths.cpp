@@ -36,8 +36,10 @@
 #include "LLIntData.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
+#include "WasmCallingConvention.h"
 #include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmInstance.h"
+#include "WasmLLIntBuiltin.h"
 #include "WasmModuleInformation.h"
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryPlan.h"
@@ -508,21 +510,6 @@ WASM_SLOW_PATH_DECL(table_init)
     WASM_END();
 }
 
-WASM_SLOW_PATH_DECL(elem_drop)
-{
-    UNUSED_PARAM(callFrame);
-
-    auto instruction = pc->as<WasmElemDrop>();
-    Wasm::operationWasmElemDrop(instance, instruction.m_elementIndex);
-    WASM_END();
-}
-
-WASM_SLOW_PATH_DECL(table_size)
-{
-    auto instruction = pc->as<WasmTableSize>();
-    WASM_RETURN(Wasm::operationGetWasmTableSize(instance, instruction.m_tableIndex));
-}
-
 WASM_SLOW_PATH_DECL(table_fill)
 {
     auto instruction = pc->as<WasmTableFill>();
@@ -530,17 +517,6 @@ WASM_SLOW_PATH_DECL(table_fill)
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
     if (!Wasm::operationWasmTableFill(instance, instruction.m_tableIndex, offset, fill, size))
-        WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
-    WASM_END();
-}
-
-WASM_SLOW_PATH_DECL(table_copy)
-{
-    auto instruction = pc->as<WasmTableCopy>();
-    int32_t dstOffset = READ(instruction.m_dstOffset).unboxedInt32();
-    int32_t srcOffset = READ(instruction.m_srcOffset).unboxedInt32();
-    int32_t length = READ(instruction.m_length).unboxedInt32();
-    if (!Wasm::operationWasmTableCopy(instance, instruction.m_dstTableIndex, instruction.m_srcTableIndex, dstOffset, srcOffset, length))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();
 }
@@ -558,48 +534,6 @@ WASM_SLOW_PATH_DECL(grow_memory)
     auto instruction = pc->as<WasmGrowMemory>();
     int32_t delta = READ(instruction.m_delta).unboxedInt32();
     WASM_RETURN(Wasm::operationGrowMemory(callFrame, instance, delta));
-}
-
-WASM_SLOW_PATH_DECL(memory_fill)
-{
-    auto instruction = pc->as<WasmMemoryFill>();
-    uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
-    uint32_t targetValue = READ(instruction.m_targetValue).unboxedUInt32();
-    uint32_t count = READ(instruction.m_count).unboxedUInt32();
-    if (!Wasm::operationWasmMemoryFill(instance, dstAddress, targetValue, count))
-        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
-    WASM_END();
-}
-
-WASM_SLOW_PATH_DECL(memory_copy)
-{
-    auto instruction = pc->as<WasmMemoryCopy>();
-    uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
-    uint32_t srcAddress = READ(instruction.m_srcAddress).unboxedUInt32();
-    uint32_t count = READ(instruction.m_count).unboxedUInt32();
-    if (!Wasm::operationWasmMemoryCopy(instance, dstAddress, srcAddress, count))
-        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
-    WASM_END();
-}
-
-WASM_SLOW_PATH_DECL(memory_init)
-{
-    auto instruction = pc->as<WasmMemoryInit>();
-    uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
-    uint32_t srcAddress = READ(instruction.m_srcAddress).unboxedUInt32();
-    uint32_t length = READ(instruction.m_length).unboxedUInt32();
-    if (!Wasm::operationWasmMemoryInit(instance, instruction.m_dataSegmentIndex, dstAddress, srcAddress, length))
-        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
-    WASM_END();
-}
-
-WASM_SLOW_PATH_DECL(data_drop)
-{
-    UNUSED_PARAM(callFrame);
-
-    auto instruction = pc->as<WasmDataDrop>();
-    Wasm::operationWasmDataDrop(instance, instruction.m_dataSegmentIndex);
-    WASM_END();
 }
 
 inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
@@ -713,6 +647,100 @@ WASM_SLOW_PATH_DECL(call_ref_no_tls)
     auto instruction = pc->as<WasmCallRefNoTls>();
     JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
     return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
+}
+
+static size_t jsrSize()
+{
+    static size_t jsrSize = 0;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        jsrSize = Wasm::wasmCallingConvention().jsrArgs.size();
+    });
+    return jsrSize;
+}
+
+WASM_SLOW_PATH_DECL(call_builtin)
+{
+    auto instruction = pc->as<WasmCallBuiltin>();
+    Register* stackBottom = callFrame->registers() - instruction.m_stackOffset;
+    Register* stackStart = stackBottom + CallFrame::headerSizeInRegisters + /* indirect call target */ 1;
+    Register* gprStart = stackStart + instruction.m_numberOfStackArgs;
+    Register* fprStart = gprStart + jsrSize();
+    UNUSED_PARAM(fprStart);
+
+    Wasm::LLIntBuiltin builtin = static_cast<Wasm::LLIntBuiltin>(instruction.m_builtinIndex);
+
+    unsigned gprIndex = 0;
+    unsigned fprIndex = 0;
+    unsigned stackIndex = 0;
+    auto takeGPR = [&]() -> Register& {
+        if (gprIndex != jsrSize())
+            return gprStart[gprIndex++];
+        return stackStart[stackIndex++];
+    };
+    UNUSED_PARAM(fprIndex);
+
+    switch (builtin) {
+    case Wasm::LLIntBuiltin::CurrentMemory: {
+        size_t size = instance->memory()->handle().size() >> 16;
+        gprStart[0] = static_cast<EncodedJSValue>(size);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::MemoryFill: {
+        uint32_t dstAddress = takeGPR().unboxedUInt32();
+        uint32_t targetValue = takeGPR().unboxedUInt32();
+        uint32_t count = takeGPR().unboxedUInt32();
+        if (!Wasm::operationWasmMemoryFill(instance, dstAddress, targetValue, count))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::MemoryCopy: {
+        uint32_t dstAddress = takeGPR().unboxedUInt32();
+        uint32_t srcAddress = takeGPR().unboxedUInt32();
+        uint32_t count = takeGPR().unboxedUInt32();
+        if (!Wasm::operationWasmMemoryCopy(instance, dstAddress, srcAddress, count))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::MemoryInit: {
+        uint32_t dstAddress = takeGPR().unboxedUInt32();
+        uint32_t srcAddress = takeGPR().unboxedUInt32();
+        uint32_t length = takeGPR().unboxedUInt32();
+        uint32_t dataSegmentIndex = takeGPR().unboxedUInt32();
+        if (!Wasm::operationWasmMemoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::TableSize: {
+        uint32_t tableIndex = takeGPR().unboxedUInt32();
+        int32_t result = Wasm::operationGetWasmTableSize(instance, tableIndex);
+        gprStart[0] = static_cast<EncodedJSValue>(result);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::TableCopy: {
+        int32_t dstOffset = takeGPR().unboxedInt32();
+        int32_t srcOffset = takeGPR().unboxedInt32();
+        int32_t length = takeGPR().unboxedInt32();
+        uint32_t dstTableIndex = takeGPR().unboxedUInt32();
+        uint32_t srcTableIndex = takeGPR().unboxedUInt32();
+        if (!Wasm::operationWasmTableCopy(instance, dstTableIndex, srcTableIndex, dstOffset, srcOffset, length))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::DataDrop: {
+        uint32_t dataSegmentIndex = takeGPR().unboxedUInt32();
+        Wasm::operationWasmDataDrop(instance, dataSegmentIndex);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::ElemDrop: {
+        uint32_t elementIndex = takeGPR().unboxedUInt32();
+        Wasm::operationWasmElemDrop(instance, elementIndex);
+        WASM_END();
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    WASM_END();
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref)

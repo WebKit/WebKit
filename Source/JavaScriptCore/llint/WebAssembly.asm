@@ -829,15 +829,8 @@ slowWasmOp(ref_func)
 slowWasmOp(table_get)
 slowWasmOp(table_set)
 slowWasmOp(table_init)
-slowWasmOp(elem_drop)
-slowWasmOp(table_size)
 slowWasmOp(table_fill)
-slowWasmOp(table_copy)
 slowWasmOp(table_grow)
-slowWasmOp(memory_fill)
-slowWasmOp(memory_copy)
-slowWasmOp(memory_init)
-slowWasmOp(data_drop)
 slowWasmOp(set_global_ref)
 slowWasmOp(set_global_ref_portable_binding)
 slowWasmOp(memory_atomic_wait32)
@@ -1170,17 +1163,7 @@ wasmOp(call_ref_no_tls, WasmCallRefNoTls, macro(ctx)
     slowPathForWasmCall(ctx, _slow_path_wasm_call_ref_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
-wasmOp(current_memory, WasmCurrentMemory, macro(ctx)
-    loadp Wasm::Instance::m_memory[wasmInstance], t0
-    loadp Wasm::Memory::m_handle[t0], t0
-    loadp BufferMemoryHandle::m_size[t0], t0
-    urshiftp 16, t0
-if JSVALUE64
-    returnq(ctx, t0)
-else
-    return2i(ctx, 0, t0)
-end
-end)
+slowWasmOp(call_builtin)
 
 wasmOp(select, WasmSelect, macro(ctx)
     mloadi(ctx, m_condition, t0)

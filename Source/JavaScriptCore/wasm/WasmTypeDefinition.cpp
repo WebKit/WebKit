@@ -536,30 +536,26 @@ bool RTT::isSubRTT(const RTT& parent) const
     return false;
 }
 
-TypeInformation::TypeInformation()
+const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin builtin)
 {
-#define MAKE_THUNK_SIGNATURE(type, enc, str, val, ...) \
-    do { \
-        if (TypeKind::type != TypeKind::Void) { \
-            RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(1, 0); \
-            sig->ref();                                                                    \
-            sig->as<FunctionSignature>()->getReturnType(0) = Types::type;                  \
-            if (Types::type.isV128())                                                      \
-                sig->as<FunctionSignature>()->setArgumentsOrResultsIncludeV128(true);      \
-            thunkTypes[linearizeType(TypeKind::type)] = sig.get();                         \
-            m_typeSet.add(TypeHash { sig.releaseNonNull() });                              \
-        }                                                                                  \
-    } while (false);
-
-    FOR_EACH_WASM_TYPE(MAKE_THUNK_SIGNATURE);
-
-    // Make Void again because we don't use the one that has void in it.
-    {
-        RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(0, 0);
-        sig->ref();
-        thunkTypes[linearizeType(TypeKind::Void)] = sig.get();
-        m_typeSet.add(TypeHash { sig.releaseNonNull() });
+    switch (builtin) {
+    case LLIntBuiltin::CurrentMemory:
+        return *singleton().m_I64_Void;
+    case LLIntBuiltin::MemoryFill:
+    case LLIntBuiltin::MemoryCopy:
+        return *singleton().m_Void_I32I32I32;
+    case LLIntBuiltin::MemoryInit:
+        return *singleton().m_Void_I32I32I32I32;
+    case LLIntBuiltin::TableSize:
+        return *singleton().m_I32_I32;
+    case LLIntBuiltin::TableCopy:
+        return *singleton().m_Void_I32I32I32I32I32;
+    case LLIntBuiltin::DataDrop:
+    case LLIntBuiltin::ElemDrop:
+        return *singleton().m_Void_I32;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return *singleton().m_I64_Void;
 }
 
 struct FunctionParameterTypes {
@@ -807,6 +803,38 @@ struct SubtypeParameterTypes {
         entry.key = WTFMove(signature);
     }
 };
+
+TypeInformation::TypeInformation()
+{
+#define MAKE_THUNK_SIGNATURE(type, enc, str, val, ...) \
+    do { \
+        if (TypeKind::type != TypeKind::Void) { \
+            RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(1, 0); \
+            sig->ref();                                                                    \
+            sig->as<FunctionSignature>()->getReturnType(0) = Types::type;                  \
+            if (Types::type.isV128())                                                      \
+                sig->as<FunctionSignature>()->setArgumentsOrResultsIncludeV128(true);      \
+            thunkTypes[linearizeType(TypeKind::type)] = sig.get();                         \
+            m_typeSet.add(TypeHash { sig.releaseNonNull() });                              \
+        }                                                                                  \
+    } while (false);
+
+    FOR_EACH_WASM_TYPE(MAKE_THUNK_SIGNATURE);
+
+    // Make Void again because we don't use the one that has void in it.
+    {
+        RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(0, 0);
+        sig->ref();
+        thunkTypes[linearizeType(TypeKind::Void)] = sig.get();
+        m_typeSet.add(TypeHash { sig.releaseNonNull() });
+    }
+    m_I64_Void = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I64 }, { } }).iterator->key;
+    m_Void_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32 } }).iterator->key;
+    m_Void_I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Void_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Void_I32I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
+}
 
 RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 1>& results, const Vector<Type>& args)
 {

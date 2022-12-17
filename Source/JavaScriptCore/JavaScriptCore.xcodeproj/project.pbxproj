@@ -1868,6 +1868,7 @@
 		E307178D24C7829A00DF0644 /* IntlLocaleConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92C245A3CFA00C9BA3B /* IntlLocaleConstructor.h */; };
 		E307178E24C7829D00DF0644 /* IntlLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */; };
 		E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D5FB18F20744BF1005DDF64 /* IntlPluralRules.cpp */; };
+		E308A80E294D39340044A109 /* WasmLLIntBuiltin.h in Headers */ = {isa = PBXBuildFile; fileRef = E308A80D294D39330044A109 /* WasmLLIntBuiltin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E30D903A28B77F28008B2CDC /* ProxyObjectAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = E30D903828B77F28008B2CDC /* ProxyObjectAccessCase.h */; };
 		E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A4E26DE2E4700DA4915 /* TemporalTimeZonePrototype.h */; };
 		E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */; };
@@ -5340,6 +5341,7 @@
 		E307178024C7824700DF0644 /* IntlSegmenter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmenter.cpp; sourceTree = "<group>"; };
 		E307178124C7824700DF0644 /* IntlSegmenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmenter.h; sourceTree = "<group>"; };
 		E307178224C7824700DF0644 /* IntlSegmenterConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmenterConstructor.cpp; sourceTree = "<group>"; };
+		E308A80D294D39330044A109 /* WasmLLIntBuiltin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmLLIntBuiltin.h; sourceTree = "<group>"; };
 		E30D903728B77F27008B2CDC /* ProxyObjectAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyObjectAccessCase.cpp; sourceTree = "<group>"; };
 		E30D903828B77F28008B2CDC /* ProxyObjectAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyObjectAccessCase.h; sourceTree = "<group>"; };
 		E30E8A4C26DE2E4700DA4915 /* TemporalTimeZonePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalTimeZonePrototype.cpp; sourceTree = "<group>"; };
@@ -7522,6 +7524,7 @@
 				AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */,
 				52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */,
 				AD00659D1ECAC7FE000CA926 /* WasmLimits.h */,
+				E308A80D294D39330044A109 /* WasmLLIntBuiltin.h */,
 				14C5AD6822F33FBF00F1FB83 /* WasmLLIntGenerator.cpp */,
 				14C5AD6922F33FBF00F1FB83 /* WasmLLIntGenerator.h */,
 				14C5AD6A22F33FBF00F1FB83 /* WasmLLIntPlan.cpp */,
@@ -11408,6 +11411,7 @@
 				AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */,
 				52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */,
 				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,
+				E308A80E294D39340044A109 /* WasmLLIntBuiltin.h in Headers */,
 				1450FA1F2357BEC90093CD4D /* WasmLLIntTierUpCounter.h in Headers */,
 				53E9E0AC1EAE83DF00FEE251 /* WasmMachineThreads.h in Headers */,
 				535557141D9D9EA5006D583B /* WasmMemory.h in Headers */,

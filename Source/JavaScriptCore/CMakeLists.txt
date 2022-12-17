@@ -1281,6 +1281,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmFunctionCodeBlockGenerator.h
     wasm/WasmHandlerInfo.h
     wasm/WasmIndexOrName.h
+    wasm/WasmLLIntBuiltin.h
     wasm/WasmLLIntTierUpCounter.h
     wasm/WasmMemory.h
     wasm/WasmMemoryInformation.h

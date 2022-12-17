@@ -1654,17 +1654,6 @@ op :table_init,
         tableIndex: unsigned,
     }
 
-op :elem_drop,
-    args: {
-        elementIndex: unsigned,
-    }
-
-op :table_size,
-    args: {
-        dst: VirtualRegister,
-        tableIndex: unsigned,
-    }
-
 op :table_grow,
     args: {
         dst: VirtualRegister,
@@ -1679,15 +1668,6 @@ op :table_fill,
         fill: VirtualRegister,
         size: VirtualRegister,
         tableIndex: unsigned,
-    }
-
-op :table_copy,
-    args: {
-        dstOffset: VirtualRegister,
-        srcOffset: VirtualRegister,
-        length: VirtualRegister,
-        dstTableIndex: unsigned,
-        srcTableIndex: unsigned,
     }
 
 op :call,
@@ -1738,42 +1718,17 @@ op :call_ref_no_tls,
         numberOfStackArgs: unsigned,
     }
 
-op :current_memory,
+op :call_builtin,
     args: {
-        dst: VirtualRegister,
+        builtinIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
     }
 
 op :grow_memory,
     args: {
         dst: VirtualRegister,
         delta: VirtualRegister
-    }
-
-op :memory_fill,
-    args: {
-        dstAddress: VirtualRegister,
-        targetValue: VirtualRegister,
-        count: VirtualRegister,
-    }
-
-op :memory_copy,
-    args: {
-        dstAddress: VirtualRegister,
-        srcAddress: VirtualRegister,
-        count: VirtualRegister,
-    }
-
-op :memory_init,
-    args: {
-        dstAddress: VirtualRegister,
-        srcAddress: VirtualRegister,
-        length: VirtualRegister,
-        dataSegmentIndex: unsigned,
-    }
-
-op :data_drop,
-    args: {
-        dataSegmentIndex: unsigned,
     }
 
 op :select,

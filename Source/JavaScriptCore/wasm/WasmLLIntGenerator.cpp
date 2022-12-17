@@ -261,6 +261,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, int64_t);
+    ExpressionType addConstantWithoutPush(Type, int64_t);
 
     // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType value, ExpressionType& result);
@@ -526,6 +527,8 @@ private:
 
     void finalizePreviousBlockForCatch(ControlType&, Stack&);
 
+    void addCallBuiltin(LLIntBuiltin, const Vector<ExpressionType> args, ResultList& results);
+
     struct SwitchEntry {
         WasmInstructionStream::Offset offset;
         int* jumpTarget;
@@ -623,8 +626,8 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
 {
     // This function sets up the stack layout for calls. The desired stack layout is:
 
-    // FPRn
-    // ...
+    // FPRn                        |
+    // ...                         v stack-growth towards lower memory
     // FPR1
     // FPR0
     // ---
@@ -937,27 +940,29 @@ void LLIntGenerator::didFinishParsingLocals()
     m_unitializedLocals.clear();
 }
 
+auto LLIntGenerator::addConstantWithoutPush(Type type, int64_t value) -> ExpressionType
+{
+    if (!value)
+        return zeroConstant();
+
+    if (value == JSValue::encode(jsNull()))
+        return jsNullConstant();
+
+    VirtualRegister source(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
+    auto result = m_constantMap.add(value, source);
+    if (!result.isNewEntry)
+        return result.iterator->value;
+    m_codeBlock->m_constants.append(value);
+    if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+        m_codeBlock->m_constantTypes.append(type);
+    return source;
+}
+
 auto LLIntGenerator::addConstant(Type type, int64_t value) -> ExpressionType
 {
-    auto constant = [&] {
-        if (!value)
-            return zeroConstant();
-
-        if (value == JSValue::encode(jsNull()))
-            return jsNullConstant();
-
-        VirtualRegister source(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
-        auto result = m_constantMap.add(value, source);
-        if (!result.isNewEntry)
-            return result.iterator->value;
-        m_codeBlock->m_constants.append(value);
-        if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
-            m_codeBlock->m_constantTypes.append(type);
-        return source;
-    };
     // leave a hole if we need to materialize the constant
     push();
-    return constant();
+    return addConstantWithoutPush(type, value);
 }
 
 auto LLIntGenerator::getLocal(uint32_t index, ExpressionType& result) -> PartialResult
@@ -1494,16 +1499,16 @@ auto LLIntGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, Ex
 
 auto LLIntGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
 {
-    WasmElemDrop::emit(this, elementIndex);
-
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ElemDrop, { addConstantWithoutPush(Types::I32, elementIndex) }, results);
     return { };
 }
 
 auto LLIntGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -> PartialResult
 {
-    result = push();
-    WasmTableSize::emit(this, result, tableIndex);
-
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::TableSize, { addConstantWithoutPush(Types::I32, tableIndex) }, results);
+    result = results.at(0);
     return { };
 }
 
@@ -1524,7 +1529,8 @@ auto LLIntGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, Ex
 
 auto LLIntGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
 {
-    WasmTableCopy::emit(this, dstOffset, srcOffset, length, dstTableIndex, srcTableIndex);
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::TableCopy, { dstOffset, srcOffset, length, addConstantWithoutPush(Types::I32, dstTableIndex), addConstantWithoutPush(Types::I32, srcTableIndex) }, results);
     return { };
 }
 
@@ -1542,25 +1548,36 @@ auto LLIntGenerator::addCrash() -> PartialResult
     return { };
 }
 
+void LLIntGenerator::addCallBuiltin(LLIntBuiltin builtin, const Vector<ExpressionType> args, ResultList& results)
+{
+    const TypeDefinition& signature = TypeInformation::signatureForLLIntBuiltin(builtin);
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    LLIntCallInformation info = callInformationForCaller(*signature.as<FunctionSignature>());
+    unifyValuesWithBlock(info.arguments, args);
+    WasmCallBuiltin::emit(this, static_cast<uint32_t>(builtin), info.stackOffset, info.numberOfStackArguments);
+    info.commitResults(results);
+    ASSERT(signature.as<FunctionSignature>()->returnCount() == results.size());
+}
+
 auto LLIntGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
-    result = push();
-    WasmCurrentMemory::emit(this, result);
-
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::CurrentMemory, { }, results);
+    result = results.at(0);
     return { };
 }
 
 auto LLIntGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length) -> PartialResult
 {
-    WasmMemoryInit::emit(this, dstAddress, srcAddress, length, dataSegmentIndex);
-
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::MemoryInit, { dstAddress, srcAddress, length, addConstantWithoutPush(Types::I32, dataSegmentIndex) }, results);
     return { };
 }
 
 auto LLIntGenerator::addDataDrop(unsigned dataSegmentIndex) -> PartialResult
 {
-    WasmDataDrop::emit(this, dataSegmentIndex);
-
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::DataDrop, { addConstantWithoutPush(Types::I32, dataSegmentIndex) }, results);
     return { };
 }
 
@@ -1574,13 +1591,15 @@ auto LLIntGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result)
 
 auto LLIntGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count) -> PartialResult
 {
-    WasmMemoryFill::emit(this, dstAddress, targetValue, count);
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::MemoryFill, { dstAddress, targetValue, count }, results);
     return { };
 }
 
 auto LLIntGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count) -> PartialResult
 {
-    WasmMemoryCopy::emit(this, dstAddress, srcAddress, count);
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::MemoryCopy, { dstAddress, srcAddress, count }, results);
     return { };
 }
 
