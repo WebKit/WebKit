@@ -51,7 +51,6 @@ private:
     WEBCORE_EXPORT void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
 
     WEBCORE_EXPORT void startMonitoringWheelEvents(bool clearLatchingState) final;
-    WEBCORE_EXPORT void stopMonitoringWheelEvents() final;
 };
 
 } // namespace WebCore

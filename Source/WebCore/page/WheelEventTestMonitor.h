@@ -60,7 +60,7 @@ public:
     };
     typedef const void* ScrollableAreaIdentifier;
 
-    WEBCORE_EXPORT void receivedWheelEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT void receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase);
     WEBCORE_EXPORT void deferForReason(ScrollableAreaIdentifier, DeferReason);
     WEBCORE_EXPORT void removeDeferralForReason(ScrollableAreaIdentifier, DeferReason);
     

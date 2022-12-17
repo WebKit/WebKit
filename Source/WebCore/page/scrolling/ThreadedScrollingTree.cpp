@@ -252,7 +252,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
 
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
-    auto deferrer = WheelEventTestMonitorCompletionDeferrer { wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
+    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { *this, node.scrollingNodeID(), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
     RunLoop::main().dispatch([strongThis = Ref { *this }, deferrer = WTFMove(deferrer)] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scrollingThreadAddedPendingUpdate();
@@ -540,6 +540,39 @@ void ThreadedScrollingTree::removePendingScrollAnimationForNode(ScrollingNodeID 
 bool ThreadedScrollingTree::isScrollingSynchronizedWithMainThread()
 {
     return m_state != SynchronizationState::Desynchronized;
+}
+
+void ThreadedScrollingTree::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
+{
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), phase, momentumPhase] {
+        scrollingCoordinator->receivedWheelEventWithPhases(phase, momentumPhase);
+    });
+}
+
+void ThreadedScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, reason] {
+        scrollingCoordinator->deferWheelEventTestCompletionForReason(nodeID, reason);
+    });
+}
+
+void ThreadedScrollingTree::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, reason] {
+        scrollingCoordinator->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
+    });
 }
 
 } // namespace WebCore

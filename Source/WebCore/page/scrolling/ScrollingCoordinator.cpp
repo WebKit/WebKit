@@ -363,6 +363,27 @@ ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
     return uniqueScrollingNodeID++;
 }
 
+void ScrollingCoordinator::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
+{
+    ASSERT(isMainThread());
+    if (auto monitor = m_page->wheelEventTestMonitor())
+        monitor->receivedWheelEventWithPhases(phase, momentumPhase);
+}
+
+void ScrollingCoordinator::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    ASSERT(isMainThread());
+    if (auto monitor = m_page->wheelEventTestMonitor())
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+}
+
+void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    ASSERT(isMainThread());
+    if (auto monitor = m_page->wheelEventTestMonitor())
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+}
+
 String ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
 {
     return emptyString();

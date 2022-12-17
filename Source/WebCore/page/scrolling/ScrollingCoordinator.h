@@ -31,6 +31,7 @@
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinatorTypes.h"
+#include "WheelEventTestMonitor.h"
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -197,6 +198,10 @@ public:
 
     virtual void startMonitoringWheelEvents(bool /* clearLatchingState */) { }
     virtual void stopMonitoringWheelEvents() { }
+
+    void receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase);
+    void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
+    void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
 
 protected:
     explicit ScrollingCoordinator(Page*);

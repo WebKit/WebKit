@@ -49,7 +49,7 @@ void ScrollingTreeScrollingNodeDelegateNicosia::updateVisibleLengths()
 
 bool ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    auto deferrer = WheelEventTestMonitorCompletionDeferrer { scrollingTree().wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::HandlingWheelEvent };
+    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { scrollingTree(), scrollingNode().scrollingNodeID(), WheelEventTestMonitor::HandlingWheelEvent };
 
     updateUserScrollInProgressForEvent(wheelEvent);
 
