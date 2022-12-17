@@ -125,6 +125,23 @@ private:
     _cookieStore->unregisterObserver(*result);
 }
 
+- (void)setCookiePolicy:(WKCookiePolicy)policy completionHandler:(void (^)(void))completionHandler
+{
+    auto corePolicy = policy == WKCookiePolicyAllow ? WebCore::HTTPCookieAcceptPolicy::AlwaysAccept : WebCore::HTTPCookieAcceptPolicy::Never;
+    _cookieStore->setHTTPCookieAcceptPolicy(corePolicy, [completionHandler = makeBlockPtr(completionHandler)] {
+        if (completionHandler)
+            completionHandler.get()();
+    });
+}
+
+- (void)getCookiePolicy:(void (^)(WKCookiePolicy))completionHandler
+{
+    _cookieStore->getHTTPCookieAcceptPolicy([completionHandler = makeBlockPtr(completionHandler)] (WebCore::HTTPCookieAcceptPolicy policy) {
+        ASSERT(policy == WebCore::HTTPCookieAcceptPolicy::Never || policy == WebCore::HTTPCookieAcceptPolicy::AlwaysAccept);
+        completionHandler(policy == WebCore::HTTPCookieAcceptPolicy::Never ? WKCookiePolicyDisallow : WKCookiePolicyAllow);
+    });
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

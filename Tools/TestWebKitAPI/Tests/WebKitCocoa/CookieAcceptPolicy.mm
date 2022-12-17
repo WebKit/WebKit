@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -73,4 +74,65 @@ TEST(WebKit, CookieAcceptPolicy)
         setPolicy = true;
     }];
     TestWebKitAPI::Util::run(&setPolicy);
+}
+
+TEST(WebKit, WKCookiePolicy)
+{
+    using namespace TestWebKitAPI;
+
+    __block bool done { false };
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto cookieStore = dataStore.httpCookieStore;
+    configuration.get().websiteDataStore = dataStore;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    [cookieStore getCookiePolicy:^(WKCookiePolicy policy) {
+        EXPECT_EQ(policy, WKCookiePolicyAllow);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [cookieStore setCookiePolicy:WKCookiePolicyDisallow completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [cookieStore getCookiePolicy:^(WKCookiePolicy policy) {
+        EXPECT_EQ(policy, WKCookiePolicyDisallow);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    bool requestHadCookie { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        requestHadCookie = strnstr(request.data(), "Cookie", request.size());
+        co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "testCookie=42"_s } }, "hi"_s).serialize());
+    } });
+
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie"], "");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie='a=b';document.cookie"], "");
+    EXPECT_FALSE(requestHadCookie);
+
+    [cookieStore setCookiePolicy:WKCookiePolicyAllow completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [webView reload];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie"], "testCookie=42");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie='a=b';document.cookie"], "testCookie=42");
+    EXPECT_FALSE(requestHadCookie);
+
+    [webView reload];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_TRUE(requestHadCookie);
 }
