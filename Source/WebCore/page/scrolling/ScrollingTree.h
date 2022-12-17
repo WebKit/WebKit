@@ -58,25 +58,6 @@ enum class EventListenerRegionType : uint8_t;
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 
-struct WheelEventHandlingResult {
-    OptionSet<WheelEventProcessingSteps> steps;
-    bool wasHandled { false };
-    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }); }
-
-    static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
-    {
-        return { steps, true };
-    }
-    static WheelEventHandlingResult unhandled(OptionSet<WheelEventProcessingSteps> steps = { })
-    {
-        return { steps, false };
-    }
-    static WheelEventHandlingResult result(bool handled)
-    {
-        return { { }, handled };
-    }
-};
-
 enum class EventTargeting : uint8_t { NodeOnly, Propagate };
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {

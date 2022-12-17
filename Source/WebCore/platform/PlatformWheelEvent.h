@@ -38,13 +38,6 @@ namespace WebCore {
 
 class PlatformGestureEvent;
 
-enum class WheelEventProcessingSteps : uint8_t {
-    ScrollingThread                             = 1 << 0,
-    MainThreadForScrolling                      = 1 << 1,
-    MainThreadForNonBlockingDOMEventDispatch    = 1 << 2,
-    MainThreadForBlockingDOMEventDispatch       = 1 << 3,
-};
-
 enum class WheelScrollGestureState : uint8_t {
     Blocking,
     NonBlocking
@@ -288,7 +281,6 @@ inline FloatSize PlatformWheelEvent::swipeVelocity() const
 #endif // ENABLE(KINETIC_SCROLLING)
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, EventHandling);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelScrollGestureState);
 

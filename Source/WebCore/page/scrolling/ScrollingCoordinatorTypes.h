@@ -173,11 +173,38 @@ struct ScrollUpdate {
     }
 };
 
+enum class WheelEventProcessingSteps : uint8_t {
+    ScrollingThread                             = 1 << 0,
+    MainThreadForScrolling                      = 1 << 1,
+    MainThreadForNonBlockingDOMEventDispatch    = 1 << 2,
+    MainThreadForBlockingDOMEventDispatch       = 1 << 3,
+};
+
+struct WheelEventHandlingResult {
+    OptionSet<WheelEventProcessingSteps> steps;
+    bool wasHandled { false };
+    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }); }
+
+    static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
+    {
+        return { steps, true };
+    }
+    static WheelEventHandlingResult unhandled(OptionSet<WheelEventProcessingSteps> steps = { })
+    {
+        return { steps, false };
+    }
+    static WheelEventHandlingResult result(bool handled)
+    {
+        return { { }, handled };
+    }
+};
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SynchronousScrollingReason);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingNodeType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingLayerPositionAction);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollableAreaParameters);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ViewportRectStability);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 
 } // namespace WebCore
 
@@ -223,6 +250,16 @@ template<> struct EnumTraits<WebCore::KeyboardScrollAction> {
         WebCore::KeyboardScrollAction::StartAnimation,
         WebCore::KeyboardScrollAction::StopWithAnimation,
         WebCore::KeyboardScrollAction::StopImmediately
+    >;
+};
+
+template<> struct EnumTraits<WebCore::WheelEventProcessingSteps> {
+    using values = EnumValues<
+        WebCore::WheelEventProcessingSteps,
+        WebCore::WheelEventProcessingSteps::ScrollingThread,
+        WebCore::WheelEventProcessingSteps::MainThreadForScrolling,
+        WebCore::WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch,
+        WebCore::WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch
     >;
 };
 

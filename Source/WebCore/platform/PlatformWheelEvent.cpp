@@ -110,17 +110,6 @@ TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
-{
-    switch (steps) {
-    case WheelEventProcessingSteps::ScrollingThread: ts << "scrolling thread"; break;
-    case WheelEventProcessingSteps::MainThreadForScrolling: ts << "main thread scrolling"; break;
-    case WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch: ts << "main thread non-blocking DOM event dispatch"; break;
-    case WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch: ts << "main thread blocking DOM event dispatch"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, EventHandling steps)
 {
     switch (steps) {
