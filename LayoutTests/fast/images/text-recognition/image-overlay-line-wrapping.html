@@ -82,7 +82,8 @@ addEventListener("load", () => {
         }
     ]);
 
-    getSelection().selectAllChildren(internals.shadowRoot(image).getElementById("image-overlay"));
+    const imageOverlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
     document.execCommand("Copy");
 
     textarea = document.querySelector("textarea");

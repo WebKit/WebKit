@@ -9,7 +9,8 @@ body, html {
 </style>
 </head>
 <body>
-<img src="../resources/green-400x400.png"></img>
+<img src="../resources/green-400x400.png">
+<textarea id="textarea"></textarea>
 <script>
 addEventListener("load", () => {
     let image = document.querySelector("img");
@@ -22,9 +23,14 @@ addEventListener("load", () => {
             text : "Hello\nworld",
         }
     ]);
-    const overlay = internals.shadowRoot(image).getElementById("image-overlay");
-    getSelection().selectAllChildren(overlay);
-    shouldBeEqualToString("getSelection().toString()", "Hello\nworld");
+    const imageOverlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
+    testRunner.execCommand("Copy");
+
+    textarea.focus();
+    testRunner.execCommand("Paste");
+
+    shouldBeEqualToString("textarea.value", "Hello\nworld");
 });
 </script>
 </body>

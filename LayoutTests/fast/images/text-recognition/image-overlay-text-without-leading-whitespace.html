@@ -50,7 +50,8 @@ addEventListener("load", () => {
         }
     ]);
 
-    getSelection().selectAllChildren(internals.shadowRoot(image).getElementById("image-overlay"));
+    const imageOverlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
     testRunner.execCommand("Copy");
 
     input = document.querySelector("input");
