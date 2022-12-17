@@ -101,8 +101,8 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
     };
 }
 
-ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID)
-    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues, sessionID), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID)
+    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues, sessionID), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), badgeProxy, WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_serviceWorkerIdentifier(contextData.serviceWorkerIdentifier)
     , m_jobDataIdentifier(contextData.jobDataIdentifier)
     , m_contextData(crossThreadCopy(WTFMove(contextData)))

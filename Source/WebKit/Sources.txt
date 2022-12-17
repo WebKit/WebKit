@@ -789,6 +789,7 @@ WebProcess/WebCoreSupport/RemoteWebLockRegistry.cpp
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
 WebProcess/WebCoreSupport/WebAttachmentElementClient.cpp
+WebProcess/WebCoreSupport/WebBadgeClient.cpp
 WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebColorChooser.cpp

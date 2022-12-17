@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-DedicatedWorkerThread::DedicatedWorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerThread(params, sourceCode, workerLoaderProxy, workerDebuggerProxy, workerObjectProxy, startMode, topOrigin, connectionProxy, socketProvider, runtimeFlags)
+DedicatedWorkerThread::DedicatedWorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerObjectProxy& workerObjectProxy, WorkerBadgeProxy& workerBadgeProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
+    : WorkerThread(params, sourceCode, workerLoaderProxy, workerDebuggerProxy, workerObjectProxy, workerBadgeProxy, startMode, topOrigin, connectionProxy, socketProvider, runtimeFlags)
     , m_workerObjectProxy(workerObjectProxy)
 {
 }

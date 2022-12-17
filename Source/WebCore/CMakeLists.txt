@@ -25,6 +25,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/applicationmanifest"
     "${WEBCORE_DIR}/Modules/async-clipboard"
     "${WEBCORE_DIR}/Modules/audiosession"
+    "${WEBCORE_DIR}/Modules/badge"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/cache"
     "${WEBCORE_DIR}/Modules/compression"
@@ -209,6 +210,7 @@ set(WebCore_IDL_INCLUDES
 
     Modules/WebGPU
     Modules/airplay
+    Modules/badge
     Modules/cache
     Modules/compression
     Modules/credentialmanagement
@@ -260,6 +262,9 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/audiosession/DOMAudioSession.idl
     Modules/audiosession/Navigator+AudioSession.idl
+
+    Modules/badge/Navigator+Badge.idl
+    Modules/badge/NavigatorBadge.idl
 
     Modules/beacon/Navigator+Beacon.idl
 

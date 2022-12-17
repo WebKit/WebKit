@@ -234,6 +234,9 @@ public:
     virtual void startXRSession(WebKit::WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&& completionHandler) { completionHandler(nil); }
     virtual void endXRSession(WebKit::WebPageProxy&) { }
 #endif
+
+    virtual void updateAppBadge(WebKit::WebPageProxy&, std::optional<uint64_t>) { }
+    virtual void updateClientBadge(WebKit::WebPageProxy&, std::optional<uint64_t>) { }
 };
 
 } // namespace API

@@ -560,6 +560,10 @@
 #define ENABLE_WEBXR_HANDS 0
 #endif
 
+#if !defined(ENABLE_BADGING)
+#define ENABLE_BADGING 1
+#endif
+
 /*
  * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
  * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.

@@ -39,6 +39,11 @@ public:
     bool onLine() const final;
     void setIsOnline(bool isOnline) { m_isOnline = isOnline; }
 
+#if ENABLE(BADGING)
+    void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
+    void clearAppBadge(Ref<DeferredPromise>&&);
+#endif
+
     GPU* gpu();
 
 private:

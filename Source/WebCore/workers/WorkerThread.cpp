@@ -93,11 +93,12 @@ WorkerThreadStartupData::WorkerThreadStartupData(const WorkerParameters& other, 
 {
 }
 
-WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
+WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerBadgeProxy& badgeProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
     : WorkerOrWorkletThread(params.inspectorIdentifier.isolatedCopy(), params.workerThreadMode)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerDebuggerProxy(workerDebuggerProxy)
     , m_workerReportingProxy(workerReportingProxy)
+    , m_workerBadgeProxy(badgeProxy)
     , m_runtimeFlags(runtimeFlags)
     , m_startupData(makeUnique<WorkerThreadStartupData>(params, sourceCode, startMode, topOrigin))
     , m_idbConnectionProxy(connectionProxy)

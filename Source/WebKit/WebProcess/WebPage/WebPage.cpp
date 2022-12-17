@@ -73,6 +73,7 @@
 #include "WebAttachmentElementClient.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
+#include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebChromeClient.h"
@@ -625,8 +626,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
         makeUniqueRef<WebStorageProvider>(),
-        makeUniqueRef<WebModelPlayerProvider>(*this)
+        makeUniqueRef<WebModelPlayerProvider>(*this),
+        WebProcess::singleton().badgeClient()
     );
+
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)
     pageConfiguration.contextMenuClient = new WebContextMenuClient(this);

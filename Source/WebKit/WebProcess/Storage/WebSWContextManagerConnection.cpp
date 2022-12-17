@@ -38,6 +38,7 @@
 #include "RemoteWorkerInitializationData.h"
 #include "RemoteWorkerLibWebRTCProvider.h"
 #include "ServiceWorkerFetchTaskMessages.h"
+#include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCompiledContentRuleListData.h"
@@ -150,7 +151,9 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
     assertIsCurrent(m_queue.get());
 
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, contextData = WTFMove(contextData).isolatedCopy(), workerData = WTFMove(workerData).isolatedCopy(), userAgent = WTFMove(userAgent).isolatedCopy(), workerThreadMode]() mutable {
-    auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
+        auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
+
+        pageConfiguration.badgeClient = WebBadgeClient::create();
         pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
         pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);
         pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();

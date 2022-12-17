@@ -34,6 +34,7 @@
     readonly attribute unsigned long long hardwareConcurrency;
 };
 
+WorkerNavigator includes NavigatorBadge;
 WorkerNavigator includes NavigatorID;
 WorkerNavigator includes NavigatorLanguage;
 WorkerNavigator includes NavigatorLocks;

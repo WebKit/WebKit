@@ -68,6 +68,10 @@ public:
     {
         return { };
     }
+
+    virtual void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>)
+    {
+    }
 };
 
 } // namespace WebKit

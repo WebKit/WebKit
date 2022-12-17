@@ -43,9 +43,11 @@
 namespace WebCore {
 
 class NotificationClient;
+class Page;
 class ScriptBuffer;
 class SecurityOrigin;
 class SocketProvider;
+class WorkerBadgeProxy;
 class WorkerGlobalScope;
 class WorkerLoaderProxy;
 class WorkerDebuggerProxy;
@@ -92,8 +94,9 @@ class WorkerThread : public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 
-    WorkerLoaderProxy& workerLoaderProxy() final { return m_workerLoaderProxy; }
+    WorkerBadgeProxy& workerBadgeProxy() const { return m_workerBadgeProxy; }
     WorkerDebuggerProxy* workerDebuggerProxy() const final { return &m_workerDebuggerProxy; }
+    WorkerLoaderProxy& workerLoaderProxy() final { return m_workerLoaderProxy; }
     WorkerReportingProxy& workerReportingProxy() const { return m_workerReportingProxy; }
 
     // Number of active worker threads.
@@ -110,7 +113,7 @@ public:
     void setWorkerClient(std::unique_ptr<WorkerClient>&& client) { m_workerClient = WTFMove(client); }
     WorkerClient* workerClient() { return m_workerClient.get(); }
 protected:
-    WorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
+    WorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerBadgeProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 
     // Factory method for creating a new worker context for the thread.
     virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, Ref<SecurityOrigin>&& topOrigin) = 0;
@@ -135,6 +138,7 @@ private:
     WorkerLoaderProxy& m_workerLoaderProxy;
     WorkerDebuggerProxy& m_workerDebuggerProxy;
     WorkerReportingProxy& m_workerReportingProxy;
+    WorkerBadgeProxy& m_workerBadgeProxy;
     JSC::RuntimeFlags m_runtimeFlags;
 
     std::unique_ptr<WorkerThreadStartupData> m_startupData;
