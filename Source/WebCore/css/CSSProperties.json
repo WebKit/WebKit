@@ -2898,7 +2898,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-grammar": "<length-percentage svg>"
+                "parser-grammar": "<length-percentage>"
             },
             "specification": {
                 "category": "svg",
@@ -2909,7 +2909,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-grammar": "<length-percentage svg>"
+                "parser-grammar": "<length-percentage>"
             },
             "specification": {
                 "category": "svg",
@@ -5767,7 +5767,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-grammar": "<length-percentage svg>"
+                "parser-grammar": "<length-percentage>"
             },
             "specification": {
                 "category": "svg",
@@ -5778,7 +5778,7 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "converter": "Length",
-                "parser-grammar": "<length-percentage svg>"
+                "parser-grammar": "<length-percentage>"
             },
             "specification": {
                 "category": "svg",
