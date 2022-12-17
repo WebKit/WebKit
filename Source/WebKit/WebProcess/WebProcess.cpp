@@ -948,7 +948,9 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 
 void WebProcess::didClose(IPC::Connection& connection)
 {
+#if ENABLE(VIDEO)
     FileSystem::markPurgeable(WebCore::HTMLMediaElement::mediaCacheDirectory());
+#endif
     if (m_applicationCacheStorage)
         FileSystem::markPurgeable(m_applicationCacheStorage->cacheDirectory());
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
