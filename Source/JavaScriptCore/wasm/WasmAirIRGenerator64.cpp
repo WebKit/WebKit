@@ -104,6 +104,8 @@ public:
     ExpressionType addConstant(Type, uint64_t);
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
     ExpressionType addConstant(v128_t);
+    ExpressionType addConstantZero(Type);
+    ExpressionType addConstantZero(BasicBlock*, Type);
 
     // This pair of operations is used when we need to call into a JIT operation with
     // some arbitrary wasm value--we need a TypedTmp with a uniform size, and all
@@ -578,6 +580,7 @@ private:
     Tmp extractJSValuePointer(const TypedTmp& tmp) const { return tmp.tmp(); }
 
     void emitZeroInitialize(ExpressionType);
+    void emitZeroInitialize(BasicBlock*, ExpressionType);
     template <typename Taken>
     void emitCheckI64Zero(ExpressionType, Taken&&);
     template<typename Then>
@@ -701,29 +704,34 @@ AirIRGenerator64::AirIRGenerator64(const ModuleInformation& info, B3::Procedure&
 
 void AirIRGenerator64::emitZeroInitialize(ExpressionType value)
 {
+    emitZeroInitialize(m_currentBlock, value);
+}
+
+void AirIRGenerator64::emitZeroInitialize(BasicBlock* block, ExpressionType value)
+{
     auto const type = value.type();
     switch (type.kind) {
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
-        append(Move, Arg::imm(JSValue::encode(jsNull())), value);
+        append(block, Move, Arg::imm(JSValue::encode(jsNull())), value);
         break;
     case TypeKind::I32:
     case TypeKind::I64: {
-        append(Move, Arg::imm(0), value);
+        append(block, Move, Arg::imm(0), value);
         break;
     }
     case TypeKind::F32:
     case TypeKind::F64: {
         auto temp = g64();
         // IEEE 754 "0" is just int32/64 zero.
-        append(Move, Arg::imm(0), temp);
-        append(type.isF32() ? Move32ToFloat : Move64ToDouble, temp, value);
+        append(block, Move, Arg::imm(0), temp);
+        append(block, type.isF32() ? Move32ToFloat : Move64ToDouble, temp, value);
         break;
     }
     case TypeKind::V128: {
-        append(MoveZeroToVector, value);
+        append(block, MoveZeroToVector, value);
         break;
     }
     default:
@@ -815,10 +823,9 @@ auto AirIRGenerator64::addConstant(v128_t value) -> ExpressionType
 {
     auto result = tmpForType(Types::V128);
 
-    if (!value.u64x2[0] && !value.u64x2[1]) {
-        append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, result, result);
-        return result;
-    }
+    if (!value.u64x2[0] && !value.u64x2[1])
+        return addConstantZero(Types::V128);
+
     if (value.u64x2[0] == 0xffffffffffffffff && value.u64x2[1] == 0xffffffffffffffff) {
         if constexpr (isX86())
             append(CompareIntegerVector, Arg::relCond(MacroAssembler::RelationalCondition::Equal), Arg::simdInfo({ SIMDLane::i32x4, SIMDSignMode::None }), result, result, result, tmpForType(Types::V128));
@@ -834,6 +841,18 @@ auto AirIRGenerator64::addConstant(v128_t value) -> ExpressionType
     append(VectorReplaceLaneInt64, Arg::imm(0), a, result);
     append(Move, Arg::bigImm(value.u64x2[1]), a);
     append(VectorReplaceLaneInt64, Arg::imm(1), a, result);
+    return result;
+}
+
+auto AirIRGenerator64::addConstantZero(Type type) -> ExpressionType
+{
+    return addConstantZero(m_currentBlock, type);
+}
+
+auto AirIRGenerator64::addConstantZero(BasicBlock* block, Type type) -> ExpressionType
+{
+    auto result = tmpForType(type);
+    emitZeroInitialize(block, result);
     return result;
 }
 

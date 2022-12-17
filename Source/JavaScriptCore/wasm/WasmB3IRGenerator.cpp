@@ -1041,7 +1041,14 @@ void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
 Value* B3IRGenerator::constant(B3::Type type, uint64_t bits, std::optional<Origin> maybeOrigin)
 {
     auto result = m_constantPool.ensure(ValueKey(opcodeForConstant(type), type, static_cast<int64_t>(bits)), [&] {
-        Value* result = m_proc.addConstant(maybeOrigin ? *maybeOrigin : origin(), type, bits);
+        Value* result = nullptr;
+        if (type.kind() == B3::V128) {
+            v128_t vector { };
+            vector.u64x2[0] = bits;
+            vector.u64x2[1] = 0;
+            result = m_proc.addConstant(maybeOrigin ? *maybeOrigin : origin(), type, vector);
+        } else
+            result = m_proc.addConstant(maybeOrigin ? *maybeOrigin : origin(), type, bits);
         m_constantInsertionValues.insertValue(0, result);
         return result;
     });

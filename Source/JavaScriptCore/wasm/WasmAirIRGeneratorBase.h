@@ -345,6 +345,7 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     //             addConstant (in derived classes)
     ExpressionType addBottom(BasicBlock*, Type);
+    ExpressionType addConstantZero(BasicBlock*, Type);
 
     // References
     //                               addRefIsNull (in derived classes)
@@ -1229,7 +1230,13 @@ template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addBottom(BasicBlock* block, Type type) -> ExpressionType
 {
     append(block, B3::Air::Oops);
-    return self().addConstant(type, 0);
+    return addConstantZero(block, type);
+}
+
+template<typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addConstantZero(BasicBlock* block, Type type) -> ExpressionType
+{
+    return self().addConstantZero(block, type);
 }
 
 template <typename Derived, typename ExpressionType>
