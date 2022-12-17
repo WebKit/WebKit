@@ -3,7 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -3739,12 +3740,21 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
             staticPosition += isOrthogonal(*child, *parent) ? renderBox.logicalTop() : renderBox.logicalLeft();
             if (renderBox.isInFlowPositioned())
                 staticPosition += renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
+            if (renderBox.isRelativelyPositioned())
+                staticPosition += renderBox.relativePositionOffset().width();
             if (fragment && is<RenderBlock>(*current)) {
                 const RenderBlock& currentBlock = downcast<RenderBlock>(*current);
                 fragment = currentBlock.clampToStartAndEndFragments(fragment);
                 RenderBoxFragmentInfo* boxInfo = currentBlock.renderBoxFragmentInfo(fragment);
                 if (boxInfo)
                     staticPosition += boxInfo->logicalLeft();
+            }
+            } else if (renderBox.isInline()) {
+            if (renderBox.isRelativelyPositioned()) {
+                if (!renderBox.style().logicalLeft().isAuto())
+                    staticPosition += renderBox.style().logicalLeft().value();
+                else
+                    staticPosition -= renderBox.style().logicalRight().value();
             }
         }
         logicalLeft.setValue(LengthType::Fixed, staticPosition);
@@ -3757,13 +3767,16 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
             return;
         }
         staticPosition -= enclosingBox.logicalWidth();
-        for (const RenderElement* current = &enclosingBox; current; current = current->container()) {
+        for (const RenderElement* current = parent; current; current = current->container()) {
             if (!is<RenderBox>(*current))
                 continue;
 
             if (current != &containerBlock) {
                 auto& renderBox = downcast<RenderBox>(*current);
                 staticPosition -= renderBox.logicalLeft();
+                if (renderBox.isRelativelyPositioned())
+                    staticPosition -= renderBox.relativePositionOffset().width();
+            }
                 if (renderBox.isInFlowPositioned())
                     staticPosition -= renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
             }
@@ -3778,11 +3791,18 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
                         staticPosition += enclosingBox.logicalWidth() - boxInfo->logicalWidth();
                 }
             }
+        } else if (current->isInline()) {
+            if (current->isRelativelyPositioned()) {
+                if (!current->style()->logicalLeft().isAuto())
+                    staticPosition -= current->style()->logicalLeft().value();
+                else
+                    staticPosition += current->style()->logicalRight().value();
+            }
+        }
             if (current == &containerBlock)
                 break;
-        }
-        logicalRight.setValue(LengthType::Fixed, staticPosition);
     }
+    logicalRight.setValue(LengthType::Fixed, staticPosition);
 }
 
 void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& computedValues, RenderFragmentContainer* fragment) const
