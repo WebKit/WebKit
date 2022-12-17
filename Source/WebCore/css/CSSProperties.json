@@ -1470,7 +1470,7 @@
             "codegen-properties": {
                 "custom": "Value",
                 "svg": true,
-                "parser-grammar": "baseline | sub | super | <length-percentage svg>"
+                "parser-grammar": "baseline | sub | super | <length-percentage>"
             },
             "specification": {
                 "category": "svg",
