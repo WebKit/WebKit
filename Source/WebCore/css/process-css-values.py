@@ -206,12 +206,20 @@ class GenerationContext:
 
         to.write("%%\n")
 
-    def _generate_name_string_table(self, *, to):
+    def _generate_name_string_tables(self, *, to):
         to.write(f"constexpr ASCIILiteral valueList[] = {{\n")
         to.write(f"    \"\"_s,\n")
 
         for value in self.values:
             to.write(f"    \"{value.name}\"_s,\n")
+
+        to.write(f"    ASCIILiteral()\n")
+        to.write(f"}};\n")
+        to.write(f"constexpr ASCIILiteral valueListForSerialization[] = {{\n")
+        to.write(f"    \"\"_s,\n")
+
+        for value in self.values:
+            to.write(f"    \"{value.name_lowercase}\"_s,\n")
 
         to.write(f"    ASCIILiteral()\n")
         to.write(f"}};\n")
@@ -231,6 +239,15 @@ class GenerationContext:
                 return valueList[id];
             }
 
+            // When serializing a CSS keyword, it should be converted to ASCII lowercase.
+            // https://drafts.csswg.org/cssom/#serialize-a-css-component-value
+            ASCIILiteral nameLiteralForSerialization(CSSValueID id)
+            {
+                if (static_cast<uint16_t>(id) >= numCSSValueKeywords)
+                    return { };
+                return valueListForSerialization[id];
+            }
+
             const AtomString& nameString(CSSValueID id)
             {
                 if (static_cast<uint16_t>(id) >= numCSSValueKeywords)
@@ -240,6 +257,20 @@ class GenerationContext:
                 auto& string = strings.get()[id];
                 if (string.isNull())
                     string = valueList[id];
+                return string;
+            }
+
+            // When serializing a CSS keyword, it should be converted to ASCII lowercase.
+            // https://drafts.csswg.org/cssom/#serialize-a-css-component-value
+            const AtomString& nameStringForSerialization(CSSValueID id)
+            {
+                if (static_cast<uint16_t>(id) >= numCSSValueKeywords)
+                    return nullAtom();
+
+                static NeverDestroyed<std::array<AtomString, numCSSValueKeywords>> strings;
+                auto& string = strings.get()[id];
+                if (string.isNull())
+                    string = valueListForSerialization[id];
                 return string;
             }
 
@@ -255,7 +286,7 @@ class GenerationContext:
                 to=output_file
             )
 
-            self._generate_name_string_table(
+            self._generate_name_string_tables(
                 to=output_file
             )
 
@@ -308,7 +339,9 @@ class GenerationContext:
         to.write(textwrap.dedent("""\
             CSSValueID findCSSValueKeyword(const char* characters, unsigned length);
             ASCIILiteral nameLiteral(CSSValueID);
+            ASCIILiteral nameLiteralForSerialization(CSSValueID); // Lowercase.
             const AtomString& nameString(CSSValueID);
+            const AtomString& nameStringForSerialization(CSSValueID); // Lowercase.
 
             struct AllCSSValueKeywordsRange {
                 struct Iterator {

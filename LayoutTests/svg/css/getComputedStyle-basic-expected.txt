@@ -94,9 +94,9 @@ rect: style.getPropertyValue(clip-rule) : nonzero
 rect: style.getPropertyCSSValue(clip-rule) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(color) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(color-interpolation) : sRGB
+rect: style.getPropertyValue(color-interpolation) : srgb
 rect: style.getPropertyCSSValue(color-interpolation) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(color-interpolation-filters) : linearRGB
+rect: style.getPropertyValue(color-interpolation-filters) : linearrgb
 rect: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-count) : auto
 rect: style.getPropertyCSSValue(column-count) : [object CSSPrimitiveValue]
@@ -602,9 +602,9 @@ g: style.getPropertyValue(clip-rule) : nonzero
 g: style.getPropertyCSSValue(clip-rule) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(color) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(color-interpolation) : sRGB
+g: style.getPropertyValue(color-interpolation) : srgb
 g: style.getPropertyCSSValue(color-interpolation) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(color-interpolation-filters) : linearRGB
+g: style.getPropertyValue(color-interpolation-filters) : linearrgb
 g: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-count) : auto
 g: style.getPropertyCSSValue(column-count) : [object CSSPrimitiveValue]

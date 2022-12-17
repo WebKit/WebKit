@@ -16,7 +16,7 @@ function testImageRendering(value, computedValue)
     document.body.appendChild(div);
     div.setAttribute("style", "image-rendering: " + value);
     shouldBe("div.style.getPropertyCSSValue('image-rendering').cssValueType", 'CSSValue.CSS_PRIMITIVE_VALUE');
-    shouldBeEqualToString("div.style.getPropertyValue('image-rendering')", value);
+    shouldBeEqualToString("div.style.getPropertyValue('image-rendering')", value.toLowerCase());
     shouldBeEqualToString("getComputedStyle(div).getPropertyValue('image-rendering')", computedValue);
 
     document.body.removeChild(div);
@@ -27,8 +27,8 @@ testImageRendering('crisp-edges', 'crisp-edges');
 testImageRendering('pixelated', 'pixelated');
 testImageRendering('-webkit-crisp-edges', 'crisp-edges');
 testImageRendering('-webkit-optimize-contrast', 'crisp-edges');
-testImageRendering('optimizeSpeed', 'optimizeSpeed');
-testImageRendering('optimizeQuality', 'optimizeQuality');
+testImageRendering('optimizeSpeed', 'optimizespeed');
+testImageRendering('optimizeQuality', 'optimizequality');
 
 successfullyParsed = true;
 </script>

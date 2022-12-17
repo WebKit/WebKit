@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "auto"
 PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "crispedges"
 PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "crispedges"
-PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "optimizeSpeed"
-PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "geometricPrecision"
+PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "optimizespeed"
+PASS document.defaultView.getComputedStyle(group, null).shapeRendering is "geometricprecision"
 PASS successfullyParsed is true
 
 TEST COMPLETE

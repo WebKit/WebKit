@@ -7,7 +7,7 @@ FAIL Testing 'alignment-baseline'. assert_equals: Value Test. expected "baseline
 FAIL Testing 'baseline-shift'. assert_equals: Value Test. expected "sub" but got "baseline"
 PASS Testing 'clip-rule'.
 PASS Testing 'color'.
-FAIL Testing 'color-interpolation-filters'. assert_equals: Default value. expected "" but got "linearRGB"
+FAIL Testing 'color-interpolation-filters'. assert_equals: Default value. expected "" but got "linearrgb"
 PASS Testing 'cursor'.
 PASS Testing 'direction'.
 FAIL Testing 'display'. assert_equals: Value Test. expected "block" but got "inline"

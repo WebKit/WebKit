@@ -1419,7 +1419,9 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSSUnitType::CSS_URI:
         return serializeURL(m_value.string);
     case CSSUnitType::CSS_VALUE_ID:
-        return nameString(m_value.valueID);
+        // Per the specification, we should lowercase keywords during serialization:
+        // https://www.w3.org/TR/cssom-1/#serialize-a-css-component-value
+        return nameStringForSerialization(m_value.valueID);
     case CSSUnitType::CSS_PROPERTY_ID:
         return nameString(m_value.propertyID);
     case CSSUnitType::CSS_ATTR:

@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS test("text-rendering: auto;") is "auto"
-PASS test("text-rendering: optimizeSpeed;") is "optimizeSpeed"
-PASS test("text-rendering: optimizeLegibility;") is "optimizeLegibility"
-PASS test("text-rendering: geometricPrecision;") is "geometricPrecision"
+PASS test("text-rendering: optimizeSpeed;") is "optimizespeed"
+PASS test("text-rendering: optimizeLegibility;") is "optimizelegibility"
+PASS test("text-rendering: geometricPrecision;") is "geometricprecision"
 PASS test("text-rendering: auto auto;") is ""
 PASS test("text-rendering: optimizeCoconuts;") is ""
 PASS test("text-rendering: 15;") is ""
