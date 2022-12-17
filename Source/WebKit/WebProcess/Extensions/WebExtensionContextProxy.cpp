@@ -32,6 +32,8 @@
 #include "JSWebExtensionWrapper.h"
 #include "WebExtensionContextMessages.h"
 #include "WebExtensionContextProxyMessages.h"
+#include "WebFrame.h"
+#include "WebPage.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
