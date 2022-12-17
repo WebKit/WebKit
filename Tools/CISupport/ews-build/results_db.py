@@ -24,13 +24,13 @@
 
 import argparse
 import json
+import os
 import sys
 import twisted
+import re
 
-from twisted.internet import defer, error, protocol, reactor
-from twisted.web.client import Agent
-from twisted.web.http_headers import Headers
-from twisted.web._newclient import ResponseFailed
+from twisted_additions import TwistedAdditions
+from twisted.internet import defer, reactor
 
 
 class ResultsDatabase(object):
@@ -51,17 +51,6 @@ class ResultsDatabase(object):
         'sdk',
     ]
 
-    class JsonPrinter(protocol.Protocol):
-        def __init__(self, finished):
-            self.finished = finished
-            self.data = b''
-
-        def dataReceived(self, bytes):
-            self.data += bytes
-
-        def connectionLost(self, reason):
-            self.finished.callback(self.data)
-
     @classmethod
     @defer.inlineCallbacks
     def get_results_summary(cls, test, commit=None, configuration=None, logger=None):
@@ -80,32 +69,15 @@ class ResultsDatabase(object):
         if commit:
             params['ref'] = commit
 
-        url = f'{cls.HOSTNAME}/api/results-summary/{cls.SUITE}/{test}'
-        if params:
-            url += '?{}'.format('&'.join([f'{key}={value}' for key, value in params.items()]))
+        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/results-summary/{cls.SUITE}/{test}', params=params, logger=logger)
 
-        try:
-            agent = Agent(reactor, connectTimeout=10)
-            response = yield agent.request(b'GET', url.encode('utf-8'), Headers({
-                'User-Agent': ['python-twisted/{}'.format(twisted.__version__)],
-                'Content-Type': ['application/json'],
-            }))
-
-            if response.code == 200:
-                finished = defer.Deferred()
-                response.deliverBody(cls.JsonPrinter(finished))
-                data = yield finished
-                defer.returnValue(json.loads(data))
-                return
-            logger(f'Failed to query results summary with status code {response.code}\n')
-        except error.ConnectError as e:
-            logger(f'Failed to connect to {cls.HOSTNAME}: {e}\n')
-        except ResponseFailed:
+        if not response:
             logger(f'No response from {cls.HOSTNAME}\n')
-        except json.decoder.JSONDecodeError:
-            logger('Non-json response from results summary query\n')
-        except Exception as e:
-            logger(f'Unknown exception when consulting results database:\n{e}\n')
+        elif response.status_code == 200:
+            defer.returnValue(response.json())
+            return
+        else:
+            logger(f'Failed to query results summary with status code {response.status_code}\n')
 
         defer.returnValue({})
 
