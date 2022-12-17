@@ -3596,7 +3596,6 @@ webkit.org/b/203447 imported/w3c/web-platform-tests/css/css-position/position-ab
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-002.sub.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-003.html [ ImageOnlyFailure ]
-webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-004.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-replaced-no-intrinsic-size.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-center-002.html [ ImageOnlyFailure ]
