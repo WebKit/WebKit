@@ -401,6 +401,7 @@ sub determineBaseProductDir
         if (!defined($baseProductDir)) {
             $baseProductDir = join '', readXcodeUserDefault("IDEApplicationwideBuildSettings");
             $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
+            undef $baseProductDir if $baseProductDir =~ /{\s*}/;
         }
     }
 
