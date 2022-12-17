@@ -3,8 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  * Copyright (C) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -174,7 +174,7 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& value)
 {
 #if ENABLE(DATALIST_ELEMENT)
     if (name == valueAttr) {
@@ -195,11 +195,9 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !value.isNull());
         m_isDefault = !value.isNull();
 
-        // FIXME: This doesn't match what the HTML specification says.
-        // The specification implies that removing the selected attribute or
-        // changing the value of a selected attribute that is already present
-        // has no effect on whether the element is selected.
-        setSelectedState(!value.isNull());
+        // https://html.spec.whatwg.org/multipage/forms.html#concept-option-selectedness
+        if (oldValue.isNull() != value.isNull())
+            setSelected(!value.isNull());
     } else
         HTMLElement::parseAttribute(name, value);
 }
