@@ -488,9 +488,10 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState&,
 
 inline TransformOperations BuilderConverter::convertTransform(BuilderState& builderState, const CSSValue& value)
 {
-    TransformOperations operations;
-    transformsForValue(value, builderState.cssToLengthConversionData(), operations);
-    return operations;
+    auto operations = transformsForValue(value, builderState.cssToLengthConversionData());
+    if (!operations)
+        return TransformOperations { };
+    return *operations;
 }
 
 inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)

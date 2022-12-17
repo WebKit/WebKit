@@ -236,12 +236,12 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
     if (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).valueID() == CSSValueNone))
         return AbstractMatrix { };
 
-    TransformOperations operations;
-    if (!transformsForValue(*value, { }, operations))
+    auto operations = transformsForValue(*value, { });
+    if (!operations)
         return Exception { SyntaxError };
 
     AbstractMatrix matrix;
-    for (auto& operation : operations.operations()) {
+    for (auto& operation : operations->operations()) {
         if (operation->apply(matrix.matrix, { 0, 0 }))
             return Exception { SyntaxError };
         if (operation->is3DOperation())
