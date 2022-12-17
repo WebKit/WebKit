@@ -30,13 +30,16 @@
 
 namespace WebCore {
 
-class Rect;
-
 class CSSBackgroundRepeatValue final : public CSSValue {
 public:
     static Ref<CSSBackgroundRepeatValue> create(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue)
     {
         return adoptRef(*new CSSBackgroundRepeatValue(WTFMove(repeatXValue), WTFMove(repeatYValue)));
+    }
+
+    static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue)
+    {
+        return adoptRef(*new CSSBackgroundRepeatValue(repeatXValue, repeatYValue));
     }
 
     String customCSSText() const;
@@ -48,6 +51,7 @@ public:
 
 private:
     CSSBackgroundRepeatValue(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue);
+    CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
 
     Ref<CSSPrimitiveValue> m_xValue;
     Ref<CSSPrimitiveValue> m_yValue;
