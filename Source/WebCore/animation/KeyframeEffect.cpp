@@ -61,6 +61,7 @@
 #include "StyledElement.h"
 #include "TimingFunction.h"
 #include "TranslateTransformOperation.h"
+#include "WebAnimationTypes.h"
 #include "WillChangeData.h"
 #include <JavaScriptCore/Exception.h>
 #include <wtf/UUID.h>
@@ -1417,14 +1418,14 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     KeyframeValue propertySpecificKeyframeWithZeroOffset(0, RenderStyle::clonePtr(targetStyle));
     KeyframeValue propertySpecificKeyframeWithOneOffset(1, RenderStyle::clonePtr(targetStyle));
 
-    auto keyframeContainsProperty = [](const KeyframeValue& keyframe, CSSPropertyAnimation::Property property) {
+    auto keyframeContainsProperty = [](const KeyframeValue& keyframe, AnimatableProperty property) {
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) { return keyframe.containsProperty(propertyId); },
-            [&] (AtomString customProperty) { return keyframe.containsCustomProperty(customProperty); }
+            [&] (const AtomString& customProperty) { return keyframe.containsCustomProperty(customProperty); }
         );
     };
 
-    auto blendProperty = [&](CSSPropertyAnimation::Property property) {
+    auto blendProperty = [&](AnimatableProperty property) {
         // 1. If iteration progress is unresolved abort this procedure.
         // 2. Let target property be the longhand property for which the effect value is to be calculated.
         // 3. If animation type of the target property is not animatable abort this procedure since the effect cannot be applied.
