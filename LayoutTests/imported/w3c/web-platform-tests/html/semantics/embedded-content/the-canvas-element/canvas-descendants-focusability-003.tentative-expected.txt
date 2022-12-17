@@ -1,12 +1,12 @@
 
-FAIL <button hidden="" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <section hidden="" tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <div tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <span tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <a href="#" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <button style="display: contents" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <section style="display: contents" tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <div style="display: contents" tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <span style="display: contents" tabindex="-1" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
-FAIL <a style="display: contents" href="#" data-focusable="false"> assert_true: Shouldn't be focused expected true got false
+PASS <button hidden="" data-focusable="false">
+PASS <section hidden="" tabindex="-1" data-focusable="false">
+PASS <div tabindex="-1" data-focusable="false">
+PASS <span tabindex="-1" data-focusable="false">
+PASS <a href="#" data-focusable="false">
+PASS <button style="display: contents" data-focusable="false">
+PASS <section style="display: contents" tabindex="-1" data-focusable="false">
+PASS <div style="display: contents" tabindex="-1" data-focusable="false">
+PASS <span style="display: contents" tabindex="-1" data-focusable="false">
+PASS <a style="display: contents" href="#" data-focusable="false">
 

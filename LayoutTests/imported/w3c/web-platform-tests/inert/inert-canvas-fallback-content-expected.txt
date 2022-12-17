@@ -8,41 +8,31 @@ PASS
 PASS
       normal `a`
 
-FAIL
+PASS
       `div` in `display: none`
-     assert_not_equals: got disallowed value Element node <div tabindex="-1" data-focusable="false">
-      `div` in...
-FAIL
+
+PASS
       `span` in `display: none`
-     assert_not_equals: got disallowed value Element node <span tabindex="-1" data-focusable="false">
-      `span` ...
-FAIL
+
+PASS
       `a` in `display: none`
-     assert_not_equals: got disallowed value Element node <a href="#" data-focusable="false">
-      `a` in `display...
-FAIL
+
+PASS
       inert `div`
-     assert_not_equals: got disallowed value Element node <div tabindex="-1" data-focusable="false">
-      inert `d...
-FAIL
+
+PASS
       inert `span`
-     assert_not_equals: got disallowed value Element node <span tabindex="-1" data-focusable="false">
-      inert `...
-FAIL
+
+PASS
       inert `a`
-     assert_not_equals: got disallowed value Element node <a href="#" data-focusable="false">
-      inert `a`
-    </a>
-FAIL
+
+PASS
       inert `div` in `display: none`
-     assert_not_equals: got disallowed value Element node <div tabindex="-1" data-focusable="false">
-      inert `d...
-FAIL
+
+PASS
       inert `span` in `display: none`
-     assert_not_equals: got disallowed value Element node <span tabindex="-1" data-focusable="false">
-      inert `...
-FAIL
+
+PASS
       inert `a` in `display: none`
-     assert_not_equals: got disallowed value Element node <a href="#" data-focusable="false">
-      inert `a` in `d...
+
 

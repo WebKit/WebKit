@@ -761,6 +761,24 @@ Vector<String> Element::getAttributeNames() const
     return attributesVector;
 }
 
+bool Element::hasFocusableStyle() const
+{
+    if (renderer() && renderer()->isSkippedContent())
+        return false;
+
+    auto isFocusableStyle = [](const RenderStyle* style) {
+        return style && style->display() != DisplayType::None && style->display() != DisplayType::Contents
+            && style->visibility() == Visibility::Visible && !style->effectiveInert();
+    };
+
+    if (renderStyle())
+        return isFocusableStyle(renderStyle());
+
+    // Compute style in yet unstyled subtree without resolving full style.
+    auto* style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+    return isFocusableStyle(style);
+}
+
 bool Element::isFocusable() const
 {
     if (!isConnected() || !supportsFocus())
@@ -769,12 +787,12 @@ bool Element::isFocusable() const
     if (!renderer()) {
         // Elements in canvas fallback content are not rendered, but they are allowed to be
         // focusable as long as their canvas is displayed and visible.
-        if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
-            return canvas->isFocusableWithoutResolvingFullStyle();
-    } else if (renderer()->isSkippedContent())
-        return false;
+        RefPtr canvas = ancestorsOfType<HTMLCanvasElement>(*this).first();
+        if (canvas && !canvas->hasFocusableStyle())
+            return false;
+    }
 
-    return isFocusableWithoutResolvingFullStyle();
+    return hasFocusableStyle();
 }
 
 bool Element::isUserActionElementInActiveChain() const
@@ -3841,24 +3859,6 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     }
 
     return computedStyle;
-}
-
-bool Element::isFocusableWithoutResolvingFullStyle() const
-{
-    auto isFocusableStyle = [](const RenderStyle* style) {
-        return style
-            && style->display() != DisplayType::None
-            && style->display() != DisplayType::Contents
-            && style->visibility() == Visibility::Visible
-            && !style->effectiveInert();
-    };
-
-    if (renderStyle())
-        return isFocusableStyle(renderStyle());
-
-    // Compute style in yet unstyled subtree.
-    auto* style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
-    return isFocusableStyle(style);
 }
 
 const RenderStyle& Element::resolvePseudoElementStyle(PseudoId pseudoElementSpecifier)
