@@ -110,6 +110,14 @@ void WebExtensionContextProxy::enumerateNamespaceObjects(const Function<void(Web
     }
 }
 
+// MARK: webNavigation support
+
+void WebExtensionContextProxy::dispatchWebNavigationOnBeforeNavigateEvent(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+{
+
+}
+
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

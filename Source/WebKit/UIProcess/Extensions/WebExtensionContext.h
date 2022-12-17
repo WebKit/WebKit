@@ -225,6 +225,8 @@ public:
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
+    void fireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
+
     template<typename T>
     void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
 
@@ -263,7 +265,6 @@ private:
     uint64_t loadBackgroundPageListenersVersionNumberFromStorage();
     void loadBackgroundPageListenersFromStorage();
     void saveBackgroundPageListenersToStorage();
-    void fireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
     void queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()>&&);
 
     void performTasksAfterBackgroundContentLoads();

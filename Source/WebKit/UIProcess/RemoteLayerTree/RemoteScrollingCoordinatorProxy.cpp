@@ -288,7 +288,7 @@ void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(M
 
 void RemoteScrollingCoordinatorProxy::startMonitoringWheelEventsForTesting()
 {
-    m_scrollingTree->setIsMonitoringWheelEvents(true);
+//    m_scrollingTree->setIsMonitoringWheelEvents(true);
 }
 
 } // namespace WebKit

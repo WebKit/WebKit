@@ -531,7 +531,6 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->findController().hideFindUI();
     webPage->sandboxExtensionTracker().didStartProvisionalLoad(m_frame.ptr());
 
-
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
@@ -543,6 +542,13 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     
     auto& url = provisionalLoader->url();
     auto& unreachableURL = provisionalLoader->unreachableURL();
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    // Notify the extensions controller.
+    if (auto* extensionControllerProxy = webPage->webExtensionControllerProxy())
+        extensionControllerProxy->didStartProvisionalLoadForFrame(*webPage, m_frame, url);
+#endif
+
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), m_frame->info(), provisionalLoader->request(), provisionalLoader->navigationID(), url, unreachableURL, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }

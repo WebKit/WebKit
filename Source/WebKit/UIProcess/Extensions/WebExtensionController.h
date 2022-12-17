@@ -121,6 +121,9 @@ private:
     void addUserContentController(WebUserContentControllerProxy&);
     void removeUserContentController(WebUserContentControllerProxy&);
 
+    // MARK: webNavigation support.
+    void didStartProvisionalLoadForFrame(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL);
+
     Ref<WebExtensionControllerConfiguration> m_configuration;
     WebExtensionControllerIdentifier m_identifier;
 
