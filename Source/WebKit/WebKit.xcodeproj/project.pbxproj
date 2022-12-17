@@ -1016,6 +1016,7 @@
 		512935D81288D19400A4B695 /* WebContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935D61288D19400A4B695 /* WebContextMenuItem.h */; };
 		512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */; };
 		5129EB1223D0DE7B00AF1CD7 /* ContentWorldShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */; };
+		512B6792294B8CB8000C0760 /* WebBadgeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512B6790294B8CB8000C0760 /* WebBadgeClient.h */; };
 		512CD6982721EFC800F7F8EC /* WebPushDaemonConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6972721EFC300F7F8EC /* WebPushDaemonConnection.h */; };
 		512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5008,6 +5009,8 @@
 		512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageContextMenuClient.cpp; sourceTree = "<group>"; };
 		512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageContextMenuClient.h; sourceTree = "<group>"; };
 		5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentWorldShared.h; sourceTree = "<group>"; };
+		512B678F294B8CB8000C0760 /* WebBadgeClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBadgeClient.cpp; sourceTree = "<group>"; };
+		512B6790294B8CB8000C0760 /* WebBadgeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBadgeClient.h; sourceTree = "<group>"; };
 		512CD6962721EFC200F7F8EC /* WebPushDaemonConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPushDaemonConnection.cpp; sourceTree = "<group>"; };
 		512CD6972721EFC300F7F8EC /* WebPushDaemonConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushDaemonConnection.h; sourceTree = "<group>"; };
 		512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushDaemonConstants.h; sourceTree = "<group>"; };
@@ -12206,6 +12209,8 @@
 				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
 				E36D701D27B718EF006531B7 /* WebAttachmentElementClient.cpp */,
 				E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */,
+				512B678F294B8CB8000C0760 /* WebBadgeClient.cpp */,
+				512B6790294B8CB8000C0760 /* WebBadgeClient.h */,
 				46EE2847269E049B00DD48AB /* WebBroadcastChannelRegistry.cpp */,
 				46EE2848269E049B00DD48AB /* WebBroadcastChannelRegistry.h */,
 				46E9760A2757F6C900ACDD37 /* WebBroadcastChannelRegistry.messages.in */,
@@ -15424,6 +15429,7 @@
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
 				DDA0A2C527E55E4E005E086E /* WebBackForwardListPrivate.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
+				512B6792294B8CB8000C0760 /* WebBadgeClient.h in Headers */,
 				46EE2849269E04AC00DD48AB /* WebBroadcastChannelRegistry.h in Headers */,
 				DDA0A33F27E55E4F005E086E /* WebCache.h in Headers */,
 				41897ED11F415D680016FA42 /* WebCacheStorageConnection.h in Headers */,

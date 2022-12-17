@@ -351,6 +351,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_attachmentElementClient(WTFMove(pageConfiguration.attachmentElementClient))
 #endif
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
+    , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
 {
     updateTimerThrottlingState();
 

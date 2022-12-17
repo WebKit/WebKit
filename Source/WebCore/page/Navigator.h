@@ -67,6 +67,14 @@ public:
 
     GPU* gpu();
 
+#if ENABLE(BADGING)
+    void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
+    void clearAppBadge(Ref<DeferredPromise>&&);
+
+    void setClientBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
+    void clearClientBadge(Ref<DeferredPromise>&&);
+#endif
+
 private:
     void showShareData(ExceptionOr<ShareDataWithParsedURL&>, Ref<DeferredPromise>&&);
     explicit Navigator(ScriptExecutionContext*, DOMWindow&);

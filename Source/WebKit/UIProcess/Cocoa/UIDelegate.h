@@ -189,6 +189,9 @@ private:
         void endXRSession(WebPageProxy&) final;
 #endif
 
+        void updateAppBadge(WebPageProxy&, std::optional<uint64_t>) final;
+        void updateClientBadge(WebPageProxy&, std::optional<uint64_t>) final;
+
         WeakPtr<UIDelegate> m_uiDelegate;
     };
 
@@ -293,6 +296,8 @@ private:
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
         bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
         bool webViewDecidePolicyForModalContainerDecisionHandler : 1;
+        bool webViewUpdatedAppBadge : 1;
+        bool webViewUpdatedClientBadge : 1;
     } m_delegateMethods;
 };
 

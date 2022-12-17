@@ -32,6 +32,7 @@
     undefined getStorageUpdates();
 };
 
+Navigator includes NavigatorBadge;
 Navigator includes NavigatorID;
 Navigator includes NavigatorLanguage;
 Navigator includes NavigatorLocks;

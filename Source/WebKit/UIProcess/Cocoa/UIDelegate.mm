@@ -210,6 +210,9 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
     m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:)];
     m_delegateMethods.webViewDecidePolicyForModalContainerDecisionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForModalContainer:decisionHandler:)];
+
+    m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:)];
+    m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1885,6 +1888,44 @@ void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
         return;
 
     [delegate _webViewDidDisableInspectorBrowserDomain:m_uiDelegate->m_webView.get().get()];
+}
+
+void UIDelegate::UIClient::updateAppBadge(WebPageProxy&, std::optional<uint64_t> badge)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewUpdatedAppBadge)
+        return;
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    NSNumber *nsBadge = nil;
+    if (badge)
+        nsBadge = @(*badge);
+
+    [delegate _webView:m_uiDelegate->m_webView.get().get() updatedAppBadge:nsBadge];
+}
+
+void UIDelegate::UIClient::updateClientBadge(WebPageProxy&, std::optional<uint64_t> badge)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewUpdatedClientBadge)
+        return;
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    NSNumber *nsBadge = nil;
+    if (badge)
+        nsBadge = @(*badge);
+
+    [delegate _webView:m_uiDelegate->m_webView.get().get() updatedClientBadge:nsBadge];
 }
 
 #if ENABLE(WEBXR)

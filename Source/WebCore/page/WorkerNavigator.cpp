@@ -27,6 +27,11 @@
 #include "config.h"
 #include "WorkerNavigator.h"
 
+#include "JSDOMPromiseDeferred.h"
+#include "WorkerBadgeProxy.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerThread.h"
+
 namespace WebCore {
 
 WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& userAgent, bool isOnline)
@@ -51,5 +56,25 @@ GPU* WorkerNavigator::gpu()
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 Implement this.
     return nullptr;
 }
+
+#if ENABLE(BADGING)
+void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
+{
+    auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
+    if (!scope) {
+        promise->reject();
+        return;
+    }
+
+    scope->thread().workerBadgeProxy().setAppBadge(badge);
+    promise->resolve();
+}
+
+void WorkerNavigator::clearAppBadge(Ref<DeferredPromise>&& promise)
+{
+    setAppBadge(0, WTFMove(promise));
+}
+#endif
+
 
 } // namespace WebCore

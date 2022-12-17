@@ -28,6 +28,7 @@
 
 #include "APIFrameHandle.h"
 #include "APIPageHandle.h"
+#include "APIUIClient.h"
 #include "AuthenticatorManager.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
@@ -2206,6 +2207,33 @@ void WebProcessProxy::systemBeep()
 void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
     WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
+}
+
+void WebProcessProxy::setAppBadge(std::optional<WebPageProxyIdentifier> pageIdentifier, const SecurityOriginData& origin, std::optional<uint64_t> badge)
+{
+    if (!pageIdentifier) {
+        websiteDataStore()->workerUpdatedAppBadge(origin, badge);
+        return;
+    }
+
+    // This page might have gone away since the WebContent process sent this message,
+    // and that's just fine.
+    auto page = m_pageMap.get(*pageIdentifier);
+    if (!page)
+        return;
+
+    page->uiClient().updateAppBadge(*page, badge);
+}
+
+void WebProcessProxy::setClientBadge(WebPageProxyIdentifier pageIdentifier, const SecurityOriginData&, std::optional<uint64_t> badge)
+{
+    // This page might have gone away since the WebContent process sent this message,
+    // and that's just fine.
+    auto page = m_pageMap.get(pageIdentifier);
+    if (!page)
+        return;
+
+    page->uiClient().updateClientBadge(*page, badge);
 }
 
 const WeakHashSet<WebProcessProxy>* WebProcessProxy::serviceWorkerClientProcesses() const

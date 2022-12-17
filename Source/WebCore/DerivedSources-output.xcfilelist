@@ -1751,6 +1751,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigationPreloadState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+AudioSession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+AudioSession.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Badge.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Badge.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.cpp
@@ -1787,6 +1789,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebXR.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebXR.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorBadge.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorBadge.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCookies.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCookies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGPU.cpp

@@ -30,6 +30,7 @@
 #include "RemoteWebLockRegistry.h"
 #include "RemoteWorkerFrameLoaderClient.h"
 #include "RemoteWorkerLibWebRTCProvider.h"
+#include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCompiledContentRuleListData.h"
@@ -96,6 +97,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
     auto pageConfiguration = WebCore::pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
 
+    pageConfiguration.badgeClient = WebBadgeClient::create();
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
     pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);
     pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();

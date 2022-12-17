@@ -253,7 +253,18 @@ AnimatedImageAsyncDecodingEnabled:
       default: true
     WebCore:
       default: true
-      
+
+AppBadgeEnabled:
+  type: bool
+  condition: ENABLE(BADGING)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AppHighlightsEnabled:
   type: bool
   condition: ENABLE(APP_HIGHLIGHTS)
@@ -375,6 +386,17 @@ CanvasUsesAcceleratedDrawing:
 
 CaretBrowsingEnabled:
   type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+ClientBadgeEnabled:
+  type: bool
+  condition: ENABLE(BADGING)
   defaultValue:
     WebKitLegacy:
       default: false

@@ -99,8 +99,9 @@ SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedW
     : m_page(WTFMove(page))
     , m_document(*m_page->mainFrame().document())
     , m_contextIdentifier(*initializationData.clientIdentifier)
-    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTFMove(workerOptions), WTFMove(initializationData), m_document), WTFMove(workerFetchResult.script), *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
+    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTFMove(workerOptions), WTFMove(initializationData), m_document), WTFMove(workerFetchResult.script), *this, *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
     , m_cacheStorageProvider(cacheStorageProvider)
+    , m_clientOrigin(clientOrigin)
 {
     ASSERT(!allSharedWorkerThreadProxies().contains(m_contextIdentifier));
     allSharedWorkerThreadProxies().add(m_contextIdentifier, this);
@@ -213,6 +214,14 @@ void SharedWorkerThreadProxy::workerGlobalScopeClosed()
 ReportingClient* SharedWorkerThreadProxy::reportingClient() const
 {
     return &m_document.get();
+}
+
+void SharedWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
+{
+    ASSERT(!isMainThread());
+    callOnMainRunLoop([badge = WTFMove(badge), this, protectedThis = Ref { *this }] {
+        m_page->badgeClient().setAppBadge(nullptr, m_clientOrigin.clientOrigin, badge);
+    });
 }
 
 } // namespace WebCore

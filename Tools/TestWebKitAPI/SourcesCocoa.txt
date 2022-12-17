@@ -54,6 +54,7 @@ Tests/WebKitCocoa/AudioBufferSize.mm
 Tests/WebKitCocoa/AudioRoutingArbitration.mm
 Tests/WebKitCocoa/AutoFillAvailable.mm
 Tests/WebKitCocoa/AutoLayoutIntegration.mm
+Tests/WebKitCocoa/Badging.mm
 Tests/WebKitCocoa/BundleCSSStyleDeclarationHandle.mm
 Tests/WebKitCocoa/BundleEditingDelegate.mm
 Tests/WebKitCocoa/BundleFormDelegate.mm

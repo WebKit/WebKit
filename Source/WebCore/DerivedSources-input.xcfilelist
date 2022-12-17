@@ -231,6 +231,8 @@ $(PROJECT_DIR)/Modules/async-clipboard/ClipboardItem.idl
 $(PROJECT_DIR)/Modules/async-clipboard/Navigator+Clipboard.idl
 $(PROJECT_DIR)/Modules/audiosession/DOMAudioSession.idl
 $(PROJECT_DIR)/Modules/audiosession/Navigator+AudioSession.idl
+$(PROJECT_DIR)/Modules/badge/Navigator+Badge.idl
+$(PROJECT_DIR)/Modules/badge/NavigatorBadge.idl
 $(PROJECT_DIR)/Modules/beacon/Navigator+Beacon.idl
 $(PROJECT_DIR)/Modules/cache/CacheQueryOptions.idl
 $(PROJECT_DIR)/Modules/cache/DOMCache.idl

@@ -1598,6 +1598,26 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->mediaPreferredFullscreenWidth();
 }
 
+- (void)_setAppBadgeEnabled:(BOOL)enabled
+{
+    _preferences->setAppBadgeEnabled(enabled);
+}
+
+- (BOOL)_appBadgeEnabled
+{
+    return _preferences->appBadgeEnabled();
+}
+
+- (void)_setClientBadgeEnabled:(BOOL)enabled
+{
+    _preferences->setClientBadgeEnabled(enabled);
+}
+
+- (BOOL)_clientBadgeEnabled
+{
+    return _preferences->clientBadgeEnabled();
+}
+
 @end
 
 @implementation WKPreferences (WKDeprecated)
