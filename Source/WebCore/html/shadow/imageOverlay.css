@@ -28,6 +28,8 @@ div#image-overlay {
     position: relative;
     overflow: hidden;
     color: transparent;
+    -webkit-text-stroke-color: currentcolor;
+    -webkit-text-fill-color: currentcolor;
     text-shadow: none;
     text-indent: 0;
     text-align: center;
