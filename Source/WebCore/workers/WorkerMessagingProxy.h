@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WorkerBadgeProxy.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
@@ -38,7 +39,7 @@ class DedicatedWorkerThread;
 class WorkerInspectorProxy;
 class WorkerUserGestureForwarder;
 
-class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
+class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerMessagingProxy(Worker&);
@@ -86,6 +87,9 @@ private:
     void workerGlobalScopeDestroyedInternal();
     Worker* workerObject() const { return m_workerObject; }
 
+    // WorkerBadgeProxy
+    void setAppBadge(std::optional<uint64_t>) final;
+    
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     ScriptExecutionContextIdentifier m_loaderContextIdentifier;
     RefPtr<WorkerInspectorProxy> m_inspectorProxy;
@@ -93,6 +97,7 @@ private:
     Worker* m_workerObject;
     bool m_mayBeDestroyed { false };
     RefPtr<DedicatedWorkerThread> m_workerThread;
+    URL m_scriptURL;
 
     bool m_askedToSuspend { false };
     bool m_askedToTerminate { false };

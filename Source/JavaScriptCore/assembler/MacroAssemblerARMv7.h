@@ -1422,6 +1422,18 @@ public:
             m_assembler.vmov(dest, src);
     }
 
+    void moveZeroToFloat(FPRegisterID reg)
+    {
+        static double zeroConstant = 0.;
+        loadFloat(TrustedImmPtr(&zeroConstant), reg);
+    }
+
+    void loadFloat(TrustedImmPtr address, FPRegisterID dest)
+    {
+        move(address, addressTempRegister);
+        m_assembler.flds(ARMRegisters::asSingle(dest), addressTempRegister, 0);
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         static double zeroConstant = 0.;
@@ -2622,6 +2634,11 @@ public:
         invalidateAllTempRegisters();
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
+    }
+
+    ALWAYS_INLINE Call threadSafePatchableNearTailCall()
+    {
+        return Call(m_assembler.b(), Call::LinkableNearTail);
     }
 
     ALWAYS_INLINE Call call(PtrTag)

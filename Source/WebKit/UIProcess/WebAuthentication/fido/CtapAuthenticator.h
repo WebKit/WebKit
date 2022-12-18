@@ -74,7 +74,6 @@ private:
 
     fido::AuthenticatorGetInfoResponse m_info;
     bool m_isDowngraded { false };
-    bool m_isKeyStoreFull { false };
     size_t m_remainingAssertionResponses { 0 };
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
     Vector<uint8_t> m_pinAuth;

@@ -1500,7 +1500,12 @@
                     "border-bottom-width",
                     "border-left-color",
                     "border-left-style",
-                    "border-left-width"
+                    "border-left-width",
+                    "border-image-source",
+                    "border-image-slice",
+                    "border-image-width",
+                    "border-image-outset",
+                    "border-image-repeat"
                 ],
                 "custom-parser": true
             },
@@ -4174,11 +4179,11 @@
         "offset": {
             "codegen-properties": {
                 "longhands": [
+                    "offset-position",
                     "offset-path",
                     "offset-distance",
-                    "offset-position",
-                    "offset-anchor",
-                    "offset-rotate"
+                    "offset-rotate",
+                    "offset-anchor"
                 ],
                 "settings-flag": "cssMotionPathEnabled",
                 "custom-parser": true

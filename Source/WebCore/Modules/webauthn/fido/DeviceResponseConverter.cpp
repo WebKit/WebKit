@@ -360,14 +360,6 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
         response.setTransports(WTFMove(transports));
     }
 
-    it = responseMap.find(CBOR(20));
-    if (it != responseMap.end()) {
-        if (!it->second.isUnsigned())
-            return std::nullopt;
-
-        response.setRemainingDiscoverableCredentials(it->second.getUnsigned());
-    }
-
     return WTFMove(response);
 }
 

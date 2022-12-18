@@ -22,6 +22,7 @@
 
 #include "ActivityState.h"
 #include "AnimationFrameRate.h"
+#include "BadgeClient.h"
 #include "Color.h"
 #include "ContentSecurityPolicy.h"
 #include "DisabledAdaptations.h"
@@ -994,6 +995,9 @@ public:
 #if ENABLE(IMAGE_ANALYSIS)
     WEBCORE_EXPORT void analyzeImagesForFindInPage(Function<void()>&& callback);
 #endif
+
+    BadgeClient& badgeClient() { return m_badgeClient.get(); }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1354,6 +1358,8 @@ private:
 #endif
 
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
+
+    Ref<BadgeClient> m_badgeClient;
 };
 
 inline PageGroup& Page::group()

@@ -2630,6 +2630,11 @@ public:
         m_assembler.fmov<64>(reg, ARM64Registers::zr);
     }
 
+    void moveZeroToFloat(FPRegisterID reg)
+    {
+        m_assembler.fmov<32>(reg, ARM64Registers::zr);
+    }
+
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
     {
         m_assembler.fmov<64>(dest, src);
@@ -4137,6 +4142,13 @@ public:
         padBeforePatch();
         m_assembler.bl();
         return Call(m_assembler.labelIgnoringWatchpoints(), Call::LinkableNear);
+    }
+
+    ALWAYS_INLINE Call threadSafePatchableNearTailCall()
+    {
+        AssemblerLabel label = m_assembler.label();
+        m_assembler.b();
+        return Call(label, Call::LinkableNearTail);
     }
 
     ALWAYS_INLINE void ret()

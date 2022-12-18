@@ -782,11 +782,9 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
     CHECK_EQUAL(objects.size(), numberOfSpans);
     CHECK_EQUAL(actualNumberOfObjects, numberOfObjects);
     
-    unsigned numberOfSpansFreed = 0;
     unsigned numberOfObjectsFreed = 0;
     set<void*> freedObject;
     for (unsigned span = firstSpanToFree; span < objects.size(); span += 2) {
-        numberOfSpansFreed++;
         for (void* object : objects[span]) {
             thingy_deallocate(object);
             freedObject.insert(object);

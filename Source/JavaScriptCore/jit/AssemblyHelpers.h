@@ -337,7 +337,7 @@ public:
     }
 
     void emitSave(const RegisterAtOffsetList&);
-    void emitRestore(const RegisterAtOffsetList&);
+    void emitRestore(const RegisterAtOffsetList&, GPRReg = GPRInfo::callFrameRegister);
 
     void emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves);
     

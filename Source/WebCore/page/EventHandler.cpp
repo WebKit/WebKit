@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -1746,6 +1747,9 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
 #if !ENABLE(IOS_TOUCH_EVENTS)
     cancelFakeMouseMoveEvent();
 #endif
+    if (m_eventHandlerWillResetCapturingMouseEventsElement)
+        m_capturingMouseEventsElement = nullptr;
+
     m_mousePressed = true;
     m_capturesDragging = true;
     setLastKnownMousePosition(platformMouseEvent);

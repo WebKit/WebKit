@@ -30,6 +30,7 @@
 #include "ApplicationCacheStorage.h"
 #include "AttachmentElementClient.h"
 #include "BackForwardClient.h"
+#include "BadgeClient.h"
 #include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "CookieJar.h"
@@ -63,7 +64,7 @@
 
 namespace WebCore {
 
-PageConfiguration::PageConfiguration(PAL::SessionID sessionID, UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider, UniqueRef<WebRTCProvider>&& webRTCProvider, Ref<CacheStorageProvider>&& cacheStorageProvider, Ref<UserContentProvider>&& userContentProvider, Ref<BackForwardClient>&& backForwardClient, Ref<CookieJar>&& cookieJar, UniqueRef<ProgressTrackerClient>&& progressTrackerClient, UniqueRef<FrameLoaderClient>&& loaderClientForMainFrame, UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider, UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider, Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry, UniqueRef<StorageProvider>&& storageProvider, UniqueRef<ModelPlayerProvider>&& modelPlayerProvider)
+PageConfiguration::PageConfiguration(PAL::SessionID sessionID, UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider, UniqueRef<WebRTCProvider>&& webRTCProvider, Ref<CacheStorageProvider>&& cacheStorageProvider, Ref<UserContentProvider>&& userContentProvider, Ref<BackForwardClient>&& backForwardClient, Ref<CookieJar>&& cookieJar, UniqueRef<ProgressTrackerClient>&& progressTrackerClient, UniqueRef<FrameLoaderClient>&& loaderClientForMainFrame, UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider, UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider, Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry, UniqueRef<StorageProvider>&& storageProvider, UniqueRef<ModelPlayerProvider>&& modelPlayerProvider, Ref<BadgeClient>&& badgeClient)
     : sessionID(sessionID)
     , editorClient(WTFMove(editorClient))
     , socketProvider(WTFMove(socketProvider))
@@ -79,6 +80,7 @@ PageConfiguration::PageConfiguration(PAL::SessionID sessionID, UniqueRef<EditorC
     , mediaRecorderProvider(WTFMove(mediaRecorderProvider))
     , storageProvider(WTFMove(storageProvider))
     , modelPlayerProvider(WTFMove(modelPlayerProvider))
+    , badgeClient(WTFMove(badgeClient))
 {
 }
 

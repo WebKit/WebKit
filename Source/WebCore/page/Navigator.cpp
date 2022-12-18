@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Navigator.h"
 
+#include "BadgeClient.h"
 #include "Chrome.h"
 #include "CookieJar.h"
 #include "DOMMimeType.h"
@@ -382,5 +383,55 @@ GPU* Navigator::gpu()
 
     return m_gpuForWebGPU.get();
 }
+
+#if ENABLE(BADGING)
+
+void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
+{
+    auto* frame = this->frame();
+    if (!frame) {
+        promise->reject();
+        return;
+    }
+
+    auto* page = frame->page();
+    if (!page) {
+        promise->reject();
+        return;
+    }
+
+    page->badgeClient().setAppBadge(page, SecurityOriginData::fromFrame(frame), badge);
+    promise->resolve();
+}
+
+void Navigator::clearAppBadge(Ref<DeferredPromise>&& promise)
+{
+    setAppBadge(0, WTFMove(promise));
+}
+
+void Navigator::setClientBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
+{
+    auto* frame = this->frame();
+    if (!frame) {
+        promise->reject();
+        return;
+    }
+
+    auto* page = frame->page();
+    if (!page) {
+        promise->reject();
+        return;
+    }
+
+    page->badgeClient().setClientBadge(*page, SecurityOriginData::fromFrame(frame), badge);
+    promise->resolve();
+}
+
+void Navigator::clearClientBadge(Ref<DeferredPromise>&& promise)
+{
+    setClientBadge(0, WTFMove(promise));
+}
+
+#endif
 
 } // namespace WebCore

@@ -252,6 +252,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/async-clipboard/Navigator+Clipboard.idl \
     $(WebCore)/Modules/audiosession/DOMAudioSession.idl \
     $(WebCore)/Modules/audiosession/Navigator+AudioSession.idl \
+    $(WebCore)/Modules/badge/Navigator+Badge.idl \
+    $(WebCore)/Modules/badge/NavigatorBadge.idl \
     $(WebCore)/Modules/beacon/Navigator+Beacon.idl \
     $(WebCore)/Modules/cache/CacheQueryOptions.idl \
     $(WebCore)/Modules/cache/DOMCache.idl \

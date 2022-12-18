@@ -53,6 +53,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyledElement.h"
+#include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -1560,14 +1561,14 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
-    auto effectAnimatesProperty = [](KeyframeEffect& effect, CSSPropertyAnimation::Property property) {
+    auto effectAnimatesProperty = [](KeyframeEffect& effect, AnimatableProperty property) {
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) { return effect.animatedProperties().contains(propertyId); },
-            [&] (AtomString customProperty) { return effect.animatedCustomProperties().contains(customProperty); }
+            [&] (const AtomString& customProperty) { return effect.animatedCustomProperties().contains(customProperty); }
         );
     };
 
-    auto commitProperty = [&](CSSPropertyAnimation::Property property) {
+    auto commitProperty = [&](AnimatableProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.
@@ -1596,7 +1597,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
                     return inlineStyle->setProperty(propertyId, cssValue->cssText(), false, { styledElement.document() });
                 return false;
             },
-            [&] (AtomString customProperty) {
+            [&] (const AtomString& customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
                     return inlineStyle->setCustomProperty(&styledElement.document(), customProperty, cssValue->cssText(), false, { styledElement.document() });
                 return false;

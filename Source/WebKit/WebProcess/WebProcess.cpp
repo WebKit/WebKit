@@ -54,6 +54,7 @@
 #include "StorageAreaMap.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
+#include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebConnectionToUIProcess.h"
@@ -287,6 +288,7 @@ WebProcess::WebProcess()
     , m_remoteVideoCodecFactory(*this)
 #endif
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
+    , m_badgeClient(WebBadgeClient::create())
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
     , m_cookieJar(WebCookieJar::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
@@ -946,7 +948,9 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 
 void WebProcess::didClose(IPC::Connection& connection)
 {
+#if ENABLE(VIDEO)
     FileSystem::markPurgeable(WebCore::HTMLMediaElement::mediaCacheDirectory());
+#endif
     if (m_applicationCacheStorage)
         FileSystem::markPurgeable(m_applicationCacheStorage->cacheDirectory());
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
@@ -2013,6 +2017,16 @@ bool WebProcess::areAllPagesThrottleable() const
     return WTF::allOf(m_pageMap.values(), [](auto& page) {
         return page->isThrottleable();
     });
+}
+
+void WebProcess::setAppBadge(std::optional<WebPageProxyIdentifier> pageIdentifier, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
+{
+    parentProcessConnection()->send(Messages::WebProcessProxy::SetAppBadge(pageIdentifier, origin, badge), 0);
+}
+
+void WebProcess::setClientBadge(WebPageProxyIdentifier pageIdentifier, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
+{
+    parentProcessConnection()->send(Messages::WebProcessProxy::SetClientBadge(pageIdentifier, origin, badge), 0);
 }
 
 #if HAVE(CVDISPLAYLINK)

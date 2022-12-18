@@ -457,6 +457,18 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt tail call gate thunk");
 }
 
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmTailCallGate(PtrTag tag)
+{
+    CCallHelpers jit;
+
+    jit.untagPtr(GPRInfo::wasmScratchGPR2, ARM64Registers::lr);
+    jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::wasmScratchGPR2);
+    jit.farJump(GPRInfo::wasmScratchGPR0, tag);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt wasm tail call gate thunk");
+}
+
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> loopOSREntryGateThunk()
 {
     static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;

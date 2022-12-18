@@ -685,6 +685,8 @@ public:
     static constexpr GPRReg patchpointScratchRegister = ARM64Registers::ip0;
     static constexpr GPRReg wasmScratchGPR0 = ARM64Registers::x9;
     static constexpr GPRReg wasmScratchGPR1 = ARM64Registers::x10;
+    static constexpr GPRReg wasmScratchGPR2 = ARM64Registers::x11;
+    static constexpr GPRReg wasmScratchGPR3 = ARM64Registers::x12;
 
     // GPRReg mapping is direct, the machine register numbers can
     // be used directly as indices into the GPR RegisterBank.

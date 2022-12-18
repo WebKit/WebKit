@@ -99,6 +99,7 @@
 #include <WebCore/DummySpeechRecognitionProvider.h>
 #include <WebCore/DummyStorageProvider.h>
 #include <WebCore/Editor.h>
+#include <WebCore/EmptyBadgeClient.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/FloatQuad.h>
@@ -2910,7 +2911,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate(false),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
-        makeUniqueRef<WebCore::DummyModelPlayerProvider>()
+        makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
+		EmptyBadgeClient::create()
     );
     configuration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)

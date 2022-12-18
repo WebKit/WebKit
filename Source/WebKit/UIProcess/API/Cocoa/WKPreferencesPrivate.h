@@ -182,6 +182,8 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setInteractionRegionInlinePadding:) double _interactionRegionInlinePadding WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setRequiresFullscreenToLockScreenOrientation:) BOOL _requiresFullscreenToLockScreenOrientation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setMediaPreferredFullscreenWidth:) double _mediaPreferredFullscreenWidth WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAppBadgeEnabled:) BOOL _appBadgeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setClientBadgeEnabled:) BOOL _clientBadgeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));

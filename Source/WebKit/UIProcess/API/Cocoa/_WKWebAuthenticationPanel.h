@@ -51,7 +51,6 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelUpdate) {
     _WKWebAuthenticationPanelUpdateLAError,
     _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched,
     _WKWebAuthenticationPanelUpdateLANoCredential,
-    _WKWebAuthenticationPanelUpdateKeyStoreFull,
 } WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationResult) {

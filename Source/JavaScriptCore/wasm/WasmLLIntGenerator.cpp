@@ -47,6 +47,7 @@ namespace JSC { namespace Wasm {
 class LLIntGenerator : public BytecodeGeneratorBase<GeneratorTraits> {
 public:
     using ExpressionType = VirtualRegister;
+    using CallType = CallLinkInfo::CallType;
 
     static constexpr bool tierSupportsSIMD = false;
 
@@ -357,8 +358,8 @@ public:
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
@@ -644,7 +645,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
     // call frame header
 
     // We need to allocate at least space for all GPRs and FPRs.
-    // Return values use the same allocation layout.
+    // Return value stack0 is at stackN - stackReturnValues
 
     const auto initialStackSize = m_stackSize;
 
@@ -652,59 +653,17 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
     const uint32_t gprCount = callingConvention.jsrArgs.size();
     const uint32_t fprCount = callingConvention.fprArgs.size();
 
-    uint32_t stackCount = 0;
+    uint32_t stackResults = callingConvention.numberOfStackResults(signature);
+    uint32_t stackCountAligned = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), std::max(callingConvention.numberOfStackArguments(signature), stackResults));
     uint32_t gprIndex = 0;
     uint32_t fprIndex = 0;
     uint32_t stackIndex = 0;
 
-    auto allocateStackRegister = [&](Type type) {
-        switch (type.kind) {
-        case TypeKind::I32:
-        case TypeKind::I64:
-        case TypeKind::Externref:
-        case TypeKind::Funcref:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
-            if (gprIndex < gprCount)
-                ++gprIndex;
-            else if (stackIndex++ >= stackCount)
-                ++stackCount;
-            break;
-        case TypeKind::F32:
-        case TypeKind::F64:
-        case TypeKind::V128:
-            if (fprIndex < fprCount)
-                ++fprIndex;
-            else if (stackIndex++ >= stackCount)
-                ++stackCount;
-            break;
-        case TypeKind::Void:
-        case TypeKind::Func:
-        case TypeKind::Struct:
-        case TypeKind::Array:
-        case TypeKind::Arrayref:
-        case TypeKind::I31ref:
-        case TypeKind::Rec:
-        case TypeKind::Sub:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    };
-
-
-    for (uint32_t i = 0; i < signature.argumentCount(); i++)
-        allocateStackRegister(signature.argumentType(i));
-
-    gprIndex = 0;
-    fprIndex = 0;
-    stackIndex = 0;
-    for (uint32_t i = 0; i < signature.returnCount(); i++)
-        allocateStackRegister(signature.returnType(i));
-
+    m_stackSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackSize.value());
     // FIXME: we are allocating the extra space for the argument/return count in order to avoid interference, but we could do better
     // NOTE: We increase arg count by 1 for the case of indirect calls
-    m_stackSize += std::max(signature.argumentCount() + 1, signature.returnCount()) + gprCount + fprCount + stackCount + CallFrame::headerSizeInRegisters + 1;
-    if (m_stackSize.value() % stackAlignmentRegisters())
-        ++m_stackSize;
+    m_stackSize += std::max(signature.argumentCount() + 1, signature.returnCount()) + gprCount + fprCount + stackCountAligned + CallFrame::headerSizeInRegisters + 1;
+    m_stackSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackSize.value());
     if (m_maxStackSize < m_stackSize)
         m_maxStackSize = m_stackSize;
 
@@ -715,11 +674,11 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
     const unsigned stackOffset = m_stackSize;
     const unsigned base = stackOffset - CallFrame::headerSizeInRegisters - 1;
 
-    const uint32_t gprLimit = base - stackCount - gprCount;
+    const uint32_t gprLimit = base - stackCountAligned - gprCount;
     const uint32_t fprLimit = gprLimit - fprCount;
 
     stackIndex = base;
-    gprIndex = base - stackCount;
+    gprIndex = base - stackCountAligned;
     fprIndex = gprIndex - gprCount;
     for (uint32_t i = 0; i < signature.argumentCount(); i++) {
         switch (signature.argumentType(i).kind) {
@@ -754,8 +713,8 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         }
     }
 
-    stackIndex = base;
-    gprIndex = base - stackCount;
+    gprIndex = base - stackCountAligned;
+    stackIndex = gprIndex + stackResults;
     fprIndex = gprIndex - gprCount;
     for (uint32_t i = 0; i < signature.returnCount(); i++) {
         switch (signature.returnType(i).kind) {
@@ -801,7 +760,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         }
     };
 
-    return LLIntCallInformation { stackOffset, stackCount, WTFMove(arguments), WTFMove(commitResults) };
+    return LLIntCallInformation { stackOffset, stackCountAligned, WTFMove(arguments), WTFMove(commitResults) };
 }
 
 auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature) -> Vector<VirtualRegister, 2>
@@ -817,9 +776,11 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
 
     uint32_t gprIndex = 0;
     uint32_t fprIndex = gprCount;
-    uint32_t stackIndex = 1;
     const uint32_t maxGPRIndex = gprCount;
     const uint32_t maxFPRIndex = maxGPRIndex + fprCount;
+    uint32_t stackResults = callingConvention.numberOfStackResults(signature);
+    uint32_t stackCountAligned = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), std::max(callingConvention.numberOfStackArguments(signature), stackResults));
+    uint32_t stackIndex = 1 + stackCountAligned - stackResults;
 
     for (uint32_t i = 0; i < signature.returnCount(); i++) {
         switch (signature.returnType(i).kind) {
@@ -1409,22 +1370,42 @@ auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
     return { };
 }
 
-auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
+    bool isTailCall = callType == CallType::TailCall;
+    ASSERT(callType == CallType::Call || isTailCall);
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
-    LLIntCallInformation info = callInformationForCaller(*signature.as<FunctionSignature>());
-    unifyValuesWithBlock(info.arguments, args);
-    if (Context::useFastTLS())
-        WasmCall::emit(this, functionIndex, info.stackOffset, info.numberOfStackArguments);
+    LLIntCallInformation wasmCalleeInfo = callInformationForCaller(*signature.as<FunctionSignature>());
+
+    unifyValuesWithBlock(wasmCalleeInfo.arguments, args);
+
+    if (isTailCall) {
+        m_codeBlock->setTailCall(functionIndex, m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex));
+
+        const auto& callingConvention = wasmCallingConvention();
+        const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
+
+        if (Context::useFastTLS())
+            WasmTailCall::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments, callerStackArgs);
+        else
+            WasmTailCallNoTls::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments, callerStackArgs);
+
+    } else if (Context::useFastTLS())
+        WasmCall::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments);
     else
-        WasmCallNoTls::emit(this, functionIndex, info.stackOffset, info.numberOfStackArguments);
-    info.commitResults(results);
+        WasmCallNoTls::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments);
+
+    wasmCalleeInfo.commitResults(results);
 
     return { };
 }
 
-auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
+    bool isTailCall = callType == CallType::TailCall;
+    ASSERT(callType == CallType::Call || isTailCall);
     ExpressionType calleeIndex = args.takeLast();
 
     const auto& functionSignature = *signature.expand().as<FunctionSignature>();
@@ -1432,13 +1413,29 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     ASSERT(m_info.tableCount() > tableIndex);
     ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
-    LLIntCallInformation info = callInformationForCaller(functionSignature);
-    unifyValuesWithBlock(info.arguments, args);
-    if (Context::useFastTLS())
-        WasmCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, tableIndex);
+    LLIntCallInformation calleeInfo = callInformationForCaller(functionSignature);
+
+    unifyValuesWithBlock(calleeInfo.arguments, args);
+
+    if (isTailCall) {
+        m_codeBlock->setTailCallClobbersInstance(true);
+
+        const auto& callingConvention = wasmCallingConvention();
+        const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+        uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
+
+        if (Context::useFastTLS())
+            WasmTailCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, callerStackArgs, tableIndex);
+        else
+            WasmTailCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, callerStackArgs, tableIndex);
+
+    } else if (Context::useFastTLS())
+        WasmCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, tableIndex);
     else
-        WasmCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, tableIndex);
-    info.commitResults(results);
+        WasmCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, tableIndex);
+
+    calleeInfo.commitResults(results);
 
     return { };
 }

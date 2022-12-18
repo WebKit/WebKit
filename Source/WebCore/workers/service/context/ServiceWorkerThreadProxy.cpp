@@ -69,7 +69,7 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, Servi
 #if ENABLE(REMOTE_INSPECTOR)
     , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, contextData))
 #endif
-    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(contextData), WTFMove(workerData), WTFMove(userAgent), workerThreadMode, m_document->settingsValues(), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider(), WTFMove(notificationClient), m_page->sessionID()))
+    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(contextData), WTFMove(workerData), WTFMove(userAgent), workerThreadMode, m_document->settingsValues(), *this, *this, *this, idbConnectionProxy(m_document), m_document->socketProvider(), WTFMove(notificationClient), m_page->sessionID()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_inspectorProxy(*this)
 {
@@ -421,6 +421,15 @@ void ServiceWorkerThreadProxy::fireNotificationEvent(NotificationData&& data, No
     UNUSED_PARAM(eventType);
     callback(false);
 #endif
+}
+
+void ServiceWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
+{
+    ASSERT(!isMainThread());
+
+    callOnMainRunLoop([badge = WTFMove(badge), this, protectedThis = Ref { *this }] {
+        m_page->badgeClient().setAppBadge(nullptr, SecurityOriginData::fromURL(scriptURL()), badge);
+    });
 }
 
 } // namespace WebCore

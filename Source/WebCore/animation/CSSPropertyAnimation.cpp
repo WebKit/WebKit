@@ -87,9 +87,9 @@ static TextStream& operator<<(TextStream& stream, CSSPropertyID property)
 
 struct CSSPropertyBlendingContext : BlendingContext {
     const CSSPropertyBlendingClient& client;
-    CSSPropertyAnimation::Property property;
+    AnimatableProperty property;
 
-    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, CSSPropertyAnimation::Property property, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, CompositeOperation compositeOperation, const CSSPropertyBlendingClient& client, AnimatableProperty property, IterationCompositeOperation iterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0)
         : BlendingContext(progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration)
         , client(client)
         , property(property)
@@ -4065,12 +4065,12 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
     }
 }
 
-void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, Property property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
+void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, AnimatableProperty property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
             blendStandardProperty(client, propertyId, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
-        }, [&] (AtomString customProperty) {
+        }, [&] (const AtomString& customProperty) {
             blendCustomProperty(client, customProperty, destination, from, to, progress, compositeOperation, iterationCompositeOperation, currentIteration);
         }
     );
@@ -4081,25 +4081,25 @@ bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)
     return property == CSSPropertyCustom || CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
 }
 
-bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(Property property)
+bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(AnimatableProperty property)
 {
     return WTF::switchOn(property,
         [] (CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->isAdditiveOrCumulative();
             return false;
-        }, [] (AtomString) { return true; }
+        }, [] (const AtomString&) { return true; }
     );
 }
 
-bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient& client, Property property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient& client, AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->requiresBlendingForAccumulativeIteration(a, b);
             return false;
-        }, [&] (AtomString customProperty) {
+        }, [&] (const AtomString& customProperty) {
             auto [from, to] = customPropertyValuesForBlending(client, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
             if (!from || !to)
                 return false;

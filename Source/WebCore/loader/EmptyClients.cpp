@@ -31,6 +31,7 @@
 #include "AppHighlight.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
+#include "BadgeClient.h"
 #include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "ColorChooser.h"
@@ -50,6 +51,7 @@
 #include "DummyStorageProvider.h"
 #include "EditorClient.h"
 #include "EmptyAttachmentElementClient.h"
+#include "EmptyBadgeClient.h"
 #include "EmptyFrameLoaderClient.h"
 #include "FormState.h"
 #include "Frame.h"
@@ -1199,7 +1201,8 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         makeUniqueRef<EmptyMediaRecorderProvider>(),
         EmptyBroadcastChannelRegistry::create(),
         makeUniqueRef<DummyStorageProvider>(),
-        makeUniqueRef<DummyModelPlayerProvider>()
+        makeUniqueRef<DummyModelPlayerProvider>(),
+        EmptyBadgeClient::create()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

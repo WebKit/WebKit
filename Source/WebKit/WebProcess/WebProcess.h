@@ -126,6 +126,7 @@ class RemoteMediaEngineConfigurationFactory;
 class StorageAreaMap;
 class UserData;
 class WebAutomationSessionProxy;
+class WebBadgeClient;
 class WebBroadcastChannelRegistry;
 class WebCacheStorageProvider;
 class WebCookieJar;
@@ -314,6 +315,7 @@ public:
     WebAutomationSessionProxy* automationSessionProxy() { return m_automationSessionProxy.get(); }
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
+    WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
     WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
@@ -385,6 +387,9 @@ public:
     bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
 
     void deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
+
+    void setAppBadge(std::optional<WebPageProxyIdentifier>, const WebCore::SecurityOriginData&, std::optional<uint64_t>);
+    void setClientBadge(WebPageProxyIdentifier, const WebCore::SecurityOriginData&, std::optional<uint64_t>);
 
 private:
     WebProcess();
@@ -645,6 +650,7 @@ private:
 #endif
 #endif
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
+    Ref<WebBadgeClient> m_badgeClient;
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
     Ref<WebCookieJar> m_cookieJar;
     WebSocketChannelManager m_webSocketChannelManager;

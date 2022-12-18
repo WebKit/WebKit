@@ -117,6 +117,9 @@ WASM_SCRATCHS =
     [
      "ws0",
      "ws1",
+     # archtecture specific registers:
+     "ws2",
+     "ws3",
     ]
 
 REGISTERS = GPRS + FPRS + WASM_GPRS + WASM_FPRS + WASM_SCRATCHS

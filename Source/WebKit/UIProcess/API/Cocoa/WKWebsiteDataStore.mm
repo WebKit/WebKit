@@ -67,6 +67,7 @@ public:
         , m_hasOpenWindowSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:openWindow:fromServiceWorkerOrigin:completionHandler:)])
         , m_hasShowNotificationSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:showNotification:)])
         , m_hasNotificationPermissionsSelector([m_delegate.get() respondsToSelector:@selector(notificationPermissionsForWebsiteDataStore:)])
+        , m_hasWorkerUpdatedAppBadgeSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:workerOrigin:updatedAppBadge:)])
     {
     }
 
@@ -158,6 +159,19 @@ private:
         return result;
     }
 
+    void workerUpdatedAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge) final
+    {
+        if (!m_hasWorkerUpdatedAppBadgeSelector || !m_delegate || !m_dataStore)
+            return;
+
+        auto apiOrigin = API::SecurityOrigin::create(origin);
+        NSNumber *nsBadge = nil;
+        if (badge)
+            nsBadge = @(*badge);
+
+        [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() workerOrigin:wrapper(apiOrigin.get()) updatedAppBadge:(NSNumber *)nsBadge];
+    }
+
     WeakObjCPtr<WKWebsiteDataStore> m_dataStore;
     WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > m_delegate;
     bool m_hasRequestStorageSpaceSelector { false };
@@ -165,6 +179,7 @@ private:
     bool m_hasOpenWindowSelector { false };
     bool m_hasShowNotificationSelector { false };
     bool m_hasNotificationPermissionsSelector { false };
+    bool m_hasWorkerUpdatedAppBadgeSelector { false };
 };
 
 @implementation WKWebsiteDataStore

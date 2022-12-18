@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: red;
+    -webkit-text-stroke-color: red;
+    -webkit-text-fill-color: red;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<script>
+addEventListener("load", () => {
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.5, 0),
+                    bottomRight : new DOMPointReadOnly(0.5, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                },
+                {
+                    text : "bar",
+                    topLeft : new DOMPointReadOnly(0.5, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0.5, 0.5),
+                }
+            ],
+        }
+    ]);
+});
+</script>
+</body>
+</html>
