@@ -245,9 +245,9 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         auto isWhitespace = inlineTextItem.isWhitespace();
 
-        auto isHangingContent = isWhitespace && style.whiteSpace() == WhiteSpace::PreWrap;
-        if (isHangingContent)
-            return m_continuousContent.append(inlineTextItem, style, logicalWidth);
+        auto isTrailingHangingContent = isWhitespace && style.whiteSpace() == WhiteSpace::PreWrap;
+        if (isTrailingHangingContent)
+            return m_continuousContent.appendTrailingHangingContent(inlineTextItem, style, logicalWidth);
 
         auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
             if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isQuirkNonBreakingSpace()) {
@@ -263,7 +263,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             ASSERT(logicalWidth > letterSpacing);
             return letterSpacing;
         };
-        m_continuousContent.append(inlineTextItem, style, logicalWidth, trimmableWidth());
+        m_continuousContent.appendTextContent(inlineTextItem, style, logicalWidth, trimmableWidth());
         return;
     }
     ASSERT_NOT_REACHED();
