@@ -57,7 +57,8 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
-    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingTrailingContent.width(); }
+    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
+    InlineLayoutUnit hangingLeadingContentWidth() const { return m_hangingContent.leadingWidth(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
@@ -232,22 +233,32 @@ private:
         InlineLayoutUnit m_partiallyTrimmableWidth { 0 };
     };
 
-    struct HangingTrailingContent {
-        void add(const InlineTextItem& trailingWhitespace, InlineLayoutUnit logicalWidth);
-        void reset();
+    struct HangingContent {
+        void addLeadingGlyphs(size_t length, InlineLayoutUnit logicalWidth);
+        void addTrailingGlyphs(size_t length, InlineLayoutUnit logicalWidth);
 
-        size_t length() const { return m_length; }
-        InlineLayoutUnit width() const { return m_width; }
+        void reset();
+        void resetTrailingGlyphs();
+
+        size_t leadingLength() const { return m_leadingLength; }
+        size_t trailingLength() const { return m_trailingLength; }
+        size_t length() const { return leadingLength() + trailingLength(); }
+
+        InlineLayoutUnit leadingWidth() const { return m_trailingWidth; }
+        InlineLayoutUnit trailingWidth() const { return m_leadingWidth; }
+        InlineLayoutUnit width() const { return leadingWidth() + trailingWidth(); }
 
     private:
-        size_t m_length { 0 };
-        InlineLayoutUnit m_width { 0 };
+        size_t m_leadingLength { 0 };
+        size_t m_trailingLength { 0 };
+        InlineLayoutUnit m_leadingWidth { 0 };
+        InlineLayoutUnit m_trailingWidth { 0 };
     };
 
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
-    HangingTrailingContent m_hangingTrailingContent;
+    HangingContent m_hangingContent;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     size_t m_nonSpanningInlineLevelBoxCount { 0 };
     std::optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
@@ -275,10 +286,17 @@ inline void Line::TrimmableTrailingContent::reset()
     m_trimmableContentOffset = { };
 }
 
-inline void Line::HangingTrailingContent::reset()
+inline void Line::HangingContent::reset()
 {
-    m_width = { };
-    m_length = { };
+    m_leadingLength = { };
+    m_leadingWidth = { };
+    resetTrailingGlyphs();
+}
+
+inline void Line::HangingContent::resetTrailingGlyphs()
+{
+    m_trailingLength = { };
+    m_trailingWidth = { };
 }
 
 inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
