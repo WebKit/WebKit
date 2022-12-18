@@ -160,9 +160,9 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 // it should not be wrapped to the next line (as it either fits/or gets fully trimmed).
                 return InlineContentBreaker::Result { Result::Action::Keep };
             }
-            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingTrimmableWidth().value_or(0.f);
+            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingTrimmableWidth();
             if (lineStatus.hasFullyTrimmableTrailingContent)
-                spaceRequired -= continuousContent.leadingTrimmableWidth().value_or(0.f);
+                spaceRequired -= continuousContent.leadingTrimmableWidth();
             if (spaceRequired <= lineStatus.availableWidth)
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
@@ -170,8 +170,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         if (continuousContent.hasHangingContent()) {
             if (continuousContent.isHangingContent())
                 return InlineContentBreaker::Result { Result::Action::Keep };
-            auto hangingTrailingContentWidth = *continuousContent.hangingContentWidth();
-            auto spaceRequired = continuousContent.logicalWidth() - hangingTrailingContentWidth;
+            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.hangingContentWidth();
             if (spaceRequired <= lineStatus.availableWidth)
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
@@ -751,7 +750,7 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
     }
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> trimmableWidth)
+void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> trimmableWidth)
 {
     if (!trimmableWidth) {
         appendToRunList(inlineTextItem, style, logicalWidth);
@@ -764,17 +763,23 @@ void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlin
     appendToRunList(inlineTextItem, style, logicalWidth);
     if (isLeadingTrimmable) {
         ASSERT(!m_trailingTrimmableWidth);
-        m_leadingTrimmableWidth = m_leadingTrimmableWidth.value_or(0.f) + *trimmableWidth;
+        m_leadingTrimmableWidth = m_leadingTrimmableWidth + *trimmableWidth;
         return;
     }
-    m_trailingTrimmableWidth = *trimmableWidth == logicalWidth ? m_trailingTrimmableWidth.value_or(0.f) + logicalWidth : *trimmableWidth;
+    m_trailingTrimmableWidth = *trimmableWidth == logicalWidth ? m_trailingTrimmableWidth + logicalWidth : *trimmableWidth;
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
+void InlineContentBreaker::ContinuousContent::appendTrailingHangingContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
 {
-    appendToRunList(inlineTextItem, style, hangingWidth);
+    appendTextContent(inlineTextItem, style, hangingWidth, { });
     m_trailingHangingContentWidth = hangingWidth;
-    resetTrailingTrimmableContent();
+}
+
+void InlineContentBreaker::ContinuousContent::appendLeadingHangingContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
+{
+    ASSERT(runs().isEmpty());
+    appendTextContent(inlineTextItem, style, hangingWidth, { });
+    m_leadingHangingContentWidth = hangingWidth;
 }
 
 void InlineContentBreaker::ContinuousContent::reset()
@@ -783,6 +788,7 @@ void InlineContentBreaker::ContinuousContent::reset()
     m_leadingTrimmableWidth = { };
     m_trailingTrimmableWidth = { };
     m_trailingHangingContentWidth = { };
+    m_leadingHangingContentWidth = { };
     m_runs.clear();
 }
 }

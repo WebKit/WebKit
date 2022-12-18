@@ -84,7 +84,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
 void Line::resetTrailingContent()
 {
     m_trimmableTrailingContent.reset();
-    m_hangingTrailingContent.reset();
+    m_hangingContent.resetTrailingGlyphs();
     m_trailingSoftHyphenWidth = { };
 }
 
@@ -99,7 +99,7 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     // A hanging glyph is still enclosed inside its parent inline box and still participates in text justification:
     // its character advance is just not measured when determining how much content fits on the line, how much the line’s contents
     // need to be expanded or compressed for justification, or how to position the content within the line box for text alignment.
-    auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth() + m_hangingTrailingContent.width();
+    auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth() + m_hangingContent.width();
     if (spaceToDistribute <= 0)
         return;
     // Collect and distribute the expansion opportunities.
@@ -110,14 +110,14 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
 
     // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
     auto runIsAfterExpansion = true;
-    auto hangingTrailingContentLength = m_hangingTrailingContent.length();
+    auto hangingContentLength = m_hangingContent.length();
     for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
         auto& run = m_runs[runIndex];
         auto expansionBehavior = ExpansionBehavior::defaultBehavior();
         size_t expansionOpportunitiesInRun = 0;
 
         // FIXME: Check why we don't apply expansion when whitespace is preserved.
-        if (run.isText() && (!TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingContentLength)) {
+        if (run.isText() && (!TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingContentLength)) {
             if (run.hasTextCombine())
                 expansionBehavior = ExpansionBehavior::forbidAll();
             else {
@@ -125,9 +125,9 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
                 expansionBehavior.right = ExpansionBehavior::Behavior::Allow;
                 auto& textContent = *run.textContent();
                 // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
-                auto hangingTrailingContentInCurrentRun = std::min(textContent.length, hangingTrailingContentLength);
-                auto length = textContent.length - hangingTrailingContentInCurrentRun;
-                hangingTrailingContentLength -= hangingTrailingContentInCurrentRun;
+                auto hangingContentInCurrentRun = std::min(textContent.length, hangingContentLength);
+                auto length = textContent.length - hangingContentInCurrentRun;
+                hangingContentLength -= hangingContentInCurrentRun;
                 std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent.start, length), run.inlineDirection(), expansionBehavior);
             }
         } else if (run.isBox())
@@ -255,8 +255,8 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
 void Line::removeHangingGlyphs()
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());
-    m_contentLogicalWidth -= m_hangingTrailingContent.width();
-    m_hangingTrailingContent.reset();
+    m_contentLogicalWidth -= m_hangingContent.width();
+    m_hangingContent.reset();
 }
 
 void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
@@ -468,10 +468,10 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
 
     auto updateHangingStatus = [&] {
         if (isTrimmable || !inlineTextItem.isWhitespace() || !m_runs[lastRunIndex].shouldTrailingWhitespaceHang()) {
-            m_hangingTrailingContent.reset();
+            m_hangingContent.resetTrailingGlyphs();
             return;
         }
-        m_hangingTrailingContent.add(inlineTextItem, logicalWidth);
+        m_hangingContent.addTrailingGlyphs(inlineTextItem.length(), logicalWidth);
     };
     updateHangingStatus();
 
@@ -640,14 +640,20 @@ InlineLayoutUnit Line::TrimmableTrailingContent::removePartiallyTrimmableContent
     return remove();
 }
 
-void Line::HangingTrailingContent::add(const InlineTextItem& trailingWhitespace, InlineLayoutUnit logicalWidth)
+void Line::HangingContent::addLeadingGlyphs(size_t length, InlineLayoutUnit logicalWidth)
+{
+    // Hanging punctuation.
+    m_leadingLength += length;
+    m_leadingWidth += logicalWidth;
+}
+
+void Line::HangingContent::addTrailingGlyphs(size_t length, InlineLayoutUnit logicalWidth)
 {
     // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit, alignment, or justification.
     // Depending on the line’s alignment/justification, this can result in the mark being placed outside the line box.
     // https://drafts.csswg.org/css-text-3/#hanging
-    ASSERT(trailingWhitespace.isWhitespace());
-    m_width += logicalWidth;
-    m_length += trailingWhitespace.length();
+    m_trailingLength += length;
+    m_trailingWidth += logicalWidth;
 }
 
 inline static Line::Run::Type toLineRunType(const InlineItem& inlineItem)

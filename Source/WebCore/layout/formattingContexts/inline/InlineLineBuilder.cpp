@@ -245,9 +245,9 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         auto isWhitespace = inlineTextItem.isWhitespace();
 
-        auto isHangingContent = isWhitespace && style.whiteSpace() == WhiteSpace::PreWrap;
-        if (isHangingContent)
-            return m_continuousContent.append(inlineTextItem, style, logicalWidth);
+        auto isTrailingHangingContent = isWhitespace && style.whiteSpace() == WhiteSpace::PreWrap;
+        if (isTrailingHangingContent)
+            return m_continuousContent.appendTrailingHangingContent(inlineTextItem, style, logicalWidth);
 
         auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
             if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isQuirkNonBreakingSpace()) {
@@ -263,7 +263,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             ASSERT(logicalWidth > letterSpacing);
             return letterSpacing;
         };
-        m_continuousContent.append(inlineTextItem, style, logicalWidth, trimmableWidth());
+        m_continuousContent.appendTextContent(inlineTextItem, style, logicalWidth, trimmableWidth());
         return;
     }
     ASSERT_NOT_REACHED();
@@ -364,7 +364,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
         , m_line.contentLogicalRight()
-        , m_line.hangingTrailingContentWidth()
+        , m_line.hangingLeadingContentWidth() + m_line.hangingTrailingContentWidth()
         , isFirstLine() ? LineContent::FirstFormattedLine::WithinIFC : LineContent::FirstFormattedLine::No
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
@@ -1018,7 +1018,15 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineBoxForCandidateInlineContent(lineCandidate);
     auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
     auto lineIsConsideredContentful = m_line.hasContent() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, trimmableTrailingContentWidth(m_line), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineIsConsideredContentful, !m_wrapOpportunityList.isEmpty() };
+    auto lineStatus = InlineContentBreaker::LineStatus {
+        m_line.contentLogicalRight(),
+        availableWidthForCandidateContent,
+        m_line.hangingLeadingContentWidth() + trimmableTrailingContentWidth(m_line),
+        m_line.trailingSoftHyphenWidth(),
+        m_line.isTrailingRunFullyTrimmable(),
+        lineIsConsideredContentful,
+        !m_wrapOpportunityList.isEmpty()
+    };
     auto toLineBuilderResult = [&](auto& lineBreakingResult) -> LineBuilder::Result {
         auto& candidateRuns = continuousInlineContent.runs();
     

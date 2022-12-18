@@ -432,6 +432,43 @@ TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
     return TextRun { verticalEllipsisStr->string() };
 }
 
+float TextUtil::hangablePunctuationStartWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+{
+    ASSERT(inlineTextItem.length());
+    auto startPosition = inlineTextItem.start();
+    auto leadingCharacter = inlineTextItem.inlineTextBox().content()[startPosition];
+    auto isHangablePunctuationAtLineStart = U_GET_GC_MASK(leadingCharacter) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+    if (!isHangablePunctuationAtLineStart)
+        return { };
+    return width(inlineTextItem, style.fontCascade(), startPosition, startPosition + 1, { });
+}
+
+float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+{
+    ASSERT(inlineTextItem.length());
+    auto endPosition = inlineTextItem.end();
+    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[endPosition];
+    auto isHangablePunctuationAtLineEnd = U_GET_GC_MASK(trailingCharacter) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+    if (!isHangablePunctuationAtLineEnd)
+        return { };
+    return width(inlineTextItem, style.fontCascade(), endPosition, endPosition + 1, { });
+}
+
+float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+{
+    auto endPosition = inlineTextItem.end();
+    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[endPosition];
+    auto isHangableStopOrComma = trailingCharacter == 0x002C
+        || trailingCharacter == 0x002E || trailingCharacter == 0x060C
+        || trailingCharacter == 0x06D4 || trailingCharacter == 0x3001
+        || trailingCharacter == 0x3002 || trailingCharacter == 0xFF0C
+        || trailingCharacter == 0xFF0E || trailingCharacter == 0xFE50
+        || trailingCharacter == 0xFE51 || trailingCharacter == 0xFE52
+        || trailingCharacter == 0xFF61 || trailingCharacter == 0xFF64;
+    if (!isHangableStopOrComma)
+        return { };
+    return width(inlineTextItem, style.fontCascade(), endPosition, endPosition + 1, { });
+}
 
 }
 }
