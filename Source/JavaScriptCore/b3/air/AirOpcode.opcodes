@@ -770,6 +770,9 @@ MoveDouble U:F:64, D:F:64, S:F:64
 MoveZeroToDouble D:F:64
     Tmp
 
+MoveZeroToFloat D:F:32
+    Tmp
+
 64: Move64ToDouble U:G:64, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp as loadDouble

@@ -2302,6 +2302,14 @@ public:
             m_assembler.xorps_rr(reg, reg);
     }
 
+    void moveZeroToFloat(FPRegisterID reg)
+    {
+        if (supportsAVX())
+            m_assembler.vxorps_rrr(reg, reg, reg);
+        else
+            m_assembler.xorps_rr(reg, reg);
+    }
+
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         if (supportsAVX())

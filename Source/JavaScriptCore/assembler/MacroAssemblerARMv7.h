@@ -1422,6 +1422,18 @@ public:
             m_assembler.vmov(dest, src);
     }
 
+    void moveZeroToFloat(FPRegisterID reg)
+    {
+        static double zeroConstant = 0.;
+        loadFloat(TrustedImmPtr(&zeroConstant), reg);
+    }
+
+    void loadFloat(TrustedImmPtr address, FPRegisterID dest)
+    {
+        move(address, addressTempRegister);
+        m_assembler.flds(ARMRegisters::asSingle(dest), addressTempRegister, 0);
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         static double zeroConstant = 0.;

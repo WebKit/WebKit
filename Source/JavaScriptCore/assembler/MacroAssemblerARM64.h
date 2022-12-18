@@ -2630,6 +2630,11 @@ public:
         m_assembler.fmov<64>(reg, ARM64Registers::zr);
     }
 
+    void moveZeroToFloat(FPRegisterID reg)
+    {
+        m_assembler.fmov<32>(reg, ARM64Registers::zr);
+    }
+
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
     {
         m_assembler.fmov<64>(dest, src);

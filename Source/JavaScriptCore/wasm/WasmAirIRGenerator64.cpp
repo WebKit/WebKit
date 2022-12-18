@@ -725,10 +725,7 @@ void AirIRGenerator64::emitZeroInitialize(BasicBlock* block, ExpressionType valu
     }
     case TypeKind::F32:
     case TypeKind::F64: {
-        auto temp = g64();
-        // IEEE 754 "0" is just int32/64 zero.
-        append(block, Move, Arg::imm(0), temp);
-        append(block, type.isF32() ? Move32ToFloat : Move64ToDouble, temp, value);
+        append(block, type.isF32() ? MoveZeroToFloat : MoveZeroToDouble, value);
         break;
     }
     case TypeKind::V128: {
@@ -797,9 +794,13 @@ void AirIRGenerator64::emitMaterializeConstant(BasicBlock* block, Type type, uin
         break;
     case TypeKind::F32:
     case TypeKind::F64: {
-        auto tmp = g64();
-        append(block, Move, Arg::bigImm(value), tmp);
-        append(block, type.isF32() ? Move32ToFloat : Move64ToDouble, tmp, dest);
+        if (value == 0)
+            append(block, type.isF32() ? MoveZeroToFloat : MoveZeroToDouble, dest);
+        else {
+            auto tmp = g64();
+            append(block, Move, Arg::bigImm(value), tmp);
+            append(block, type.isF32() ? Move32ToFloat : Move64ToDouble, tmp, dest);
+        }
         break;
     }
 
