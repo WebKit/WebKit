@@ -67,7 +67,7 @@ enum class PlatformWheelEventPhase : uint8_t {
 #endif
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, PlatformWheelEventPhase);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformWheelEventPhase);
 
 
 #if PLATFORM(WIN)
@@ -285,3 +285,23 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, EventHandling);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelScrollGestureState);
 
 } // namespace WebCore
+
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlatformWheelEventPhase> {
+    using values = EnumValues<
+        WebCore::PlatformWheelEventPhase
+        , WebCore::PlatformWheelEventPhase::None
+#if ENABLE(KINETIC_SCROLLING)
+        , WebCore::PlatformWheelEventPhase::Began
+        , WebCore::PlatformWheelEventPhase::Stationary
+        , WebCore::PlatformWheelEventPhase::Changed
+        , WebCore::PlatformWheelEventPhase::Ended
+        , WebCore::PlatformWheelEventPhase::Cancelled
+        , WebCore::PlatformWheelEventPhase::MayBegin
+#endif
+    >;
+};
+
+} // namespace WTF

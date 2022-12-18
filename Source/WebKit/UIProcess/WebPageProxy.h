@@ -1055,7 +1055,7 @@ public:
 
     bool isProcessingWheelEvents() const;
     void handleWheelEvent(const NativeWebWheelEvent&);
-    void startMonitoringWheelEventsForTesting();
+    void startMonitoringWheelEventsForTesting(bool resetLatching);
 
     bool isProcessingKeyboardEvents() const;
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);

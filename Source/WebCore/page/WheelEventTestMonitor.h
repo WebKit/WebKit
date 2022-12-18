@@ -113,7 +113,26 @@ private:
     WheelEventTestMonitor::DeferReason m_reason;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestMonitor::DeferReason);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestMonitor::DeferReason);
 WTF::TextStream& operator<<(WTF::TextStream&, const WheelEventTestMonitor::ScrollableAreaReasonMap&);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::WheelEventTestMonitor::DeferReason> {
+    using values = EnumValues<
+        WebCore::WheelEventTestMonitor::DeferReason,
+        WebCore::WheelEventTestMonitor::DeferReason::HandlingWheelEvent,
+        WebCore::WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread,
+        WebCore::WheelEventTestMonitor::DeferReason::PostMainThreadWheelEventHandling,
+        WebCore::WheelEventTestMonitor::DeferReason::RubberbandInProgress,
+        WebCore::WheelEventTestMonitor::DeferReason::ScrollSnapInProgress,
+        WebCore::WheelEventTestMonitor::DeferReason::ScrollAnimationInProgress,
+        WebCore::WheelEventTestMonitor::DeferReason::ScrollingThreadSyncNeeded,
+        WebCore::WheelEventTestMonitor::DeferReason::ContentScrollInProgress,
+        WebCore::WheelEventTestMonitor::DeferReason::RequestedScrollPosition
+    >;
+};
+
+} // namespace WTF

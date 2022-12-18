@@ -3072,11 +3072,11 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     }
 }
 
-void WebPageProxy::startMonitoringWheelEventsForTesting()
+void WebPageProxy::startMonitoringWheelEventsForTesting(bool resetLatching)
 {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->startMonitoringWheelEventsForTesting();
+        m_scrollingCoordinatorProxy->startMonitoringWheelEventsForTesting(resetLatching);
 #endif
 }
 

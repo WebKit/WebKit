@@ -110,6 +110,21 @@ void RemoteScrollingTree::reportSynchronousScrollingReasonsChanged(MonotonicTime
     m_scrollingCoordinatorProxy.reportSynchronousScrollingReasonsChanged(timestamp, reasons);
 }
 
+void RemoteScrollingTree::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
+{
+    m_scrollingCoordinatorProxy.receivedWheelEventWithPhases(phase, momentumPhase);
+}
+
+void RemoteScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    m_scrollingCoordinatorProxy.deferWheelEventTestCompletionForReason(nodeID, reason);
+}
+
+void RemoteScrollingTree::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    m_scrollingCoordinatorProxy.removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

@@ -1862,7 +1862,8 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MonitorWheelEvents")) {
-            m_eventSenderProxy->monitorWheelEvents();
+            bool resetLatching = booleanValue(dictionary, "ResetLatching");
+            m_eventSenderProxy->monitorWheelEvents(resetLatching);
             return;
         }
 

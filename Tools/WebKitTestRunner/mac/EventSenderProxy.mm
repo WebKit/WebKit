@@ -824,9 +824,9 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
     }
 }
 
-void EventSenderProxy::monitorWheelEvents()
+void EventSenderProxy::monitorWheelEvents(bool resetLatching)
 {
-    [m_testController->mainWebView()->platformView() _startMonitoringWheelEvents];
+    [m_testController->mainWebView()->platformView() _startMonitoringWheelEventsResettingLatching:resetLatching];
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)

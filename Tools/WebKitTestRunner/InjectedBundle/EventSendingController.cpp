@@ -513,12 +513,14 @@ void EventSendingController::monitorWheelEvents(MonitorWheelEventsOptions* optio
 {
     auto page = InjectedBundle::singleton().page()->page();
     
+    bool resetLatching = options ? options->resetLatching : true;
     m_sentWheelPhaseEndOrCancel = false;
     m_sentWheelMomentumPhaseEnd = false;
-    WKBundlePageStartMonitoringScrollOperations(page, options ? options->resetLatching : true);
+    WKBundlePageStartMonitoringScrollOperations(page, resetLatching);
 
     auto body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "SubMessage", "MonitorWheelEvents");
+    setValue(body, "ResetLatching", resetLatching);
     postPageMessage("EventSender", body);
 }
 

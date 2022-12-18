@@ -293,9 +293,9 @@
     });
 }
 
-- (void)_startMonitoringWheelEvents
+- (void)_startMonitoringWheelEventsResettingLatching:(BOOL)resetLatching
 {
-    _page->startMonitoringWheelEventsForTesting();
+    _page->startMonitoringWheelEventsForTesting(resetLatching);
 }
 
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier

@@ -99,7 +99,7 @@ void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
 }
 
-void EventSenderProxy::monitorWheelEvents()
+void EventSenderProxy::monitorWheelEvents(bool)
 {
 }
 
