@@ -112,8 +112,6 @@ const testNfcCtapVersionBase64 = "RklET18yXzCQAA==";
 const testGetInfoResponseApduBase64 =
     "AKYBgmZVMkZfVjJoRklET18yXzACgWtobWFjLXNlY3JldANQbUS6m/bsLkm5MAyP" +
     "6SDLcwSkYnJr9WJ1cPVkcGxhdPRpY2xpZW50UGlu9AUZBLAGgQGQAA==";
-const testGetInfoResponseApduNoRemainingDiscoverableBase64 =
-    "AKcBgmZVMkZfVjJoRklET18yXzACgWtobWFjLXNlY3JldANQbUS6m/bsLkm5MAyP6SDLcwSkYnJr9WJ1cPVkcGxhdPRpY2xpZW50UGlu9AUZBLAGgQEUAJAA";
 const testCreationMessageApduBase64 =
     "AKMBZnBhY2tlZAJYxEbMf7lnnVWy25CS4cjZ5eHQK3WA8LSBLHcJYuHkj1rYQQAA" +
     "AE74oBHzjApNFYAGFxEfntx9AEAoCK3O6P5OyXN6V/f+9nAga0NA2Cgp4V3mgSJ5" +
@@ -145,7 +143,6 @@ const testAssertionMessageApduBase64 =
     "QoJ1L7Fe64G9uBeQAA==";
 const testCcidNoUidBase64 = "aIE=";
 const testCcidValidUidBase64 = "CH+d1ZAA";
-const testCreateMessageFullKeyStoreBase64 = "KA==";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 
