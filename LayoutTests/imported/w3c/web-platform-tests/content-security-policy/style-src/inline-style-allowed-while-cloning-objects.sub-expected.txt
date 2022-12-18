@@ -10,9 +10,9 @@ Yet another div.
 
 PASS Test that violation report event was fired
 PASS inline-style-allowed-while-cloning-objects
-FAIL inline-style-allowed-while-cloning-objects 1 null is not an object (evaluating 'node2.style.background.match(/yellow/)[0]')
+PASS inline-style-allowed-while-cloning-objects 1
 PASS inline-style-allowed-while-cloning-objects 2
-FAIL inline-style-allowed-while-cloning-objects 3 null is not an object (evaluating 'node4.style.background.match(/blue/)[0]')
+PASS inline-style-allowed-while-cloning-objects 3
 PASS inline-style-allowed-while-cloning-objects 4
 PASS inline-style-allowed-while-cloning-objects 5
 PASS inline-style-allowed-while-cloning-objects 6

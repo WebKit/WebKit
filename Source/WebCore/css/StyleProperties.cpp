@@ -202,7 +202,7 @@ String StyleProperties::commonShorthandChecks(const StylePropertyShorthand& shor
         return nameString(*specialKeyword);
     if (*firstValueFromShorthand)
         return (*firstValueFromShorthand)->shorthandValue().cssText();
-    return { };
+    return String();
 }
 
 String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
@@ -225,7 +225,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 
     auto shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length())
-        return nullString();
+        return String();
 
     if (auto result = commonShorthandChecks(shorthand); !result.isNull())
         return result.isEmpty() ? nullString() : result;
@@ -296,6 +296,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBorderSpacing:
         return borderSpacingValue(shorthand);
     case CSSPropertyBorder:
+        if (!hasAllInitialValues(borderImageShorthand()))
+            return String();
         return borderPropertyValue(borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand());
     case CSSPropertyBorderBlock:
         return borderPropertyValue(borderBlockWidthShorthand(), borderBlockStyleShorthand(), borderBlockColorShorthand());
@@ -581,180 +583,226 @@ String StyleProperties::fontSynthesisValue() const
 String StyleProperties::get2Values(const StylePropertyShorthand& shorthand) const
 {
     ASSERT(shorthand.length() == 2);
-
-    auto start = propertyAt(findPropertyIndex(shorthand.properties()[0]));
-    auto end = propertyAt(findPropertyIndex(shorthand.properties()[1]));
-
-    if (start.value()->isInitialValue() || end.value()->isInitialValue()) {
-        if (start.value()->isInitialValue() && end.value()->isInitialValue() && !start.isImplicit())
-            return nameString(CSSValueInitial);
-        return { };
-    }
-
-    StringBuilder result;
-    result.append(start.value()->cssText());
-    if (!start.value()->equals(*end.value())) {
-        result.append(' ');
-        result.append(end.value()->cssText());
-    }
-    return result.toString();
+    auto first = getPropertyValue(shorthand.properties()[0]);
+    auto second = getPropertyValue(shorthand.properties()[1]);
+    if (first != second)
+        return makeString(first, ' ', second);
+    return first;
 }
 
 String StyleProperties::get4Values(const StylePropertyShorthand& shorthand) const
 {
-    // Assume the properties are in the usual order top, right, bottom, left.
     ASSERT(shorthand.length() == 4);
+    auto top = getPropertyValue(shorthand.properties()[0]);
+    auto right = getPropertyValue(shorthand.properties()[1]);
+    auto bottom = getPropertyValue(shorthand.properties()[2]);
+    auto left = getPropertyValue(shorthand.properties()[3]);
+    if (left != right)
+        return makeString(top, ' ', right, ' ', bottom, ' ', left);
+    if (bottom != top)
+        return makeString(top, ' ', right, ' ', bottom);
+    if (right != top)
+        return makeString(top, ' ', right);
+    return top;
+}
 
-    auto top = propertyAt(findPropertyIndex(shorthand.properties()[0]));
-    auto right = propertyAt(findPropertyIndex(shorthand.properties()[1]));
-    auto bottom = propertyAt(findPropertyIndex(shorthand.properties()[2]));
-    auto left = propertyAt(findPropertyIndex(shorthand.properties()[3]));
+static bool isValueID(const RefPtr<CSSValue>& value)
+{
+    auto primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
+    return primitiveValue && primitiveValue->isValueID();
+}
 
-    if (top.isInherited() && right.isInherited() && bottom.isInherited() && left.isInherited())
-        return nameString(CSSValueInherit);
-
-    if (top.value()->isInitialValue() || right.value()->isInitialValue() || bottom.value()->isInitialValue() || left.value()->isInitialValue()) {
-        if (top.value()->isInitialValue() && right.value()->isInitialValue() && bottom.value()->isInitialValue() && left.value()->isInitialValue() && !top.isImplicit()) {
-            // All components are "initial" and "top" is not implicit.
-            return nameString(CSSValueInitial);
-        }
-        return String();
-    }
-
-    bool showLeft = !right.value()->equals(*left.value());
-    bool showBottom = !top.value()->equals(*bottom.value()) || showLeft;
-    bool showRight = !top.value()->equals(*right.value()) || showBottom;
-
-    StringBuilder result;
-    result.append(top.value()->cssText());
-    if (showRight) {
-        result.append(' ');
-        result.append(right.value()->cssText());
-    }
-    if (showBottom) {
-        result.append(' ');
-        result.append(bottom.value()->cssText());
-    }
-    if (showLeft) {
-        result.append(' ');
-        result.append(left.value()->cssText());
-    }
-    return result.toString();
+static bool isPair(const RefPtr<CSSValue>& value)
+{
+    auto primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
+    return primitiveValue && primitiveValue->isPair();
 }
 
 String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& shorthand) const
 {
-    StringBuilder result;
+    ASSERT(shorthand.length() <= 9);
 
-    const unsigned size = shorthand.length();
-    Vector<RefPtr<CSSValue>> values(size);
-    size_t numLayers = 0;
-
-    for (unsigned i = 0; i < size; ++i) {
-        values[i] = getPropertyCSSValue(shorthand.properties()[i]);
-        if (values[i]->isBaseValueList())
-            numLayers = std::max(downcast<CSSValueList>(*values[i]).length(), numLayers);
-        else
-            numLayers = std::max<size_t>(1U, numLayers);
+    unsigned length = shorthand.length();
+    Vector<Ref<CSSValue>> values;
+    values.reserveInitialCapacity(length);
+    size_t numLayers = 1;
+    for (auto longhand : shorthand) {
+        auto value = getPropertyCSSValue(longhand);
+        if (value->isBaseValueList())
+            numLayers = std::max(downcast<CSSValueList>(*value).length(), numLayers);
+        values.uncheckedAppend(value.releaseNonNull());
     }
 
-    // Now stitch the properties together.
-    // Implicit initial values are flagged as such and can safely be omitted.
+    StringBuilder result;
     for (size_t i = 0; i < numLayers; i++) {
-        StringBuilder layerResult;
-        bool useRepeatXShorthand = false;
-        bool useRepeatYShorthand = false;
-        bool useSingleWordShorthand = false;
-        bool foundPositionYCSSProperty = false;
-        for (unsigned j = 0; j < size; j++) {
-            auto property = shorthand.properties()[j];
+        RefPtr<CSSValue> layerValues[9];
+        bool skipSerializingLayerValues[9] { };
 
-            auto value = values[j];
-            if (value) {
-                if (value->isBaseValueList())
-                    value = downcast<CSSValueList>(*value).item(i);
-                else {
-                    // Color only belongs in the last layer.
-                    if (property == CSSPropertyBackgroundColor) {
-                        if (i != numLayers - 1)
-                            value = nullptr;
-                    } else if (i) // Other singletons only belong in the first layer.
-                        value = nullptr;
+        ASSERT(length <= std::size(layerValues));
+
+        for (unsigned j = 0; j < length; j++) {
+            auto longhand = shorthand.properties()[j];
+            auto& value = values[j].get();
+            RefPtr<CSSValue> layerValue;
+            bool skipSerializing = false;
+            if (value.isBaseValueList())
+                layerValue = downcast<CSSValueList>(value).item(i);
+            else {
+                layerValue = &value;
+                if (longhand != CSSPropertyBackgroundColor) {
+                    // Singletons are only in the first layer.
+                    if (i)
+                        skipSerializing = true;
+                } else {
+                    // Color is only in the last layer.
+                    if (i != numLayers - 1)
+                        skipSerializing = true;
+                }
+            }
+            skipSerializing = skipSerializing || !layerValue || isInitialValueForLonghand(longhand, *layerValue);
+            layerValues[j] = WTFMove(layerValue);
+            skipSerializingLayerValues[j] = skipSerializing;
+        }
+
+        for (unsigned j = 0; j < length; j++) {
+            auto longhand = shorthand.properties()[j];
+
+            // A single box value sets both background-origin and background-clip.
+            // A single geometry-box value sets both mask-origin and mask-clip.
+            // A single geometry-box value sets both mask-origin and -webkit-mask-clip.
+            if (longhand == CSSPropertyBackgroundClip || longhand == CSSPropertyMaskClip || longhand == CSSPropertyWebkitMaskClip) {
+                // The previous property is origin.
+                ASSERT(j >= 1);
+                ASSERT(shorthand.properties()[j - 1] == CSSPropertyBackgroundOrigin
+                    || shorthand.properties()[j - 1] == CSSPropertyMaskOrigin);
+                if (compareCSSValuePtr(layerValues[j - 1], layerValues[j])) {
+                    // If the two are the same, one value sets both.
+                    if (!skipSerializingLayerValues[j - 1] && !skipSerializingLayerValues[j])
+                        skipSerializingLayerValues[j] = true;
+                } else if (!skipSerializingLayerValues[j - 1] || !skipSerializingLayerValues[j]) {
+                    // If the two are different, both need to be serialized, except in the special case of no-clip.
+                    if (!isValueID(layerValues[j], CSSValueNoClip)) {
+                        skipSerializingLayerValues[j - 1] = false;
+                        skipSerializingLayerValues[j] = false;
+                    }
                 }
             }
 
-            auto canOmitValue = [&]() {
-                if (shorthand.id() == CSSPropertyMask) {
-                    if (property == CSSPropertyMaskClip) {
-                        // If the mask-clip value is the same as the value for mask-origin (the previous value),
-                        // then we can skip serializing it, as one value sets both properties.
-                        ASSERT(j > 0);
-                        ASSERT(shorthand.properties()[j - 1] == CSSPropertyMaskOrigin);
-                        auto originValue = values[j - 1];
-                        if (is<CSSValueList>(*originValue))
-                            originValue = downcast<CSSValueList>(*originValue).item(i);
-                        if (!is<CSSPrimitiveValue>(*value) || (originValue && !is<CSSPrimitiveValue>(*originValue)))
-                            return false;
+            if (skipSerializingLayerValues[j])
+                continue;
 
-                        auto maskId = downcast<CSSPrimitiveValue>(*value).valueID();
-                        auto originId = originValue ? downcast<CSSPrimitiveValue>(*originValue).valueID() : CSSValueInitial;
-                        return maskId == originId && (!isCSSWideValueKeyword(StringView { nameLiteral(maskId) }) || value->isImplicitInitialValue());
-                    }
-                    if (property == CSSPropertyMaskOrigin) {
-                        // We can skip serializing mask-origin if it's the initial value, but only if we're also going to skip serializing
-                        // the mask-clip as well (otherwise the single value for mask-clip would be assumed to be setting the value for both).
-                        ASSERT(j + 1 < size);
-                        ASSERT(shorthand.properties()[j + 1] == CSSPropertyMaskClip);
-                        auto clipValue = values[j + 1];
-                        if (is<CSSValueList>(*clipValue))
-                            clipValue = downcast<CSSValueList>(*clipValue).item(i);
-                        return value->isImplicitInitialValue() && (!clipValue || clipValue->isImplicitInitialValue());
-                    }
+            // The syntax for background-size means that if it is present, background-position must be too.
+            // The syntax for mask-size means that if it is present, mask-position must be too.
+            if (longhand == CSSPropertyBackgroundSize || longhand == CSSPropertyMaskSize) {
+                // The previous properties are X and Y.
+                ASSERT(j >= 2);
+                ASSERT(shorthand.properties()[j - 2] == CSSPropertyBackgroundPositionX
+                    || shorthand.properties()[j - 2] == CSSPropertyWebkitMaskPositionX);
+                ASSERT(shorthand.properties()[j - 1] == CSSPropertyBackgroundPositionY
+                    || shorthand.properties()[j - 1] == CSSPropertyWebkitMaskPositionY);
+                skipSerializingLayerValues[j - 2] = false;
+                skipSerializingLayerValues[j - 1] = false;
+            }
+
+            // A single background-position value (identifier or numeric) sets the other value to center.
+            // A single mask-position value (identifier or numeric) sets the other value to center.
+            // Order matters when one is numeric, but not when both are identifiers.
+            if (longhand == CSSPropertyBackgroundPositionY || longhand == CSSPropertyWebkitMaskPositionY) {
+                // The previous property is X.
+                ASSERT(j >= 1);
+                ASSERT(shorthand.properties()[j - 1] == CSSPropertyBackgroundPositionX
+                    || shorthand.properties()[j - 1] == CSSPropertyWebkitMaskPositionX);
+                if (isValueID(layerValues[j - 1], CSSValueCenter) && isValueID(layerValues[j]))
+                    skipSerializingLayerValues[j - 1] = true;
+                else if (isValueID(layerValues[j], CSSValueCenter) && !isPair(layerValues[j - 1])) {
+                    skipSerializingLayerValues[j - 1] = false;
+                    skipSerializingLayerValues[j] = true;
                 }
+            }
 
-                return value->isImplicitInitialValue();
-            };
-
-            String valueText;
-            if (!value && shorthand.id() == CSSPropertyMask)
-                value = CSSValuePool::singleton().createImplicitInitialValue();
-            if (value && !canOmitValue()) {
-                if (!layerResult.isEmpty())
-                    layerResult.append(' ');
-
-                if (property == CSSPropertyBackgroundSize || property == CSSPropertyMaskSize) {
-                    if (!foundPositionYCSSProperty)
-                        continue;
-                    layerResult.append("/ ");
-                }
-
-                if (useRepeatXShorthand) {
-                    useRepeatXShorthand = false;
-                    layerResult.append(nameLiteral(CSSValueRepeatX));
-                } else if (useRepeatYShorthand) {
-                    useRepeatYShorthand = false;
-                    layerResult.append(nameLiteral(CSSValueRepeatY));
-                } else if (shorthand.id() == CSSPropertyMask && property == CSSPropertyMaskOrigin && value->isImplicitInitialValue()) {
-                    // If we're about to write the value for mask-origin, but it's an implicit initial value that's just a placeholder
-                    // for a 'real' mask-clip value, then write the actual value not 'initial'.
-                    layerResult.append(nameLiteral(CSSValueBorderBox));
-                } else {
-                    if (useSingleWordShorthand)
-                        useSingleWordShorthand = false;
-                    valueText = value->cssText();
-                    layerResult.append(valueText);
-                }
-
-                if (property == CSSPropertyBackgroundPositionY || property == CSSPropertyWebkitMaskPositionY)
-                    foundPositionYCSSProperty = true;
+            // The first value in each animation shorthand that can be parsed as a time is assigned to
+            // animation-duration, and the second is assigned to animation-delay, so we must serialize
+            // both if we are serializing animation-delay.
+            if (longhand == CSSPropertyAnimationDelay) {
+                // The first property is animation-duration.
+                constexpr auto animationDurationIndex = 0;
+                ASSERT(shorthand.properties()[0] == CSSPropertyAnimationDuration);
+                skipSerializingLayerValues[animationDurationIndex] = false;
             }
         }
 
-        if (shorthand.id() == CSSPropertyMask && layerResult.isEmpty())
-            layerResult.append(nameLiteral(CSSValueNone));
+        // In the animation shorthand, if the value of animation-name could be parsed as one of
+        // the other longhands that longhand must be serialized to avoid ambiguity.
+        if (shorthand.id() == CSSPropertyAnimation) {
+            constexpr auto animationTimingFunctionIndex = 1;
+            constexpr auto animationIterationCountIndex = 3;
+            constexpr auto animationDirectionIndex = 4;
+            constexpr auto animationFillModeIndex = 5;
+            constexpr auto animationPlayStateIndex = 6;
+            constexpr auto animationNameIndex = 7;
+            ASSERT(shorthand.properties()[animationTimingFunctionIndex] == CSSPropertyAnimationTimingFunction);
+            ASSERT(shorthand.properties()[animationIterationCountIndex] == CSSPropertyAnimationIterationCount);
+            ASSERT(shorthand.properties()[animationDirectionIndex] == CSSPropertyAnimationDirection);
+            ASSERT(shorthand.properties()[animationFillModeIndex] == CSSPropertyAnimationFillMode);
+            ASSERT(shorthand.properties()[animationPlayStateIndex] == CSSPropertyAnimationPlayState);
+            ASSERT(shorthand.properties()[animationNameIndex] == CSSPropertyAnimationName);
+            if (!skipSerializingLayerValues[animationNameIndex]) {
+                if (auto value = dynamicDowncast<CSSPrimitiveValue>(layerValues[animationNameIndex].get())) {
+                    switch (value->isCustomIdent() ? cssValueKeywordID(value->stringValue()) : value->valueID()) {
+                    case CSSValueAlternate:
+                    case CSSValueAlternateReverse:
+                    case CSSValueNormal:
+                    case CSSValueReverse:
+                        skipSerializingLayerValues[animationDirectionIndex] = false;
+                        break;
+                    case CSSValueBackwards:
+                    case CSSValueBoth:
+                    case CSSValueForwards:
+                        skipSerializingLayerValues[animationFillModeIndex] = false;
+                        break;
+                    case CSSValueEase:
+                    case CSSValueEaseIn:
+                    case CSSValueEaseInOut:
+                    case CSSValueEaseOut:
+                    case CSSValueLinear:
+                        skipSerializingLayerValues[animationTimingFunctionIndex] = false;
+                        break;
+                    case CSSValueInfinite:
+                        skipSerializingLayerValues[animationIterationCountIndex] = false;
+                        break;
+                    case CSSValuePaused:
+                    case CSSValueRunning:
+                        skipSerializingLayerValues[animationPlayStateIndex] = false;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
 
-        if (!layerResult.isEmpty())
-            result.append(result.isEmpty() ? "" : ", ", layerResult.toString());
+        // Serialize the first value if we would otherwise skip all of them.
+        auto begin = std::begin(skipSerializingLayerValues);
+        auto end = begin + length;
+        if (std::find(begin, end, false) == end)
+            skipSerializingLayerValues[0] = false;
+
+        StringBuilder layerResult;
+        auto separatorWithinLayer = ""_s;
+        for (unsigned j = 0; j < length; j++) {
+            if (skipSerializingLayerValues[j])
+                continue;
+            auto longhand = shorthand.properties()[j];
+            if (longhand == CSSPropertyBackgroundSize || longhand == CSSPropertyMaskSize)
+                separatorWithinLayer = " / "_s;
+            if (auto& value = layerValues[j])
+                layerResult.append(separatorWithinLayer, value->cssText());
+            else
+                layerResult.append(separatorWithinLayer, initialValueTextForLonghand(longhand));
+            separatorWithinLayer = " "_s;
+        }
+
+        result.append(result.isEmpty() ? "" : ", ", layerResult.toString());
     }
 
     return result.isEmpty() ? String() : result.toString();
@@ -1015,8 +1063,8 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
         result.append(separator, valueText);
         separator = " ";
     }
-    if (!commonWideValueText.isNull())
-        return commonWideValueText;
+    if (result.isEmpty())
+        return nameString(CSSValueNone);
     return result.toString();
 }
 
@@ -1060,23 +1108,26 @@ String StyleProperties::borderRadiusShorthandValue(const StylePropertyShorthand&
 
 String StyleProperties::borderPropertyValue(const StylePropertyShorthand& width, const StylePropertyShorthand& style, const StylePropertyShorthand& color) const
 {
-    StringBuilder result;
-    for (auto shorthand : { width, style, color }) {
-        auto isAllImplicitInitial = [&]() {
-            for (auto longhand : shorthand) {
-                if (!getPropertyCSSValue(longhand)->isImplicitInitialValue())
-                    return false;
-            }
-            return true;
-        };
-        if (isAllImplicitInitial())
-            continue;
-        String value = getCommonValue(shorthand);
-        if (value.isNull())
-            return String();
-        result.append(result.isEmpty() ? "" : " ", value);
-    }
-    return result.toString();
+    auto widthText = getCommonValue(width);
+    if (widthText.isNull())
+        return String();
+    auto styleText = getCommonValue(style);
+    if (styleText.isNull())
+        return String();
+    auto colorText = getCommonValue(color);
+    if (colorText.isNull())
+        return String();
+
+    if (styleText == "none"_s)
+        styleText = String();
+    if (colorText == "currentcolor"_s)
+        colorText = String();
+    if (widthText == "medium"_s && (!styleText.isNull() || !colorText.isNull()))
+        widthText = String();
+
+    bool needFirstSpace = !widthText.isNull() && (!styleText.isNull() || !colorText.isNull());
+    bool needSecondSpace = !styleText.isNull() && !colorText.isNull();
+    return makeString(widthText, needFirstSpace ? " "_s : ""_s, styleText, needSecondSpace ? " "_s : ""_s, colorText);
 }
 
 String StyleProperties::breakInsideShorthandValue(const StylePropertyShorthand& shorthand) const
@@ -1090,7 +1141,7 @@ String StyleProperties::breakInsideShorthandValue(const StylePropertyShorthand& 
     case CSSValueAvoid:
         return nameString(keyword);
     default:
-        return nullString();
+        return String();
     }
 }
 
@@ -1109,7 +1160,7 @@ String StyleProperties::pageBreakValue(const StylePropertyShorthand& shorthand) 
     case CSSValueRight:
         return nameString(keyword);
     default:
-        return nullString();
+        return String();
     }
 }
 
@@ -1127,8 +1178,17 @@ String StyleProperties::webkitColumnBreakValue(const StylePropertyShorthand& sho
     case CSSValueAuto:
         return nameString(keyword);
     default:
-        return nullString();
+        return String();
     }
+}
+
+bool StyleProperties::hasAllInitialValues(const StylePropertyShorthand& shorthand) const
+{
+    for (auto longhand : shorthand) {
+        if (!isInitialValueForLonghand(longhand, *getPropertyCSSValue(longhand)))
+            return false;
+    }
+    return true;
 }
 
 RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
@@ -1458,7 +1518,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     // FIXME: If font-variant-ligatures is none, this depends on the value of the longhand.
     case CSSPropertyFontVariant:
     // FIXME: These shorthands are avoided for unknown legacy reasons, probably shouldn't be avoided.
-    case CSSPropertyBackground:
     case CSSPropertyBorderBlockEnd:
     case CSSPropertyBorderBlockStart:
     case CSSPropertyBorderBottom:

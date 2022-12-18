@@ -3,35 +3,35 @@ Test for http://bugs.webkit.org/show_bug.cgi?id=9284 Quirksmode (CSS1): Removing
 Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed when a shortcut property is removed. The shortcut’s constituents and only them should be removed.
 
 Removing background
-removes "background-image, background-position, background-repeat, background-attachment, background-color"
+removes "background"
 and adds "".
 Removing background-position
-removes "background-position"
-and adds "".
+removes "background"
+and adds "background-image, background-size, background-repeat, background-attachment, background-origin, background-clip, background-color".
 Removing border
 removes "border"
 and adds "".
 Removing border-top
 removes "border"
-and adds "border-right-width, border-bottom-width, border-left-width, border-right-style, border-bottom-style, border-left-style, border-right-color, border-bottom-color, border-left-color".
+and adds "border-right-width, border-bottom-width, border-left-width, border-right-style, border-bottom-style, border-left-style, border-right-color, border-bottom-color, border-left-color, border-image".
 Removing border-right
 removes "border"
-and adds "border-top-width, border-bottom-width, border-left-width, border-top-style, border-bottom-style, border-left-style, border-top-color, border-bottom-color, border-left-color".
+and adds "border-top-width, border-bottom-width, border-left-width, border-top-style, border-bottom-style, border-left-style, border-top-color, border-bottom-color, border-left-color, border-image".
 Removing border-bottom
 removes "border"
-and adds "border-top-width, border-right-width, border-left-width, border-top-style, border-right-style, border-left-style, border-top-color, border-right-color, border-left-color".
+and adds "border-top-width, border-right-width, border-left-width, border-top-style, border-right-style, border-left-style, border-top-color, border-right-color, border-left-color, border-image".
 Removing border-left
 removes "border"
-and adds "border-top-width, border-right-width, border-bottom-width, border-top-style, border-right-style, border-bottom-style, border-top-color, border-right-color, border-bottom-color".
+and adds "border-top-width, border-right-width, border-bottom-width, border-top-style, border-right-style, border-bottom-style, border-top-color, border-right-color, border-bottom-color, border-image".
 Removing border-color
 removes "border"
-and adds "border-width, border-style".
+and adds "border-width, border-style, border-image".
 Removing border-style
 removes "border"
-and adds "border-width, border-color".
+and adds "border-width, border-color, border-image".
 Removing border-width
 removes "border"
-and adds "border-style, border-color".
+and adds "border-style, border-color, border-image".
 Removing border-radius
 removes "border-radius"
 and adds "".
@@ -54,11 +54,11 @@ Removing margin
 removes "margin"
 and adds "".
 Removing -webkit-mask
-removes "mask-image, -webkit-mask-position-x, -webkit-mask-position-y, mask-repeat"
+removes "mask-image, -webkit-mask-source-type, -webkit-mask-position-x, -webkit-mask-position-y, mask-size, mask-repeat, mask-origin, -webkit-mask"
 and adds "".
 Removing -webkit-mask-position
-removes "-webkit-mask-position-x, -webkit-mask-position-y"
-and adds "".
+removes "-webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask"
+and adds "-webkit-mask-clip".
 Removing overflow
 removes "overflow"
 and adds "".

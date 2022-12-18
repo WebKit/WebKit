@@ -199,6 +199,7 @@ private:
     String fontSynthesisValue() const;
     String offsetValue() const;
     String commonShorthandChecks(const StylePropertyShorthand&) const;
+    bool hasAllInitialValues(const StylePropertyShorthand&) const;
     StringBuilder asTextInternal() const;
 
     friend class PropertySetCSSStyleDeclaration;
