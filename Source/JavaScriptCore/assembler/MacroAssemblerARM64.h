@@ -4139,6 +4139,13 @@ public:
         return Call(m_assembler.labelIgnoringWatchpoints(), Call::LinkableNear);
     }
 
+    ALWAYS_INLINE Call threadSafePatchableNearTailCall()
+    {
+        AssemblerLabel label = m_assembler.label();
+        m_assembler.b();
+        return Call(label, Call::LinkableNearTail);
+    }
+
     ALWAYS_INLINE void ret()
     {
         m_assembler.ret();

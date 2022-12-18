@@ -645,6 +645,34 @@ WASM_SLOW_PATH_DECL(call_ref_no_tls)
     return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
 }
 
+WASM_SLOW_PATH_DECL(tail_call)
+{
+    UNUSED_PARAM(callFrame);
+    auto instruction = pc->as<WasmTailCall>();
+    return doWasmCall(instance, instruction.m_functionIndex);
+}
+
+WASM_SLOW_PATH_DECL(tail_call_no_tls)
+{
+    UNUSED_PARAM(callFrame);
+    auto instruction = pc->as<WasmTailCallNoTls>();
+    return doWasmCall(instance, instruction.m_functionIndex);
+}
+
+WASM_SLOW_PATH_DECL(tail_call_indirect)
+{
+    auto instruction = pc->as<WasmTailCallIndirect>();
+    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
+    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
+}
+
+WASM_SLOW_PATH_DECL(tail_call_indirect_no_tls)
+{
+    auto instruction = pc->as<WasmTailCallIndirectNoTls>();
+    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
+    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
+}
+
 static size_t jsrSize()
 {
     static size_t jsrSize = 0;

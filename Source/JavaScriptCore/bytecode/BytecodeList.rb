@@ -1508,6 +1508,10 @@ op :wasm_trampoline_wasm_call_indirect
 op :wasm_trampoline_wasm_call_indirect_no_tls
 op :wasm_trampoline_wasm_call_ref
 op :wasm_trampoline_wasm_call_ref_no_tls
+op :wasm_trampoline_wasm_tail_call
+op :wasm_trampoline_wasm_tail_call_no_tls
+op :wasm_trampoline_wasm_tail_call_indirect
+op :wasm_trampoline_wasm_tail_call_indirect_no_tls
 
 end_section :NativeHelpers
 
@@ -1684,6 +1688,22 @@ op :call_no_tls,
         numberOfStackArgs: unsigned,
     }
 
+op :tail_call,
+    args: {
+        functionIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfCalleeStackArgs: unsigned,
+        numberOfCallerStackArgs: unsigned,
+    }
+
+op :tail_call_no_tls,
+    args: {
+        functionIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfCalleeStackArgs: unsigned,
+        numberOfCallerStackArgs: unsigned,
+    }
+
 op :call_indirect,
     args: {
         functionIndex: VirtualRegister,
@@ -1699,6 +1719,26 @@ op :call_indirect_no_tls,
         typeIndex: unsigned,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
+        tableIndex: unsigned,
+    }
+
+op :tail_call_indirect,
+    args: {
+        functionIndex: VirtualRegister,
+        signatureIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfCalleeStackArgs: unsigned,
+        numberOfCallerStackArgs: unsigned,
+        tableIndex: unsigned,
+    }
+
+op :tail_call_indirect_no_tls,
+    args: {
+        functionIndex: VirtualRegister,
+        signatureIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfCalleeStackArgs: unsigned,
+        numberOfCallerStackArgs: unsigned,
         tableIndex: unsigned,
     }
 

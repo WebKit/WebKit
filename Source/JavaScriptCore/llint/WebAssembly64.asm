@@ -1293,3 +1293,10 @@ wasmOp(array_len, WasmArrayLen, macro(ctx)
 .nullArray:
     throwException(NullArrayLen)
 end)
+
+if ARM64E
+    global _wasmTailCallJSEntrySlowPathTrampoline
+    _wasmTailCallJSEntrySlowPathTrampoline:
+        untagReturnAddress ws2
+        jmp ws0, JSEntryPtrTag
+end
