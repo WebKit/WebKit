@@ -9,6 +9,6 @@ let importObject = {
 (async function () {
   let i = await WebAssembly.instantiate(bytes, importObject);
   for (let j = 0; j < 100; j++) {
-    try { debug(i.instance.exports.fn4(0n)); } catch (e) { debug(e); }
+    try { i.instance.exports.fn4(0n); } catch { }
   }
 })();
