@@ -41,7 +41,7 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.host import Host
 from webkitpy.test.finder import Finder
 from webkitpy.test.printer import Printer
-from webkitpy.test.runner import Runner, unit_test_name
+from webkitpy.test.runner import Runner
 from webkitpy.results.upload import Upload
 from webkitpy.results.options import upload_options
 
@@ -334,7 +334,7 @@ class Tester(object):
             for t in suite._tests:
                 names.extend(self._all_test_names(t))
         else:
-            names.append(unit_test_name(suite))
+            names.append(suite.id())
         return names
 
     def _log_exception(self):
