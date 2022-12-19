@@ -55,9 +55,6 @@ struct pas_pgm_storage {
 // including guard pages and wasted memory
 #define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
 
-// Probability that we should call PGM (0-1000]
-#define PAS_PGM_PROBABILITY (1)
-
 /* We want a fast way to determine if we can call PGM or not.
  * It would be really wasteful to recompute this answer each time we try to allocate,
  * so just update this variable each time we allocate or deallocate. */

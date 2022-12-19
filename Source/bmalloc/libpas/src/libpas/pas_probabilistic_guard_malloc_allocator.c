@@ -25,6 +25,7 @@
 
 
 #include "pas_config.h"
+#include "pas_random.h"
 #include <stdint.h>
 
 #if LIBPAS_ENABLED
@@ -222,8 +223,15 @@ bool pas_probabilistic_guard_malloc_should_call_pgm()
     if (!pas_pgm_is_initialized) {
         pas_pgm_is_initialized = true;
 
-        if (PAS_LIKELY(pas_get_fast_random(1000) >= PAS_PGM_PROBABILITY))
+        // 1 in 1000 probability
+        if (PAS_LIKELY(pas_get_fast_random(1000) >= 1)) {
             pas_pgm_can_use = false;
+            return false;
+        }
+
+        // Number between 4000 and 5000
+        pas_pgm_random = pas_get_secure_random(4000) + 1000;
+        return true;
     }
 
     if (!pas_pgm_can_use)
