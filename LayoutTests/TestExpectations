@@ -6161,7 +6161,6 @@ imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credential
 imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Skip ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageBitmap.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.html [ DumpJSConsoleLogInStdErr ]
 
