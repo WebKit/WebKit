@@ -218,6 +218,13 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void)
     return free_wasted_mem;
 }
 
+
+// Determine whether we should call PGM during allocation.
+// This is composed in a few steps.
+// 1. PGM needs to initialized
+// 2. If not initialized we should compute whether to enable PGM for the lifetime of the process.
+// 3. If we decide to turn it on compute a random probability for the separation between PGM allocations.
+// 4. Once initialized check if we can use it, and if we have hit random counter.
 bool pas_probabilistic_guard_malloc_should_call_pgm()
 {
     if (!pas_pgm_is_initialized) {
