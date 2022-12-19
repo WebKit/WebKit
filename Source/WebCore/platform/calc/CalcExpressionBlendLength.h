@@ -32,11 +32,11 @@ namespace WebCore {
 
 class CalcExpressionBlendLength final : public CalcExpressionNode {
 public:
-    CalcExpressionBlendLength(Length from, Length to, float progress);
+    CalcExpressionBlendLength(Length from, Length to, double progress);
 
     const Length& from() const { return m_from; }
     const Length& to() const { return m_to; }
-    float progress() const { return m_progress; }
+    double progress() const { return m_progress; }
 
 private:
     float evaluate(float maxValue) const final;
@@ -45,7 +45,7 @@ private:
 
     Length m_from;
     Length m_to;
-    float m_progress;
+    double m_progress;
 };
 
 inline bool operator==(const CalcExpressionBlendLength& a, const CalcExpressionBlendLength& b)
