@@ -50,8 +50,6 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
         return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
-#endif
-#if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
         return IPC::handleMessageAsync<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
 #endif

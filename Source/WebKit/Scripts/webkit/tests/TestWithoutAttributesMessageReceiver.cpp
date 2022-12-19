@@ -114,8 +114,6 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
-#endif
-#if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name())
         return IPC::handleMessageAsync<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, this, &TestWithoutAttributes::interpretKeyEvent);
 #endif
