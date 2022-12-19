@@ -25,6 +25,7 @@
 
 
 #include "pas_config.h"
+#include <stdint.h>
 
 #if LIBPAS_ENABLED
 
@@ -44,6 +45,8 @@
 static size_t free_wasted_mem  = PAS_PGM_MAX_WASTED_MEMORY;
 static size_t free_virtual_mem = PAS_PGM_MAX_VIRTUAL_MEMORY;
 
+uint16_t pas_pgm_random;
+uint16_t counter = 0;
 bool pas_pgm_can_use = true;
 bool pas_pgm_is_initialized = false;
 
@@ -223,7 +226,15 @@ bool pas_probabilistic_guard_malloc_should_call_pgm()
             pas_pgm_can_use = false;
     }
 
-    return pas_pgm_can_use;
+    if (!pas_pgm_can_use)
+        return false;
+
+    if (counter++ % pas_pgm_random) {
+        counter = 1;
+        return true;
+    }
+
+    return false;
 }
 
 void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_storage* value, const char* operation)
