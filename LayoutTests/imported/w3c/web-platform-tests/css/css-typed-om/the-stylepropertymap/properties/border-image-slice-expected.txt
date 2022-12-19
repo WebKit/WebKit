@@ -5,11 +5,11 @@ PASS Can set 'border-image-slice' to CSS-wide keywords: unset
 PASS Can set 'border-image-slice' to CSS-wide keywords: revert
 PASS Can set 'border-image-slice' to var() references:  var(--A)
 PASS Can set 'border-image-slice' to a number: 0
-FAIL Can set 'border-image-slice' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-image-slice' to a number: -3.14
 PASS Can set 'border-image-slice' to a number: 3.14
 PASS Can set 'border-image-slice' to a number: calc(2 + 3)
 PASS Can set 'border-image-slice' to a percent: 0%
-FAIL Can set 'border-image-slice' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-image-slice' to a percent: -3.14%
 PASS Can set 'border-image-slice' to a percent: 3.14%
 PASS Can set 'border-image-slice' to a percent: calc(0% + 0%)
 PASS Setting 'border-image-slice' to a length: 0px throws TypeError

@@ -8,11 +8,11 @@ PASS Can set 'grid-auto-columns' to the 'min-content' keyword: min-content
 PASS Can set 'grid-auto-columns' to the 'max-content' keyword: max-content
 PASS Can set 'grid-auto-columns' to the 'auto' keyword: auto
 PASS Can set 'grid-auto-columns' to a length: 0px
-FAIL Can set 'grid-auto-columns' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'grid-auto-columns' to a length: -3.14em
 PASS Can set 'grid-auto-columns' to a length: 3.14cm
 PASS Can set 'grid-auto-columns' to a length: calc(0px + 0em)
 PASS Can set 'grid-auto-columns' to a percent: 0%
-FAIL Can set 'grid-auto-columns' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'grid-auto-columns' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'grid-auto-columns' to a percent: 3.14%
 PASS Can set 'grid-auto-columns' to a percent: calc(0% + 0%)
 PASS Can set 'grid-auto-columns' to a flexible length: 0fr
@@ -44,11 +44,11 @@ PASS Can set 'grid-auto-rows' to the 'min-content' keyword: min-content
 PASS Can set 'grid-auto-rows' to the 'max-content' keyword: max-content
 PASS Can set 'grid-auto-rows' to the 'auto' keyword: auto
 PASS Can set 'grid-auto-rows' to a length: 0px
-FAIL Can set 'grid-auto-rows' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'grid-auto-rows' to a length: -3.14em
 PASS Can set 'grid-auto-rows' to a length: 3.14cm
 PASS Can set 'grid-auto-rows' to a length: calc(0px + 0em)
 PASS Can set 'grid-auto-rows' to a percent: 0%
-FAIL Can set 'grid-auto-rows' to a percent: -3.14% assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'grid-auto-rows' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'grid-auto-rows' to a percent: 3.14%
 PASS Can set 'grid-auto-rows' to a percent: calc(0% + 0%)
 PASS Can set 'grid-auto-rows' to a flexible length: 0fr
