@@ -2511,7 +2511,8 @@ webkit.org/b/244649 [ Debug ] imported/w3c/web-platform-tests/css/css-align/base
 
 webkit.org/b/244652 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/bfcache/embedded-mp4.html [ Pass Crash ]
 
-webkit.org/b/244677 media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Pass Failure ]
+# VP8/VP9 aren't supported on WK1
+media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Failure ]
 
 webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]
 
