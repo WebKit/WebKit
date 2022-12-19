@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
 #include "CompositeOperation.h"
+#include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
@@ -49,13 +49,9 @@ public:
     {
     }
 
-    void addProperty(CSSPropertyID prop) { m_properties.add(prop); }
-    bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
-    const HashSet<CSSPropertyID>& properties() const { return m_properties; }
-
-    void addCustomProperty(const AtomString& customProperty) { m_customProperties.add(customProperty); }
-    bool containsCustomProperty(const AtomString& customProperty) const { return m_customProperties.contains(customProperty); }
-    const HashSet<AtomString>& customProperties() const { return m_customProperties; }
+    void addProperty(AnimatableProperty);
+    bool containsProperty(AnimatableProperty) const;
+    const HashSet<AnimatableProperty>& properties() const { return m_properties; }
 
     double key() const { return m_key; }
     void setKey(double key) { m_key = key; }
@@ -74,8 +70,7 @@ public:
 
 private:
     double m_key;
-    HashSet<CSSPropertyID> m_properties; // The properties specified in this keyframe.
-    HashSet<AtomString> m_customProperties; // The custom properties being animated.
+    HashSet<AnimatableProperty> m_properties; // The properties specified in this keyframe.
     std::unique_ptr<RenderStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
     std::optional<CompositeOperation> m_compositeOperation;
@@ -98,14 +93,12 @@ public:
     
     void insert(KeyframeValue&&);
     
-    bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
-    const HashSet<CSSPropertyID>& properties() const { return m_properties; }
+    void addProperty(AnimatableProperty);
+    bool containsProperty(AnimatableProperty) const;
+    const HashSet<AnimatableProperty>& properties() const { return m_properties; }
+
     bool containsAnimatableProperty() const;
     bool containsDirectionAwareProperty() const;
-
-    void addCustomProperty(const AtomString& customProperty) { m_customProperties.add(customProperty); }
-    bool containsCustomProperty(const AtomString& customProperty) const { return m_customProperties.contains(customProperty); }
-    const HashSet<AtomString>& customProperties() const { return m_customProperties; }
 
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
@@ -124,8 +117,7 @@ public:
 private:
     AtomString m_animationName;
     Vector<KeyframeValue> m_keyframes; // Kept sorted by key.
-    HashSet<CSSPropertyID> m_properties; // The properties being animated.
-    HashSet<AtomString> m_customProperties; // The custom properties being animated.
+    HashSet<AnimatableProperty> m_properties; // The properties being animated.
 };
 
 } // namespace WebCore

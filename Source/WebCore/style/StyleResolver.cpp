@@ -73,6 +73,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentStyle.h"
 #include "VisitedLinkState.h"
+#include "WebAnimationTypes.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Seconds.h>
@@ -279,18 +280,19 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     bool hasRevert = false;
     for (auto propertyReference : keyframe.properties()) {
         auto unresolvedProperty = propertyReference.id();
-        auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
         // The animation-composition and animation-timing-function within keyframes are special
         // because they are not animated; they just describe the composite operation and timing
         // function between this keyframe and the next.
-        bool isAnimatableValue = resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition;
-        if (isAnimatableValue)
-            keyframeValue.addProperty(resolvedProperty);
         if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
             keyframeValue.setContainsDirectionAwareProperty(true);
         if (auto* value = propertyReference.value()) {
-            if (isAnimatableValue && value->isCustomPropertyValue())
-                keyframeValue.addCustomProperty(downcast<CSSCustomPropertyValue>(*value).name());
+            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
+            if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
+                if (value->isCustomPropertyValue())
+                    keyframeValue.addProperty(downcast<CSSCustomPropertyValue>(*value).name());
+                else
+                    keyframeValue.addProperty(resolvedProperty);
+            }
             if (value->isRevertValue())
                 hasRevert = true;
         }

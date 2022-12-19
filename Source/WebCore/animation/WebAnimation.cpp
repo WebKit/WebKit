@@ -1561,13 +1561,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
-    auto effectAnimatesProperty = [](KeyframeEffect& effect, AnimatableProperty property) {
-        return WTF::switchOn(property,
-            [&] (CSSPropertyID propertyId) { return effect.animatedProperties().contains(propertyId); },
-            [&] (const AtomString& customProperty) { return effect.animatedCustomProperties().contains(customProperty); }
-        );
-    };
-
     auto commitProperty = [&](AnimatableProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
@@ -1584,7 +1577,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         for (const auto& effectInStack : keyframeStack.sortedEffects()) {
             if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this))
                 break;
-            if (effectAnimatesProperty(*effectInStack, property))
+            if (effectInStack->animatedProperties().contains(property))
                 effectInStack->animation()->resolve(*animatedStyle, { nullptr });
             if (effectInStack->animation() == this)
                 break;
@@ -1607,21 +1600,18 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one
     // animation effect associated with animation whose effect target is target.
-    HashSet<CSSPropertyID> targetedProperties;
+    HashSet<AnimatableProperty> targetedProperties;
     for (auto property : effect->animatedProperties()) {
-        for (auto longhand : shorthandForProperty(property))
-            targetedProperties.add(longhand);
+        if (std::holds_alternative<CSSPropertyID>(property)) {
+            for (auto longhand : shorthandForProperty(std::get<CSSPropertyID>(property)))
+                targetedProperties.add(longhand);
+        }
         targetedProperties.add(property);
     }
     // 2.5 For each property, property, in targeted properties:
     auto didMutate = false;
-    for (auto property : targetedProperties) {
-        if (property != CSSPropertyCustom)
-            didMutate = commitProperty(property) || didMutate;
-    }
-    auto customProperties = effect->animatedCustomProperties();
-    for (auto customProperty : customProperties)
-        didMutate = commitProperty(customProperty) || didMutate;
+    for (auto property : targetedProperties)
+        didMutate = commitProperty(property) || didMutate;
 
     if (didMutate)
         styledElement.setAttribute(HTMLNames::styleAttr, inlineStyle->asTextAtom());

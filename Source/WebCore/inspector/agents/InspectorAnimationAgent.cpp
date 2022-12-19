@@ -51,6 +51,7 @@
 #include "Styleable.h"
 #include "TimingFunction.h"
 #include "WebAnimation.h"
+#include "WebAnimationTypes.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
@@ -146,16 +147,22 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
                 keyframePayload->setEasing(timingFunction->cssText());
 
             StringBuilder stylePayloadBuilder;
-            auto& cssPropertyIds = blendingKeyframe.properties();
-            size_t count = cssPropertyIds.size();
-            for (auto cssPropertyId : cssPropertyIds) {
+            auto& properties = blendingKeyframe.properties();
+            size_t count = properties.size();
+            for (auto property : properties) {
                 --count;
-                if (cssPropertyId == CSSPropertyCustom)
-                    continue;
-
-                stylePayloadBuilder.append(nameString(cssPropertyId), ": ");
-                if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
-                    stylePayloadBuilder.append(value->cssText());
+                WTF::switchOn(property,
+                    [&] (CSSPropertyID cssPropertyId) {
+                        stylePayloadBuilder.append(nameString(cssPropertyId), ": ");
+                        if (auto value = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                            stylePayloadBuilder.append(value->cssText());
+                    },
+                    [&] (const AtomString& customProperty) {
+                        stylePayloadBuilder.append(customProperty, ": ");
+                        if (auto value = computedStyleExtractor.customPropertyValue(customProperty))
+                            stylePayloadBuilder.append(value->cssText());
+                    }
+                );
                 stylePayloadBuilder.append(';');
                 if (count > 0)
                     stylePayloadBuilder.append(' ');

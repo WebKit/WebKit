@@ -28,14 +28,6 @@ import unittest
 
 from webkitpy.common import message_pool
 
-_test_description = re.compile(r"(\w+) \(([\w.]+)\)")
-
-
-def unit_test_name(test):
-    m = _test_description.match(str(test))
-    return "%s.%s" % (m.group(2), m.group(1))
-
-
 class Runner(object):
     def __init__(self, printer, loader):
         self.printer = printer
