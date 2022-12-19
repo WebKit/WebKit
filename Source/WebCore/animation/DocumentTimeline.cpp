@@ -246,9 +246,15 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return RenderStyle::defaultStyle();
     }();
 
-    HashSet<CSSPropertyID> propertiesToMatch;
-    for (auto cssProperty : keyframeEffect->animatedProperties())
-        propertiesToMatch.add(CSSProperty::resolveDirectionAwareProperty(cssProperty, style.direction(), style.writingMode()));
+    auto resolvedProperty = [&] (AnimatableProperty property) -> AnimatableProperty {
+        if (std::holds_alternative<CSSPropertyID>(property))
+            return CSSProperty::resolveDirectionAwareProperty(std::get<CSSPropertyID>(property), style.direction(), style.writingMode());
+        return property;
+    };
+
+    HashSet<AnimatableProperty> propertiesToMatch;
+    for (auto property : keyframeEffect->animatedProperties())
+        propertiesToMatch.add(resolvedProperty(property));
 
     auto protectedAnimations = [&]() -> Vector<RefPtr<WebAnimation>> {
         if (auto* effectStack = target->keyframeEffectStack()) {
@@ -267,9 +273,8 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
             auto* effectWithHigherCompositeOrder = animationWithHigherCompositeOrder->effect();
             if (is<KeyframeEffect>(effectWithHigherCompositeOrder)) {
                 auto* keyframeEffectWithHigherCompositeOrder = downcast<KeyframeEffect>(effectWithHigherCompositeOrder);
-                for (auto cssProperty : keyframeEffectWithHigherCompositeOrder->animatedProperties()) {
-                    auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, style.direction(), style.writingMode());
-                    if (propertiesToMatch.remove(resolvedProperty) && propertiesToMatch.isEmpty())
+                for (auto property : keyframeEffectWithHigherCompositeOrder->animatedProperties()) {
+                    if (propertiesToMatch.remove(resolvedProperty(property)) && propertiesToMatch.isEmpty())
                         break;
                 }
             }

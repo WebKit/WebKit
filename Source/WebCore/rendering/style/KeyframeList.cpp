@@ -26,6 +26,7 @@
 #include "CSSAnimation.h"
 #include "CSSKeyframeRule.h"
 #include "CSSPropertyAnimation.h"
+#include "CSSPropertyNames.h"
 #include "CompositeOperation.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
@@ -80,8 +81,6 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
     auto& insertedKeyframe = m_keyframes[i];
     for (auto& property : insertedKeyframe.properties())
         m_properties.add(property);
-    for (auto& customProperty : insertedKeyframe.customProperties())
-        m_customProperties.add(customProperty);
 }
 
 bool KeyframeList::hasImplicitKeyframes() const
@@ -95,8 +94,6 @@ void KeyframeList::copyKeyframes(KeyframeList& other)
         KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
         for (auto propertyId : keyframe.properties())
             keyframeValue.addProperty(propertyId);
-        for (auto& customProperty : keyframe.customProperties())
-            keyframeValue.addCustomProperty(customProperty);
         keyframeValue.setTimingFunction(keyframe.timingFunction());
         keyframeValue.setCompositeOperation(keyframe.compositeOperation());
         insert(WTFMove(keyframeValue));
@@ -139,8 +136,6 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
     // any 0% and 100% keyframes specify them.
     auto zeroKeyframeImplicitProperties = m_properties;
     auto oneKeyframeImplicitProperties = m_properties;
-    zeroKeyframeImplicitProperties.remove(CSSPropertyCustom);
-    oneKeyframeImplicitProperties.remove(CSSPropertyCustom);
 
     KeyframeValue* implicitZeroKeyframe = nullptr;
     KeyframeValue* implicitOneKeyframe = nullptr;
@@ -169,21 +164,21 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
 
     for (auto& keyframe : m_keyframes) {
         if (!keyframe.key()) {
-            for (auto cssPropertyId : keyframe.properties())
-                zeroKeyframeImplicitProperties.remove(cssPropertyId);
+            for (auto property : keyframe.properties())
+                zeroKeyframeImplicitProperties.remove(property);
             if (!implicitZeroKeyframe && isSuitableKeyframeForImplicitValues(keyframe))
                 implicitZeroKeyframe = &keyframe;
         }
     }
 
-    auto addImplicitKeyframe = [&](double key, const HashSet<CSSPropertyID>& implicitProperties, const StyleRuleKeyframe& keyframeRule, KeyframeValue* existingImplicitKeyframeValue) {
+    auto addImplicitKeyframe = [&](double key, const HashSet<AnimatableProperty>& implicitProperties, const StyleRuleKeyframe& keyframeRule, KeyframeValue* existingImplicitKeyframeValue) {
         // If we're provided an existing implicit keyframe, we need to add all the styles for the implicit properties.
         if (existingImplicitKeyframeValue) {
             ASSERT(existingImplicitKeyframeValue->style());
             auto keyframeStyle = RenderStyle::clonePtr(*existingImplicitKeyframeValue->style());
-            for (auto cssPropertyId : implicitProperties) {
-                CSSPropertyAnimation::blendProperty(effect, cssPropertyId, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace);
-                existingImplicitKeyframeValue->addProperty(cssPropertyId);
+            for (auto property : implicitProperties) {
+                CSSPropertyAnimation::blendProperty(effect, property, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace);
+                existingImplicitKeyframeValue->addProperty(property);
             }
             existingImplicitKeyframeValue->setStyle(WTFMove(keyframeStyle));
             return;
@@ -192,8 +187,8 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         // Otherwise we create a new keyframe.
         KeyframeValue keyframeValue(key, nullptr);
         keyframeValue.setStyle(styleResolver.styleForKeyframe(element, underlyingStyle, { nullptr }, keyframeRule, keyframeValue));
-        for (auto cssPropertyId : implicitProperties)
-            keyframeValue.addProperty(cssPropertyId);
+        for (auto property : implicitProperties)
+            keyframeValue.addProperty(property);
         insert(WTFMove(keyframeValue));
     };
 
@@ -202,8 +197,8 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
 
     for (auto& keyframe : m_keyframes) {
         if (keyframe.key() == 1) {
-            for (auto cssPropertyId : keyframe.properties())
-                oneKeyframeImplicitProperties.remove(cssPropertyId);
+            for (auto property : keyframe.properties())
+                oneKeyframeImplicitProperties.remove(property);
             if (!implicitOneKeyframe && isSuitableKeyframeForImplicitValues(keyframe))
                 implicitOneKeyframe = &keyframe;
         }
@@ -215,11 +210,8 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
 
 bool KeyframeList::containsAnimatableProperty() const
 {
-    if (!m_customProperties.isEmpty())
-        return true;
-
-    for (auto cssPropertyId : m_properties) {
-        if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId))
+    for (auto property : m_properties) {
+        if (CSSPropertyAnimation::isPropertyAnimatable(property))
             return true;
     }
     return false;
@@ -243,5 +235,26 @@ bool KeyframeList::usesContainerUnits() const
     return false;
 }
 
+void KeyframeList::addProperty(AnimatableProperty property)
+{
+    ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
+    m_properties.add(property);
+}
+
+bool KeyframeList::containsProperty(AnimatableProperty property) const
+{
+    return m_properties.contains(property);
+}
+
+void KeyframeValue::addProperty(AnimatableProperty property)
+{
+    ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
+    m_properties.add(property);
+}
+
+bool KeyframeValue::containsProperty(AnimatableProperty property) const
+{
+    return m_properties.contains(property);
+}
 
 } // namespace WebCore

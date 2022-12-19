@@ -41,10 +41,10 @@ class RenderStyle;
 
 class CSSPropertyAnimation {
 public:
-    static bool isPropertyAnimatable(CSSPropertyID);
+    static bool isPropertyAnimatable(AnimatableProperty);
     static bool isPropertyAdditiveOrCumulative(AnimatableProperty);
     static bool propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, AnimatableProperty, const RenderStyle& a, const RenderStyle& b);
-    static bool animationOfPropertyIsAccelerated(CSSPropertyID);
+    static bool animationOfPropertyIsAccelerated(AnimatableProperty);
     static bool propertiesEqual(CSSPropertyID, const RenderStyle& a, const RenderStyle& b);
     static bool canPropertyBeInterpolated(CSSPropertyID, const RenderStyle& a, const RenderStyle& b);
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
