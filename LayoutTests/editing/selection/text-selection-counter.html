@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script>
+function selectRange(startElement, startIndex, endElement, endIndex) {
+  var range = document.createRange();
+  range.setStart(startElement, startIndex);
+  range.setEnd(endElement, endIndex);
+  window.getSelection().addRange(range);
+}
+
+function selectNode(element) {
+  var range = document.createRange();
+  range.selectNode(element);
+  window.getSelection().addRange(range);
+}
+</script>
+<style>
+  span { color: transparent }
+  span::after { content: counter(dummy) }
+  span::selection { background: transparent; color: initial }
+</style>
+<p>You should see the word PASS two times below (no zeros).</p>
+<div id="select">
+  <span>PASS</span><span>PASS</span>
+</div>
+<script>
+  selectNode(select);
+</script>
