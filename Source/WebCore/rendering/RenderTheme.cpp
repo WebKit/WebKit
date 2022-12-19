@@ -588,7 +588,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& ren
     };
 }
 
-bool RenderTheme::paint(const RenderBox& box, const ControlPart& part, const PaintInfo& paintInfo, const LayoutRect& rect)
+bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting

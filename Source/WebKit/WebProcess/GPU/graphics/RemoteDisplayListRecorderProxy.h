@@ -123,6 +123,7 @@ private:
     void recordStrokePath(const WebCore::Path&) final;
     void recordStrokeEllipse(const WebCore::FloatRect&) final;
     void recordClearRect(const WebCore::FloatRect&) final;
+    void recordDrawControlPart(WebCore::ControlPart&, const WebCore::FloatRect&, float deviceScaleFactor, const WebCore::ControlStyle&) final;
 #if USE(CG)
     void recordApplyStrokePattern() final;
     void recordApplyFillPattern() final;

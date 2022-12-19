@@ -311,6 +311,7 @@ def types_that_cannot_be_forward_declared():
         'PlatformXR::VisibilityState',
         'String',
         'WebCore::BackForwardItemIdentifier',
+        'WebCore::ControlStyle',
         'WebCore::DestinationColorSpace',
         'WebCore::DiagnosticLoggingDomain',
         'WebCore::DictationContext',

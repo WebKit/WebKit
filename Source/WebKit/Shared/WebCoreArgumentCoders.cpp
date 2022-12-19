@@ -44,6 +44,7 @@
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
 #include <WebCore/CompositionUnderline.h>
+#include <WebCore/ControlPart.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMCacheEngine.h>
@@ -74,6 +75,7 @@
 #include <WebCore/Matrix3DTransformOperation.h>
 #include <WebCore/MatrixTransformOperation.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/MeterPart.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PerspectiveTransformOperation.h>
@@ -1510,6 +1512,138 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
         return WTFMove(*image);
     }
 #endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+template<typename Encoder>
+void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& part)
+{
+    encoder << part.type();
+
+    switch (part.type()) {
+    case WebCore::ControlPartType::NoControl:
+    case WebCore::ControlPartType::Auto:
+        break;
+
+    case WebCore::ControlPartType::Checkbox:
+    case WebCore::ControlPartType::Radio:
+    case WebCore::ControlPartType::PushButton:
+    case WebCore::ControlPartType::SquareButton:
+    case WebCore::ControlPartType::Button:
+    case WebCore::ControlPartType::DefaultButton:
+    case WebCore::ControlPartType::Listbox:
+    case WebCore::ControlPartType::Menulist:
+    case WebCore::ControlPartType::MenulistButton:
+        break;
+
+    case WebCore::ControlPartType::Meter:
+        encoder << downcast<WebCore::MeterPart>(part);
+        break;
+
+    case WebCore::ControlPartType::ProgressBar:
+    case WebCore::ControlPartType::SliderHorizontal:
+    case WebCore::ControlPartType::SliderVertical:
+    case WebCore::ControlPartType::SearchField:
+#if ENABLE(APPLE_PAY)
+    case WebCore::ControlPartType::ApplePayButton:
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case WebCore::ControlPartType::Attachment:
+    case WebCore::ControlPartType::BorderlessAttachment:
+#endif
+    case WebCore::ControlPartType::TextArea:
+    case WebCore::ControlPartType::TextField:
+    case WebCore::ControlPartType::CapsLockIndicator:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebCore::ControlPartType::ColorWell:
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    case WebCore::ControlPartType::ImageControlsButton:
+#endif
+    case WebCore::ControlPartType::InnerSpinButton:
+#if ENABLE(DATALIST_ELEMENT)
+    case WebCore::ControlPartType::ListButton:
+#endif
+    case WebCore::ControlPartType::SearchFieldDecoration:
+    case WebCore::ControlPartType::SearchFieldResultsDecoration:
+    case WebCore::ControlPartType::SearchFieldResultsButton:
+    case WebCore::ControlPartType::SearchFieldCancelButton:
+    case WebCore::ControlPartType::SliderThumbHorizontal:
+    case WebCore::ControlPartType::SliderThumbVertical:
+        break;
+    }
+}
+
+template
+void ArgumentCoder<ControlPart>::encode<Encoder>(Encoder&, const ControlPart&);
+template
+void ArgumentCoder<ControlPart>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const ControlPart&);
+
+std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::ControlPartType> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    switch (*type) {
+    case WebCore::ControlPartType::NoControl:
+    case WebCore::ControlPartType::Auto:
+        break;
+
+    case WebCore::ControlPartType::Checkbox:
+    case WebCore::ControlPartType::Radio:
+    case WebCore::ControlPartType::PushButton:
+    case WebCore::ControlPartType::SquareButton:
+    case WebCore::ControlPartType::Button:
+    case WebCore::ControlPartType::DefaultButton:
+    case WebCore::ControlPartType::Listbox:
+    case WebCore::ControlPartType::Menulist:
+    case WebCore::ControlPartType::MenulistButton:
+        break;
+
+    case WebCore::ControlPartType::Meter: {
+        std::optional<Ref<WebCore::MeterPart>> meterPart;
+        decoder >> meterPart;
+        if (meterPart)
+            return WTFMove(*meterPart);
+        break;
+    }
+
+    case WebCore::ControlPartType::ProgressBar:
+    case WebCore::ControlPartType::SliderHorizontal:
+    case WebCore::ControlPartType::SliderVertical:
+    case WebCore::ControlPartType::SearchField:
+#if ENABLE(APPLE_PAY)
+    case WebCore::ControlPartType::ApplePayButton:
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case WebCore::ControlPartType::Attachment:
+    case WebCore::ControlPartType::BorderlessAttachment:
+#endif
+    case WebCore::ControlPartType::TextArea:
+    case WebCore::ControlPartType::TextField:
+    case WebCore::ControlPartType::CapsLockIndicator:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebCore::ControlPartType::ColorWell:
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    case WebCore::ControlPartType::ImageControlsButton:
+#endif
+    case WebCore::ControlPartType::InnerSpinButton:
+#if ENABLE(DATALIST_ELEMENT)
+    case WebCore::ControlPartType::ListButton:
+#endif
+    case WebCore::ControlPartType::SearchFieldDecoration:
+    case WebCore::ControlPartType::SearchFieldResultsDecoration:
+    case WebCore::ControlPartType::SearchFieldResultsButton:
+    case WebCore::ControlPartType::SearchFieldCancelButton:
+    case WebCore::ControlPartType::SliderThumbHorizontal:
+    case WebCore::ControlPartType::SliderThumbVertical:
+        break;
     }
 
     ASSERT_NOT_REACHED();

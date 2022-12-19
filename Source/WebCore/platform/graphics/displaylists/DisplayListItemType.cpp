@@ -154,6 +154,8 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(StrokeEllipse);
     case ItemType::ClearRect:
         return sizeof(ClearRect);
+    case ItemType::DrawControlPart:
+        return sizeof(DrawControlPart);
     case ItemType::BeginTransparencyLayer:
         return sizeof(BeginTransparencyLayer);
     case ItemType::EndTransparencyLayer:
@@ -206,6 +208,7 @@ bool isDrawingItem(ItemType type)
         return false;
     case ItemType::BeginTransparencyLayer:
     case ItemType::ClearRect:
+    case ItemType::DrawControlPart:
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
     case ItemType::DrawFilteredImageBuffer:
@@ -283,6 +286,7 @@ bool isInlineItem(ItemType type)
     switch (type) {
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
+    case ItemType::DrawControlPart:
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:

@@ -110,6 +110,7 @@ private:
     void recordStrokePath(const Path&) final;
     void recordStrokeEllipse(const FloatRect&) final;
     void recordClearRect(const FloatRect&) final;
+    void recordDrawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) final;
 #if USE(CG)
     void recordApplyStrokePattern() final;
     void recordApplyFillPattern() final;

@@ -421,6 +421,19 @@ void ClearRect::apply(GraphicsContext& context) const
     context.clearRect(m_rect);
 }
 
+DrawControlPart::DrawControlPart(ControlPart& part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+    : m_part(part)
+    , m_rect(rect)
+    , m_deviceScaleFactor(deviceScaleFactor)
+    , m_style(style)
+{
+}
+
+void DrawControlPart::apply(GraphicsContext& context)
+{
+    context.drawControlPart(m_part, m_rect, m_deviceScaleFactor, m_style);
+}
+
 void BeginTransparencyLayer::apply(GraphicsContext& context) const
 {
     context.beginTransparencyLayer(m_opacity);
@@ -516,6 +529,7 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
     case ItemType::ClearRect: ts << "clear-rect"; break;
+    case ItemType::DrawControlPart: ts << "draw-control-part"; break;
     case ItemType::BeginTransparencyLayer: ts << "begin-transparency-layer"; break;
     case ItemType::EndTransparencyLayer: ts << "end-transparency-layer"; break;
 #if USE(CG)
@@ -860,6 +874,14 @@ void dumpItem(TextStream& ts, const ClearRect& item, OptionSet<AsTextFlag>)
     ts.dumpProperty("rect", item.rect());
 }
 
+void dumpItem(TextStream& ts, const DrawControlPart& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("type", item.type());
+    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("device-scale-factor", item.deviceScaleFactor());
+    ts.dumpProperty("style", item.style());
+}
+
 void dumpItem(TextStream& ts, const BeginTransparencyLayer& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("opacity", item.opacity());
@@ -1042,6 +1064,9 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         break;
     case ItemType::ClearRect:
         dumpItem(ts, item.get<ClearRect>(), flags);
+        break;
+    case ItemType::DrawControlPart:
+        dumpItem(ts, item.get<DrawControlPart>(), flags);
         break;
     case ItemType::BeginTransparencyLayer:
         dumpItem(ts, item.get<BeginTransparencyLayer>(), flags);

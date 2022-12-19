@@ -369,6 +369,11 @@ void RecorderImpl::recordClearRect(const FloatRect& rect)
     append<ClearRect>(rect);
 }
 
+void RecorderImpl::recordDrawControlPart(ControlPart& part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+{
+    append<DrawControlPart>(part, rect, deviceScaleFactor, style);
+}
+
 #if USE(CG)
 
 void RecorderImpl::recordApplyStrokePattern()

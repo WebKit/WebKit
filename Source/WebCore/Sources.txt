@@ -2201,6 +2201,7 @@ platform/graphics/WidthIterator.cpp
 platform/graphics/controls/ControlFactory.cpp
 platform/graphics/controls/ControlPart.cpp
 platform/graphics/controls/ControlPartType.cpp
+platform/graphics/controls/ControlStyle.cpp
 platform/graphics/controls/MeterPart.cpp
 platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp

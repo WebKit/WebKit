@@ -110,6 +110,7 @@ class AuthenticationChallenge;
 class BlobPart;
 class CertificateInfo;
 class Color;
+class ControlPart;
 class SharedBuffer;
 class CSPViolationReportBody;
 class Credential;
@@ -488,6 +489,12 @@ template<> struct ArgumentCoder<WebCore::SystemImage> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::SystemImage&);
     static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::ControlPart> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::ControlPart&);
+    static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

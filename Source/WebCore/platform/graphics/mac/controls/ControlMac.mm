@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-ControlMac::ControlMac(const ControlPart& owningPart, ControlFactoryMac& controlFactory)
+ControlMac::ControlMac(ControlPart& owningPart, ControlFactoryMac& controlFactory)
     : PlatformControl(owningPart)
     , m_controlFactory(controlFactory)
 {

@@ -39,7 +39,7 @@ class IntSize;
 
 class ControlMac : public PlatformControl {
 public:
-    ControlMac(const ControlPart&, ControlFactoryMac&);
+    ControlMac(ControlPart&, ControlFactoryMac&);
 
 protected:
     using PlatformControl::draw;

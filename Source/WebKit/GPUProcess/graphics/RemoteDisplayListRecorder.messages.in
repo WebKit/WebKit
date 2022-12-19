@@ -89,6 +89,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     StrokePath(WebCore::Path path) StreamBatched
     StrokeEllipse(WebCore::FloatRect rect) StreamBatched
     ClearRect(WebCore::FloatRect rect)
+    DrawControlPart(Ref<WebCore::ControlPart> part, WebCore::FloatRect rect, float deviceScaleFactor, WebCore::ControlStyle style)
 #if USE(CG)
     ApplyStrokePattern()
     ApplyFillPattern()

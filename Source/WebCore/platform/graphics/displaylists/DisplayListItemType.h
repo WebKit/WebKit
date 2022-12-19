@@ -55,6 +55,7 @@ enum class ItemType : uint8_t {
     ClipToImageBuffer,
     ClipOutToPath,
     ClipPath,
+    DrawControlPart,
     DrawFilteredImageBuffer,
     DrawGlyphs,
     DrawDecomposedGlyphs,
