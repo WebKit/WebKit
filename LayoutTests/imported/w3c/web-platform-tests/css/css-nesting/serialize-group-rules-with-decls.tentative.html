@@ -55,7 +55,7 @@
 
   // They are not removed from regular rules.
   test(() => {
-    assert_becomes("div { & { color: red; } }", "div {\n  & { color: red; }\n}");
+    assert_becomes("div { & { color: red; } }", "div {\n & { color: red; }\n}");
   });
 
   // Empty rules (confusingly?) serialize different between style rules

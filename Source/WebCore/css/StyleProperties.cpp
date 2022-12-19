@@ -1848,6 +1848,11 @@ Ref<MutableStyleProperties> MutableStyleProperties::create(Vector<CSSProperty>&&
     return adoptRef(*new MutableStyleProperties(WTFMove(properties)));
 }
 
+Ref<MutableStyleProperties> MutableStyleProperties::createEmpty()
+{
+    return adoptRef(*new MutableStyleProperties({ }));
+}
+
 String StyleProperties::PropertyReference::cssName() const
 {
     if (id() == CSSPropertyCustom)

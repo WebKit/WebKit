@@ -119,10 +119,30 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
 String CSSStyleRule::cssText() const
 {
-    String declarations = m_styleRule->properties().asText();
-    if (declarations.isEmpty())
-        return makeString(selectorText(), " { }");
-    return makeString(selectorText(), " { ", declarations, " }");
+    StringBuilder builder;
+    builder.append(selectorText());
+    builder.append(" {");
+
+    auto declarations = m_styleRule->properties().asText();
+    const auto& nestedRules = m_styleRule->nestedRules();
+
+    if (nestedRules.isEmpty()) {
+        if (!declarations.isEmpty())
+            builder.append(' ', declarations, " }");
+        else
+            builder.append(" }");
+
+        return builder.toString();
+    }
+
+    builder.append("\n  ", declarations);
+    for (const auto& nestedRule : nestedRules) {
+        auto wrapped = nestedRule->createCSSOMWrapper();
+        auto text = wrapped->cssText();
+        builder.append(text, "\n}");
+    }
+
+    return builder.toString();
 }
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)

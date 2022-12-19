@@ -162,6 +162,11 @@ CSSRule* CSSComputedStyleDeclaration::parentRule() const
     return nullptr;
 }
 
+CSSRule* CSSComputedStyleDeclaration::cssRules() const
+{
+    return nullptr;
+}
+
 RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName)) {

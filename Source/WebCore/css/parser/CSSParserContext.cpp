@@ -89,6 +89,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
     , subgridEnabled { document.settings().subgridEnabled() }
     , masonryEnabled { document.settings().masonryEnabled() }
+    , cssNestingEnabled { document.settings().cssNestingEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -123,6 +124,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.gradientInterpolationColorSpacesEnabled == b.gradientInterpolationColorSpacesEnabled
         && a.subgridEnabled == b.subgridEnabled
         && a.masonryEnabled == b.masonryEnabled
+        && a.cssNestingEnabled == b.cssNestingEnabled
         && a.propertySettings == b.propertySettings
     ;
 }
@@ -151,7 +153,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.gradientInterpolationColorSpacesEnabled   << 17
         | context.subgridEnabled                            << 18
         | context.masonryEnabled                            << 19
-        | (uint64_t)context.mode                            << 20; // This is multiple bits, so keep it last.
+        | context.cssNestingEnabled                         << 20
+        | (uint64_t)context.mode                            << 21; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

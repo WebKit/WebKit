@@ -29,6 +29,7 @@ typedef USVString CSSOMString;
     Exposed=Window,
 ] interface CSSStyleDeclaration {
     [CEReactions] attribute CSSOMString cssText;
+    readonly attribute CSSRuleList cssRules;
     readonly attribute unsigned long length;
     getter CSSOMString item(unsigned long index);
     CSSOMString getPropertyValue(CSSOMString property);

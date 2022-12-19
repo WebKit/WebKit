@@ -413,20 +413,36 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
     }
 }
 
-RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRulesType allowedRules)
+// https://drafts.csswg.org/css-syntax/#consume-a-qualified-rule
+RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRulesType allowedRules, RefPtr<StyleRule> parentRule)
 {
+    auto isNestedContext = [&]() {
+        return parentRule && context().cssNestingEnabled;
+    };
+
     const CSSParserToken* preludeStart = &range.peek();
-    while (!range.atEnd() && range.peek().type() != LeftBraceToken)
+
+    // Parsing a selector (aka a component value) should stop at the first semicolon (and goes to error recovery)
+    // instead of consuming the whole list of declaration (in nested context).
+    // At top level (aka non nested context), it's the normal rule list error recovery and we don't need this.
+    while (!range.atEnd() && range.peek().type() != LeftBraceToken && (!isNestedContext() || range.peek().type() != SemicolonToken))
         range.consumeComponentValue();
 
     if (range.atEnd())
         return nullptr; // Parse error, EOF instead of qualified rule block
 
+    // See comment above
+    if (isNestedContext() && range.peek().type() == SemicolonToken) {
+        range.consume();
+        return nullptr;
+    }
+
     CSSParserTokenRange prelude = range.makeSubRange(preludeStart, &range.peek());
     CSSParserTokenRange block = range.consumeBlockCheckingForEditability(m_styleSheet.get());
 
     if (allowedRules <= RegularRules)
-        return consumeStyleRule(prelude, block);
+        return consumeStyleRule(prelude, block, parentRule);
+    
     if (allowedRules == KeyframeRules)
         return consumeKeyframeStyleRule(prelude, block);
 
@@ -1028,20 +1044,33 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
     wrapper.observer().endRuleHeader(wrapper.endOffset(originalRange));
 }
 
-RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block, RefPtr<StyleRule> parentRule)
 {
-    auto selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get());
+    auto selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get(), parentRule ? CSSSelectorParser::IsNestedContext::Yes : CSSSelectorParser::IsNestedContext::No);
     if (!selectorList)
         return nullptr; // Parse error, invalid selector list
 
     if (m_observerWrapper)
         observeSelectors(*m_observerWrapper, prelude);
     
-    consumeDeclarationList(block, StyleRuleType::Style);
-    return StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
+    // Save the already parsed properties to avoid mixing them with the nested ones.
+    ParsedPropertyVector previouslyParsedProperties;
+    std::swap(m_parsedProperties, previouslyParsedProperties);
+    
+    auto styleRule = StyleRule::create(m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
+
+    consumeStyleBlock(block, StyleRuleType::Style, styleRule.ptr());
+    
+    styleRule->setProperties(createStyleProperties(m_parsedProperties, m_context.mode));
+    
+    // Restore the old (= caller) state
+    m_parsedProperties = WTFMove(previouslyParsedProperties);
+    
+    return styleRule;
 }
 
-void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleType ruleType)
+// parentRule determines if we are in a declaration list or in a style block
+void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange range, StyleRuleType ruleType, RefPtr<StyleRule> parentRule)
 {
     ASSERT(m_parsedProperties.isEmpty());
 
@@ -1050,6 +1079,11 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(range));
         m_observerWrapper->skipCommentsBefore(range, true);
     }
+
+    auto consumeErrorUntilSemicolon = [&] () {
+        while (!range.atEnd() && range.peek().type() != SemicolonToken)
+            range.consumeComponentValue();
+    };
 
     while (!range.atEnd()) {
         switch (range.peek().type()) {
@@ -1063,8 +1097,7 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
             if (useObserver)
                 m_observerWrapper->yieldCommentsBefore(range);
 
-            while (!range.atEnd() && range.peek().type() != SemicolonToken)
-                range.consumeComponentValue();
+            consumeErrorUntilSemicolon();
 
             consumeDeclaration(range.makeSubRange(declarationStart, &range.peek()), ruleType);
 
@@ -1073,13 +1106,26 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
             break;
         }
         case AtKeywordToken: {
-            RefPtr<StyleRuleBase> rule = consumeAtRule(range, NoRules);
+            // FIXME: Add support for nested rules
+            auto rule = consumeAtRule(range, NoRules);
             ASSERT_UNUSED(rule, !rule);
             break;
         }
-        default: // Parse error, unexpected token in declaration list
-            while (!range.atEnd() && range.peek().type() != SemicolonToken)
-                range.consumeComponentValue();
+        default: 
+            if (parentRule && context().cssNestingEnabled) {
+                auto rule = consumeQualifiedRule(range, AllowedRulesType::RegularRules, parentRule);
+                if (!rule)
+                    break;
+                // FIXME: Add support for valid at-rules (@media, ...)
+                if (!rule->isStyleRule())
+                    break;
+                parentRule->appendNestedRule(downcast<StyleRule>(*rule));
+                break;
+            }
+        FALLTHROUGH;
+        case FunctionToken:
+            // Parse error, unexpected token in declaration list
+            consumeErrorUntilSemicolon();
             break;
         }
     }
@@ -1089,6 +1135,16 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
         m_observerWrapper->yieldCommentsBefore(range);
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(range));
     }
+}
+
+void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleType ruleType)
+{
+    consumeDeclarationListOrStyleBlockHelper(range, ruleType, nullptr);
+}
+
+void CSSParserImpl::consumeStyleBlock(CSSParserTokenRange range, StyleRuleType ruleType, RefPtr<StyleRule> parentRule)
+{
+    consumeDeclarationListOrStyleBlockHelper(range, ruleType, parentRule);
 }
 
 static void removeTrailingWhitespace(const CSSParserTokenRange& range, const CSSParserToken*& position)

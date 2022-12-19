@@ -418,6 +418,18 @@ CSSMotionPathEnabled:
     WebCore:
       default: true
 
+CSSNestingEnabled:
+  type: bool
+  humanReadableName: "CSS Nesting"
+  humanReadableDescription: "Enable support for CSS nesting https://www.w3.org/TR/css-nesting-1/"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSOMViewSmoothScrollingEnabled:
   type: bool
   humanReadableName: "CSSOM View Smooth Scrolling"

@@ -96,6 +96,7 @@ struct CSSParserContext {
     bool gradientInterpolationColorSpacesEnabled { false };
     bool subgridEnabled { false };
     bool masonryEnabled { false };
+    bool cssNestingEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

@@ -1168,6 +1168,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         }
     case CSSSelector::PseudoClassHost:
         return FunctionType::CannotCompile;
+    case CSSSelector::PseudoClassParent: // Should have already been replaced by the actual parent selector at this point.
     case CSSSelector::PseudoClassUnknown:
         ASSERT_NOT_REACHED();
         return FunctionType::CannotMatchAnything;
