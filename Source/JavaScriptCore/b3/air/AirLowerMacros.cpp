@@ -139,16 +139,16 @@ void lowerMacros(Code& code)
                 if (!isX86())
                     return;
 
-                Tmp lhs = inst.args[1].tmp();
-                Tmp rhs = inst.args[2].tmp();
-                Tmp dst = inst.args[3].tmp(); // Bitmask is passed via dst.
+                Tmp lhs = inst.args[0].tmp();
+                Tmp rhs = inst.args[1].tmp();
+                Tmp dst = inst.args[2].tmp(); // Bitmask is passed via dst.
                 auto* origin = inst.origin;
 
                 Tmp scratch = code.newTmp(FP);
 
-                insertionSet.insert(instIndex, VectorAnd, origin, lhs, dst, scratch);
-                insertionSet.insert(instIndex, VectorAndnot, origin, rhs, dst, dst);
-                insertionSet.insert(instIndex, VectorOr, origin, scratch, dst, dst);
+                insertionSet.insert(instIndex, VectorAnd, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), lhs, dst, scratch);
+                insertionSet.insert(instIndex, VectorAndnot, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), rhs, dst, dst);
+                insertionSet.insert(instIndex, VectorOr, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), scratch, dst, dst);
 
                 inst = Inst();
             };
@@ -247,7 +247,7 @@ void lowerMacros(Code& code)
                 insertionSet.insert(instIndex, VectorOr, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), tmp, dst, tmp);
                 SIMDLane equivalentIntegerLane = simdInfo.lane == SIMDLane::f32x4 ? SIMDLane::i32x4 : SIMDLane::i64x2;
                 insertionSet.insert(instIndex, VectorUshr8, origin, Arg::simdInfo({ equivalentIntegerLane, SIMDSignMode::None }), dst, Arg::imm(simdInfo.lane == SIMDLane::f32x4 ? 10 : 13), dst);
-                insertionSet.insert(instIndex, VectorAndnot, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), dst, tmp, dst);
+                insertionSet.insert(instIndex, VectorAndnot, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), tmp, dst, dst);
 
                 inst = Inst();
             };
@@ -287,7 +287,7 @@ void lowerMacros(Code& code)
                 insertionSet.insert(instIndex, CompareFloatingPointVectorUnordered, origin, Arg::simdInfo(simdInfo), dst, tmp, dst);
                 SIMDLane equivalentIntegerLane = simdInfo.lane == SIMDLane::f32x4 ? SIMDLane::i32x4 : SIMDLane::i64x2;
                 insertionSet.insert(instIndex, VectorUshr8, origin, Arg::simdInfo({ equivalentIntegerLane, SIMDSignMode::None }), dst, Arg::imm(simdInfo.lane == SIMDLane::f32x4 ? 10 : 13), dst);
-                insertionSet.insert(instIndex, VectorAndnot, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), dst, tmp, dst);
+                insertionSet.insert(instIndex, VectorAndnot, origin, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), tmp, dst, dst);
 
                 inst = Inst();
             };
@@ -342,29 +342,6 @@ void lowerMacros(Code& code)
                 insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), gpTmp, control);
 
                 insertionSet.insert(instIndex, VectorSwizzle2, origin, n, n2, control, dst);
-                inst = Inst();
-            };
-
-            auto handleVectorSshr = [&] {
-                SIMDInfo simdInfo = inst.args[0].simdInfo();
-
-                if (!isX86() || simdInfo.lane != SIMDLane::i64x2)
-                    return;
-
-                Tmp vec = inst.args[1].tmp();
-                Arg shift = inst.args[2];
-                Tmp dst = inst.args[3].tmp();
-                auto* origin = inst.origin;
-
-                Tmp lower = code.newTmp(GP);
-                Tmp upper = code.newTmp(GP);
-
-                insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(0), vec, lower);
-                insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(1), vec, upper);
-                insertionSet.insert(instIndex, Rshift64, origin, shift, lower);
-                insertionSet.insert(instIndex, Rshift64, origin, shift, upper);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), lower, dst);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), upper, dst);
                 inst = Inst();
             };
 
@@ -494,9 +471,6 @@ void lowerMacros(Code& code)
                 break;
             case VectorShuffle:
                 handleVectorShuffle();
-                break;
-            case VectorSshr:
-                handleVectorSshr();
                 break;
             case VectorBitwiseSelect:
                 handleVectorBitwiseSelect();

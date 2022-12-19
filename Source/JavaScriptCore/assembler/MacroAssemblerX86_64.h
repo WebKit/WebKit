@@ -2461,39 +2461,39 @@ public:
         switch (cond) {
         case DoubleEqualAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::Equal, right, left, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::EqualAndOrdered, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::Equal, right, left, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::EqualAndOrdered, right, left, dest);
             break;
         case DoubleNotEqualOrUnordered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::NotEqual, right, left, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::NotEqualOrUnordered, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::NotEqual, right, left, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::NotEqualOrUnordered, right, left, dest);
             break;
         case DoubleGreaterThanAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThan, right, left, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThanAndOrdered, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThan, right, left, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThanAndOrdered, right, left, dest);
             break;
         case DoubleGreaterThanOrEqualAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThanOrEqual, right, left, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::GreaterThanOrEqualAndOrdered, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThanOrEqual, right, left, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::GreaterThanOrEqualAndOrdered, right, left, dest);
             break;
         case DoubleLessThanAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThan, right, left, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThanAndOrdered, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThan, right, left, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThanAndOrdered, right, left, dest);
             break;
         case DoubleLessThanOrEqualAndOrdered:
             if (simdInfo.lane == SIMDLane::f32x4)
-                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThanOrEqual, right, left, dest);
+                m_assembler.vcmpps_rrr(PackedCompareCondition::LessThanOrEqualAndOrdered, right, left, dest);
             else
-                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThanOrEqual, right, left, dest);
+                m_assembler.vcmppd_rrr(PackedCompareCondition::LessThanOrEqualAndOrdered, right, left, dest);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2914,20 +2914,28 @@ public:
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        // When comparing min(0.0, -0.0), the WebAssembly semantics of Pmin say we should return 0.0, since
+        // Pmin is defined as right < left ? right : left. However, the vminps instruction breaks ties towards the second
+        // source operand - essentially left < right ? left : right. So we reverse the usual operand order for the
+        // instruction.
         if (simdInfo.lane == SIMDLane::f32x4)
-            m_assembler.vminps_rrr(right, left, dest);
+            m_assembler.vminps_rrr(left, right, dest);
         else
-            m_assembler.vminpd_rrr(right, left, dest);
+            m_assembler.vminpd_rrr(left, right, dest);
     }
 
     void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        // When comparing max(0.0, -0.0), the WebAssembly semantics of Pmax say we should return 0.0, since
+        // Pmax is defined as right > left ? right : left. However, the vmaxps instruction breaks ties towards the second
+        // source operand - essentially left > right ? left : right. So we reverse the usual operand order for the
+        // instruction.
         if (simdInfo.lane == SIMDLane::f32x4)
-            m_assembler.vmaxps_rrr(right, left, dest);
+            m_assembler.vmaxps_rrr(left, right, dest);
         else
-            m_assembler.vmaxpd_rrr(right, left, dest);
+            m_assembler.vmaxpd_rrr(left, right, dest);
     }
 
     void vectorBitwiseSelect(FPRegisterID left, FPRegisterID right, FPRegisterID inputBitsAndDest)
@@ -2946,7 +2954,10 @@ public:
     {
         RELEASE_ASSERT(supportsAVX());
         RELEASE_ASSERT(simdInfo.lane == SIMDLane::v128);
-        m_assembler.vandnps_rrr(right, left, dest);
+        // WebAssembly v128.andnot is equivalent to (v128.and left (v128.not right)). However, the Intel
+        // vandnps instruction negates the first source operand, essentially (v128.and (v128.not left) right).
+        // To achieve correct WebAssembly semantics, we provide left and right in reversed order here.
+        m_assembler.vandnps_rrr(left, right, dest);
     }
 
     void vectorOr(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
@@ -3012,12 +3023,6 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
-    }
-
-    void vectorPopcnt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
-    {
-        ASSERT(simdInfo.lane == SIMDLane::i8x16);
-        UNUSED_PARAM(input); UNUSED_PARAM(dest); UNUSED_PARAM(simdInfo);
     }
 
     using RoundingType = X86Assembler::RoundingType;
@@ -3134,7 +3139,7 @@ public:
 
         using PackedCompareCondition = X86Assembler::PackedCompareCondition;
 
-        m_assembler.vcmppd_rrr(PackedCompareCondition::Equal, src, src, scratchFPR);
+        m_assembler.vcmppd_rrr(PackedCompareCondition::EqualAndOrdered, src, src, scratchFPR);
         move(TrustedImmPtr(masks), scratchGPR);
         m_assembler.vandpd_mrr(0, scratchGPR, scratchFPR, scratchFPR);
         m_assembler.vminpd_rrr(scratchFPR, src, dest);
@@ -3387,6 +3392,75 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid lane kind for unsigned vector left shift.");
         }
+    }
+
+    void vectorUshl8(FPRegisterID input, FPRegisterID shift, FPRegisterID dest, FPRegisterID tmp1, FPRegisterID tmp2)
+    {
+        RELEASE_ASSERT(supportsAVX());
+
+        // Unpack and zero-extend low input bytes.
+        m_assembler.vxorps_rrr(tmp2, tmp2, tmp2);
+        m_assembler.vpunpcklbw_rrr(input, tmp2, tmp1);
+
+        // Word-wise shift low input bytes into tmp1.
+        m_assembler.vpsllw_rrr(shift, tmp1, tmp1);
+
+        // Unpack and zero-extend high input bytes.
+        m_assembler.vpunpckhbw_rrr(input, tmp2, tmp2);
+
+        // Word-wise shift high input bytes into tmp2.
+        m_assembler.vpsllw_rrr(shift, tmp2, tmp2);
+
+        // Mask away higher bits of left-shifted results.
+        m_assembler.vpsllw_i8rr(8, tmp1, tmp1);
+        m_assembler.vpsllw_i8rr(8, tmp2, tmp2);
+        m_assembler.vpsrlw_i8rr(8, tmp1, tmp1);
+        m_assembler.vpsrlw_i8rr(8, tmp2, tmp2);
+
+        // Pack low and high results into destination.
+        m_assembler.vpackuswb_rrr(tmp2, tmp1, dest);
+    }
+
+    void vectorUshr8(FPRegisterID input, FPRegisterID shift, FPRegisterID dest, FPRegisterID tmp1, FPRegisterID tmp2)
+    {
+        RELEASE_ASSERT(supportsAVX());
+
+        // Unpack and zero-extend low input bytes.
+        m_assembler.vxorps_rrr(tmp2, tmp2, tmp2);
+        m_assembler.vpunpcklbw_rrr(input, tmp2, tmp1);
+
+        // Word-wise shift low input bytes into tmp1.
+        m_assembler.vpsrlw_rrr(shift, tmp1, tmp1);
+
+        // Unpack and zero-extend high input bytes.
+        m_assembler.vpunpckhbw_rrr(input, tmp2, tmp2);
+
+        // Word-wise shift high input bytes into tmp2.
+        m_assembler.vpsrlw_rrr(shift, tmp2, tmp2);
+
+        // Pack low and high results into destination.
+        m_assembler.vpackuswb_rrr(tmp2, tmp1, dest);
+    }
+
+    void vectorSshr8(FPRegisterID input, FPRegisterID shift, FPRegisterID dest, FPRegisterID tmp1, FPRegisterID tmp2)
+    {
+        RELEASE_ASSERT(supportsAVX());
+
+        // Unpack and zero-extend low input bytes.
+        m_assembler.vpmovsxbw_rr(input, tmp1);
+
+        // Word-wise shift low input bytes into tmp1.
+        m_assembler.vpsraw_rrr(shift, tmp1, tmp1);
+
+        // Unpack and sign-extend high input bytes.
+        m_assembler.vpshufd_i8rr(0b00001110, input, tmp2);
+        m_assembler.vpmovsxbw_rr(tmp2, tmp2);
+
+        // Word-wise shift high input bytes into tmp2.
+        m_assembler.vpsraw_rrr(shift, tmp2, tmp2);
+
+        // Pack low and high results into destination.
+        m_assembler.vpacksswb_rrr(tmp2, tmp1, dest);
     }
 
     void vectorSshr8(SIMDInfo simdInfo, FPRegisterID input, TrustedImm32 shift, FPRegisterID dest)

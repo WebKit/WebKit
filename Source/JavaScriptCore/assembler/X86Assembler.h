@@ -309,8 +309,10 @@ private:
         OP2_DIVSD_VsdWsd                = 0x5E,
         OP2_MAXPS_VpsWps                = 0x5F,
         OP2_MAXPD_VpdWpd                = 0x5F,
+        OP2_PUNPCKLBW_VdqWdq            = 0x60,
         OP2_PACKSSWB_VdqWdq             = 0x63,
         OP2_PACKUSWB_VdqWdq             = 0x67,
+        OP2_PUNPCKHBW_VdqWdq            = 0x68,
         OP2_PACKSSDW_VdqWdq             = 0x6B,
         OP2_PUNPCKLQDQ_VdqWdq           = 0x6C,
         OP2_MOVD_VdEd                   = 0x6E,
@@ -319,8 +321,10 @@ private:
         OP2_PSHUFD_VdqWdqIb             = 0x70,
         OP2_PSHUFLW_VdqWdqIb            = 0x70,
         OP2_PSHUFHW_VdqWdqIb            = 0x70,
+        OP2_PSLLW_UdqIb                 = 0x71,
         OP2_PSRLW_UdqIb                 = 0x71,
         OP2_PSRAW_UdqIb                 = 0x71,
+        OP2_PSLLD_UdqIb                 = 0x72,
         OP2_PSRLD_UdqIb                 = 0x72,
         OP2_PSRAD_UdqIb                 = 0x72,
         OP2_PSLLQ_UdqIb                 = 0x73,
@@ -2910,14 +2914,22 @@ public:
     };
 
     enum class PackedCompareCondition : uint8_t {
-        Equal = 0,
-        LessThan = 1,
-        LessThanOrEqual = 2,
+        EqualAndOrdered = 0,
+        LessThanAndOrdered = 1,
+        LessThanOrEqualAndOrdered = 2,
         Unordered = 3,
-        NotEqual = 4,
-        GreaterThanOrEqual = 5, // Also called "NotLessThan" in the Intel manual
-        GreaterThan = 6, // Also called "NotLessThanOrEqual" in the Intel manual
-        Ordered = 7
+        NotEqualOrUnordered = 4,
+        NotLessThanOrUnordered = 5,
+        NotLessThanOrEqualOrUnordered = 6,
+        Ordered = 7,
+        EqualOrUnordered = 8,
+        NotGreaterThanOrEqualOrUnordered = 9,
+        NotGreaterThanOrUnordered = 10,
+        False = 11,
+        NotEqualAndOrdered = 12,
+        GreaterThanOrEqualAndOrdered = 13,
+        GreaterThanAndOrdered = 14,
+        True = 15
     };
 
     void cvtdq2ps_rr(XMMRegisterID vn, XMMRegisterID vd)
@@ -4481,6 +4493,22 @@ public:
         m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VBROADCASTSS_VxWd, (RegisterID)dst, (RegisterID)0, base, offset);
     }
 
+    void vpunpcklbw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    {
+        // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
+        // VEX.128.66.0F.WIG 60/r VPUNPCKLBW xmm1, xmm2, xmm3/m128
+        // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PUNPCKLBW_VdqWdq, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+    }
+
+    void vpunpckhbw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
+    {
+        // https://www.felixcloutier.com/x86/punpckhbw:punpckhwd:punpckhdq:punpckhqdq
+        // VEX.128.66.0F.WIG 68/r VPUNPCKHBW xmm1, xmm2, xmm3/m128
+        // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PUNPCKHBW_VdqWdq, (RegisterID)xmm1, (RegisterID)xmm3, (RegisterID)xmm2);
+    }
+
     void vpunpcklqdq_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
         // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
@@ -5228,17 +5256,17 @@ public:
 
     void vcmpleps_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        vcmpps_rrr(PackedCompareCondition::LessThanOrEqual, a, b, dest);
+        vcmpps_rrr(PackedCompareCondition::LessThanOrEqualAndOrdered, a, b, dest);
     }
 
     void vcmpnltps_mrr(int offset, RegisterID base, XMMRegisterID xmm2, XMMRegisterID xmm1)
     {
-        vcmpps_mrr(PackedCompareCondition::GreaterThanOrEqual, offset, base, xmm2, xmm1);
+        vcmpps_mrr(PackedCompareCondition::GreaterThanOrEqualAndOrdered, offset, base, xmm2, xmm1);
     }
 
     void vcmpltps_rrr(XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        vcmpps_rrr(PackedCompareCondition::LessThan, a, b, dest);
+        vcmpps_rrr(PackedCompareCondition::LessThanAndOrdered, a, b, dest);
     }
 
     void vcmpps_rrr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
@@ -5246,10 +5274,18 @@ public:
         // https://www.felixcloutier.com/x86/cmpps
         // VEX.128.0F.WIG C2 /r ib VCMPPS xmm1, xmm2, xmm3/m128, imm8
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    Imm8
-        if (condition == PackedCompareCondition::Equal || condition == PackedCompareCondition::NotEqual)
+        switch (condition) {
+        case PackedCompareCondition::EqualAndOrdered:
+        case PackedCompareCondition::NotEqualOrUnordered:
+        case PackedCompareCondition::Unordered:
+        case PackedCompareCondition::Ordered:
+        case PackedCompareCondition::EqualOrUnordered:
+        case PackedCompareCondition::NotEqualAndOrdered:
             m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_00, OP2_CMPPS_VpsWpsIb, (RegisterID)dest, (RegisterID)b, (RegisterID)a);
-        else
+            break;
+        default:
             m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_00, OP2_CMPPS_VpsWpsIb, (RegisterID)dest, (RegisterID)b, (RegisterID)a);
+        }
         m_formatter.immediate8(static_cast<uint8_t>(condition));
     }
 
@@ -5264,13 +5300,21 @@ public:
 
     void vcmppd_rrr(PackedCompareCondition condition, XMMRegisterID a, XMMRegisterID b, XMMRegisterID dest)
     {
-        // https://www.felixcloutier.com/x86/cmppd.html
+        // https://www.felixcloutier.com/x86/cmppd
         // VEX.128.66.0F.WIG C2 /r ib VCMPPD xmm1, xmm2, xmm3/m128, imm8
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    Imm8
-        if (condition == PackedCompareCondition::Equal || condition == PackedCompareCondition::NotEqual)
+        switch (condition) {
+        case PackedCompareCondition::EqualAndOrdered:
+        case PackedCompareCondition::NotEqualOrUnordered:
+        case PackedCompareCondition::Unordered:
+        case PackedCompareCondition::Ordered:
+        case PackedCompareCondition::EqualOrUnordered:
+        case PackedCompareCondition::NotEqualAndOrdered:
             m_formatter.vexNdsLigWigCommutativeTwoByteOp(PRE_SSE_66, OP2_CMPPD_VpdWpdIb, (RegisterID)dest, (RegisterID)b, (RegisterID)a);
-        else
+            break;
+        default:
             m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_CMPPD_VpdWpdIb, (RegisterID)dest, (RegisterID)b, (RegisterID)a);
+        }
         m_formatter.immediate8(static_cast<uint8_t>(condition));
     }
 
@@ -5313,6 +5357,24 @@ public:
         // B    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    Imm8
         m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_CMPPD_VpdWpdIb, (RegisterID)xmm1, (RegisterID)xmm2, (RegisterID)xmm3);
         m_formatter.immediate8(imm8);
+    }
+
+    void vpsllw_i8rr(uint8_t shift, XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/psrlw:psrld:psrlq
+        // VEX.128.66.0F.WIG 71 /6 ib VPSLLW xmm1, xmm2, imm8
+        // D    NA    VEX.vvvv (w)    ModRM:r/m (r)    imm8    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSLLW_UdqIb, (RegisterID)GROUP14_OP_PSLLQ, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(shift);
+    }
+
+    void vpslld_i8rr(uint8_t shift, XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/psrlw:psrld:psrlq
+        // VEX.128.66.0F.WIG 72 /6 ib VPSLLD xmm1, xmm2, imm8
+        // D    NA    VEX.vvvv (w)    ModRM:r/m (r)    imm8    NA
+        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSLLD_UdqIb, (RegisterID)GROUP14_OP_PSLLQ, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(shift);
     }
 
     void vpsrlw_i8rr(uint8_t shift, XMMRegisterID src, XMMRegisterID dst)
@@ -5622,15 +5684,6 @@ public:
         // VEX.128.66.0F.WIG F2 /r VPSLLD xmm1, xmm2, xmm3/m128
         // C    NA    ModRM:reg (w)    VEX.vvvv (r)    ModRM:r/m (r)    NA
         m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_PSLLD_VdqWdq, (RegisterID)dest, (RegisterID)input, (RegisterID)shift);
-    }
-
-    void vpslld_i8rr(uint8_t imm8, XMMRegisterID input, XMMRegisterID dest)
-    {
-        // https://www.felixcloutier.com/x86/psllw:pslld:psllq
-        // VEX.128.66.0F.WIG 72 /6 ib VPSLLD xmm1, xmm2, imm8
-        // D    NA    VEX.vvvv (w)    ModRM:r/m (r)    imm8    NA
-        m_formatter.vexNdsLigWigTwoByteOp(PRE_SSE_66, OP2_VPSLLD_VxHxWx, (RegisterID)GROUP14_OP_PSLLD, (RegisterID)dest, (RegisterID)input);
-        m_formatter.immediate8(imm8);
     }
 
     void vpsllq_rrr(XMMRegisterID shift, XMMRegisterID input, XMMRegisterID dest)
