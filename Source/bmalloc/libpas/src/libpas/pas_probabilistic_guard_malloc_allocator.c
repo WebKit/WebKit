@@ -237,8 +237,8 @@ bool pas_probabilistic_guard_malloc_should_call_pgm()
     if (!pas_pgm_can_use)
         return false;
 
-    if (counter++ % pas_pgm_random) {
-        counter = 1;
+    if (++counter == pas_pgm_random) {
+        counter = 0;
         return true;
     }
 
