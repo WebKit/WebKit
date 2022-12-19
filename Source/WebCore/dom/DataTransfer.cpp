@@ -273,7 +273,7 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
 
     if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
         if (auto* page = document.page())
-            sanitizedData = page->sanitizeForCopyOrShare(sanitizedData);
+            sanitizedData = page->sanitizeLookalikeCharacters(sanitizedData);
     }
 
     if (sanitizedData != data)

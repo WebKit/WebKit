@@ -655,7 +655,7 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageCocoaAdditions.mm>)
 #include <WebKitAdditions/WebPageCocoaAdditions.mm>
 #else
-URL WebPage::sanitizeForCopyOrShare(const URL& url) const
+URL WebPage::sanitizeLookalikeCharacters(const URL& url) const
 {
     return url;
 }

@@ -1492,7 +1492,7 @@ public:
 
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
 
-    URL sanitizeForCopyOrShare(const URL&) const;
+    URL sanitizeLookalikeCharacters(const URL&) const;
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(WebCore::Element&, WebCore::TextRecognitionOptions&&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { });
@@ -2581,7 +2581,7 @@ inline bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const { 
 #endif
 
 #if !PLATFORM(COCOA)
-inline URL WebPage::sanitizeForCopyOrShare(const URL& url) const { return url; }
+inline URL WebPage::sanitizeLookalikeCharacters(const URL& url) const { return url; }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
