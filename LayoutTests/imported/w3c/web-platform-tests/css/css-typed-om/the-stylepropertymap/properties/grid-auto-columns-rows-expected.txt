@@ -17,7 +17,6 @@ PASS Can set 'grid-auto-columns' to a percent: 3.14%
 PASS Can set 'grid-auto-columns' to a percent: calc(0% + 0%)
 PASS Can set 'grid-auto-columns' to a flexible length: 0fr
 PASS Can set 'grid-auto-columns' to a flexible length: 1fr
-FAIL Can set 'grid-auto-columns' to a flexible length: -3.14fr Invalid values
 PASS Setting 'grid-auto-columns' to a time: 0s throws TypeError
 PASS Setting 'grid-auto-columns' to a time: -3.14ms throws TypeError
 PASS Setting 'grid-auto-columns' to a time: 3.14s throws TypeError
@@ -26,6 +25,7 @@ PASS Setting 'grid-auto-columns' to an angle: 0deg throws TypeError
 PASS Setting 'grid-auto-columns' to an angle: 3.14rad throws TypeError
 PASS Setting 'grid-auto-columns' to an angle: -3.14deg throws TypeError
 PASS Setting 'grid-auto-columns' to an angle: calc(0rad + 0deg) throws TypeError
+PASS Setting 'grid-auto-columns' to a flexible length: -3.14fr throws TypeError
 FAIL Setting 'grid-auto-columns' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'grid-auto-columns' to a number: -3.14 throws TypeError
 PASS Setting 'grid-auto-columns' to a number: 3.14 throws TypeError
@@ -53,7 +53,6 @@ PASS Can set 'grid-auto-rows' to a percent: 3.14%
 PASS Can set 'grid-auto-rows' to a percent: calc(0% + 0%)
 PASS Can set 'grid-auto-rows' to a flexible length: 0fr
 PASS Can set 'grid-auto-rows' to a flexible length: 1fr
-FAIL Can set 'grid-auto-rows' to a flexible length: -3.14fr Invalid values
 PASS Setting 'grid-auto-rows' to a time: 0s throws TypeError
 PASS Setting 'grid-auto-rows' to a time: -3.14ms throws TypeError
 PASS Setting 'grid-auto-rows' to a time: 3.14s throws TypeError
@@ -62,6 +61,7 @@ PASS Setting 'grid-auto-rows' to an angle: 0deg throws TypeError
 PASS Setting 'grid-auto-rows' to an angle: 3.14rad throws TypeError
 PASS Setting 'grid-auto-rows' to an angle: -3.14deg throws TypeError
 PASS Setting 'grid-auto-rows' to an angle: calc(0rad + 0deg) throws TypeError
+PASS Setting 'grid-auto-rows' to a flexible length: -3.14fr throws TypeError
 FAIL Setting 'grid-auto-rows' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'grid-auto-rows' to a number: -3.14 throws TypeError
 PASS Setting 'grid-auto-rows' to a number: 3.14 throws TypeError

@@ -5,14 +5,16 @@ PASS Can set 'grid-template-columns' to CSS-wide keywords: unset
 PASS Can set 'grid-template-columns' to CSS-wide keywords: revert
 PASS Can set 'grid-template-columns' to var() references:  var(--A)
 PASS Can set 'grid-template-columns' to the 'none' keyword: none
-FAIL Setting 'grid-template-columns' to a length: 0px throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-PASS Setting 'grid-template-columns' to a length: -3.14em throws TypeError
-FAIL Setting 'grid-template-columns' to a length: 3.14cm throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-columns' to a length: calc(0px + 0em) throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-columns' to a percent: 0% throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-PASS Setting 'grid-template-columns' to a percent: -3.14% throws TypeError
-FAIL Setting 'grid-template-columns' to a percent: 3.14% throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-columns' to a percent: calc(0% + 0%) throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Can set 'grid-template-columns' to a length: 0px
+PASS Can set 'grid-template-columns' to a length: -3.14em
+PASS Can set 'grid-template-columns' to a length: 3.14cm
+PASS Can set 'grid-template-columns' to a length: calc(0px + 0em)
+PASS Can set 'grid-template-columns' to a percent: 0%
+FAIL Can set 'grid-template-columns' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'grid-template-columns' to a percent: 3.14%
+PASS Can set 'grid-template-columns' to a percent: calc(0% + 0%)
+PASS Can set 'grid-template-columns' to a flexible length: 0fr
+PASS Can set 'grid-template-columns' to a flexible length: 1fr
 PASS Setting 'grid-template-columns' to a time: 0s throws TypeError
 PASS Setting 'grid-template-columns' to a time: -3.14ms throws TypeError
 PASS Setting 'grid-template-columns' to a time: 3.14s throws TypeError
@@ -21,8 +23,6 @@ PASS Setting 'grid-template-columns' to an angle: 0deg throws TypeError
 PASS Setting 'grid-template-columns' to an angle: 3.14rad throws TypeError
 PASS Setting 'grid-template-columns' to an angle: -3.14deg throws TypeError
 PASS Setting 'grid-template-columns' to an angle: calc(0rad + 0deg) throws TypeError
-FAIL Setting 'grid-template-columns' to a flexible length: 0fr throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-columns' to a flexible length: 1fr throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'grid-template-columns' to a flexible length: -3.14fr throws TypeError
 FAIL Setting 'grid-template-columns' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'grid-template-columns' to a number: -3.14 throws TypeError
@@ -39,14 +39,16 @@ PASS Can set 'grid-template-rows' to CSS-wide keywords: unset
 PASS Can set 'grid-template-rows' to CSS-wide keywords: revert
 PASS Can set 'grid-template-rows' to var() references:  var(--A)
 PASS Can set 'grid-template-rows' to the 'none' keyword: none
-FAIL Setting 'grid-template-rows' to a length: 0px throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-PASS Setting 'grid-template-rows' to a length: -3.14em throws TypeError
-FAIL Setting 'grid-template-rows' to a length: 3.14cm throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-rows' to a length: calc(0px + 0em) throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-rows' to a percent: 0% throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-PASS Setting 'grid-template-rows' to a percent: -3.14% throws TypeError
-FAIL Setting 'grid-template-rows' to a percent: 3.14% throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-rows' to a percent: calc(0% + 0%) throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Can set 'grid-template-rows' to a length: 0px
+PASS Can set 'grid-template-rows' to a length: -3.14em
+PASS Can set 'grid-template-rows' to a length: 3.14cm
+PASS Can set 'grid-template-rows' to a length: calc(0px + 0em)
+PASS Can set 'grid-template-rows' to a percent: 0%
+FAIL Can set 'grid-template-rows' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'grid-template-rows' to a percent: 3.14%
+PASS Can set 'grid-template-rows' to a percent: calc(0% + 0%)
+PASS Can set 'grid-template-rows' to a flexible length: 0fr
+PASS Can set 'grid-template-rows' to a flexible length: 1fr
 PASS Setting 'grid-template-rows' to a time: 0s throws TypeError
 PASS Setting 'grid-template-rows' to a time: -3.14ms throws TypeError
 PASS Setting 'grid-template-rows' to a time: 3.14s throws TypeError
@@ -55,8 +57,6 @@ PASS Setting 'grid-template-rows' to an angle: 0deg throws TypeError
 PASS Setting 'grid-template-rows' to an angle: 3.14rad throws TypeError
 PASS Setting 'grid-template-rows' to an angle: -3.14deg throws TypeError
 PASS Setting 'grid-template-rows' to an angle: calc(0rad + 0deg) throws TypeError
-FAIL Setting 'grid-template-rows' to a flexible length: 0fr throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
-FAIL Setting 'grid-template-rows' to a flexible length: 1fr throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'grid-template-rows' to a flexible length: -3.14fr throws TypeError
 FAIL Setting 'grid-template-rows' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
 PASS Setting 'grid-template-rows' to a number: -3.14 throws TypeError

@@ -227,6 +227,8 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     case CSSPropertyFontStretch:
     case CSSPropertyGridAutoColumns:
     case CSSPropertyGridAutoRows:
+    case CSSPropertyGridTemplateColumns:
+    case CSSPropertyGridTemplateRows:
     case CSSPropertyInlineSize:
     case CSSPropertyLineHeight:
     case CSSPropertyMaxBlockSize:
