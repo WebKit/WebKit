@@ -81,8 +81,8 @@ PASS Document.querySelector: Invalid class: .foo..quux
 PASS Document.querySelectorAll: Invalid class: .foo..quux
 PASS Document.querySelector: Invalid class: .bar.
 PASS Document.querySelectorAll: Invalid class: .bar.
-PASS Document.querySelector: Invalid combinator: div & address, p
-PASS Document.querySelectorAll: Invalid combinator: div & address, p
+PASS Document.querySelector: Invalid combinator: div % address, p
+PASS Document.querySelectorAll: Invalid combinator: div % address, p
 PASS Document.querySelector: Invalid combinator: div ++ address, p
 PASS Document.querySelectorAll: Invalid combinator: div ++ address, p
 PASS Document.querySelector: Invalid combinator: div ~~ address, p
@@ -149,8 +149,8 @@ PASS Detached Element.querySelector: Invalid class: .foo..quux
 PASS Detached Element.querySelectorAll: Invalid class: .foo..quux
 PASS Detached Element.querySelector: Invalid class: .bar.
 PASS Detached Element.querySelectorAll: Invalid class: .bar.
-PASS Detached Element.querySelector: Invalid combinator: div & address, p
-PASS Detached Element.querySelectorAll: Invalid combinator: div & address, p
+PASS Detached Element.querySelector: Invalid combinator: div % address, p
+PASS Detached Element.querySelectorAll: Invalid combinator: div % address, p
 PASS Detached Element.querySelector: Invalid combinator: div ++ address, p
 PASS Detached Element.querySelectorAll: Invalid combinator: div ++ address, p
 PASS Detached Element.querySelector: Invalid combinator: div ~~ address, p
@@ -217,8 +217,8 @@ PASS Fragment.querySelector: Invalid class: .foo..quux
 PASS Fragment.querySelectorAll: Invalid class: .foo..quux
 PASS Fragment.querySelector: Invalid class: .bar.
 PASS Fragment.querySelectorAll: Invalid class: .bar.
-PASS Fragment.querySelector: Invalid combinator: div & address, p
-PASS Fragment.querySelectorAll: Invalid combinator: div & address, p
+PASS Fragment.querySelector: Invalid combinator: div % address, p
+PASS Fragment.querySelectorAll: Invalid combinator: div % address, p
 PASS Fragment.querySelector: Invalid combinator: div ++ address, p
 PASS Fragment.querySelectorAll: Invalid combinator: div ++ address, p
 PASS Fragment.querySelector: Invalid combinator: div ~~ address, p
@@ -285,8 +285,8 @@ PASS In-document Element.querySelector: Invalid class: .foo..quux
 PASS In-document Element.querySelectorAll: Invalid class: .foo..quux
 PASS In-document Element.querySelector: Invalid class: .bar.
 PASS In-document Element.querySelectorAll: Invalid class: .bar.
-PASS In-document Element.querySelector: Invalid combinator: div & address, p
-PASS In-document Element.querySelectorAll: Invalid combinator: div & address, p
+PASS In-document Element.querySelector: Invalid combinator: div % address, p
+PASS In-document Element.querySelectorAll: Invalid combinator: div % address, p
 PASS In-document Element.querySelector: Invalid combinator: div ++ address, p
 PASS In-document Element.querySelectorAll: Invalid combinator: div ++ address, p
 PASS In-document Element.querySelector: Invalid combinator: div ~~ address, p
@@ -353,8 +353,8 @@ PASS Empty Element.querySelector: Invalid class: .foo..quux
 PASS Empty Element.querySelectorAll: Invalid class: .foo..quux
 PASS Empty Element.querySelector: Invalid class: .bar.
 PASS Empty Element.querySelectorAll: Invalid class: .bar.
-PASS Empty Element.querySelector: Invalid combinator: div & address, p
-PASS Empty Element.querySelectorAll: Invalid combinator: div & address, p
+PASS Empty Element.querySelector: Invalid combinator: div % address, p
+PASS Empty Element.querySelectorAll: Invalid combinator: div % address, p
 PASS Empty Element.querySelector: Invalid combinator: div ++ address, p
 PASS Empty Element.querySelectorAll: Invalid combinator: div ++ address, p
 PASS Empty Element.querySelector: Invalid combinator: div ~~ address, p

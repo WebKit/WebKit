@@ -32,11 +32,13 @@
 #include "DeprecatedGlobalSettings.h"
 #include "HTMLNames.h"
 #include "SelectorPseudoTypeMap.h"
+#include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -163,6 +165,9 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
         case CSSSelector::PseudoClassRelativeScope:
             return 0;
+        case CSSSelector::PseudoClassParent:
+            ASSERT_NOT_REACHED();
+            return { };
         default:
             return SelectorSpecificityIncrement::ClassB;
         }
@@ -647,6 +652,9 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 break;
             case CSSSelector::PseudoClassOptional:
                 builder.append(":optional");
+                break;
+            case CSSSelector::PseudoClassParent:
+                builder.append('&');
                 break;
             case CSSSelector::PseudoClassIs: {
                 builder.append(":is(");

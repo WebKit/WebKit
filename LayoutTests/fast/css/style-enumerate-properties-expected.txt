@@ -16,7 +16,7 @@ PASS initialIndexOfGroup3 > initialIndexOfGroup2 is true
 PASS initialIndexOfGroup4 > initialIndexOfGroup3 is true
 PASS initialIndexOfGroup5 > initialIndexOfGroup4 is true
 PASS initialIndexOfGroup6 > initialIndexOfGroup5 is true
-PASS group1 is ["0", "1", "cssText", "length", "parentRule", "cssFloat"]
+PASS group1 is ["0", "1", "cssText", "cssRules", "length", "parentRule", "cssFloat"]
 PASS group2 is group2Clone
 PASS group2.some(property => property.startsWith("Webkit")) is true
 PASS group2.some(property => property.startsWith("Epub")) is true

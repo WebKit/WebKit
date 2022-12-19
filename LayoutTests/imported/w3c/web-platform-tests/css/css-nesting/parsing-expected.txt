@@ -1,45 +1,65 @@
 
-FAIL .foo {
+PASS .foo {
   & { color: green; }
-} assert_equals: expected ".foo {\n  & { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo { //color: red; color: green; }
+PASS .foo {
   &.bar { color: green; }
-} assert_equals: expected ".foo {\n  &.bar { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo {
   & .bar { color: green; }
-} assert_equals: expected ".foo {\n  & .bar { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo {
   & > .bar { color: green; }
-} assert_equals: expected ".foo {\n  & > .bar { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo {
   &:is(.bar, &.baz) { color: green; }
-} assert_equals: expected ".foo {\n  &:is(.bar, &.baz) { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo {
   .bar& { color: green; }
-} assert_equals: expected ".foo {\n  .bar& { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo {
   .bar & { color: green; }
-} assert_equals: expected ".foo {\n  .bar & { color: green; }\n}" but got ".foo { }"
-FAIL .foo {
+}
+PASS .foo {
   .bar > & { color: green; }
-} assert_equals: expected ".foo {\n  .bar > & { color: green; }\n}" but got ".foo { }"
-FAIL .foo, .bar {
+}
+PASS .foo, .bar {
   & + .baz, &.qux { color: green; }
-} assert_equals: expected ".foo, .bar {\n  & + .baz, &.qux { color: green; }\n}" but got ".foo, .bar { }"
-FAIL .foo {
+}
+PASS .foo {
   & .bar & .baz & .qux { color: green; }
-} assert_equals: expected ".foo {\n  & .bar & .baz & .qux { color: green; }\n}" but got ".foo { }"
+}
 FAIL .foo {
   @media (min-width: 50px) {
   & { color: green; }
 }
-} assert_equals: expected ".foo {\n  @media (min-width: 50px) {\n  & { color: green; }\n}\n}" but got ".foo { }"
+} assert_equals: expected ".foo {\n  @media (min-width: 50px) { color: green; }\n}" but got ".foo { }"
 FAIL .foo {
   @media (min-width: 50px) { color: green; }
 } assert_equals: expected ".foo {\n  @media (min-width: 50px) { color: green; }\n}" but got ".foo { }"
-FAIL main {
+PASS main {
   & > section, & > article {
   & > header { color: green; }
 }
-} assert_equals: expected "main {\n  & > section, & > article {\n  & > header { color: green; }\n}\n}" but got "main { }"
+}
+PASS .foo {
+  :has(div) { color: green; }
+}
+PASS .foo {
+  .bar {
+  && { color: green; }
+}
+}
+PASS .foo {
+ color: red; ident { color: green; }
+}
+PASS .foo {
+ //color: comment; & { color: green; }
+}
+PASS .foo {
+ .bar {
+  functionalnotation(div) { color: green; }
+
+}
 

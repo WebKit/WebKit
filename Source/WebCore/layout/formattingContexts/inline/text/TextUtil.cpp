@@ -432,25 +432,39 @@ TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
     return TextRun { verticalEllipsisStr->string() };
 }
 
+bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+{
+    ASSERT(inlineTextItem.length());
+    if (!style.hangingPunctuation().contains(HangingPunctuation::First))
+        return false;
+    auto leadingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.start()];
+    return U_GET_GC_MASK(leadingCharacter) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
+}
+
 float TextUtil::hangablePunctuationStartWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
     ASSERT(inlineTextItem.length());
-    auto startPosition = inlineTextItem.start();
-    auto leadingCharacter = inlineTextItem.inlineTextBox().content()[startPosition];
-    auto isHangablePunctuationAtLineStart = U_GET_GC_MASK(leadingCharacter) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
-    if (!isHangablePunctuationAtLineStart)
+    if (!hasHangablePunctuationStart(inlineTextItem, style))
         return { };
+    auto startPosition = inlineTextItem.start();
     return width(inlineTextItem, style.fontCascade(), startPosition, startPosition + 1, { });
+}
+
+bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+{
+    ASSERT(inlineTextItem.length());
+    if (!style.hangingPunctuation().contains(HangingPunctuation::Last))
+        return false;
+    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.end()];
+    return U_GET_GC_MASK(trailingCharacter) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
 }
 
 float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
     ASSERT(inlineTextItem.length());
-    auto endPosition = inlineTextItem.end();
-    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[endPosition];
-    auto isHangablePunctuationAtLineEnd = U_GET_GC_MASK(trailingCharacter) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
-    if (!isHangablePunctuationAtLineEnd)
+    if (!hasHangablePunctuationEnd(inlineTextItem, style))
         return { };
+    auto endPosition = inlineTextItem.end();
     return width(inlineTextItem, style.fontCascade(), endPosition, endPosition + 1, { });
 }
 

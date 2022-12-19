@@ -66,6 +66,8 @@ private:
     void deref() override;
 
     CSSRule* parentRule() const override { return nullptr; }
+    // FIXME: To implement.
+    CSSRule* cssRules() const override { return nullptr; }
     unsigned length() const final;
     String item(unsigned index) const final;
     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;

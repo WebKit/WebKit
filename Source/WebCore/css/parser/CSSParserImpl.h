@@ -73,7 +73,7 @@ public:
     enum AllowedRulesType {
         // As per css-syntax, css-cascade and css-namespaces, @charset rules
         // must come first, followed by @import then @namespace.
-        // AllowImportRules actually means we allow @import and any rules thay
+        // AllowImportRules actually means we allow @import and any rules that
         // may follow it, i.e. @namespace rules and regular rules.
         // AllowCharsetRules and AllowNamespaceRules behave similarly.
         AllowCharsetRules,
@@ -123,7 +123,7 @@ private:
     bool consumeRuleList(CSSParserTokenRange, RuleListType, T callback);
 
     // This function updates the range it's given.
-    RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
+    RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType, RefPtr<StyleRule> parentRule = { });
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleImport> consumeImportRule(CSSParserTokenRange prelude);
@@ -143,9 +143,12 @@ private:
     RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block, RefPtr<StyleRule> parentRule = { });
 
+    // FIXME: We should return value for all those functions instead of using class member attributes.
+    void consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange, StyleRuleType, RefPtr<StyleRule> parentRule = { });
     void consumeDeclarationList(CSSParserTokenRange, StyleRuleType);
+    void consumeStyleBlock(CSSParserTokenRange, StyleRuleType, RefPtr<StyleRule> parentRule = { });
     void consumeDeclaration(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, bool important, StyleRuleType);
     void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, bool important);
@@ -155,6 +158,7 @@ private:
     // FIXME: Can we build StylePropertySets directly?
     // FIXME: Investigate using a smaller inline buffer
     ParsedPropertyVector m_parsedProperties;
+    Vector<Ref<StyleRuleBase>> m_parsedRules;
     const CSSParserContext& m_context;
 
     RefPtr<StyleSheetContents> m_styleSheet;

@@ -43,9 +43,9 @@ namespace WebCore {
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet)
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSSelectorParser::IsNestedContext isNestedContext)
 {
-    CSSSelectorParser parser(context, styleSheet);
+    CSSSelectorParser parser(context, styleSheet, isNestedContext);
     range.consumeWhitespace();
     CSSSelectorList result = parser.consumeComplexSelectorList(range);
     if (result.isEmpty() || !range.atEnd())
@@ -53,9 +53,10 @@ std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const
     return result;
 }
 
-CSSSelectorParser::CSSSelectorParser(const CSSParserContext& context, StyleSheetContents* styleSheet)
+CSSSelectorParser::CSSSelectorParser(const CSSParserContext& context, StyleSheetContents* styleSheet, CSSSelectorParser::IsNestedContext isNestedContext)
     : m_context(context)
     , m_styleSheet(styleSheet)
+    , m_isNestedContext(isNestedContext)
 {
 }
 
@@ -459,6 +460,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeSimpleSelector(CSSP
         selector = consumeId(range);
     else if (token.type() == DelimiterToken && token.delimiter() == '.')
         selector = consumeClass(range);
+    else if (token.type() == DelimiterToken && token.delimiter() == '&')
+        selector = consumeNesting(range);
     else if (token.type() == LeftBracketToken)
         selector = consumeAttribute(range);
     else if (token.type() == ColonToken)
@@ -551,6 +554,19 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeClass(CSSParserToke
     CSSParserToken token = range.consume();
     selector->setValue(token.value().toAtomString(), m_context.mode == HTMLQuirksMode);
 
+    return selector;
+}
+
+std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNesting(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().type() == DelimiterToken);
+    ASSERT(range.peek().delimiter() == '&');
+    range.consume();
+
+    auto selector = makeUnique<CSSParserSelector>();
+    selector->setMatch(CSSSelector::PseudoClass);
+    selector->setPseudoClassType(CSSSelector::PseudoClassParent);
+    
     return selector;
 }
 

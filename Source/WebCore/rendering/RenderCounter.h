@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +42,7 @@ public:
     static void rendererStyleChanged(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
 
     void updateCounter();
+    bool canBeSelectionLeaf() const final { return false; }
 
 private:
     void willBeDestroyed() override;

@@ -187,6 +187,7 @@ struct PossiblyQuotedIdentifier {
             PseudoClassModal,
             PseudoClassUserInvalid,
             PseudoClassUserValid,
+            PseudoClassParent,
         };
 
         enum PseudoElementType {

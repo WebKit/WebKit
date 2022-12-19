@@ -30,7 +30,7 @@ PASS Detached Element.webkitMatchesSelector: Invalid class: .5cm
 PASS Detached Element.webkitMatchesSelector: Invalid class: ..test
 PASS Detached Element.webkitMatchesSelector: Invalid class: .foo..quux
 PASS Detached Element.webkitMatchesSelector: Invalid class: .bar.
-PASS Detached Element.webkitMatchesSelector: Invalid combinator: div & address, p
+PASS Detached Element.webkitMatchesSelector: Invalid combinator: div % address, p
 PASS Detached Element.webkitMatchesSelector: Invalid combinator: div ++ address, p
 PASS Detached Element.webkitMatchesSelector: Invalid combinator: div ~~ address, p
 PASS Detached Element.webkitMatchesSelector: Invalid [att=value] selector: [*=test]
@@ -64,7 +64,7 @@ PASS In-document Element.webkitMatchesSelector: Invalid class: .5cm
 PASS In-document Element.webkitMatchesSelector: Invalid class: ..test
 PASS In-document Element.webkitMatchesSelector: Invalid class: .foo..quux
 PASS In-document Element.webkitMatchesSelector: Invalid class: .bar.
-PASS In-document Element.webkitMatchesSelector: Invalid combinator: div & address, p
+PASS In-document Element.webkitMatchesSelector: Invalid combinator: div % address, p
 PASS In-document Element.webkitMatchesSelector: Invalid combinator: div ++ address, p
 PASS In-document Element.webkitMatchesSelector: Invalid combinator: div ~~ address, p
 PASS In-document Element.webkitMatchesSelector: Invalid [att=value] selector: [*=test]

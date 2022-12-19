@@ -16,6 +16,8 @@
 
   const testRules = [
     `.foo {\n  & { color: green; }\n}`, // 🐰
+    // nesting should not mess with single line comment legacy special case
+    [`.foo { //color: red; color: green; }`,`.foo { color: green; }`],
     `.foo {\n  &.bar { color: green; }\n}`,
     `.foo {\n  & .bar { color: green; }\n}`,
     `.foo {\n  & > .bar { color: green; }\n}`,
@@ -25,19 +27,36 @@
     `.foo {\n  .bar > & { color: green; }\n}`,
     `.foo, .bar {\n  & + .baz, &.qux { color: green; }\n}`,
     `.foo {\n  & .bar & .baz & .qux { color: green; }\n}`,
-    `.foo {\n  @media (min-width: 50px) {\n  & { color: green; }\n}\n}`,
+    // implicit nested rule
+    [`.foo {\n  @media (min-width: 50px) {\n  & { color: green; }\n}\n}`,`.foo {\n  @media (min-width: 50px) { color: green; }\n}`],
     `.foo {\n  @media (min-width: 50px) { color: green; }\n}`,
     `main {\n  & > section, & > article {\n  & > header { color: green; }\n}\n}`,
+    `.foo {\n  :has(div) { color: green; }\n}`,
+    `.foo {\n  .bar {\n  && { color: green; }\n}\n}`,
+    [`.foo {\n color: red; ident { color: green; }\n}`, `.foo { color: red; }`],
+    [`.foo {\n //color: comment; & { color: green; }\n}`, `.foo {\n  & { color: green; }\n}`],
+    [`.foo {\n .bar {\n  functionalnotation(div) { color: green; }\n\n}`, `.foo {\n  .bar { }\n}`],
   ]
 
   testRules.forEach(testRule => {
+    var inputRule = null
+    var expectedRule = null
+
+    if (Array.isArray(testRule)) {
+      inputRule = testRule[0]
+      expectedRule = testRule[1]
+    } else {
+      inputRule = expectedRule = testRule
+    }
+
     test(function() {
+      //console.log(testRule)
       beforeEach()
-      ss.insertRule(testRule)
+      ss.insertRule(inputRule)
       // todo?
       // when parsing is being ready/prototyped,
       // switch to crawling nested rules instead of comparing text
-      assert_equals(ss.rules[0].cssText, testRule)
-    }, testRule)
+      assert_equals(ss.rules[0].cssText, expectedRule)
+    }, inputRule)
   })
 </script>

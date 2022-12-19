@@ -723,7 +723,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         // Normal element pseudo class checking.
         switch (selector.pseudoClassType()) {
             // Pseudo classes:
+        case CSSSelector::PseudoClassParent:
+            // This pseudo selector should have been replaced earlier.
         case CSSSelector::PseudoClassNot:
+            ASSERT_NOT_REACHED();
             break; // Already handled up above.
         case CSSSelector::PseudoClassEmpty:
             {

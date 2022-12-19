@@ -7,5 +7,5 @@ FAIL Simple CSSOM manipulation of subrules 4 undefined is not an object (evaluat
 FAIL Simple CSSOM manipulation of subrules 5 assert_throws_dom: function "() => { ss.cssRules[0].insertRule('% {}'); }" threw object "TypeError: ss.cssRules[0].insertRule is not a function. (In 'ss.cssRules[0].insertRule('% {}')', 'ss.cssRules[0].insertRule' is undefined)" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
 FAIL Simple CSSOM manipulation of subrules 6 undefined is not an object (evaluating 'ss.cssRules[0].cssRules[1]')
 FAIL Simple CSSOM manipulation of subrules 7 ss.cssRules[0].insertRule is not a function. (In 'ss.cssRules[0].insertRule('@supports selector(&) { & div { font-size: 10px; }}', 1)', 'ss.cssRules[0].insertRule' is undefined)
-FAIL Simple CSSOM manipulation of subrules 8 assert_equals: color is changed, new rule is ignored expected ".a {\n  color: olivedrab;\n  & .b { color: green; }\n  & .c { color: blue; }\n}" but got ".a { color: olivedrab; }"
+FAIL Simple CSSOM manipulation of subrules 8 assert_equals: color is changed, new rule is ignored expected ".a {\n  color: olivedrab;\n  & .b { color: green; }\n  & .c { color: blue; }\n}" but got ".a {\n  color: olivedrab;& .b { color: green; }\n}& .c { color: blue; }\n}"
 

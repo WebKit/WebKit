@@ -47,8 +47,9 @@ Line::~Line()
 {
 }
 
-void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
+void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine)
 {
+    m_isFirstFormattedLine = isFirstFormattedLine;
     m_contentIsTruncated = false;
     m_inlineBoxListWithClonedDecorationEnd.clear();
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
@@ -216,7 +217,7 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
                 continue;
             }
             if (!run.isNonBreakingSpace()) {
-                // Only trim/remove trailign non-breaking space.
+                // Only trim/remove trailing non-breaking space.
                 return index;
             }
             trimmedContentWidth += run.logicalWidth();
@@ -414,9 +415,14 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         return false;
     }();
     auto oldContentLogicalWidth = contentLogicalWidth();
+    auto runHasHangablePunctuationStart = isFirstFormattedLine() && TextUtil::hasHangablePunctuationStart(inlineTextItem, style) && !lineHasVisuallyNonEmptyContent();
     if (needsNewRun) {
         // Note, negative word spacing may cause glyph overlap.
-        auto runLogicalLeft = lastRunLogicalRight() + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.0f);
+        auto runLogicalLeft = [&] {
+            if (runHasHangablePunctuationStart)
+                return -TextUtil::hangablePunctuationStartWidth(inlineTextItem, style);
+            return lastRunLogicalRight() + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.0f);
+        }();
         m_runs.append({ inlineTextItem, style, runLogicalLeft, logicalWidth });
         // Note that the _content_ logical right may be larger than the _run_ logical right.
         auto contentLogicalRight = runLogicalLeft + logicalWidth + m_clonedEndDecorationWidthForInlineBoxRuns;
@@ -467,11 +473,16 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
     auto isTrimmable = updateTrimmableStatus();
 
     auto updateHangingStatus = [&] {
-        if (isTrimmable || !inlineTextItem.isWhitespace() || !m_runs[lastRunIndex].shouldTrailingWhitespaceHang()) {
-            m_hangingContent.resetTrailingGlyphs();
+        if (inlineTextItem.isWhitespace() && !isTrimmable && m_runs[lastRunIndex].shouldTrailingWhitespaceHang()) {
+            // Hanging trailing whitespace.
+            m_hangingContent.addTrailingGlyphs(inlineTextItem.length(), logicalWidth);
             return;
         }
-        m_hangingContent.addTrailingGlyphs(inlineTextItem.length(), logicalWidth);
+        if (runHasHangablePunctuationStart) {
+            m_hangingContent.addLeadingGlyphs(1, TextUtil::hangablePunctuationStartWidth(inlineTextItem, style));
+            return;
+        }
+        m_hangingContent.resetTrailingGlyphs();
     };
     updateHangingStatus();
 
@@ -563,6 +574,21 @@ void Line::addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth)
         return;
     }
     ASSERT_NOT_REACHED();
+}
+
+bool Line::lineHasVisuallyNonEmptyContent() const
+{
+    for (auto& run : makeReversedRange(m_runs)) {
+        if (run.isContentful() || run.isGenerated())
+            return true;
+        if (run.isInlineBox()) {
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(run.layoutBox());
+            auto marginBorderAndPaddingStart = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderStart() + inlineBoxGeometry.paddingStart().value_or(0_lu);
+            if (marginBorderAndPaddingStart)
+                return true;
+        }
+    }
+    return false;
 }
 
 const InlineFormattingContext& Line::formattingContext() const

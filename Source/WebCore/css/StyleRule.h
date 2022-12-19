@@ -27,6 +27,7 @@
 #include "FontFeatureValues.h"
 #include "FontPaletteValues.h"
 #include "MediaQuery.h"
+#include "StyleProperties.h"
 #include "StyleRuleType.h"
 #include <map>
 #include <variant>
@@ -102,7 +103,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
 class StyleRule final : public StyleRuleBase {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
 public:
-    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
+    static Ref<StyleRule> create(bool hasDocumentSecurityOrigin, CSSSelectorList&&);
+    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRule>>&& nestedRules);
     Ref<StyleRule> copy() const;
     ~StyleRule();
 
@@ -128,15 +130,23 @@ public:
 #endif
 
     static unsigned averageSizeInBytes();
+    void setProperties(Ref<StyleProperties> properties) { m_properties = properties; }
+    void setNestedRules(Vector<Ref<StyleRule>> nestedRules) { m_nestedRules = nestedRules; }
+    const Vector<Ref<StyleRule>>& nestedRules() const { return m_nestedRules; }
+    void appendNestedRule(Ref<StyleRule> rule) { m_nestedRules.append(rule); }
 
 private:
-    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
+    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRule>>&&);
+    StyleRule(bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     StyleRule(const StyleRule&);
 
     static Ref<StyleRule> createForSplitting(const Vector<const CSSSelector*>&, Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin);
 
     mutable Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
+
+    // CSS Nesting
+    Vector<Ref<StyleRule>> m_nestedRules;
 
 #if ENABLE(CSS_SELECTOR_JIT)
     mutable UniqueArray<CompiledSelector> m_compiledSelectors;
