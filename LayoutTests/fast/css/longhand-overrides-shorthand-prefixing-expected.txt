@@ -4,38 +4,39 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Setting "animation" to "2s move" then "animation-duration" to "10s" accessing "animation"
-PASS element.style.animation
-PASS element.style.cssText
+FAIL expected element.style.animation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "animation" to "2s move" then "animation-duration" to "10s" accessing "webkitAnimation"
-PASS element.style.animation
-PASS element.style.cssText
+FAIL expected element.style.animation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "-webkit-animation" to "2s move" then "animation-duration" to "10s" accessing "animation"
-PASS element.style.webkitAnimation
-PASS element.style.cssText
+FAIL expected element.style.webkitAnimation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "-webkit-animation" to "2s move" then "animation-duration" to "10s" accessing "webkitAnimation"
-PASS element.style.webkitAnimation
-PASS element.style.cssText
+FAIL expected element.style.webkitAnimation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "animation" to "2s move" then "-webkit-animation-duration" to "10s" accessing "animation"
-PASS element.style.animation
-PASS element.style.cssText
+FAIL expected element.style.animation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "animation" to "2s move" then "-webkit-animation-duration" to "10s" accessing "webkitAnimation"
-PASS element.style.animation
-PASS element.style.cssText
+FAIL expected element.style.animation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "-webkit-animation" to "2s move" then "-webkit-animation-duration" to "10s" accessing "animation"
-PASS element.style.webkitAnimation
-PASS element.style.cssText
+FAIL expected element.style.webkitAnimation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 Setting "-webkit-animation" to "2s move" then "-webkit-animation-duration" to "10s" accessing "webkitAnimation"
-PASS element.style.webkitAnimation
-PASS element.style.cssText
+FAIL expected element.style.webkitAnimation to be "10s move" but got "10s ease 0s 1 normal none running move"
+FAIL expected element.style.cssText to be "animation: 10s move;" but got "animation: 10s ease 0s 1 normal none running move;"
 
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

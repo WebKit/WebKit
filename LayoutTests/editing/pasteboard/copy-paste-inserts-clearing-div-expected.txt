@@ -42,9 +42,9 @@ first test - after:
 |       style="position: relative;"
 |       "Before "
 |       <div>
-|         style="position: absolute; top: 0px; right: 0px; width: 100px; height: 100px; background: yellow;"
+|         style="position: absolute; top: 0px; right: 0px; width: 100px; height: 100px; background-color: yellow;"
 |       <div>
-|         style="float: right; width: 200px; height: 200px; background: blue;"
+|         style="float: right; width: 200px; height: 200px; background-color: blue;"
 |       "After<#selection-caret>"
 |       <div>
 |         style="clear: both;"

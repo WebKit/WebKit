@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class CSSFontStyleRangeValue;
 class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
@@ -65,7 +64,7 @@ RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange&, CSSValuePool&)
 RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&, CSSValuePool&);
 
 #if ENABLE(VARIATION_FONTS)
-RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
+RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
 RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&, CSSValuePool&);
 #endif

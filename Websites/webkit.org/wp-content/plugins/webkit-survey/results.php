@@ -61,7 +61,7 @@
     foreach ($SurveyResults->survey as $id => $Entry): $total = isset($Entry->scores['total']) ? $Entry->scores['total'] : 1; 
     
     $results_classes = ['webkit-survey-results'];
-    if ($SurveyResults->status == 'closed' || $SurveyResults->results == 'visible' || WebKit_Survey::responded()) 
+    if ($SurveyResults->status == 'closed' || $SurveyResults->results == 'visible' || WebKit_Survey::responded() || is_admin()) 
         $results_classes[] = 'visible';
 ?>
 <div class="<?php esc_attr_e(join(' ', $results_classes)); ?>">

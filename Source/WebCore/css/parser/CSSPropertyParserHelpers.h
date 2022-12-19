@@ -234,7 +234,6 @@ RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontFamilyDescriptor(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange&, CSSParserMode);
@@ -317,6 +316,30 @@ RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 #endif
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
+
+
+// @font-face descriptor consumers:
+
+RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&);
+
+// @font-palette-values descriptor consumers:
+
+RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange&, const CSSParserContext&);
+
+// @counter-style descriptor consumers:
+
+RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
+
+// @property descriptor consumers:
+
+RefPtr<CSSValue> consumePropertyInitialValue(CSSParserTokenRange&);
 
 
 // Template and inline implementations are at the bottom of the file for readability.

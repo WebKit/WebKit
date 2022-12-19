@@ -866,10 +866,10 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSPropertyInfo>>> Insp
                 property->setLonghands(WTFMove(longhands));
         }
 
-        if (CSSParserFastPaths::isKeywordPropertyID(propertyID)) {
+        if (CSSParserFastPaths::isKeywordFastPathEligibleStyleProperty(propertyID)) {
             auto values = JSON::ArrayOf<String>::create();
             for (auto valueID : allCSSValueKeywords()) {
-                if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyID, valueID, strictCSSParserContext()))
+                if (CSSParserFastPaths::isKeywordValidForStyleProperty(propertyID, valueID, strictCSSParserContext()))
                     values->addItem(nameString(valueID));
             }
             if (values->length())

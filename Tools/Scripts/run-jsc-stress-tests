@@ -1823,7 +1823,7 @@ end
 def runV8WebAssemblySuite(*optionalTestSpecificOptions)
     return if !$jitTests
     return if !$isWasmPlatform
-    prepareExtraAbsoluteFiles(Pathname.new(WASMTESTS_PATH).join("v8", "resources"), ["mjsunit.js", "wasm-module-builder.js"])
+    prepareExtraAbsoluteFiles(Pathname.new(WASMTESTS_PATH).join("v8", "resources"), ["async-compile.js", "mjsunit.js", "trap-location.js", "user-properties-common.js", "wasm-module-builder.js"])
     if optionalTestSpecificOptions[0] == :no_module
       optionalTestSpecificOptions.shift
     else

@@ -276,6 +276,33 @@ public:
         result = tmpForType(Types::V128);
 
         if (isX86()) {
+            if (airOp == B3::Air::VectorPopcnt) {
+                ASSERT(info.lane == SIMDLane::i8x16);
+
+                // x86_64 does not natively support vector lanewise popcount, so we emulate it using multiple
+                // masks.
+
+                v128_t bottomNibbleConst;
+                v128_t popcntConst;
+                bottomNibbleConst.u64x2[0] = 0x0f0f0f0f0f0f0f0f;
+                bottomNibbleConst.u64x2[1] = 0x0f0f0f0f0f0f0f0f;
+                popcntConst.u64x2[0] = 0x0302020102010100;
+                popcntConst.u64x2[1] = 0x0403030203020201;
+                TypedTmp bottomNibbleMask = addConstant(bottomNibbleConst), popcntMask = addConstant(popcntConst);
+
+                TypedTmp tmp = tmpForType(Types::V128);
+                result = tmpForType(Types::V128);
+
+                append(VectorAndnot, Arg::simdInfo(SIMDLane::v128), v, bottomNibbleMask, tmp);
+                append(VectorAnd, Arg::simdInfo(SIMDLane::v128), v, bottomNibbleMask, result);
+                append(VectorUshr8, Arg::simdInfo(SIMDLane::i16x8), tmp, Arg::imm(4), tmp);
+                append(VectorSwizzle, popcntMask, result, result);
+                append(VectorSwizzle, popcntMask, tmp, tmp);
+                append(VectorAdd, Arg::simdInfo(SIMDLane::i8x16), result, tmp, result);
+
+                return { };
+            }
+
             if (airOp == B3::Air::VectorNot) {
                 // x86_64 has no vector bitwise NOT instruction, so we expand vxv.not v into vxv.xor -1, v
                 // here to give B3/Air a chance to optimize out repeated usage of the mask.
@@ -283,6 +310,7 @@ public:
                 mask.u64x2[0] = 0xffffffffffffffff;
                 mask.u64x2[1] = 0xffffffffffffffff;
                 TypedTmp ones = addConstant(mask);
+
                 append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), ones, v, result);
                 return { };
             }
@@ -1569,9 +1597,42 @@ auto AirIRGenerator64::addSIMDShift(SIMDLaneOperation op, SIMDInfo info, Express
     } else if (isX86()) {
         Tmp shiftAmount = newTmp(B3::GP);
         Tmp shiftVector = newTmp(B3::FP);
-        append(Move32, shift.tmp(), shiftAmount);
-        append(And32, Arg::bitImm(mask), shift.tmp(), shiftAmount);
-        append(VectorSplatInt8, shiftAmount, shiftVector);
+        append(Move, shift.tmp(), shiftAmount);
+        append(And32, Arg::imm(mask), shiftAmount);
+
+        if (op == SIMDLaneOperation::Shr && info.signMode == SIMDSignMode::Signed && info.lane == SIMDLane::i64x2) {
+            // x86 has no SIMD 64-bit signed right shift instruction, so we scalarize it here.
+
+#if CPU(X86_64)
+            Tmp shiftRCX = Tmp(X86Registers::ecx);
+            Tmp lower = newTmp(B3::GP);
+            Tmp upper = newTmp(B3::GP);
+
+            append(Move, shiftAmount, shiftRCX);
+            append(VectorExtractLaneInt64, Arg::imm(0), v, lower);
+            append(VectorExtractLaneInt64, Arg::imm(1), v, upper);
+            append(Rshift64, shiftRCX, lower);
+            append(Rshift64, shiftRCX, upper);
+            append(VectorReplaceLaneInt64, Arg::imm(0), lower, result);
+            append(VectorReplaceLaneInt64, Arg::imm(1), upper, result);
+#endif
+
+            return { };
+        }
+
+        // Unlike ARM, x86 expects the shift provided as a *scalar*, stored in the lower 64 bits of a vector register.
+        // So, we don't need to splat the shift amount like we do on ARM.
+        append(Move64ToDouble, shiftAmount, shiftVector);
+
+        // 8-bit shifts are pretty involved to implement on Intel, so they get their own instruction type with extra temps.
+        if (op == SIMDLaneOperation::Shl && info.lane == SIMDLane::i8x16) {
+            append(VectorUshl8, v, shiftVector, result, tmpForType(Types::V128), tmpForType(Types::V128));
+            return { };
+        }
+        if (op == SIMDLaneOperation::Shr && info.lane == SIMDLane::i8x16) {
+            append(info.signMode == SIMDSignMode::Signed ? VectorSshr8 : VectorUshr8, v, shiftVector, result, tmpForType(Types::V128), tmpForType(Types::V128));
+            return { };
+        }
 
         if (op == SIMDLaneOperation::Shl)
             append(VectorUshl, Arg::simdInfo(info), v.tmp(), shiftVector, result.tmp());

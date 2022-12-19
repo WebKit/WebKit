@@ -43,6 +43,7 @@
 #include "CSSContentDistributionValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariantLigaturesParser.h"
@@ -5434,24 +5435,6 @@ RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange& range)
     });
 }
 
-RefPtr<CSSValue> consumeFontFamilyDescriptor(CSSParserTokenRange& range)
-{
-    // FIXME-NEWPARSER: https://bugs.webkit.org/show_bug.cgi?id=196381 For compatibility with the old parser, we have to make
-    // a list here, even though the list always contains only a single family name.
-    // Once the old parser is gone, we can delete this function, make the caller
-    // use consumeFamilyName instead, and then patch the @font-face code to
-    // not expect a list with a single name in it.
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    RefPtr<CSSValue> parsedValue = consumeFamilyName(range);
-    if (parsedValue)
-        list->append(parsedValue.releaseNonNull());
-    
-    if (!range.atEnd() || !list->length())
-        return nullptr;
-
-    return list;
-}
-
 static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, int defaultValue)
 {
     if (range.peek().id() == CSSValueNone)
@@ -7262,7 +7245,7 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
         vertical = consumeIdent<CSSValueAuto>(range);
         if (!vertical)
             vertical = consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative, UnitlessQuirk::Allow);
-    }
+        }
 
     if (!vertical) {
         if constexpr (property == CSSPropertyWebkitBackgroundSize) {
@@ -8218,6 +8201,254 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
 }
 
-} // namespace CSSPropertyParserHelpers
+// MARK: - @-rule descriptor consumers:
 
+// MARK: @font-face
+
+RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range)
+{
+    // FIXME-NEWPARSER: https://bugs.webkit.org/show_bug.cgi?id=196381 For compatibility with the old parser, we have to make
+    // a list here, even though the list always contains only a single family name.
+    // Once the old parser is gone, we can delete this function, make the caller
+    // use consumeFamilyName instead, and then patch the @font-face code to
+    // not expect a list with a single name in it.
+    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    RefPtr<CSSValue> parsedValue = consumeFamilyName(range);
+    if (parsedValue)
+        list->append(parsedValue.releaseNonNull());
+    
+    if (!range.atEnd() || !list->length())
+        return nullptr;
+
+    return list;
+}
+
+// MARK: @font-palette-values
+
+RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto list = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range, auto& context) -> RefPtr<CSSValue> {
+        auto key = consumeNonNegativeInteger(range);
+        if (!key)
+            return nullptr;
+
+        auto color = consumeColor(range, context, false, { StyleColor::CSSColorType::Absolute });
+        if (!color)
+            return nullptr;
+
+        return CSSFontPaletteValuesOverrideColorsValue::create(key.releaseNonNull(), color.releaseNonNull());
+    }, context);
+
+    if (!range.atEnd() || !list || !list->length())
+        return nullptr;
+
+    return list;
+}
+
+// MARK: @counter-style
+
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range)
+{
+    // cyclic | numeric | alphabetic | symbolic | additive | [fixed <integer>?] | [ extends <counter-style-name> ]
+
+    if (auto ident = consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueAdditive>(range))
+        return ident;
+
+    if (auto ident = consumeIdent<CSSValueFixed>(range)) {
+        if (range.atEnd())
+            return ident;
+        // If we have the `fixed` keyword but the range is not at the end, the next token must be a integer.
+        // If it's not, this value is invalid.
+        auto firstSymbolValue = consumeInteger(range);
+        if (!firstSymbolValue)
+            return nullptr;
+        return createPrimitiveValuePair(ident.releaseNonNull(), firstSymbolValue.releaseNonNull());
+    }
+
+    if (auto ident = consumeIdent<CSSValueExtends>(range)) {
+        // There must be a `<counter-style-name>` following the `extends` keyword. If there isn't, this value is invalid.
+        auto parsedCounterStyleName = consumeCounterStyleName(range);
+        if (!parsedCounterStyleName)
+            return nullptr;
+        return createPrimitiveValuePair(ident.releaseNonNull(), parsedCounterStyleName.releaseNonNull());
+    }
+    return nullptr;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#typedef-symbol
+RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // [ <string> | <image> | <custom-ident> ]
+
+    if (auto string = consumeString(range))
+        return string;
+    if (auto customIdent = consumeCustomIdent(range))
+        return customIdent;
+    // There are inherent difficulties in supporting <image> symbols in @counter-styles, so gate them behind a
+    // flag for now. https://bugs.webkit.org/show_bug.cgi?id=167645
+    if (context.counterStyleAtRuleImageSymbolsEnabled) {
+        if (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage }))
+            return image;
+    }
+    return nullptr;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
+RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // <symbol> <symbol>?
+
+    auto prependValue = consumeCounterStyleSymbol(range, context);
+    if (!prependValue)
+        return nullptr;
+    if (range.atEnd())
+        return prependValue;
+
+    auto appendValue = consumeCounterStyleSymbol(range, context);
+    if (!appendValue || !range.atEnd())
+        return nullptr;
+
+    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    values->append(prependValue.releaseNonNull());
+    values->append(appendValue.releaseNonNull());
+    return values;
+}
+
+static RefPtr<CSSPrimitiveValue> consumeCounterStyleRangeBound(CSSParserTokenRange& range)
+{
+    if (auto infinite = consumeIdent<CSSValueInfinite>(range))
+        return infinite;
+    if (auto integer = consumeInteger(range))
+        return integer;
+    return nullptr;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
+RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range)
+{
+    // [ [ <integer> | infinite ]{2} ]# | auto
+
+    if (auto autoValue = consumeIdent<CSSValueAuto>(range))
+        return autoValue;
+
+    auto rangeList = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range) -> RefPtr<CSSValue> {
+        auto lowerBound = consumeCounterStyleRangeBound(range);
+        if (!lowerBound)
+            return nullptr;
+        auto upperBound = consumeCounterStyleRangeBound(range);
+        if (!upperBound)
+            return nullptr;
+
+        // If the lower bound of any range is higher than the upper bound, the entire descriptor is invalid and must be
+        // ignored.
+        if (lowerBound->isInteger() && upperBound->isInteger() && lowerBound->intValue() > upperBound->intValue())
+            return nullptr;
+        
+        return createPrimitiveValuePair(lowerBound.releaseNonNull(), upperBound.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
+    });
+
+    if (!range.atEnd() || !rangeList || !rangeList->length())
+        return nullptr;
+    return rangeList;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-pad
+RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // <integer [0,∞]> && <symbol>
+
+    RefPtr<CSSValue> integer;
+    RefPtr<CSSValue> symbol;
+    while (!integer || !symbol) {
+        if (!integer) {
+            integer = consumeNonNegativeInteger(range);
+            if (integer)
+                continue;
+        }
+        if (!symbol) {
+            symbol = consumeCounterStyleSymbol(range, context);
+            if (symbol)
+                continue;
+        }
+        return nullptr;
+    }
+    if (!range.atEnd())
+        return nullptr;
+    auto values = CSSValueList::createSpaceSeparated();
+    values->append(integer.releaseNonNull());
+    values->append(symbol.releaseNonNull());
+    return values;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#descdef-counter-style-symbols
+RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // <symbol>+
+
+    auto symbols = CSSValueList::createSpaceSeparated();
+    while (!range.atEnd()) {
+        auto symbol = consumeCounterStyleSymbol(range, context);
+        if (!symbol)
+            return nullptr;
+        symbols->append(symbol.releaseNonNull());
+    }
+    if (!symbols->length())
+        return nullptr;
+    return symbols;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#descdef-counter-style-additive-symbols
+RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // [ <integer [0,∞]> && <symbol> ]#
+
+    std::optional<int> lastWeight;
+    auto values = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&lastWeight](auto& range, auto& context) -> RefPtr<CSSValue> {
+        auto integer = consumeNonNegativeInteger(range);
+        auto symbol = consumeCounterStyleSymbol(range, context);
+        if (!integer) {
+            if (!symbol)
+                return nullptr;
+            integer = consumeNonNegativeInteger(range);
+            if (!integer)
+                return nullptr;
+        }
+
+        // Additive tuples must be specified in order of strictly descending weight.
+        auto weight = integer->intValue();
+        if (lastWeight && !(weight < lastWeight))
+            return nullptr;
+        lastWeight = weight;
+
+        auto pair = CSSValueList::createSpaceSeparated();
+        pair->append(integer.releaseNonNull());
+        pair->append(symbol.releaseNonNull());
+        return pair;
+    }, context);
+
+    if (!range.atEnd() || !values || !values->length())
+        return nullptr;
+    return values;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as
+RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
+{
+    // auto | bullets | numbers | words | spell-out | <counter-style-name>
+
+    if (auto speakAsIdent = consumeIdent<CSSValueAuto, CSSValueBullets, CSSValueNumbers, CSSValueWords, CSSValueSpellOut>(range))
+        return speakAsIdent;
+    return consumeCounterStyleName(range);
+}
+
+// MARK: @property
+
+// https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
+RefPtr<CSSValue> consumePropertyInitialValue(CSSParserTokenRange& range)
+{
+    return CSSCustomPropertyValue::createSyntaxAll(nullAtom(), CSSVariableData::create(range.consumeAll()));
+}
+
+} // namespace CSSPropertyParserHelpers
 } // namespace WebCore
