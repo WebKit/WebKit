@@ -36,6 +36,7 @@
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
+#include "CSSPropertyRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "MediaList.h"
@@ -104,6 +105,8 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleLayer>(*this));
     case StyleRuleType::Container:
         return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleContainer>(*this));
+    case StyleRuleType::Property:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleProperty>(*this));
     case StyleRuleType::Margin:
         break;
     case StyleRuleType::Unknown:
@@ -184,6 +187,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSGr
         },
         [&](StyleRuleContainer& rule) -> Ref<CSSRule> {
             return CSSContainerRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleProperty& rule) -> Ref<CSSRule> {
+            return CSSPropertyRule::create(rule, parentSheet);
         },
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();
@@ -451,6 +457,17 @@ StyleRuleContainer::StyleRuleContainer(CQ::ContainerQuery&& query, Vector<RefPtr
 Ref<StyleRuleContainer> StyleRuleContainer::create(CQ::ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleContainer(WTFMove(query), WTFMove(rules)));
+}
+
+StyleRuleProperty::StyleRuleProperty(Descriptor&& descriptor)
+    : StyleRuleBase(StyleRuleType::Property)
+    , m_descriptor(WTFMove(descriptor))
+{
+}
+
+Ref<StyleRuleProperty> StyleRuleProperty::create(Descriptor&& descriptor)
+{
+    return adoptRef(*new StyleRuleProperty(WTFMove(descriptor)));
 }
 
 StyleRuleCharset::StyleRuleCharset()

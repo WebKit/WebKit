@@ -3701,7 +3701,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyInternalTextAutosizingStatus:
 #endif
         case CSSPropertyWebkitTextZoom:
-        case CSSPropertyAdditiveSymbols:
         case CSSPropertyAlignmentBaseline:
         case CSSPropertyAlt:
         case CSSPropertyAnimation:
@@ -3715,7 +3714,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyAnimationPlayState:
         case CSSPropertyAnimationTimingFunction:
         case CSSPropertyAppearance:
-        case CSSPropertyBasePalette:
         case CSSPropertyBorderBlock: // logical shorthand
         case CSSPropertyBorderBlockColor: // logical shorthand
         case CSSPropertyBorderBlockStyle: // logical shorthand
@@ -3733,10 +3731,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyContainerName:
         case CSSPropertyContainerType:
         case CSSPropertyContentVisibility:
-        case CSSPropertyFallback:
         case CSSPropertyFlex:
         case CSSPropertyFlexFlow:
-        case CSSPropertyFontDisplay:
         case CSSPropertyGap:
         case CSSPropertyGlyphOrientationHorizontal:
         case CSSPropertyGlyphOrientationVertical:
@@ -3762,23 +3758,18 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyMarker:
         case CSSPropertyMasonryAutoFlow:
         case CSSPropertyMathStyle:
-        case CSSPropertyNegative:
         case CSSPropertyOverflow:
-        case CSSPropertyOverrideColors:
         case CSSPropertyOverscrollBehavior:
         case CSSPropertyOverscrollBehaviorBlock:
         case CSSPropertyOverscrollBehaviorInline:
         case CSSPropertyOverscrollBehaviorX:
         case CSSPropertyOverscrollBehaviorY:
-        case CSSPropertyPad:
         case CSSPropertyPaddingBlock: // logical shorthand
         case CSSPropertyPaddingInline: // logical shorthand
         case CSSPropertyPage:
         case CSSPropertyPlaceContent:
         case CSSPropertyPlaceItems:
         case CSSPropertyPlaceSelf:
-        case CSSPropertyPrefix:
-        case CSSPropertyRange:
         case CSSPropertyScrollMargin:
         case CSSPropertyScrollMarginBlock:
         case CSSPropertyScrollMarginBlockEnd:
@@ -3807,11 +3798,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyTextEdge:
         case CSSPropertySize:
         case CSSPropertySpeakAs:
-        case CSSPropertySrc:
         case CSSPropertyStrokeColor:
-        case CSSPropertySuffix:
-        case CSSPropertySymbols:
-        case CSSPropertySystem:
         case CSSPropertyTextCombineUpright:
         case CSSPropertyTextDecoration:
         case CSSPropertyTextDecorationSkip:
@@ -3822,7 +3809,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyTransitionProperty:
         case CSSPropertyTransitionTimingFunction:
         case CSSPropertyUnicodeBidi:
-        case CSSPropertyUnicodeRange:
         case CSSPropertyWillChange:
 #if ENABLE(APPLE_PAY)
         case CSSPropertyApplePayButtonStyle:
@@ -3895,6 +3881,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitUserSelect:
             continue;
         default:
+            if (CSSProperty::isDescriptorOnly(property))
+                continue;
+
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
             ASSERT_UNUSED(resolvedProperty, wrapperForProperty(resolvedProperty));
             break;

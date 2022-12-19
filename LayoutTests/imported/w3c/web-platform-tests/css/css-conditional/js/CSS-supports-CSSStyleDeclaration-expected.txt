@@ -981,9 +981,9 @@ PASS image-rendering: _camel_cased_attribute v. CSS.supports
 PASS image-rendering: _dashed_attribute v. CSS.supports
 PASS ime-mode: _camel_cased_attribute v. CSS.supports
 PASS ime-mode: _dashed_attribute v. CSS.supports
-PASS inherits: _camel_cased_attribute v. CSS.supports
-PASS initial-value: _camel_cased_attribute v. CSS.supports
-PASS initial-value: _dashed_attribute v. CSS.supports
+FAIL inherits: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
+FAIL initial-value: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
+FAIL initial-value: _dashed_attribute v. CSS.supports assert_equals: expected true but got false
 PASS inline-size: _camel_cased_attribute v. CSS.supports
 PASS inline-size: _dashed_attribute v. CSS.supports
 PASS inset: _camel_cased_attribute v. CSS.supports
@@ -1357,7 +1357,7 @@ PASS stroke-width: _camel_cased_attribute v. CSS.supports
 PASS stroke-width: _dashed_attribute v. CSS.supports
 PASS supported-color-schemes: _camel_cased_attribute v. CSS.supports
 PASS supported-color-schemes: _dashed_attribute v. CSS.supports
-PASS syntax: _camel_cased_attribute v. CSS.supports
+FAIL syntax: _camel_cased_attribute v. CSS.supports assert_equals: expected true but got false
 PASS tab-size: _camel_cased_attribute v. CSS.supports
 PASS tab-size: _dashed_attribute v. CSS.supports
 PASS table-layout: _camel_cased_attribute v. CSS.supports

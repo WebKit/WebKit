@@ -521,6 +521,7 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         case StyleRuleType::FontFeatureValuesBlock:
         case StyleRuleType::FontPaletteValues:
         case StyleRuleType::Margin:
+        case StyleRuleType::Property:
             return false;
         };
         ASSERT_NOT_REACHED();

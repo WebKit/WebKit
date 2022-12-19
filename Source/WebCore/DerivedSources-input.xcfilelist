@@ -961,6 +961,7 @@ $(PROJECT_DIR)/css/CSSPageRule.idl
 $(PROJECT_DIR)/css/CSSPaintCallback.idl
 $(PROJECT_DIR)/css/CSSPaintSize.idl
 $(PROJECT_DIR)/css/CSSProperties.json
+$(PROJECT_DIR)/css/CSSPropertyRule.idl
 $(PROJECT_DIR)/css/CSSRule.idl
 $(PROJECT_DIR)/css/CSSRuleList.idl
 $(PROJECT_DIR)/css/CSSStyleDeclaration.idl

@@ -1,28 +1,28 @@
 
-FAIL Attribute 'syntax' returns expected value for ["<color>"] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for ["<color> | none"] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for ["<color># | <image> | none"] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for ["foo | bar | baz"] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for ["*"] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for ["notasyntax"] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for [red] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for [rgb(255, 0, 0)] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for [<color>] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'syntax' returns expected value for [foo | bar] undefined is not an object (evaluating 'rule.syntax')
-FAIL Attribute 'initial-value' returns expected value for [10px] undefined is not an object (evaluating 'rule.initialValue')
-FAIL Attribute 'initial-value' returns expected value for [rgb(1, 2, 3)] undefined is not an object (evaluating 'rule.initialValue')
-FAIL Attribute 'initial-value' returns expected value for [red] undefined is not an object (evaluating 'rule.initialValue')
-FAIL Attribute 'initial-value' returns expected value for [foo] undefined is not an object (evaluating 'rule.initialValue')
-FAIL Attribute 'initial-value' returns expected value for [if(){}] undefined is not an object (evaluating 'rule.initialValue')
-FAIL Attribute 'initial-value' returns expected value for [var(--x)] undefined is not an object (evaluating 'rule.initialValue')
-FAIL Attribute 'inherits' returns expected value for [true] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for [false] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for [none] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for [0] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for [1] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for ["true"] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for ["false"] undefined is not an object (evaluating 'rule.inherits')
-FAIL Attribute 'inherits' returns expected value for [calc(0)] undefined is not an object (evaluating 'rule.inherits')
+PASS Attribute 'syntax' returns expected value for ["<color>"]
+PASS Attribute 'syntax' returns expected value for ["<color> | none"]
+PASS Attribute 'syntax' returns expected value for ["<color># | <image> | none"]
+PASS Attribute 'syntax' returns expected value for ["foo | bar | baz"]
+PASS Attribute 'syntax' returns expected value for ["*"]
+PASS Attribute 'syntax' returns expected value for ["notasyntax"]
+PASS Attribute 'syntax' returns expected value for [red]
+PASS Attribute 'syntax' returns expected value for [rgb(255, 0, 0)]
+PASS Attribute 'syntax' returns expected value for [<color>]
+PASS Attribute 'syntax' returns expected value for [foo | bar]
+PASS Attribute 'initial-value' returns expected value for [10px]
+PASS Attribute 'initial-value' returns expected value for [rgb(1, 2, 3)]
+PASS Attribute 'initial-value' returns expected value for [red]
+PASS Attribute 'initial-value' returns expected value for [foo]
+PASS Attribute 'initial-value' returns expected value for [if(){}]
+PASS Attribute 'initial-value' returns expected value for [var(--x)]
+PASS Attribute 'inherits' returns expected value for [true]
+PASS Attribute 'inherits' returns expected value for [false]
+PASS Attribute 'inherits' returns expected value for [none]
+PASS Attribute 'inherits' returns expected value for [0]
+PASS Attribute 'inherits' returns expected value for [1]
+PASS Attribute 'inherits' returns expected value for ["true"]
+PASS Attribute 'inherits' returns expected value for ["false"]
+PASS Attribute 'inherits' returns expected value for [calc(0)]
 PASS Invalid property name does not parse [foo]
 PASS Invalid property name does not parse [-foo]
 FAIL Rule applied [*, if(){}, false] assert_equals: expected "if(){}" but got ""

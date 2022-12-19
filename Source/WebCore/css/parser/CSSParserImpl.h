@@ -142,6 +142,7 @@ private:
     RefPtr<StyleRuleCounterStyle> consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleLayer> consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block);
     RefPtr<StyleRuleContainer> consumeContainerRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);

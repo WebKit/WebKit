@@ -4300,6 +4300,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyAdditiveSymbols:
         return nullptr;
 
+    // @property descriptors.
+    case CSSPropertyInherits:
+    case CSSPropertyInitialValue:
+    case CSSPropertySyntax:
+        return nullptr;
+
     /* Unimplemented @font-face properties */
     case CSSPropertySrc:
     case CSSPropertyUnicodeRange:

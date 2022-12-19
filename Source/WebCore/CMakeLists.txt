@@ -842,6 +842,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSPaintCallback.idl
     css/CSSPaintSize.idl
     css/CSSPageRule.idl
+    css/CSSPropertyRule.idl
     css/CSSRule.idl
     css/CSSRuleList.idl
     css/CSSStyleDeclaration.idl

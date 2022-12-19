@@ -786,6 +786,7 @@ css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
+css/CSSPropertyRule.cpp
 css/CSSPropertySourceData.cpp
 css/CSSRayValue.cpp
 css/CSSReflectValue.cpp
@@ -3087,6 +3088,7 @@ JSCSSNamespaceRule.cpp
 JSCSSPageRule.cpp
 JSCSSPaintCallback.cpp
 JSCSSPaintSize.cpp
+JSCSSPropertyRule.cpp
 JSCSSRule.cpp
 JSCSSRuleList.cpp
 JSCSSStyleDeclaration.cpp

@@ -8746,6 +8746,42 @@
                 "category": "css-round-display",
                 "url": "https://www.w3.org/TR/css-round-display-1/#border-boundary-property"
             }
+        },
+        "syntax": {
+            "codegen-properties": {
+                "descriptor-only": true,
+                "settings-flag": "cssCustomPropertiesAndValuesEnabled",
+                "skip-builder": true,
+                "custom-parser": true
+            },
+            "specification": {
+                "category": "css-properties-and-values",
+                "url": "https://drafts.css-houdini.org/css-properties-values-api/#the-syntax-descriptor"
+            }
+        },
+        "inherits": {
+            "codegen-properties": {
+                "descriptor-only": true,
+                "settings-flag": "cssCustomPropertiesAndValuesEnabled",
+                "skip-builder": true,
+                "custom-parser": true
+            },
+            "specification": {
+                "category": "css-properties-and-values",
+                "url": "https://drafts.css-houdini.org/css-properties-values-api/#inherits-descriptor"
+            }
+        },
+        "initial-value": {
+            "codegen-properties": {
+                "descriptor-only": true,
+                "settings-flag": "cssCustomPropertiesAndValuesEnabled",
+                "skip-builder": true,
+                "custom-parser": true
+            },
+            "specification": {
+                "category": "css-properties-and-values",
+                "url": "https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor"
+            }
         }
     },
     "categories": {
@@ -8906,6 +8942,11 @@
             "shortname": "CSS Paged Media",
             "longname": "CSS Paged Media Module",
             "url": "https://www.w3.org/TR/css3-page/"
+        },
+        "css-properties-and-values": {
+            "shortname": "CSS Properties and Values API",
+            "longname": "CSS Properties and Values API",
+            "url": "https://drafts.css-houdini.org/css-properties-values-api"
         },
         "css-round-display": {
             "shortname": "CSS Round Display",

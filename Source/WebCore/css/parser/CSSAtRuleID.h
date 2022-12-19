@@ -50,6 +50,7 @@ enum CSSAtRuleID {
     CSSAtRuleCounterStyle,
     CSSAtRuleLayer,
     CSSAtRuleContainer,
+    CSSAtRuleProperty,
 
     CSSAtRuleFontFeatureValues,
     CSSAtRuleStylistic,
