@@ -47,8 +47,8 @@ public:
     static RefPtr<CSSValue> maybeParseValue(CSSPropertyID, StringView, const CSSParserContext&);
 
     // Properties handled here shouldn't be explicitly handled in CSSPropertyParser.
-    static bool isKeywordPropertyID(CSSPropertyID);
-    static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, const CSSParserContext&);
+    static bool isKeywordFastPathEligibleStyleProperty(CSSPropertyID);
+    static bool isKeywordValidForStyleProperty(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
     // Parses numeric and named colors.
     static std::optional<SRGBA<uint8_t>> parseSimpleColor(StringView, bool strict = false);

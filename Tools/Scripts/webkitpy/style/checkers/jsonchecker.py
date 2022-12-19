@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -131,6 +131,12 @@ class JSONCSSPropertiesChecker(JSONChecker):
             self._shared_grammar_rules = properties_definition['shared-grammar-rules']
             self.check_shared_grammar_rules()
 
+            if 'descriptors' not in properties_definition:
+                self._handle_style_error(0, 'json/syntax', 5, '"descriptors" key not found, the key is mandatory.')
+                return
+            self._descriptors = properties_definition['descriptors']
+            self.check_descriptors()
+
             if 'properties' not in properties_definition:
                 self._handle_style_error(0, 'json/syntax', 5, '"properties" key not found, the key is mandatory.')
                 return
@@ -177,6 +183,42 @@ class JSONCSSPropertiesChecker(JSONChecker):
                 return
 
             keys_and_validators[key](rule_name, "", key, value)
+
+    def check_descriptor(self, descriptor_name, descriptor_value):
+        keys_and_validators = {
+            '*': self.validate_comment,
+            'values': self.validate_array,
+            'codegen-properties': self.validate_codegen_properties,
+            'status': self.validate_status,
+            'specification': self.validate_specification,
+        }
+
+        for key, value in descriptor_value.items():
+            if key not in keys_and_validators:
+                self._handle_style_error(0, 'json/syntax', 5, 'dictionary for descriptor "%s" has unexpected key "%s".' % (property_name, key))
+                return
+
+            keys_and_validators[key](descriptor_name, "", key, value)
+
+    def check_descriptor_kind(self, descriptor_kind, descriptors):
+        if descriptor_kind[0] != "@":
+            self._handle_style_error(0, 'json/syntax', 5, '"descriptors" key "%s" does not begin with an "@".' % (descriptor_kind))
+            return
+
+        if not isinstance(descriptors, dict):
+            self._handle_style_error(0, 'json/syntax', 5, '"descriptors.%s" is not a dictionary.' % (descriptor_kind))
+            return
+
+        for descriptor_name, descriptor_value in descriptors.items():
+            self.check_descriptor(descriptor_name, descriptor_value)
+
+    def check_descriptors(self):
+        if not isinstance(self._descriptors, dict):
+            self._handle_style_error(0, 'json/syntax', 5, '"descriptors" is not a dictionary.')
+            return
+
+        for descriptor_kind, descriptors in self._descriptors.items():
+            self.check_descriptor_kind(descriptor_kind, descriptors)
 
     def check_shared_grammar_rules(self):
         if not isinstance(self._shared_grammar_rules, dict):
@@ -357,7 +399,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'converter': self.validate_string,
             'custom': self.validate_string,
             'custom-parser': self.validate_boolean,
-            'descriptor-only': self.validate_boolean,
             'enable-if': self.validate_string,
             'fast-path-inherited': self.validate_boolean,
             'fill-layer-property': self.validate_boolean,

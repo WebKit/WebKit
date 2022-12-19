@@ -35,7 +35,6 @@ import subprocess
 import sys
 import textwrap
 
-
 def quote_iterable(iterable, suffix=""):
     return (f'"{x}"{suffix}' for x in iterable)
 
@@ -181,7 +180,7 @@ class Name(object):
 
 
 class PropertyName(Name):
-    def __init__(self, name, *, name_for_methods):
+    def __init__(self, name, *, name_for_methods=None):
         super().__init__(name)
         self.name_for_methods = PropertyName._compute_name_for_methods(name_for_methods, self.id_without_prefix)
 
@@ -450,7 +449,7 @@ class Longhand:
         return Longhand(**json_value)
 
 
-class CodeGenProperties:
+class StylePropertyCodeGenProperties:
     schema = Schema(
         Schema.Entry("aliases", allowed_types=[list], default_value=[]),
         Schema.Entry("auto-functions", allowed_types=[bool], default_value=False),
@@ -461,7 +460,6 @@ class CodeGenProperties:
         Schema.Entry("converter", allowed_types=[str]),
         Schema.Entry("custom", allowed_types=[str]),
         Schema.Entry("custom-parser", allowed_types=[bool]),
-        Schema.Entry("descriptor-only", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
@@ -501,11 +499,11 @@ class CodeGenProperties:
     )
 
     def __init__(self, property_name, **dictionary):
-        CodeGenProperties.schema.set_attributes_from_dictionary(dictionary, instance=self)
+        StylePropertyCodeGenProperties.schema.set_attributes_from_dictionary(dictionary, instance=self)
         self.property_name = property_name
 
     def __str__(self):
-        return f"CodeGenProperties {vars(self)}"
+        return f"StylePropertyCodeGenProperties {vars(self)}"
 
     def __repr__(self):
         return self.__str__()
@@ -516,7 +514,7 @@ class CodeGenProperties:
             json_value = parsing_context.select_enabled_variant(json_value, label=f"{key_path}.codegen-properties")
 
         assert(type(json_value) is dict)
-        CodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label=f"CodeGenProperties")
+        StylePropertyCodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label=f"StylePropertyCodeGenProperties")
 
         property_name = PropertyName(name, name_for_methods=json_value.get("name-for-methods"))
 
@@ -546,7 +544,7 @@ class CodeGenProperties:
         if "longhands" in json_value:
             json_value["longhands"] = list(compact_map(lambda value: Longhand.from_json(parsing_context, f"{key_path}.codegen-properties", value), json_value["longhands"]))
             if not json_value["longhands"]:
-                longhands = None
+                del json_value["longhands"]
 
         if "computable" in json_value:
             if json_value["computable"]:
@@ -587,7 +585,21 @@ class CodeGenProperties:
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar"] = grammar
 
-        return CodeGenProperties(property_name, **json_value)
+        if json_value.get("parser-function"):
+            for entry_name in ["skip-parser", "longhands", "custom-parser", "parser-grammar"]:
+                if entry_name in json_value:
+                    raise Exception(f"{key_path} can't have both 'parser-function' and '{entry_name}'.")
+
+        if json_value.get("custom-parser"):
+            for entry_name in ["skip-parser"]:
+                if entry_name in json_value:
+                    raise Exception(f"{key_path} can't have both 'custom-parser' and '{entry_name}'.")
+
+            # Canonicalize to 'parser-function' so that the rest of the code only has to deal with one of them.
+            json_value["parser-function"] = f"consume{property_name.id_without_prefix}"
+            del json_value["custom-parser"]
+
+        return StylePropertyCodeGenProperties(property_name, **json_value)
 
     @property
     def is_logical(self):
@@ -620,7 +632,6 @@ class Property:
         Property.schema.set_attributes_from_dictionary(dictionary, instance=self)
         self.property_name = self.codegen_properties.property_name
         self.synonymous_properties = []
-        self._fast_path_keyword_terms_sorted_by_name = None
 
     def __str__(self):
         return self.name
@@ -633,7 +644,7 @@ class Property:
         assert(type(json_value) is dict)
         Property.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Property")
 
-        codegen_properties = CodeGenProperties.from_json(parsing_context, f"{key_path}.{name}", name, json_value.get("codegen-properties", {}))
+        codegen_properties = StylePropertyCodeGenProperties.from_json(parsing_context, f"{key_path}.{name}", name, json_value.get("codegen-properties", {}))
         json_value["codegen-properties"] = codegen_properties
 
         if codegen_properties.enable_if is not None and not parsing_context.is_enabled(conditional=codegen_properties.enable_if):
@@ -650,6 +661,8 @@ class Property:
             values = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
             if codegen_properties.parser_grammar:
                 codegen_properties.parser_grammar.perform_fixups_for_values_references(values)
+            else:
+                codegen_properties.parser_grammar = Grammar.from_values(parsing_context, key_path, name, values)
             json_value["values"] = values
 
         return Property(**json_value)
@@ -657,10 +670,10 @@ class Property:
     def perform_fixups_for_synonyms(self, all_properties):
         # If 'synonym' was specified, replace the name with references to the Property object, and vice-versa a back-reference on that Property object back to this.
         if self.codegen_properties.synonym:
-            if self.codegen_properties.synonym not in all_properties.properties_by_name:
+            if self.codegen_properties.synonym not in all_properties.all_by_name:
                 raise Exception(f"Property {self.name} has an unknown synonym: {self.codegen_properties.synonym}.")
 
-            original = all_properties.properties_by_name[self.codegen_properties.synonym]
+            original = all_properties.all_by_name[self.codegen_properties.synonym]
             original.synonymous_properties.append(self)
 
             self.codegen_properties.synonym = original
@@ -668,15 +681,15 @@ class Property:
     def perform_fixups_for_longhands(self, all_properties):
         # If 'longhands' was specified, replace the names with references to the Property objects.
         if self.codegen_properties.longhands:
-            self.codegen_properties.longhands = [all_properties.properties_by_name[longhand.value] for longhand in self.codegen_properties.longhands]
+            self.codegen_properties.longhands = [all_properties.all_by_name[longhand.value] for longhand in self.codegen_properties.longhands]
 
     def perform_fixups_for_related_properties(self, all_properties):
         # If 'related-property' was specified, validate the relationship and replace the name with a reference to the Property object.
         if self.codegen_properties.related_property:
-            if self.codegen_properties.related_property not in all_properties.properties_by_name:
+            if self.codegen_properties.related_property not in all_properties.all_by_name:
                 raise Exception(f"Property {self.name} has an unknown related property: {self.codegen_properties.related_property}.")
 
-            related_property = all_properties.properties_by_name[self.codegen_properties.related_property]
+            related_property = all_properties.all_by_name[self.codegen_properties.related_property]
             if type(related_property.codegen_properties.related_property) is str:
                 if related_property.codegen_properties.related_property != self.name:
                     raise Exception(f"Property {self.name} has {related_property.name} as a related property, but it's not reciprocal.")
@@ -730,6 +743,14 @@ class Property:
     def id(self):
         return self.property_name.id
 
+    # Used for parsing and consume methods. It is prefixed with a 'kind' for descriptors, and left unprefixed for style properties.
+    # Examples:
+    #       style property 'column-width' would generate a consume method called `consumeColumnWidth`
+    #       @font-face descriptor 'font-display' would generate a consume method called `consumeFontFaceFontDisplay`
+    @property
+    def name_for_parsing_methods(self):
+        return self.property_name.id_without_prefix
+
     @property
     def name_for_methods(self):
         return self.property_name.name_for_methods
@@ -759,50 +780,6 @@ class Property:
                     return True
 
         return False
-
-    @property
-    def is_eligible_for_fast_path(self):
-        if self.codegen_properties.longhands or self.codegen_properties.descriptor_only or self.codegen_properties.skip_parser:
-            return False
-        return True
-
-    @property
-    def _fast_path_keyword_terms(self):
-        if not self.is_eligible_for_fast_path:
-            return []
-        if self.codegen_properties.parser_grammar:
-            return self.codegen_properties.parser_grammar.fast_path_keyword_terms
-        return (value.keyword_term for value in self.values if value.keyword_term.is_eligible_for_fast_path)
-
-    @property
-    def fast_path_keyword_terms_sorted_by_name(self):
-        if not self.is_eligible_for_fast_path:
-            return []
-        if not self._fast_path_keyword_terms_sorted_by_name:
-            self._fast_path_keyword_terms_sorted_by_name = sorted(self._fast_path_keyword_terms, key=functools.cmp_to_key(Properties._sort_with_prefixed_properties_last))
-        return self._fast_path_keyword_terms_sorted_by_name
-
-    @property
-    def has_only_keyword_terms(self):
-        if self.codegen_properties.parser_grammar:
-            return self.codegen_properties.parser_grammar.has_only_keyword_terms
-        return self.values is not None
-
-    @property
-    def has_fast_path_keyword_terms(self):
-        if not self.is_eligible_for_fast_path:
-            return False
-        if self.codegen_properties.parser_grammar:
-            return self.codegen_properties.parser_grammar.has_fast_path_keyword_terms
-        return self.values and any(value.keyword_term.is_eligible_for_fast_path for value in self.values)
-
-    @property
-    def has_only_fast_path_keyword_terms(self):
-        if not self.is_eligible_for_fast_path:
-            return False
-        if self.codegen_properties.parser_grammar:
-            return self.codegen_properties.parser_grammar.has_only_fast_path_keyword_terms
-        return self.values and all(value.keyword_term.is_eligible_for_fast_path for value in self.values)
 
     # Specialized properties to compute method names.
 
@@ -847,7 +824,7 @@ class Property:
         raise Exception(f"Unrecognized FillLayer property name: '{self.name}")
 
 
-class Properties:
+class StyleProperties:
     def __init__(self, *properties):
         self.properties = properties
         self.properties_by_name = {property.name: property for property in properties}
@@ -859,10 +836,24 @@ class Properties:
         self._perform_fixups()
 
     def __str__(self):
-        return "Properties"
+        return "StyleProperties"
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        return StyleProperties(
+            *list(
+                filter(
+                    lambda value: value is not None,
+                    map(
+                        lambda item: Property.from_json(parsing_context, key_path, item[0], item[1]),
+                        json_value.items()
+                    )
+                )
+            )
+        )
 
     # Updates any references to other properties that were by name (e.g. string) with a direct
     # reference to the property object.
@@ -874,30 +865,20 @@ class Properties:
     @property
     def all(self):
         if not self._all:
-            self._all = sorted(self.properties, key=functools.cmp_to_key(Properties._sort_by_descending_priority_and_name))
+            self._all = sorted(self.properties, key=functools.cmp_to_key(StyleProperties._sort_by_descending_priority_and_name))
         return self._all
+
+    # Returns the map of property names to properties.
+    @property
+    def all_by_name(self):
+        return self.properties_by_name
 
     # Returns the set of all properties that are included in computed styles. Sorted lexically by name with prefixed properties last.
     @property
     def all_computed(self):
         if not self._all_computed:
-            self._all_computed = sorted([property for property in self.all if not property.is_skipped_from_computed_style], key=functools.cmp_to_key(Properties._sort_with_prefixed_properties_last))
+            self._all_computed = sorted([property for property in self.all if not property.is_skipped_from_computed_style], key=functools.cmp_to_key(StyleProperties._sort_with_prefixed_properties_last))
         return self._all_computed
-
-    # Returns a generator for the set of properties that are conditionally included depending on settings. Default decreasing priority and name sorting.
-    @property
-    def all_with_settings_flag(self):
-        return (property for property in self.all if property.codegen_properties.settings_flag)
-
-    # Returns a generator for the set of properties that are marked internal-only. Default decreasing priority and name sorting.
-    @property
-    def all_internal_only(self):
-        return (property for property in self.all if property.codegen_properties.internal_only)
-
-    # Returns a generator for the set properties that are NOT marked internal. Default decreasing priority and name sorting.
-    @property
-    def all_non_internal_only(self):
-        return (property for property in self.all if not property.codegen_properties.internal_only)
 
     # Returns a generator for the set of properties that have an associate longhand, the so-called shorthands. Default decreasing priority and name sorting.
     @property
@@ -908,11 +889,6 @@ class Properties:
     @property
     def all_non_shorthands(self):
         return (property for property in self.all if not property.codegen_properties.longhands)
-
-    # Returns a generator for the set of properties that can accept a single value keyword. Default decreasing priority and name sorting.
-    @property
-    def all_with_fast_path_keyword_terms(self):
-        return (property for property in self.all if property.has_fast_path_keyword_terms)
 
     # Returns a generator for the set of properties that are direction-aware (aka flow-sensative). Sorted first by property group name and then by property name.
     @property
@@ -928,13 +904,6 @@ class Properties:
             for kind in ["logical", "physical"]:
                 for resolver, property in sorted(property_group[kind].items(), key=lambda x: x[1].name):
                     yield property
-
-    # Returns the set of settings-flags used by any property. Uniqued and sorted lexically.
-    @property
-    def settings_flags(self):
-        if not self._settings_flags:
-            self._settings_flags = sorted(list(set([property.codegen_properties.settings_flag for property in self.properties if property.codegen_properties.settings_flag])))
-        return self._settings_flags
 
     # Default sorting algorithm for properties.
     def _sort_by_descending_priority_and_name(a, b):
@@ -978,7 +947,7 @@ class Properties:
         if not a_is_sink_priority and b_is_sink_priority:
             return -1
 
-        return Properties._sort_with_prefixed_properties_last(a, b)
+        return StyleProperties._sort_with_prefixed_properties_last(a, b)
 
     def _sort_with_prefixed_properties_last(a, b):
         # Sort prefixed names to the back.
@@ -995,6 +964,366 @@ class Properties:
         elif a.name > b.name:
             return 1
         return 0
+
+
+class DescriptorCodeGenProperties:
+    schema = Schema(
+        Schema.Entry("aliases", allowed_types=[list], default_value=[]),
+        Schema.Entry("comment", allowed_types=[str]),
+        Schema.Entry("enable-if", allowed_types=[str]),
+        Schema.Entry("internal-only", allowed_types=[bool], default_value=False),
+        Schema.Entry("longhands", allowed_types=[list]),
+        Schema.Entry("parser-function", allowed_types=[str]),
+        Schema.Entry("parser-exported", allowed_types=[bool]),
+        Schema.Entry("parser-grammar", allowed_types=[list, dict, str]),
+        Schema.Entry("parser-grammar-comment", allowed_types=[str]),
+        Schema.Entry("parser-requires-additional-parameters", allowed_types=[list], default_value=[]),
+        Schema.Entry("parser-requires-context", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-requires-context-mode", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-requires-current-shorthand", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-requires-current-property", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-requires-quirks-mode", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-requires-value-pool", allowed_types=[bool], default_value=False),
+        Schema.Entry("settings-flag", allowed_types=[str]),
+        Schema.Entry("skip-codegen", allowed_types=[bool], default_value=False),
+        Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
+    )
+
+    def __init__(self, descriptor_name, **dictionary):
+        DescriptorCodeGenProperties.schema.set_attributes_from_dictionary(dictionary, instance=self)
+        self.descriptor_name = descriptor_name
+
+        # By defining these to None, we can utilize the shared sorting method, StyleProperties._sort_by_descending_priority_and_name.
+        self.top_priority = None
+        self.high_priority = None
+        self.sink_priority = None
+        self.is_deferred = None
+
+    def __str__(self):
+        return f"DescriptorCodeGenProperties {vars(self)}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def from_json(parsing_context, key_path, name, json_value):
+        if type(json_value) is list:
+            json_value = parsing_context.select_enabled_variant(json_value, label=f"{key_path}.codegen-properties")
+
+        assert(type(json_value) is dict)
+        DescriptorCodeGenProperties.schema.validate_dictionary(parsing_context, f"{key_path}.codegen-properties", json_value, label=f"DescriptorCodeGenProperties")
+
+        descriptor_name = PropertyName(name)
+
+        if "longhands" in json_value:
+            json_value["longhands"] = list(compact_map(lambda value: Longhand.from_json(parsing_context, f"{key_path}.codegen-properties", value), json_value["longhands"]))
+            if not json_value["longhands"]:
+                del json_value["longhands"]
+
+        if json_value.get("parser-grammar"):
+            for entry_name in ["parser-function", "parser-requires-additional-parameters", "parser-requires-context", "parser-requires-context-mode", "parser-requires-current-shorthand", "parser-requires-current-property", "parser-requires-quirks-mode", "parser-requires-value-pool", "skip-parser", "longhands"]:
+                if entry_name in json_value:
+                    raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}.")
+            grammar = Grammar.from_json(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
+            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
+            json_value["parser-grammar"] = grammar
+
+        if json_value.get("parser-function"):
+            for entry_name in ["skip-parser", "longhands"]:
+                if entry_name in json_value:
+                    raise Exception(f"{key_path} can't have both 'parser-function' and '{entry_name}'.")
+
+        return DescriptorCodeGenProperties(descriptor_name, **json_value)
+
+
+class Descriptor:
+    schema = Schema(
+        Schema.Entry("codegen-properties", allowed_types=[dict, list]),
+        Schema.Entry("specification", allowed_types=[dict], convert_to=Specification),
+        Schema.Entry("status", allowed_types=[dict, str], convert_to=Status),
+        Schema.Entry("values", allowed_types=[list]),
+    )
+
+    def __init__(self, kind, descriptor_method_name_modifier, **dictionary):
+        Descriptor.schema.set_attributes_from_dictionary(dictionary, instance=self)
+        self.kind = kind
+        self.descriptor_method_name_modifier = descriptor_method_name_modifier
+        self.descriptor_name = self.codegen_properties.descriptor_name
+
+    def __str__(self):
+        return f"{self.name} ({self.kind})"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def from_json(parsing_context, key_path, name, json_value, kind, descriptor_method_name_modifier):
+        assert(type(json_value) is dict)
+        Descriptor.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Descriptor")
+
+        codegen_properties = DescriptorCodeGenProperties.from_json(parsing_context, f"{key_path}.{name}", name, json_value.get("codegen-properties", {}))
+        json_value["codegen-properties"] = codegen_properties
+
+        if codegen_properties.enable_if is not None and not parsing_context.is_enabled(conditional=codegen_properties.enable_if):
+            if parsing_context.verbose:
+                print(f"SKIPPED {name} due to failing to satisfy 'enable-if' condition, '{json_value['codegen-properties'].enable_if}', with active macro set")
+            return None
+
+        if codegen_properties.skip_codegen is not None and codegen_properties.skip_codegen:
+            if parsing_context.verbose:
+                print(f"SKIPPED {name} due to 'skip-codegen'")
+            return None
+
+        if "values" in json_value:
+            values = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
+            if codegen_properties.parser_grammar:
+                codegen_properties.parser_grammar.perform_fixups_for_values_references(values)
+            else:
+                codegen_properties.parser_grammar = Grammar.from_values(parsing_context, key_path, name, values)
+            json_value["values"] = values
+
+        return Descriptor(kind, descriptor_method_name_modifier, **json_value)
+
+    def perform_fixups_for_longhands(self, all_descriptors):
+        # If 'longhands' was specified, replace the names with references to the Descriptor objects.
+        if self.codegen_properties.longhands:
+            self.codegen_properties.longhands = [all_descriptors.all_by_name[longhand.value] for longhand in self.codegen_properties.longhands]
+
+    def perform_fixups(self, all_descriptors):
+        self.perform_fixups_for_longhands(all_descriptors)
+
+    @property
+    def id_without_prefix(self):
+        return self.descriptor_name.id_without_prefix
+
+    # Used for parsing and consume methods. It is prefixed with a 'kind' for descriptors, and left unprefixed for style properties.
+    # Examples:
+    #       style property 'column-width' would generate a consume method called `consumeColumnWidth`
+    #       @font-face descriptor 'font-display' would generate a consume method called `consumeFontFaceFontDisplay`
+    @property
+    def name_for_parsing_methods(self):
+        return self.descriptor_method_name_modifier + self.descriptor_name.id_without_prefix
+
+    @property
+    def id_without_prefix_with_lowercase_first_letter(self):
+        return self.descriptor_name.id_without_prefix_with_lowercase_first_letter
+
+    @property
+    def id_without_scope(self):
+        return self.descriptor_name.id_without_scope
+
+    @property
+    def id(self):
+        return self.descriptor_name.id
+
+    @property
+    def name(self):
+        return self.descriptor_name.name
+
+    @property
+    def aliases(self):
+        return self.codegen_properties.aliases
+
+
+class Descriptors:
+    def __init__(self, kind, descriptor_method_name_modifier, descriptors):
+        self.kind = kind
+        self.descriptor_method_name_modifierdescriptor_method_name_modifier = descriptor_method_name_modifier
+        self.descriptors = descriptors
+        self.descriptors_by_name = {descriptor.name: descriptor for descriptor in descriptors}
+        self._all = None
+        self._perform_fixups()
+
+    def __str__(self):
+        return f"{self.kind} descriptors"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value, Subclass, kind, descriptor_method_name_modifier):
+        return Subclass(kind, descriptor_method_name_modifier,
+            *list(
+                filter(
+                    lambda value: value is not None,
+                    map(
+                        lambda item: Descriptor.from_json(parsing_context, key_path, item[0], item[1], kind, descriptor_method_name_modifier),
+                        json_value.items()
+                    )
+                )
+            )
+        )
+
+    # Updates any references to other properties that were by name (e.g. string) with a direct
+    # reference to the descriptor object.
+    def _perform_fixups(self):
+        for descriptor in self.all:
+            descriptor.perform_fixups(self)
+
+    @property
+    def all(self):
+        if not self._all:
+            self._all = sorted(self.descriptors, key=functools.cmp_to_key(StyleProperties._sort_by_descending_priority_and_name))
+        return self._all
+
+    @property
+    def all_by_name(self):
+        return self.descriptors_by_name
+
+
+class CounterStyleDescriptors(Descriptors):
+    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
+        super().__init__(kind, descriptor_method_name_modifier, descriptors)
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        return Descriptors.from_json(parsing_context, key_path, json_value, CounterStyleDescriptors, "@counter-style", "CounterStyle")
+
+
+class FontFaceDescriptors(Descriptors):
+    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
+        super().__init__(kind, descriptor_method_name_modifier, descriptors)
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        return Descriptors.from_json(parsing_context, key_path, json_value, FontFaceDescriptors, "@font-face", "FontFace")
+
+
+class FontPaletteValuesDescriptors(Descriptors):
+    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
+        super().__init__(kind, descriptor_method_name_modifier, descriptors)
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        return Descriptors.from_json(parsing_context, key_path, json_value, FontPaletteValuesDescriptors, "@font-palette-values", "FontPaletteValues")
+
+
+class PropertyDescriptors(Descriptors):
+    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
+        super().__init__(kind, descriptor_method_name_modifier, descriptors)
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        return Descriptors.from_json(parsing_context, key_path, json_value, PropertyDescriptors, "@property", "Property")
+
+
+class PropertiesAndDescriptors:
+    def __init__(self, style, counter_style, font_face, font_palette_values, property):
+        self.style = style
+        self.counter_style = counter_style
+        self.font_face = font_face
+        self.font_palette_values = font_palette_values
+        self.property = property
+        self._all_grouped_by_name = None
+        self._all_by_name = None
+        self._all_unique = None
+        self._settings_flags = None
+
+    def __str__(self):
+        return "PropertiesAndDescriptors"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def from_json(parsing_context, *, properties_json_value, descriptors_json_value):
+        return PropertiesAndDescriptors(
+            StyleProperties.from_json(parsing_context, "properties", properties_json_value),
+            CounterStyleDescriptors.from_json(parsing_context, "descriptors.@counter-style", descriptors_json_value["@counter-style"]),
+            FontFaceDescriptors.from_json(parsing_context, "descriptors.@font-face", descriptors_json_value["@font-face"]),
+            FontPaletteValuesDescriptors.from_json(parsing_context, "descriptors.@font-palette-values", descriptors_json_value["@font-palette-values"]),
+            PropertyDescriptors.from_json(parsing_context, "descriptors.@property", descriptors_json_value["@property"])
+        )
+
+    def _compute_all_grouped_by_name(self):
+        return [self.all_by_name[property.name] for property in self.all_unique]
+
+    def _compute_all_by_name(self):
+        result = {}
+        for property in self.all_properties_and_descriptors:
+            result.setdefault(property.name, []).append(property)
+        return result
+
+    def _compute_all_unique(self):
+        # NOTE: This is computes the ordered set of properties and descriptors that correspond to the CSSPropertyID
+        # enumeration and related lookup tables and functions.
+
+        result = list(self.style.all)
+        name_set = set(self.style.all_by_name.keys())
+
+        for descriptor in self.all_descriptors:
+            if descriptor.name in name_set:
+                continue
+            result.append(descriptor)
+            name_set.add(descriptor.name)
+
+        # FIXME: It doesn't make a lot of sense to sort the descriptors like this, but this maintains
+        # the current behavior and has no negative side effect. In the future, we should either separate
+        # the descriptors out of CSSPropertyID or the descriptor-only ones together in some fashion.
+        return sorted(result, key=functools.cmp_to_key(StyleProperties._sort_by_descending_priority_and_name))
+
+    # Returns a generator for the set of all properties and descriptors.
+    @property
+    def all_properties_and_descriptors(self):
+        return itertools.chain(self.style.all, self.counter_style.all, self.font_face.all, self.font_palette_values.all, self.property.all)
+
+    # Returns a generator for the set of all properties and descriptors.
+    @property
+    def all_descriptors(self):
+        return itertools.chain(self.counter_style.all, self.font_face.all, self.font_palette_values.all, self.property.all)
+
+    # Returns the set of properties and descriptors that have unique names, preferring style properties when
+    # there is a conflict. This set corresponds one-to-one in membership and order with CSSPropertyID.
+    @property
+    def all_unique(self):
+        if not self._all_unique:
+            self._all_unique = self._compute_all_unique()
+        return self._all_unique
+
+    # Returns a parallel list to `all_unique`, but rather than containing the canonical property, each entry
+    # in this list is a list of all properties or descriptors with the unique name.
+    @property
+    def all_grouped_by_name(self):
+        if not self._all_grouped_by_name:
+            self._all_grouped_by_name = self._compute_all_grouped_by_name()
+        return self._all_grouped_by_name
+
+    # Returns a map of names to lists of the properties or descriptors with that name.
+    @property
+    def all_by_name(self):
+        if not self._all_by_name:
+            self._all_by_name = self._compute_all_by_name()
+        return self._all_by_name
+
+    # Returns a generator for the set of properties and descriptors that are conditionally included depending on settings. If two properties
+    # or descriptors have the same, we only return the canonical one and only if all the variants have settings flags.
+    #
+    # For example, there are two "speak-as" entries. One is a style property and the other is @counter-style descriptor. Only the one of the
+    # two, the @counter-style descriptor, has settings_flags set, so we don't return anything for that name.
+    @property
+    def all_unique_with_settings_flag(self):
+        return (property_set[0] for property_set in self.all_grouped_by_name if all(property.codegen_properties.settings_flag for property in property_set))
+
+    # Returns a generator for the subset of `self.all_unique` that are marked internal-only.
+    @property
+    def all_unique_internal_only(self):
+        return (property for property in self.all_unique if property.codegen_properties.internal_only)
+
+    # Returns a generator for the subset of `self.all_unique` that are NOT marked internal.
+    @property
+    def all_unique_non_internal_only(self):
+        return (property for property in self.all_unique if not property.codegen_properties.internal_only)
+
+    @property
+    def all_descriptor_only(self):
+        return (descriptor for descriptor in self.all_descriptors if descriptor.name not in self.style.all_by_name)
+
+    # Returns the set of settings-flags used by any property or descriptor. Uniqued and sorted lexically.
+    @property
+    def settings_flags(self):
+        if not self._settings_flags:
+            self._settings_flags = sorted(list(set([property.codegen_properties.settings_flag for property in self.all_properties_and_descriptors if property.codegen_properties.settings_flag])))
+        return self._settings_flags
 
 
 # MARK: - Property Parsing
@@ -1428,6 +1757,14 @@ class MatchOneTerm:
         return MatchOneTerm(**dictionary)
 
     @staticmethod
+    def from_values(parsing_context, key_path, values):
+        dictionary = {
+            "value": list(compact_map(lambda value: value.keyword_term, values))
+        }
+
+        return MatchOneTerm(**dictionary)
+
+    @staticmethod
     def from_json(parsing_context, key_path, json_value):
         assert(type(json_value) is dict)
         MatchOneTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"MatchOneTerm")
@@ -1552,12 +1889,17 @@ class Grammar:
     def __init__(self, name, root_term):
         self.name = name
         self.root_term = root_term
+        self._fast_path_keyword_terms_sorted_by_name = None
 
     def __str__(self):
         return f"{self.name} {self.root_term}"
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def from_values(parsing_context, key_path, name, values):
+        return Grammar(name, MatchOneTerm.from_values(parsing_context, key_path, values))
 
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value):
@@ -1594,6 +1936,12 @@ class Grammar:
         if isinstance(self.root_term, MatchOneTerm):
             return self.root_term.fast_path_keyword_terms
         return []
+
+    @property
+    def fast_path_keyword_terms_sorted_by_name(self):
+        if not self._fast_path_keyword_terms_sorted_by_name:
+            self._fast_path_keyword_terms_sorted_by_name = sorted(self.fast_path_keyword_terms, key=functools.cmp_to_key(StyleProperties._sort_with_prefixed_properties_last))
+        return self._fast_path_keyword_terms_sorted_by_name
 
 
 # A shared grammar rule and metadata describing it. Part of the set of rules tracked by SharedGrammarRules.
@@ -1664,6 +2012,7 @@ class ParsingContext:
             Schema.Entry("categories", allowed_types=[dict], required=True),
             Schema.Entry("instructions", allowed_types=[list], required=True),
             Schema.Entry("properties", allowed_types=[dict], required=True),
+            Schema.Entry("descriptors", allowed_types=[dict], required=True),
             Schema.Entry("shared-grammar-rules", allowed_types=[dict], required=True),
         )
 
@@ -1675,7 +2024,7 @@ class ParsingContext:
         self.parsing_for_codegen = parsing_for_codegen
         self.verbose = verbose
         self.parsed_shared_grammar_rules = None
-        self.parsed_properties = None
+        self.parsed_properties_and_descriptors = None
 
     def parse_shared_grammar_rules(self):
         self.parsed_shared_grammar_rules = SharedGrammarRules(
@@ -1690,18 +2039,8 @@ class ParsingContext:
             )
         )
 
-    def parse_properties(self):
-        self.parsed_properties = Properties(
-            *list(
-                filter(
-                    lambda value: value is not None,
-                    map(
-                        lambda item: Property.from_json(self, "$properties", item[0], item[1]),
-                        self.json_value["properties"].items()
-                    )
-                )
-            )
-        )
+    def parse_properties_and_descriptors(self):
+        self.parsed_properties_and_descriptors = PropertiesAndDescriptors.from_json(self, properties_json_value=self.json_value["properties"], descriptors_json_value=self.json_value["descriptors"])
 
     def is_enabled(self, *, conditional):
         if conditional[0] == '!':
@@ -1722,8 +2061,8 @@ class ParsingContext:
 # MARK: - Code Generation
 
 class GenerationContext:
-    def __init__(self, properties, shared_grammar_rules, *, verbose, gperf_executable):
-        self.properties = properties
+    def __init__(self, properties_and_descriptors, shared_grammar_rules, *, verbose, gperf_executable):
+        self.properties_and_descriptors = properties_and_descriptors
         self.shared_grammar_rules = shared_grammar_rules
         self.verbose = verbose
         self.gperf_executable = gperf_executable
@@ -1804,7 +2143,7 @@ class GenerationContext:
             to.write(f"class {class_};")
         to.newline()
 
-    def generate_property_id_switch_function(self, *, to, signature, properties, mapping, default, prologue=None, epilogue=None):
+    def generate_property_id_switch_function(self, *, to, signature, iterable, mapping, default, mapping_to_property=lambda p: p, prologue=None, epilogue=None):
         to.write(f"{signature}")
         to.write(f"{{")
 
@@ -1814,10 +2153,10 @@ class GenerationContext:
 
             to.write(f"switch (id) {{")
 
-            for property in properties:
-                to.write(f"case {property.id}:")
+            for item in iterable:
+                to.write(f"case {mapping_to_property(item).id}:")
                 with to.indent():
-                    to.write(f"{mapping(property)}")
+                    to.write(f"{mapping(item)}")
 
             to.write(f"default:")
             with to.indent():
@@ -1830,15 +2169,15 @@ class GenerationContext:
         to.write(f"}}")
         to.newline()
 
-    def generate_property_id_switch_function_bool(self, *, to, signature, properties):
+    def generate_property_id_switch_function_bool(self, *, to, signature, iterable, mapping_to_property=lambda p: p):
         to.write(f"{signature}")
         to.write(f"{{")
 
         with to.indent():
             to.write(f"switch (id) {{")
 
-            for property in properties:
-                to.write(f"case {property.id}:")
+            for item in iterable:
+                to.write(f"case {mapping_to_property(item).id}:")
 
             with to.indent():
                 to.write(f"return true;")
@@ -1858,8 +2197,12 @@ class GenerateCSSPropertyNames:
         self.generation_context = generation_context
 
     @property
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
+
+    @property
     def properties(self):
-        return self.generation_context.properties
+        return self.generation_context.properties_and_descriptors.style
 
     def generate(self):
         self.generate_css_property_names_h()
@@ -1920,14 +2263,14 @@ class GenerateCSSPropertyNames:
             static_assert(numCSSProperties + 1 <= 65535, "CSSPropertyID should fit into uint16_t.");
             """)
 
-        all_computed_property_ids = (f"{property.id}," for property in self.properties.all_computed)
-        to.write(f"const std::array<CSSPropertyID, {count_iterable(self.properties.all_computed)}> computedPropertyIDs {{")
+        all_computed_property_ids = (f"{property.id}," for property in self.properties_and_descriptors.style.all_computed)
+        to.write(f"const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style.all_computed)}> computedPropertyIDs {{")
         with to.indent():
             to.write_lines(all_computed_property_ids)
         to.write("};")
         to.newline()
 
-        all_property_name_strings = quote_iterable(self.properties.all, "_s,")
+        all_property_name_strings = quote_iterable((f"{property.name}" for property in self.properties_and_descriptors.all_unique), "_s,")
         to.write(f"constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {{")
         with to.indent():
             to.write_lines(all_property_name_strings)
@@ -1961,10 +2304,10 @@ class GenerateCSSPropertyNames:
             """)
 
     def _generate_gperf_keywords(self, *, to):
-        # Concatenates a list of 'propererty-name, property-id' strings with a second list of 'property-alias, property-id' strings.
+        # Concatenates a list of unique 'propererty-name, property-id' strings with a second list of all 'property-alias, property-id' strings.
         all_property_names_and_aliases_with_ids = itertools.chain(
-              [f'{property.name}, {property.id}'                        for property in self.properties.all],
-            *[[f'{alias}, {property.id}' for alias in property.aliases] for property in self.properties.all]
+              [f'{property.name}, {property.id}'                        for property in self.properties_and_descriptors.all_unique],
+            *[[f'{alias}, {property.id}' for alias in property.aliases] for property in self.properties_and_descriptors.all_properties_and_descriptors]
         )
 
         to.write("%%")
@@ -2038,7 +2381,7 @@ class GenerateCSSPropertyNames:
             to.write(f"auto textflow = makeTextFlow(writingMode, direction);")
             to.write(f"switch (id) {{")
 
-            for group_name, property_group in sorted(self.properties.logical_property_groups.items(), key=lambda x: x[0]):
+            for group_name, property_group in sorted(self.properties_and_descriptors.style.logical_property_groups.items(), key=lambda x: x[0]):
                 kind = property_group["kind"]
                 kind_as_id = PropertyName.convert_name_to_id(kind)
 
@@ -2067,7 +2410,7 @@ class GenerateCSSPropertyNames:
         self.generation_context.generate_property_id_switch_function(
             to=to,
             signature="static bool isExposedNotInvalidAndNotInternal(CSSPropertyID id, const CSSPropertySettings& settings)",
-            properties=self.properties.all_with_settings_flag,
+            iterable=self.properties_and_descriptors.all_unique_with_settings_flag,
             mapping=lambda p: f"return settings.{p.codegen_properties.settings_flag};",
             default="return true;"
         )
@@ -2075,7 +2418,7 @@ class GenerateCSSPropertyNames:
         self.generation_context.generate_property_id_switch_function(
             to=to,
             signature="static bool isExposedNotInvalidAndNotInternal(CSSPropertyID id, const Settings& settings)",
-            properties=self.properties.all_with_settings_flag,
+            iterable=self.properties_and_descriptors.all_unique_with_settings_flag,
             mapping=lambda p: f"return settings.{p.codegen_properties.settings_flag}();",
             default="return true;"
         )
@@ -2115,7 +2458,7 @@ class GenerateCSSPropertyNames:
         """)
 
     def _generate_is_inherited_property(self, *, to):
-        all_inherited_and_ids = (f'{"true " if property.inherited else "false"}, // {property.id}' for property in self.properties.all)
+        all_inherited_and_ids = (f'{"true " if hasattr(property, "inherited") and property.inherited else "false"}, // {property.id}' for property in self.properties_and_descriptors.all_unique)
 
         to.write(f"constexpr bool isInheritedPropertyTable[numCSSProperties + {GenerationContext.number_of_predefined_properties}] = {{")
         with to.indent():
@@ -2139,7 +2482,7 @@ class GenerateCSSPropertyNames:
         with to.indent():
             to.write(f"switch (id1) {{")
 
-            for group_name, property_group in sorted(self.properties.logical_property_groups.items(), key=lambda x: x[0]):
+            for group_name, property_group in sorted(self.properties_and_descriptors.style.logical_property_groups.items(), key=lambda x: x[0]):
                 logical = property_group["logical"]
                 physical = property_group["physical"]
                 for first in [logical, physical]:
@@ -2166,7 +2509,7 @@ class GenerateCSSPropertyNames:
         to.newline()
 
     def _generate_css_property_settings_constructor(self, *, to):
-        first_settings_initializer, *remaining_settings_initializers = [f"{flag} {{ settings.{flag}() }}" for flag in self.properties.settings_flags]
+        first_settings_initializer, *remaining_settings_initializers = [f"{flag} {{ settings.{flag}() }}" for flag in self.properties_and_descriptors.settings_flags]
 
         to.write(f"CSSPropertySettings::CSSPropertySettings(const Settings& settings)")
         with to.indent():
@@ -2178,7 +2521,7 @@ class GenerateCSSPropertyNames:
         to.newline()
 
     def _generate_css_property_settings_operator_equal(self, *, to):
-        first, *middle, last = (f"a.{flag} == b.{flag}" for flag in self.properties.settings_flags)
+        first, *middle, last = (f"a.{flag} == b.{flag}" for flag in self.properties_and_descriptors.settings_flags)
 
         to.write(f"bool operator==(const CSSPropertySettings& a, const CSSPropertySettings& b)")
         to.write(f"{{")
@@ -2192,7 +2535,7 @@ class GenerateCSSPropertyNames:
         to.newline()
 
     def _generate_css_property_settings_hasher(self, *, to):
-        first, *middle, last = (f"settings.{flag} << {i}" for (i, flag) in enumerate(self.properties.settings_flags))
+        first, *middle, last = (f"settings.{flag} << {i}" for (i, flag) in enumerate(self.properties_and_descriptors.settings_flags))
 
         to.write(f"void add(Hasher& hasher, const CSSPropertySettings& settings)")
         to.write(f"{{")
@@ -2229,7 +2572,7 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool isInternal(CSSPropertyID id)",
-                properties=self.properties.all_internal_only
+                iterable=(p for p in self.properties_and_descriptors.all_unique if p.codegen_properties.internal_only)
             )
 
             self._generate_is_exposed_functions(
@@ -2243,7 +2586,7 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
                 signature="CSSPropertyID relatedProperty(CSSPropertyID id)",
-                properties=(p for p in self.properties.all if p.codegen_properties.related_property),
+                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.related_property),
                 mapping=lambda p: f"return {p.codegen_properties.related_property.id};",
                 default="return CSSPropertyID::CSSPropertyInvalid;"
             )
@@ -2251,7 +2594,7 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
                 signature="Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)",
-                properties=(p for p in self.properties.all if p.codegen_properties.aliases),
+                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.aliases),
                 mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, '_s'))} }};",
                 default="return { };"
             )
@@ -2259,13 +2602,13 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isColorProperty(CSSPropertyID id)",
-                properties=(p for p in self.properties.all if p.codegen_properties.color_property)
+                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.color_property)
             )
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
                 signature="UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
-                properties=(p for p in self.properties.all if p.codegen_properties.separator),
+                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.separator),
                 mapping=lambda p: f"return '{ p.codegen_properties.separator[0] }';",
                 default="break;",
                 epilogue="return '\\0';"
@@ -2274,13 +2617,13 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)",
-                properties=self.properties.all_direction_aware_properties
+                iterable=self.properties_and_descriptors.style.all_direction_aware_properties
             )
 
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)",
-                properties=self.properties.all_in_logical_property_group
+                iterable=self.properties_and_descriptors.style.all_in_logical_property_group
             )
 
             self._generate_are_in_same_logical_property_group_with_different_mappings_logic(
@@ -2306,7 +2649,7 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isDescriptorOnly(CSSPropertyID id)",
-                properties=(p for p in self.properties.all if p.codegen_properties.descriptor_only)
+                iterable=self.properties_and_descriptors.all_descriptor_only
             )
 
             self._generate_css_property_settings_constructor(
@@ -2347,7 +2690,7 @@ class GenerateCSSPropertyNames:
             first_deferred_property = None
             last_deferred_property = None
 
-            for property in self.properties.all:
+            for property in self.properties_and_descriptors.all_unique:
                 if property.codegen_properties.longhands:
                     if not first_shorthand_property:
                         first_shorthand_property = property
@@ -2394,11 +2737,11 @@ class GenerateCSSPropertyNames:
         to.write(f"constexpr auto lastShorthandProperty = {last_shorthand_property.id};")
         to.write(f"constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;")
 
-        to.write(f"extern const std::array<CSSPropertyID, {count_iterable(self.properties.all_computed)}> computedPropertyIDs;")
+        to.write(f"extern const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style.all_computed)}> computedPropertyIDs;")
         to.newline()
 
     def _generate_css_property_names_h_property_settings(self, *, to):
-        settings_variable_declarations = (f"bool {flag} {{ false }};" for flag in self.properties.settings_flags)
+        settings_variable_declarations = (f"bool {flag} {{ false }};" for flag in self.properties_and_descriptors.settings_flags)
 
         to.write(f"struct CSSPropertySettings {{")
         with to.indent():
@@ -2530,8 +2873,8 @@ class GenerateCSSStyleDeclarationPropertyNames:
         self.generation_context = generation_context
 
     @property
-    def properties(self):
-        return self.generation_context.properties
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
 
     def generate(self):
         self.generate_css_style_declaration_property_names_idl()
@@ -2592,7 +2935,7 @@ class GenerateCSSStyleDeclarationPropertyNames:
             )
 
             name_or_alias_to_property = {}
-            for property in self.properties.all_non_internal_only:
+            for property in self.properties_and_descriptors.all_unique_non_internal_only:
                 name_or_alias_to_property[property.name] = property
                 for alias in property.aliases:
                     name_or_alias_to_property[alias] = property
@@ -2680,8 +3023,12 @@ class GenerateStyleBuilderGenerated:
         self.generation_context = generation_context
 
     @property
-    def properties(self):
-        return self.generation_context.properties
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
+
+    @property
+    def style_properties(self):
+        return self.generation_context.properties_and_descriptors.style
 
     def generate(self):
         self.generate_style_builder_generated_cpp()
@@ -2923,7 +3270,7 @@ class GenerateStyleBuilderGenerated:
                 else:
                     return "downcast<CSSPrimitiveValue>(value)"
 
-            if property in self.properties.properties_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.custom and not property.codegen_properties.converter:
+            if property in self.style_properties.all_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.custom and not property.codegen_properties.converter:
                 to.write(f"if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {{")
                 with to.indent():
                     to.write(f"applyInitial{property.id_without_prefix}(builderState);")
@@ -2973,7 +3320,7 @@ class GenerateStyleBuilderGenerated:
         to.write(f"public:")
 
         with to.indent():
-            for property in self.properties.all:
+            for property in self.style_properties.all:
                 if property.codegen_properties.longhands:
                     continue
                 if property.codegen_properties.skip_builder:
@@ -3015,7 +3362,13 @@ class GenerateStyleBuilderGenerated:
                     return "BuilderCustom"
                 return "BuilderFunctions"
 
-            for property in self.properties.all:
+            for property in self.properties_and_descriptors.all_unique:
+                if not isinstance(property, Property):
+                    to.write(f"case {property.id}:")
+                    with to.indent():
+                        to.write(f"break;")
+                    continue
+                
                 if property.codegen_properties.synonym:
                     continue
 
@@ -3093,8 +3446,8 @@ class GenerateStylePropertyShorthandFunctions:
         self.generation_context = generation_context
 
     @property
-    def properties(self):
-        return self.generation_context.properties
+    def style_properties(self):
+        return self.generation_context.properties_and_descriptors.style
 
     def generate(self):
         self.generate_style_property_shorthand_functions_h()
@@ -3104,7 +3457,7 @@ class GenerateStylePropertyShorthandFunctions:
 
     def _generate_style_property_shorthand_functions_declarations(self, *, to):
         # Skip non-shorthand properties (aka properties WITH longhands).
-        for property in self.properties.all_shorthands:
+        for property in self.style_properties.all_shorthands:
             to.write(f"StylePropertyShorthand {property.id_without_prefix_with_lowercase_first_letter}Shorthand();")
         to.newline()
 
@@ -3133,7 +3486,7 @@ class GenerateStylePropertyShorthandFunctions:
     # MARK: - Helper generator functions for StylePropertyShorthandFunctions.cpp
 
     def _generate_style_property_shorthand_functions_accessors(self, *, to, longhand_to_shorthands, shorthand_to_longhand_count):
-        for property in self.properties.all_shorthands:
+        for property in self.style_properties.all_shorthands:
             to.write(f"StylePropertyShorthand {property.id_without_prefix_with_lowercase_first_letter}Shorthand()")
             to.write(f"{{")
             with to.indent():
@@ -3143,7 +3496,7 @@ class GenerateStylePropertyShorthandFunctions:
                     shorthand_to_longhand_count[property] = 0
                     for longhand in property.codegen_properties.longhands:
                         if longhand.name == "all":
-                            for inner_property in self.properties.all_non_shorthands:
+                            for inner_property in self.style_properties.all_non_shorthands:
                                 if inner_property.name == "direction" or inner_property.name == "unicode-bidi":
                                     continue
                                 longhand_to_shorthands.setdefault(inner_property, [])
@@ -3225,7 +3578,7 @@ class GenerateStylePropertyShorthandFunctions:
                 self.generation_context.generate_property_id_switch_function(
                     to=writer,
                     signature="StylePropertyShorthand shorthandForProperty(CSSPropertyID id)",
-                    properties=self.properties.all_shorthands,
+                    iterable=self.style_properties.all_shorthands,
                     mapping=lambda p: f"return {p.id_without_prefix_with_lowercase_first_letter}Shorthand();",
                     default="return { };"
                 )
@@ -3243,7 +3596,7 @@ class GenerateCSSPropertyParsing:
         self.generation_context = generation_context
 
         # Create a handler for each property and add it to the `property_consumers` map.
-        self.property_consumers = {property: PropertyConsumer.make(property) for property in generation_context.properties.all}
+        self.property_consumers = {property: PropertyConsumer.make(property) for property in generation_context.properties_and_descriptors.all_properties_and_descriptors}
         self.shared_grammar_rule_consumers = {shared_grammar_rule: SharedGrammarRuleConsumer.make(shared_grammar_rule) for shared_grammar_rule in generation_context.shared_grammar_rules.all}
 
     def generate(self):
@@ -3251,8 +3604,8 @@ class GenerateCSSPropertyParsing:
         self.generate_css_property_parsing_cpp()
 
     @property
-    def properties(self):
-        return self.generation_context.properties
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
 
     @property
     def shared_grammar_rules(self):
@@ -3260,11 +3613,59 @@ class GenerateCSSPropertyParsing:
 
     @property
     def all_property_consumers(self):
-        return (self.property_consumers[property] for property in self.properties.all)
+        return (self.property_consumers[property] for property in self.properties_and_descriptors.all_properties_and_descriptors)
+
+    @property
+    def all_style_property_consumers(self):
+        return (self.property_consumers[property] for property in self.properties_and_descriptors.style.all)
+
+    @property
+    def all_counter_style_descriptor_property_consumers(self):
+        return (self.property_consumers[property] for property in self.properties_and_descriptors.counter_style.all)
+
+    @property
+    def all_font_face_descriptor_property_consumers(self):
+        return (self.property_consumers[property] for property in self.properties_and_descriptors.font_face.all)
+
+    @property
+    def all_font_palette_values_descriptor_property_consumers(self):
+        return (self.property_consumers[property] for property in self.properties_and_descriptors.font_palette_values.all)
+
+    @property
+    def all_property_descriptor_property_consumers(self):
+        return (self.property_consumers[property] for property in self.properties_and_descriptors.property.all)
 
     @property
     def all_shared_grammar_rule_consumers(self):
         return (self.shared_grammar_rule_consumers[shared_grammar_rule] for shared_grammar_rule in self.shared_grammar_rules.all)
+
+    @property
+    def all_property_parsing_collections(self):
+        ParsingCollection = collections.namedtuple('ParsingCollection', ['parsing_suffix', 'rule', 'noun', 'supports_current_shorthand', 'property_consumers'])
+
+        return [
+            ParsingCollection('StyleProperty', 'style', 'style', True, list(self.all_style_property_consumers)),
+            ParsingCollection('CounterStyleDescriptor', '@counter-style', 'descriptor', False, list(self.all_counter_style_descriptor_property_consumers)),
+            ParsingCollection('FontFaceDescriptor', '@font-face', 'descriptor', False, list(self.all_font_face_descriptor_property_consumers)),
+            ParsingCollection('FontPaletteValuesDescriptor', '@font-palette-values', 'descriptor', False, list(self.all_font_palette_values_descriptor_property_consumers)),
+            ParsingCollection('PropertyDescriptor', '@property', 'descriptor', False, list(self.all_property_descriptor_property_consumers)),
+        ]
+
+    @property
+    def all_property_consumers_grouped_by_kind(self):
+        return [
+            ("style property", list(self.all_style_property_consumers)),
+            ("@counter-style", list(self.all_counter_style_descriptor_property_consumers)),
+            ("@font-face", list(self.all_font_face_descriptor_property_consumers)),
+            ("@font-palette-values", list(self.all_font_palette_values_descriptor_property_consumers)),
+            ("@property", list(self.all_property_descriptor_property_consumers)),
+        ]
+
+    @property
+    def all_consumers_grouped_by_kind(self):
+        return self.all_property_consumers_grouped_by_kind + [
+            ("shared", list(self.all_shared_grammar_rule_consumers))
+        ]
 
     def generate_css_property_parsing_h(self):
         with open('CSSPropertyParsing.h', 'w') as output_file:
@@ -3337,19 +3738,25 @@ class GenerateCSSPropertyParsing:
                     to=writer
                 )
 
-                self._generate_css_property_parsing_cpp_parse(
-                    to=writer
-                )
+                for parsing_collection in self.all_property_parsing_collections:
+                    self._generate_css_property_parsing_cpp_parse_property(
+                        to=writer,
+                        parsing_collection=parsing_collection
+                    )
 
-                self._generate_css_property_parsing_cpp_is_keyword_valid_aggregate(
-                    to=writer
-                )
+                    keyword_fast_path_eligible_property_consumers = [property_consumer for property_consumer in parsing_collection.property_consumers if property_consumer.keyword_fast_path_generator]
 
-                self.generation_context.generate_property_id_switch_function_bool(
-                    to=writer,
-                    signature="bool CSSPropertyParsing::isKeywordProperty(CSSPropertyID id)",
-                    properties=self.properties.all_with_fast_path_keyword_terms,
-                )
+                    self._generate_css_property_parsing_cpp_is_keyword_valid_for_property(
+                        to=writer,
+                        parsing_collection=parsing_collection,
+                        keyword_fast_path_eligible_property_consumers=keyword_fast_path_eligible_property_consumers
+                    )
+
+                    self._generate_css_property_parsing_cpp_is_keyword_fast_path_eligible_for_property(
+                        to=writer,
+                        parsing_collection=parsing_collection,
+                        keyword_fast_path_eligible_property_consumers=keyword_fast_path_eligible_property_consumers
+                    )
 
     # MARK: - Helper generator functions for CSSPropertyParsing.h
 
@@ -3357,56 +3764,68 @@ class GenerateCSSPropertyParsing:
         to.write(f"struct CSSPropertyParsing {{")
 
         with to.indent():
-            to.write_block("""\
-                // Parse and return a single value.
-                static RefPtr<CSSValue> parse(CSSParserTokenRange&, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext&);
+            for parsing_collection in self.all_property_parsing_collections:
+                to.write(f"// Parse and return a single longhand {parsing_collection.rule} {parsing_collection.noun}.")
+                if parsing_collection.supports_current_shorthand:
+                    to.write(f"static RefPtr<CSSValue> parse{parsing_collection.parsing_suffix}(CSSParserTokenRange&, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext&);")
+                else:
+                    to.write(f"static RefPtr<CSSValue> parse{parsing_collection.parsing_suffix}(CSSParserTokenRange&, CSSPropertyID id, const CSSParserContext&);")
+                to.write(f"// Fast path bare-keyword support.")
+                to.write(f"static bool isKeywordValidFor{parsing_collection.parsing_suffix}(CSSPropertyID, CSSValueID, const CSSParserContext&);")
+                to.write(f"static bool isKeywordFastPathEligible{parsing_collection.parsing_suffix}(CSSPropertyID);")
+                to.newline()
 
-                // Returns true if the bare keyword value forms a valid construction when used with the
-                // provided property.
-                static bool isKeywordValidForProperty(CSSPropertyID, CSSValueID, const CSSParserContext&);
+            to.write(f"// Direct consumers.")
 
-                // Returns true for properties that are valid to pass to `isKeywordValidForProperty`. This
-                // corresponds to the set of properties where a bare keyword value is a valid construction.
-                // NOTE: This will return true for properties that allow values that aren't keywords. All
-                // that it validates is that the property can be valid with a keyword value. (For example,
-                // 'list-style-type' supports a litany of keyword values, but also supports a string value.)
-                static bool isKeywordProperty(CSSPropertyID);
-                """)
-
-            for property_consumer in self.all_property_consumers:
-                property_consumer.generate_export_declaration(to=to)
-
-            for shared_grammar_rule_consumer in self.all_shared_grammar_rule_consumers:
-                shared_grammar_rule_consumer.generate_export_declaration(to=to)
+            for description, consumers in self.all_consumers_grouped_by_kind:
+                if any(consumer.is_exported for consumer in consumers):
+                    to.newline()
+                    to.write(f"// Exported {description} consumers.")
+                    for consumer in (consumer for consumer in consumers if consumer.is_exported):
+                        consumer.generate_export_declaration(to=to)
 
         to.write(f"}};")
         to.newline()
 
     # MARK: - Helper generator functions for CSSPropertyParsing.cpp
 
-    def _generate_css_property_parsing_cpp_is_keyword_valid_aggregate(self, *, to):
-        to.write(f"bool CSSPropertyParsing::isKeywordValidForProperty(CSSPropertyID id, CSSValueID keyword, const CSSParserContext& context)")
-        to.write(f"{{")
-
-        with to.indent():
-            to.write(f"switch (id) {{")
-
-            for property_consumer in self.all_property_consumers:
-                keyword_fast_path_generator = property_consumer.keyword_fast_path_generator
-                if not keyword_fast_path_generator:
-                    continue
-
-                to.write(f"case {property_consumer.property.id}:")
-                with to.indent():
-                    to.write(f"return {keyword_fast_path_generator.generate_call_string(keyword_string='keyword', context_string='context')};")
-
-            to.write(f"default:")
+    def _generate_css_property_parsing_cpp_is_keyword_valid_for_property(self, *, to, parsing_collection, keyword_fast_path_eligible_property_consumers):
+        if not keyword_fast_path_eligible_property_consumers:
+            to.write(f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.parsing_suffix}(CSSPropertyID, CSSValueID, const CSSParserContext&)")
+            to.write(f"{{")
             with to.indent():
                 to.write(f"return false;")
-
             to.write(f"}}")
-        to.write(f"}}")
-        to.newline()
+            to.newline()
+            return
+
+        requires_context = any(propopery_consumer.keyword_fast_path_generator.requires_context for propopery_consumer in keyword_fast_path_eligible_property_consumers)
+
+        self.generation_context.generate_property_id_switch_function(
+            to=to,
+            signature=f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.parsing_suffix}(CSSPropertyID id, CSSValueID keyword, const CSSParserContext&{' context' if requires_context else ''})",
+            iterable=keyword_fast_path_eligible_property_consumers,
+            mapping=lambda property_consumer: f"return {property_consumer.keyword_fast_path_generator.generate_call_string(keyword_string='keyword', context_string='context')};",
+            default="return false;",
+            mapping_to_property=lambda property_consumer: property_consumer.property
+        )
+
+    def _generate_css_property_parsing_cpp_is_keyword_fast_path_eligible_for_property(self, *, to, parsing_collection, keyword_fast_path_eligible_property_consumers):
+        if not keyword_fast_path_eligible_property_consumers:
+            to.write(f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.parsing_suffix}(CSSPropertyID)")
+            to.write(f"{{")
+            with to.indent():
+                to.write(f"return false;")
+            to.write(f"}}")
+            to.newline()
+            return
+
+        self.generation_context.generate_property_id_switch_function_bool(
+            to=to,
+            signature=f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.parsing_suffix}(CSSPropertyID id)",
+            iterable=keyword_fast_path_eligible_property_consumers,
+            mapping_to_property=lambda property_consumer: property_consumer.property
+        )
 
     def _generate_css_property_parsing_cpp_property_parsing_functions(self, *, to):
         # First generate definitions for all the keyword-only fast path predicate functions.
@@ -3426,12 +3845,18 @@ class GenerateCSSPropertyParsing:
             if property_consumer.property.codegen_properties.parser_exported:
                 property_consumer.generate_definition(to=to)
 
-        # And finally all the exported shared grammar rule consumers.
+        # And finally all the exported shared grammar rule consumers (these will be static members of the CSSPropertyParsing struct).
         for shared_grammar_rule_consumer in self.all_shared_grammar_rule_consumers:
             shared_grammar_rule_consumer.generate_definition(to=to)
 
-    def _generate_css_property_parsing_cpp_parse(self, *, to):
-        to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse(CSSParserTokenRange& range, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext& context)")
+    def _generate_css_property_parsing_cpp_parse_property(self, *, to, parsing_collection):
+        if parsing_collection.supports_current_shorthand:
+            to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.parsing_suffix}(CSSParserTokenRange& range, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext& context)")
+            current_shorthand_string = "currentShorthand"
+        else:
+            to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.parsing_suffix}(CSSParserTokenRange& range, CSSPropertyID id, const CSSParserContext& context)")
+            current_shorthand_string = None
+
         to.write(f"{{")
         with to.indent():
             to.write(f"if (!isExposed(id, context.propertySettings) && !isInternal(id)) {{")
@@ -3447,11 +3872,11 @@ class GenerateCSSPropertyParsing:
             PropertyReturnExpression = collections.namedtuple('PropertyReturnExpression', ['property', 'return_expression'])
             property_and_return_expressions = []
 
-            for property_consumer in self.all_property_consumers:
+            for property_consumer in parsing_collection.property_consumers:
                 return_expression = property_consumer.generate_call_string(
                     range_string="range",
                     id_string="id",
-                    current_shorthand_string="currentShorthand",
+                    current_shorthand_string=current_shorthand_string,
                     context_string="context")
 
                 if return_expression is None:
@@ -3473,7 +3898,7 @@ class GenerateCSSPropertyParsing:
                 property_and_return_expressions_grouped_by_expression.append(PropertiesReturnExpression(properties, return_expression))
 
             def _sort_by_first_property(a, b):
-                return Properties._sort_by_descending_priority_and_name(a.properties[0], b.properties[0])
+                return StyleProperties._sort_by_descending_priority_and_name(a.properties[0], b.properties[0])
 
             to.write(f"switch (id) {{")
             for properties, return_expression in sorted(property_and_return_expressions_grouped_by_expression, key=functools.cmp_to_key(_sort_by_first_property)):
@@ -3920,6 +4345,7 @@ class KeywordFastPathGenerator:
 #
 #   def generate_export_declaration(self, *, to):
 #   def generate_definition(self, *, to):
+#   var is_exported
 #
 class SharedGrammarRuleConsumer(object):
     @staticmethod
@@ -3938,6 +4364,10 @@ class SkipSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
 
     def __repr__(self):
         return self.__str__()
+
+    @property
+    def is_exported(self):
+        return False
 
     def generate_export_declaration(self, *, to):
         pass
@@ -3972,6 +4402,10 @@ class GeneratedSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
             scope="CSSPropertyParsing",
             name=f"consume{shared_grammar_rule.name_for_methods.id_without_prefix}",
             parameters=GeneratedSharedGrammarRuleConsumer._build_parameters(requires_context))
+
+    @property
+    def is_exported(self):
+        return True
 
     def generate_export_declaration(self, *, to):
         to.write(f"static {self.signature.declaration_string};")
@@ -4021,22 +4455,23 @@ class GeneratedSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
 #        called from the main `parse` function. If the parser grammar allows for any keyword only valid
 #        parses (e.g. for the grammar [ none | <image> ], "none" is a valid keyword only parse), these
 #        property consumers will also emit a `keyword-only fast path` function (e.g. `isKeywordValidFor*`)
-#        and ensure that it is called from the main `isKeywordValidForProperty` function.
+#        and ensure that it is called from the main `isKeywordValidForStyleProperty` function.
 #
 # `PropertyConsumer` abstract interface:
 #
 #   def generate_call_string(self, *, range_string, id_string, current_shorthand_string, context_string):
 #   def generate_export_declaration(self, *, to):
 #   def generate_definition(self, *, to):
+#   var is_exported
 #   var keyword_fast_path_generator
 
 class PropertyConsumer(object):
     @staticmethod
     def make(property):
-        if property.codegen_properties.longhands or property.codegen_properties.descriptor_only or property.codegen_properties.skip_parser:
+        if property.codegen_properties.longhands or property.codegen_properties.skip_parser:
             return SkipPropertyConsumer(property)
 
-        if property.codegen_properties.custom_parser or property.codegen_properties.parser_function:
+        if property.codegen_properties.parser_function:
             return CustomPropertyConsumer(property)
 
         if property.codegen_properties.parser_grammar:
@@ -4044,11 +4479,6 @@ class PropertyConsumer(object):
                 return FastPathKeywordOnlyPropertyConsumer(property)
             if isinstance(property.codegen_properties.parser_grammar.root_term, ReferenceTerm):
                 return DirectPropertyConsumer(property)
-            return GeneratedPropertyConsumer(property)
-
-        if property.has_only_keyword_terms:
-            if property.has_only_fast_path_keyword_terms:
-                return FastPathKeywordOnlyPropertyConsumer(property)
             return GeneratedPropertyConsumer(property)
 
         raise Exception(f"Invalid property definition for '{property.id}'. Style properties must either specify values or a custom parser.")
@@ -4060,7 +4490,7 @@ class SkipPropertyConsumer(PropertyConsumer):
         self.property = property
 
     def __str__(self):
-        return "SkipPropertyConsumer"
+        return f"SkipPropertyConsumer for {self.property}"
 
     def __repr__(self):
         return self.__str__()
@@ -4075,6 +4505,10 @@ class SkipPropertyConsumer(PropertyConsumer):
         pass
 
     @property
+    def is_exported(self):
+        return False
+
+    @property
     def keyword_fast_path_generator(self):
         return None
 
@@ -4085,7 +4519,7 @@ class CustomPropertyConsumer(PropertyConsumer):
         self.property = property
 
     def __str__(self):
-        return "CustomPropertyConsumer"
+        return f"CustomPropertyConsumer for {self.property}"
 
     def __repr__(self):
         return self.__str__()
@@ -4107,8 +4541,7 @@ class CustomPropertyConsumer(PropertyConsumer):
             parameters.append("CSSValuePool::singleton()")
         parameters += self.property.codegen_properties.parser_requires_additional_parameters
 
-        # If a "parser-function" has been specified, use that, otherwise assume the 'consume' function uses the property name.
-        function = self.property.codegen_properties.parser_function or f"consume{self.property.id_without_prefix}"
+        function = self.property.codegen_properties.parser_function
 
         # Merge the scope, function and parameters to form the final invocation.
         return f"{function}({', '.join(parameters)})"
@@ -4120,6 +4553,10 @@ class CustomPropertyConsumer(PropertyConsumer):
         pass
 
     @property
+    def is_exported(self):
+        return False
+
+    @property
     def keyword_fast_path_generator(self):
         return None
 
@@ -4128,12 +4565,12 @@ class CustomPropertyConsumer(PropertyConsumer):
 class FastPathKeywordOnlyPropertyConsumer(PropertyConsumer):
     def __init__(self, property):
         self.property = property
-        self.keyword_fast_path_generator = KeywordFastPathGenerator(f"isKeywordValidFor{property.id_without_prefix}", property.fast_path_keyword_terms_sorted_by_name)
+        self.keyword_fast_path_generator = KeywordFastPathGenerator(f"isKeywordValidFor{property.name_for_parsing_methods}", property.codegen_properties.parser_grammar.fast_path_keyword_terms_sorted_by_name)
         self.term_generator = TermGeneratorFastPathKeywordTerms(self.keyword_fast_path_generator)
         self.signature = FastPathKeywordOnlyPropertyConsumer._build_signature(property, self.keyword_fast_path_generator)
 
     def __str__(self):
-        return "FastPathKeywordOnlyPropertyConsumer"
+        return f"FastPathKeywordOnlyPropertyConsumer for {self.property}"
 
     def __repr__(self):
         return self.__str__()
@@ -4156,7 +4593,7 @@ class FastPathKeywordOnlyPropertyConsumer(PropertyConsumer):
         return FunctionSignature(
             result_type="RefPtr<CSSValue>",
             scope=FastPathKeywordOnlyPropertyConsumer._build_scope(property),
-            name=f"consume{property.id_without_prefix}",
+            name=f"consume{property.name_for_parsing_methods}",
             parameters=FastPathKeywordOnlyPropertyConsumer._build_parameters(keyword_fast_path_generator))
 
     def generate_call_string(self, *, range_string, id_string=None, current_shorthand_string=None, context_string):
@@ -4167,12 +4604,16 @@ class FastPathKeywordOnlyPropertyConsumer(PropertyConsumer):
     # For "direct" and "fast-path keyword only" consumers, we only generate the property specific
     # defintion if the property has been marked as exported.
 
+    @property
+    def is_exported(self):
+        return self.property.codegen_properties.parser_exported
+
     def generate_export_declaration(self, *, to):
-        if self.property.codegen_properties.parser_exported:
+        if self.is_exported:
             to.write(f"static {self.signature.declaration_string};")
 
     def generate_definition(self, *, to):
-        if self.property.codegen_properties.parser_exported:
+        if self.is_exported:
             to.write(f"{self.signature.definition_string}")
             to.write(f"{{")
             with to.indent():
@@ -4190,7 +4631,7 @@ class DirectPropertyConsumer(PropertyConsumer):
         self.signature = DirectPropertyConsumer._build_signature(self.property, self.term_generator)
 
     def __str__(self):
-        return "DirectPropertyConsumer"
+        return f"DirectPropertyConsumer for {self.property}"
 
     def __repr__(self):
         return self.__str__()
@@ -4213,7 +4654,7 @@ class DirectPropertyConsumer(PropertyConsumer):
         return FunctionSignature(
             result_type="RefPtr<CSSValue>",
             scope=DirectPropertyConsumer._build_scope(property),
-            name=f"consume{property.id_without_prefix}",
+            name=f"consume{property.name_for_parsing_methods}",
             parameters=DirectPropertyConsumer._build_parameters(term_generator))
 
     def generate_call_string(self, *, range_string, id_string=None, current_shorthand_string=None, context_string):
@@ -4225,12 +4666,16 @@ class DirectPropertyConsumer(PropertyConsumer):
     # For "direct" and "fast-path keyword only" consumers, we only generate the property specific
     # defintion if the property has been marked as exported.
 
+    @property
+    def is_exported(self):
+        return self.property.codegen_properties.parser_exported
+
     def generate_export_declaration(self, *, to):
-        if self.property.codegen_properties.parser_exported:
+        if self.is_exported:
             to.write(f"static {self.signature.declaration_string};")
 
     def generate_definition(self, *, to):
-        if self.property.codegen_properties.parser_exported:
+        if self.is_exported:
             to.write(f"{self.signature.definition_string}")
             to.write(f"{{")
             with to.indent():
@@ -4253,7 +4698,7 @@ class GeneratedPropertyConsumer(PropertyConsumer):
         self.signature = GeneratedPropertyConsumer._build_signature(property, self.requires_context)
 
     def __str__(self):
-        return "GeneratedPropertyConsumer"
+        return f"GeneratedPropertyConsumer for {self.property}"
 
     def __repr__(self):
         return self.__str__()
@@ -4276,13 +4721,13 @@ class GeneratedPropertyConsumer(PropertyConsumer):
         return FunctionSignature(
             result_type="RefPtr<CSSValue>",
             scope=GeneratedPropertyConsumer._build_scope(property),
-            name=f"consume{property.id_without_prefix}",
+            name=f"consume{property.name_for_parsing_methods}",
             parameters=GeneratedPropertyConsumer._build_parameters(property, requires_context))
 
     @staticmethod
     def _build_keyword_fast_path_generator(property):
-        if property.has_fast_path_keyword_terms:
-            return KeywordFastPathGenerator(f"isKeywordValidFor{property.id_without_prefix}", property.fast_path_keyword_terms_sorted_by_name)
+        if property.codegen_properties.parser_grammar.has_fast_path_keyword_terms:
+            return KeywordFastPathGenerator(f"isKeywordValidFor{property.name_for_parsing_methods}", property.codegen_properties.parser_grammar.fast_path_keyword_terms_sorted_by_name)
         return None
 
     def generate_call_string(self, *, range_string, id_string, current_shorthand_string, context_string):
@@ -4291,12 +4736,16 @@ class GeneratedPropertyConsumer(PropertyConsumer):
             parameters += [context_string]
         return self.signature.generate_call_string(parameters)
 
+    @property
+    def is_exported(self):
+        return self.property.codegen_properties.parser_exported
+
     def generate_export_declaration(self, *, to):
-        if self.property.codegen_properties.parser_exported:
+        if self.is_exported:
             to.write(f"static {self.signature.declaration_string};")
 
     def generate_definition(self, *, to):
-        if self.property.codegen_properties.parser_exported:
+        if self.is_exported:
             to.write(f"{self.signature.definition_string}")
         else:
             to.write(f"static {self.signature.definition_string}")
@@ -5015,12 +5464,18 @@ def main():
 
     parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, verbose=args.verbose)
     parsing_context.parse_shared_grammar_rules()
-    parsing_context.parse_properties()
+    parsing_context.parse_properties_and_descriptors()
 
     if args.verbose:
-        print(f"{len(parsing_context.parsed_properties.properties)} properties active for code generation")
+        print(f"{len(parsing_context.parsed_shared_grammar_rules.rules)} shared grammar rules active for code generation")
+        print(f"{len(parsing_context.parsed_properties_and_descriptors.style.all)} style properties active for code generation")
+        print(f"{len(parsing_context.parsed_properties_and_descriptors.counter_style.all)} @counter-style descriptors active for code generation")
+        print(f"{len(parsing_context.parsed_properties_and_descriptors.font_face.all)} @font-face descriptors active for code generation")
+        print(f"{len(parsing_context.parsed_properties_and_descriptors.font_palette_values.all)} @font-palette-values descriptors active for code generation")
+        print(f"{len(parsing_context.parsed_properties_and_descriptors.property.all)} @property descriptors active for code generation")
+        print(f"{len(parsing_context.parsed_properties_and_descriptors.all_unique)} uniquely named properties and descriptors active for code generation")
 
-    generation_context = GenerationContext(parsing_context.parsed_properties, parsing_context.parsed_shared_grammar_rules, verbose=args.verbose, gperf_executable=args.gperf_executable)
+    generation_context = GenerationContext(parsing_context.parsed_properties_and_descriptors, parsing_context.parsed_shared_grammar_rules, verbose=args.verbose, gperf_executable=args.gperf_executable)
 
     generators = [
         GenerateCSSPropertyNames,

@@ -222,7 +222,7 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     else if (ruleType == StyleRuleType::FontPaletteValues)
         parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
     else if (ruleType == StyleRuleType::CounterStyle)
-        parseSuccess = parser.parseCounterStyleDescriptor(propertyID, context);
+        parseSuccess = parser.parseCounterStyleDescriptor(propertyID);
     else if (ruleType == StyleRuleType::Keyframe)
         parseSuccess = parser.parseKeyframeDescriptor(propertyID, important);
     else if (ruleType == StyleRuleType::Property)
@@ -335,7 +335,7 @@ bool CSSPropertyParser::consumeCSSWideKeyword(CSSPropertyID propertyID, bool imp
 
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
-    return CSSPropertyParsing::parse(m_range, property, currentShorthand, m_context);
+    return CSSPropertyParsing::parseStyleProperty(m_range, property, currentShorthand, m_context);
 }
 
 std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::consumeCustomPropertyValueWithSyntax(const CSSCustomPropertySyntax& syntax)
@@ -531,298 +531,48 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     return CSSCustomPropertyValue::createForSyntaxValue(name, WTFMove(*syntaxValue));
 }
 
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
-static RefPtr<CSSPrimitiveValue> consumeCounterStyleSystem(CSSParserTokenRange& range)
-{
-    if (auto ident = consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueAdditive>(range))
-        return ident;
-
-    if (auto ident = consumeIdent<CSSValueFixed>(range)) {
-        if (range.atEnd())
-            return ident;
-        // If we have the `fixed` keyword but the range is not at the end, the next token must be a integer.
-        // If it's not, this value is invalid.
-        auto firstSymbolValue = consumeInteger(range);
-        if (!firstSymbolValue)
-            return nullptr;
-        return createPrimitiveValuePair(ident.releaseNonNull(), firstSymbolValue.releaseNonNull());
-    }
-
-    if (auto ident = consumeIdent<CSSValueExtends>(range)) {
-        // There must be a `<counter-style-name>` following the `extends` keyword. If there isn't, this value is invalid.
-        auto parsedCounterStyleName = consumeCounterStyleName(range);
-        if (!parsedCounterStyleName)
-            return nullptr;
-        return createPrimitiveValuePair(ident.releaseNonNull(), parsedCounterStyleName.releaseNonNull());
-    }
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#typedef-symbol
-static RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    if (auto string = consumeString(range))
-        return string;
-    if (auto customIdent = consumeCustomIdent(range))
-        return customIdent;
-    // There are inherent difficulties in supporting <image> symbols in @counter-styles, so gate them behind a
-    // flag for now. https://bugs.webkit.org/show_bug.cgi?id=167645
-    if (context.counterStyleAtRuleImageSymbolsEnabled) {
-        if (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage }))
-            return image;
-    }
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
-static RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    auto prependValue = consumeCounterStyleSymbol(range, context);
-    if (!prependValue)
-        return nullptr;
-    if (range.atEnd())
-        return prependValue;
-
-    auto appendValue = consumeCounterStyleSymbol(range, context);
-    if (!appendValue || !range.atEnd())
-        return nullptr;
-
-    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
-    values->append(prependValue.releaseNonNull());
-    values->append(appendValue.releaseNonNull());
-    return values;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
-static RefPtr<CSSPrimitiveValue> consumeCounterStyleRangeBound(CSSParserTokenRange& range)
-{
-    if (auto infinite = consumeIdent<CSSValueInfinite>(range))
-        return infinite;
-    if (auto integer = consumeInteger(range))
-        return integer;
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
-static RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range)
-{
-    if (auto autoValue = consumeIdent<CSSValueAuto>(range))
-        return autoValue;
-
-    auto rangeList = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range) -> RefPtr<CSSValue> {
-        auto lowerBound = consumeCounterStyleRangeBound(range);
-        if (!lowerBound)
-            return nullptr;
-        auto upperBound = consumeCounterStyleRangeBound(range);
-        if (!upperBound)
-            return nullptr;
-
-        // If the lower bound of any range is higher than the upper bound, the entire descriptor is invalid and must be
-        // ignored.
-        if (lowerBound->isInteger() && upperBound->isInteger() && lowerBound->intValue() > upperBound->intValue())
-            return nullptr;
-        
-        return createPrimitiveValuePair(lowerBound.releaseNonNull(), upperBound.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
-    });
-
-    if (!range.atEnd() || !rangeList || !rangeList->length())
-        return nullptr;
-    return rangeList;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-pad
-static RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    RefPtr<CSSValue> integer;
-    RefPtr<CSSValue> symbol;
-    while (!integer || !symbol) {
-        if (!integer) {
-            integer = consumeNonNegativeInteger(range);
-            if (integer)
-                continue;
-        }
-        if (!symbol) {
-            symbol = consumeCounterStyleSymbol(range, context);
-            if (symbol)
-                continue;
-        }
-        return nullptr;
-    }
-    if (!range.atEnd())
-        return nullptr;
-    auto values = CSSValueList::createSpaceSeparated();
-    values->append(integer.releaseNonNull());
-    values->append(symbol.releaseNonNull());
-    return values;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols
-static RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    auto symbols = CSSValueList::createSpaceSeparated();
-    while (!range.atEnd()) {
-        auto symbol = consumeCounterStyleSymbol(range, context);
-        if (!symbol)
-            return nullptr;
-        symbols->append(symbol.releaseNonNull());
-    }
-    if (!symbols->length())
-        return nullptr;
-    return symbols;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols
-static RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    std::optional<int> lastWeight;
-    auto values = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&lastWeight](auto& range, auto& context) -> RefPtr<CSSValue> {
-        auto integer = consumeNonNegativeInteger(range);
-        auto symbol = consumeCounterStyleSymbol(range, context);
-        if (!integer) {
-            if (!symbol)
-                return nullptr;
-            integer = consumeNonNegativeInteger(range);
-            if (!integer)
-                return nullptr;
-        }
-
-        // Additive tuples must be specified in order of strictly descending weight.
-        auto weight = integer->intValue();
-        if (lastWeight && !(weight < lastWeight))
-            return nullptr;
-        lastWeight = weight;
-
-        auto pair = CSSValueList::createSpaceSeparated();
-        pair->append(integer.releaseNonNull());
-        pair->append(symbol.releaseNonNull());
-        return pair;
-    }, context);
-
-    if (!range.atEnd() || !values || !values->length())
-        return nullptr;
-    return values;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as
-static RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
-{
-    if (auto speakAsIdent = consumeIdent<CSSValueAuto, CSSValueBullets, CSSValueNumbers, CSSValueWords, CSSValueSpellOut>(range))
-        return speakAsIdent;
-    return consumeCounterStyleName(range);
-}
-
-RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(context.propertySettings.cssCounterStyleAtRulesEnabled);
-    ASSERT(isExposed(propId, &context.propertySettings));
 
-    switch (propId) {
-    case CSSPropertySystem:
-        return consumeCounterStyleSystem(range);
-    case CSSPropertyNegative:
-        return consumeCounterStyleNegative(range, context);
-    case CSSPropertyPrefix:
-    case CSSPropertySuffix:
-        return consumeCounterStyleSymbol(range, context);
-    case CSSPropertyRange:
-        return consumeCounterStyleRange(range);
-    case CSSPropertyPad:
-        return consumeCounterStylePad(range, context);
-    case CSSPropertyFallback:
-        return consumeCounterStyleName(range);
-    case CSSPropertySymbols:
-        return consumeCounterStyleSymbols(range, context);
-    case CSSPropertyAdditiveSymbols:
-        return consumeCounterStyleAdditiveSymbols(range, context);
-    case CSSPropertySpeakAs:
-        return consumeCounterStyleSpeakAs(range);
-    default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+    return CSSPropertyParsing::parseCounterStyleDescriptor(range, property, context);
 }
 
-bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, const CSSParserContext& context)
+bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property)
 {
-    auto parsedValue = parseCounterStyleDescriptor(propId, m_range, context);
+    ASSERT(m_context.propertySettings.cssCounterStyleAtRulesEnabled);
+
+    auto parsedValue = CSSPropertyParsing::parseCounterStyleDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(propId, CSSPropertyInvalid, *parsedValue, false);
+    addProperty(property, CSSPropertyInvalid, *parsedValue, false);
     return true;
 }
 
-bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
+bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID property)
 {
-    ASSERT(isExposed(propId, &m_context.propertySettings));
+    if (isShorthandCSSProperty(property))
+        return parseFontFaceDescriptorShorthand(property);
 
-    RefPtr<CSSValue> parsedValue;
-    switch (propId) {
-    case CSSPropertyFontFamily:
-        parsedValue = consumeFontFamilyDescriptor(m_range);
-        break;
-    case CSSPropertySrc: // This is a list of urls or local references.
-        parsedValue = consumeFontFaceSrc(m_range, m_context);
-        break;
-    case CSSPropertyUnicodeRange:
-        parsedValue = consumeFontFaceUnicodeRange(m_range);
-        break;
-    case CSSPropertyFontDisplay:
-        parsedValue = consumeFontFaceFontDisplay(m_range, CSSValuePool::singleton());
-        break;
-    case CSSPropertyFontWeight:
-#if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontWeightAbsoluteRange(m_range, CSSValuePool::singleton());
-#else
-        parsedValue = consumeFontWeightAbsolute(m_range, CSSValuePool::singleton());
-#endif
-        break;
-    case CSSPropertyFontStretch:
-#if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontStretchRange(m_range, CSSValuePool::singleton());
-#else
-        parsedValue = consumeFontStretch(m_range, CSSValuePool::singleton());
-#endif
-        break;
-    case CSSPropertyFontStyle:
-#if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontStyleRange(m_range, m_context.mode, CSSValuePool::singleton());
-#else
-        parsedValue = consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton());
-#endif
-        break;
-    case CSSPropertyFontVariantCaps:
-        parsedValue = CSSPropertyParsing::consumeFontVariantCaps(m_range);
-        break;
-    case CSSPropertyFontVariantLigatures:
-        parsedValue = consumeFontVariantLigatures(m_range);
-        break;
-    case CSSPropertyFontVariantNumeric:
-        parsedValue = consumeFontVariantNumeric(m_range);
-        break;
-    case CSSPropertyFontVariantEastAsian:
-        parsedValue = consumeFontVariantEastAsian(m_range);
-        break;
-    case CSSPropertyFontVariantAlternates:
-        parsedValue = consumeFontVariantAlternates(m_range);
-        break;
-    case CSSPropertyFontVariantPosition:
-        parsedValue = CSSPropertyParsing::consumeFontVariantPosition(m_range);
-        break;
+    auto parsedValue = CSSPropertyParsing::parseFontFaceDescriptor(m_range, property, m_context);
+    if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(property, CSSPropertyInvalid, *parsedValue, false);
+    return true;
+}
+
+bool CSSPropertyParser::parseFontFaceDescriptorShorthand(CSSPropertyID property)
+{
+    ASSERT(isExposed(property, m_context.propertySettings));
+
+    switch (property) {
     case CSSPropertyFontVariant:
         return consumeFontVariantShorthand(false);
-    case CSSPropertyFontFeatureSettings:
-        parsedValue = consumeFontFeatureSettings(m_range, CSSValuePool::singleton());
-        break;
     default:
-        break;
-    }
-
-    if (!parsedValue || !m_range.atEnd())
         return false;
-
-    addProperty(propId, CSSPropertyInvalid, *parsedValue, false);
-    return true;
+    }
 }
 
 bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, bool important)
@@ -846,78 +596,23 @@ bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, bool i
     }
 }
 
-bool CSSPropertyParser::parsePropertyDescriptor(CSSPropertyID propertyID)
+bool CSSPropertyParser::parsePropertyDescriptor(CSSPropertyID property)
 {
-    auto parsedValue = [&]() -> RefPtr<CSSValue> {
-        switch (propertyID) {
-        case CSSPropertySyntax:
-            return consumeString(m_range);
-        case CSSPropertyInherits:
-            return consumeIdent<CSSValueTrue, CSSValueFalse>(m_range);
-        case CSSPropertyInitialValue:
-            return CSSCustomPropertyValue::createSyntaxAll(nullAtom(), CSSVariableData::create(m_range.consumeAll()));
-        default:
-            return nullptr;
-        }
-    }();
-
+    auto parsedValue = CSSPropertyParsing::parsePropertyDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(propertyID, CSSPropertyInvalid, *parsedValue, false);
+    addProperty(property, CSSPropertyInvalid, *parsedValue, false);
     return true;
 }
 
-static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRange& range)
+bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID property)
 {
-    if (auto result = consumeIdent<CSSValueLight, CSSValueDark>(range))
-        return result;
-    return consumeNonNegativeInteger(range);
-}
-
-static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    auto list = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range, auto& context) -> RefPtr<CSSValue> {
-        auto key = consumeNonNegativeInteger(range);
-        if (!key)
-            return nullptr;
-
-        auto color = consumeColor(range, context, false, { StyleColor::CSSColorType::Absolute });
-        if (!color)
-            return nullptr;
-
-        return CSSFontPaletteValuesOverrideColorsValue::create(key.releaseNonNull(), color.releaseNonNull());
-    }, context);
-
-    if (!range.atEnd() || !list || !list->length())
-        return nullptr;
-
-    return list;
-}
-
-bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID propId)
-{
-    ASSERT(isExposed(propId, &m_context.propertySettings));
-
-    RefPtr<CSSValue> parsedValue;
-    switch (propId) {
-    case CSSPropertyFontFamily:
-        parsedValue = consumeFamilyName(m_range);
-        break;
-    case CSSPropertyBasePalette:
-        parsedValue = consumeBasePaletteDescriptor(m_range);
-        break;
-    case CSSPropertyOverrideColors:
-        parsedValue = consumeOverrideColorsDescriptor(m_range, m_context);
-        break;
-    default:
-        break;
-    }
-
+    auto parsedValue = CSSPropertyParsing::parseFontPaletteValuesDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(propId, CSSPropertyInvalid, *parsedValue, false);
+    addProperty(property, CSSPropertyInvalid, *parsedValue, false);
     return true;
 }
 
@@ -1734,7 +1429,7 @@ bool CSSPropertyParser::consumeLegacyTextOrientation(bool important)
     if (valueID == CSSValueSidewaysRight) {
         keyword = CSSValuePool::singleton().createIdentifierValue(CSSValueSideways);
         consumeIdentRaw(m_range);
-    } else if (CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyTextOrientation, valueID, m_context))
+    } else if (CSSParserFastPaths::isKeywordValidForStyleProperty(CSSPropertyTextOrientation, valueID, m_context))
         keyword = consumeIdent(m_range);
     if (!keyword || !m_range.atEnd())
         return false;
@@ -2009,7 +1704,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
 bool CSSPropertyParser::consumeOverflowShorthand(bool important)
 {
     CSSValueID xValueID = m_range.consumeIncludingWhitespace().id();
-    if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, xValueID, m_context))
+    if (!CSSParserFastPaths::isKeywordValidForStyleProperty(CSSPropertyOverflowY, xValueID, m_context))
         return false;
 
     CSSValueID yValueID;
@@ -2025,7 +1720,7 @@ bool CSSPropertyParser::consumeOverflowShorthand(bool important)
     } else 
         yValueID = m_range.consumeIncludingWhitespace().id();
 
-    if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, yValueID, m_context))
+    if (!CSSParserFastPaths::isKeywordValidForStyleProperty(CSSPropertyOverflowY, yValueID, m_context))
         return false;
     if (!m_range.atEnd())
         return false;

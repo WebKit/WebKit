@@ -112,10 +112,6 @@
         "   (https://drafts.csswg.org/css-logical-1/#mapping-logic).",
         "   Examples: \"top-left\", \"block-start\", \"horizontal\".",
         "",
-        "* descriptor-only:",
-        "Indicates that this CSS property is descriptor only (populates.",
-        "CSSProperty::isDescriptorOnly().",
-        "",
         "* font-property:",
         "Indicates that this CSS property is font-related. It must have corresponding",
         "methods on the FontDescription class.",
@@ -417,7 +413,7 @@
             "codegen-properties": {
                 "custom": "All",
                 "high-priority": true,
-                "custom-parser": true
+                "parser-function": "consumeFontFamily"
             },
             "specification": {
                 "category": "css-fonts",
@@ -461,9 +457,9 @@
                 "custom": "All",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true,
                 "parser-requires-context-mode": true,
-                "parser-requires-value-pool": true
+                "parser-requires-value-pool": true,
+                "parser-function": "consumeFontStyle"
             },
             "specification": {
                 "category": "css-fonts",
@@ -477,7 +473,7 @@
                 "font-property": true,
                 "high-priority": true,
                 "converter": "FontWeight",
-                "custom-parser": true
+                "parser-function": "consumeFontWeight"
             },
             "specification": {
                 "category": "css-fonts",
@@ -502,8 +498,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "converter": "FontStretch",
-                "custom-parser": true,
-                "parser-requires-value-pool": true
+                "parser-requires-value-pool": true,
+                "parser-function": "consumeFontStretch"
             },
             "specification": {
                 "category": "css-fonts",
@@ -547,7 +543,7 @@
                 "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true,
+                "parser-function": "consumeFontFeatureSettings",
                 "parser-requires-value-pool": true
             },
             "specification": {
@@ -625,7 +621,7 @@
                 "custom": "All",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true
+                "parser-function": "consumeFontVariantLigatures"
             },
             "specification": {
                 "category": "css-fonts",
@@ -683,7 +679,7 @@
                 "custom": "All",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true
+                "parser-function": "consumeFontVariantNumeric"
             },
             "specification": {
                 "category": "css-fonts",
@@ -697,7 +693,7 @@
                 "custom": "All",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true
+                "parser-function": "consumeFontVariantAlternates"
             },
             "specification": {
                 "category": "css-fonts",
@@ -711,7 +707,7 @@
                 "custom": "All",
                 "font-property": true,
                 "high-priority": true,
-                "custom-parser": true
+                "parser-function": "consumeFontVariantEastAsian"
             },
             "specification": {
                 "category": "css-fonts",
@@ -1027,18 +1023,6 @@
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
-            }
-        },
-        "additive-symbols": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols"
             }
         },
         "alignment-baseline": {
@@ -2947,18 +2931,6 @@
                 "url": "https://www.w3.org/TR/CSS2/tables.html#empty-cells"
             }
         },
-        "fallback": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback"
-            }
-        },
         "fill": {
             "inherited": true,
             "codegen-properties": {
@@ -4478,18 +4450,6 @@
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
             }
         },
-        "pad": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-pad"
-            }
-        },
         "padding": {
             "codegen-properties": {
                 "longhands": [
@@ -4879,39 +4839,6 @@
                 "url": "https://www.w3.org/TR/css3-page/#page-size-prop"
             }
         },
-        "src": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-3/#src-desc"
-            }
-        },
-        "base-palette": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-4/#base-palette-desc"
-            }
-        },
-        "override-colors": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-4/#override-color"
-            }
-        },
         "stop-color": {
             "codegen-properties": {
                 "svg": true,
@@ -5071,23 +4998,11 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "SpeakAs",
-                "custom-parser": true
+                "parser-function": "consumeSpeakAs"
             },
             "specification": {
                 "category": "css-speech",
                 "url": "https://www.w3.org/TR/css3-speech/#speak-as"
-            }
-        },
-        "symbols": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols"
             }
         },
         "table-layout": {
@@ -5605,34 +5520,6 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-unicode-bidi"
-            }
-        },
-        "unicode-range": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "descriptor-only": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-fonts",
-                "url": "https://www.w3.org/TR/css-fonts-3/#descdef-unicode-range"
-            }
-        },
-        "font-display": {
-            "values": [
-                "auto",
-                "block",
-                "swap",
-                "fallback",
-                "optional"
-            ],
-            "codegen-properties": {
-                "skip-builder": true,
-                "descriptor-only": true
-            },
-            "specification": {
-                "category": "css-fonts-4",
-                "url": "https://drafts.csswg.org/css-fonts-4/#font-display-desc"
             }
         },
         "vector-effect": {
@@ -7434,18 +7321,6 @@
             },
             "status": "non-standard"
         },
-        "negative": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative"
-            }
-        },
         "color-scheme": {
             "inherited": true,
             "values": [
@@ -7556,18 +7431,6 @@
                 "url": "https://www.w3.org/TR/css-transforms-1/#propdef-perspective-origin"
             }
         },
-        "prefix": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-prefix"
-            }
-        },
         "print-color-adjust": {
             "inherited": true,
             "values": [
@@ -7585,18 +7448,6 @@
                 "url": "https://www.w3.org/TR/css-color-adjust/#print-color-adjust"
             }
         },
-        "range": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-range"
-            }
-        },
         "-webkit-rtl-ordering": {
             "inherited": true,
             "values": [
@@ -7608,18 +7459,6 @@
                 "setter": "setRTLOrdering"
             },
             "status": "non-standard"
-        },
-        "suffix": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-suffix"
-            }
         },
         "-webkit-text-combine": {
             "inherited": true,
@@ -8552,18 +8391,6 @@
                 "url": "https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold"
             }
         },
-        "system": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRulesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
-            },
-            "specification": {
-                "category": "css-counter-styles",
-                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-system"
-            }
-        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {
@@ -8746,41 +8573,387 @@
                 "category": "css-round-display",
                 "url": "https://www.w3.org/TR/css-round-display-1/#border-boundary-property"
             }
-        },
-        "syntax": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCustomPropertiesAndValuesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+        }
+    },
+    "descriptors": {
+        "@counter-style": {
+            "additive-symbols": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleAdditiveSymbols",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols"
+                }
             },
-            "specification": {
-                "category": "css-properties-and-values",
-                "url": "https://drafts.css-houdini.org/css-properties-values-api/#the-syntax-descriptor"
+            "fallback": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleName"
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback"
+                }
+            },
+            "negative": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleNegative",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative"
+                }
+            },
+            "pad": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStylePad",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-pad"
+                }
+            },
+            "prefix": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleSymbol",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-prefix"
+                }
+            },
+            "range": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleRange"
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-range"
+                }
+            },
+            "suffix": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleSymbol",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-suffix"
+                }
+            },
+            "system": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleSystem"
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-system"
+                }
+            },
+            "speak-as": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleSpeakAs"
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"
+                }
+            },
+            "symbols": {
+                "codegen-properties": {
+                    "settings-flag": "cssCounterStyleAtRulesEnabled",
+                    "parser-function": "consumeCounterStyleSymbols",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-counter-styles",
+                    "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols"
+                }
             }
         },
-        "inherits": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCustomPropertiesAndValuesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+        "@font-face": {
+            "font-family": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontFaceFontFamily"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#font-family-desc"
+                }
             },
-            "specification": {
-                "category": "css-properties-and-values",
-                "url": "https://drafts.css-houdini.org/css-properties-values-api/#inherits-descriptor"
+            "font-display": {
+                "values": [
+                    "auto",
+                    "block",
+                    "swap",
+                    "fallback",
+                    "optional"
+                ],
+                "codegen-properties": {
+                    "parser-exported": true
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://drafts.csswg.org/css-fonts-4/#font-display-desc"
+                }
+            },
+            "font-feature-settings": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontFeatureSettings",
+                    "parser-requires-value-pool": true
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#descdef-font-face-font-feature-settings"
+                }
+            },
+            "font-stretch": {
+                "values": [
+                    "normal",
+                    "ultra-condensed",
+                    "extra-condensed",
+                    "condensed",
+                    "semi-condensed",
+                    "semi-expanded",
+                    "expanded",
+                    "extra-expanded",
+                    "ultra-expanded"
+                ],
+                "codegen-properties": [
+                    {
+                        "enable-if": "ENABLE_VARIATION_FONTS",
+                        "parser-requires-value-pool": true,
+                        "parser-function": "consumeFontStretchRange"
+                    },
+                    {
+                        "enable-if": "!ENABLE_VARIATION_FONTS",
+                        "parser-requires-value-pool": true,
+                        "parser-function": "consumeFontStretch"
+                    }
+                ],
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#descdef-font-face-font-stretch"
+                }
+            },
+            "font-style": {
+                "values": [
+                    {
+                        "value": "auto",
+                        "status": "unimplemented"
+                    },
+                    "normal",
+                    "italic",
+                    "oblique"
+                ],
+                "codegen-properties": [
+                    {
+                        "enable-if": "ENABLE_VARIATION_FONTS",
+                        "parser-requires-context-mode": true,
+                        "parser-requires-value-pool": true,
+                        "parser-function": "consumeFontStyleRange"
+                    },
+                    {
+                        "enable-if": "!ENABLE_VARIATION_FONTS",
+                        "parser-requires-context-mode": true,
+                        "parser-requires-value-pool": true,
+                        "parser-function": "consumeFontStyle"
+                    }
+                ],
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#descdef-font-face-font-style"
+                }
+            },
+            "font-variant": {
+                "codegen-properties": {
+                    "longhands": [
+                        "font-variant-ligatures",
+                        "font-variant-caps",
+                        "font-variant-alternates",
+                        "font-variant-numeric",
+                        "font-variant-east-asian",
+                        "font-variant-position"
+                    ]
+                },
+                "specification": {
+                    "category": "css-fonts",
+                    "url": "https://www.w3.org/TR/css-fonts-3/#propdef-font-variant"
+                }
+            },
+            "font-variant-alternates": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontVariantAlternates"
+                },
+                "specification": {
+                    "category": "css-fonts",
+                    "url": "https://drafts.csswg.org/css-fonts-3/#font-variant-alternates-prop"
+                }
+            },
+            "font-variant-caps": {
+                "values": [
+                    "normal",
+                    "small-caps",
+                    "all-small-caps",
+                    "petite-caps",
+                    "all-petite-caps",
+                    "unicase",
+                    "titling-caps"
+                ],
+                "specification": {
+                    "category": "css-fonts",
+                    "url": "https://drafts.csswg.org/css-fonts-3/#font-variant-caps-prop"
+                }
+            },
+            "font-variant-east-asian": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontVariantEastAsian"
+                },
+                "specification": {
+                    "category": "css-fonts",
+                    "url": "https://drafts.csswg.org/css-fonts-3/#font-variant-east-asian-prop"
+                }
+            },
+            "font-variant-ligatures": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontVariantLigatures"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://drafts.csswg.org/css-fonts-4/#font-variant-ligatures-prop"
+                }
+            },
+            "font-variant-numeric": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontVariantNumeric"
+                },
+                "specification": {
+                    "category": "css-fonts",
+                    "url": "https://drafts.csswg.org/css-fonts-3/#font-variant-numeric-prop"
+                }
+            },
+            "font-variant-position": {
+                "values": [
+                    "normal",
+                    "sub",
+                    "super"
+                ],
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-position"
+                }
+            },
+            "font-weight": {
+                "codegen-properties": [
+                    {
+                        "enable-if": "ENABLE_VARIATION_FONTS",
+                        "parser-requires-value-pool": true,
+                        "parser-function": "consumeFontWeightAbsoluteRange"
+                    },
+                    {
+                        "enable-if": "!ENABLE_VARIATION_FONTS",
+                        "parser-requires-value-pool": true,
+                        "parser-function": "consumeFontWeightAbsolute"
+                    }
+                ],
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#descdef-font-face-font-weight"
+                }
+            },
+            "src": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontFaceSrc",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#src-desc"
+                }
+            },
+            "unicode-range": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontFaceUnicodeRange"
+                },
+                "specification": {
+                    "category": "css-fonts",
+                    "url": "https://www.w3.org/TR/css-fonts-3/#descdef-unicode-range"
+                }
             }
         },
-        "initial-value": {
-            "codegen-properties": {
-                "descriptor-only": true,
-                "settings-flag": "cssCustomPropertiesAndValuesEnabled",
-                "skip-builder": true,
-                "custom-parser": true
+        "@font-palette-values": {
+            "font-family": {
+                "codegen-properties": {
+                    "parser-function": "consumeFamilyName"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#font-family-2-desc"
+                }
             },
-            "specification": {
-                "category": "css-properties-and-values",
-                "url": "https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor"
+            "base-palette": {
+                "codegen-properties": {
+                    "parser-grammar": "light | dark | <integer [0,inf]>"
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#font-family-2-desc"
+                }
+            },
+            "override-colors": {
+                "codegen-properties": {
+                    "parser-function": "consumeFontPaletteValuesOverrideColors",
+                    "parser-requires-context": true
+                },
+                "specification": {
+                    "category": "css-fonts-4",
+                    "url": "https://www.w3.org/TR/css-fonts-4/#override-color"
+                }
+            }
+        },
+        "@property": {
+            "syntax": {
+                "codegen-properties": {
+                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
+                    "parser-grammar": "<string>"
+                },
+                "specification": {
+                    "category": "css-properties-and-values",
+                    "url": "https://drafts.css-houdini.org/css-properties-values-api/#the-syntax-descriptor"
+                }
+            },
+            "inherits": {
+                "codegen-properties": {
+                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
+                    "parser-grammar": "true | false"
+                },
+                "specification": {
+                    "category": "css-properties-and-values",
+                    "url": "https://drafts.css-houdini.org/css-properties-values-api/#inherits-descriptor"
+                }
+            },
+            "initial-value": {
+                "codegen-properties": {
+                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
+                    "parser-function": "consumePropertyInitialValue"
+                },
+                "specification": {
+                    "category": "css-properties-and-values",
+                    "url": "https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor"
+                }
             }
         }
     },

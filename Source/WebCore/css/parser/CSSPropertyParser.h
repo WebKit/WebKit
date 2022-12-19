@@ -71,11 +71,20 @@ private:
 
     bool inQuirksMode() const { return m_context.mode == HTMLQuirksMode; }
 
-    bool parseViewportDescriptor(CSSPropertyID propId, bool important);
+    // @font-face descriptors.
     bool parseFontFaceDescriptor(CSSPropertyID);
+    bool parseFontFaceDescriptorShorthand(CSSPropertyID);
+
+    // @font-palette-values descriptors.
     bool parseFontPaletteValuesDescriptor(CSSPropertyID);
-    bool parseCounterStyleDescriptor(CSSPropertyID, const CSSParserContext&);
+
+    // @counter-style descriptors.
+    bool parseCounterStyleDescriptor(CSSPropertyID);
+    
+    // @keyframe descriptors.
     bool parseKeyframeDescriptor(CSSPropertyID, bool important);
+
+    // @property descriptors.
     bool parsePropertyDescriptor(CSSPropertyID);
 
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, Ref<CSSValue>&&, bool important, bool implicit = false);
