@@ -4527,7 +4527,7 @@ bool EventHandler::focusedScrollableAreaShouldUseSmoothKeyboardScrolling()
 
 bool EventHandler::shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()
 {
-    return m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() && focusedScrollableAreaShouldUseSmoothKeyboardScrolling();
+    return m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() && focusedScrollableAreaShouldUseSmoothKeyboardScrolling() && m_frame.settings().scrollAnimatorEnabled();
 }
 
 bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode)

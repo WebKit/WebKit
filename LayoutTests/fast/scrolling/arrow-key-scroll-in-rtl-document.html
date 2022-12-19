@@ -28,8 +28,12 @@
 
         function checkForScroll()
         {
+            var expectedScrollLeft = -120;
             var scrollLeft = document.scrollingElement.scrollLeft;
-            document.getElementById('result').textContent = "scrollLeft is " + scrollLeft;
+            if (scrollLeft != expectedScrollLeft)
+                document.getElementById('result').textContent = "FAIL: scrollLeft is " + scrollLeft +  ", expected " + expectedScrollLeft;
+             else
+                document.getElementById('result').textContent = "PASS: scrollLeft is " + scrollLeft;
 
             if (window.testRunner)
                 testRunner.notifyDone();
