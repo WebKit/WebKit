@@ -1,20 +1,20 @@
 
-PASS e.style['mask-position'] = "10%" should set the property value
+FAIL e.style['mask-position'] = "10%" should set the property value assert_equals: serialization should be canonical expected "10%" but got "10% center"
 PASS e.style['mask-position'] = "right 30% top 60px" should set the property value
 PASS e.style['mask-position'] = "-20% -30px" should set the property value
-PASS e.style['mask-position'] = "30px center" should set the property value
+FAIL e.style['mask-position'] = "30px center" should set the property value assert_equals: serialization should be canonical expected "30px" but got "30px center"
 PASS e.style['mask-position'] = "40px top" should set the property value
 PASS e.style['mask-position'] = "bottom 10% right 20%" should set the property value
 PASS e.style['mask-position'] = "bottom right" should set the property value
 PASS e.style['mask-position'] = "center 50px" should set the property value
-PASS e.style['mask-position'] = "center bottom" should set the property value
-PASS e.style['mask-position'] = "center left" should set the property value
-PASS e.style['mask-position'] = "left" should set the property value
+FAIL e.style['mask-position'] = "center bottom" should set the property value assert_equals: serialization should be canonical expected "bottom" but got "center bottom"
+FAIL e.style['mask-position'] = "center left" should set the property value assert_equals: serialization should be canonical expected "left" but got "left center"
+FAIL e.style['mask-position'] = "left" should set the property value assert_equals: serialization should be canonical expected "left" but got "left center"
 PASS e.style['mask-position'] = "left bottom" should set the property value
 PASS e.style['mask-position'] = "right 40%" should set the property value
-PASS e.style['mask-position'] = "top" should set the property value
-PASS e.style['mask-position'] = "top center" should set the property value
-PASS e.style['mask-position'] = "center" should set the property value
+FAIL e.style['mask-position'] = "top" should set the property value assert_equals: serialization should be canonical expected "top" but got "center top"
+FAIL e.style['mask-position'] = "top center" should set the property value assert_equals: serialization should be canonical expected "top" but got "center top"
+FAIL e.style['mask-position'] = "center" should set the property value assert_equals: serialization should be canonical expected "center" but got "center center"
 PASS e.style['mask-position'] = "bottom left, right 20%" should set the property value
-PASS e.style['mask-position'] = "top, center, left" should set the property value
+FAIL e.style['mask-position'] = "top, center, left" should set the property value assert_equals: serialization should be canonical expected "top, center, left" but got "center top, center center, left center"
 

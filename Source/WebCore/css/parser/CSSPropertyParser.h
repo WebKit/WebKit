@@ -89,8 +89,7 @@ private:
 
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, Ref<CSSValue>&&, bool important, bool implicit = false);
     void addPropertyWithImplicitDefault(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, Ref<CSSValue>&& implicitDefault, bool important);
-    void addExpandedProperty(CSSPropertyID, Ref<CSSValue>&&, bool important, bool implicit = false);
-    void addExpandedPropertyWithImplicitDefault(CSSPropertyID, RefPtr<CSSValue>&&, Ref<CSSValue>&& implicitDefault, bool important);
+    void addExpandedPropertyForValue(CSSPropertyID propId, Ref<CSSValue>&&, bool);
 
     // Shorthand Parsing.
 
@@ -99,7 +98,7 @@ private:
     bool consume2ValueShorthand(const StylePropertyShorthand&, bool important);
     bool consume4ValueShorthand(const StylePropertyShorthand&, bool important);
 
-    bool consumeBorderShorthand(CSSPropertyID widthProperty, CSSPropertyID styleProperty, CSSPropertyID colorProperty, bool important);
+    bool consumeBorder(RefPtr<CSSValue>& width, RefPtr<CSSValue>& style, RefPtr<CSSValue>& color);
 
     // Legacy parsing allows <string>s for animation-name
     bool consumeAnimationShorthand(const StylePropertyShorthand&, bool important);
@@ -156,7 +155,5 @@ private:
 CSSPropertyID cssPropertyID(StringView);
 WEBCORE_EXPORT CSSValueID cssValueKeywordID(StringView);
 bool isCustomPropertyName(const String&);
-bool isInitialValueForLonghand(CSSPropertyID, const CSSValue&);
-ASCIILiteral initialValueTextForLonghand(CSSPropertyID);
 
 } // namespace WebCore
