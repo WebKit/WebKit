@@ -49,7 +49,8 @@ enum class StyleRuleType : uint8_t {
     Container = 18,
     FontPaletteValues = 19,
     // Those at-rules (@swash, @annotation,...) don't have a specified number in the spec.
-    FontFeatureValuesBlock = 20,
+    FontFeatureValuesBlock,
+    Property,
 };
 
 } // namespace WebCore

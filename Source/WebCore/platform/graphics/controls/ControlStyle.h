@@ -27,6 +27,10 @@
 
 #include "Color.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 struct ControlStyle {
@@ -51,5 +55,8 @@ struct ControlStyle {
     float zoomFactor { 1 };
     Color accentColor;
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ControlStyle::State);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ControlStyle&);
 
 } // namespace WebCore

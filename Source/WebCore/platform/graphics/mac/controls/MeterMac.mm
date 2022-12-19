@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-MeterMac::MeterMac(const MeterPart& owningMeterPart, ControlFactoryMac& controlFactory, NSLevelIndicatorCell* levelIndicatorCell)
+MeterMac::MeterMac(MeterPart& owningMeterPart, ControlFactoryMac& controlFactory, NSLevelIndicatorCell* levelIndicatorCell)
     : ControlMac(owningMeterPart, controlFactory)
     , m_levelIndicatorCell(levelIndicatorCell)
 {

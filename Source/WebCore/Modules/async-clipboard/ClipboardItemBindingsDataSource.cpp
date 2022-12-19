@@ -292,7 +292,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         if (urlStringToSanitize.isEmpty())
             return;
 
-        m_data = { page->sanitizeForCopyOrShare(urlStringToSanitize) };
+        m_data = { page->sanitizeLookalikeCharacters(urlStringToSanitize) };
     }
 
     if (m_type == "text/html"_s) {

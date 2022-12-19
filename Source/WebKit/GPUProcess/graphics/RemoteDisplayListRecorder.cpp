@@ -535,6 +535,14 @@ void RemoteDisplayListRecorder::clearRect(const FloatRect& rect)
     handleItem(DisplayList::ClearRect(rect));
 }
 
+void RemoteDisplayListRecorder::drawControlPart(Ref<ControlPart> part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+{
+    if (!m_controlFactory)
+        m_controlFactory = ControlFactory::createControlFactory();
+    part->setControlFactory(m_controlFactory.get());
+    handleItem(DisplayList::DrawControlPart(WTFMove(part), rect, deviceScaleFactor, style));
+}
+
 #if USE(CG)
 
 void RemoteDisplayListRecorder::applyStrokePattern()

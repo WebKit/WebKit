@@ -2330,3 +2330,85 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     RequestNoCors,
     Response
 };
+
+[Nested OptionSet] enum class WebCore::ControlStyle::State : uint16_t {
+    Hovered,
+    Pressed,
+    Focused,
+    Enabled,
+    Checked,
+    Default,
+    WindowInactive,
+    Indeterminate,
+    SpinUp,
+    Presenting,
+    FormSemanticContext,
+    DarkAppearance,
+    RightToLeft,
+    LargeControls
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ControlStyle {
+    OptionSet<WebCore::ControlStyle::State> states;
+    unsigned fontSize;
+    float zoomFactor;
+    WebCore::Color accentColor;
+};
+
+enum class WebCore::ControlPartType : uint8_t {
+    NoControl,
+    Auto,
+    Checkbox,
+    Radio,
+    PushButton,
+    SquareButton,
+    Button,
+    DefaultButton,
+    Listbox,
+    Menulist,
+    MenulistButton,
+    Meter,
+    ProgressBar,
+    SliderHorizontal,
+    SliderVertical,
+    SearchField,
+#if ENABLE(APPLE_PAY)
+    ApplePayButton,
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    Attachment,
+    BorderlessAttachment,
+#endif
+    TextArea,
+    TextField,
+    CapsLockIndicator,
+#if ENABLE(INPUT_TYPE_COLOR)
+    ColorWell,
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    ImageControlsButton,
+#endif
+    InnerSpinButton,
+#if ENABLE(DATALIST_ELEMENT)
+    ListButton,
+#endif
+    SearchFieldDecoration,
+    SearchFieldResultsDecoration,
+    SearchFieldResultsButton,
+    SearchFieldCancelButton,
+    SliderThumbHorizontal,
+    SliderThumbVertical
+};
+
+[Nested] enum class WebCore::MeterPart::GaugeRegion : uint8_t {
+    Optimum,
+    Suboptimal,
+    EvenLessGood
+};
+
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::MeterPart {
+    WebCore::MeterPart::GaugeRegion gaugeRegion();
+    double value();
+    double minimum();
+    double maximum();
+};

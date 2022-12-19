@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, float progress)
+CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, double progress)
     : CalcExpressionNode(CalcExpressionNodeType::BlendLength)
     , m_from(from)
     , m_to(to)
@@ -48,7 +48,7 @@ CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, flo
 
 float CalcExpressionBlendLength::evaluate(float maxValue) const
 {
-    return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
+    return (1.0 - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
 }
 
 bool CalcExpressionBlendLength::operator==(const CalcExpressionNode& other) const

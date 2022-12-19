@@ -20,7 +20,8 @@ function test()
 </head>
 <body onload="test()">
 <p>This test checks to see if focus methods work on a couple types of elements.</p>
-<p>If the test passes, you should see a line saying "focused 1", then 2, then 3.</p>
+<p>If the test passes, you should see a line saying "focused 2", then 3.</p>
+<p>legend.focus() should not delegate focus.</p>
 <hr>
 <p>
 <fieldset><legend id="1">Legend</legend><input onfocus="log('focused 1')" type="text"></fieldset>

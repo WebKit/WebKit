@@ -62,18 +62,18 @@ function runTest()
     shouldBe("seventh.selectionStart", "11");
     shouldBe("seventh.selectionEnd", "18");
 
-    shouldBe("eighth.selectionStart", "12");
-    shouldBe("eighth.selectionEnd", "19");
+    shouldBe("eighth.selectionStart", "11");
+    shouldBe("eighth.selectionEnd", "18");
     var eighthLegend = document.getElementById("eighthLegend");
     eighthLegend.focus();
-    shouldBe("eighth.selectionStart", "0");
-    shouldBe("eighth.selectionEnd", "19");
+    shouldBe("eighth.selectionStart", "11");
+    shouldBe("eighth.selectionEnd", "18");
 
-    shouldBe("ninth.selectionStart", "12");
-    shouldBe("ninth.selectionEnd", "19");
+    shouldBe("ninth.selectionStart", "11");
+    shouldBe("ninth.selectionEnd", "18");
     eventSender.keyDown("I", accessKeyModifiers);
-    shouldBe("ninth.selectionStart", "0");
-    shouldBe("ninth.selectionEnd", "19");
+    shouldBe("ninth.selectionStart", "11");
+    shouldBe("ninth.selectionEnd", "18");
 
 }
 </script>
@@ -166,12 +166,12 @@ test harness, the test runs automatically.</p>
 
 8) <input type="button" onclick="document.getElementById('eighthLegend').focus()" value="Click this button">
 <fieldset>
-<legend id="eighthLegend">, the whole phrase "SUCCESS and SUCCESS" should be selected:</legend>
-<input type="text" id="eighth" value="SUCCESS and SUCCESS">
+<legend id="eighthLegend">, only the word "SUCCESS" should be selected:</legend>
+<input type="text" id="eighth" value="FAILURE or SUCCESS">
 <script>
     var eighth = document.getElementById("eighth");
     eighth.focus();
-    eighth.setSelectionRange(12, 19);
+    eighth.setSelectionRange(11, 18);
     eighth.blur();
 </script>
 </fieldset>
@@ -179,12 +179,12 @@ test harness, the test runs automatically.</p>
 
 
 9) <fieldset>
-<legend id="eighthLegend" accesskey="i">Hit Ctrl-Option-I (or Alt-I on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:</legend>
-<input type="text" id="ninth" value="SUCCESS and SUCCESS">
+<legend id="ninthLegend" accesskey="i">Hit Ctrl-Option-I (or Alt-I on Windows), only the word "SUCCESS" should be selected:</legend>
+<input type="text" id="ninth" value="FAILURE or SUCCESS">
 <script>
     var ninth = document.getElementById("ninth");
     ninth.focus();
-    ninth.setSelectionRange(12, 19);
+    ninth.setSelectionRange(11, 18);
     ninth.blur();
 </script>
 </fieldset>

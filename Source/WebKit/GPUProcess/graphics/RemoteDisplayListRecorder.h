@@ -33,6 +33,7 @@
 #include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
+#include <WebCore/ControlFactory.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -125,6 +126,7 @@ public:
     void strokePath(const WebCore::Path&);
     void strokeEllipse(const WebCore::FloatRect&);
     void clearRect(const WebCore::FloatRect&);
+    void drawControlPart(Ref<WebCore::ControlPart>, const WebCore::FloatRect&, float deviceScaleFactor, const WebCore::ControlStyle&);
 #if USE(CG)
     void applyStrokePattern();
     void applyFillPattern();
@@ -162,6 +164,7 @@ private:
     QualifiedRenderingResourceIdentifier m_imageBufferIdentifier;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
+    std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
 };
 
 } // namespace WebKit

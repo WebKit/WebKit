@@ -953,8 +953,8 @@ public:
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
-    URL sanitizeForCopyOrShare(const URL&) const;
-    String sanitizeForCopyOrShare(const String&) const;
+    URL sanitizeLookalikeCharacters(const URL&) const;
+    String sanitizeLookalikeCharacters(const String&) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);

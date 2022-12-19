@@ -406,6 +406,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeLayerRule(prelude, block);
     case CSSAtRuleContainer:
         return consumeContainerRule(prelude, block);
+    case CSSAtRuleProperty:
+        return consumePropertyRule(prelude, block);
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -951,6 +953,44 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
     return StyleRuleContainer::create(WTFMove(*query), WTFMove(rules));
+}
+
+RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
+    if (!m_context.propertySettings.cssCustomPropertiesAndValuesEnabled)
+        return nullptr;
+
+    auto nameToken = prelude.consumeIncludingWhitespace();
+    if (nameToken.type() != IdentToken || !prelude.atEnd())
+        return nullptr;
+
+    auto name = nameToken.value().toAtomString();
+    if (!isCustomPropertyName(name))
+        return nullptr;
+
+    consumeDeclarationList(block, StyleRuleType::Property);
+
+    auto propertyDescriptor = StyleRuleProperty::Descriptor { name };
+
+    for (auto& property : m_parsedProperties) {
+        switch (property.id()) {
+        case CSSPropertySyntax:
+            propertyDescriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
+            continue;
+        case CSSPropertyInherits:
+            propertyDescriptor.inherits = downcast<CSSPrimitiveValue>(*property.value()).valueID() == CSSValueTrue;
+            break;
+        case CSSPropertyInitialValue:
+            propertyDescriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).customCSSText();
+            break;
+        default:
+            break;
+        };
+    };
+
+    m_parsedProperties.clear();
+
+    return StyleRuleProperty::create(WTFMove(propertyDescriptor));
 }
     
 RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

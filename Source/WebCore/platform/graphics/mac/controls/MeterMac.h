@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MeterMac : public ControlMac {
 public:
-    MeterMac(const MeterPart& owningMeterPart, ControlFactoryMac&, NSLevelIndicatorCell*);
+    MeterMac(MeterPart& owningMeterPart, ControlFactoryMac&, NSLevelIndicatorCell*);
 
 private:
     const MeterPart& owningMeterPart() const { return downcast<MeterPart>(m_owningPart); }

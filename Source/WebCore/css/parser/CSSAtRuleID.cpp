@@ -53,6 +53,7 @@ CSSAtRuleID cssAtRuleID(StringView name)
         { "namespace", CSSAtRuleNamespace },
         { "ornaments", CSSAtRuleOrnaments },
         { "page", CSSAtRulePage },
+        { "property", CSSAtRuleProperty },
         { "styleset", CSSAtRuleStyleset },
         { "stylistic", CSSAtRuleStylistic },
         { "supports", CSSAtRuleSupports },

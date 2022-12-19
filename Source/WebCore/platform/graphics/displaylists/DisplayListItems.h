@@ -1812,6 +1812,28 @@ private:
     FloatRect m_rect;
 };
 
+class DrawControlPart {
+public:
+    static constexpr ItemType itemType = ItemType::DrawControlPart;
+    static constexpr bool isInlineItem = false;
+    static constexpr bool isDrawingItem = true;
+
+    WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
+
+    ControlPartType type() const { return m_part->type(); }
+    FloatRect rect() const { return m_rect; }
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+    const ControlStyle& style() const { return m_style; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&);
+
+private:
+    Ref<ControlPart> m_part;
+    FloatRect m_rect;
+    float m_deviceScaleFactor;
+    ControlStyle m_style;
+};
+
 #if USE(CG)
 
 class ApplyStrokePattern {
@@ -1864,6 +1886,7 @@ using DisplayListItem = std::variant
     , ClipPath
     , ClipToImageBuffer
     , ConcatenateCTM
+    , DrawControlPart
     , DrawDotsForDocumentMarker
     , DrawEllipse
     , DrawFilteredImageBuffer
@@ -1949,6 +1972,7 @@ WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOut&, OptionSet<AsTextFlag>)
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipToImageBuffer&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOutToPath&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const DrawControlPart&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawFilteredImageBuffer&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawGlyphs&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawDecomposedGlyphs&, OptionSet<AsTextFlag>);

@@ -1519,9 +1519,9 @@ void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOp
 
 #endif
 
-URL WebChromeClient::sanitizeForCopyOrShare(const URL& url) const
+URL WebChromeClient::sanitizeLookalikeCharacters(const URL& url) const
 {
-    return m_page.sanitizeForCopyOrShare(url);
+    return m_page.sanitizeLookalikeCharacters(url);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

@@ -76,6 +76,7 @@ private:
     bool parseFontPaletteValuesDescriptor(CSSPropertyID);
     bool parseCounterStyleDescriptor(CSSPropertyID, const CSSParserContext&);
     bool parseKeyframeDescriptor(CSSPropertyID, bool important);
+    bool parsePropertyDescriptor(CSSPropertyID);
 
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, Ref<CSSValue>&&, bool important, bool implicit = false);
     void addPropertyWithImplicitDefault(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, Ref<CSSValue>&& implicitDefault, bool important);

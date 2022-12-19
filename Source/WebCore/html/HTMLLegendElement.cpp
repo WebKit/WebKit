@@ -2,8 +2,9 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2018 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,40 +45,6 @@ inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Docume
 Ref<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLLegendElement(tagName, document));
-}
-
-RefPtr<HTMLFormControlElement> HTMLLegendElement::associatedControl()
-{
-    // Check if there's a fieldset belonging to this legend.
-    auto enclosingFieldset = ancestorsOfType<HTMLFieldSetElement>(*this).first();
-    if (!enclosingFieldset)
-        return nullptr;
-
-    // Find first form element inside the fieldset that is not a legend element.
-    // FIXME: Should we consider tabindex?
-    return descendantsOfType<HTMLFormControlElement>(*enclosingFieldset).first();
-}
-
-void HTMLLegendElement::focus(const FocusOptions& options)
-{
-    if (document().haveStylesheetsLoaded()) {
-        document().updateLayoutIgnorePendingStylesheets();
-        if (isFocusable()) {
-            Element::focus({ options.selectionRestorationMode, options.direction });
-            return;
-        }
-    }
-
-    // To match other browsers' behavior, never restore previous selection.
-    if (auto control = associatedControl())
-        control->focus({ SelectionRestorationMode::SelectAll, options.direction });
-}
-
-bool HTMLLegendElement::accessKeyAction(bool sendMouseEvents)
-{
-    if (auto control = associatedControl())
-        return control->accessKeyAction(sendMouseEvents);
-    return false;
 }
 
 HTMLFormElement* HTMLLegendElement::form() const

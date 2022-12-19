@@ -225,6 +225,8 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
         parseSuccess = parser.parseCounterStyleDescriptor(propertyID, context);
     else if (ruleType == StyleRuleType::Keyframe)
         parseSuccess = parser.parseKeyframeDescriptor(propertyID, important);
+    else if (ruleType == StyleRuleType::Property)
+        parseSuccess = parser.parsePropertyDescriptor(propertyID);
     else
         parseSuccess = parser.parseValueStart(propertyID, important);
 
@@ -842,6 +844,28 @@ bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, bool i
     default:
         return parseValueStart(propertyID, important);
     }
+}
+
+bool CSSPropertyParser::parsePropertyDescriptor(CSSPropertyID propertyID)
+{
+    auto parsedValue = [&]() -> RefPtr<CSSValue> {
+        switch (propertyID) {
+        case CSSPropertySyntax:
+            return consumeString(m_range);
+        case CSSPropertyInherits:
+            return consumeIdent<CSSValueTrue, CSSValueFalse>(m_range);
+        case CSSPropertyInitialValue:
+            return CSSCustomPropertyValue::createSyntaxAll(nullAtom(), CSSVariableData::create(m_range.consumeAll()));
+        default:
+            return nullptr;
+        }
+    }();
+
+    if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(propertyID, CSSPropertyInvalid, *parsedValue, false);
+    return true;
 }
 
 static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRange& range)

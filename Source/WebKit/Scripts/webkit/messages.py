@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import itertools
 import re
 import sys
 
@@ -87,9 +88,20 @@ class MessageEnumerator(object):
             return self.messages[0].name
         return '%s_%s' % (self.receiver.name, self.messages[0].name)
 
+    def condition(self):
+        conditions = [message.condition for message in self.messages]
+        if any([condition is None for condition in conditions]):
+            return None
+        return " || ".join(conditions)
+
+    def synchronous(self):
+        is_synchronous = self.messages[0].has_attribute(SYNCHRONOUS_ATTRIBUTE)
+        assert(all([message.has_attribute(SYNCHRONOUS_ATTRIBUTE) == is_synchronous for message in self.messages]))
+        return is_synchronous
+
     @classmethod
     def sort_key(cls, obj):
-        return obj.messages[0].has_attribute(SYNCHRONOUS_ATTRIBUTE), receiver_enumerator_order_key(obj.receiver.name), str(obj)
+        return obj.synchronous(), receiver_enumerator_order_key(obj.receiver.name), str(obj)
 
 
 def get_message_enumerators(receivers):
@@ -311,6 +323,7 @@ def types_that_cannot_be_forward_declared():
         'PlatformXR::VisibilityState',
         'String',
         'WebCore::BackForwardItemIdentifier',
+        'WebCore::ControlStyle',
         'WebCore::DestinationColorSpace',
         'WebCore::DiagnosticLoggingDomain',
         'WebCore::DictationContext',
@@ -491,7 +504,7 @@ def async_message_statement(receiver, message):
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(%s, %s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
-    return surround_in_condition(''.join(result), message.condition)
+    return result
 
 
 def sync_message_statement(receiver, message):
@@ -512,7 +525,7 @@ def sync_message_statement(receiver, message):
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
-    return surround_in_condition(''.join(result), message.condition)
+    return result
 
 
 def class_template_headers(template_string):
@@ -995,16 +1008,28 @@ def generate_message_handler(receiver):
         else:
             async_messages.append(message)
 
+    def collect_message_statements(messages, message_statement_function):
+        result = []
+        for condition, messages in itertools.groupby(messages, lambda m: m.condition):
+            if condition:
+                result.append('#if %s\n' % condition)
+            for message in messages:
+                result += message_statement_function(receiver, message)
+            if condition:
+                result.append('#endif\n')
+        return result
+
+    async_message_statements = collect_message_statements(async_messages, async_message_statement)
+    sync_message_statements = collect_message_statements(sync_messages, sync_message_statement)
+
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
         assert(receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE))
-
-        result += [async_message_statement(receiver, message) for message in async_messages]
-        result += [sync_message_statement(receiver, message) for message in sync_messages]
-
+        result += async_message_statements
+        result += sync_message_statements
         if (receiver.superclass):
             result.append('    %s::didReceiveStreamMessage(connection, decoder);\n' % (receiver.superclass))
         else:
@@ -1022,9 +1047,7 @@ def generate_message_handler(receiver):
         result.append('{\n')
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
             result.append('    Ref protectedThis { *this };\n')
-
-        result += [async_message_statement(receiver, message) for message in async_messages]
-
+        result += async_message_statements
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE) or receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchMessage(connection, decoder))\n')
             result.append('        return;\n')
@@ -1046,7 +1069,7 @@ def generate_message_handler(receiver):
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    Ref protectedThis { *this };\n')
-        result += [sync_message_statement(receiver, message) for message in sync_messages]
+        result += sync_message_statements
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')
             result.append('        return true;\n')
@@ -1061,37 +1084,39 @@ def generate_message_handler(receiver):
         result.append('    return false;\n')
         result.append('}\n')
 
-    result.append('\n} // namespace WebKit\n')
+    result.append('\n')
+    result.append('} // namespace WebKit\n')
 
     result.append('\n')
-    result.append('#if ENABLE(IPC_TESTING_API)\n\n')
-    result.append('namespace IPC {\n\n')
-    previous_message_condition = None
-    for message in receiver.messages:
-        if previous_message_condition != message.condition:
-            if previous_message_condition:
-                result.append('#endif\n')
-            if message.condition:
-                result.append('#if %s\n' % message.condition)
-            previous_message_condition = message.condition
-        result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
-        result.append('{\n')
-        result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'Arguments'))
-        result.append('}\n')
-        has_reply = message.reply_parameters is not None
-        if not has_reply:
-            continue
-        result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
-        result.append('{\n')
-        result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'ReplyArguments'))
-        result.append('}\n')
-    if previous_message_condition:
-        result.append('#endif\n')
-    result.append('\n}\n\n')
-    result.append('#endif\n\n')
+    result.append('#if ENABLE(IPC_TESTING_API)\n')
+    result.append('\n')
+    result.append('namespace IPC {\n')
+    result.append('\n')
+    for condition, messages in itertools.groupby(receiver.messages, lambda m: m.condition):
+        if condition:
+            result.append('#if %s\n' % condition)
+        for message in messages:
+            result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
+            result.append('{\n')
+            result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'Arguments'))
+            result.append('}\n')
+            has_reply = message.reply_parameters is not None
+            if has_reply:
+                result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
+                result.append('{\n')
+                result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'ReplyArguments'))
+                result.append('}\n')
+        if condition:
+            result.append('#endif\n')
+    result.append('\n')
+    result.append('}\n')
+    result.append('\n')
+    result.append('#endif\n')
+    result.append('\n')
 
     if receiver.condition:
-        result.append('\n#endif // %s\n' % receiver.condition)
+        result.append('\n')
+        result.append('#endif // %s\n' % receiver.condition)
 
     return ''.join(result)
 
@@ -1101,6 +1126,7 @@ def generate_message_names_header(receivers):
     result.append(_license_header)
     result.append('#pragma once\n')
     result.append('\n')
+    result.append('#include <algorithm>\n')
     result.append('#include <wtf/EnumTraits.h>\n')
     result.append('\n')
     result.append('namespace IPC {\n')
@@ -1113,35 +1139,61 @@ def generate_message_names_header(receivers):
     result.append('\n};\n')
     result.append('\n')
 
+    result.append('enum class MessageName : uint16_t {\n')
     message_enumerators = get_message_enumerators(receivers)
-
-    result.append('enum class MessageName : uint16_t {')
-    result.append('\n    ')
-    result.append('\n    , '.join(str(e) for e in message_enumerators))
-    result.append('\n    , Last = %s' % message_enumerators[-1])
-    result.append('\n};\n')
+    seen_synchronous = False
+    for (condition, synchronous), enumerators in itertools.groupby(message_enumerators, lambda e: (e.condition(), e.synchronous())):
+        if synchronous and not seen_synchronous:
+            result.append('    FirstSynchronous,\n')
+            result.append('    LastAsynchronous = FirstSynchronous - 1,\n')
+            seen_synchronous = True
+        if condition:
+            result.append('#if %s\n' % condition)
+        for enumerator in enumerators:
+            result.append('    %s,\n' % enumerator)
+        if condition:
+            result.append('#endif\n')
+    result.append('    Count,\n')
+    result.append('    Last = Count - 1\n')
+    result.append('};\n')
     result.append('\n')
-    result.append('ReceiverName receiverName(MessageName);\n')
-    result.append('const char* description(MessageName);\n')
+    result.append('namespace Detail {\n')
+    result.append('struct MessageDescription {\n')
+    result.append('    const char* const description;\n')
+    result.append('    ReceiverName receiverName;\n')
+    for fname, _ in sorted(attributes_to_generate_validators.items()):
+        result.append('    bool %s : 1;\n' % fname)
+    result.append('};\n')
+    result.append('\n')
+    result.append('extern const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1];\n')
+    result.append('}\n')
+    result.append('\n')
+    fnames = [('ReceiverName', 'receiverName'), ('const char*', 'description')]
+    fnames += [('bool', fname) for fname, _ in sorted(attributes_to_generate_validators.items())]
+    for returnType, fname in fnames:
+        result.append('inline %s %s(MessageName messageName)\n' % (returnType, fname))
+        result.append('{\n')
+        result.append('    messageName = std::min(messageName, MessageName::Last);\n')
+        result.append('    return Detail::messageDescriptions[static_cast<size_t>(messageName)].%s;\n' % fname)
+        result.append('}\n')
+        result.append('\n')
     result.append('constexpr bool messageIsSync(MessageName name)\n')
     result.append('{\n')
-    first_synchronous = next((e for e in message_enumerators if e.messages[0].has_attribute(SYNCHRONOUS_ATTRIBUTE)), None)
-    if first_synchronous:
-        result.append('    return name >= MessageName::%s;\n' % first_synchronous)
+    if seen_synchronous:
+        result.append('    return name >= MessageName::FirstSynchronous;\n')
     else:
         result.append('    UNUSED_PARAM(name);\n')
         result.append('    return false;\n')
     result.append('}\n')
     result.append('\n')
-
-    for fname, _ in sorted(attributes_to_generate_validators.items()):
-        result.append('bool %s(MessageName);\n' % fname)
-
     result.append('} // namespace IPC\n')
     result.append('\n')
     result.append('namespace WTF {\n')
     result.append('\n')
-    result.append('template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName>);\n')
+    result.append('template<> constexpr bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> messageName)\n')
+    result.append('{\n')
+    result.append('    return messageName <= WTF::enumToUnderlyingType(IPC::MessageName::Last);\n')
+    result.append('}\n')
     result.append('\n')
     result.append('} // namespace WTF\n')
     return ''.join(result)
@@ -1153,69 +1205,26 @@ def generate_message_names_implementation(receivers):
     result.append('#include "config.h"\n')
     result.append('#include "MessageNames.h"\n')
     result.append('\n')
-    result.append('namespace IPC {\n')
+    result.append('namespace IPC::Detail {\n')
     result.append('\n')
-    result.append('const char* description(MessageName name)\n')
-    result.append('{\n')
-    result.append('    switch (name) {\n')
+    result.append('const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1] = {\n')
 
     message_enumerators = get_message_enumerators(receivers)
-    for enumerator in message_enumerators:
-        result.append('    case MessageName::%s:\n' % enumerator)
-        result.append('        return "%s";\n' % enumerator)
-    result.append('    }\n')
-    result.append('    ASSERT_NOT_REACHED();\n')
-    result.append('    return "<invalid message name>";\n')
-    result.append('}\n')
-    result.append('\n')
-    result.append('ReceiverName receiverName(MessageName messageName)\n')
-    result.append('{\n')
-    result.append('    switch (messageName) {\n')
-    prev_enumerator = None
-    for enumerator in message_enumerators:
-        if prev_enumerator and prev_enumerator.receiver != enumerator.receiver:
-            result.append('        return ReceiverName::%s;\n' % prev_enumerator.receiver.name)
-        result.append('    case MessageName::%s:\n' % enumerator)
-        prev_enumerator = enumerator
-    if prev_enumerator:
-        result.append('        return ReceiverName::%s;\n' % prev_enumerator.receiver.name)
-    result.append('    }\n')
-    result.append('    ASSERT_NOT_REACHED();\n')
-    result.append('    return ReceiverName::Invalid;\n')
-    result.append('}\n')
-    for fnam, attr_list in sorted(attributes_to_generate_validators.items()):
-        result.append('bool %s(MessageName name)\n' % fnam)
-        result.append('{\n')
-        result.append('    switch (name) {\n')
-        for e in message_enumerators:
-            if set(attr_list).intersection(set(e.messages[0].attributes).union(set(e.receiver.attributes))):
-                result.append('    case MessageName::%s:\n' % e)
-        if [e for e in message_enumerators if set(attr_list).intersection(set(e.messages[0].attributes).union(set(e.receiver.attributes)))]:
-            result.append('        return true;\n')
-        result.append('    default:\n')
-        result.append('        return false;\n')
-        result.append('    }\n')
-        result.append('}\n')
-        result.append('\n')
-    result.append('\n')
-    result.append('} // namespace IPC\n')
-    result.append('\n')
-    result.append('namespace WTF {\n')
-    result.append('template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> underlyingType)\n')
-    result.append('{\n')
-    result.append('    auto messageName = static_cast<IPC::MessageName>(underlyingType);\n')
-    for enumerator in message_enumerators:
-        for message in enumerator.messages:
-            if message.condition:
-                result.append('#if %s\n' % message.condition)
-            result.append('    if (messageName == IPC::MessageName::%s)\n' % enumerator)
-            result.append('        return true;\n')
-            if message.condition:
-                result.append('#endif\n')
-    result.append('    return false;\n')
+    for condition, enumerators in itertools.groupby(message_enumerators, lambda e: e.condition()):
+        if condition:
+            result.append('#if %s\n' % condition)
+        for enumerator in enumerators:
+            result.append('    { "%s", ReceiverName::%s' % (enumerator, enumerator.receiver.name))
+            for attr_list in sorted(attributes_to_generate_validators.values()):
+                value = "true" if set(attr_list).intersection(set(enumerator.messages[0].attributes).union(set(enumerator.receiver.attributes))) else "false"
+                result.append(', %s' % value)
+            result.append(' },\n')
+        if condition:
+            result.append('#endif\n')
+    result.append('    { "<invalid message name>", ReceiverName::Invalid%s }\n' % (", false" * len(attributes_to_generate_validators)))
     result.append('};\n')
     result.append('\n')
-    result.append('} // namespace WTF\n')
+    result.append('} // namespace IPC::Detail\n')
     return ''.join(result)
 
 

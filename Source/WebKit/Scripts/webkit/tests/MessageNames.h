@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <wtf/EnumTraits.h>
 
 namespace IPC {
@@ -45,111 +46,196 @@ enum class ReceiverName : uint8_t {
 };
 
 enum class MessageName : uint16_t {
-    TestWithCVPixelBuffer_ReceiveCVPixelBuffer
-    , TestWithCVPixelBuffer_SendCVPixelBuffer
-    , TestWithIfMessage_LoadURL
-    , TestWithImageData_ReceiveImageData
-    , TestWithImageData_SendImageData
-    , TestWithLegacyReceiver_AddEvent
-    , TestWithLegacyReceiver_Close
-    , TestWithLegacyReceiver_CreatePlugin
-    , TestWithLegacyReceiver_DeprecatedOperation
-    , TestWithLegacyReceiver_DidCreateWebProcessConnection
-    , TestWithLegacyReceiver_DidReceivePolicyDecision
-    , TestWithLegacyReceiver_ExperimentalOperation
-    , TestWithLegacyReceiver_GetPlugins
-    , TestWithLegacyReceiver_InterpretKeyEvent
-    , TestWithLegacyReceiver_LoadSomething
-    , TestWithLegacyReceiver_LoadSomethingElse
-    , TestWithLegacyReceiver_LoadURL
-    , TestWithLegacyReceiver_PreferencesDidChange
-    , TestWithLegacyReceiver_RunJavaScriptAlert
-    , TestWithLegacyReceiver_SendDoubleAndFloat
-    , TestWithLegacyReceiver_SendInts
-    , TestWithLegacyReceiver_SetVideoLayerID
-    , TestWithLegacyReceiver_TemplateTest
-    , TestWithLegacyReceiver_TestParameterAttributes
-    , TestWithLegacyReceiver_TouchEvent
-    , TestWithSemaphore_ReceiveSemaphore
-    , TestWithSemaphore_SendSemaphore
-    , TestWithStreamBatched_SendString
-    , TestWithStreamBuffer_SendStreamBuffer
-    , TestWithStream_SendMachSendRight
-    , TestWithStream_SendString
-    , TestWithStream_SendStringAsync
-    , TestWithSuperclass_LoadURL
-    , TestWithSuperclass_TestAsyncMessage
-    , TestWithSuperclass_TestAsyncMessageWithConnection
-    , TestWithSuperclass_TestAsyncMessageWithMultipleArguments
-    , TestWithSuperclass_TestAsyncMessageWithNoArguments
-    , TestWithoutAttributes_AddEvent
-    , TestWithoutAttributes_Close
-    , TestWithoutAttributes_CreatePlugin
-    , TestWithoutAttributes_DeprecatedOperation
-    , TestWithoutAttributes_DidCreateWebProcessConnection
-    , TestWithoutAttributes_DidReceivePolicyDecision
-    , TestWithoutAttributes_ExperimentalOperation
-    , TestWithoutAttributes_GetPlugins
-    , TestWithoutAttributes_InterpretKeyEvent
-    , TestWithoutAttributes_LoadSomething
-    , TestWithoutAttributes_LoadSomethingElse
-    , TestWithoutAttributes_LoadURL
-    , TestWithoutAttributes_PreferencesDidChange
-    , TestWithoutAttributes_RunJavaScriptAlert
-    , TestWithoutAttributes_SendDoubleAndFloat
-    , TestWithoutAttributes_SendInts
-    , TestWithoutAttributes_SetVideoLayerID
-    , TestWithoutAttributes_TemplateTest
-    , TestWithoutAttributes_TestParameterAttributes
-    , TestWithoutAttributes_TouchEvent
-    , InitializeConnection
-    , LegacySessionState
-    , ProcessOutOfStreamMessage
-    , SetStreamDestinationID
-    , SyncMessageReply
-    , Terminate
-    , TestWithCVPixelBuffer_ReceiveCVPixelBufferReply
-    , TestWithImageData_ReceiveImageDataReply
-    , TestWithLegacyReceiver_CreatePluginReply
-    , TestWithLegacyReceiver_GetPluginsReply
-    , TestWithLegacyReceiver_InterpretKeyEventReply
-    , TestWithLegacyReceiver_RunJavaScriptAlertReply
-    , TestWithSemaphore_ReceiveSemaphoreReply
-    , TestWithStream_SendStringAsyncReply
-    , TestWithSuperclass_TestAsyncMessageReply
-    , TestWithSuperclass_TestAsyncMessageWithConnectionReply
-    , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply
-    , TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
-    , TestWithoutAttributes_CreatePluginReply
-    , TestWithoutAttributes_GetPluginsReply
-    , TestWithoutAttributes_InterpretKeyEventReply
-    , TestWithoutAttributes_RunJavaScriptAlertReply
-    , TestWithLegacyReceiver_GetPluginProcessConnection
-    , TestWithLegacyReceiver_TestMultipleAttributes
-    , TestWithStream_ReceiveMachSendRight
-    , TestWithStream_SendAndReceiveMachSendRight
-    , TestWithStream_SendStringSync
-    , TestWithSuperclass_TestSyncMessage
-    , TestWithSuperclass_TestSynchronousMessage
-    , TestWithoutAttributes_GetPluginProcessConnection
-    , TestWithoutAttributes_TestMultipleAttributes
-    , WrappedAsyncMessageForTesting
-    , Last = WrappedAsyncMessageForTesting
+#if USE(AVFOUNDATION)
+    TestWithCVPixelBuffer_ReceiveCVPixelBuffer,
+    TestWithCVPixelBuffer_SendCVPixelBuffer,
+#endif
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+    TestWithIfMessage_LoadURL,
+#endif
+    TestWithImageData_ReceiveImageData,
+    TestWithImageData_SendImageData,
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+    TestWithLegacyReceiver_AddEvent,
+#endif
+    TestWithLegacyReceiver_Close,
+    TestWithLegacyReceiver_CreatePlugin,
+#if ENABLE(DEPRECATED_FEATURE)
+    TestWithLegacyReceiver_DeprecatedOperation,
+#endif
+#if PLATFORM(MAC)
+    TestWithLegacyReceiver_DidCreateWebProcessConnection,
+#endif
+    TestWithLegacyReceiver_DidReceivePolicyDecision,
+#if ENABLE(FEATURE_FOR_TESTING)
+    TestWithLegacyReceiver_ExperimentalOperation,
+#endif
+    TestWithLegacyReceiver_GetPlugins,
+#if PLATFORM(MAC)
+    TestWithLegacyReceiver_InterpretKeyEvent,
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    TestWithLegacyReceiver_LoadSomething,
+    TestWithLegacyReceiver_LoadSomethingElse,
+#endif
+    TestWithLegacyReceiver_LoadURL,
+    TestWithLegacyReceiver_PreferencesDidChange,
+    TestWithLegacyReceiver_RunJavaScriptAlert,
+    TestWithLegacyReceiver_SendDoubleAndFloat,
+    TestWithLegacyReceiver_SendInts,
+    TestWithLegacyReceiver_SetVideoLayerID,
+    TestWithLegacyReceiver_TemplateTest,
+    TestWithLegacyReceiver_TestParameterAttributes,
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+    TestWithLegacyReceiver_TouchEvent,
+#endif
+    TestWithSemaphore_ReceiveSemaphore,
+    TestWithSemaphore_SendSemaphore,
+    TestWithStreamBatched_SendString,
+    TestWithStreamBuffer_SendStreamBuffer,
+#if PLATFORM(COCOA)
+    TestWithStream_SendMachSendRight,
+#endif
+    TestWithStream_SendString,
+    TestWithStream_SendStringAsync,
+    TestWithSuperclass_LoadURL,
+#if ENABLE(TEST_FEATURE)
+    TestWithSuperclass_TestAsyncMessage,
+    TestWithSuperclass_TestAsyncMessageWithConnection,
+    TestWithSuperclass_TestAsyncMessageWithMultipleArguments,
+    TestWithSuperclass_TestAsyncMessageWithNoArguments,
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+    TestWithoutAttributes_AddEvent,
+#endif
+    TestWithoutAttributes_Close,
+    TestWithoutAttributes_CreatePlugin,
+#if ENABLE(DEPRECATED_FEATURE)
+    TestWithoutAttributes_DeprecatedOperation,
+#endif
+#if PLATFORM(MAC)
+    TestWithoutAttributes_DidCreateWebProcessConnection,
+#endif
+    TestWithoutAttributes_DidReceivePolicyDecision,
+#if ENABLE(FEATURE_FOR_TESTING)
+    TestWithoutAttributes_ExperimentalOperation,
+#endif
+    TestWithoutAttributes_GetPlugins,
+#if PLATFORM(MAC)
+    TestWithoutAttributes_InterpretKeyEvent,
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    TestWithoutAttributes_LoadSomething,
+    TestWithoutAttributes_LoadSomethingElse,
+#endif
+    TestWithoutAttributes_LoadURL,
+    TestWithoutAttributes_PreferencesDidChange,
+    TestWithoutAttributes_RunJavaScriptAlert,
+    TestWithoutAttributes_SendDoubleAndFloat,
+    TestWithoutAttributes_SendInts,
+    TestWithoutAttributes_SetVideoLayerID,
+    TestWithoutAttributes_TemplateTest,
+    TestWithoutAttributes_TestParameterAttributes,
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+    TestWithoutAttributes_TouchEvent,
+#endif
+#if PLATFORM(COCOA)
+    InitializeConnection,
+#endif
+    LegacySessionState,
+    ProcessOutOfStreamMessage,
+    SetStreamDestinationID,
+    SyncMessageReply,
+    Terminate,
+#if USE(AVFOUNDATION)
+    TestWithCVPixelBuffer_ReceiveCVPixelBufferReply,
+#endif
+    TestWithImageData_ReceiveImageDataReply,
+    TestWithLegacyReceiver_CreatePluginReply,
+    TestWithLegacyReceiver_GetPluginsReply,
+#if PLATFORM(MAC)
+    TestWithLegacyReceiver_InterpretKeyEventReply,
+#endif
+    TestWithLegacyReceiver_RunJavaScriptAlertReply,
+    TestWithSemaphore_ReceiveSemaphoreReply,
+    TestWithStream_SendStringAsyncReply,
+#if ENABLE(TEST_FEATURE)
+    TestWithSuperclass_TestAsyncMessageReply,
+    TestWithSuperclass_TestAsyncMessageWithConnectionReply,
+    TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply,
+    TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply,
+#endif
+    TestWithoutAttributes_CreatePluginReply,
+    TestWithoutAttributes_GetPluginsReply,
+#if PLATFORM(MAC)
+    TestWithoutAttributes_InterpretKeyEventReply,
+#endif
+    TestWithoutAttributes_RunJavaScriptAlertReply,
+    FirstSynchronous,
+    LastAsynchronous = FirstSynchronous - 1,
+    TestWithLegacyReceiver_GetPluginProcessConnection,
+    TestWithLegacyReceiver_TestMultipleAttributes,
+#if PLATFORM(COCOA)
+    TestWithStream_ReceiveMachSendRight,
+    TestWithStream_SendAndReceiveMachSendRight,
+#endif
+    TestWithStream_SendStringSync,
+    TestWithSuperclass_TestSyncMessage,
+    TestWithSuperclass_TestSynchronousMessage,
+    TestWithoutAttributes_GetPluginProcessConnection,
+    TestWithoutAttributes_TestMultipleAttributes,
+    WrappedAsyncMessageForTesting,
+    Count,
+    Last = Count - 1
 };
 
-ReceiverName receiverName(MessageName);
-const char* description(MessageName);
-constexpr bool messageIsSync(MessageName name)
-{
-    return name >= MessageName::TestWithLegacyReceiver_GetPluginProcessConnection;
+namespace Detail {
+struct MessageDescription {
+    const char* const description;
+    ReceiverName receiverName;
+    bool messageAllowedWhenWaitingForSyncReply : 1;
+    bool messageAllowedWhenWaitingForUnboundedSyncReply : 1;
+};
+
+extern const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1];
 }
 
-bool messageAllowedWhenWaitingForSyncReply(MessageName);
-bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName);
+inline ReceiverName receiverName(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return Detail::messageDescriptions[static_cast<size_t>(messageName)].receiverName;
+}
+
+inline const char* description(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return Detail::messageDescriptions[static_cast<size_t>(messageName)].description;
+}
+
+inline bool messageAllowedWhenWaitingForSyncReply(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return Detail::messageDescriptions[static_cast<size_t>(messageName)].messageAllowedWhenWaitingForSyncReply;
+}
+
+inline bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return Detail::messageDescriptions[static_cast<size_t>(messageName)].messageAllowedWhenWaitingForUnboundedSyncReply;
+}
+
+constexpr bool messageIsSync(MessageName name)
+{
+    return name >= MessageName::FirstSynchronous;
+}
+
 } // namespace IPC
 
 namespace WTF {
 
-template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName>);
+template<> constexpr bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> messageName)
+{
+    return messageName <= WTF::enumToUnderlyingType(IPC::MessageName::Last);
+}
 
 } // namespace WTF

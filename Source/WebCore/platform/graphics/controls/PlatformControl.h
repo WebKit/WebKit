@@ -38,7 +38,7 @@ class PlatformControl {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    PlatformControl(const ControlPart& owningPart)
+    PlatformControl(ControlPart& owningPart)
         : m_owningPart(owningPart)
     {
     }
@@ -54,7 +54,7 @@ public:
     virtual void draw(GraphicsContext&, const FloatRect&, float, const ControlStyle&) { }
 
 protected:
-    const ControlPart& m_owningPart;
+    ControlPart& m_owningPart;
 };
 
 } // namespace WebCore

@@ -2,7 +2,8 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +28,6 @@
 
 namespace WebCore {
 
-class HTMLFormControlElement;
-
 class HTMLLegendElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLLegendElement);
 public:
@@ -38,12 +37,6 @@ public:
 
 private:
     HTMLLegendElement(const QualifiedName&, Document&);
-
-    // Control in the legend's field set that gets focus and access key.
-    RefPtr<HTMLFormControlElement> associatedControl();
-
-    bool accessKeyAction(bool sendMouseEvents) final;
-    void focus(const FocusOptions&) final;
 };
 
 } // namespace WebCore

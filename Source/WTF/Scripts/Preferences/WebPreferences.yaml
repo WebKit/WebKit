@@ -2463,7 +2463,7 @@ VP8DecoderEnabled:
   condition: ENABLE(VP9)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
       default: true
 
@@ -2474,7 +2474,7 @@ VP9DecoderEnabled:
     WebCore:
       default: false
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
       default: true
 

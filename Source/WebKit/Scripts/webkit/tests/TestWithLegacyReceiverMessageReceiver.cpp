@@ -114,8 +114,6 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
-#endif
-#if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name())
         return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(connection, decoder, this, &TestWithLegacyReceiver::interpretKeyEvent);
 #endif

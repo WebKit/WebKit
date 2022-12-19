@@ -307,6 +307,8 @@ void DisplayList::append(ItemHandle item)
         return append<StrokeEllipse>(item.get<StrokeEllipse>());
     case ItemType::ClearRect:
         return append<ClearRect>(item.get<ClearRect>());
+    case ItemType::DrawControlPart:
+        return append<DrawControlPart>(item.get<DrawControlPart>());
     case ItemType::BeginTransparencyLayer:
         return append<BeginTransparencyLayer>(item.get<BeginTransparencyLayer>());
     case ItemType::EndTransparencyLayer:

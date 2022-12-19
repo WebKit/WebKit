@@ -270,7 +270,7 @@ public:
     virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
     WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
 
-    WEBCORE_EXPORT virtual void drawControlPart(const ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
+    WEBCORE_EXPORT virtual void drawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);

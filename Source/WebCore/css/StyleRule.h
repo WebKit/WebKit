@@ -68,6 +68,7 @@ public:
     bool isImportRule() const { return type() == StyleRuleType::Import; }
     bool isLayerRule() const { return type() == StyleRuleType::LayerBlock || type() == StyleRuleType::LayerStatement; }
     bool isContainerRule() const { return type() == StyleRuleType::Container; }
+    bool isPropertyRule() const { return type() == StyleRuleType::Property; }
 
     Ref<StyleRuleBase> copy() const;
 
@@ -326,6 +327,26 @@ private:
     CQ::ContainerQuery m_containerQuery;
 };
 
+class StyleRuleProperty final : public StyleRuleBase {
+public:
+    struct Descriptor {
+        AtomString name;
+        String syntax { };
+        std::optional<bool> inherits { };
+        String initialValue { };
+    };
+    static Ref<StyleRuleProperty> create(Descriptor&&);
+    Ref<StyleRuleProperty> copy() const { return adoptRef(*new StyleRuleProperty(*this)); }
+
+    const Descriptor& descriptor() const { return m_descriptor; }
+
+private:
+    StyleRuleProperty(Descriptor&&);
+    StyleRuleProperty(const StyleRuleProperty&) = default;
+
+    Descriptor m_descriptor;
+};
+
 // This is only used by the CSS parser.
 class StyleRuleCharset final : public StyleRuleBase {
 public:
@@ -443,3 +464,8 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleContainer)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isContainerRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleProperty)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isPropertyRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+

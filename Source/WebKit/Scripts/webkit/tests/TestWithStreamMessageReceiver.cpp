@@ -58,8 +58,6 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
         return IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
-#endif
-#if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
         return IPC::handleMessageSynchronous<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
 #endif

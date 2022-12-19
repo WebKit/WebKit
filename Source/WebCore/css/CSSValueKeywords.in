@@ -1640,3 +1640,7 @@ only
 // overflow-anchor
 // none
 // auto
+
+// inherits
+true
+false

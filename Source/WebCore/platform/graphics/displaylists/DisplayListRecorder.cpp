@@ -523,6 +523,12 @@ void Recorder::applyFillPattern()
 }
 #endif
 
+void Recorder::drawControlPart(ControlPart& part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+{
+    appendStateChangeItemIfNecessary();
+    recordDrawControlPart(part, rect, deviceScaleFactor, style);
+}
+
 void Recorder::clip(const FloatRect& rect)
 {
     currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
