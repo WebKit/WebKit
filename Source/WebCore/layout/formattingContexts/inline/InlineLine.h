@@ -41,7 +41,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes);
+    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
@@ -207,6 +207,9 @@ private:
 
     void resetTrailingContent();
 
+    bool lineHasVisuallyNonEmptyContent() const;
+
+    bool isFirstFormattedLine() const { return m_isFirstFormattedLine; }
     const InlineFormattingContext& formattingContext() const;
 
     struct TrimmableTrailingContent {
@@ -244,8 +247,8 @@ private:
         size_t trailingLength() const { return m_trailingLength; }
         size_t length() const { return leadingLength() + trailingLength(); }
 
-        InlineLayoutUnit leadingWidth() const { return m_trailingWidth; }
-        InlineLayoutUnit trailingWidth() const { return m_leadingWidth; }
+        InlineLayoutUnit leadingWidth() const { return m_leadingWidth; }
+        InlineLayoutUnit trailingWidth() const { return m_trailingWidth; }
         InlineLayoutUnit width() const { return leadingWidth() + trailingWidth(); }
 
     private:
@@ -266,6 +269,7 @@ private:
     InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
     bool m_hasNonDefaultBidiLevelRun { false };
     bool m_contentIsTruncated { false };
+    bool m_isFirstFormattedLine { false };
 };
 
 inline bool Line::hasContent() const

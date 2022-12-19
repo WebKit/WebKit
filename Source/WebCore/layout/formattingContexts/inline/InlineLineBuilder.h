@@ -157,7 +157,7 @@ private:
 
     TextDirection inlineBaseDirectionForLineContent();
 
-    bool isFirstLine() const { return !m_previousLine.has_value(); }
+    bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
