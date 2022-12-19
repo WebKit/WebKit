@@ -1185,7 +1185,9 @@ void dumpRenderTree(int argc, const char *argv[])
     [NSSound _setAlertType:0];
 #endif
 
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    auto urlCache = adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]);
+    [NSURLCache setSharedURLCache:urlCache.get()];
+
     [WebCache empty];
 
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
