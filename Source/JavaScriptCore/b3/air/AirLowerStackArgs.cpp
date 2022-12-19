@@ -126,6 +126,10 @@ void lowerStackArgs(Code& code)
                         result = Arg::addr(Air::Tmp(MacroAssembler::stackPointerRegister), offsetFromSP);
                         if (result.isValidForm(width))
                             return result;
+
+                        if (inst.kind.opcode == Patch)
+                            return Arg::extendedOffsetAddr(offsetFromFP);
+
 #if CPU(ARM64) || CPU(RISCV64)
                         Air::Tmp tmp = Air::Tmp(extendedOffsetAddrRegister());
 
