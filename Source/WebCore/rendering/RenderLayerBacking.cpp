@@ -1684,9 +1684,6 @@ void RenderLayerBacking::updateInternalHierarchy()
     constexpr size_t maxOrderedLayers = 6;
     Vector<GraphicsLayer*, maxOrderedLayers> orderedLayers;
 
-    if (m_transformFlatteningLayer)
-        orderedLayers.append(m_transformFlatteningLayer.get());
-
     if (lastClippingLayer)
         orderedLayers.append(lastClippingLayer);
 
@@ -1704,6 +1701,15 @@ void RenderLayerBacking::updateInternalHierarchy()
     }
 
     orderedLayers.append(m_graphicsLayer.get());
+
+    // The transform flattening layer is outside the clipping stack, so we need
+    // to make sure we add the first layer in the clipping stack as its child.
+    if (m_transformFlatteningLayer) {
+        if (lastClippingLayer)
+            m_transformFlatteningLayer->addChild(*m_ancestorClippingStack->firstLayer());
+        else
+            m_transformFlatteningLayer->addChild(*orderedLayers[0]);
+    }
 
     if (m_childContainmentLayer)
         orderedLayers.append(m_childContainmentLayer.get());
