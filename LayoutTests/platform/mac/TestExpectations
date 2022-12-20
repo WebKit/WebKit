@@ -2348,3 +2348,10 @@ webkit.org/b/242484 fast/css/display-contents-all.html [ Pass ImageOnlyFailure ]
 
 # rdar://99942843 ([ iOS Mac ] imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets.html is a constant failure)
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets.html [ Failure ]
+
+#rdar://103538502 ([ macOS ] 5* fast/forms/* (layout-tests) are constant failures)
+[ Monterey+ ] fast/forms/button-sizes.html [ Failure ]
+[ Monterey+ ] fast/forms/input-appearance-spinbutton.html [ Failure ]
+[ Monterey+ ] fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
+[ Monterey+ ] fast/forms/select-list-box-with-height.html [ Failure ]
+[ Monterey+ ] fast/forms/select/optgroup-rendering.html [ Failure ]
