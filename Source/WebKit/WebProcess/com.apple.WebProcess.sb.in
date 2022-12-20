@@ -2064,17 +2064,21 @@
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 #if HAVE(SANDBOX_STATE_FLAGS)
-(allow mach-bootstrap
-    (apply-message-filter
-        (deny mach-message-send)
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-        (with-filter (extension "com.apple.webkit.mach-bootstrap")
-            (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
-#else
-        (allow mach-message-send (mach-bootstrap-message-numbers-post-launch))
-#endif
-        (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-            (allow mach-message-send (mach-bootstrap-message-numbers))))))
+    (begin
+        (if (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
+            (allow mach-bootstrap
+                (apply-message-filter
+                    (deny mach-message-send)
+                    (allow mach-message-send
+                        (mach-bootstrap-message-numbers-post-launch))))
+        ;; else
+            (allow-mach-bootstrap-with-filter))
+
+        (with-filter
+            (require-any
+                (require-not (state-flag "WebContentProcessLaunched"))
+                (state-flag "EnableMachBootstrap"))
+            (allow-mach-bootstrap-with-filter))))
 #else
     (allow-mach-bootstrap-with-filter))
 #endif // HAVE(SANDBOX_STATE_FLAGS)

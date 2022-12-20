@@ -337,7 +337,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&, SandboxExtension::Handle&&);
+    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
 #endif
 
     bool areAllPagesThrottleable() const;
@@ -349,9 +349,9 @@ public:
     bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
 #endif
 
-    void grantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle>&& assetServicesHandles);
+    void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
     void revokeAccessToAssetServices();
-    void switchFromStaticFontRegistryToUserFontRegistry(Vector<SandboxExtension::Handle>&& fontMachExtensionHandles);
+    void switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle);
 
     void disableURLSchemeCheckInDataDetectors() const;
 
@@ -711,7 +711,6 @@ private:
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
-    RefPtr<SandboxExtension> m_machBootstrapExtension;
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -732,7 +731,7 @@ private:
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
 #endif
 
-    Vector<RefPtr<SandboxExtension>> m_assetServicesExtensions;
+    RefPtr<SandboxExtension> m_assetServiceV2Extension;
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;

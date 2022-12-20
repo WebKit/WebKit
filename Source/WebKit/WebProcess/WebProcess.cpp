@@ -1952,9 +1952,6 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
         WEBPROCESS_RELEASE_LOG(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", extension.first.utf8().data());
         m_mediaCaptureSandboxExtensions.add(extension.first, extension.second.copyRef());
     }
-    m_machBootstrapExtension = extensions.machBootstrapExtension();
-    if (m_machBootstrapExtension)
-        m_machBootstrapExtension->consume();
 }
 
 static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& extensionIDs)
@@ -1977,7 +1974,7 @@ static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& e
 void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
 {
     checkDocumentsCaptureStateConsistency(extensionIDs);
-    
+
     for (const auto& extensionID : extensionIDs) {
         auto extension = m_mediaCaptureSandboxExtensions.take(extensionID);
         ASSERT(extension || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled());
@@ -1986,9 +1983,6 @@ void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& ex
             WEBPROCESS_RELEASE_LOG(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", extensionID.utf8().data());
         }
     }
-    
-    if (m_machBootstrapExtension)
-        m_machBootstrapExtension->revoke();
 }
 #endif
 #endif

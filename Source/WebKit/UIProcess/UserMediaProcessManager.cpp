@@ -95,7 +95,6 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     if (extensionCount) {
         Vector<SandboxExtension::Handle> handles;
         Vector<String> ids;
-        SandboxExtension::Handle machBootstrapExtension;
 
         if (!proxy.page().preferences().mockCaptureDevicesEnabled()) {
             handles.resize(extensionCount);
@@ -117,13 +116,12 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
             auto auditToken = process.auditToken();
             if (needsAppleCameraSandboxExtension) {
-                machBootstrapExtension = SandboxExtension::createHandleForMachBootstrapExtension();
-                if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, auditToken)) {
+                if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)) {
                     handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(appleCameraServicePath);
                 }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-                if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, auditToken)) {
+                if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)) {
                     handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(additionalAppleCameraServicePath);
                 }
@@ -145,7 +143,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             process.grantAudioCaptureExtension();
         if (needsVideoSandboxExtension)
             process.grantVideoCaptureExtension();
-        process.send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles), WTFMove(machBootstrapExtension))), 0);
+        process.send(Messages::WebProcess::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), 0);
     }
 #else
     UNUSED_PARAM(proxy);

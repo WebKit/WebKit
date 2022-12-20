@@ -417,8 +417,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
-        auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.webinspector"_s }, process.auditToken());
-        parameters.enableRemoteWebInspectorExtensionHandles = WTFMove(handles);
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, process.auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+            parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(*handle);
     }
 #endif
 
@@ -779,11 +779,10 @@ void WebProcessPool::registerNotificationObservers()
             for (auto& process : m_processes) {
                 if (!process->canSendMessage())
                     continue;
-                auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, std::nullopt);
+                auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, process->auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
                 if (!handle)
                     continue;
-                auto bootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
-                process->send(Messages::WebProcess::OpenDirectoryCacheInvalidated(*handle, bootstrapHandle), 0);
+                process->send(Messages::WebProcess::OpenDirectoryCacheInvalidated(*handle), 0);
             }
         });
         m_openDirectoryNotifyTokens.append(notifyToken);

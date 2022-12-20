@@ -1279,16 +1279,22 @@
             (allow mach-message-send
                 (mach-bootstrap-message-numbers)))))
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-(allow mach-bootstrap
-    (apply-message-filter
-        (deny mach-message-send)
-        (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-            (allow mach-message-send (mach-bootstrap-message-numbers)))
-        (with-filter (extension "com.apple.webkit.mach-bootstrap")
-            (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))))
-#else
 (allow-mach-bootstrap-with-filter)
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter
+    (require-all
+        (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
+        (state-flag "WebContentProcessLaunched")
+        (require-not (state-flag "EnableMachBootstrap")))
+    (allow mach-bootstrap
+        (require-not (state-flag "EnableExperimentalSandbox"))
+        (apply-message-filter
+            (deny mach-message-send (with telemetry-backtrace))
+            (allow mach-message-send (with telemetry-backtrace)
+                (mach-bootstrap-message-numbers-post-launch))))
+    (deny mach-bootstrap (with telemetry-backtrace)
+        (state-flag "EnableExperimentalSandbox")))
 #endif
 
 (define (syscall-mach-only-in-use-during-launch)

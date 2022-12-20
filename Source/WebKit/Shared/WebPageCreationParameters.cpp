@@ -117,7 +117,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << gpuMachExtensionHandles;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    encoder << fontMachExtensionHandles;
+    encoder << fontMachExtensionHandle;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     encoder << accentColor;
@@ -200,10 +200,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << contentSecurityPolicyModeForExtension;
     encoder << mainFrameIdentifier;
-
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    encoder << machBootstrapHandle;
-#endif
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -418,11 +414,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    std::optional<Vector<SandboxExtension::Handle>> fontMachExtensionHandles;
-    decoder >> fontMachExtensionHandles;
-    if (!fontMachExtensionHandles)
+    std::optional<std::optional<SandboxExtension::Handle>> fontMachExtensionHandle;
+    decoder >> fontMachExtensionHandle;
+    if (!fontMachExtensionHandle)
         return std::nullopt;
-    parameters.fontMachExtensionHandles = WTFMove(*fontMachExtensionHandles);
+    parameters.fontMachExtensionHandle = WTFMove(*fontMachExtensionHandle);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
@@ -638,14 +634,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
     if (!decoder.decode(parameters.mainFrameIdentifier))
         return std::nullopt;
-
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    std::optional<SandboxExtension::Handle> machBootstrapHandle;
-    decoder >> machBootstrapHandle;
-    if (!machBootstrapHandle)
-        return std::nullopt;
-    parameters.machBootstrapHandle = WTFMove(*machBootstrapHandle);
-#endif
 
     return { WTFMove(parameters) };
 }
