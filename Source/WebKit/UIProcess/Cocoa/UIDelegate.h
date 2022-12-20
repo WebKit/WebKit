@@ -189,8 +189,8 @@ private:
         void endXRSession(WebPageProxy&) final;
 #endif
 
-        void updateAppBadge(WebPageProxy&, std::optional<uint64_t>) final;
-        void updateClientBadge(WebPageProxy&, std::optional<uint64_t>) final;
+        void updateAppBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;
+        void updateClientBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
