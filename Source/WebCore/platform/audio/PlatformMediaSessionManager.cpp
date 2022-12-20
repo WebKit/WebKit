@@ -212,7 +212,7 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
 
     m_sessions.remove(index);
 
-    if (hasNoSession())
+    if (hasNoSession() && !activeAudioSessionRequired())
         maybeDeactivateAudioSession();
 
 #if !RELEASE_LOG_DISABLED

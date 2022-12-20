@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "AudioSession.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCounted.h>
 
@@ -44,7 +45,7 @@ public:
     enum class Type : uint8_t { Auto, Playback, Transient, TransientSolo, Ambient, PlayAndRecord };
     enum class State : uint8_t { Inactive, Active, Interrupted };
 
-    void setType(Type);
+    ExceptionOr<void> setType(Type);
     Type type() const;
     State state() const;
 
@@ -72,7 +73,8 @@ private:
 
     void scheduleStateChangeEvent();
 
-    static Type s_type;
+    bool m_hasScheduleStateChangeEvent { false };
+    mutable std::optional<State> m_state;
 };
 
 } // namespace WebCore

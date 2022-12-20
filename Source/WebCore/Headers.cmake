@@ -145,6 +145,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/applicationmanifest/ApplicationManifest.h
     Modules/applicationmanifest/ApplicationManifestParser.h
 
+    Modules/audiosession/DOMAudioSession.h
+
     Modules/badge/BadgeClient.h
     Modules/badge/EmptyBadgeClient.h
     Modules/badge/WorkerBadgeProxy.h

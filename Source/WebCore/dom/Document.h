@@ -31,6 +31,7 @@
 #include "CanvasBase.h"
 #include "ClientOrigin.h"
 #include "ContainerNode.h"
+#include "DOMAudioSession.h"
 #include "DisabledAdaptations.h"
 #include "DocumentEventTiming.h"
 #include "FocusOptions.h"
@@ -1729,6 +1730,11 @@ public:
     // This should be used over the settings lazy loading image flag due to a quirk, which may occur causing website images to fail to load properly.
     bool lazyImageLoadingEnabled() const;
 
+#if ENABLE(DOM_AUDIO_SESSION)
+    void setAudioSessionType(DOMAudioSession::Type type) { m_audioSessionType = type; }
+    DOMAudioSession::Type audioSessionType() const { return m_audioSessionType; }
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -2332,6 +2338,10 @@ private:
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
 
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
+
+#if ENABLE(DOM_AUDIO_SESSION)
+    DOMAudioSession::Type m_audioSessionType { DOMAudioSession::Type::Auto };
+#endif
 };
 
 Element* eventTargetElementForDocument(Document*);
