@@ -397,7 +397,7 @@ Ref<MutableStyleProperties> PropertySetCSSStyleDeclaration::copyProperties() con
 StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStyleProperties& propertySet, CSSRule& parentRule)
     : PropertySetCSSStyleDeclaration(propertySet)
     , m_refCount(1)
-    , m_parentRuleType(parentRule.styleRuleType())
+    , m_parentRuleType(static_cast<StyleRuleType>(parentRule.type()))
     , m_parentRule(&parentRule)
 {
     m_propertySet->ref();
