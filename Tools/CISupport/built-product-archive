@@ -60,7 +60,7 @@ def main():
         parser.error("Action is required")
         return 1
 
-    genericPlatform = options.platform.split('-', 1)[0]
+    genericPlatform = 'jsc-only' if options.platform.startswith('jsc') else options.platform.split('-', 1)[0]
     determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration)
     if not _topLevelBuildDirectory:
         print('Could not determine top-level build directory', file=sys.stderr)
@@ -215,7 +215,7 @@ def dirContainsdwo(directory):
 MINIFIED_EXCLUDED_PATTERNS = ('*.a', '*.dSYM', 'DerivedSources')
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
-    assert platform in ('gtk', 'ios', 'jsc', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
     global _configurationBuildDirectory
 
     if platform in ['ios', 'tvos', 'watchos']:
@@ -255,7 +255,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
 
         shutil.rmtree(thinDirectory)
 
-    elif platform in ('gtk', 'jsc', 'wpe'):
+    elif platform in ('gtk', 'jsc-only', 'wpe'):
         # On GTK+/WPE/JSC we don't need the intermediate step of creating a thinDirectory
         # to be compressed in a ZIP file, because we can create the ZIP directly.
         # This is faster and requires less disk resources.
@@ -329,7 +329,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('gtk', 'ios', 'jsc', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
 
     archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
@@ -338,7 +338,7 @@ def extractBuiltProduct(configuration, platform):
 
     if platform in ('mac', 'ios', 'tvos', 'watchos'):
         return unzipArchive(_topLevelBuildDirectory, configuration)
-    elif platform in ('gtk', 'jsc', 'win', 'wincairo', 'wpe'):
+    elif platform in ('gtk', 'jsc-only', 'win', 'wincairo', 'wpe'):
         print('Extracting: {}'.format(_configurationBuildDirectory))
         if unzipArchive(_configurationBuildDirectory, configuration):
             return 1
