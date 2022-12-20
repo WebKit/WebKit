@@ -1,0 +1,19 @@
+Two lines with 
+a hard line break.
+BC
+DE
+If this test passes, area outside border radius is body element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS elementInTopLeftCorner.nodeName is "DIV"
+PASS elementInTopLeftCorner.nodeName is "SPAN"
+PASS elementInTopLeftCorner.nodeName is "DIV"
+PASS elementInTopLeftCorner.nodeName is "BODY"
+PASS elementInTopLeftCorner.nodeName is "BODY"
+PASS elementInTopLeftCorner.nodeName is "SPAN"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
