@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "DeclarativeAnimation.h"
 #include "Styleable.h"
+#include "WebAnimationTypes.h"
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
@@ -41,11 +42,11 @@ class RenderStyle;
 class CSSTransition final : public DeclarativeAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSTransition);
 public:
-    static Ref<CSSTransition> create(const Styleable&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
+    static Ref<CSSTransition> create(const Styleable&, AnimatableProperty, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;
 
-    const AtomString& transitionProperty() const { return nameString(m_property); }
-    CSSPropertyID property() const { return m_property; }
+    const AtomString transitionProperty() const;
+    AnimatableProperty property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
     std::optional<Seconds> timelineTimeAtCreation() const { return m_timelineTimeAtCreation; }
     const RenderStyle& targetStyle() const { return *m_targetStyle; }
@@ -54,14 +55,14 @@ public:
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
 private:
-    CSSTransition(const Styleable&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    CSSTransition(const Styleable&, AnimatableProperty, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
     void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
 
-    CSSPropertyID m_property;
+    AnimatableProperty m_property;
     MonotonicTime m_generationTime;
     Markable<Seconds, Seconds::MarkableTraits> m_timelineTimeAtCreation;
     std::unique_ptr<RenderStyle> m_targetStyle;

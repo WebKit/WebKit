@@ -207,7 +207,7 @@ void Styleable::animationWasAdded(WebAnimation& animation) const
     ensureAnimations().add(&animation);
 }
 
-static inline bool removeCSSTransitionFromMap(CSSTransition& transition, PropertyToTransitionMap& cssTransitionsByProperty)
+static inline bool removeCSSTransitionFromMap(CSSTransition& transition, AnimatablePropertyToTransitionMap& cssTransitionsByProperty)
 {
     auto transitionIterator = cssTransitionsByProperty.find(transition.property());
     if (transitionIterator == cssTransitionsByProperty.end() || transitionIterator->value != &transition)
@@ -232,7 +232,7 @@ void Styleable::animationWasRemoved(WebAnimation& animation) const
 {
     ensureAnimations().remove(&animation);
 
-    // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByCSSPropertyID map.
+    // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByAnimatableProperty map.
     // We don't need to do this for CSS Animations because their timing can be set via CSS to end, which would cause this
     // function to be called, but they should remain associated with their owning element until this is changed via a call
     // to the JS API or changing the target element's animation-name property.
@@ -372,7 +372,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     element.cssAnimationsDidUpdate(pseudoId);
 }
 
-static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID property)
+static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, AnimatableProperty property)
 {
     if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
         auto effects = keyframeEffectStack->sortedEffects();
@@ -385,7 +385,7 @@ static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styl
     return nullptr;
 }
 
-static bool propertyInStyleMatchesValueForTransitionInMap(CSSPropertyID property, const RenderStyle& style, PropertyToTransitionMap& transitions)
+static bool propertyInStyleMatchesValueForTransitionInMap(AnimatableProperty property, const RenderStyle& style, AnimatablePropertyToTransitionMap& transitions)
 {
     if (auto* transition = transitions.get(property)) {
         if (CSSPropertyAnimation::propertiesEqual(property, style, transition->targetStyle()))
@@ -399,7 +399,7 @@ static double transitionCombinedDuration(const Animation* transition)
     return std::max(0.0, transition->duration()) + transition->delay();
 }
 
-static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID property, const RenderStyle& style)
+static bool transitionMatchesProperty(const Animation& transition, AnimatableProperty property, const RenderStyle& style)
 {
     if (transition.isPropertyFilled())
         return false;
@@ -407,11 +407,12 @@ static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID
     auto mode = transition.property().mode;
     if (mode == Animation::TransitionMode::None || mode == Animation::TransitionMode::UnknownProperty)
         return false;
-    if (mode == Animation::TransitionMode::SingleProperty) {
+    if (mode == Animation::TransitionMode::SingleProperty && std::holds_alternative<CSSPropertyID>(property)) {
+        auto cssPropertyId = std::get<CSSPropertyID>(property);
         auto transitionProperty = CSSProperty::resolveDirectionAwareProperty(transition.property().id, style.direction(), style.writingMode());
-        if (transitionProperty != property) {
+        if (transitionProperty != cssPropertyId) {
             for (auto longhand : shorthandForProperty(transitionProperty)) {
-                if (longhand == property)
+                if (longhand == cssPropertyId)
                     return true;
             }
             return false;
@@ -420,7 +421,7 @@ static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID
     return true;
 }
 
-static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet<CSSPropertyID>& transitionProperties, bool& transitionPropertiesContainAll)
+static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet<AnimatableProperty>& transitionProperties, bool& transitionPropertiesContainAll)
 {
     if (transitionPropertiesContainAll)
         return;
@@ -445,7 +446,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     }
 }
 
-static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
+static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, AnimatableProperty property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
 {
     auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
@@ -468,7 +469,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     }
 
     auto effectTargetsProperty = [property](KeyframeEffect& effect) {
-        if (effect.animatedProperties().contains(property))
+        if (effect.animatesProperty(property))
             return true;
         if (auto* transition = dynamicDowncast<CSSTransition>(effect.animation()))
             return transition->property() == property;
@@ -616,8 +617,8 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
     if (currentStyle.hasTransitions() && currentStyle.display() != DisplayType::None && newStyle.display() == DisplayType::None) {
         if (hasRunningTransitions()) {
             auto runningTransitions = ensureRunningTransitionsByProperty();
-            for (const auto& cssTransitionsByCSSPropertyIDMapItem : runningTransitions)
-                cssTransitionsByCSSPropertyIDMapItem.value->cancelFromStyle();
+            for (const auto& cssTransitionsByAnimatablePropertyMapItem : runningTransitions)
+                cssTransitionsByAnimatablePropertyMapItem.value->cancelFromStyle();
         }
         return;
     }
@@ -629,7 +630,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
 
     // First, let's compile the list of all CSS properties found in the current style and the after-change style.
     bool transitionPropertiesContainAll = false;
-    HashSet<CSSPropertyID> transitionProperties;
+    HashSet<AnimatableProperty> transitionProperties;
     compileTransitionPropertiesInStyle(currentStyle, transitionProperties, transitionPropertiesContainAll);
     compileTransitionPropertiesInStyle(newStyle, transitionProperties, transitionPropertiesContainAll);
 
