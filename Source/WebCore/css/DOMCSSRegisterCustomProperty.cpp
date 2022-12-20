@@ -31,6 +31,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSTokenizer.h"
+#include "CustomPropertyRegistry.h"
 #include "DOMCSSNamespace.h"
 #include "Document.h"
 #include "StyleBuilder.h"
@@ -79,11 +80,16 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
             return Exception { SyntaxError, "The intitial value cannot be a CSS-wide keyword."_s };
     }
 
-    CSSRegisteredCustomProperty property { AtomString { descriptor.name }, *syntax, descriptor.inherits, WTFMove(initialValue) };
-    if (!document.registerCSSCustomProperty(WTFMove(property)))
-        return Exception { InvalidModificationError, "This property has already been registered."_s };
+    auto property = CSSRegisteredCustomProperty {
+        descriptor.name,
+        *syntax,
+        descriptor.inherits,
+        WTFMove(initialValue)
+    };
 
-    document.styleScope().didChangeStyleSheetEnvironment();
+    auto& registry = document.styleScope().customPropertyRegistry();
+    if (!registry.registerFromAPI(WTFMove(property)))
+        return Exception { InvalidModificationError, "This property has already been registered."_s };
 
     return { };
 }

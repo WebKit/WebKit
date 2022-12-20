@@ -34,6 +34,7 @@
 #include "CSSPaintImageValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSValuePool.h"
+#include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
@@ -274,9 +275,9 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
 
-    CSSCustomPropertyValue* customPropertyValue = nullptr;
+    const CSSCustomPropertyValue* customPropertyValue = nullptr;
     CSSValueID customPropertyValueID = CSSValueInvalid;
-    CSSRegisteredCustomProperty* customPropertyRegistered = nullptr;
+    const CSSRegisteredCustomProperty* registeredCustomProperty = nullptr;
 
     if (id == CSSPropertyCustom) {
         customPropertyValue = downcast<CSSCustomPropertyValue>(valueToApply.ptr());
@@ -284,7 +285,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         if (std::holds_alternative<CSSValueID>(customPropertyValue->value()))
             customPropertyValueID = std::get<CSSValueID>(customPropertyValue->value());
         auto& name = customPropertyValue->name();
-        customPropertyRegistered = m_state.document().registeredCSSCustomProperties().get(name);
+        registeredCustomProperty = m_state.document().customPropertyRegistry().get(name);
     }
 
     bool isInherit = valueToApply->isInheritValue() || customPropertyValueID == CSSValueInherit;
@@ -306,7 +307,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
             // With the rollback cascade built, we need to obtain the property and apply it. If the property is
             // not present, then we behave like "unset." Otherwise we apply the property instead of our own.
             if (customPropertyValue) {
-                if (customPropertyRegistered && customPropertyRegistered->inherits && rollbackCascade->hasCustomProperty(customPropertyValue->name())) {
+                if (registeredCustomProperty && registeredCustomProperty->inherits && rollbackCascade->hasCustomProperty(customPropertyValue->name())) {
                     auto property = rollbackCascade->customProperty(customPropertyValue->name());
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
@@ -356,7 +357,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 #endif
 
-    BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), isInitial, isInherit, customPropertyRegistered);
+    BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), isInitial, isInherit, registeredCustomProperty);
 }
 
 Ref<CSSValue> Builder::resolveValue(CSSPropertyID propertyID, CSSValue& value)

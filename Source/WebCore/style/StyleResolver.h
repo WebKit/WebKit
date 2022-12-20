@@ -152,6 +152,8 @@ public:
     bool isSharedBetweenShadowTrees() const { return m_isSharedBetweenShadowTrees; }
     void setSharedBetweenShadowTrees() { m_isSharedBetweenShadowTrees = true; }
 
+    const RenderStyle* rootDefaultStyle() const { return m_rootDefaultStyle.get(); }
+
 private:
     Resolver(Document&);
 

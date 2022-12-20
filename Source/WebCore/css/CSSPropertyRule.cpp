@@ -27,6 +27,7 @@
 #include "CSSPropertyRule.h"
 
 #include "CSSMarkup.h"
+#include "CSSParserTokenRange.h"
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
@@ -63,7 +64,10 @@ bool CSSPropertyRule::inherits() const
 
 String CSSPropertyRule::initialValue() const
 {
-    return m_propertyRule->descriptor().initialValue;
+    if (!m_propertyRule->descriptor().initialValue)
+        return nullString();
+
+    return m_propertyRule->descriptor().initialValue->tokenRange().serialize();
 }
 
 String CSSPropertyRule::cssText() const
@@ -85,8 +89,8 @@ String CSSPropertyRule::cssText() const
     if (descriptor.inherits)
         builder.append("inherits: ", *descriptor.inherits ? "true" : "false", "; ");
 
-    if (!descriptor.initialValue.isNull())
-        builder.append("initial-value: ", descriptor.initialValue, "; ");
+    if (descriptor.initialValue)
+        builder.append("initial-value: ", initialValue(), "; ");
 
     builder.append("}");
 

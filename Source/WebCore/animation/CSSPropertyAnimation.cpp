@@ -42,6 +42,7 @@
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CounterDirectives.h"
+#include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
@@ -4024,7 +4025,7 @@ static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> c
     // for a custom property that was not explicitly set.
     auto initialValue = [&]() -> const CSSCustomPropertyValue* {
         if (auto* document = client.document()) {
-            if (auto registered = document->registeredCSSCustomProperties().get(customProperty))
+            if (auto registered = document->customPropertyRegistry().get(customProperty))
                 return registered->initialValue();
         }
         return nullptr;

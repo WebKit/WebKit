@@ -1,6 +1,6 @@
 
 PASS @keyframes is defined regardless of evaluation
-FAIL @property is defined regardless of evaluation assert_equals: expected "20px" but got "1em"
+PASS @property is defined regardless of evaluation
 PASS @layer order respected regardless of evaluation
 PASS @font-face is defined regardless of evaluation
 PASS @media works inside @container

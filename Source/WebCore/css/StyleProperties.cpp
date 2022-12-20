@@ -40,6 +40,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "Color.h"
+#include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "FontSelectionValueInlines.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -1288,7 +1289,7 @@ bool MutableStyleProperties::setCustomProperty(const Document* document, const S
     parserContext.mode = cssParserMode();
 
     auto propertyNameAtom = AtomString { propertyName };
-    auto* registered = document ? document->registeredCSSCustomProperties().get(propertyNameAtom) : nullptr;
+    auto* registered = document ? document->customPropertyRegistry().get(propertyNameAtom) : nullptr;
 
     auto& syntax = registered ? registered->syntax : CSSCustomPropertySyntax::universal();
 

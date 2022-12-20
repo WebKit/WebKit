@@ -1,6 +1,6 @@
 
-FAIL @property unlayered overrides layered assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL @property override between layers assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL @property override update with appended sheet 1 assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL @property override update with appended sheet 2 assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS @property unlayered overrides layered
+PASS @property override between layers
+PASS @property override update with appended sheet 1
+PASS @property override update with appended sheet 2
 

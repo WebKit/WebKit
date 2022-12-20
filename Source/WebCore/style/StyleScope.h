@@ -37,6 +37,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -59,6 +60,7 @@ class TreeScope;
 
 namespace Style {
 
+class CustomPropertyRegistry;
 class Resolver;
 
 class Scope : public CanMakeWeakPtr<Scope> {
@@ -137,6 +139,9 @@ public:
         HashSet<Element*> invalidatedContainers;
     };
     bool updateQueryContainerState(QueryContainerUpdateContext&);
+
+    const CustomPropertyRegistry& customPropertyRegistry() const { return m_customPropertyRegistry.get(); }
+    CustomPropertyRegistry& customPropertyRegistry() { return m_customPropertyRegistry.get(); }
 
 private:
     Scope& documentScope();
@@ -223,6 +228,8 @@ private:
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerStates;
+
+    UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
 
     // FIXME: These (and some things above) are only relevant for the root scope.
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;

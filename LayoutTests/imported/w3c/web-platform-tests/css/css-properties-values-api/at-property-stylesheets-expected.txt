@@ -1,7 +1,7 @@
 
-FAIL @property detected when stylesheet appears assert_equals: expected "1px" but got ""
-FAIL @property removal detected when last @property rule disappears assert_equals: expected "1px" but got ""
-FAIL @property detected in second stylesheet assert_equals: expected "2px" but got ""
-FAIL @property removal detected with removal of second stylesheet assert_equals: expected "2px" but got ""
-FAIL @property removal detected with removal of first stylesheet assert_equals: expected "1px" but got ""
+PASS @property detected when stylesheet appears
+PASS @property removal detected when last @property rule disappears
+PASS @property detected in second stylesheet
+PASS @property removal detected with removal of second stylesheet
+PASS @property removal detected with removal of first stylesheet
 

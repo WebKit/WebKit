@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSSelectorList.h"
+#include "CSSVariableData.h"
 #include "CompiledSelector.h"
 #include "ContainerQuery.h"
 #include "FontFeatureValues.h"
@@ -343,7 +344,7 @@ public:
         AtomString name;
         String syntax { };
         std::optional<bool> inherits { };
-        String initialValue { };
+        RefPtr<CSSVariableData> initialValue { };
     };
     static Ref<StyleRuleProperty> create(Descriptor&&);
     Ref<StyleRuleProperty> copy() const { return adoptRef(*new StyleRuleProperty(*this)); }
