@@ -3314,8 +3314,17 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             configuration['flavor'] = 'wk2'
 
         self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
+        has_commit = False
+        if failing_tests and identifier:
+            has_commit = yield ResultsDatabase.has_commit(commit=identifier)
+            if not has_commit:
+                self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
+
         for test in failing_tests:
-            data = yield ResultsDatabase().is_test_pre_existing_failure(test, commit=identifier, configuration=configuration)
+            data = yield ResultsDatabase.is_test_pre_existing_failure(
+                test, configuration=configuration,
+                commit=identifier if has_commit else None,
+            )
             self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
