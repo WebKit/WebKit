@@ -85,14 +85,14 @@ class FileLockTestCase(unittest.TestCase):
             self.assertFalse(lock_a.acquired)
             self.assertFalse(lock_b.acquired)
 
-            start_time = int(time.time())
+            start_time = time.time()
             with lock_a:
-                self.assertEqual(start_time, int(time.time()))
+                self.assertAlmostEqual(start_time, time.time(), places=1)
                 self.assertTrue(lock_a.acquired)
                 self.assertFalse(lock_b.acquired)
 
                 with lock_b:
-                    self.assertEqual(start_time + 30, int(time.time()))
+                    self.assertAlmostEqual(start_time + 30, time.time(), places=1)
                     self.assertTrue(lock_a.acquired)
                     self.assertFalse(lock_b.acquired)
 
