@@ -428,7 +428,7 @@ void EventHandler::clear()
 
 void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
 {
-    if (nodeToBeRemoved.contains(m_clickNode.get()))
+    if (nodeToBeRemoved.containsIncludingShadowDOM(m_clickNode.get()))
         m_clickNode = nullptr;
 }
 
