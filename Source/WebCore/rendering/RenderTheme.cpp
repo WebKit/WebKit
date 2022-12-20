@@ -54,6 +54,7 @@
 #include "SliderThumbElement.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
+#include "TextAreaPart.h"
 #include "TextControlInnerElements.h"
 #include "TextFieldPart.h"
 #include <wtf/FileSystem.h>
@@ -496,7 +497,6 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case ControlPartType::SquareButton:
     case ControlPartType::Button:
     case ControlPartType::DefaultButton:
-    case ControlPartType::Listbox:
     case ControlPartType::Menulist:
     case ControlPartType::MenulistButton:
         break;
@@ -515,8 +515,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case ControlPartType::Attachment:
     case ControlPartType::BorderlessAttachment:
 #endif
-    case ControlPartType::TextArea:
         break;
+
+    case ControlPartType::Listbox:
+    case ControlPartType::TextArea:
+        return TextAreaPart::create(type);
 
     case ControlPartType::TextField:
         return TextFieldPart::create();

@@ -33,8 +33,8 @@
     Promise<unsigned long long> getSize();
     Promise<undefined> flush();
     Promise<undefined> close();
-    unsigned long long read([AllowShared] (ArrayBufferView or ArrayBuffer) buffer, FilesystemReadWriteOptions options);
-    unsigned long long write([AllowShared] (ArrayBufferView or ArrayBuffer) buffer, FilesystemReadWriteOptions options);
+    unsigned long long read([AllowShared] (ArrayBufferView or ArrayBuffer) buffer, optional FilesystemReadWriteOptions options = {});
+    unsigned long long write([AllowShared] (ArrayBufferView or ArrayBuffer) buffer, optional FilesystemReadWriteOptions options = {});
 };
 
 dictionary FilesystemReadWriteOptions {

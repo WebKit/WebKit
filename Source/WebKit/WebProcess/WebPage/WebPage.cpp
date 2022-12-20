@@ -1980,28 +1980,6 @@ WebPage& WebPage::fromCorePage(Page& page)
     return static_cast<WebChromeClient&>(page.chrome().client()).page();
 }
 
-static std::optional<FrameTreeNodeData> frameTreeNodeData(AbstractFrame& frame)
-{
-    std::optional<FrameTreeNodeData> info;
-    if (auto* webFrame = WebFrame::fromCoreFrame(frame)) {
-        Vector<FrameTreeNodeData> children;
-        for (auto* childFrame = frame.tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-            if (auto childInfo = frameTreeNodeData(*childFrame))
-                children.append(WTFMove(*childInfo));
-        }
-        info = FrameTreeNodeData {
-            webFrame->info(),
-            WTFMove(children)
-        };
-    }
-    return info;
-}
-
-void WebPage::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
-{
-    completionHandler(*frameTreeNodeData(m_page->mainFrame()));
-}
-
 void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
     if (m_viewSize == viewSize)

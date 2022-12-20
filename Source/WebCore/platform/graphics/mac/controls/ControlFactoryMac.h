@@ -39,6 +39,7 @@ public:
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) override;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) override;
 
 private:

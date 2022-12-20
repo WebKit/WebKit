@@ -262,12 +262,13 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
 #if ENABLE(ATTACHMENT_ELEMENT)
     case ControlPartType::Attachment:
     case ControlPartType::BorderlessAttachment:
-        return true;
 #endif
 #if ENABLE(APPLE_PAY)
     case ControlPartType::ApplePayButton:
-        return true;
 #endif
+    case ControlPartType::Listbox:
+    case ControlPartType::Meter:
+    case ControlPartType::TextArea:
     case ControlPartType::TextField:
         return true;
     default:
@@ -290,7 +291,8 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::TextField;
+    return type == ControlPartType::TextArea
+        || type == ControlPartType::TextField;
 }
 
 bool RenderThemeMac::useFormSemanticContext() const
@@ -1131,13 +1133,6 @@ void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const El
 
 void RenderThemeMac::adjustTextFieldStyle(RenderStyle&, const Element*) const
 {
-}
-
-bool RenderThemeMac::paintTextArea(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
-{
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    _NSDrawCarbonThemeListBox(r, isEnabled(o) && !isReadOnlyControl(o), YES, YES);
-    return false;
 }
 
 void RenderThemeMac::adjustTextAreaStyle(RenderStyle&, const Element*) const

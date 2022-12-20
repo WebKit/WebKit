@@ -52,8 +52,10 @@ class Decoder;
 }
 
 namespace WebKit {
+struct FrameTreeNodeData;
 class ProvisionalFrameProxy;
 class SafeBrowsingWarning;
+class SubframePageProxy;
 class WebFramePolicyListenerProxy;
 class WebsiteDataStore;
 enum class ShouldExpectSafeBrowsingResult : bool;
@@ -146,6 +148,8 @@ public:
 
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, std::optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
+    void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
+
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 
@@ -156,7 +160,7 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;
-    RefPtr<WebProcessProxy> m_parentFrameProcess;
+    std::unique_ptr<SubframePageProxy> m_subframePage;
     WebCore::PageIdentifier m_webPageID;
 
     FrameLoadState m_frameLoadState;
@@ -167,7 +171,7 @@ private:
     WebCore::CertificateInfo m_certificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     WebCore::FrameIdentifier m_frameID;
-    HashSet<Ref<WebFrameProxy>> m_childFrames;
+    ListHashSet<Ref<WebFrameProxy>> m_childFrames;
     WeakPtr<WebFrameProxy> m_parentFrame;
     std::unique_ptr<ProvisionalFrameProxy> m_provisionalFrame;
 #if ENABLE(CONTENT_FILTERING)

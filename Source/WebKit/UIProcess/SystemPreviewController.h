@@ -33,6 +33,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 
+OBJC_CLASS NSString;
 #if USE(QUICK_LOOK)
 OBJC_CLASS QLPreviewController;
 OBJC_CLASS _WKPreviewControllerDataSource;

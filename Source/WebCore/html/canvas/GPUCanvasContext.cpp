@@ -45,7 +45,8 @@ namespace WebCore {
 static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas)
 {
     return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> IntSize {
-        return { static_cast<int>(htmlCanvas->width()), static_cast<int>(htmlCanvas->height()) };
+        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
+        return { static_cast<int>(scaleFactor * htmlCanvas->width()), static_cast<int>(scaleFactor * htmlCanvas->height()) };
     }
 #if ENABLE(OFFSCREEN_CANVAS)
     , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> IntSize {

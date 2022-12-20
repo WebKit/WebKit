@@ -222,6 +222,11 @@ FrameInfoData WebFrame::info() const
     return info;
 }
 
+void WebFrame::getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&& completionHandler)
+{
+    completionHandler(info());
+}
+
 WebCore::FrameIdentifier WebFrame::frameID() const
 {
     ASSERT(m_frameID);

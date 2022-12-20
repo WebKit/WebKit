@@ -128,6 +128,19 @@ TEST(WKWebView, LoadAlternateHTMLStringNoFileSystemPath)
     [webView loadHTMLString:@"<html>hi</html>" baseURL:[NSURL URLWithString:@"file:///.file/id="]];
 }
 
+TEST(WKWebView, LoadNilAlternateHTMLStringDoesNotCrash)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto controller = adoptNS([LoadAlternateHTMLStringFromProvisionalLoadErrorController new]);
+    [webView setNavigationDelegate:controller.get()];
+
+    IGNORE_NULL_CHECK_WARNINGS_BEGIN
+    [webView _loadAlternateHTMLString:nil baseURL:nil forUnreachableURL:[NSURL URLWithString:@"https://www.example.com"]];
+    IGNORE_NULL_CHECK_WARNINGS_END
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorReload)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

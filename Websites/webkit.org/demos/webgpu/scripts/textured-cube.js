@@ -11,6 +11,7 @@ async function helloCube() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
     
+    const preferredBackingFormat = navigator.gpu.getPreferredCanvasFormat();
     /*** Vertex Buffer Setup ***/
     
     /* Vertex Data */
@@ -99,7 +100,7 @@ async function helloCube() {
         mipLevelCount: 1,
         sampleCount: 1,
         dimension: "2d",
-        format: "bgra8unorm",
+        format: preferredBackingFormat,
         usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
     };
     const texture = device.createTexture(textureDescriptor);
@@ -207,7 +208,7 @@ async function helloCube() {
     /* GPUPipelineStageDescriptors */
     const vertexStageDescriptor = { module: shaderModule, entryPoint: "vsmain" };
 
-    const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: "bgra8unorm" }, ],  };
+    const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: preferredBackingFormat }, ],  };
 
     /* GPURenderPipelineDescriptor */
 
@@ -236,7 +237,7 @@ async function helloCube() {
         const gpuContext = canvas.getContext("webgpu");
         
         /* GPUCanvasConfiguration */
-        const canvasConfiguration = { device: device, format: "bgra8unorm" };
+        const canvasConfiguration = { device: device, format: preferredBackingFormat };
         gpuContext.configure(canvasConfiguration);
         /* GPUTexture */
         const currentTexture = gpuContext.getCurrentTexture();

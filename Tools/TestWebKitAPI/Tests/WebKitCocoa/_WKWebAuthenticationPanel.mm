@@ -1939,7 +1939,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, WKErrorUnknown);
+        EXPECT_EQ(error.code, NotAllowedError);
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -2113,7 +2113,7 @@ TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, WKErrorUnknown);
+        EXPECT_EQ(error.code, NotAllowedError);
     }];
     Util::run(&webAuthenticationPanelRan);
 }

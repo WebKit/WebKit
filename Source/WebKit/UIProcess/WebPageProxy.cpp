@@ -4642,7 +4642,9 @@ void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const We
 
 void WebPageProxy::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::GetAllFrames(), WTFMove(completionHandler));
+    if (!m_mainFrame)
+        return completionHandler({ });
+    m_mainFrame->getFrameInfo(WTFMove(completionHandler));
 }
 
 void WebPageProxy::getBytecodeProfile(CompletionHandler<void(const String&)>&& callback)

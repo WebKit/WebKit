@@ -29,7 +29,7 @@ if (window.testRunner && window.internals) {
     // Check roles and initial states
     // Move the caret once to force the focus onto this toplevel
     var par1 = document.getElementById("par1");
-    window.getSelection().setPosition(par1, 10);
+    window.getSelection().setPosition(par1, 1);
     eventSender.keyDown("rightArrow");
     shouldBe("axCombo.role", "'AXRole: AXComboBox'");
     shouldBe("axMenuItemFoo.role", "'AXRole: AXMenuItem'");
