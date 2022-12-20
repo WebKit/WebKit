@@ -247,9 +247,18 @@ async function helloCube() {
         }
     };
 
+    const deviceScaleFactor = window.devicePixelRatio || 1;
     const depthTexture = device.createTexture({
-        size: [ canvas.width, canvas.height ],
+        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
         format: 'depth24plus',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        sampleCount: 4
+    });
+
+    const msaaRenderTarget = device.createTexture({
+        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
+        sampleCount: 4,
+        format: 'bgra8unorm',
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
 
@@ -306,7 +315,8 @@ async function helloCube() {
         
         /* GPURenderPassColorATtachmentDescriptor */
         const colorAttachmentDescriptor = {
-            view: renderAttachment,
+            view: msaaRenderTarget.createView(),
+            resolveTarget: renderAttachment,
             loadOp: "clear",
             storeOp: "store",
             clearColor: darkBlue
