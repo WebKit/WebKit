@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicyDirectiveNames.h"
 #include "Document.h"
 #include "Frame.h"
+#include "HTTPParsers.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
 #include <wtf/text/StringParsingBuffer.h>
@@ -444,7 +445,15 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
 //
 void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecurityPolicy::PolicyFrom policyFrom)
 {
-    m_header = policy;
+    // A meta tag delievered CSP could contain invalid HTTP header values depending on how it was formatted in the document.
+    // We want to store the CSP as a valid HTTP header for e.g. blob URL inheritance.
+    if (policyFrom == ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta) {
+        m_header = stripLeadingAndTrailingHTTPSpaces(policy).removeCharacters([](auto c) {
+            return c == 0x00 || c == '\r' || c == '\n';
+        });
+    } else
+        m_header = policy;
+
     if (policy.isEmpty())
         return;
 
