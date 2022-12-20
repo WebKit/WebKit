@@ -29,6 +29,7 @@ namespace WebCore {
 
 class MeterPart;
 class PlatformControl;
+class TextFieldPart;
 
 class ControlFactory {
     WTF_MAKE_FAST_ALLOCATED;
@@ -40,6 +41,7 @@ public:
     static ControlFactory& sharedControlFactory();
 
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) = 0;
 };
 
 } // namespace WebCore

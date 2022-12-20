@@ -102,11 +102,11 @@ private:
 
     bool canPaint(const PaintInfo&, const Settings&, ControlPartType) const final;
     bool canCreateControlPartForRenderer(const RenderObject&) const final;
+    bool canCreateControlPartForBorderOnly(const RenderObject&) const final;
 
     bool useFormSemanticContext() const final;
     bool supportsLargeFormControls() const final;
 
-    bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
 
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) final;
@@ -159,8 +159,6 @@ private:
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    bool shouldPaintCustomTextField(const RenderObject&) const;
-
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
@@ -199,7 +197,6 @@ private:
     NSMenu *searchMenuTemplate() const;
     NSSliderCell *sliderThumbHorizontal() const;
     NSSliderCell *sliderThumbVertical() const;
-    NSTextFieldCell *textField() const;
 #if ENABLE(DATALIST_ELEMENT)
     NSCell *listButton() const;
 #endif
@@ -221,7 +218,6 @@ private:
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
-    mutable RetainPtr<NSTextFieldCell> m_textField;
 #if ENABLE(SERVICE_CONTROLS)
     mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;
 #endif

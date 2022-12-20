@@ -42,14 +42,14 @@ public:
 
     ControlPartType type() const { return m_type; }
 
-    ControlFactory& controlFactory() const;
+    WEBCORE_EXPORT ControlFactory& controlFactory() const;
     void setControlFactory(ControlFactory* controlFactory) { m_controlFactory = controlFactory; }
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
     void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) const;
 
 protected:
-    ControlPart(ControlPartType);
+    WEBCORE_EXPORT ControlPart(ControlPartType);
 
     PlatformControl* platformControl() const;
     virtual std::unique_ptr<PlatformControl> createPlatformControl() = 0;

@@ -70,7 +70,8 @@ public:
     void adjustStyle(RenderStyle&, const Element*, const RenderStyle* userAgentAppearanceStyle);
 
     virtual bool canCreateControlPartForRenderer(const RenderObject&) const { return false; }
-    RefPtr<ControlPart> createControlPartForRenderer(const RenderObject&) const;
+    virtual bool canCreateControlPartForBorderOnly(const RenderObject&) const { return false; }
+    RefPtr<ControlPart> createControlPart(const RenderObject&) const;
 
     OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;
     ControlStyle extractControlStyleForRenderer(const RenderObject&) const;
@@ -396,6 +397,10 @@ public:
     bool isPresenting(const RenderObject&) const;
     bool isReadOnlyControl(const RenderObject&) const;
     bool isDefault(const RenderObject&) const;
+#if ENABLE(DATALIST_ELEMENT)
+    bool hasListButton(const RenderObject&) const;
+    bool hasListButtonPressed(const RenderObject&) const;
+#endif
 
 protected:
     struct ColorCache {

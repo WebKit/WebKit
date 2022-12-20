@@ -55,6 +55,7 @@
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextControlInnerElements.h"
+#include "TextFieldPart.h"
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -480,7 +481,7 @@ static RefPtr<ControlPart> createMeterPartForRenderer(const RenderObject& render
     return MeterPart::create(gaugeRegion, element->value(), element->min(), element->max());
 }
 
-RefPtr<ControlPart> RenderTheme::createControlPartForRenderer(const RenderObject& renderer) const
+RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
 
@@ -515,7 +516,11 @@ RefPtr<ControlPart> RenderTheme::createControlPartForRenderer(const RenderObject
     case ControlPartType::BorderlessAttachment:
 #endif
     case ControlPartType::TextArea:
+        break;
+
     case ControlPartType::TextField:
+        return TextFieldPart::create();
+
     case ControlPartType::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
     case ControlPartType::ColorWell:
@@ -575,6 +580,15 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         states.add(ControlStyle::State::RightToLeft);
     if (supportsLargeFormControls())
         states.add(ControlStyle::State::LargeControls);
+    if (isReadOnlyControl(renderer))
+        states.add(ControlStyle::State::ReadOnly);
+#if ENABLE(DATALIST_ELEMENT)
+    if (hasListButton(renderer)) {
+        states.add(ControlStyle::State::ListButton);
+        if (hasListButtonPressed(renderer))
+            states.add(ControlStyle::State::ListButtonPressed);
+    }
+#endif
     return states;
 }
 
@@ -1164,6 +1178,29 @@ bool RenderTheme::isDefault(const RenderObject& o) const
 
     return o.style().effectiveAppearance() == ControlPartType::DefaultButton;
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+bool RenderTheme::hasListButton(const RenderObject& renderer) const
+{
+    if (!is<HTMLInputElement>(renderer.generatingNode()))
+        return false;
+
+    const auto& input = downcast<HTMLInputElement>(*(renderer.generatingNode()));
+    return input.list();
+}
+
+bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
+{
+    const auto* input = downcast<HTMLInputElement>(renderer.generatingNode());
+    if (!input)
+        return false;
+
+    if (auto* buttonElement = input->dataListButtonElement())
+        return buttonElement->active();
+
+    return false;
+}
+#endif
 
 #if !USE(NEW_THEME)
 

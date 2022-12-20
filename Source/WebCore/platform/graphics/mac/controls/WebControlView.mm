@@ -34,6 +34,7 @@
 #import <pal/spi/mac/NSImageSPI.h>
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#import <pal/spi/mac/NSTextFieldCellSPI.h>
 
 @implementation WebControlWindow
 
@@ -134,6 +135,37 @@ static NSRect _clipBounds;
     // By doing nothing in this method we forbid controls from adding subviews.
     // This tells AppKit to not use layer-backed animation for control rendering.
     UNUSED_PARAM(subview);
+}
+
+@end
+
+@implementation WebControlTextFieldCell
+
+- (CFDictionaryRef)_adjustedCoreUIDrawOptionsForDrawingBordersOnly:(CFDictionaryRef)defaultOptions
+{
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    // Dark mode controls don't have borders, just a semi-transparent background of shadows.
+    // In the dark mode case we can't disable borders, or we will not paint anything for the control.
+    NSAppearanceName appearance = [self.controlView.effectiveAppearance bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+    if ([appearance isEqualToString:NSAppearanceNameDarkAqua])
+        return defaultOptions;
+#endif
+
+    // FIXME: This is a workaround for <rdar://problem/11385461>. When that bug is resolved, we should remove this code,
+    // as well as the internal method overrides below.
+    auto coreUIDrawOptions = adoptCF(CFDictionaryCreateMutableCopy(NULL, 0, defaultOptions));
+    CFDictionarySetValue(coreUIDrawOptions.get(), CFSTR("borders only"), kCFBooleanTrue);
+    return coreUIDrawOptions.autorelease();
+}
+
+- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus
+{
+    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus]];
+}
+
+- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus maskOnly:(BOOL)maskOnly
+{
+    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus maskOnly:maskOnly]];
 }
 
 @end

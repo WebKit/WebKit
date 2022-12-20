@@ -34,7 +34,7 @@ class TextStream;
 namespace WebCore {
 
 struct ControlStyle {
-    enum class State : uint16_t {
+    enum class State {
         Hovered             = 1 << 0,
         Pressed             = 1 << 1,
         Focused             = 1 << 2,
@@ -49,6 +49,9 @@ struct ControlStyle {
         DarkAppearance      = 1 << 11,
         RightToLeft         = 1 << 12,
         LargeControls       = 1 << 13,
+        ReadOnly            = 1 << 14,
+        ListButton          = 1 << 15,
+        ListButtonPressed   = 1 << 16,
     };
     OptionSet<State> states;
     unsigned fontSize { 12 };

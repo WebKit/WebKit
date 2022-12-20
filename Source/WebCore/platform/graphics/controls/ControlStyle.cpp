@@ -75,6 +75,15 @@ TextStream& operator<<(TextStream& ts, ControlStyle::State state)
     case ControlStyle::State::LargeControls:
         ts << "large-controls";
         break;
+    case ControlStyle::State::ReadOnly:
+        ts << "read-only";
+        break;
+    case ControlStyle::State::ListButton:
+        ts << "list-button";
+        break;
+    case ControlStyle::State::ListButtonPressed:
+        ts << "list-button-pressed";
+        break;
     }
     return ts;
 }

@@ -465,6 +465,7 @@ platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/controls/ControlFactoryMac.mm
 platform/graphics/mac/controls/ControlMac.mm
 platform/graphics/mac/controls/MeterMac.mm
+platform/graphics/mac/controls/TextFieldMac.mm
 platform/graphics/mac/controls/WebControlView.mm
 platform/graphics/opentype/OpenTypeCG.cpp
 platform/image-decoders/avif/AVIFImageDecoder.cpp
