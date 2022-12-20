@@ -211,11 +211,13 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
     if (!m_pendingPromises.isEmpty())
         return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
 
-    int result = FileSystem::seekFile(m_file.handle(), options.at, FileSystem::FileSeekOrigin::Beginning);
-    if (result == -1)
-        return Exception { InvalidStateError, "Failed to read at offset"_s };
+    if (options.at) {
+        int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
+        if (result == -1)
+            return Exception { InvalidStateError, "Failed to read at offset"_s };
+    }
 
-    result = FileSystem::readFromFile(m_file.handle(), buffer.mutableData(), buffer.length());
+    int result = FileSystem::readFromFile(m_file.handle(), buffer.mutableData(), buffer.length());
     if (result == -1)
         return Exception { InvalidStateError, "Failed to read from file"_s };
 
@@ -232,11 +234,13 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
     if (!m_pendingPromises.isEmpty())
         return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
 
-    int result = FileSystem::seekFile(m_file.handle(), options.at, FileSystem::FileSeekOrigin::Beginning);
-    if (result == -1)
-        return Exception { InvalidStateError, "Failed to write at offset"_s };
+    if (options.at) {
+        int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
+        if (result == -1)
+            return Exception { InvalidStateError, "Failed to write at offset"_s };
+    }
 
-    result = FileSystem::writeToFile(m_file.handle(), buffer.data(), buffer.length());
+    int result = FileSystem::writeToFile(m_file.handle(), buffer.data(), buffer.length());
     if (result == -1)
         return Exception { InvalidStateError, "Failed to write to file"_s };
 

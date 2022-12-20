@@ -14,6 +14,11 @@ PASS [Worker] readSize is readBuffer.byteLength
 PASS [Worker] readText is "This is second sentence."
 PASS [Worker] readSize is readBuffer.byteLength
 PASS [Worker] readText is "This is first sentence.This is second sentence."
+PASS [Worker] writeSize is writeBuffer.byteLength
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "This is first sentence.This is second sentence."
+PASS [Worker] readSize is readBuffer.byteLength
+PASS [Worker] readText is "This is third sentence."
 PASS [Worker] accessHandle.read(new ArrayBuffer(1), { "at" : Number.MAX_SAFE_INTEGER }) threw exception InvalidStateError: Failed to read at offset.
 PASS [Worker] accessHandle.write(new ArrayBuffer(1), { "at" : Number.MAX_SAFE_INTEGER }) threw exception InvalidStateError: Failed to write at offset.
 [Worker] test flush():
