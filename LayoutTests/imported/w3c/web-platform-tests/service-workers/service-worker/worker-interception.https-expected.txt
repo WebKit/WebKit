@@ -1,3 +1,19 @@
+CONSOLE MESSAGE: Response served by service worker is CORS while mode is same origin
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js?pipe=header(Access-Control-Allow-Origin,*).
+CONSOLE MESSAGE: Response served by service worker is CORS while mode is same origin
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js?pipe=header(Access-Control-Allow-Origin,*) due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is CORS while mode is same origin
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js?pipe=header(Access-Control-Allow-Origin,*).
+CONSOLE MESSAGE: Response served by service worker is CORS while mode is same origin
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js?pipe=header(Access-Control-Allow-Origin,*) due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/postmessage-on-load-worker.js due to access control checks.
 
 PASS Verify a dedicated worker script request issued from a uncontrolled document is intercepted by worker's own service worker.
 PASS Verify an out-of-scope dedicated worker script request issued from a controlled document should not be intercepted by document's service worker.

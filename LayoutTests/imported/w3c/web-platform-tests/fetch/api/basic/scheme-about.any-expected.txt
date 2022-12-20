@@ -1,3 +1,17 @@
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:blank due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:blank due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:blank due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:invalid.com due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:config due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:unicorn due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Fetch API cannot load about:blank due to access control checks.
 
 PASS Fetching about:blank with method GET is KO
 PASS Fetching about:blank with method PUT is KO

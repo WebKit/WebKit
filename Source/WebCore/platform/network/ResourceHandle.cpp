@@ -47,6 +47,24 @@ static bool shouldForceContentSniffing;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceHandleInternal);
 
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+static HashSet<String>& localhostAliasesForTestingMap()
+{
+    static NeverDestroyed<HashSet<String>> aliases;
+    return aliases;
+}
+
+void ResourceHandle::setLocalhostAliasesForTesting(HashSet<String>&& aliases)
+{
+    localhostAliasesForTestingMap() = WTFMove(aliases);
+}
+
+const HashSet<String>& ResourceHandle::localhostAliasesForTesting()
+{
+    return localhostAliasesForTestingMap();
+}
+#endif // PLATFORM(COCOA) || USE(CFURLCONNECTION)
+
 typedef HashMap<AtomString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
 static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap()
 {

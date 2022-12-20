@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: reader released lock
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: reader released lock
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 
 Harness Error (FAIL), message = Unhandled rejection: error1!
 

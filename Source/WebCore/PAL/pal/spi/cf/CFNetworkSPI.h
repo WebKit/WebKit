@@ -29,6 +29,7 @@
 
 #include <CFNetwork/CFNetwork.h>
 #include <pal/spi/cf/CFNetworkConnectionCacheSPI.h>
+#include <pal/spi/cocoa/NWSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -142,6 +143,7 @@ typedef enum {
 
 @interface NSURLSessionTask ()
 @property (readonly, retain) NSURLSessionTaskMetrics* _incompleteTaskMetrics;
+@property (nullable, nonatomic, retain) nw_endpoint_t _hostOverride;
 @end
 
 @interface NSURLCache ()

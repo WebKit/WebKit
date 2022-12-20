@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Request signal is aborted
 
 PASS Aborting rejects with AbortError
 FAIL Aborting rejects with abort reason promise_rejects_exactly: fetch() should reject with abort reason function "function () { throw e }" threw object "AbortError: Request signal is aborted" but we expected it to throw object "error1: error1"

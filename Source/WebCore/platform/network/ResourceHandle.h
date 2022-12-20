@@ -138,9 +138,12 @@ public:
     CFURLStorageSessionRef storageSession() const;
     CFURLConnectionRef connection() const;
     WEBCORE_EXPORT RetainPtr<CFURLConnectionRef> releaseConnectionForDownload();
-    const ResourceRequest& currentRequest() const;
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, CFDataRef);
+#endif
+
+#if USE(CFURLCONNECTION) || PLATFORM(COCOA)
+    const ResourceRequest& currentRequest() const;
 #endif
 
 #if OS(WINDOWS) && USE(CURL)
@@ -201,6 +204,9 @@ public:
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     WEBCORE_EXPORT static CFStringRef synchronousLoadRunLoopMode();
+
+    static const HashSet<String>& localhostAliasesForTesting();
+    WEBCORE_EXPORT static void setLocalhostAliasesForTesting(HashSet<String>&&);
 #endif
 
     typedef Ref<ResourceHandle> (*BuiltinConstructor)(const ResourceRequest& request, ResourceHandleClient* client);

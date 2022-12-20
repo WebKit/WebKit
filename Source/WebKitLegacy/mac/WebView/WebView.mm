@@ -4437,6 +4437,14 @@ IGNORE_WARNINGS_END
     [CATransaction synchronize];
 }
 
++ (void)_setLocalhostAliasesForTesting:(NSArray<NSString *> *)localhostAliases
+{
+    HashSet<String> aliases;
+    for (NSString *alias in localhostAliases)
+        aliases.add(String { alias });
+    WebCore::ResourceHandle::setLocalhostAliasesForTesting(WTFMove(aliases));
+}
+
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme
 {
     WebCore::LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);

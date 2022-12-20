@@ -1,3 +1,36 @@
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
+CONSOLE MESSAGE: Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
+CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/fetch/metadata/generated/appcache-manifest.https.sub.html was not allowed to display insecure content from http://web-platform.test:8800/fetch/metadata/resources/record-headers.py?key=db70e533-88d4-4585-9360-af7d268dc7f1&location=http%3A%2F%2Fweb-platform.test%3A8800%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3Ddb70e533-88d4-4585-9360-af7d268dc7f1&count=1.
+
+CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/fetch/metadata/generated/appcache-manifest.https.sub.html was not allowed to display insecure content from http://web-platform.test:8800/fetch/api/resources/redirect.py?location=https%3A%2F%2Fweb-platform.test%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3Dbfa66887-1920-4719-9f1e-e29af7466655&location=http%3A%2F%2Fweb-platform.test%3A8800%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Fweb-platform.test%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253Dbfa66887-1920-4719-9f1e-e29af7466655&count=1.
+
+CONSOLE MESSAGE: Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?
+CONSOLE MESSAGE: Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?
+CONSOLE MESSAGE: Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?
 
 
 Harness Error (TIMEOUT), message = null

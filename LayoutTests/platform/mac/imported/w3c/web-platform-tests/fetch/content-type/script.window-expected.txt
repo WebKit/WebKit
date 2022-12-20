@@ -1,3 +1,15 @@
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=%22text%2Fjavascript%22&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2F%20javascript&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%20%2Fjavascript&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2Fjavascript%0C&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?single_header&value=x%2Fx&value=text%2Fjavascript&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2Fjavascript%3B%22&value=x%2Fx&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2Fjavascript&value=&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2Fjavascript%3Bcharset%3Dwindows-1252%3B%22&value=%5C%22&value=x%2Fx&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?single_header&value=x%2Fx%3Bcharset%3Dwindows-1252&value=text%2Fjavascript&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2Fjavascript&value=x%2Fx&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?value=text%2Fjavascript&value=error&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://web-platform.test:8800/fetch/content-type/resources/content-type.py?single_header&value=x%2Fx%3B%22&value=x%2Fy%3B%5C%22&value=text%2Fjavascript%3Bcharset%3Dwindows-1252%3B%22&value=text%2Fjavascript&&content=self.stringFromExecutedScript%20%3D%20%22%E2%82%AC%22 as script because "X-Content-Type-Options: nosniff" was given and its Content-Type is not a script MIME type.
 
 PASS Loading JSON…
 PASS separate text/javascript;charset=windows-1252
@@ -11,13 +23,13 @@ FAIL combined x/x text/javascript assert_unreached: onerror Reached unreachable 
 PASS separate x/x;charset=windows-1252 text/javascript
 FAIL combined x/x;charset=windows-1252 text/javascript assert_unreached: onerror Reached unreachable code
 PASS separate text/javascript x/x
-FAIL combined text/javascript x/x assert_unreached: onload Reached unreachable code
+PASS combined text/javascript x/x
 FAIL separate text/javascript; charset=windows-1252 text/javascript assert_equals: expected "â‚¬" but got "€"
 PASS combined text/javascript; charset=windows-1252 text/javascript
 FAIL separate text/javascript;" x/x assert_unreached: onerror Reached unreachable code
 PASS combined text/javascript;" x/x
 FAIL separate text/javascript  assert_unreached: onerror Reached unreachable code
-PASS combined text/javascript
+FAIL combined text/javascript  assert_unreached: onerror Reached unreachable code
 FAIL separate text/javascript error assert_unreached: onerror Reached unreachable code
 PASS combined text/javascript error
 PASS separate text/javascript;charset=windows-1252 x/x text/javascript

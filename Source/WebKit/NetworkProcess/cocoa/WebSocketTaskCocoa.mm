@@ -28,6 +28,7 @@
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
 
+#import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>
@@ -35,6 +36,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/WebSocketChannel.h>
+#import <pal/spi/cocoa/NWSPI.h>
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -52,6 +54,9 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     // In that case, let's only call the callback for same origin loads.
     if (clientOrigin.topOrigin == clientOrigin.clientOrigin)
         m_topOrigin = clientOrigin.topOrigin;
+
+    if (networkSession()->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(request.url().host()))
+        m_task.get()._hostOverride = adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", request.url().port().value_or(0))).get();
 
     readNextMessage();
     m_channel.didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });

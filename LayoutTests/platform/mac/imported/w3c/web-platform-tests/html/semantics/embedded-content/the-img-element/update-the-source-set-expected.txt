@@ -1,6 +1,6 @@
 
 PASS <img data-expect="">
-FAIL <img src="" data-expect=""> assert_equals: expected "" but got "http://localhost:8800/html/semantics/embedded-content/the-img-element/update-the-source-set.html"
+FAIL <img src="" data-expect=""> assert_equals: expected "" but got "http://web-platform.test:8800/html/semantics/embedded-content/the-img-element/update-the-source-set.html"
 PASS <img src="data:,a" data-expect="data:,a">
 PASS <img srcset="" src="data:,a" data-expect="data:,a">
 PASS <img srcset="data:,b" src="data:,a" data-expect="data:,b">

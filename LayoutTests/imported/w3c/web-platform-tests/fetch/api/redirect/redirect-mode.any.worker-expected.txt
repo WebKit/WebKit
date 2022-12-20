@@ -1,3 +1,29 @@
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=301&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=302&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=303&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=307&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://www1.web-platform.test:8800/fetch/api/resources/redirect.py?redirect_status=308&location=cors-top.txt
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: Cross-origin redirection to http://web-platform.test:8800/common/blank.html denied by Cross-Origin Resource Sharing policy: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 302
 
 PASS same-origin redirect 301 in error redirect and cors mode
 PASS same-origin redirect 301 in error redirect and no-cors mode

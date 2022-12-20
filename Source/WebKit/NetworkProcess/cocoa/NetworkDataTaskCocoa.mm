@@ -43,6 +43,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NWSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
@@ -417,6 +418,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy);
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
+    if (session.networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(url.host()))
+        m_task.get()._hostOverride = adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", url.port().value_or(0))).get();
 
     switch (parameters.storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
@@ -522,6 +525,9 @@ void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& er
         WTFEndSignpost(m_task.get(), "DataTask", "completed");
     else
         WTFEndSignpost(m_task.get(), "DataTask", "failed");
+
+    if (!error.isNull())
+        WTFLogAlways("DEBUG: didCompleteWithError() for %s, error: %d / %s / %s", error.failingURL().string().utf8().data(), error.errorCode(), error.domain().utf8().data(), error.localizedDescription().utf8().data());
 
     if (m_client)
         m_client->didCompleteWithError(error, networkLoadMetrics);

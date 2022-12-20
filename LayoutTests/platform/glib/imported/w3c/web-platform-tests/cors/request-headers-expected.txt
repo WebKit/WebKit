@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Request header field y-print is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://not-web-platform.test:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
 Request headers
 
 

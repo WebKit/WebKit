@@ -28,15 +28,15 @@ PASS GET Navigation, cross-site with navpreload service worker sets correct orig
 PASS GET Navigation, cross-site with service worker that changes the request sets correct origin and referer headers.
 PASS POST Navigation, cross-site with service worker that changes the request sets correct origin and referer headers.
 PASS POST Navigation, same-origin with same-site redirect and no service worker sets correct origin and referer headers.
-FAIL POST Navigation, same-origin with same-site redirect and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://localhost:9443"
+FAIL POST Navigation, same-origin with same-site redirect and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://web-platform.test:9443"
 PASS POST Navigation, same-origin with same-site redirect and fallback service worker sets correct origin and referer headers.
 PASS POST Navigation, same-origin with same-site redirect and change-request service worker sets correct origin and referer headers.
 PASS POST Navigation, same-origin with cross-site redirect and no service worker sets correct origin and referer headers.
-FAIL POST Navigation, same-origin with cross-site redirect and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://localhost:9443"
+FAIL POST Navigation, same-origin with cross-site redirect and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://web-platform.test:9443"
 PASS POST Navigation, same-origin with cross-site redirect and fallback service worker sets correct origin and referer headers.
 PASS POST Navigation, same-origin with cross-site redirect and change-request service worker sets correct origin and referer headers.
 PASS POST Navigation, same-origin with cross-site redirect, same-origin redirect, and no service worker sets correct origin and referer headers.
-FAIL POST Navigation, same-origin with cross-site redirect, same-origin redirect, and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://localhost:9443"
+FAIL POST Navigation, same-origin with cross-site redirect, same-origin redirect, and passthrough service worker sets correct origin and referer headers. assert_equals: origin header expected "null" but got "https://web-platform.test:9443"
 PASS POST Navigation, same-origin with cross-site redirect, same-origin redirect, and fallback service worker sets correct origin and referer headers.
 PASS POST Navigation, same-origin with cross-site redirect, same-origin redirect, and change-request service worker sets correct origin and referer headers.
 PASS GET Navigation, same-origin with no service worker sets correct sec-fetch headers.

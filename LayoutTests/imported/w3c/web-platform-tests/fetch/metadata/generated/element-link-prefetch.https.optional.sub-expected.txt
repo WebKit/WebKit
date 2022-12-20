@@ -1,11 +1,10 @@
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
 
 Harness Error (TIMEOUT), message = null
 
 PASS sec-fetch-site - Same origin no attributes
 PASS sec-fetch-site - Cross-site no attributes
-TIMEOUT sec-fetch-site - Same site no attributes Test timed out
-NOTRUN sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect no attributes
+PASS sec-fetch-site - Same site no attributes
+TIMEOUT sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect no attributes Test timed out
 NOTRUN sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect no attributes
 NOTRUN sec-fetch-site - Cross-Site -> Same Origin no attributes
 NOTRUN sec-fetch-site - Cross-Site -> Same-Site no attributes

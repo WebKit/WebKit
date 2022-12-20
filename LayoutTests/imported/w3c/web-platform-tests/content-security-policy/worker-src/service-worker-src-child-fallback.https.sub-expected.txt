@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''none''. It will be ignored. Note that 'none' has no effect unless it is the only expression in the source list.
 
 PASS Same-origin service worker allowed by child-src 'self'.
 

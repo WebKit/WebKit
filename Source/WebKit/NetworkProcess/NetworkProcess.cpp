@@ -78,6 +78,7 @@
 #include <WebCore/NetworkStateNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotificationData.h>
+#include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SQLiteDatabase.h>
@@ -347,6 +348,13 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     
     for (auto&& websiteDataStoreParameters : WTFMove(parameters.websiteDataStoreParameters))
         addWebsiteDataStore(WTFMove(websiteDataStoreParameters));
+
+    m_localhostAliasesForTesting = WTFMove(parameters.localhostAliasesForTesting);
+
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+    // Needed for older OSes that do not use WebSocketTask.
+    ResourceHandle::setLocalhostAliasesForTesting(HashSet<String> { m_localhostAliasesForTesting });
+#endif
 
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, WebCore::presentingApplicationPID());
 }

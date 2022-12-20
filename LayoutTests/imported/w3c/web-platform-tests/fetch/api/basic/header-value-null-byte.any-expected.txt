@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/xhr/resources/parse-headers.py?my-custom-header=x%00x.
 
 PASS Ensure fetch() rejects null bytes in headers
 

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Error: Invalid Request
+CONSOLE MESSAGE: Cannot load https://www1.web-platform.test:9443/fetch/range/resources/partial-text.py?action=record-media-range-request&length=100&size=99&partial=206&id=0.5554430010181177&type=audio%2Fmp4.
 
 Harness Error (TIMEOUT), message = null
 

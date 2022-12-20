@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "NetworkStorageSession.h"
 #include "ProtectionSpace.h"
+#include "ResourceHandle.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include "StorageSessionProvider.h"
@@ -319,7 +320,7 @@ void SocketStreamHandleImpl::createStreams()
     if (m_connectionType == Unknown)
         return;
 
-    RetainPtr<CFStringRef> host = m_url.host().createCFString();
+    RetainPtr<CFStringRef> host = ResourceHandle::localhostAliasesForTesting().contains<StringViewHashTranslator>(m_url.host()) ? RetainPtr<CFStringRef> { CFSTR("localHost") } : m_url.host().createCFString();
 
     // Creating streams to final destination, not to proxy.
     CFReadStreamRef readStream = 0;

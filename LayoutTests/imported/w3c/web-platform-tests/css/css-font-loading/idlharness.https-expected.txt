@@ -1,3 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Font Loading API IDL tests
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
 
 FAIL idl_test setup promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FontFaceSetLoadEvent"
 PASS idl_test validation

@@ -27,8 +27,8 @@
 
 #if USE(LIBWEBRTC)
 
-#include "NWSPI.h"
 #include <optional>
+#include <pal/spi/cocoa/NWSPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

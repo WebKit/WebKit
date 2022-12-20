@@ -1,5 +1,6 @@
+CONSOLE MESSAGE: Refused to load https://not-web-platform.test:9443/content-security-policy/reporting-api/support/non-embeddable-frame.html?id=f6857cf9-48bd-4ada-9b00-9b9c1cb577ed because it does not appear in the frame-ancestors directive of the Content Security Policy.
 
 
 FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
-PASS No report to parent.
+FAIL No report to parent. assert_equals: CSP report sent, but not expecting one. expected 0 but got 1
 

@@ -87,6 +87,7 @@
 		4469328B28483EF700614F16 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4469328A2848321C00614F16 /* FoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
 		46FF911929196C73006005B5 /* SleepDisablerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46FF911829196C73006005B5 /* SleepDisablerIOS.mm */; };
+		4664A56828D576C0005B0C2F /* NWSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4664A56728D576C0005B0C2F /* NWSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57F1C90A25DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F1C90825DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm */; };
 		57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */; };
 		5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C787223AC3E770065F47E /* ManagedConfigurationSoftLink.mm */; };
@@ -919,6 +920,7 @@
 		44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LookupSoftLink.mm; sourceTree = "<group>"; };
 		44EEA0FE2747438900594A83 /* NSServicesRolloverButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSServicesRolloverButtonCellSPI.h; sourceTree = "<group>"; };
 		46FF911829196C73006005B5 /* SleepDisablerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SleepDisablerIOS.mm; sourceTree = "<group>"; };
+		4664A56728D576C0005B0C2F /* NWSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSPI.h; sourceTree = "<group>"; };
 		4996C0F22717642B002C125D /* TCCSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
 		517E03F824B7C0060054895A /* IOKitSPIMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPIMac.h; sourceTree = "<group>"; };
 		570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxySPI.h; sourceTree = "<group>"; };
@@ -1138,6 +1140,7 @@
 				0C2DA1381F3BEB4900DBC317 /* NSURLFileTypeMappingsSPI.h */,
 				C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */,
 				570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */,
+				4664A56728D576C0005B0C2F /* NWSPI.h */,
 				A169B040248EF03900EE8B7B /* PassKitInstallmentsSPI.h */,
 				0C2DA1391F3BEB4900DBC317 /* PassKitSPI.h */,
 				0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */,
@@ -1877,6 +1880,7 @@
 				DD20DE3C27BC90D80093D175 /* NSViewSPI.h in Headers */,
 				DD20DE3D27BC90D80093D175 /* NSWindowSPI.h in Headers */,
 				DD20DE0127BC90D80093D175 /* NSXPCConnectionSPI.h in Headers */,
+				4664A56828D576C0005B0C2F /* NWSPI.h in Headers */,
 				DD20DE1727BC90D80093D175 /* OpenGLESSPI.h in Headers */,
 				DD20DD2127BC90D60093D175 /* OpenGLSoftLinkCocoa.h in Headers */,
 				DD20DD1827BC90D60093D175 /* OTSVGTable.h in Headers */,

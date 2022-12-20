@@ -7,6 +7,6 @@ FAIL Response.body is null for responses with status=205 (method=POST) assert_eq
 FAIL Response.body is null for responses with status=205 (method=OPTIONS) assert_equals: the body should be null expected null but got object "[object ReadableStream]"
 FAIL Response.body is null for responses with status=304 (method=GET) assert_equals: the body should be null expected null but got object "[object ReadableStream]"
 FAIL Response.body is null for responses with status=304 (method=POST) assert_equals: the body should be null expected null but got object "[object ReadableStream]"
-FAIL Response.body is null for responses with status=304 (method=OPTIONS) assert_equals: the body should be null expected null but got object "[object ReadableStream]"
+FAIL Response.body is null for responses with status=304 (method=OPTIONS) promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 FAIL Response.body is null for responses with method=HEAD assert_equals: the body should be null expected null but got object "[object ReadableStream]"
 

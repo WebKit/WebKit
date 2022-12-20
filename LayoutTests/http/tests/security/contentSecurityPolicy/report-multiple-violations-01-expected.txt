@@ -1,8 +1,17 @@
-CONSOLE MESSAGE: [Report Only] Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
-CONSOLE MESSAGE: [Report Only] Refused to load the image 'http://127.0.0.1:8000/security/resources/eba.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
-PingLoader dispatched to 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/does-not-exist'.
-This tests that multiple violations on a page trigger multiple reports. The test passes if two PingLoader callbacks are visible in the output.
-
-
+CONSOLE MESSAGE: [Report Only] Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to load http://127.0.0.1:8000/security/resources/eba.png because it does not appear in the img-src directive of the Content Security Policy.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x183
+  RenderBlock {HTML} at (0,0) size 800x183
+    RenderBody {BODY} at (8,16) size 784x159
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 743x36
+          text run at (0,0) width 743: "This tests that multiple violations on a page trigger multiple reports. The test passes if two PingLoader callbacks are"
+          text run at (0,18) width 132: "visible in the output."
+      RenderBlock (anonymous) at (0,52) size 784x107
+        RenderImage {IMG} at (0,0) size 76x103
+        RenderText {#text} at (76,89) size 4x18
+          text run at (76,89) width 4: " "
+        RenderImage {IMG} at (80,83) size 20x20
+        RenderText {#text} at (0,0) size 0x0

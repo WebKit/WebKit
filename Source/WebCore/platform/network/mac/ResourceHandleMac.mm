@@ -48,6 +48,7 @@
 #import "WebCoreURLResponse.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
+#import <pal/spi/cocoa/NWSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/ProcessPrivilege.h>
@@ -200,6 +201,9 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         // Connections are grouped by their socket stream properties, with each group having a separate count.
         [streamProperties setObject:@TRUE forKey:@"_WebKitSynchronousRequest"];
     }
+
+    if (localhostAliasesForTesting().contains<StringViewHashTranslator>(firstRequest().url().host()))
+        [streamProperties setObject:adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", firstRequest().url().port().value_or(0))).get() forKey:@"__kCFStreamPropertyEndpointOverride"];
 
     RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
     if (sourceApplicationAuditData)
@@ -472,6 +476,8 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // Client call may not preserve the session, especially if the request is sent over IPC.
         if (!request.isNull())
             request.setStorageSession(d->m_storageSession.get());
+
+        d->m_currentRequest = request;
         completionHandler(WTFMove(request));
     });
 }
@@ -659,6 +665,11 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& c
     [[d->m_currentMacChallenge sender] rejectProtectionSpaceAndContinueWithChallenge:d->m_currentMacChallenge];
 
     clearAuthentication();
+}
+
+const ResourceRequest& ResourceHandle::currentRequest() const
+{
+    return d->m_currentRequest;
 }
 
 } // namespace WebCore

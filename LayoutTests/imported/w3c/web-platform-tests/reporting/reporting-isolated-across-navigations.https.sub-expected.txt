@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/missing1.png because it does not appear in the img-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/missing2.png because it does not appear in the img-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/missing3.png because it does not appear in the img-src directive of the Content Security Policy.
 Bug test main frame
 
 

@@ -105,6 +105,7 @@ CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKi
 CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
 
 constexpr unsigned maxNumberOfIsolatedSessions { 10 };
+static bool forceAcceptServerTrustEvaluations { true };
 
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
@@ -733,6 +734,16 @@ void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChall
         return;
     }
 
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        if (!_session->networkProcess().localhostAliasesForTesting().isEmpty() && task._hostOverride) {
+            String requestHost(task.currentRequest.URL.host);
+            if (_session->networkProcess().localhostAliasesForTesting().contains(requestHost)) {
+                SecTrustSetPolicies(challenge.protectionSpace.serverTrust, adoptCF(SecPolicyCreateSSL(TRUE, requestHost.createCFString().get())).get());
+                return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+            }
+        }
+    }
+
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveChallenge", taskIdentifier);
     
@@ -746,8 +757,13 @@ void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChall
     NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        // FIXME: Only do this on pre-macOS Ventura / ios16 as this bug has been fixed.
+        WTFLogAlways("DEBUG: didReceiveChallenge for protectionSpaceHost=%s / currentRequestHost=%s", String(challenge.protectionSpace.host).utf8().data(), String(task.currentRequest.URL.host).utf8().data());
+
         sessionCocoa->setClientAuditToken(challenge);
-        if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
+
+        // FIXME: Temporary hack to try and fix EWS failures.
+        if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge) || forceAcceptServerTrustEvaluations)
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         NSURLSessionTaskTransactionMetrics *metrics = task._incompleteTaskMetrics.transactionMetrics.lastObject;

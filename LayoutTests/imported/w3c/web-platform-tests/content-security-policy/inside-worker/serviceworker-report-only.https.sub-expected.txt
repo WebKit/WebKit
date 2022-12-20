@@ -1,7 +1,9 @@
 
-PASS serviceworker-report-only
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT serviceworker-report-only Test timed out
 PASS Same-origin 'fetch()'.
-FAIL Cross-origin 'fetch()'. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
-FAIL Same-origin => cross-origin 'fetch()'. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
-FAIL connect-src-self-report-only assert_array_equals: Reports do not match lengths differ, expected array ["https://localhost:9443/common/redirect-opt-in.py?status=307&location=https://www.localhost:9444/content-security-policy/support/resource.py?cross-origin-fetch", "https://www.localhost:9444/content-security-policy/support/resource.py?cross-origin-fetch"] length 2, got [] length 0
+TIMEOUT Cross-origin 'fetch()'. Test timed out
+NOTRUN Same-origin => cross-origin 'fetch()'.
+NOTRUN connect-src-self-report-only
 

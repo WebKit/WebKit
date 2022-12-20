@@ -3221,8 +3221,6 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-022.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padding-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
-
 fast/text/selection-is-prevent-defaulted.html [ Failure ]
 
 # FIXME: These tests require UIScriptControllerIOS additions to know when a date/time picker is presented

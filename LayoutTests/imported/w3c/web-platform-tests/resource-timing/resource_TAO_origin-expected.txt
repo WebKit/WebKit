@@ -1,14 +1,26 @@
+<<<<<<< HEAD
 Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=origin
 CONSOLE MESSAGE: NetworkError:  A network error occurred.
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'entry.redirectStart')
+=======
+>>>>>>> 30d2ff3274ef ([COCOA] Add support for web-platform-tests custom domains when running layout tests)
 Description
 
 This test validates that for a cross origin resource, the timing allow check algorithm will pass when the value of Timing-Allow-Origin is a case-sensitive match for the value of the origin of the current document.
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'entry.redirectStart')
-
 PASS window.performance is defined
 PASS window.performance.getEntriesByType is defined
-FAIL The iframe should have one resource timing entry. assert_equals: The iframe should have one resource timing entry. expected 1 but got 0
+PASS The iframe should have one resource timing entry.
+PASS redirectStart should be 0 in cross-origin request since no redirect.
+PASS redirectEnd should be 0 in cross-origin request since no redirect.
+PASS domainLookupStart should not be 0 in timing-allow cross-origin request.
+PASS domainLookupEnd should not be 0 in timing-allow cross-origin request.
+PASS connectStart should not be 0 in timing-allow cross-origin request.
+PASS connectEnd should not be 0 in timing-allow cross-origin request.
+PASS requestStart should not be 0 in timing-allow cross-origin request.
+PASS responseStart should not be 0 in timing-allow cross-origin request.
+PASS secureConnectionStart should be 0 in cross-origin request since no ssl!
+PASS fetchStart should not be 0 in timing-allow cross-origin request.
+PASS responseEnd should not be 0 in timing-allow cross-origin request.
 

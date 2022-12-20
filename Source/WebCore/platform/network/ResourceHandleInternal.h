@@ -74,7 +74,7 @@ public:
         , m_defersLoading(defersLoading)
         , m_shouldContentSniff(shouldContentSniff)
         , m_contentEncodingSniffingPolicy(contentEncodingSniffingPolicy)
-#if USE(CFURLCONNECTION)
+#if USE(CFURLCONNECTION) || PLATFORM(COCOA)
         , m_currentRequest(request)
 #endif
         , m_failureTimer(*loader, &ResourceHandle::failureTimerFired)
@@ -110,8 +110,10 @@ public:
     ContentEncodingSniffingPolicy m_contentEncodingSniffingPolicy;
 #if USE(CFURLCONNECTION)
     RetainPtr<CFURLConnectionRef> m_connection;
-    ResourceRequest m_currentRequest;
     RefPtr<ResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
+#endif
+#if USE(CFURLCONNECTION) || PLATFORM(COCOA)
+    ResourceRequest m_currentRequest;
 #endif
 #if PLATFORM(COCOA)
     RetainPtr<NSURLConnection> m_connection;

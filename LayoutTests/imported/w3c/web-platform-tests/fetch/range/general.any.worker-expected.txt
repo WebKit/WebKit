@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 500
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
 
 PASS Range header setting allowed for guard type: none
 PASS Range header setting allowed for guard type: response
