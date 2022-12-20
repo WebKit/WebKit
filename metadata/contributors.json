@@ -7431,6 +7431,14 @@
    },
    {
       "emails" : [
+         "yuki.sekiguchi@access-company.com",
+         "yukiseki712@gmail.com"
+      ],
+      "github" : "aYukiSekiguchi",
+      "name" : "Yuki Sekiguchi"
+   },
+   {
+      "emails" : [
          "yuqiang.xian@intel.com"
       ],
       "expertise" : "JavaScriptCore",
