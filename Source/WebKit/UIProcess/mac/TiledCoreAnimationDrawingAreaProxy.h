@@ -59,6 +59,8 @@ private:
 
     WTF::MachSendRight createFence() override;
 
+    bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
+
     // Message handlers.
     void didUpdateGeometry() override;
 

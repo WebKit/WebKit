@@ -94,24 +94,24 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
     return std::exchange(m_requestedScroll, { });
 }
 
-bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (!m_scrollingTree)
-        return false;
+        return WheelEventHandlingResult::unhandled();
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(wheelEvent);
     if (processingSteps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }))
-        return false;
+        return WheelEventHandlingResult::unhandled(processingSteps);
 
     if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
-        return false;
+        return WheelEventHandlingResult::unhandled();
 
     m_scrollingTree->willProcessWheelEvent();
 
     auto filteredEvent = filteredWheelEvent(wheelEvent);
     auto result = m_scrollingTree->handleWheelEvent(filteredEvent);
     didReceiveWheelEvent(result.wasHandled);
-    return result.wasHandled;
+    return result;
 }
 
 void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

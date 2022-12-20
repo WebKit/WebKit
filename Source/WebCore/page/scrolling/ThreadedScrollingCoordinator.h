@@ -47,7 +47,7 @@ private:
     WEBCORE_EXPORT void didCompleteRenderingUpdate() final;
 
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    WEBCORE_EXPORT bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) final;
+    WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) final;
     WEBCORE_EXPORT void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
 
     WEBCORE_EXPORT void startMonitoringWheelEvents(bool clearLatchingState) final;

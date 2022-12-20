@@ -68,14 +68,14 @@ void ThreadedScrollingCoordinator::commitTreeStateIfNeeded()
     scrollingTree()->commitTreeState(WTFMove(stateTree));
 }
 
-bool ThreadedScrollingCoordinator::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
+WheelEventHandlingResult ThreadedScrollingCoordinator::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
     ASSERT(scrollingTree());
 
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
-        return false;
+        return WheelEventHandlingResult::unhandled();
 
     LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingCoordinator::handleWheelEventForScrolling " << wheelEvent << " - sending event to scrolling thread, node " << targetNodeID << " gestureState " << gestureState);
 
@@ -85,7 +85,7 @@ bool ThreadedScrollingCoordinator::handleWheelEventForScrolling(const PlatformWh
     ScrollingThread::dispatch([threadedScrollingTree, wheelEvent, targetNodeID, gestureState, deferrer = WTFMove(deferrer)] {
         threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNodeID, gestureState);
     });
-    return true;
+    return WheelEventHandlingResult::handled();
 }
 
 void ThreadedScrollingCoordinator::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)

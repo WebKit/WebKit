@@ -3050,11 +3050,15 @@ void WebPageProxy::dispatchWheelEventWithoutScrolling(const WebWheelEvent& event
 
 void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 {
+    WheelEventHandlingResult handlingResult;
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
-    if (m_scrollingCoordinatorProxy && m_scrollingCoordinatorProxy->handleWheelEvent(platform(event)))
-        return;
-#endif
+    if (m_scrollingCoordinatorProxy) {
+        handlingResult = m_scrollingCoordinatorProxy->handleWheelEvent(platform(event));
+        if (!handlingResult.needsMainThreadProcessing())
+            return;
+    }
 
+#endif
     if (!hasRunningProcess())
         return;
 
@@ -3066,9 +3070,9 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
         m_scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(event);
 #endif
 
-    if (wheelEventCoalescer().shouldDispatchEvent(event)) {
-        auto event = wheelEventCoalescer().nextEventToDispatch();
-        sendWheelEvent(*event);
+    if (wheelEventCoalescer().shouldDispatchEvent(event, handlingResult.steps)) {
+        auto eventAndSteps = wheelEventCoalescer().nextEventToDispatch();
+        sendWheelEvent(eventAndSteps->event, eventAndSteps->processingSteps);
     }
 }
 
@@ -3106,7 +3110,7 @@ void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 #endif
 }
 
-void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
+void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
 {
 #if HAVE(CVDISPLAYLINK)
     m_wheelEventActivityHysteresis.impulse();
@@ -3129,7 +3133,10 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
     }
 #endif
 
-    connection->send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
+    if (drawingArea()->shouldSendWheelEventsToEventDispatcher())
+        connection->send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
+    else
+        send(Messages::WebPage::HandleWheelEvent(event, processingSteps));
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
@@ -7861,7 +7868,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         }
 
         if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch())
-            sendWheelEvent(*eventToSend);
+            sendWheelEvent(eventToSend->event, eventToSend->processingSteps);
         else if (auto* automationSession = process().processPool().automationSession())
             automationSession->wheelEventsFlushedForPage(*this);
         break;
