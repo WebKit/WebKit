@@ -1,0 +1,49 @@
+Test to make sure shadow nodes are not exposed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().anchorNode is null
+PASS getSelection().anchorOffset is 0
+PASS getSelection().focusNode is null
+PASS getSelection().focusOffset is 0
+PASS getSelection().isCollapsed is true
+PASS getSelection().rangeCount is 0
+PASS getSelection().baseNode is null
+PASS getSelection().baseOffset is 0
+PASS getSelection().extentNode is null
+PASS getSelection().extentOffset is 0
+PASS getSelection().type is "None"
+
+Add an input element.
+
+PASS getSelection().anchorNode is null
+PASS getSelection().anchorOffset is 0
+PASS getSelection().focusNode is null
+PASS getSelection().focusOffset is 0
+PASS getSelection().isCollapsed is true
+PASS getSelection().rangeCount is 0
+PASS getSelection().baseNode is null
+PASS getSelection().baseOffset is 0
+PASS getSelection().extentNode is null
+PASS getSelection().extentOffset is 0
+PASS getSelection().type is "None"
+
+Add a textarea element.
+
+PASS getSelection().anchorNode is null
+PASS getSelection().anchorOffset is 0
+PASS getSelection().focusNode is null
+PASS getSelection().focusOffset is 0
+PASS getSelection().isCollapsed is true
+PASS getSelection().rangeCount is 0
+PASS getSelection().baseNode is null
+PASS getSelection().baseOffset is 0
+PASS getSelection().extentNode is null
+PASS getSelection().extentOffset is 0
+PASS getSelection().type is "None"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
