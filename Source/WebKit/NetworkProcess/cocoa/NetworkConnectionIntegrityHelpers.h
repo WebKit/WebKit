@@ -26,7 +26,7 @@
 #pragma once
 
 #import <wtf/CompletionHandler.h>
-#import <wtf/HashSet.h>
+#import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
 OBJC_CLASS NSURLSession;
@@ -36,7 +36,7 @@ namespace WebKit {
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 void configureForNetworkConnectionIntegrity(NSURLSession *);
-void requestLookalikeCharacterStrings(CompletionHandler<void(const HashSet<String>&)>&&);
+void requestLookalikeCharacterStrings(CompletionHandler<void(const Vector<String>&)>&&);
 
 #endif
 

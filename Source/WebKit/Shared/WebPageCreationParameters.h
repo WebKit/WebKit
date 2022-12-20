@@ -281,6 +281,10 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    Vector<String> lookalikeCharacterStrings;
+#endif
 };
 
 } // namespace WebKit

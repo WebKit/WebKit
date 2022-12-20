@@ -983,6 +983,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     updateImageAnimationEnabled();
 #endif
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    setLookalikeCharacterStrings(WTFMove(parameters.lookalikeCharacterStrings));
+#endif
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -4331,10 +4334,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    m_sanitizeLookalikeCharactersInLinksEnabled = store.getBoolValueForKey(WebPreferencesKey::sanitizeLookalikeCharactersInLinksEnabledKey());
-#endif
-
     if (settings.showMediaStatsContextMenuItemEnabled())
         settings.setTrackConfigurationEnabled(true);
 
@@ -6874,10 +6873,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     m_elementsToExcludeFromRemoveBackground.clear();
 #endif
-
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    updateLookalikeCharacterStringsIfNeeded();
-#endif
 }
 
 void WebPage::didFinishDocumentLoad(WebFrame& frame)
@@ -8363,22 +8358,12 @@ bool WebPage::isUsingUISideCompositing() const
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
-void WebPage::updateLookalikeCharacterStringsIfNeeded()
+void WebPage::setLookalikeCharacterStrings(Vector<String>&& strings)
 {
-    if (!m_sanitizeLookalikeCharactersInLinksEnabled)
-        return;
-
-    RefPtr networkProcess = WebProcess::singleton().existingNetworkProcessConnection();
-    if (!networkProcess)
-        return;
-
-    if (!std::exchange(m_shouldUpdateLookalikeCharacterStrings, false))
-        return;
-
-    networkProcess->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestLookalikeCharacterStrings(), [weakPage = WeakPtr { *this }](auto&& strings) {
-        if (RefPtr page = weakPage.get())
-            page->m_lookalikeCharacterStrings = WTFMove(strings);
-    });
+    m_lookalikeCharacterStrings.clear();
+    m_lookalikeCharacterStrings.reserveInitialCapacity(strings.size());
+    for (auto& string : strings)
+        m_lookalikeCharacterStrings.add(string);
 }
 
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)

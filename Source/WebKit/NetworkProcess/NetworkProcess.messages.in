@@ -228,4 +228,8 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     SetEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t> bytesPerSecondLimit)
 #endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    RequestLookalikeCharacterStrings() -> (Vector<String> strings)
+#endif
 }

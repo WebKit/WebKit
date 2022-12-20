@@ -1201,6 +1201,10 @@ void WebPageProxy::initializeWebPage()
     send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(m_process, *m_drawingArea)), 0);
 
     m_process->addVisitedLinkStoreUser(visitedLinkStore(), m_identifier);
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    m_shouldUpdateLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
+#endif
 }
 
 void WebPageProxy::close()
@@ -5257,6 +5261,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if USE(APPKIT)
         closeSharedPreviewPanelIfNecessary();
 #endif
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+        updateLookalikeCharacterStringsIfNeeded();
+#endif
     }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
@@ -6222,6 +6229,9 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
             newPage->m_privateClickMeasurement = {{ WTFMove(*privateClickMeasurement), { }, { }}};
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
+#endif
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+        newPage->m_shouldUpdateLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
 #endif
     };
 
@@ -8820,6 +8830,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.hasResizableWindows = pageClient().hasResizableWindows();
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    if (preferences().sanitizeLookalikeCharactersInLinksEnabled())
+        parameters.lookalikeCharacterStrings = cachedLookalikeStrings();
+#endif
     return parameters;
 }
 
@@ -11802,6 +11816,49 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
 {
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+Vector<String>& WebPageProxy::cachedLookalikeStrings()
+{
+    static NeverDestroyed cachedStrings = [] {
+        return Vector<String> { };
+    }();
+    return cachedStrings.get();
+}
+
+void WebPageProxy::updateLookalikeCharacterStringsIfNeeded()
+{
+    if (!m_shouldUpdateLookalikeCharacterStrings)
+        return;
+
+    m_shouldUpdateLookalikeCharacterStrings = false;
+
+    if (!preferences().sanitizeLookalikeCharactersInLinksEnabled())
+        return;
+
+    if (!cachedLookalikeStrings().isEmpty()) {
+        send(Messages::WebPage::SetLookalikeCharacterStrings(cachedLookalikeStrings()));
+        return;
+    }
+
+    RefPtr networkProcess = websiteDataStore().networkProcessIfExists();
+    if (!networkProcess) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    networkProcess->requestLookalikeCharacterStrings([weakPage = WeakPtr { *this }](auto&& strings) {
+        if (cachedLookalikeStrings().isEmpty()) {
+            cachedLookalikeStrings() = WTFMove(strings);
+            cachedLookalikeStrings().shrinkToFit();
+        }
+        if (RefPtr page = weakPage.get(); page && page->hasRunningProcess())
+            page->send(Messages::WebPage::SetLookalikeCharacterStrings(cachedLookalikeStrings()));
+    });
+}
+
+#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 } // namespace WebKit
 

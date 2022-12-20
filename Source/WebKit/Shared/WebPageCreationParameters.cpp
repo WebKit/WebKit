@@ -200,6 +200,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << contentSecurityPolicyModeForExtension;
     encoder << mainFrameIdentifier;
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    encoder << lookalikeCharacterStrings;
+#endif
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -634,6 +638,14 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
     if (!decoder.decode(parameters.mainFrameIdentifier))
         return std::nullopt;
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    std::optional<Vector<String>> lookalikeCharacterStrings;
+    decoder >> lookalikeCharacterStrings;
+    if (!lookalikeCharacterStrings)
+        return std::nullopt;
+    parameters.lookalikeCharacterStrings = WTFMove(*lookalikeCharacterStrings);
+#endif
 
     return { WTFMove(parameters) };
 }

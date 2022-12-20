@@ -193,6 +193,15 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
+static void sanitizeLookalikeCharactersIfNecessary(ContentRuleListResults& results, const Page& page, const URL& url, OptionSet<ResourceType> type)
+{
+    if (!type.contains(ResourceType::Document))
+        return;
+
+    if (auto adjustedURL = page.chrome().client().sanitizeLookalikeCharacters(url); adjustedURL != url)
+        results.summary.redirectActions.append({ { RedirectAction::URLAction { adjustedURL.string() } }, adjustedURL });
+}
+
 ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
 {
     Document* currentDocument = nullptr;
@@ -222,6 +231,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     ContentRuleListResults results;
     if (page.httpsUpgradeEnabled())
         makeSecureIfNecessary(results, url, redirectFrom);
+    if (mainFrameContext)
+        sanitizeLookalikeCharactersIfNecessary(results, page, url, resourceType);
     results.results.reserveInitialCapacity(actions.size());
     for (const auto& actionsFromContentRuleList : actions) {
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;

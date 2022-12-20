@@ -1847,6 +1847,15 @@ void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::o
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+void NetworkProcessProxy::requestLookalikeCharacterStrings(CompletionHandler<void(Vector<String>&&)>&& completion)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::RequestLookalikeCharacterStrings(), WTFMove(completion), 0);
+}
+
+#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

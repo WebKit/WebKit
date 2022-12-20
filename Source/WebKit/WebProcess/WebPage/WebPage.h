@@ -1654,7 +1654,7 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    void updateLookalikeCharacterStringsIfNeeded();
+    void setLookalikeCharacterStrings(Vector<String>&&);
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -2559,8 +2559,6 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    bool m_sanitizeLookalikeCharactersInLinksEnabled { false };
-    bool m_shouldUpdateLookalikeCharacterStrings { true };
     HashSet<String> m_lookalikeCharacterStrings;
 #endif
 
