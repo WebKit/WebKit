@@ -155,7 +155,7 @@ public:
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableProperty>& animatedProperties();
     const HashSet<CSSPropertyID>& inheritedProperties() const { return m_inheritedProperties; }
-    bool animatesProperty(CSSPropertyID) const;
+    bool animatesProperty(AnimatableProperty) const;
     bool animatesDirectionAwareProperty() const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;

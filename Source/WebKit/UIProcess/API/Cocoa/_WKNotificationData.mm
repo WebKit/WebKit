@@ -27,6 +27,7 @@
 #import "_WKNotificationDataInternal.h"
 
 #import <WebCore/NotificationData.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 static NSString *iconURLKey = @"iconURL";
 static NSString *tagKey = @"tag";

@@ -42,13 +42,17 @@ public:
     ControlMac(ControlPart&, ControlFactoryMac&);
 
 protected:
-    using PlatformControl::draw;
+    static bool userPrefersContrast();
 
     void setFocusRingClipRect(const FloatRect& clipBounds) override;
 
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, NSView *, bool drawCell = true);
+    void drawCell(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, NSView *, bool drawCell = true);
+
+#if ENABLE(DATALIST_ELEMENT)
+    void drawListButton(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
+#endif
 
     ControlFactoryMac& m_controlFactory;
 };

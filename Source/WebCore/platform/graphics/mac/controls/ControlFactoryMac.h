@@ -39,12 +39,16 @@ public:
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) override;
 
 private:
     NSLevelIndicatorCell* levelIndicatorCell() const;
+    NSTextFieldCell* textFieldCell() const;
 
     mutable RetainPtr<WebControlView> m_drawingView;
+
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
+    mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };
 
 } // namespace WebCore

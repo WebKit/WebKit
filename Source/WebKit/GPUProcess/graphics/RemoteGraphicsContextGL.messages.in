@@ -53,6 +53,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
     void ReadnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> data) -> (IPC::ArrayReference<uint8_t> data) Synchronous
     void ReadnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
+    void ReadnPixels2(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, WebKit::SharedMemory::Handle handle) -> (bool hadError) Synchronous NotStreamEncodable
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
     void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)

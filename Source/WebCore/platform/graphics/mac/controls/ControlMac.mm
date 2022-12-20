@@ -29,10 +29,14 @@
 #if PLATFORM(MAC)
 
 #import "ColorCocoa.h"
+#import "FloatRoundedRect.h"
 #import "GraphicsContextCG.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "WebControlView.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 
 namespace WebCore {
@@ -41,6 +45,11 @@ ControlMac::ControlMac(ControlPart& owningPart, ControlFactoryMac& controlFactor
     : PlatformControl(owningPart)
     , m_controlFactory(controlFactory)
 {
+}
+
+bool ControlMac::userPrefersContrast()
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
 }
 
 void ControlMac::setFocusRingClipRect(const FloatRect& clipBounds)
@@ -87,17 +96,17 @@ static void drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect,
         if ([cell isKindOfClass:[NSSliderCell class]]) {
             // For slider cells, draw only the knob.
             [(NSSliderCell *)cell drawKnob:rect];
-        } else
+        } else {
             [cell drawWithFrame:rect inView:view];
+            [cell setControlView:nil];
+        }
     }
 
     if (style.states.contains(ControlStyle::State::Focused))
         drawFocusRing(rect, cell, view);
-
-    [cell setControlView:nil];
 }
 
-void ControlMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
+void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
 {
     auto platformContext = context.platformContext();
     auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext))));
@@ -117,6 +126,65 @@ void ControlMac::draw(GraphicsContext& context, const FloatRect& rect, float dev
     drawCellOrFocusRing(imageBuffer->context(), imageBufferRect, style, cell, view, drawCell);
     context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location());
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+{
+    // We can't paint an NSComboBoxCell since they are not height-resizable.
+    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
+
+    const FloatSize comboBoxSize { 40, 19 };
+    const FloatSize comboBoxButtonSize { 16, 16 };
+    const FloatPoint comboBoxButtonInset { 5, 1 };
+    constexpr auto comboBoxButtonCornerRadii = 4;
+
+    const FloatSize desiredComboBoxButtonSize { 12, 12 };
+    constexpr auto desiredComboBoxInset = 2;
+
+    auto comboBoxImageBuffer = context.createImageBuffer(comboBoxSize, deviceScaleFactor);
+    if (!comboBoxImageBuffer)
+        return;
+
+    ContextContainer cgContextContainer(comboBoxImageBuffer->context());
+    CGContextRef cgContext = cgContextContainer.context();
+
+    NSString *coreUIState;
+    if (style.states.containsAny({ ControlStyle::State::Presenting, ControlStyle::State::ListButtonPressed }))
+        coreUIState = (__bridge NSString *)kCUIStatePressed;
+    else
+        coreUIState = (__bridge NSString *)kCUIStateActive;
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext options:@{
+    ALLOW_DEPRECATED_DECLARATIONS_END
+        (__bridge NSString *)kCUIWidgetKey : (__bridge NSString *)kCUIWidgetButtonComboBox,
+        (__bridge NSString *)kCUISizeKey : (__bridge NSString *)kCUISizeRegular,
+        (__bridge NSString *)kCUIStateKey : coreUIState,
+        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey : (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
+    }];
+
+    auto comboBoxButtonImageBuffer = context.createImageBuffer(desiredComboBoxButtonSize, deviceScaleFactor);
+    if (!comboBoxButtonImageBuffer)
+        return;
+
+    auto& comboBoxButtonContext = comboBoxButtonImageBuffer->context();
+
+    comboBoxButtonContext.scale(desiredComboBoxButtonSize.width() / comboBoxButtonSize.width());
+    comboBoxButtonContext.clipRoundedRect(FloatRoundedRect(FloatRect(FloatPoint::zero(), comboBoxButtonSize), FloatRoundedRect::Radii(comboBoxButtonCornerRadii)));
+    comboBoxButtonContext.translate(comboBoxButtonInset.scaled(-1));
+    comboBoxButtonContext.drawConsumingImageBuffer(WTFMove(comboBoxImageBuffer), FloatPoint::zero(), ImagePaintingOptions { ImageOrientation::OriginBottomRight });
+
+    FloatPoint listButtonLocation;
+    float listButtonY = rect.center().y() - desiredComboBoxButtonSize.height() / 2;
+    if (style.states.contains(ControlStyle::State::RightToLeft))
+        listButtonLocation = { rect.x() + desiredComboBoxInset, listButtonY };
+    else
+        listButtonLocation = { rect.maxX() - desiredComboBoxButtonSize.width() - desiredComboBoxInset, listButtonY };
+
+    GraphicsContextStateSaver stateSaver(context);
+    context.drawConsumingImageBuffer(WTFMove(comboBoxButtonImageBuffer), listButtonLocation);
+}
+#endif
 
 } // namespace WebCore
 

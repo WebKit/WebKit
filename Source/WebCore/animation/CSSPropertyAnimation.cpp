@@ -4132,20 +4132,34 @@ bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(AnimatableProperty p
     );
 }
 
-bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
 {
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
-    if (wrapper)
-        return wrapper->equals(a, b);
-    return true;
+    return WTF::switchOn(property,
+        [&] (CSSPropertyID propertyId) {
+            if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
+                return wrapper->equals(a, b);
+            return true;
+        }, [&] (const AtomString&) {
+            // FIXME: implement support for whether custom property values are equal.
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+    );
 }
 
-bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID property, const RenderStyle& from, const RenderStyle& to)
+bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
 {
-    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
-    if (wrapper)
-        return wrapper->canInterpolate(from, to, CompositeOperation::Replace);
-    return false;
+    return WTF::switchOn(property,
+        [&] (CSSPropertyID propertyId) {
+            if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
+                return wrapper->canInterpolate(a, b, CompositeOperation::Replace);
+            return true;
+        }, [&] (const AtomString&) {
+            // FIXME: implement support for whether custom property values can be interpolated.
+            ASSERT_NOT_REACHED();
+            return true;
+        }
+    );
 }
 
 CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, std::optional<bool>& isShorthand)

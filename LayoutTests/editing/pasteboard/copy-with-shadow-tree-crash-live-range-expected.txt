@@ -1,2 +1,0 @@
-This test passes if WebKit does not crash. PASS
-

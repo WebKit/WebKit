@@ -922,18 +922,29 @@ const HashSet<AnimatableProperty>& KeyframeEffect::animatedProperties()
     return m_animatedProperties;
 }
 
-bool KeyframeEffect::animatesProperty(CSSPropertyID property) const
+bool KeyframeEffect::animatesProperty(AnimatableProperty property) const
 {
     if (!m_blendingKeyframes.isEmpty())
-        return m_blendingKeyframes.properties().contains(property);
+        return m_blendingKeyframes.containsProperty(property);
 
-    for (auto& keyframe : m_parsedKeyframes) {
-        for (auto keyframeProperty : keyframe.styleStrings.keys()) {
-            if (keyframeProperty == property)
-                return true;
-        }
-    }
-    return false;
+    return m_parsedKeyframes.findIf([&](const auto& keyframe) {
+        return WTF::switchOn(property,
+            [&](CSSPropertyID cssProperty) {
+                for (auto keyframeProperty : keyframe.styleStrings.keys()) {
+                    if (keyframeProperty == cssProperty)
+                        return true;
+                }
+                return false;
+            },
+            [&](const AtomString& customProperty) {
+                for (auto keyframeProperty : keyframe.customStyleStrings.keys()) {
+                    if (keyframeProperty == customProperty)
+                        return true;
+                }
+                return false;
+            }
+        );
+    }) != notFound;
 }
 
 bool KeyframeEffect::animatesDirectionAwareProperty() const

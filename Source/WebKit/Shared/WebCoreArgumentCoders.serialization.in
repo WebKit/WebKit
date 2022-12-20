@@ -2331,7 +2331,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     Response
 };
 
-[Nested OptionSet] enum class WebCore::ControlStyle::State : uint16_t {
+[Nested OptionSet] enum class WebCore::ControlStyle::State : unsigned {
     Hovered,
     Pressed,
     Focused,
@@ -2345,7 +2345,10 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     FormSemanticContext,
     DarkAppearance,
     RightToLeft,
-    LargeControls
+    LargeControls,
+    ReadOnly,
+    ListButton,
+    ListButtonPressed
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ControlStyle {

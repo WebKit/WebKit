@@ -268,6 +268,8 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
     case ControlPartType::ApplePayButton:
         return true;
 #endif
+    case ControlPartType::TextField:
+        return true;
     default:
         break;
     }
@@ -283,6 +285,12 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
 {
     ControlPartType type = renderer.style().effectiveAppearance();
     return type == ControlPartType::Meter;
+}
+
+bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
+{
+    ControlPartType type = renderer.style().effectiveAppearance();
+    return type == ControlPartType::TextField;
 }
 
 bool RenderThemeMac::useFormSemanticContext() const
@@ -1121,65 +1129,6 @@ void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const El
 }
 #endif
 
-bool RenderThemeMac::shouldPaintCustomTextField(const RenderObject& renderer) const
-{
-    // <rdar://problem/88948646> Prevent AppKit from painting text fields in the light appearance
-    // with increased contrast, as the border is not painted, rendering the control invisible.
-#if HAVE(LARGE_CONTROL_SIZE)
-    return Theme::singleton().userPrefersContrast() && !renderer.useDarkAppearance();
-#else
-    UNUSED_PARAM(renderer);
-    return false;
-#endif
-}
-
-bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
-{
-    FloatRect paintRect(r);
-    auto& context = paintInfo.context();
-
-    LocalCurrentGraphicsContext localContext(context);
-    GraphicsContextStateSaver stateSaver(context);
-
-    auto enabled = isEnabled(o) && !isReadOnlyControl(o);
-
-    if (shouldPaintCustomTextField(o)) {
-        constexpr int strokeThickness = 1;
-
-        FloatRect strokeRect(paintRect);
-        strokeRect.inflate(-strokeThickness / 2.0f);
-
-        context.setStrokeColor(enabled ? Color::black : Color::darkGray);
-        context.setStrokeStyle(SolidStroke);
-        context.strokeRect(strokeRect, strokeThickness);
-    } else {
-        // <rdar://problem/22896977> We adjust the paint rect here to account for how AppKit draws the text
-        // field cell slightly smaller than the rect we pass to drawWithFrame.
-        AffineTransform transform = context.getCTM();
-        if (transform.xScale() > 1 || transform.yScale() > 1) {
-            paintRect.inflateX(1 / transform.xScale());
-            paintRect.inflateY(2 / transform.yScale());
-            paintRect.move(0, -1 / transform.yScale());
-        }
-
-        NSTextFieldCell *textField = this->textField();
-        [textField setEnabled:enabled];
-        [textField drawWithFrame:NSRect(paintRect) inView:documentViewFor(o)];
-        [textField setControlView:nil];
-    }
-
-#if ENABLE(DATALIST_ELEMENT)
-    if (!is<HTMLInputElement>(o.generatingNode()))
-        return false;
-
-    const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
-    if (input.list())
-        paintListButtonForInput(o, context, paintRect);
-#endif
-
-    return false;
-}
-
 void RenderThemeMac::adjustTextFieldStyle(RenderStyle&, const Element*) const
 {
 }
@@ -1267,7 +1216,7 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
 
 FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const FloatRect& bounds) const
 {
-    auto* control = const_cast<RenderMeter&>(renderMeter).ensureControlPart();
+    auto* control = const_cast<RenderMeter&>(renderMeter).ensureControlPartForRenderer();
     if (!control)
         return bounds.size();
 
@@ -2203,22 +2152,6 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     }
 
     return m_sliderThumbVertical.get();
-}
-
-NSTextFieldCell* RenderThemeMac::textField() const
-{
-    if (!m_textField) {
-        m_textField = adoptNS([[WebCoreTextFieldCell alloc] initTextCell:@""]);
-        [m_textField setBezeled:YES];
-        [m_textField setEditable:YES];
-        [m_textField setFocusRingType:NSFocusRingTypeExterior];
-        // Post-Lion, WebCore can be in charge of paintinng the background thanks to
-        // the workaround in place for <rdar://problem/11385461>, which is implemented
-        // above as _coreUIDrawOptionsWithFrame.
-        [m_textField setDrawsBackground:NO];
-    }
-
-    return m_textField.get();
 }
 
 #if ENABLE(DATALIST_ELEMENT)

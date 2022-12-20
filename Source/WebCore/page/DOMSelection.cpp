@@ -187,8 +187,12 @@ String DOMSelection::type() const
 
 unsigned DOMSelection::rangeCount() const
 {
-    auto frame = this->frame();
-    return !frame || frame->selection().isNone() ? 0 : 1;
+    RefPtr frame = this->frame();
+    if (!frame)
+        return 0;
+    if (frame->settings().liveRangeSelectionEnabled())
+        return frame->selection().associatedLiveRange() ? 1 : 0;
+    return frame->selection().isNone() ? 0 : 1;
 }
 
 ExceptionOr<void> DOMSelection::collapse(Node* node, unsigned offset)

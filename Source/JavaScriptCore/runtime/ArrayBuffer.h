@@ -130,15 +130,20 @@ public:
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
 
-    ArrayBufferContents(void* data, size_t sizeInBytes, std::optional<size_t> maxByteLength, Ref<SharedArrayBufferContents>&& shared)
-        : m_data(data, maxByteLength.value_or(sizeInBytes))
-        , m_shared(WTFMove(shared))
+    ArrayBufferContents(Ref<SharedArrayBufferContents>&& shared)
+        : m_shared(WTFMove(shared))
         , m_memoryHandle(m_shared->memoryHandle())
-        , m_sizeInBytes(sizeInBytes)
-        , m_maxByteLength(maxByteLength.value_or(sizeInBytes))
-        , m_hasMaxByteLength(!!maxByteLength)
+        , m_sizeInBytes(m_shared->sizeInBytes(std::memory_order_seq_cst))
     {
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
+        if (m_shared->mode() == SharedArrayBufferContents::Mode::WebAssembly) {
+            m_hasMaxByteLength = false;
+            m_maxByteLength = m_sizeInBytes;
+        } else {
+            m_hasMaxByteLength = !!m_shared->maxByteLength();
+            m_maxByteLength = m_shared->maxByteLength().value_or(m_sizeInBytes);
+        }
+        m_data = DataType { m_shared->data(), m_maxByteLength };
     }
 
     ArrayBufferContents(void* data, size_t sizeInBytes, size_t maxByteLength, Ref<BufferMemoryHandle>&& memoryHandle)
@@ -178,7 +183,7 @@ public:
     size_t sizeInBytes(std::memory_order order = std::memory_order_seq_cst) const
     {
         if (m_hasMaxByteLength) {
-            if (m_shared && m_shared->mode() == SharedArrayBufferContents::Mode::Default)
+            if (m_shared)
                 return m_shared->sizeInBytes(order);
         }
         return m_sizeInBytes;

@@ -208,8 +208,8 @@ struct UIEdgeInsets;
 
 - (void)_webView:(WKWebView *)webView decidePolicyForModalContainer:(_WKModalContainerInfo *)containerInfo decisionHandler:(void (^)(_WKModalContainerDecision))decisionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-- (void)_webView:(WKWebView *)webView updatedAppBadge:(NSNumber *)badge WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_webView:(WKWebView *)webView updatedClientBadge:(NSNumber *)badge WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView updatedAppBadge:(NSNumber *)badge fromSecurityOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView updatedClientBadge:(NSNumber *)badge fromSecurityOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 

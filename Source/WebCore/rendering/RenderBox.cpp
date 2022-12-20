@@ -1578,14 +1578,26 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     return BackgroundBleedUseTransparencyLayer;
 }
 
-ControlPart* RenderBox::ensureControlPart()
+ControlPart* RenderBox::ensureControlPartForRenderer()
 {
     if (!theme().canCreateControlPartForRenderer(*this))
         return nullptr;
 
     auto& rareData = ensureRareData();
     if (!rareData.controlPart)
-        rareData.controlPart = theme().createControlPartForRenderer(*this);
+        rareData.controlPart = theme().createControlPart(*this);
+
+    return rareData.controlPart.get();
+}
+
+ControlPart* RenderBox::ensureControlPartForBorderOnly()
+{
+    if (!theme().canCreateControlPartForBorderOnly(*this))
+        return nullptr;
+
+    auto& rareData = ensureRareData();
+    if (!rareData.controlPart)
+        rareData.controlPart = theme().createControlPart(*this);
 
     return rareData.controlPart.get();
 }
@@ -1623,7 +1635,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // The theme will tell us whether or not we should also paint the CSS background.
     bool borderOrBackgroundPaintingIsNeeded = true;
     if (style().hasEffectiveAppearance()) {
-        if (auto* control = ensureControlPart())
+        if (auto* control = ensureControlPartForRenderer())
             borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *control, paintInfo, paintRect);
         else {
             ControlStates* controlStates = controlStatesForRenderer(*this);
@@ -1646,9 +1658,22 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     }
     backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Inset);
 
-    // The theme will tell us whether or not we should also paint the CSS border.
-    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasEffectiveAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasVisibleBorderDecoration())
-        borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
+    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder) {
+        bool paintCSSBorder = false;
+
+        if (!style().hasEffectiveAppearance())
+            paintCSSBorder = true;
+        else if (borderOrBackgroundPaintingIsNeeded) {
+            // The theme will tell us whether or not we should also paint the CSS border.
+            if (auto* control = ensureControlPartForBorderOnly())
+                paintCSSBorder = theme().paint(*this, *control, paintInfo, paintRect);
+            else
+                paintCSSBorder = theme().paintBorderOnly(*this, paintInfo, paintRect);
+        }
+
+        if (paintCSSBorder && style().hasVisibleBorderDecoration())
+            borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
+    }
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context().endTransparencyLayer();

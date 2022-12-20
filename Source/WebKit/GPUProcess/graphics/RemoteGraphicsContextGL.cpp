@@ -82,6 +82,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
 #endif
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
     , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
+    , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
 {
     assertIsMainRunLoop();
 }
@@ -324,6 +325,21 @@ void RemoteGraphicsContextGL::readnPixels1(int32_t x, int32_t y, int32_t width, 
 {
     assertIsCurrent(workQueue());
     m_context->readnPixels(x, y, width, height, format, type, static_cast<GCGLintptr>(offset));
+}
+
+void RemoteGraphicsContextGL::readnPixels2(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, SharedMemory::Handle handle, CompletionHandler<void(bool)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    bool success = false;
+    if (!handle.isNull()) {
+        handle.setOwnershipOfMemory(m_resourceOwner, WebKit::MemoryLedger::Default);
+        if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
+            success = m_context->readnPixelsWithStatus(x, y, width, height, format, type, GCGLSpan<void> { buffer->data(), buffer->size() });
+        else
+            m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+    } else
+        m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+    completionHandler(success);
 }
 
 void RemoteGraphicsContextGL::multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts)

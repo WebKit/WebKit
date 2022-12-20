@@ -652,10 +652,6 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
 #endif
     , m_identifier(PDFPluginIdentifier::generate())
 {
-    // FIXME: <rdar://101787977> Replace this with SPI once we get it from PDFKit
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"PDFKit2_UseIOSurfaceForTiles"];
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"PDFKit2_UseWhippet"];
-
     auto& document = element.document();
 
 #if ENABLE(UI_PROCESS_PDF_HUD)
@@ -691,6 +687,9 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(m_frame->coreFrame()->view()).platformColorSpace()];
+    
+    if ([getPDFLayerControllerClass() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
+        [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalPDFLoadingEnabled) {

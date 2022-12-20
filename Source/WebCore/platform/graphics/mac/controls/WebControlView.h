@@ -37,4 +37,7 @@
 @property (class) NSRect clipBounds;
 @end
 
+@interface WebControlTextFieldCell : NSTextFieldCell
+@end
+
 #endif // PLATFORM(MAC)

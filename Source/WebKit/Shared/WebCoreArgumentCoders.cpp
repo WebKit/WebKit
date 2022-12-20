@@ -109,6 +109,7 @@
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TextFieldPart.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TransformOperation.h>
 #include <WebCore/TransformationMatrix.h>
@@ -1625,7 +1626,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::BorderlessAttachment:
 #endif
     case WebCore::ControlPartType::TextArea:
+        break;
+
     case WebCore::ControlPartType::TextField:
+        return WebCore::TextFieldPart::create();
+
     case WebCore::ControlPartType::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebCore::ControlPartType::ColorWell:

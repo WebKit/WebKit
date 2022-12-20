@@ -94,7 +94,7 @@ void MeterMac::draw(GraphicsContext& context, const FloatRect& rect, float devic
 
     auto *view = m_controlFactory.drawingView(rect, style);
 
-    ControlMac::draw(context, rect, deviceScaleFactor, style, m_levelIndicatorCell.get(), view);
+    drawCell(context, rect, deviceScaleFactor, style, m_levelIndicatorCell.get(), view);
 }
 
 } // namespace WebCore

@@ -212,8 +212,8 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:)];
     m_delegateMethods.webViewDecidePolicyForModalContainerDecisionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForModalContainer:decisionHandler:)];
 
-    m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:)];
-    m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:)];
+    m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:fromSecurityOrigin:)];
+    m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:fromSecurityOrigin:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1918,7 +1918,7 @@ void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
     [delegate _webViewDidDisableInspectorBrowserDomain:m_uiDelegate->m_webView.get().get()];
 }
 
-void UIDelegate::UIClient::updateAppBadge(WebPageProxy&, std::optional<uint64_t> badge)
+void UIDelegate::UIClient::updateAppBadge(WebPageProxy&, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
     if (!m_uiDelegate)
         return;
@@ -1934,10 +1934,12 @@ void UIDelegate::UIClient::updateAppBadge(WebPageProxy&, std::optional<uint64_t>
     if (badge)
         nsBadge = @(*badge);
 
-    [delegate _webView:m_uiDelegate->m_webView.get().get() updatedAppBadge:nsBadge];
+
+    auto apiOrigin = API::SecurityOrigin::create(origin);
+    [delegate _webView:m_uiDelegate->m_webView.get().get() updatedAppBadge:nsBadge fromSecurityOrigin:wrapper(apiOrigin.get())];
 }
 
-void UIDelegate::UIClient::updateClientBadge(WebPageProxy&, std::optional<uint64_t> badge)
+void UIDelegate::UIClient::updateClientBadge(WebPageProxy&, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
     if (!m_uiDelegate)
         return;
@@ -1953,7 +1955,8 @@ void UIDelegate::UIClient::updateClientBadge(WebPageProxy&, std::optional<uint64
     if (badge)
         nsBadge = @(*badge);
 
-    [delegate _webView:m_uiDelegate->m_webView.get().get() updatedClientBadge:nsBadge];
+    auto apiOrigin = API::SecurityOrigin::create(origin);
+    [delegate _webView:m_uiDelegate->m_webView.get().get() updatedClientBadge:nsBadge fromSecurityOrigin:wrapper(apiOrigin.get())];
 }
 
 #if ENABLE(WEBXR)

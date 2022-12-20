@@ -1,0 +1,78 @@
+<!DOCTYPE html><!--  webkit-test-runner [ LiveRangeSelectionEnabled=true ]  -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test to make sure shadow nodes are not exposed.");
+
+var container = document.createElement("p");
+document.body.appendChild(container);
+
+container.appendChild(document.createTextNode("Some text: "));
+
+shouldBe("getSelection().anchorNode", "null");
+shouldBe("getSelection().anchorOffset", "0");
+shouldBe("getSelection().focusNode", "null");
+shouldBe("getSelection().focusOffset", "0");
+shouldBe("getSelection().isCollapsed", "true");
+shouldBe("getSelection().rangeCount", "0");
+
+shouldBe("getSelection().baseNode", "null");
+shouldBe("getSelection().baseOffset", "0");
+shouldBe("getSelection().extentNode", "null");
+shouldBe("getSelection().extentOffset", "0");
+shouldBeEqualToString("getSelection().type", "None");
+
+debug("\nAdd an input element.\n");
+
+var input = document.createElement("input");
+container.appendChild(input);
+input.value = "text";
+input.focus();
+input.select();
+
+shouldBe("getSelection().anchorNode", "null");
+shouldBe("getSelection().anchorOffset", "0");
+shouldBe("getSelection().focusNode", "null");
+shouldBe("getSelection().focusOffset", "0");
+shouldBe("getSelection().isCollapsed", "true");
+shouldBe("getSelection().rangeCount", "0");
+
+shouldBe("getSelection().baseNode", "null");
+shouldBe("getSelection().baseOffset", "0");
+shouldBe("getSelection().extentNode", "null");
+shouldBe("getSelection().extentOffset", "0");
+shouldBeEqualToString("getSelection().type", "None");
+
+debug("\nAdd a textarea element.\n");
+
+var textarea = document.createElement("textarea");
+container.appendChild(textarea);
+textarea.value = "text";
+textarea.focus();
+textarea.select();
+
+shouldBe("getSelection().anchorNode", "null");
+shouldBe("getSelection().anchorOffset", "0");
+shouldBe("getSelection().focusNode", "null");
+shouldBe("getSelection().focusOffset", "0");
+shouldBe("getSelection().isCollapsed", "true");
+shouldBe("getSelection().rangeCount", "0");
+
+shouldBe("getSelection().baseNode", "null");
+shouldBe("getSelection().baseOffset", "0");
+shouldBe("getSelection().extentNode", "null");
+shouldBe("getSelection().extentOffset", "0");
+shouldBeEqualToString("getSelection().type", "None");
+
+document.body.removeChild(container);
+
+debug("");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

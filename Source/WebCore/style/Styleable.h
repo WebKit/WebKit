@@ -108,12 +108,12 @@ struct Styleable {
         return element.animations(pseudoId);
     }
 
-    bool hasCompletedTransitionForProperty(CSSPropertyID property) const
+    bool hasCompletedTransitionForProperty(AnimatableProperty property) const
     {
         return element.hasCompletedTransitionForProperty(pseudoId, property);
     }
 
-    bool hasRunningTransitionForProperty(CSSPropertyID property) const
+    bool hasRunningTransitionForProperty(AnimatableProperty property) const
     {
         return element.hasRunningTransitionForProperty(pseudoId, property);
     }
@@ -128,12 +128,12 @@ struct Styleable {
         return element.ensureAnimations(pseudoId);
     }
 
-    PropertyToTransitionMap& ensureCompletedTransitionsByProperty() const
+    AnimatablePropertyToTransitionMap& ensureCompletedTransitionsByProperty() const
     {
         return element.ensureCompletedTransitionsByProperty(pseudoId);
     }
 
-    PropertyToTransitionMap& ensureRunningTransitionsByProperty() const
+    AnimatablePropertyToTransitionMap& ensureRunningTransitionsByProperty() const
     {
         return element.ensureRunningTransitionsByProperty(pseudoId);
     }

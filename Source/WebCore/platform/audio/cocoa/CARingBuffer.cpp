@@ -86,7 +86,7 @@ static void StoreABL(Vector<Byte*>& pointers, size_t destOffset, const AudioBuff
     }
 }
 
-static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytes, CARingBuffer::FetchMode mode)
+static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& pointers, size_t srcOffset, size_t nbytesTarget, CARingBuffer::FetchMode mode, bool shouldUpdateListDataByteSize)
 {
     ASSERT(list->mNumberBuffers == pointers.size());
     auto bufferCount = std::min<size_t>(list->mNumberBuffers, pointers.size());
@@ -99,7 +99,7 @@ static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& po
 
         auto* destinationData = static_cast<Byte*>(dest.mData) + destOffset;
         auto* sourceData = pointer + srcOffset;
-        nbytes = std::min<size_t>(nbytes, dest.mDataByteSize - destOffset);
+        auto nbytes = std::min<size_t>(nbytesTarget, dest.mDataByteSize - destOffset);
         switch (mode) {
         case CARingBuffer::Copy:
             memcpy(destinationData, sourceData, nbytes);
@@ -127,6 +127,9 @@ static void FetchABL(AudioBufferList* list, size_t destOffset, Vector<Byte*>& po
             break;
         }
         }
+
+        if (shouldUpdateListDataByteSize)
+            dest.mDataByteSize = destOffset + nbytes;
     }
 }
 
@@ -290,20 +293,13 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
     
     if (offset0 < offset1) {
         nbytes = offset1 - offset0;
-        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode);
+        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode, true);
     } else {
         nbytes = m_capacityBytes - offset0;
-        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode);
+        FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode, !offset1);
         if (offset1)
-            FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, mode);
+            FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, mode, true);
         nbytes += offset1;
-    }
-    
-    int channelCount = list->mNumberBuffers;
-    AudioBuffer* dest = list->mBuffers;
-    while (--channelCount >= 0) {
-        dest->mDataByteSize = nbytes;
-        dest++;
     }
 }
 

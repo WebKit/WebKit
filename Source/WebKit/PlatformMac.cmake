@@ -367,6 +367,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKScriptMessageHandler.h
     UIProcess/API/Cocoa/WKScriptMessageHandlerWithReply.h
     UIProcess/API/Cocoa/WKSecurityOrigin.h
+    UIProcess/API/Cocoa/WKSecurityOriginPrivate.h
     UIProcess/API/Cocoa/WKSnapshotConfiguration.h
     UIProcess/API/Cocoa/WKTypeRefWrapper.h
     UIProcess/API/Cocoa/WKUIDelegate.h

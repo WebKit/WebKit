@@ -543,13 +543,13 @@ public:
     bool hasKeyframeEffects(PseudoId) const;
 
     const AnimationCollection* animations(PseudoId) const;
-    bool hasCompletedTransitionForProperty(PseudoId, CSSPropertyID) const;
-    bool hasRunningTransitionForProperty(PseudoId, CSSPropertyID) const;
+    bool hasCompletedTransitionForProperty(PseudoId, AnimatableProperty) const;
+    bool hasRunningTransitionForProperty(PseudoId, AnimatableProperty) const;
     bool hasRunningTransitions(PseudoId) const;
     AnimationCollection& ensureAnimations(PseudoId);
 
-    PropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
-    PropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
+    AnimatablePropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
+    AnimatablePropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
     CSSAnimationCollection& animationsCreatedByMarkup(PseudoId);
     void setAnimationsCreatedByMarkup(PseudoId, CSSAnimationCollection&&);
 
