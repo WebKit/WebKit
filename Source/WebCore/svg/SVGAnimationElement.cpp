@@ -57,28 +57,27 @@ SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document&
 {
 }
 
-static void parseKeyTimes(StringView parse, Vector<float>& result, bool verifyOrder)
+static Vector<float> parseKeyTimes(StringView value, bool verifyOrder)
 {
-    result.clear();
-    bool isFirst = true;
-    for (auto timeString : parse.split(';')) {
+    auto keyTimes = value.split(';');
+    Vector<float> result;
+
+    for (auto keyTime : keyTimes) {
+        keyTime = keyTime.stripWhiteSpace();
+
         bool ok;
-        float time = timeString.toFloat(ok);
+        float time = keyTime.toFloat(ok);
+
         if (!ok || time < 0 || time > 1)
-            goto fail;
-        if (verifyOrder) {
-            if (isFirst) {
-                if (time)
-                    goto fail;
-                isFirst = false;
-            } else if (time < result.last())
-                goto fail;
-        }
+            return { };
+
+        if (verifyOrder && (result.isEmpty() ? time : time < result.last()))
+            return { };
+
         result.append(time);
     }
-    return;
-fail:
-    result.clear();
+
+    return result;
 }
 
 static std::optional<Vector<UnitBezier>> parseKeySplines(StringView string)
@@ -179,7 +178,7 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == SVGNames::keyTimesAttr) {
-        parseKeyTimes(value, m_keyTimesFromAttribute, true);
+        m_keyTimesFromAttribute = parseKeyTimes(value, true);
         return;
     }
 
@@ -187,7 +186,7 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
         if (hasTagName(SVGNames::animateMotionTag)) {
             // This is specified to be an animateMotion attribute only but it is simpler to put it here 
             // where the other timing calculatations are.
-            parseKeyTimes(value, m_keyPoints, false);
+            m_keyPoints = parseKeyTimes(value, false);
         }
         return;
     }

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg"> 
+    <rect x="-100" y="-100" width="100" height="100" fill="green">
+        <animate attributeName="x" dur="50ms" values="-100 ; 0" keyTimes="0 ; 1 " fill="freeze" onend="handleEndEvent()"/>
+        <animate attributeName="y" dur="50ms" values="-100 ; 0" keyTimes="0 ; 1 " fill="freeze" onend="handleEndEvent()"/>
+    </rect>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var handledEndEvents = 0;
+        function handleEndEvent() {
+            if (++handledEndEvents == 2) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+    </script>
+</svg>
