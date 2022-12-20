@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -9,12 +9,17 @@ description('Tests that we find controls if they have a range limitation and are
 
 var parentDiv = document.createElement('div');
 document.body.appendChild(parentDiv);
-parentDiv.innerHTML = '<input id="number1" type="number" min=0 max=10 value=5><input id="range1" type="range" min=0 max=10 value=5><input id="text1" type="text" min=0 max=10 value=5><input id="checkbox1" type="checkbox">    <input id="radio1" type="radio">';
+parentDiv.innerHTML = '<input id="number1" type="number" min=0 max=10><input id="range1" type="range" min=0 max=10 value=5><input id="text1" type="text" min=0 max=10 value=5><input id="checkbox1" type="checkbox">    <input id="radio1" type="radio">';
 
-shouldBe('document.querySelector("input[type=number]:in-range").id', '"number1"');
-shouldBe('document.querySelector("input[type=range]:in-range").id', '"range1"');
+debug('==> :in-range should match to an INPUT without a value:');
+shouldBeEqualToString('document.querySelector("input[type=number]:in-range").id', 'number1');
+
+debug('');
+debug('==> :in-range should match to an INPUT with an in-range value:');
+parentDiv.firstChild.value = '5';
+shouldBeEqualToString('document.querySelector("input[type=number]:in-range").id', 'number1');
+shouldBeEqualToString('document.querySelector("input[type=range]:in-range").id', 'range1');
 shouldBe('document.querySelectorAll(":in-range").length', '2');
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
