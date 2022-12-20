@@ -88,6 +88,8 @@ public:
     WebCore::Frame* coreFrame() const;
 
     FrameInfoData info() const;
+    void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
+
     WebCore::FrameIdentifier frameID() const;
 
     enum class ForNavigationAction { No, Yes };
