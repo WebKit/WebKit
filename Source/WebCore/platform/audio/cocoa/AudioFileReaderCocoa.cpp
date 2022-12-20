@@ -543,6 +543,12 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
     if (!inFormat)
         return nullptr;
 
+    // Block loading of the Audible Audio codec.
+    // FIXME: convert this to a WebPreference deny-list of codecIDs
+    if (inFormat->mFormatID == kAudioFormatAudible
+        || inFormat->mFormatID == kCMAudioCodecType_AAC_AudibleProtected)
+        return nullptr;
+
     AudioStreamBasicDescription outFormat = clientDataFormat(*inFormat, sampleRate);
     size_t numberOfChannels = inFormat->mChannelsPerFrame;
     double fileSampleRate = inFormat->mSampleRate;

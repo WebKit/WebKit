@@ -2107,7 +2107,7 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
 {
-    builderState.style().setStrokeWidth(BuilderConverter::convertLength(builderState, value));
+    builderState.style().setStrokeWidth(BuilderConverter::convertLengthAllowingNumber(builderState, value));
     builderState.style().setHasExplicitlySetStrokeWidth(true);
 }
 

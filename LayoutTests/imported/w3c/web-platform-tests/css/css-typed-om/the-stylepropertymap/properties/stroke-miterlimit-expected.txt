@@ -5,7 +5,7 @@ PASS Can set 'stroke-miterlimit' to CSS-wide keywords: unset
 PASS Can set 'stroke-miterlimit' to CSS-wide keywords: revert
 PASS Can set 'stroke-miterlimit' to var() references:  var(--A)
 PASS Can set 'stroke-miterlimit' to a number: 0
-FAIL Can set 'stroke-miterlimit' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+FAIL Can set 'stroke-miterlimit' to a number: -3.14 assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
 PASS Can set 'stroke-miterlimit' to a number: 3.14
 PASS Can set 'stroke-miterlimit' to a number: calc(2 + 3)
 PASS Setting 'stroke-miterlimit' to a length: 0px throws TypeError

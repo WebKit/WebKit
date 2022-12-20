@@ -82,41 +82,16 @@ SpeechRecognitionCaptureSourceImpl::~SpeechRecognitionCaptureSourceImpl()
 }
 
 #if PLATFORM(COCOA)
-bool SpeechRecognitionCaptureSourceImpl::updateDataSource(const CAAudioStreamDescription& audioDescription)
-{
-    if (!m_dataSourceLock.tryLock())
-        return false;
-
-    Locker locker { AdoptLock, m_dataSourceLock };
-
-    auto dataSource = AudioSampleDataSource::create(audioDescription.sampleRate() * 1, m_source.get());
-    if (dataSource->setInputFormat(audioDescription)) {
-        callOnMainThread([this, weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format"_s }));
-        });
-        return false;
-    }
-
-    if (dataSource->setOutputFormat(audioDescription)) {
-        callOnMainThread([this, weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format"_s }));
-        });
-        return false;
-    }
-
-    m_dataSource = WTFMove(dataSource);
-    return true;
-}
-
-void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(const MediaTime& time, const CAAudioStreamDescription& audioDescription, size_t sampleCount)
+void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(AudioSampleDataSource* dataSource, const MediaTime& time, const CAAudioStreamDescription& audioDescription, size_t sampleCount)
 {
     ASSERT(isMainThread());
 
     auto data = WebAudioBufferList { audioDescription, sampleCount };
     {
         Locker locker { m_dataSourceLock };
+        if (m_dataSource.get() != dataSource)
+            return;
+        
         m_dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);
     }
 
@@ -124,27 +99,53 @@ void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(const Me
 }
 #endif
 
-// FIXME: It is unclear why it is safe to use m_dataSource without locking in this function.
-void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
-#if PLATFORM(COCOA)
-    DisableMallocRestrictionsForCurrentThreadScope scope;
+    if (isMainThread())
+        return m_dataCallback(time, data, description, sampleCount);
 
+#if PLATFORM(COCOA)
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope scope;
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
+    // Use tryLock() to avoid contention in the real-time audio thread.
+    if (!m_dataSourceLock.tryLock())
+        return;
+
+    Locker locker { AdoptLock, m_dataSourceLock };
     auto audioDescription = toCAAudioStreamDescription(description);
     if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
-        if (!updateDataSource(audioDescription))
+        auto dataSource = AudioSampleDataSource::create(audioDescription.sampleRate(), m_source.get());
+        if (dataSource->setInputFormat(audioDescription)) {
+            callOnMainThread([this, weakThis = WeakPtr { *this }] {
+                if (!weakThis)
+                    return;
+    
+                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format"_s }));
+            });
             return;
+        }
+        
+        if (dataSource->setOutputFormat(audioDescription)) {
+            callOnMainThread([this, weakThis = WeakPtr { *this }] {
+                if (!weakThis)
+                    return;
+
+                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format"_s }));
+            });
+            return;
+        }
+        m_dataSource = WTFMove(dataSource);
     }
 
     m_dataSource->pushSamples(time, data, sampleCount);
+    callOnMainThread([this, weakThis = WeakPtr { *this }, dataSource = m_dataSource, time, audioDescription, sampleCount] {
+        if (!weakThis)
+            return;
 
-    callOnMainThread([weakThis = WeakPtr { *this }, time, audioDescription, sampleCount] {
-        if (weakThis)
-            weakThis->pullSamplesAndCallDataCallback(time, audioDescription, sampleCount);
+        pullSamplesAndCallDataCallback(dataSource.get(), time, audioDescription, sampleCount);
     });
-#else
-    m_dataCallback(time, data, description, sampleCount);
 #endif
 }
 

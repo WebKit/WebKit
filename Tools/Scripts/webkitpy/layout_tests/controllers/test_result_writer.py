@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import re
 import logging
 
 from webkitpy.common.wavediff import WaveDiff
@@ -61,6 +61,7 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
     FILENAME_SUFFIX_IMAGE_DIFFS_HTML = "-diffs.html"
+    PROCESS_NAME_RE = re.compile(r'(com\.apple|org\.WebKit)\..+')
 
     @staticmethod
     def expected_filename(test_name, filesystem, port_name=None, suffix='txt'):
@@ -98,7 +99,11 @@ class TestResultWriter(object):
         """
         fs = self._filesystem
 
-        ext_parts = fs.splitext(self._test_name)
+        # Test names that are acutally process names are treated like they don't have any extension
+        if self.PROCESS_NAME_RE.match(fs.basename(self._test_name)):
+            ext_parts = (self._test_name, '', '')
+        else:
+            ext_parts = fs.splitext(self._test_name)
         output_basename = ext_parts[0]
         extension = ext_parts[1]
 
@@ -112,11 +117,7 @@ class TestResultWriter(object):
             if index != -1:
                 extension, extra_part = extension[:index], extension[index + 1:]
 
-        if len(extension) - 1 > 5:
-            # Temporary fix, also in LayoutTests/fast/harness/results.html, line 313.
-            # FIXME: Refactor to avoid confusing reference to both test and process names.
-            return fs.join(self._root_output_dir, self._test_name) + modifier
-        elif extra_part:
+        if extra_part:
             output_basename += '_' + extra_part
         return fs.join(self._root_output_dir, output_basename) + modifier
 

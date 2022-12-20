@@ -52,6 +52,7 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ContentData.h"
 #include "CursorList.h"
+#include "CustomPropertyRegistry.h"
 #include "FontSelectionValueInlines.h"
 #include "GridPositionsResolver.h"
 #include "NodeRenderStyle.h"
@@ -2780,7 +2781,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& p
 
     auto* value = style->getCustomProperty(propertyName);
     if (!value) {
-        auto registered = styledElement->document().registeredCSSCustomProperties().get(propertyName);
+        auto registered = styledElement->document().customPropertyRegistry().get(propertyName);
         return registered ? registered->initialValueCopy() : nullptr;
     }
 

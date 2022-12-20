@@ -25,6 +25,9 @@
 
 PRODUCT_NAME = webpushtool;
 
+SKIP_INSTALL = $(SKIP_INSTALL_$(WK_PLATFORM_NAME));
+SKIP_INSTALL_maccatalyst = YES;
+
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = *;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = *;
 

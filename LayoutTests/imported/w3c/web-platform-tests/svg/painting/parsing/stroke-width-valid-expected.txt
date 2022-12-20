@@ -1,5 +1,5 @@
 
-PASS e.style['stroke-width'] = "0" should set the property value
+FAIL e.style['stroke-width'] = "0" should set the property value assert_equals: serialization should be canonical expected "0" but got "0px"
 PASS e.style['stroke-width'] = "10" should set the property value
 PASS e.style['stroke-width'] = "1px" should set the property value
 PASS e.style['stroke-width'] = "calc(2em + 3ex)" should set the property value

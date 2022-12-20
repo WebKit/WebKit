@@ -259,7 +259,6 @@ class GPUCanvasContext;
 
 struct ApplicationManifest;
 struct BoundaryPoint;
-struct CSSRegisteredCustomProperty;
 struct HighlightRangeData;
 struct IntersectionObserverData;
 struct SecurityPolicyViolationEventInit;
@@ -283,6 +282,7 @@ using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 using PlatformDisplayID = uint32_t;
 
 namespace Style {
+class CustomPropertyRegistry;
 class Resolver;
 class Scope;
 class Update;
@@ -590,6 +590,8 @@ public:
     const Style::Scope& styleScope() const { return *m_styleScope; }
     ExtensionStyleSheets& extensionStyleSheets() { return *m_extensionStyleSheets; }
     const ExtensionStyleSheets& extensionStyleSheets() const { return *m_extensionStyleSheets; }
+
+    const Style::CustomPropertyRegistry& customPropertyRegistry() const;
 
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
@@ -1624,9 +1626,6 @@ public:
     void updateMainArticleElementAfterLayout();
     bool hasMainArticleElement() const { return !!m_mainArticleElement; }
 
-    const auto& registeredCSSCustomProperties() const { return m_registeredCSSCustomProperties; }
-    bool registerCSSCustomProperty(CSSRegisteredCustomProperty&&);
-
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs();
 
 #if ENABLE(CSS_PAINTING_API)
@@ -2284,8 +2283,6 @@ private:
     String m_referrerOverride;
 #endif
     
-    HashMap<AtomString, std::unique_ptr<CSSRegisteredCustomProperty>> m_registeredCSSCustomProperties;
-
     std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 
 #if ENABLE(CSS_PAINTING_API)

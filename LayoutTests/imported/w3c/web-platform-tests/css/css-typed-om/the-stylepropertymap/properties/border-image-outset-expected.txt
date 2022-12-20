@@ -5,11 +5,11 @@ PASS Can set 'border-image-outset' to CSS-wide keywords: unset
 PASS Can set 'border-image-outset' to CSS-wide keywords: revert
 PASS Can set 'border-image-outset' to var() references:  var(--A)
 PASS Can set 'border-image-outset' to a length: 0px
-FAIL Can set 'border-image-outset' to a length: -3.14em assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-image-outset' to a length: -3.14em
 PASS Can set 'border-image-outset' to a length: 3.14cm
 PASS Can set 'border-image-outset' to a length: calc(0px + 0em)
 PASS Can set 'border-image-outset' to a number: 0
-FAIL Can set 'border-image-outset' to a number: -3.14 assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Can set 'border-image-outset' to a number: -3.14
 PASS Can set 'border-image-outset' to a number: 3.14
 PASS Can set 'border-image-outset' to a number: calc(2 + 3)
 PASS Setting 'border-image-outset' to a percent: 0% throws TypeError

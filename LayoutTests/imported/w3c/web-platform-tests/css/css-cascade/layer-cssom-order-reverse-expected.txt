@@ -5,6 +5,6 @@ PASS Insert layer invalidates style
 PASS Delete layer invalidates style
 PASS Insert layer invalidates @font-face
 PASS Delete layer invalidates @font-face
-FAIL Insert layer invalidates @property assert_equals: expected "green" but got ""
-FAIL Delete layer invalidates @property assert_equals: expected "green" but got ""
+PASS Insert layer invalidates @property
+PASS Delete layer invalidates @property
 

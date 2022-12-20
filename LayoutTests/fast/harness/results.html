@@ -309,10 +309,6 @@ class Utils
                 prefix += '_' + remains.split('?')[1]
             else if (remains.includes('#'))
                 prefix += '_' + remains.split('#')[1]
-        } else if (Utils.splitExtension(parts[0])[1].length - 1 > 5) {
-            // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 115.
-            // FIXME: Refactor to avoid confusing reference to both test and process names.
-            return testName;
         }
         return prefix;
     }
@@ -328,6 +324,10 @@ class Utils
         let parts = buffer.split('.');
         let extensionIndex = buffer.lastIndexOf(".");
         let filename = buffer.substr(0, extensionIndex);
+        // Test names that are acutally process names are treated like they don't have any extension
+        if (filename.match(/com\.apple\..+/) || filename.match(/org\.WebKit\..+/)) {
+            return [testName, '', ''];
+        }
         let ext = buffer.substr(extensionIndex);
         let remainsIndex = testName.lastIndexOf(ext);
         let remains = testName.substr(remainsIndex + ext.length);

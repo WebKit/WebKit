@@ -78,6 +78,7 @@ public:
     static Length convertLengthOrAutoOrContent(const BuilderState&, const CSSValue&);
     static Length convertLengthSizing(const BuilderState&, const CSSValue&);
     static Length convertLengthMaxSizing(const BuilderState&, const CSSValue&);
+    static Length convertLengthAllowingNumber(const BuilderState&, const CSSValue&); // Assumes unit is 'px' if input is a number.
     static TabSize convertTabSize(const BuilderState&, const CSSValue&);
     template<typename T> static T convertComputedLength(BuilderState&, const CSSValue&);
     template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
@@ -227,6 +228,14 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
     ASSERT_NOT_REACHED();
     return Length(0, LengthType::Fixed);
+}
+
+inline Length BuilderConverter::convertLengthAllowingNumber(const BuilderState& builderState, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isNumberOrInteger())
+        return convertLength(builderState, CSSPrimitiveValue::create(primitiveValue.doubleValue(), CSSUnitType::CSS_PX));
+    return convertLength(builderState, value);
 }
 
 inline Length BuilderConverter::convertLengthOrAuto(const BuilderState& builderState, const CSSValue& value)
@@ -1051,6 +1060,7 @@ inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value
 
 inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTrackList& trackList, BuilderState& builderState)
 {
+    RefPtr<const CSSValueList> valueList;
     // Handle 'none' or 'masonry'.
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueMasonry) {
@@ -1058,14 +1068,22 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
             trackList.append(GridTrackEntryMasonry());
             return true;
         }
-        return primitiveValue->valueID() == CSSValueNone;
-    }
+        // Values coming from CSS Typed OM may not have been converted to a CSSValueList yet.
+        if (primitiveValue->valueID() == CSSValueNone)
+            return true;
 
-    if (!is<CSSValueList>(value))
+        auto newList = CSSValueList::createSpaceSeparated();
+        newList->append(const_cast<CSSValue&>(value));
+        valueList = WTFMove(newList);
+    } else if (is<CSSValueList>(value))
+        valueList = &downcast<CSSValueList>(value);
+    else
         return false;
 
+    ASSERT(valueList);
+
     bool isSubgrid = false;
-    if (is<CSSSubgridValue>(value)) {
+    if (is<CSSSubgridValue>(*valueList)) {
         isSubgrid = true;
         trackList.append(GridTrackEntrySubgrid());
     }
@@ -1097,7 +1115,7 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
             ensureLineNames(repeatList);
     };
 
-    for (auto& currentValue : downcast<CSSValueList>(value)) {
+    for (auto& currentValue : *valueList) {
         if (is<CSSGridLineNamesValue>(currentValue)) {
             Vector<String> names;
             for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(currentValue.get()))

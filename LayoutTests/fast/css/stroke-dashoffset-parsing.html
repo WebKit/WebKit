@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+description("Tests the parsing of the stroke-dashoffset CSS property.");
+
+const target = document.getElementById("target");
+
+// Initial value.
+shouldBeEqualToString("getComputedStyle(target).strokeDashoffset", "0px");
+
+// Valid length.
+evalAndLog("target.style.strokeDashoffset = '3px';");
+shouldBeEqualToString("target.style.strokeDashoffset", "3px");
+shouldBeEqualToString("getComputedStyle(target).strokeDashoffset", "3px");
+
+// Valid percentage.
+evalAndLog("target.style.strokeDashoffset = '10%';");
+shouldBeEqualToString("target.style.strokeDashoffset", "10%");
+shouldBeEqualToString("getComputedStyle(target).strokeDashoffset", "10%");
+
+// Valid number.
+evalAndLog("target.style.strokeDashoffset = '20';");
+shouldBeEqualToString("target.style.strokeDashoffset", "20"); // Gecko says 20%, Blink says 20.
+shouldBeEqualToString("getComputedStyle(target).strokeDashoffset", "20px");
+
+// Zero value.
+evalAndLog("target.style.strokeDashoffset = '0';");
+shouldBeEqualToString("target.style.strokeDashoffset", "0"); // Gecko says 0px, specification and Blink say 0.
+shouldBeEqualToString("getComputedStyle(target).strokeDashoffset", "0px");
+
+// Negative value.
+target.style.strokeDashoffset = "";
+evalAndLog("target.style.strokeDashoffset = '-30px';");
+shouldBeEqualToString("target.style.strokeDashoffset", "-30px");
+shouldBeEqualToString("getComputedStyle(target).strokeDashoffset", "-30px");
+</script>
+</body>
+</html>

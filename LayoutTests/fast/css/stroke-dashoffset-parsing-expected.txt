@@ -1,0 +1,26 @@
+Tests the parsing of the stroke-dashoffset CSS property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(target).strokeDashoffset is "0px"
+target.style.strokeDashoffset = '3px';
+PASS target.style.strokeDashoffset is "3px"
+PASS getComputedStyle(target).strokeDashoffset is "3px"
+target.style.strokeDashoffset = '10%';
+PASS target.style.strokeDashoffset is "10%"
+PASS getComputedStyle(target).strokeDashoffset is "10%"
+target.style.strokeDashoffset = '20';
+PASS target.style.strokeDashoffset is "20"
+PASS getComputedStyle(target).strokeDashoffset is "20px"
+target.style.strokeDashoffset = '0';
+FAIL target.style.strokeDashoffset should be 0. Was 0px.
+PASS getComputedStyle(target).strokeDashoffset is "0px"
+target.style.strokeDashoffset = '-30px';
+PASS target.style.strokeDashoffset is "-30px"
+PASS getComputedStyle(target).strokeDashoffset is "-30px"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

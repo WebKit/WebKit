@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .perspective-layer {
+        perspective: 1px;
+        will-change: transform;
+    }
+    .scroll-clip {
+        overflow-y: scroll;
+    }
+    .intermediate {
+        height: 200px;
+    }
+    .clipped-layer {
+        height: 300px;
+        width: 100px;
+        background-color: red;
+        position: relative;
+        will-change: transform;
+    }
+    ::-webkit-scrollbar { 
+        display: none;
+    }
+</style>
+</head>
+<body>
+    <div class="perspective-layer">
+        <div class="scroll-clip">
+            <div class="intermediate">
+                <div class="clipped-layer"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

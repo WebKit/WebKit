@@ -151,8 +151,17 @@ class CommitsStory(object):
         for commit in commits or []:
             self.add(commit)
 
-    def add(self, commit):
+    def __contains__(self, commit):
         if str(commit) in self.by_ref:
+            return True
+        if commit.hash and commit.hash[:Commit.HASH_LABEL_SIZE] in self.by_ref:
+            return True
+        if commit.revision and 'r{}'.format(commit.revision) in self.by_ref:
+            return True
+        return False
+
+    def add(self, commit):
+        if commit in self:
             return True
         self.commits.append(commit)
         self.by_ref[str(commit)] = commit

@@ -47,6 +47,7 @@ private:
     void pushCascadeLayer(const CascadeLayerName&);
     void popCascadeLayer(const CascadeLayerName&);
     void updateCascadeLayerPriorities();
+    
     void addMutatingRulesToResolver();
     void updateDynamicMediaQueries();
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+description("Tests the parsing of the stroke-width CSS property.");
+
+const target = document.getElementById("target");
+
+// Initial value.
+shouldBeEqualToString("getComputedStyle(target).strokeWidth", "1px");
+
+// Valid length.
+evalAndLog("target.style.strokeWidth = '3px';");
+shouldBeEqualToString("target.style.strokeWidth", "3px");
+shouldBeEqualToString("getComputedStyle(target).strokeWidth", "3px");
+
+// Valid percentage.
+evalAndLog("target.style.strokeWidth = '10%';");
+shouldBeEqualToString("target.style.strokeWidth", "10%");
+shouldBeEqualToString("getComputedStyle(target).strokeWidth", "10%");
+
+// Valid number.
+evalAndLog("target.style.strokeWidth = '20';");
+shouldBeEqualToString("target.style.strokeWidth", "20"); // Gecko says 20%, Blink says 20.
+shouldBeEqualToString("getComputedStyle(target).strokeWidth", "20px");
+
+// Zero value.
+evalAndLog("target.style.strokeWidth = '0';");
+shouldBeEqualToString("target.style.strokeWidth", "0"); // Gecko says 0px, specification and Blink say 0.
+shouldBeEqualToString("getComputedStyle(target).strokeWidth", "0px");
+
+// Negative value.
+target.style.strokeWidth = "";
+evalAndLog("target.style.strokeWidth = '-30px';");
+shouldBeEqualToString("target.style.strokeWidth", "");
+shouldBeEqualToString("getComputedStyle(target).strokeWidth", "1px");
+</script>
+</body>
+</html>

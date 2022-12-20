@@ -996,9 +996,11 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
         case CSSPropertyInherits:
             propertyDescriptor.inherits = downcast<CSSPrimitiveValue>(*property.value()).valueID() == CSSValueTrue;
             break;
-        case CSSPropertyInitialValue:
-            propertyDescriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).customCSSText();
+        case CSSPropertyInitialValue: {
+            auto& customPropertyValue = downcast<CSSCustomPropertyValue>(*property.value());
+            propertyDescriptor.initialValue = std::get<Ref<CSSVariableData>>(customPropertyValue.value()).copyRef();
             break;
+        }
         default:
             break;
         };

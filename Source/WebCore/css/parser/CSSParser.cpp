@@ -43,6 +43,7 @@
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
+#include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "Element.h"
 #include "Page.h"
@@ -228,7 +229,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     const auto& valueWithReferences = std::get<Ref<CSSVariableReferenceValue>>(customPropValue.value()).get();
 
     auto& name = downcast<CSSCustomPropertyValue>(value).name();
-    auto* registered = builderState.document().registeredCSSCustomProperties().get(name);
+    auto* registered = builderState.document().customPropertyRegistry().get(name);
     auto& syntax = registered ? registered->syntax : CSSCustomPropertySyntax::universal();
     auto resolvedData = valueWithReferences.resolveVariableReferences(builderState);
     if (!resolvedData)
