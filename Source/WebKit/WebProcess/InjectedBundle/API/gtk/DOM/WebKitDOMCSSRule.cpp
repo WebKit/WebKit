@@ -196,7 +196,7 @@ gushort webkit_dom_css_rule_get_rule_type(WebKitDOMCSSRule* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_RULE(self), 0);
     WebCore::CSSRule* item = WebKit::core(self);
-    gushort result = item->type();
+    gushort result = item->typeForCSSOM();
     return result;
 }
 

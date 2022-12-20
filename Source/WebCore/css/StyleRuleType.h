@@ -44,13 +44,15 @@ enum class StyleRuleType : uint8_t {
     CounterStyle = 11,
     Supports = 12,
     FontFeatureValues = 14,
+    // Numbers above 15 are not exposed to the web.
     LayerBlock = 16,
-    LayerStatement = 17,
-    Container = 18,
-    FontPaletteValues = 19,
-    // Those at-rules (@swash, @annotation,...) don't have a specified number in the spec.
+    LayerStatement,
+    Container,
+    FontPaletteValues,
     FontFeatureValuesBlock,
     Property,
 };
+
+static constexpr auto firstUnexposedStyleRuleType = StyleRuleType::LayerBlock;
 
 } // namespace WebCore
