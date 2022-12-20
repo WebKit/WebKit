@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "MeterMac.h"
+#import "TextAreaMac.h"
 #import "TextFieldMac.h"
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -90,6 +91,11 @@ NSTextFieldCell* ControlFactoryMac::textFieldCell() const
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPart& part)
 {
     return makeUnique<MeterMac>(part, *this, levelIndicatorCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)
+{
+    return makeUnique<TextAreaMac>(part);
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextField(TextFieldPart& part)

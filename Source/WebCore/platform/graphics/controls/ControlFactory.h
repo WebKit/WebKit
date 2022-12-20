@@ -29,6 +29,7 @@ namespace WebCore {
 
 class MeterPart;
 class PlatformControl;
+class TextAreaPart;
 class TextFieldPart;
 
 class ControlFactory {
@@ -41,6 +42,7 @@ public:
     static ControlFactory& sharedControlFactory();
 
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) = 0;
 };
 

@@ -109,7 +109,6 @@ private:
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
 
-    bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
 
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;

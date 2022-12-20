@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class TextFieldPart : public ControlPart {
+class TextFieldPart final : public ControlPart {
 public:
     static Ref<TextFieldPart> create()
     {
@@ -43,7 +43,7 @@ private:
     {
     }
 
-    std::unique_ptr<PlatformControl> createPlatformControl() override
+    std::unique_ptr<PlatformControl> createPlatformControl() final
     {
         return controlFactory().createPlatformTextField(*this);
     }

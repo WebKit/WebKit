@@ -108,6 +108,7 @@
 #include <WebCore/SkewTransformOperation.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
+#include <WebCore/TextAreaPart.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextFieldPart.h>
 #include <WebCore/TextIndicator.h>
@@ -1601,7 +1602,6 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::SquareButton:
     case WebCore::ControlPartType::Button:
     case WebCore::ControlPartType::DefaultButton:
-    case WebCore::ControlPartType::Listbox:
     case WebCore::ControlPartType::Menulist:
     case WebCore::ControlPartType::MenulistButton:
         break;
@@ -1625,8 +1625,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::Attachment:
     case WebCore::ControlPartType::BorderlessAttachment:
 #endif
-    case WebCore::ControlPartType::TextArea:
         break;
+
+    case WebCore::ControlPartType::Listbox:
+    case WebCore::ControlPartType::TextArea:
+        return WebCore::TextAreaPart::create(*type);
 
     case WebCore::ControlPartType::TextField:
         return WebCore::TextFieldPart::create();
