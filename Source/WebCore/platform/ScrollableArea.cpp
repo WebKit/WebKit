@@ -551,6 +551,7 @@ void ScrollableArea::resnapAfterLayout()
     }
 
     if (correctedOffset != currentOffset) {
+        LOG_WITH_STREAM(ScrollSnap, stream << " adjusting offset from " << currentOffset << " to " << correctedOffset);
         auto position = scrollPositionFromOffset(correctedOffset);
         if (scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating)
             scrollToOffsetWithoutAnimation(correctedOffset);

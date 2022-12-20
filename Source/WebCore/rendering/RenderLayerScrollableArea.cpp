@@ -1545,7 +1545,7 @@ void RenderLayerScrollableArea::updateSnapOffsets()
         return;
 
     RenderBox* box = m_layer.enclosingElement()->renderBox();
-    updateSnapOffsetsForScrollableArea(*this, *box, box->style(), box->paddingBoxRect(), box->style().writingMode(), box->style().direction(), m_layer.renderer().document().focusedElement());
+    updateSnapOffsetsForScrollableArea(*this, *box, box->style(), box->paddingBoxRect(), box->style().writingMode(), box->style().direction());
 }
 
 bool RenderLayerScrollableArea::isScrollSnapInProgress() const

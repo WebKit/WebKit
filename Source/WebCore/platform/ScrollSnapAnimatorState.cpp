@@ -95,79 +95,18 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
     return offset * pageScale;
 }
 
-void ScrollSnapAnimatorState::setFocusedElementForAxis(ScrollEventAxis axis)
-{
-    auto snapOffsets = snapOffsetsForAxis(axis);
-    auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [](SnapOffset<LayoutUnit> p) -> bool {
-        return p.isFocused;
-    });
-    if (found == snapOffsets.end())
-        return;
-
-    auto newIndex = std::distance(snapOffsets.begin(), found);
-    auto newID = snapOffsets[newIndex].snapTargetID;
-    setActiveSnapIndexForAxis(axis, newIndex);
-    setActiveSnapIndexIDForAxis(axis, newID);
-}
-
-bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis)
-{
-    auto snapID = activeSnapIDForAxis(axis);
-    auto snapOffsets = snapOffsetsForAxis(axis);
-    
-    auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [snapID](SnapOffset<LayoutUnit> p) -> bool {
-        return p.snapTargetID == *snapID;
-    });
-    if (found == snapOffsets.end()) {
-        setActiveSnapIndexIDForAxis(axis, std::nullopt);
-        return false;
-    }
-    
-    setActiveSnapIndexForAxis(axis, std::distance(snapOffsets.begin(), found));
-    return true;
-}
-
 bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
 {
-    // Check if we need to set the active target to a focused element
-    setFocusedElementForAxis(ScrollEventAxis::Vertical);
-    setFocusedElementForAxis(ScrollEventAxis::Horizontal);
-    
     bool snapPointChanged = false;
+    // If we are already snapped in a particular axis, maintain that. Otherwise, snap to the nearest eligible snap point.
     auto activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
-    auto activeHorizontalID = activeSnapIDForAxis(ScrollEventAxis::Horizontal);
-    auto activeVerticalID = activeSnapIDForAxis(ScrollEventAxis::Vertical);
-    auto snapOffsetsVertical = snapOffsetsForAxis(ScrollEventAxis::Vertical);
-    auto snapOffsetsHorizontal = snapOffsetsForAxis(ScrollEventAxis::Horizontal);
-    
-    // Check if we need to set the current indices
-    if (!activeVerticalIndex || *activeVerticalIndex >= snapOffsetsForAxis(ScrollEventAxis::Vertical).size()) {
-        snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
-        activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
-    }
-    if (!activeHorizontalIndex || *activeHorizontalIndex >= snapOffsetsForAxis(ScrollEventAxis::Horizontal).size()) {
+    if (!activeHorizontalIndex || *activeHorizontalIndex >= snapOffsetsForAxis(ScrollEventAxis::Horizontal).size())
         snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, scrollOffset, scrollExtents, pageScale);
-        activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    }
-    
-    // If we have active targets, see if we need to preserve one of them
-    if (activeHorizontalID && activeHorizontalIndex && activeVerticalID && activeVerticalIndex && *activeHorizontalID
-        != snapOffsetsHorizontal[*activeHorizontalIndex].snapTargetID && *activeVerticalID
-        != snapOffsetsVertical[*activeVerticalIndex].snapTargetID)
-        snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal);
 
-    // If we do not have current targets and are snapped to multiple targets, set them
-    if ((!activeHorizontalID && activeHorizontalIndex) && (!activeVerticalID && activeVerticalIndex)) {
-        auto horizontalID = snapOffsetsForAxis(ScrollEventAxis::Horizontal)[*activeHorizontalIndex].snapTargetID;
-        auto verticalID = snapOffsetsForAxis(ScrollEventAxis::Vertical)[*activeVerticalIndex].snapTargetID;
-        if (horizontalID && verticalID && horizontalID != verticalID) {
-            setActiveSnapIndexIDForAxis(ScrollEventAxis::Horizontal, horizontalID);
-            setActiveSnapIndexIDForAxis(ScrollEventAxis::Vertical, verticalID);
-        }
-    }
-    
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() current target: horizontal: " << activeHorizontalID << " vertical: "<< activeVerticalID);
+    auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
+    if (!activeVerticalIndex || *activeVerticalIndex >= snapOffsetsForAxis(ScrollEventAxis::Vertical).size())
+        snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
+
     return snapPointChanged;
 }
 
