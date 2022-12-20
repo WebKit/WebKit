@@ -2406,6 +2406,11 @@ bool Element::hasDisplayContents() const
     return style && style->display() == DisplayType::Contents;
 }
 
+bool Element::mayHaveDisplayContents() const
+{
+    return (hasDisplayContents() || displayContentsChanged());
+}
+
 void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 {
     ASSERT(style && style->display() == DisplayType::Contents);

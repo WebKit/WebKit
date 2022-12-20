@@ -670,6 +670,7 @@ public:
     void invalidateEventListenerRegions();
 
     bool hasDisplayContents() const;
+    bool mayHaveDisplayContents() const;
     void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
 
     using ContainerNode::setAttributeEventListener;
