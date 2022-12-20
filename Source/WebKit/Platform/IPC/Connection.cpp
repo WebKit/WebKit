@@ -303,6 +303,8 @@ Connection::Connection(Identifier identifier, bool isServer)
     : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
+    , m_transferRegionPool(identifier.regionPool ? identifier.regionPool.releaseNonNull() : TransferRegionPool::create(*this))
+    , m_transferRegionMapper(identifier.regionMapper ? identifier.regionMapper.releaseNonNull() : TransferRegionMapper::create())
 {
     {
         Locker locker { s_connectionMapLock };
@@ -468,10 +470,20 @@ void Connection::invalidate()
         return;
     assertIsCurrent(dispatcher());
     m_client = nullptr;
-    [this] {
-        Locker locker { m_incomingMessagesLock };
-        return WTFMove(m_syncState);
-    }();
+
+    {
+        decltype(m_syncState) syncState;
+        RefPtr<TransferRegionMapper> mapper;
+        RefPtr<TransferRegionPool> pool;
+        {
+            Locker locker { m_incomingMessagesLock };
+            syncState = WTFMove(m_syncState);
+            pool = WTFMove(m_transferRegionPool);
+            mapper = WTFMove(m_transferRegionMapper);
+        }
+        mapper->invalidate();
+        pool->invalidate();
+    }
 
     cancelAsyncReplyHandlers();
 
@@ -848,7 +860,6 @@ static NEVER_INLINE NO_RETURN_DUE_TO_CRASH void terminateDueToIPCTerminateMessag
 void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
 {
     ASSERT(message->messageReceiverName() != ReceiverName::Invalid);
-
     if (message->messageName() == MessageName::SyncMessageReply) {
         processIncomingSyncReply(WTFMove(message));
         return;
@@ -866,6 +877,13 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
     Locker waitForMessagesLocker { m_waitForMessageLock };
 
     Locker incomingMessagesLocker { m_incomingMessagesLock };
+    if (message->messageName() == MessageName::ReleaseTransferBuffer) {
+        auto bufferID = makeObjectIdentifier<TransferBufferIdentifierType>(message->destinationID());
+        if (bufferID && m_transferRegionMapper)
+            m_transferRegionMapper->releaseBufferMapping(bufferID);
+        return;
+    }
+
     if (!m_syncState)
         return;
 
@@ -1115,6 +1133,52 @@ size_t Connection::pendingMessageCountForTesting() const
 void Connection::dispatchOnReceiveQueueForTesting(Function<void()>&& completionHandler)
 {
     m_connectionQueue->dispatch(WTFMove(completionHandler));
+}
+
+bool Connection::addToTransferRegionGroup(Identifier& newConnection)
+{
+    Locker locker { m_incomingMessagesLock };
+    if (!m_transferRegionPool && !m_transferRegionMapper)
+        return false;
+    newConnection.regionPool = m_transferRegionPool;
+    newConnection.regionMapper = m_transferRegionMapper;
+    return true;
+}
+
+std::optional<ScopedTransferRegion> Connection::reserveTransferRegion(size_t size)
+{
+    RefPtr<TransferRegionPool> pool;
+    {
+        Locker locker { m_incomingMessagesLock };
+        if (!m_transferRegionPool)
+            return std::nullopt;
+        pool = m_transferRegionPool;
+    }
+    return pool->reserveRegion(size);
+}
+
+std::optional<ScopedTransferRegionMapping> Connection::mapTransferRegion(TransferRegion&& region, const WebCore::ProcessIdentity& resourceOwner)
+{
+    RefPtr<TransferRegionMapper> mapper;
+    {
+        Locker locker { m_incomingMessagesLock };
+        if (!m_transferRegionMapper)
+            return std::nullopt;
+        mapper = m_transferRegionMapper;
+    }
+    return mapper->mapRegion(WTFMove(region), resourceOwner);
+}
+
+void Connection::releaseUnusedMemory()
+{
+    RefPtr<TransferRegionPool> pool;
+    {
+        Locker locker { m_incomingMessagesLock };
+        if (!m_transferRegionPool)
+            return;
+        pool = m_transferRegionPool;
+    }
+    pool->releaseUnusedMemory();
 }
 
 void Connection::didFailToSendSyncMessage()
@@ -1411,6 +1475,7 @@ void Connection::dispatchToClient(F&& clientRunLoopTask)
         return;
     dispatcher().dispatch(WTFMove(clientRunLoopTask));
 }
+
 
 #if !USE(UNIX_DOMAIN_SOCKETS) && !OS(DARWIN) && !OS(WINDOWS)
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()

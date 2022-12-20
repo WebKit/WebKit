@@ -56,9 +56,12 @@ void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage
     ASSERT_NOT_REACHED(); // The sender is expected to be trusted, so all invalid messages are programming errors.
 }
 
-StreamClientConnection::StreamConnectionPair StreamClientConnection::create(size_t bufferSize)
+StreamClientConnection::StreamConnectionPair StreamClientConnection::create(size_t bufferSize, Connection* mainConnection)
 {
     auto connectionIdentifiers = Connection::createConnectionIdentifierPair();
+    if (mainConnection)
+        mainConnection->addToTransferRegionGroup(connectionIdentifiers->server);
+
     // Create StreamClientConnection with "server" type Connection. The caller will send the "client" type connection identifier via
     // IPC to the other side, where StreamServerConnection will be created with "client" type Connection.
     // For Connection, "server" means the connection which was created first, the connection which is not sent through IPC to other party.

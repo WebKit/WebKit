@@ -171,8 +171,8 @@ public:
     void SetUp() override
     {
         WTF::initializeMainThread();
-        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(10000);
-        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), *m_workQueue);
+        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(1000);
+        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), *m_workQueue, nullptr);
         m_clientConnection = WTFMove(clientConnection);
         m_serverConnection = WTFMove(serverConnection);
     }

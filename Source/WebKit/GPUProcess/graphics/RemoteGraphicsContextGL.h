@@ -37,6 +37,7 @@
 #include "StreamServerConnection.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PixelBuffer.h>
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakPtr.h>
 
@@ -130,7 +131,7 @@ protected:
     void copyTextureFromVideoFrame(RemoteVideoFrameReadReference, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
 #endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
-    void readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&&);
+    void readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::TransferRegion&& data, CompletionHandler<void(bool)>&&);
     void readnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset);
     void multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts);
     void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts);
@@ -164,6 +165,7 @@ protected:
 #endif
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
+    const WebCore::ProcessIdentity m_resourceOwner;
 };
 
 

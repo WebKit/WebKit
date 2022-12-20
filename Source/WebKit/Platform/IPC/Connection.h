@@ -34,6 +34,7 @@
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
 #include "Timeout.h"
+#include "TransferRegion.h"
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
@@ -71,6 +72,10 @@
 #if ENABLE(IPC_TESTING_API)
 #include "MessageObserver.h"
 #endif
+
+namespace WebCore {
+class ProcessIdentity;
+}
 
 namespace IPC {
 
@@ -193,8 +198,14 @@ public:
         }
         operator bool() const { return MACH_PORT_VALID(port); }
         mach_port_t port { MACH_PORT_NULL };
+        // Target process specific.
         OSObjectPtr<xpc_connection_t> xpcConnection;
 #endif
+        // FIXME: these target-process-specific objects will be moved to auxiliary type
+        // passed to constructors when Identifier is removed.
+        // See: https://bugs.webkit.org/show_bug.cgi?id=239487
+        RefPtr<TransferRegionPool> regionPool; // Target process specific.
+        RefPtr<TransferRegionMapper> regionMapper; // Target process specific.
     };
 
 #if OS(DARWIN)
@@ -210,6 +221,7 @@ public:
         IPC::Connection::Identifier server;
         IPC::Connection::Handle client;
     };
+    // The optional other connection is used to inherit target process properties.
     static std::optional<ConnectionIdentifierPair> createConnectionIdentifierPair();
 
     ~Connection();
@@ -379,6 +391,19 @@ public:
 
     template<typename T, typename C> static AsyncReplyHandler makeAsyncReplyHandler(C&& completionHandler, ThreadLikeAssertion callThread = CompletionHandlerCallThread::AnyThread);
 
+    // Adds newConnection to the same transfer region group as this connection.
+    // Connections to the same target process can belong to same transfer region group.
+    // Returns true if success.
+    bool addToTransferRegionGroup(IPC::Connection::Identifier& newConnection);
+
+    // Reserves new transfer region to be used to send data.
+    std::optional<ScopedTransferRegion> reserveTransferRegion(size_t);
+
+    // Maps received transfer region to be used to receive data.
+    std::optional<ScopedTransferRegionMapping> mapTransferRegion(TransferRegion&&, const WebCore::ProcessIdentity& resourceOwner);
+
+    void releaseUnusedMemory();
+
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
@@ -503,6 +528,9 @@ private:
     using AsyncReplyHandlerMap = HashMap<AsyncReplyID, CompletionHandler<void(Decoder*)>>;
     AsyncReplyHandlerMap m_asyncReplyHandlers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
+    RefPtr<TransferRegionPool> m_transferRegionPool WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
+    RefPtr<TransferRegionMapper> m_transferRegionMapper WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
+
 #if ENABLE(IPC_TESTING_API)
     Vector<WeakPtr<MessageObserver>> m_messageObservers;
     bool m_ignoreInvalidMessageForTesting { false };
@@ -573,6 +601,7 @@ private:
     HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
 #endif
     friend class StreamClientConnection;
+    friend class StreamServerConnection;
 };
 
 template<typename T>

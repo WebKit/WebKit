@@ -78,12 +78,16 @@ public:
     size_t size() const { ASSERT(isValid()); return m_encodedSize; }
     bool isValid() const { return m_bufferCapacity; }
     operator bool() const { return isValid(); }
+    void markInvalid()
+    {
+        m_bufferCapacity = 0;
+    }
 private:
     bool reserve(size_t alignedSize, size_t additionalSize)
     {
         size_t size = alignedSize + additionalSize;
         if (size < alignedSize || size > m_bufferCapacity) {
-            m_bufferCapacity = 0;
+            markInvalid();
             return false;
         }
         return true;

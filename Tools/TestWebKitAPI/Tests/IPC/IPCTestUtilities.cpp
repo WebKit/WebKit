@@ -81,6 +81,11 @@ void ConnectionTestBase::teardownBase()
             EXPECT_EQ(messages[i].destinationID, 0xddddddu);
         }
     }
+
+    // Remember to call localReferenceBarrier() in test scope.
+    // Otherwise run loops might be executing code that uses variables
+    // that went out of scope.
+    EXPECT_EQ(m_runLoops.size(), 0u);
 }
 
 void ConnectionTestBase::ensureConnectionWorkQueueEmpty(IPC::Connection& connection)
@@ -100,4 +105,33 @@ void ConnectionTestBase::ensureConnectionWorkQueueEmpty(IPC::Connection& connect
     }
 }
 
+Ref<RunLoop> ConnectionTestBase::createRunLoop(const char* name)
+{
+    auto runLoop = RunLoop::create(name, ThreadType::Unknown);
+    m_runLoops.append(runLoop);
+    return runLoop;
+}
+
+void ConnectionTestBase::localReferenceBarrier()
+{
+    // Since we need to send sync to create a barrier to run loops,
+    // we might as well destroy the run loops in this function.
+    Vector<Ref<Thread>> threadsToWait;
+    // FIXME: Cannot wait for RunLoop to really exit.
+    for (auto& runLoop : std::exchange(m_runLoops, { })) {
+        dispatchSync(runLoop, [&] {
+            threadsToWait.append(Thread::current());
+            RunLoop::current().stop();
+        });
+    }
+    while (true) {
+        sleep(0.1_s);
+        Locker lock { Thread::allThreadsLock() };
+        for (auto& thread : threadsToWait) {
+            if (Thread::allThreads().contains(thread.ptr()))
+                continue;
+        }
+        break;
+    }
+}
 }

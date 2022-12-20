@@ -455,6 +455,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             WebCore::releaseMemory(critical, synchronous, maintainBackForwardCache, maintainMemoryCache);
             for (auto& page : m_pageMap.values())
                 page->releaseMemory(critical);
+            if (auto* gpuProcessConnection = existingGPUProcessConnection())
+                gpuProcessConnection->connection().releaseUnusedMemory();
         });
 #if ENABLE(PERIODIC_MEMORY_MONITOR)
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);

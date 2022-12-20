@@ -48,9 +48,12 @@ private:
 
 }
 
-Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle, StreamConnectionWorkQueue& workQueue)
+Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle, StreamConnectionWorkQueue& workQueue, Connection* mainConnection)
 {
-    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
+    IPC::Connection::Identifier identifier { WTFMove(handle.outOfStreamConnection) };
+    if (mainConnection)
+        mainConnection->addToTransferRegionGroup(identifier);
+    auto connection = IPC::Connection::createClientConnection(WTFMove(identifier));
     auto buffer = StreamConnectionBuffer::map(WTFMove(handle.buffer));
     RELEASE_ASSERT(buffer); // FIXME: make callers call this outside constructor.
     return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer), workQueue));

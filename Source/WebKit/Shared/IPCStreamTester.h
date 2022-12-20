@@ -46,13 +46,13 @@ namespace WebKit {
 // Interface to test various IPC stream related activities.
 class IPCStreamTester final : public IPC::StreamMessageReceiver {
 public:
-    static RefPtr<IPCStreamTester> create(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
+    static RefPtr<IPCStreamTester> create(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, IPC::Connection& otherConnection);
     void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
     // IPC::StreamMessageReceiver overrides.
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 private:
-    IPCStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
+    IPCStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, IPC::Connection& otherConnection);
     ~IPCStreamTester();
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }

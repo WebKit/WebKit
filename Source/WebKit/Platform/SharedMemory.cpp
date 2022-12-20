@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SharedMemory.h"
+#include "StreamConnectionEncoder.h"
 
 #include <WebCore/SharedBuffer.h>
 
@@ -72,5 +73,13 @@ void SharedMemory::Handle::setOwnershipOfMemory(const ProcessIdentity&, MemoryLe
 {
 }
 #endif
+
+void SharedMemory::Handle::encode(IPC::StreamConnectionEncoder& encoder) const
+{
+    // This is useful when sending messages with std::optional<SharedMemory::Handle> instances.
+    // Messages with std::nullopt std::optional instances can be sent as stream messages
+    // and messages with engaged std::optional instances are sent as out-of-stream.
+    encoder.markInvalid();
+}
 
 } // namespace WebKit

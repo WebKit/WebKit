@@ -45,6 +45,7 @@ namespace IPC {
 class Decoder;
 class Encoder;
 class Connection;
+class StreamConnectionEncoder;
 }
 
 namespace WebCore {
@@ -77,6 +78,7 @@ public:
         void clear();
 
         void encode(IPC::Encoder&) const;
+        void encode(IPC::StreamConnectionEncoder&) const;
         static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
 #if USE(UNIX_DOMAIN_SOCKETS)
         UnixFileDescriptor releaseHandle();
