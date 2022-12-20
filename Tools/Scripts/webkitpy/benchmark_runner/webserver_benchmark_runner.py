@@ -59,12 +59,12 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
 
     def _run_one_test(self, web_root, test_file, iteration):
         enable_profiling = True if self._profile_output_dir else False
-        profile_filename = '{}/{}-{}'.format(self._profile_output_dir, self._plan_name, iteration)
+        profile_filename = '{}-{}'.format(self._plan_name, iteration)
         try:
             self._http_server_driver.serve(web_root)
             url = urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + test_file + self._construct_subtest_url(self._subtests))
             if enable_profiling:
-                context = self._browser_driver.profile(profile_filename)
+                context = self._browser_driver.profile(self._profile_output_dir, profile_filename)
             else:
                 context = NullContext()
             with context:

@@ -87,9 +87,6 @@ def parse_args(parser=None):
     if args.generate_pgo_profiles and args.platform != 'osx':
         raise Exception('PGO Profile generation is currently only supported on macOS.')
 
-    if args.profile and args.platform != 'osx':
-        raise Exception('Profile collection is currently only supported on macOS.')
-
     return args
 
 
