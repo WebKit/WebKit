@@ -48,9 +48,9 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
-    void getFileHandle(const String& name, std::optional<GetFileOptions>, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
-    void getDirectoryHandle(const String& name, std::optional<GetDirectoryOptions>, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
-    void removeEntry(const String& name, std::optional<RemoveOptions>, DOMPromiseDeferred<void>&&);
+    void getFileHandle(const String& name, const GetFileOptions&, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
+    void getDirectoryHandle(const String& name, const GetDirectoryOptions&, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
+    void removeEntry(const String& name, const RemoveOptions&, DOMPromiseDeferred<void>&&);
     void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&&);
 
     void getHandleNames(CompletionHandler<void(ExceptionOr<Vector<String>>&&)>&&);

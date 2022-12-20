@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-void NavigatorCookieConsent::requestCookieConsent(Navigator& navigator, std::optional<RequestCookieConsentOptions>&& options, Ref<DeferredPromise>&& promise)
+void NavigatorCookieConsent::requestCookieConsent(Navigator& navigator, RequestCookieConsentOptions&& options, Ref<DeferredPromise>&& promise)
 {
     from(navigator).requestCookieConsent(WTFMove(options), WTFMove(promise));
 }
 
-void NavigatorCookieConsent::requestCookieConsent(std::optional<RequestCookieConsentOptions>&& options, Ref<DeferredPromise>&& promise)
+void NavigatorCookieConsent::requestCookieConsent(RequestCookieConsentOptions&& options, Ref<DeferredPromise>&& promise)
 {
     // FIXME: Support the 'More info' option.
     UNUSED_PARAM(options);

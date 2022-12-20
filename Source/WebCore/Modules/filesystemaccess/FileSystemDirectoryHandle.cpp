@@ -49,13 +49,12 @@ FileSystemDirectoryHandle::FileSystemDirectoryHandle(ScriptExecutionContext& con
 {
 }
 
-void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetFileOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&& promise)
+void FileSystemDirectoryHandle::getFileHandle(const String& name, const FileSystemDirectoryHandle::GetFileOptions& options, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&& promise)
 {
     if (isClosed())
         return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
-    bool createIfNecessary = options ? options->create : false;
-    connection().getFileHandle(identifier(), name, createIfNecessary, [weakThis = ThreadSafeWeakPtr { *this }, connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
+    connection().getFileHandle(identifier(), name, options.create, [weakThis = ThreadSafeWeakPtr { *this }, connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
@@ -70,13 +69,12 @@ void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<
     });
 }
 
-void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetDirectoryOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
+void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, const FileSystemDirectoryHandle::GetDirectoryOptions& options, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
     if (isClosed())
         return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
-    bool createIfNecessary = options ? options->create : false;
-    connection().getDirectoryHandle(identifier(), name, createIfNecessary, [weakThis = ThreadSafeWeakPtr { *this }, connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
+    connection().getDirectoryHandle(identifier(), name, options.create, [weakThis = ThreadSafeWeakPtr { *this }, connection = Ref { connection() }, name, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 
@@ -91,13 +89,12 @@ void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::opti
     });
 }
 
-void FileSystemDirectoryHandle::removeEntry(const String& name, std::optional<FileSystemDirectoryHandle::RemoveOptions> options, DOMPromiseDeferred<void>&& promise)
+void FileSystemDirectoryHandle::removeEntry(const String& name, const FileSystemDirectoryHandle::RemoveOptions& options, DOMPromiseDeferred<void>&& promise)
 {
     if (isClosed())
         return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
-    bool deleteRecursively = options ? options->recursive : false;
-    connection().removeEntry(identifier(), name, deleteRecursively, [promise = WTFMove(promise)](auto result) mutable {
+    connection().removeEntry(identifier(), name, options.recursive, [promise = WTFMove(promise)](auto result) mutable {
         promise.settle(WTFMove(result));
     });
 }
