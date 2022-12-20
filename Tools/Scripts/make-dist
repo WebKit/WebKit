@@ -244,7 +244,7 @@ class Distcheck(object):
         create_dir(build_dir, "build")
         create_dir(install_dir, "install")
 
-        command = ['cmake', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', '-DENABLE_GTKDOC=ON', '-DENABLE_MINIBROWSER=ON', dist_dir]
+        command = ['cmake', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
         subprocess.check_call(command, cwd=build_dir)
 
     def build(self, build_dir):
