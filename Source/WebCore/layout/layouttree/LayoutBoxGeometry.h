@@ -99,13 +99,18 @@ public:
     LayoutUnit marginBoxHeight() const { return marginBefore() + borderBoxHeight() + marginAfter(); }
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
-    LayoutUnit verticalMarginBorderAndPadding() const { return marginBefore() + verticalBorder() + verticalPadding().value_or(0_lu) + marginAfter(); }
     LayoutUnit marginBorderAndPaddingBefore() const { return marginBefore() + borderBefore() + paddingBefore().value_or(0_lu); }
     LayoutUnit marginBorderAndPaddingAfter() const { return marginAfter() + borderAfter() + paddingAfter().value_or(0_lu); }
-    LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().value_or(0_lu) + marginEnd(); }
+    LayoutUnit verticalMarginBorderAndPadding() const { return marginBorderAndPaddingBefore() + marginBorderAndPaddingAfter(); }
+
+    LayoutUnit marginBorderAndPaddingStart() const { return marginStart() + borderStart() + paddingStart().value_or(0_lu); }
+    LayoutUnit marginBorderAndPaddingEnd() const { return marginEnd() + borderEnd() + paddingEnd().value_or(0_lu); }
+    LayoutUnit horizontalMarginBorderAndPadding() const { return marginBorderAndPaddingStart() + marginBorderAndPaddingEnd(); }
 
     LayoutUnit verticalSpaceForScrollbar() const { return m_verticalSpaceForScrollbar; }
     LayoutUnit horizontalSpaceForScrollbar() const { return m_horizontalSpaceForScrollbar; }
+
+    bool hasMarginBorderOrPadding() const { return horizontalMarginBorderAndPadding() || verticalMarginBorderAndPadding(); }
 
     Rect marginBox() const;
     Rect borderBox() const;
