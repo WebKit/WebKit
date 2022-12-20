@@ -812,6 +812,7 @@
 		330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934441315B9220097A7BC /* WebCookieManagerMessages.h */; };
 		330934501315B94D0097A7BC /* WebCookieManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3309344D1315B94D0097A7BC /* WebCookieManager.h */; };
 		3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934591315B9980097A7BC /* WKCookieManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		330A30E52951112200F84419 /* WebExtensionContextProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 330A30E42951112200F84419 /* WebExtensionContextProxyCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3375A37129429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3375A37029429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3375A37529429DF50028536D /* WebExtensionAPIWebNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3375A37329429DF50028536D /* WebExtensionAPIWebNavigation.h */; };
@@ -4543,6 +4544,7 @@
 		3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCookieManager.messages.in; sourceTree = "<group>"; };
 		330934581315B9980097A7BC /* WKCookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKCookieManager.cpp; sourceTree = "<group>"; };
 		330934591315B9980097A7BC /* WKCookieManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCookieManager.h; sourceTree = "<group>"; };
+		330A30E42951112200F84419 /* WebExtensionContextProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextProxyCocoa.mm; sourceTree = "<group>"; };
 		33367638130C99DC006C9DE2 /* WKResourceCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKResourceCacheManager.cpp; sourceTree = "<group>"; };
 		33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKResourceCacheManager.h; sourceTree = "<group>"; };
 		3375A37029429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIWebNavigationCocoa.mm; sourceTree = "<group>"; };
@@ -8846,6 +8848,7 @@
 			children = (
 				337822422947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h */,
 				337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */,
+				330A30E42951112200F84419 /* WebExtensionContextProxyCocoa.mm */,
 				1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */,
 			);
 			path = Cocoa;
@@ -18230,6 +18233,7 @@
 				1C1549822926E7CC001B9E5B /* WebExtensionContextAPITestCocoa.mm in Sources */,
 				1C0234DC28A0268C00AC1E5B /* WebExtensionContextCocoa.mm in Sources */,
 				1C0234CD28A00FE400AC1E5B /* WebExtensionContextMessageReceiver.cpp in Sources */,
+				330A30E52951112200F84419 /* WebExtensionContextProxyCocoa.mm in Sources */,
 				1C0234CE28A00FE600AC1E5B /* WebExtensionContextProxyMessageReceiver.cpp in Sources */,
 				1CBEE27028F4DDA1006D1A02 /* WebExtensionControllerCocoa.mm in Sources */,
 				1C1549D229381BA0001B9E5B /* WebExtensionControllerConfiguration.mm in Sources */,

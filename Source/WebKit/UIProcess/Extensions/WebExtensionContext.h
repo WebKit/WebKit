@@ -225,6 +225,8 @@ public:
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
+    void fireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
+
     template<typename T>
     void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
 
@@ -263,7 +265,6 @@ private:
     uint64_t loadBackgroundPageListenersVersionNumberFromStorage();
     void loadBackgroundPageListenersFromStorage();
     void saveBackgroundPageListenersToStorage();
-    void fireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
     void queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()>&&);
 
     void performTasksAfterBackgroundContentLoads();
@@ -349,7 +350,7 @@ void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType 
     if (iterator == m_eventListenerPages.end())
         return;
 
-    HashSet<WebProcessProxy> processes;
+    WeakHashSet<WebProcessProxy> processes;
     for (auto entry : iterator->value) {
         auto& process = entry.key.process();
         if (process.canSendMessage())

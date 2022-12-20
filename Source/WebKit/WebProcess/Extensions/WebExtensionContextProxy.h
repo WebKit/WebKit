@@ -29,7 +29,10 @@
 
 #include "MessageReceiver.h"
 #include "WebExtensionContextParameters.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
 
@@ -75,6 +78,9 @@ public:
 
 private:
     explicit WebExtensionContextProxy(WebExtensionContextParameters);
+
+    // webNavigation support
+    void dispatchWebNavigationOnBeforeNavigateEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
