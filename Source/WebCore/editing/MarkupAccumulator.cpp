@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -312,6 +312,9 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, con
     char quoteChar = '"';
     if (WTF::protocolIsJavaScript(resolvedURLString)) {
         // minimal escaping for javascript urls
+        if (resolvedURLString.contains('&'))
+            resolvedURLString = makeStringByReplacingAll(resolvedURLString, '&', "&amp;"_s);
+
         if (resolvedURLString.contains('"')) {
             if (resolvedURLString.contains('\''))
                 resolvedURLString = makeStringByReplacingAll(resolvedURLString, '"', "&quot;"_s);

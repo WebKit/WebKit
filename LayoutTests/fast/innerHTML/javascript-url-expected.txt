@@ -1,13 +1,12 @@
-Test that innerHTML does not mangle javascript: urls.
-r.innerHTML = r.innerHTML.replace(/&37;3C!--D--&37;3E/g, 123)
-PASS: r.innerHTML.indexOf('javascript:test(123)') > -1 should be true and is.
-r.firstChild.setAttribute('href', 'javascript:test("text<")')
-PASS: r.innerHTML.indexOf('javascript:test("text<")') > -1 should be true and is.
-r.firstChild.setAttribute("href", "javascript:test('text>')")
-PASS: r.innerHTML.indexOf("javascript:test('text>')") > -1 should be true and is.
-testString = javascript:test('text&',"test2&")
-r.firstChild.setAttribute("href", testString)
-PASS: r.innerHTML.indexOf("javascript:test('text&',&quot;test2&&quot;)") > 1 should be true and is.
-r.firstChild.setAttribute('href', 'http://www.google.fi/search?q=scarlett johansson&meta=&btnG=Google-haku')
-<a href="http://www.google.fi/search?q=scarlett johansson&amp;meta=&amp;btnG=Google-haku">link</a>
+Test that innerHTML/outerHTML does not mangle javascript: urls.
+PASS r.innerHTML is "<a href=\"javascript:test(123)\">link</a>"
+PASS r.innerHTML is "<a href='javascript:test(\"text<\")'>link</a>"
+PASS r.innerHTML is "<a href=\"javascript:test('text>')\">link</a>"
+PASS r.innerHTML is "<a href=\"javascript:test('text&amp;',&quot;test2&amp;&quot;)\">link</a>"
+PASS r.firstChild.outerHTML is "<a href=\"javascript:window.location='?x&amp;y'\">link</a>"
+PASS r.firstChild.outerHTML is "<a href=\"javascript:window.location='?x&amp;amp;y'\">link</a>"
+PASS r.firstChild.outerHTML is "<a href=\"javascript:window.location='?x&amp;y'\">link</a>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 link

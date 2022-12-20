@@ -1,62 +1,25 @@
-<head>
-<script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-    
-function print(message, color) 
-{
-    var paragraph = document.createElement("div");
-    paragraph.appendChild(document.createTextNode(message));
-    paragraph.style.fontFamily = "monospace";
-    if (color)
-        paragraph.style.color = color;
-    document.getElementById("console").appendChild(paragraph);
-}
-
-function run(a)
-{
-    print(a);
-    try {
-        eval(a);
-    } catch(e) {
-        print(e);
-    }
-}
-
-function shouldBe(a, b)
-{
-    var evalA;
-    try {
-        evalA = eval(a);
-    } catch(e) {
-        evalA = e;
-    }
-    
-    if (evalA == b)
-        print("PASS: " + a + " should be " + b + " and is.", "green");
-    else
-        print("FAIL: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
-}
-</script>
-</head>
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
 <body>
-Test that innerHTML does not mangle javascript: urls.
+Test that innerHTML/outerHTML does not mangle javascript: urls.
 <div id=console></div>
-<div id=jsurltest><a href='
- javascript:test(&37;3C!--D--&37;3E)'>link</a></div>
+<div id=jsurltest><a href='javascript:test(&37;3C!--D--&37;3E)'>link</a></div>
 <script>
 var r = document.getElementById('jsurltest');
-run("r.innerHTML = r.innerHTML.replace(/&37;3C!--D--&37;3E/g, 123)");
-shouldBe("r.innerHTML.indexOf('javascript:test(123)') > -1", true);
-run("r.firstChild.setAttribute('href', 'javascript:test(\"text<\")')");
-shouldBe("r.innerHTML.indexOf('javascript:test(\"text<\")') > -1", true);
-run('r.firstChild.setAttribute("href", "javascript:test(\'text>\')")');
-shouldBe('r.innerHTML.indexOf("javascript:test(\'text>\')") > -1', true);
+r.innerHTML = r.innerHTML.replace('&amp;37;3C!--D--&amp;37;3E', 123);
+shouldBeEqualToString('r.innerHTML', '<a href="javascript:test(123)">link</a>');
+r.firstChild.setAttribute('href', 'javascript:test(\"text<\")');
+shouldBeEqualToString('r.innerHTML', '<a href=\'javascript:test("text<")\'>link</a>');
+r.firstChild.setAttribute('href', 'javascript:test(\'text>\')');
+shouldBeEqualToString("r.innerHTML", '<a href="javascript:test(\'text>\')">link</a>');
 testString = 'javascript:test(\'text&\',"test2&")';
-print("testString = " + testString);
-run('r.firstChild.setAttribute("href", testString)');
-shouldBe('r.innerHTML.indexOf("javascript:test(\'text&\',&quot;test2&&quot;)") > 1', true);
-
-run("r.firstChild.setAttribute('href', 'http://www.google.fi/search?q=scarlett johansson&meta=&btnG=Google-haku')");
-print(r.innerHTML);
+r.firstChild.setAttribute('href', testString);
+shouldBeEqualToString('r.innerHTML', '<a href="javascript:test(\'text&amp;\',&quot;test2&amp;&quot;)">link</a>');
+r.firstChild.href = 'javascript:window.location=\'?x&y\'';
+shouldBeEqualToString("r.firstChild.outerHTML", '<a href="javascript:window.location=\'?x&amp;y\'">link</a>');
+// Behavior is same as FF
+r.firstChild.href = 'javascript:window.location=\'?x&amp;y\'';
+shouldBeEqualToString('r.firstChild.outerHTML', '<a href="javascript:window.location=\'?x&amp;amp;y\'">link</a>');
+r.innerHTML = '<a href="javascript:window.location=\'?x&amp;y\'">link</a>';
+shouldBeEqualToString('r.firstChild.outerHTML', '<a href="javascript:window.location=\'?x&amp;y\'">link</a>');
 </script>
