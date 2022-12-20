@@ -78,6 +78,7 @@ public:
     static Length convertLengthOrAutoOrContent(const BuilderState&, const CSSValue&);
     static Length convertLengthSizing(const BuilderState&, const CSSValue&);
     static Length convertLengthMaxSizing(const BuilderState&, const CSSValue&);
+    static Length convertLengthAllowingNumber(const BuilderState&, const CSSValue&); // Assumes unit is 'px' if input is a number.
     static TabSize convertTabSize(const BuilderState&, const CSSValue&);
     template<typename T> static T convertComputedLength(BuilderState&, const CSSValue&);
     template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
@@ -227,6 +228,14 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
     ASSERT_NOT_REACHED();
     return Length(0, LengthType::Fixed);
+}
+
+inline Length BuilderConverter::convertLengthAllowingNumber(const BuilderState& builderState, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isNumberOrInteger())
+        return convertLength(builderState, CSSPrimitiveValue::create(primitiveValue.doubleValue(), CSSUnitType::CSS_PX));
+    return convertLength(builderState, value);
 }
 
 inline Length BuilderConverter::convertLengthOrAuto(const BuilderState& builderState, const CSSValue& value)

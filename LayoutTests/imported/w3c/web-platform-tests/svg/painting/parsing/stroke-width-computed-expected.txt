@@ -1,7 +1,7 @@
 
 PASS Property stroke-width value '10'
 PASS Property stroke-width value 'calc(10px + 0.5em)'
-FAIL Property stroke-width value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
+PASS Property stroke-width value 'calc(10px - 0.5em)'
 PASS Property stroke-width value '40%'
 PASS Property stroke-width value 'calc(50% + 60px)'
 PASS stroke-width computes em lengths

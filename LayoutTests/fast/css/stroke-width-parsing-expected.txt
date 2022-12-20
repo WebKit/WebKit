@@ -1,0 +1,26 @@
+Tests the parsing of the stroke-width CSS property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(target).strokeWidth is "1px"
+target.style.strokeWidth = '3px';
+PASS target.style.strokeWidth is "3px"
+PASS getComputedStyle(target).strokeWidth is "3px"
+target.style.strokeWidth = '10%';
+PASS target.style.strokeWidth is "10%"
+PASS getComputedStyle(target).strokeWidth is "10%"
+target.style.strokeWidth = '20';
+PASS target.style.strokeWidth is "20"
+PASS getComputedStyle(target).strokeWidth is "20px"
+target.style.strokeWidth = '0';
+FAIL target.style.strokeWidth should be 0. Was 0px.
+PASS getComputedStyle(target).strokeWidth is "0px"
+target.style.strokeWidth = '-30px';
+PASS target.style.strokeWidth is ""
+PASS getComputedStyle(target).strokeWidth is "1px"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

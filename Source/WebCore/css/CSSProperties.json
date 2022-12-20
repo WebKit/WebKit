@@ -4888,12 +4888,12 @@
             "codegen-properties": {
                 "initial": "initialZeroLength",
                 "name-for-methods": "StrokeDashOffset",
-                "converter": "Length",
-                "parser-grammar": "<length-percentage svg>"
+                "converter": "LengthAllowingNumber",
+                "parser-grammar": "<length-percentage> | <number>"
             },
             "specification": {
                 "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#StrokeDashoffsetProperty"
+                "url": "https://svgwg.org/svg2-draft/painting.html#StrokeDashoffsetProperty"
             }
         },
         "stroke-linecap": {
@@ -4978,8 +4978,8 @@
             "codegen-properties": {
                 "custom": "Value",
                 "initial": "initialOneLength",
-                "converter": "Length",
-                "parser-grammar": "<length-percentage svg>"
+                "converter": "LengthAllowingNumber",
+                "parser-grammar": "<length-percentage [0,inf]> | <number [0,inf]>"
             },
             "status": "supported",
             "specification": {

@@ -10,7 +10,7 @@ PASS testComputedStyle(";") is "1px"
 PASS test("stroke-width: 4px;") is "4px"
 PASS test("stroke-width: 0.01em;") is "0.01em"
 PASS test("stroke-width: 10%;") is "10%"
-PASS test("stroke-width: 4;") is "4px"
+PASS test("stroke-width: 4;") is "4"
 PASS test("stroke-width: em;") is ""
 PASS test("stroke-width: %;") is ""
 PASS successfullyParsed is true
