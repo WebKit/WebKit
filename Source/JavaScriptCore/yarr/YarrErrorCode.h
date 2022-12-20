@@ -42,6 +42,7 @@ enum class ErrorCode : uint8_t {
     QuantifierWithoutAtom,
     QuantifierTooLarge,
     QuantifierIncomplete,
+    CantQuantifyAtom,
     MissingParentheses,
     BracketUnmatched,
     ParenthesesUnmatched,
