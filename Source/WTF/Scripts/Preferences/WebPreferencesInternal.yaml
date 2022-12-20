@@ -292,6 +292,18 @@ DateTimeInputsEditableComponentsEnabled:
     WebCore:
       default: false
 
+EmbedElementEnabled:
+  type: bool
+  humanReadableName: "Embed Element"
+  humanReadableDescription: "Embed Element"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 EnterKeyHintEnabled:
   type: bool
   humanReadableName: "Enter Key Hint"
