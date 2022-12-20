@@ -83,8 +83,8 @@ String CSSCustomPropertyValue::customCSSText() const
             return serializeURL(value.string());
         }, [&](const String& value) {
             return value;
-        }, [&](const RefPtr<TransformOperation>& value) {
-            auto cssValue = transformOperationAsCSSValue(*value, RenderStyle::defaultStyle());
+        }, [&](const TransformSyntaxValue& value) {
+            auto cssValue = transformOperationAsCSSValue(*value.transform, RenderStyle::defaultStyle());
             if (!cssValue)
                 return emptyString();
             return cssValue->cssText();

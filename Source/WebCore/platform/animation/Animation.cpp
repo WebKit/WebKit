@@ -65,6 +65,7 @@ Animation::Animation(const Animation& o)
     : RefCounted<Animation>()
     , m_property(o.m_property)
     , m_name(o.m_name)
+    , m_customOrUnknownProperty(o.m_customOrUnknownProperty)
     , m_iterationCount(o.m_iterationCount)
     , m_delay(o.m_delay)
     , m_duration(o.m_duration)
@@ -105,6 +106,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_playState == other.m_playState
         && m_compositeOperation == other.m_compositeOperation
         && m_playStateSet == other.m_playStateSet
+        && m_customOrUnknownProperty == other.m_customOrUnknownProperty
         && m_iterationCount == other.m_iterationCount
         && m_delay == other.m_delay
         && m_duration == other.m_duration
@@ -140,6 +142,7 @@ TextStream& operator<<(TextStream& ts, Animation::TransitionProperty transitionP
     case Animation::TransitionMode::All: ts << "all"; break;
     case Animation::TransitionMode::None: ts << "none"; break;
     case Animation::TransitionMode::SingleProperty: ts << nameLiteral(transitionProperty.id); break;
+    case Animation::TransitionMode::CustomProperty: ts << "custom property"; break;
     case Animation::TransitionMode::UnknownProperty: ts << "unknown property"; break;
     }
     return ts;

@@ -6,8 +6,8 @@ PASS Ongoing animation matches new keyframes against the current registration
 FAIL Ongoing animation picks up redeclared intial value assert_equals: expected "250px" but got "200px"
 FAIL Ongoing animation picks up redeclared inherits flag assert_equals: expected "250px" but got "200px"
 FAIL Ongoing animation picks up redeclared meaning of 'unset' assert_equals: expected "250px" but got "200px"
-FAIL Transitioning from initial value assert_equals: expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
-FAIL Transitioning from specified value assert_equals: expected "rgb(0, 64, 128)" but got "rgb(0, 128, 0)"
+PASS Transitioning from initial value
+PASS Transitioning from specified value
 FAIL Transition triggered by initial value change assert_equals: expected "150px" but got "200px"
 PASS No transition when changing types
 FAIL No transition when removing @property rule assert_equals: expected " 100px" but got "100px"

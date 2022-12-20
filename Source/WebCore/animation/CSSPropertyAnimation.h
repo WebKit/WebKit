@@ -46,8 +46,8 @@ public:
     static bool isPropertyAdditiveOrCumulative(AnimatableProperty);
     static bool propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, AnimatableProperty, const RenderStyle& a, const RenderStyle& b);
     static bool animationOfPropertyIsAccelerated(AnimatableProperty);
-    static bool propertiesEqual(AnimatableProperty, const RenderStyle& a, const RenderStyle& b);
-    static bool canPropertyBeInterpolated(AnimatableProperty, const RenderStyle& a, const RenderStyle& b);
+    static bool propertiesEqual(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
+    static bool canPropertyBeInterpolated(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
     static int getNumProperties();
 

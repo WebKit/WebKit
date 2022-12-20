@@ -32,6 +32,7 @@
 #include "StyleColor.h"
 #include "StyleImage.h"
 #include "TransformOperation.h"
+#include <wtf/PointerComparison.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -47,7 +48,12 @@ public:
         bool operator==(const NumericSyntaxValue& other) const { return value == other.value && unitType == other.unitType; }
     };
 
-    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, RefPtr<TransformOperation>>;
+    struct TransformSyntaxValue {
+        RefPtr<TransformOperation> transform;
+        bool operator==(const TransformSyntaxValue& other) const { return arePointingToEqualData(transform, other.transform); }
+    };
+
+    using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;
 
     struct SyntaxValueList {
         Vector<SyntaxValue> values;
