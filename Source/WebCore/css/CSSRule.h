@@ -37,7 +37,7 @@ class CSSRule : public RefCounted<CSSRule> {
 public:
     virtual ~CSSRule() = default;
 
-    unsigned short type() const { return static_cast<unsigned short>(styleRuleType()); }
+    WEBCORE_EXPORT unsigned short typeForCSSOM() const;
 
     virtual StyleRuleType styleRuleType() const = 0;
     virtual String cssText() const = 0;

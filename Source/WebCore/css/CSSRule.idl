@@ -31,7 +31,7 @@
     readonly attribute CSSRule? parentRule;
     readonly attribute CSSStyleSheet? parentStyleSheet;
 
-    readonly attribute unsigned short type;
+    [ImplementedAs=typeForCSSOM] readonly attribute unsigned short type;
     
     [ImplementedAs=Unknown] const unsigned short UNKNOWN_RULE = 0;
     [ImplementedAs=Style] const unsigned short STYLE_RULE = 1;

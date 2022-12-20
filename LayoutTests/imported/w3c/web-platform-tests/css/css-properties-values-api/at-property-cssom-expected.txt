@@ -12,7 +12,7 @@ PASS Rule for --syntax-only has expected cssText
 PASS Rule for --inherits-only has expected cssText
 PASS Rule for --initial-value-only has expected cssText
 PASS Rule for --tab	tab has expected cssText
-FAIL CSSRule.type returns 0 assert_equals: expected 0 but got 21
+PASS CSSRule.type returns 0
 PASS Rule for --valid returns expected value for CSSPropertyRule.name
 PASS Rule for --valid-reverse returns expected value for CSSPropertyRule.name
 PASS Rule for --valid-universal returns expected value for CSSPropertyRule.name
