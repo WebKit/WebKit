@@ -153,8 +153,8 @@ public:
     static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
     static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
-    static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&);
-    static Vector<SVGLengthValue> convertSVGLengthVector(BuilderState&, const CSSValue&);
+    static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
+    static Vector<SVGLengthValue> convertSVGLengthVector(BuilderState&, const CSSValue&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
     static Vector<SVGLengthValue> convertStrokeDashArray(BuilderState&, const CSSValue&);
     static PaintOrder convertPaintOrder(BuilderState&, const CSSValue&);
     static float convertOpacity(BuilderState&, const CSSValue&);
@@ -1553,31 +1553,34 @@ inline bool BuilderConverter::convertSmoothScrolling(BuilderState&, const CSSVal
     return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueSmooth;
 }
 
-inline SVGLengthValue BuilderConverter::convertSVGLengthValue(BuilderState&, const CSSValue& value)
+inline SVGLengthValue BuilderConverter::convertSVGLengthValue(BuilderState&, const CSSValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
-    return SVGLengthValue::fromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value));
+    return SVGLengthValue::fromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value), shouldConvertNumberToPxLength);
 }
 
-inline Vector<SVGLengthValue> BuilderConverter::convertSVGLengthVector(BuilderState& builderState, const CSSValue& value)
+inline Vector<SVGLengthValue> BuilderConverter::convertSVGLengthVector(BuilderState& builderState, const CSSValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
     auto& valueList = downcast<CSSValueList>(value);
 
     Vector<SVGLengthValue> svgLengths;
     svgLengths.reserveInitialCapacity(valueList.length());
     for (auto& item : valueList)
-        svgLengths.uncheckedAppend(convertSVGLengthValue(builderState, item));
+        svgLengths.uncheckedAppend(convertSVGLengthValue(builderState, item, shouldConvertNumberToPxLength));
 
     return svgLengths;
 }
 
 inline Vector<SVGLengthValue> BuilderConverter::convertStrokeDashArray(BuilderState& builderState, const CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
-        return SVGRenderStyle::initialStrokeDashArray();
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueNone)
+            return SVGRenderStyle::initialStrokeDashArray();
+
+        // Values coming from CSS-Typed-OM may not have been converted to a CSSValueList yet.
+        return Vector { convertSVGLengthValue(builderState, value, ShouldConvertNumberToPxLength::Yes) };
     }
 
-    return convertSVGLengthVector(builderState, value);
+    return convertSVGLengthVector(builderState, value, ShouldConvertNumberToPxLength::Yes);
 }
 
 inline PaintOrder BuilderConverter::convertPaintOrder(BuilderState&, const CSSValue& value)
