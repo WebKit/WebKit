@@ -827,10 +827,10 @@ static bool shouldDisableHyphenation(const RenderStyle& rootStyle, unsigned succ
 static float trimmableTrailingContentWidth(const Line& line)
 {
     if (auto trimmableWidth = line.trimmableTrailingWidth()) {
-        ASSERT(!line.hangingTrailingContentWidth());
+        ASSERT(!line.hangingTrailingWhitespaceWidth());
         return trimmableWidth;
     }
-    return line.hangingTrailingContentWidth();
+    return line.hangingTrailingWhitespaceWidth();
 }
 
 static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent& candidateContent, const Line& line, InlineLayoutUnit availableWidthForContent)

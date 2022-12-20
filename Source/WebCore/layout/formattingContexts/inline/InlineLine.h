@@ -57,8 +57,8 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
+    InlineLayoutUnit hangingTrailingWhitespaceWidth() const { return m_hangingContent.trailingWhitespaceWidth(); }
     InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
-    InlineLayoutUnit hangingLeadingContentWidth() const { return m_hangingContent.leadingWidth(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
@@ -237,25 +237,29 @@ private:
     };
 
     struct HangingContent {
-        void addLeadingGlyphs(size_t length, InlineLayoutUnit logicalWidth);
-        void addTrailingGlyphs(size_t length, InlineLayoutUnit logicalWidth);
+        void setLeadingPunctuation(InlineLayoutUnit logicalWidth) { m_leadingPunctuationWidth = logicalWidth; }
+        void setTrailingPunctuation(InlineLayoutUnit logicalWidth);
+        void setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth);
 
-        void reset();
-        void resetTrailingGlyphs();
+        void resetTrailingContent() { m_trailingContent = { }; }
+        void resetTrailingPunctuation();
 
-        size_t leadingLength() const { return m_leadingLength; }
-        size_t trailingLength() const { return m_trailingLength; }
-        size_t length() const { return leadingLength() + trailingLength(); }
+        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace ? m_trailingContent->width : 0.f; }
+        InlineLayoutUnit trailingWidth() const { return m_trailingContent ? m_trailingContent->width : 0.f; }
+        InlineLayoutUnit width() const { return m_leadingPunctuationWidth + trailingWidth(); }
 
-        InlineLayoutUnit leadingWidth() const { return m_leadingWidth; }
-        InlineLayoutUnit trailingWidth() const { return m_trailingWidth; }
-        InlineLayoutUnit width() const { return leadingWidth() + trailingWidth(); }
+        size_t length() const;
 
     private:
-        size_t m_leadingLength { 0 };
-        size_t m_trailingLength { 0 };
-        InlineLayoutUnit m_leadingWidth { 0 };
-        InlineLayoutUnit m_trailingWidth { 0 };
+        InlineLayoutUnit m_leadingPunctuationWidth { 0.f };
+        // There's either a whitespace or punctuation trailing content.
+        struct TrailingContent {
+            enum class Type : uint8_t { Whitespace, Punctuation };
+            Type type { Type::Whitespace };
+            size_t length { 0 };
+            InlineLayoutUnit width { 0.f };
+        };
+        std::optional<TrailingContent> m_trailingContent { };
     };
 
     const InlineFormattingContext& m_inlineFormattingContext;
@@ -264,7 +268,7 @@ private:
     HangingContent m_hangingContent;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     size_t m_nonSpanningInlineLevelBoxCount { 0 };
-    std::optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
+    std::optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { };
     InlineBoxListWithClonedDecorationEnd m_inlineBoxListWithClonedDecorationEnd;
     InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
     bool m_hasNonDefaultBidiLevelRun { false };
@@ -290,17 +294,31 @@ inline void Line::TrimmableTrailingContent::reset()
     m_trimmableContentOffset = { };
 }
 
-inline void Line::HangingContent::reset()
+inline void Line::HangingContent::setTrailingPunctuation(InlineLayoutUnit logicalWidth)
 {
-    m_leadingLength = { };
-    m_leadingWidth = { };
-    resetTrailingGlyphs();
+    m_trailingContent = { TrailingContent::Type::Punctuation, 1, logicalWidth };
 }
 
-inline void Line::HangingContent::resetTrailingGlyphs()
+inline void Line::HangingContent::setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth)
 {
-    m_trailingLength = { };
-    m_trailingWidth = { };
+    m_trailingContent = { TrailingContent::Type::Whitespace, length, logicalWidth };
+}
+
+inline size_t Line::HangingContent::length() const
+{
+    size_t length = 0;
+    if (m_leadingPunctuationWidth)
+        ++length;
+    if (m_trailingContent)
+        length += m_trailingContent->length;
+    return length;
+}
+
+inline void Line::HangingContent::resetTrailingPunctuation()
+{
+    if (!m_trailingContent || m_trailingContent->type == TrailingContent::Type::Whitespace)
+        return;
+    m_trailingContent = { };
 }
 
 inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)

@@ -85,7 +85,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool is
 void Line::resetTrailingContent()
 {
     m_trimmableTrailingContent.reset();
-    m_hangingContent.resetTrailingGlyphs();
+    m_hangingContent.resetTrailingContent();
     m_trailingSoftHyphenWidth = { };
 }
 
@@ -257,7 +257,7 @@ void Line::removeHangingGlyphs()
 {
     ASSERT(m_trimmableTrailingContent.isEmpty());
     m_contentLogicalWidth -= m_hangingContent.width();
-    m_hangingContent.reset();
+    m_hangingContent.resetTrailingContent();
 }
 
 void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
@@ -331,7 +331,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
 {
     auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     if (inlineBoxGeometry.marginBorderAndPaddingStart())
-        m_hangingContent.resetTrailingGlyphs();
+        m_hangingContent.resetTrailingContent();
     // This is really just a placeholder to mark the start of the inline box <span>.
     ++m_nonSpanningInlineLevelBoxCount;
     auto logicalLeft = lastRunLogicalRight();
@@ -352,7 +352,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     if (formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingEnd())
-        m_hangingContent.resetTrailingGlyphs();
+        m_hangingContent.resetTrailingContent();
     // This is really just a placeholder to mark the end of the inline box </span>.
     auto removeTrailingLetterSpacing = [&] {
         if (!m_trimmableTrailingContent.isTrailingRunPartiallyTrimmable())
@@ -478,22 +478,27 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
     auto isTrimmable = updateTrimmableStatus();
 
     auto updateHangingStatus = [&] {
-        if (inlineTextItem.isWhitespace() && !isTrimmable && m_runs[lastRunIndex].shouldTrailingWhitespaceHang()) {
-            // Hanging trailing whitespace.
-            m_hangingContent.addTrailingGlyphs(inlineTextItem.length(), logicalWidth);
+        if (runHasHangablePunctuationStart)
+            m_hangingContent.setLeadingPunctuation(TextUtil::hangablePunctuationStartWidth(inlineTextItem, style));
+
+        auto runHasHangableWhitespaceEnd = inlineTextItem.isWhitespace() && !isTrimmable && m_runs[lastRunIndex].shouldTrailingWhitespaceHang();
+        auto runHasHangablePunctuationEnd = TextUtil::hasHangablePunctuationEnd(inlineTextItem, style);
+        if (runHasHangableWhitespaceEnd) {
+            ASSERT(!runHasHangablePunctuationEnd);
+            m_hangingContent.setTrailingWhitespace(inlineTextItem.length(), logicalWidth);
             return;
         }
-        if (runHasHangablePunctuationStart) {
-            m_hangingContent.addLeadingGlyphs(1, TextUtil::hangablePunctuationStartWidth(inlineTextItem, style));
+        if (runHasHangablePunctuationEnd) {
+            ASSERT(!runHasHangableWhitespaceEnd);
+            m_hangingContent.setTrailingPunctuation(TextUtil::hangablePunctuationEndWidth(inlineTextItem, style));
             return;
         }
-        m_hangingContent.resetTrailingGlyphs();
+        m_hangingContent.resetTrailingContent();
     };
     updateHangingStatus();
 
     if (inlineTextItem.hasTrailingSoftHyphen())
         m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
-
 }
 
 void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
@@ -665,22 +670,6 @@ InlineLayoutUnit Line::TrimmableTrailingContent::removePartiallyTrimmableContent
     // We can't just trim spacing in the middle.
     ASSERT(!m_fullyTrimmableWidth);
     return remove();
-}
-
-void Line::HangingContent::addLeadingGlyphs(size_t length, InlineLayoutUnit logicalWidth)
-{
-    // Hanging punctuation.
-    m_leadingLength += length;
-    m_leadingWidth += logicalWidth;
-}
-
-void Line::HangingContent::addTrailingGlyphs(size_t length, InlineLayoutUnit logicalWidth)
-{
-    // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit, alignment, or justification.
-    // Depending on the line’s alignment/justification, this can result in the mark being placed outside the line box.
-    // https://drafts.csswg.org/css-text-3/#hanging
-    m_trailingLength += length;
-    m_trailingWidth += logicalWidth;
 }
 
 inline static Line::Run::Type toLineRunType(const InlineItem& inlineItem)
