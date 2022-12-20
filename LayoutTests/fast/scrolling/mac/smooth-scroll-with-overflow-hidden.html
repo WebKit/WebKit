@@ -6,6 +6,7 @@
             height: 250px;
             width: 300px;
             border: 1px solid black;
+            overflow-y: scroll;
             overflow: hidden;
         }
         
@@ -24,8 +25,7 @@
         {
             scrollContainer = document.querySelector('.scroll-container');
 
-            if (window.eventSender)
-                eventSender.monitorWheelEvents();
+            eventSender.monitorWheelEvents();
             
             scrollContainer.scrollTo({
                 top: 0,
