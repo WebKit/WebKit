@@ -1,4 +1,4 @@
-Content Visibility: caret position with html hidden   * { all: initial; content-visibility: hidden; } test(() => { const range = document.caretRangeFromPoint(); assert_not_equals(range, null, "range exists"); assert_equals(range.startContainer, html, "startContainer is html"); assert_equals(range.startOffset, 0, "startOffset is zero"); assert_equals(range.endContainer, html, "endContainer is html"); assert_equals(range.endOffset, 0, "endOffset is zero"); }, "Caret range from point");
-FAIL Caret range from point assert_equals: startContainer is html expected Element node <html id="html"><head><meta charset="utf8">
-<title>Conten... but got Text node "Content Visibility: caret position with html hidden"
+
+
+PASS Caret range from point
 

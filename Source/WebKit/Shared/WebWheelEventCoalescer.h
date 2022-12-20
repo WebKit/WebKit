@@ -26,17 +26,38 @@
 #pragma once
 
 #include "NativeWebWheelEvent.h"
+#include <WebCore/ScrollingCoordinatorTypes.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 
 namespace WebKit {
 
+struct NativeWebWheelEventAndSteps {
+    NativeWebWheelEvent event;
+    OptionSet<WheelEventProcessingSteps> processingSteps;
+};
+
+struct WebWheelEventAndSteps {
+    WebWheelEvent event;
+    OptionSet<WheelEventProcessingSteps> processingSteps;
+    
+    WebWheelEventAndSteps(const WebWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps)
+        : event(event)
+        , processingSteps(processingSteps)
+    { }
+
+    explicit WebWheelEventAndSteps(const NativeWebWheelEventAndSteps& nativeEventAndSteps)
+        : event(nativeEventAndSteps.event)
+        , processingSteps(nativeEventAndSteps.processingSteps)
+    { }
+};
+
 class WebWheelEventCoalescer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // If this returns true, use nextEventToDispatch() to get the event to dispatch.
-    bool shouldDispatchEvent(const NativeWebWheelEvent&);
-    std::optional<WebWheelEvent> nextEventToDispatch();
+    bool shouldDispatchEvent(const NativeWebWheelEvent&, OptionSet<WheelEventProcessingSteps>);
+    std::optional<WebWheelEventAndSteps> nextEventToDispatch();
 
     NativeWebWheelEvent takeOldestEventBeingProcessed();
 
@@ -45,14 +66,14 @@ public:
     void clear();
 
 private:
-    using CoalescedEventSequence = Vector<NativeWebWheelEvent>;
+    using CoalescedEventSequence = Vector<NativeWebWheelEventAndSteps>;
 
-    static bool canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
-    static WebWheelEvent coalesce(const WebWheelEvent&, const WebWheelEvent&);
+    static bool canCoalesce(const WebWheelEventAndSteps&, const WebWheelEventAndSteps&);
+    static WebWheelEventAndSteps coalesce(const WebWheelEventAndSteps&, const WebWheelEventAndSteps&);
 
     bool shouldDispatchEventNow(const WebWheelEvent&) const;
 
-    Deque<NativeWebWheelEvent, 2> m_wheelEventQueue;
+    Deque<NativeWebWheelEventAndSteps, 2> m_wheelEventQueue;
     Deque<std::unique_ptr<CoalescedEventSequence>> m_eventsBeingProcessed;
 };
 

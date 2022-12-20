@@ -595,8 +595,9 @@ sub AddToIncludesForIDLType
         return;
     }
 
-    if ($codeGenerator->IsBufferSourceType($type)) {
+    if ($codeGenerator->IsBufferSourceType($type) || $type->extendedAttributes->{AllowShared}) {
         AddToIncludes("JSDOMConvertBufferSource.h", $includesRef, $conditional);
+        AddToIncludes("JSDOMConvertUnion.h", $includesRef, $conditional);
         return;
     }
 

@@ -56,6 +56,8 @@ enum class SVGLengthNegativeValuesMode : uint8_t {
     Forbid
 };
 
+enum class ShouldConvertNumberToPxLength : bool { No, Yes };
+
 class SVGLengthValue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -67,7 +69,7 @@ public:
     static SVGLengthValue construct(SVGLengthMode, StringView, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow);
     static SVGLengthValue blend(const SVGLengthValue& from, const SVGLengthValue& to, float progress);
 
-    static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&);
+    static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
     Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const Element* = nullptr) const;
 
     SVGLengthType lengthType() const { return m_lengthType; }

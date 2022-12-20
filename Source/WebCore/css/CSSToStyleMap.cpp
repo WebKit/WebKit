@@ -36,6 +36,7 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParser.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
 #include "CompositeOperation.h"
@@ -438,8 +439,12 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
         return;
     }
     if (primitiveValue.propertyID() == CSSPropertyInvalid) {
-        animation.setProperty({ Animation::TransitionMode::UnknownProperty, CSSPropertyInvalid });
-        animation.setUnknownProperty(primitiveValue.stringValue());
+        auto stringValue = primitiveValue.stringValue();
+        if (isCustomPropertyName(stringValue))
+            animation.setProperty({ Animation::TransitionMode::CustomProperty, CSSPropertyCustom });
+        else
+            animation.setProperty({ Animation::TransitionMode::UnknownProperty, CSSPropertyInvalid });
+        animation.setCustomOrUnknownProperty(stringValue);
         return;
     }
 

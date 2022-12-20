@@ -45,13 +45,13 @@ public:
     {
     }
 
-    static void requestCookieConsent(Navigator&, std::optional<RequestCookieConsentOptions>&&, Ref<DeferredPromise>&&);
+    static void requestCookieConsent(Navigator&, RequestCookieConsentOptions&&, Ref<DeferredPromise>&&);
 
 private:
     static NavigatorCookieConsent& from(Navigator&);
     static const char* supplementName() { return "NavigatorCookieConsent"; }
 
-    void requestCookieConsent(std::optional<RequestCookieConsentOptions>&&, Ref<DeferredPromise>&&);
+    void requestCookieConsent(RequestCookieConsentOptions&&, Ref<DeferredPromise>&&);
 
     Navigator& m_navigator;
 };

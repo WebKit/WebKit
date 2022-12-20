@@ -192,9 +192,20 @@ void ContentSecurityPolicy::didCreateWindowProxy(JSWindowProxy& windowProxy) con
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
 {
     if (!m_cachedResponseHeaders) {
+        auto makeValidHTTPHeaderIfNeeded = [this](auto& header) {
+            // If coming from an existing HTTP header it should be valid already.
+            if (m_isHeaderDelivered)
+                return header;
+
+            // Newlines are valid in http-equiv but not in HTTP header value.
+            auto returnValue = makeStringByReplacingAll(header, '\n', ""_s);
+            returnValue = makeStringByReplacingAll(returnValue, '\r', ""_s);
+            return returnValue;
+        };
+
         ContentSecurityPolicyResponseHeaders result;
-        result.m_headers = m_policies.map([](auto& policy) {
-            return std::pair { policy->header(), policy->headerType() };
+        result.m_headers = m_policies.map([&makeValidHTTPHeaderIfNeeded](auto& policy) {
+            return std::pair { makeValidHTTPHeaderIfNeeded(policy->header()), policy->headerType() };
         });
         result.m_httpStatusCode = m_httpStatusCode;
         m_cachedResponseHeaders = WTFMove(result);

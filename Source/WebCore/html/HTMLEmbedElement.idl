@@ -20,7 +20,8 @@
 
 [
     Plugin,
-    Exposed=Window
+    Exposed=Window,
+    EnabledBySetting=EmbedElementEnabled
 ] interface HTMLEmbedElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString height;

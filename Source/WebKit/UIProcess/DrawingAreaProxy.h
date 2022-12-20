@@ -129,6 +129,7 @@ public:
     virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }
 
     virtual bool shouldCoalesceVisualEditorStateUpdates() const { return false; }
+    virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }
 
     WebPageProxy& page() const { return m_webPageProxy; }
     WebProcessProxy& process() { return m_process.get(); }

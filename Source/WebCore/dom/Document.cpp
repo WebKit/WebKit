@@ -1624,6 +1624,10 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
     auto* renderer = node->renderer();
     if (!renderer)
         return std::nullopt;
+
+    if (renderer->shouldSkipContent())
+        return { { *node, 0 } };
+
     auto rangeCompliantPosition = renderer->positionForPoint(localPoint).parentAnchoredEquivalent();
     if (rangeCompliantPosition.isNull())
         return std::nullopt;

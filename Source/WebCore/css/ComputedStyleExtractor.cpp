@@ -1304,8 +1304,9 @@ static Ref<CSSValue> createTransitionPropertyValue(const Animation& animation)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
     case Animation::TransitionMode::SingleProperty:
         return CSSValuePool::singleton().createCustomIdent(nameString(animation.property().id));
+    case Animation::TransitionMode::CustomProperty:
     case Animation::TransitionMode::UnknownProperty:
-        return CSSValuePool::singleton().createCustomIdent(animation.unknownProperty());
+        return CSSValuePool::singleton().createCustomIdent(animation.customOrUnknownProperty());
     }
     ASSERT_NOT_REACHED();
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);

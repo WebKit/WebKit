@@ -531,8 +531,11 @@ bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheel
 
 #if ENABLE(ASYNC_SCROLLING)
     if (usesAsyncScrolling() && scrollingNodeID()) {
-        if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
-            return scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), gestureState);
+        if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator()) {
+            auto result = scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), gestureState);
+            if (!result.needsMainThreadProcessing())
+                return result.wasHandled;
+        }
     }
 #endif
 

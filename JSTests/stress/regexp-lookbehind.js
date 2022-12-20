@@ -79,6 +79,20 @@ function testRegExp(re, str, exp)
         print(dumpValue(str) +".match(" + re.toString() + "), FAILED test #" + testNumber + ", Expected ", dumpValue(exp), " got ", dumpValue(actual));
 }
 
+function testRegExpSyntaxError(reString, flags, expError)
+{
+    testNumber++;
+
+    try {
+        let re = new RegExp(reString, flags);
+    } catch (e) {
+        if (e != expError)
+            print("FAILED test #" + testNumber + ", Expected /" + reString + "/" + flags + " to throw \"" + expError + "\" got \"" + e + "\"");
+        else if (verbose)
+            print("/" + reString + "/" + flags + "passed, it threw \"" + expError + "\" as expected");
+    }
+}
+
 // Test 1
 testRegExp(/(?<= )Dog/, " Dog", ["Dog"]);
 testRegExp(/(?<=A )Dog/, "Walk A Dog", ["Dog"]);
@@ -201,3 +215,4 @@ testRegExp(/(?<=(^(?:A|\u{10400}|\u{10401}|\u{10406})*))x/u, "\u{10401}A\u{10400
 // Test 86
 testRegExp(/(?<=(\d{2})(\d{2}))X/, "34121234X", ["X", "12", "34"]);
 testRegExp(/(?<=\2\1(\d{2})(\d{2}))X/, "34121234X", ["X", "12", "34"]);
+testRegExpSyntaxError(".(?<=.)?", "", "SyntaxError: Invalid regular expression: invalid quantifier");

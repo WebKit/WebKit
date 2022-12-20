@@ -605,13 +605,13 @@ struct LengthRawKnownTokenTypeDimensionConsumer {
 
 struct LengthRawKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk)
+    static std::optional<LengthRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
     {
         ASSERT(range.peek().type() == NumberToken);
 
         auto& token = range.peek();
 
-        if (!shouldAcceptUnitlessValue(token.numericValue(), parserMode, unitless, UnitlessZeroQuirk::Allow))
+        if (!shouldAcceptUnitlessValue(token.numericValue(), parserMode, unitless, unitlessZero))
             return std::nullopt;
 
         if (auto validatedValue = validatedLengthRaw(token.numericValue(), valueRange)) {
@@ -1445,7 +1445,7 @@ RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange& range, V
 
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
-    return consumeMetaConsumer<LengthConsumer>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid, CSSValuePool::singleton());
+    return consumeMetaConsumer<LengthConsumer>(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Allow, CSSValuePool::singleton());
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -1488,7 +1488,7 @@ static std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserToke
 }
 
 // FIXME: This doesn't work with the current scheme due to the NegativePercentagePolicy parameter
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, NegativePercentagePolicy negativePercentagePolicy)
+RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentagePolicy)
 {
     auto& token = range.peek();
 
@@ -1502,13 +1502,13 @@ RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSS
     }
 
     case DimensionToken:
-        return LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid, CSSValuePool::singleton());
+        return LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer::consume(range, { }, valueRange, parserMode, unitless, unitlessZero, CSSValuePool::singleton());
 
     case NumberToken:
-        return LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid, CSSValuePool::singleton());
+        return LengthCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer::consume(range, { }, valueRange, parserMode, unitless, unitlessZero, CSSValuePool::singleton());
 
     case PercentageToken:
-        return PercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentConsumer::consume(range, { }, valueRange, parserMode, unitless, UnitlessZeroQuirk::Forbid, CSSValuePool::singleton());
+        return PercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentConsumer::consume(range, { }, valueRange, parserMode, unitless, unitlessZero, CSSValuePool::singleton());
 
     default:
         break;
@@ -3223,7 +3223,7 @@ static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& r
 {
     if (range.peek().type() == IdentToken)
         return consumeIdent<CSSValueLeft, CSSValueTop, CSSValueBottom, CSSValueRight, CSSValueCenter>(range);
-    return consumeLengthOrPercent(range, parserMode, ValueRange::All, unitless, negativePercentagePolicy);
+    return consumeLengthOrPercent(range, parserMode, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, negativePercentagePolicy);
 }
 
 static bool isHorizontalPositionKeywordOnly(const CSSPrimitiveValue& value)
@@ -6441,7 +6441,9 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range)
 
     RefPtr<CSSValueList> dashes = CSSValueList::createCommaSeparated();
     do {
-        RefPtr<CSSPrimitiveValue> dash = consumeLengthOrPercent(range, SVGAttributeMode, ValueRange::NonNegative);
+        RefPtr<CSSPrimitiveValue> dash = consumeLengthOrPercent(range, HTMLStandardMode, ValueRange::NonNegative, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+        if (!dash)
+            dash = consumeNumber(range, ValueRange::NonNegative);
         if (!dash || (consumeCommaIncludingWhitespace(range) && range.atEnd()))
             return nullptr;
         dashes->append(dash.releaseNonNull());

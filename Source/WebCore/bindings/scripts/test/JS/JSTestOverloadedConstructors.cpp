@@ -31,6 +31,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMConvertVariadic.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObjectInlines.h"

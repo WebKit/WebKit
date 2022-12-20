@@ -70,6 +70,8 @@ private:
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void targetRefreshRateDidChange(unsigned) override;
 
+    bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
+
 #if !PLATFORM(WPE)
     void incorporateUpdate(const UpdateInfo&);
 #endif

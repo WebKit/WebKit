@@ -679,6 +679,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
+    HandleWheelEvent(WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled)
 
     LastNavigationWasAppInitiated() -> (bool wasAppBound)

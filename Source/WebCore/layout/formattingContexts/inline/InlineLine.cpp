@@ -67,7 +67,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool is
                 // https://drafts.csswg.org/css-break/#break-decoration
                 // clone: Each box fragment is independently wrapped with the border, padding, and margin.
                 auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineBoxStartItem.layoutBox());
-                auto marginBorderAndPaddingStart = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderStart() + inlineBoxGeometry.paddingStart().value_or(0_lu);
+                auto marginBorderAndPaddingStart = inlineBoxGeometry.marginBorderAndPaddingStart();
                 auto runLogicalLeft = lastRunLogicalRight();
                 m_runs.append({ inlineBoxStartItem, runLogicalLeft, marginBorderAndPaddingStart });
                 // Do not let negative margin make the content shorter than it already is.
@@ -329,6 +329,9 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
 
 void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
+    auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
+    if (inlineBoxGeometry.marginBorderAndPaddingStart())
+        m_hangingContent.resetTrailingGlyphs();
     // This is really just a placeholder to mark the start of the inline box <span>.
     ++m_nonSpanningInlineLevelBoxCount;
     auto logicalLeft = lastRunLogicalRight();
@@ -337,7 +340,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
     // Do not let negative margin make the content shorter than it already is.
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, logicalLeft + logicalWidth);
 
-    auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
+    auto marginStart = inlineBoxGeometry.marginStart();
     if (marginStart >= 0) {
         m_runs.append({ inlineItem, style, logicalLeft, logicalWidth - borderAndPaddingEndForDecorationClone });
         return;
@@ -348,6 +351,8 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
+    if (formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingEnd())
+        m_hangingContent.resetTrailingGlyphs();
     // This is really just a placeholder to mark the end of the inline box </span>.
     auto removeTrailingLetterSpacing = [&] {
         if (!m_trimmableTrailingContent.isTrailingRunPartiallyTrimmable())
@@ -581,12 +586,8 @@ bool Line::lineHasVisuallyNonEmptyContent() const
     for (auto& run : makeReversedRange(m_runs)) {
         if (run.isContentful() || run.isGenerated())
             return true;
-        if (run.isInlineBox()) {
-            auto& inlineBoxGeometry = formattingContext().geometryForBox(run.layoutBox());
-            auto marginBorderAndPaddingStart = inlineBoxGeometry.marginStart() + inlineBoxGeometry.borderStart() + inlineBoxGeometry.paddingStart().value_or(0_lu);
-            if (marginBorderAndPaddingStart)
-                return true;
-        }
+        if (run.isInlineBox() && formattingContext().geometryForBox(run.layoutBox()).hasMarginBorderOrPadding())
+            return true;
     }
     return false;
 }

@@ -251,6 +251,7 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     case CSSPropertyScrollPaddingLeft:
     case CSSPropertyScrollPaddingRight:
     case CSSPropertyScrollPaddingTop:
+    case CSSPropertyStrokeDasharray:
     case CSSPropertyStrokeMiterlimit:
     case CSSPropertyStrokeWidth:
         return value < 0;

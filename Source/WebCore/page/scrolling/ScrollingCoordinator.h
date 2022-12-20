@@ -128,7 +128,7 @@ public:
     virtual bool requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping) { return false; }
     virtual void stopAnimatedScroll(ScrollableArea&) { }
 
-    virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) { return false; }
+    virtual WheelEventHandlingResult handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) { return WheelEventHandlingResult::unhandled(WheelEventProcessingSteps::MainThreadForScrolling); }
     virtual void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) { }
 
     // Create an unparented node.

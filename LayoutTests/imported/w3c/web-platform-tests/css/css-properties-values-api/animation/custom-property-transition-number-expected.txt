@@ -1,0 +1,3 @@
+
+PASS A custom property of type <number> can yield a CSS Transition
+

@@ -385,10 +385,10 @@ static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styl
     return nullptr;
 }
 
-static bool propertyInStyleMatchesValueForTransitionInMap(AnimatableProperty property, const RenderStyle& style, AnimatablePropertyToTransitionMap& transitions)
+static bool propertyInStyleMatchesValueForTransitionInMap(AnimatableProperty property, const RenderStyle& style, AnimatablePropertyToTransitionMap& transitions, const Document& document)
 {
     if (auto* transition = transitions.get(property)) {
-        if (CSSPropertyAnimation::propertiesEqual(property, style, transition->targetStyle()))
+        if (CSSPropertyAnimation::propertiesEqual(property, style, transition->targetStyle(), document))
             return true;
     }
     return false;
@@ -407,6 +407,18 @@ static bool transitionMatchesProperty(const Animation& transition, AnimatablePro
     auto mode = transition.property().mode;
     if (mode == Animation::TransitionMode::None || mode == Animation::TransitionMode::UnknownProperty)
         return false;
+
+    if (mode == Animation::TransitionMode::CustomProperty) {
+        return WTF::switchOn(property,
+            [] (CSSPropertyID) {
+                return false;
+            },
+            [&] (const AtomString& customProperty) {
+                return customProperty == transition.customOrUnknownProperty();
+            }
+        );
+    }
+
     if (mode == Animation::TransitionMode::SingleProperty && std::holds_alternative<CSSPropertyID>(property)) {
         auto cssPropertyId = std::get<CSSPropertyID>(property);
         auto transitionProperty = CSSProperty::resolveDirectionAwareProperty(transition.property().id, style.direction(), style.writingMode());
@@ -418,6 +430,7 @@ static bool transitionMatchesProperty(const Animation& transition, AnimatablePro
             return false;
         }
     }
+
     return true;
 }
 
@@ -439,7 +452,9 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
                     transitionProperties.add(longhand);
             } else if (property != CSSPropertyInvalid)
                 transitionProperties.add(property);
-        } else if (mode == Animation::TransitionMode::All) {
+        } else if (mode == Animation::TransitionMode::CustomProperty)
+            transitionProperties.add(AtomString { animation->customOrUnknownProperty() });
+        else if (mode == Animation::TransitionMode::All) {
             transitionPropertiesContainAll = true;
             return;
         }
@@ -476,6 +491,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         return false;
     };
 
+    auto& document = styleable.element.document();
+
     // https://drafts.csswg.org/css-transitions-1/#before-change-style
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
@@ -487,7 +504,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
                     if (!effectTargetsProperty(*effect))
                         continue;
                     auto* effectAnimation = effect->animation();
-                    bool shouldUseTimelineTimeAtCreation = is<CSSTransition>(effectAnimation) && (!effectAnimation->startTime() || *effectAnimation->startTime() == styleable.element.document().timeline().currentTime());
+                    bool shouldUseTimelineTimeAtCreation = is<CSSTransition>(effectAnimation) && (!effectAnimation->startTime() || *effectAnimation->startTime() == document.timeline().currentTime());
                     effectAnimation->resolve(style, { nullptr }, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*effectAnimation).timelineTimeAtCreation() : std::nullopt);
                 }
             }
@@ -512,9 +529,9 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     }();
 
     if (!styleable.hasRunningTransitionForProperty(property)
-        && !CSSPropertyAnimation::propertiesEqual(property, beforeChangeStyle, afterChangeStyle)
-        && CSSPropertyAnimation::canPropertyBeInterpolated(property, beforeChangeStyle, afterChangeStyle)
-        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty())
+        && !CSSPropertyAnimation::propertiesEqual(property, beforeChangeStyle, afterChangeStyle, document)
+        && CSSPropertyAnimation::canPropertyBeInterpolated(property, beforeChangeStyle, afterChangeStyle, document)
+        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)
         && matchingBackingAnimation && transitionCombinedDuration(matchingBackingAnimation) > 0) {
         // 1. If all of the following are true:
         //   - the element does not have a running transition for the property,
@@ -538,7 +555,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         auto& reversingAdjustedStartStyle = beforeChangeStyle;
         auto reversingShorteningFactor = 1;
         styleable.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(styleable, property, generationTime, *matchingBackingAnimation, beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
-    } else if (styleable.hasCompletedTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty())) {
+    } else if (styleable.hasCompletedTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)) {
         // 2. Otherwise, if the element has a completed transition for the property and the end value of the completed transition is different from
         //    the after-change style for the property, then implementations must remove the completed transition from the set of completed transitions.
         styleable.ensureCompletedTransitionsByProperty().remove(property);
@@ -554,20 +571,20 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             styleable.ensureCompletedTransitionsByProperty().remove(property);
     }
 
-    if (matchingBackingAnimation && styleable.hasRunningTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureRunningTransitionsByProperty())) {
+    if (matchingBackingAnimation && styleable.hasRunningTransitionForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureRunningTransitionsByProperty(), document)) {
         auto previouslyRunningTransition = styleable.ensureRunningTransitionsByProperty().take(property);
         auto& previouslyRunningTransitionCurrentStyle = previouslyRunningTransition->currentStyle();
         // 4. If the element has a running transition for the property, there is a matching transition-property value, and the end value of the running
         //    transition is not equal to the value of the property in the after-change style, then:
-        if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle) || !CSSPropertyAnimation::canPropertyBeInterpolated(property, currentStyle, afterChangeStyle)) {
+        if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle, document) || !CSSPropertyAnimation::canPropertyBeInterpolated(property, currentStyle, afterChangeStyle, document)) {
             // 1. If the current value of the property in the running transition is equal to the value of the property in the after-change style,
             //    or if these two values cannot be interpolated, then implementations must cancel the running transition.
             previouslyRunningTransition->cancelFromStyle();
-        } else if (transitionCombinedDuration(matchingBackingAnimation) <= 0.0 || !CSSPropertyAnimation::canPropertyBeInterpolated(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle)) {
+        } else if (transitionCombinedDuration(matchingBackingAnimation) <= 0.0 || !CSSPropertyAnimation::canPropertyBeInterpolated(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle, document)) {
             // 2. Otherwise, if the combined duration is less than or equal to 0s, or if the current value of the property in the running transition
             //    cannot be interpolated with the value of the property in the after-change style, then implementations must cancel the running transition.
             previouslyRunningTransition->cancelFromStyle();
-        } else if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransition->reversingAdjustedStartStyle(), afterChangeStyle)) {
+        } else if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransition->reversingAdjustedStartStyle(), afterChangeStyle, document)) {
             // 3. Otherwise, if the reversing-adjusted start value of the running transition is the same as the value of the property in the after-change
             //    style (see the section on reversing of transitions for why these case exists), implementations must cancel the running transition
             //    and start a new transition whose:
@@ -635,6 +652,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
     compileTransitionPropertiesInStyle(newStyle, transitionProperties, transitionPropertiesContainAll);
 
     if (transitionPropertiesContainAll) {
+        // FIXME: this does not deal with custom properties.
         auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
         for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
             std::optional<bool> isShorthand;

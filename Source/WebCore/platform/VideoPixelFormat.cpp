@@ -53,10 +53,7 @@ VideoPixelFormat convertVideoFramePixelFormat(uint32_t format, bool shouldDiscar
         return VideoPixelFormat::I420;
     case GST_VIDEO_FORMAT_A420:
         return VideoPixelFormat::I420A;
-    case GST_VIDEO_FORMAT_I422_10BE:
-    case GST_VIDEO_FORMAT_I422_10LE:
-    case GST_VIDEO_FORMAT_I422_12BE:
-    case GST_VIDEO_FORMAT_I422_12LE:
+    case GST_VIDEO_FORMAT_Y42B:
         return VideoPixelFormat::I422;
     case GST_VIDEO_FORMAT_Y444:
         return VideoPixelFormat::I444;

@@ -227,6 +227,7 @@ namespace WebCore {
     macro(HTMLAudioElement) \
     macro(HTMLDialogElement) \
     macro(HTMLDataListElement) \
+    macro(HTMLEmbedElement) \
     macro(HTMLMenuItemElement) \
     macro(HTMLModelElement) \
     macro(Headers) \

@@ -41,6 +41,7 @@ ASCIILiteral errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "nothing to repeat"_s,                                    // QuantifierWithoutAtom
         REGEXP_ERROR_PREFIX "number too large in {} quantifier"_s,                    // QuantifierTooLarge
         REGEXP_ERROR_PREFIX "incomplete {} quantifier for Unicode pattern"_s,         // QuantifierIncomplete
+        REGEXP_ERROR_PREFIX "invalid quantifier"_s,                                   // CantQuantifyAtom
         REGEXP_ERROR_PREFIX "missing )"_s,                                            // MissingParentheses
         REGEXP_ERROR_PREFIX "unmatched ] or } bracket for Unicode pattern"_s,         // BracketUnmatched
         REGEXP_ERROR_PREFIX "unmatched parentheses"_s,                                // ParenthesesUnmatched
@@ -78,6 +79,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::QuantifierWithoutAtom:
     case ErrorCode::QuantifierTooLarge:
     case ErrorCode::QuantifierIncomplete:
+    case ErrorCode::CantQuantifyAtom:
     case ErrorCode::MissingParentheses:
     case ErrorCode::BracketUnmatched:
     case ErrorCode::ParenthesesUnmatched:

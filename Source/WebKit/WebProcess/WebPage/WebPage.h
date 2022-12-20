@@ -1126,6 +1126,7 @@ public:
     void startWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = true; }
 #endif
 
+    void handleWheelEvent(const WebWheelEvent&, const OptionSet<WebCore::WheelEventProcessingSteps>&);
     bool wheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, EventDispatcher::WheelEventOrigin);
 
     void wheelEventHandlersChanged(bool);

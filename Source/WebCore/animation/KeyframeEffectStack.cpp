@@ -165,7 +165,8 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
         auto inheritedPropertyChanged = [&]() {
             if (previousLastStyleChangeEventStyle) {
                 for (auto property : effect->inheritedProperties()) {
-                    if (!CSSPropertyAnimation::propertiesEqual(property, *previousLastStyleChangeEventStyle, targetStyle))
+                    ASSERT(effect->target());
+                    if (!CSSPropertyAnimation::propertiesEqual(property, *previousLastStyleChangeEventStyle, targetStyle, effect->target()->document()))
                         return true;
                 }
             }

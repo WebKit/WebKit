@@ -237,10 +237,13 @@ SVGLengthValue SVGLengthValue::blend(const SVGLengthValue& from, const SVGLength
     return { WebCore::blend(fromValue.releaseReturnValue(), toValue, { progress }), to.lengthType() };
 }
 
-SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value)
+SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
     // FIXME: This needs to call value.computeLength() so it can correctly resolve non-absolute units (webkit.org/b/204826).
-    SVGLengthType lengthType = primitiveTypeToLengthType(value.primitiveType());
+    auto primitiveType = value.primitiveType();
+    if (primitiveType == CSSUnitType::CSS_NUMBER && shouldConvertNumberToPxLength == ShouldConvertNumberToPxLength::Yes)
+        primitiveType = CSSUnitType::CSS_PX;
+    SVGLengthType lengthType = primitiveTypeToLengthType(primitiveType);
     return lengthType == SVGLengthType::Unknown ? SVGLengthValue() : SVGLengthValue(value.floatValue(), lengthType);
 }
 

@@ -3940,37 +3940,39 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
             return blendFunc(fromNumeric, toNumeric, blendingContext);
     }
 
-    if (std::holds_alternative<RefPtr<TransformOperation>>(from) && std::holds_alternative<RefPtr<TransformOperation>>(to)) {
-        auto& fromTransformOperation = std::get<RefPtr<TransformOperation>>(from);
-        auto& toTransformOperation = std::get<RefPtr<TransformOperation>>(to);
-        return blendFunc(fromTransformOperation.get(), toTransformOperation.get(), blendingContext);
+    if (std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(from) && std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(to)) {
+        auto& fromTransformOperation = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(from).transform;
+        auto& toTransformOperation = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(to).transform;
+        return CSSCustomPropertyValue::TransformSyntaxValue { blendFunc(fromTransformOperation.get(), toTransformOperation.get(), blendingContext) };
     }
 
+    return std::nullopt;
+}
+
+static std::optional<CSSCustomPropertyValue::SyntaxValue> firstValueInSyntaxValueLists(const CSSCustomPropertyValue::SyntaxValueList& a, const CSSCustomPropertyValue::SyntaxValueList& b)
+{
+    if (!a.values.isEmpty())
+        return a.values[0];
+    if (!b.values.isEmpty())
+        return b.values[0];
     return std::nullopt;
 }
 
 static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLists(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue::SyntaxValueList& from, const CSSCustomPropertyValue::SyntaxValueList& to, const CSSPropertyBlendingContext& blendingContext)
 {
     // https://drafts.css-houdini.org/css-properties-values-api-1/#animation-behavior-of-custom-properties
-
-    auto firstValue = [&]() -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
-        if (!from.values.isEmpty())
-            return from.values[0];
-        if (!to.values.isEmpty())
-            return to.values[0];
-        return std::nullopt;
-    }();
+    auto firstValue = firstValueInSyntaxValueLists(from, to);
 
     if (!firstValue)
         return std::nullopt;
 
     // <transform-function> lists are special in that they don't require matching numbers of items.
-    if (std::holds_alternative<RefPtr<TransformOperation>>(*firstValue)) {
+    if (std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(*firstValue)) {
         auto transformOperationsFromSyntaxValueList = [](const CSSCustomPropertyValue::SyntaxValueList& src) {
             TransformOperations transformOperations;
             for (auto& syntaxValue : src.values) {
-                ASSERT(std::holds_alternative<RefPtr<TransformOperation>>(syntaxValue));
-                transformOperations.operations().append(std::get<RefPtr<TransformOperation>>(syntaxValue));
+                ASSERT(std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue));
+                transformOperations.operations().append(std::get<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue).transform);
             }
             return transformOperations;
         };
@@ -3979,7 +3981,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLi
         auto toTransformOperations = transformOperationsFromSyntaxValueList(to);
         auto blendedTransformOperations = blendFunc(fromTransformOperations, toTransformOperations, blendingContext);
         auto blendedSyntaxValues = blendedTransformOperations.operations().map([](auto& transformOperation) -> CSSCustomPropertyValue::SyntaxValue {
-            return transformOperation;
+            return CSSCustomPropertyValue::TransformSyntaxValue { transformOperation };
         });
         return CSSCustomPropertyValue::SyntaxValueList { blendedSyntaxValues, from.separator };
     }
@@ -4019,12 +4021,12 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderSty
     return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
 }
 
-static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const CSSPropertyBlendingClient& client, const AtomString& customProperty, const CSSCustomPropertyValue* fromValue, const CSSCustomPropertyValue* toValue)
+static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const Document* document, const AtomString& customProperty, const CSSCustomPropertyValue* fromValue, const CSSCustomPropertyValue* toValue)
 {
     // FIXME: it would be convenient if RenderStyle stored the initialValue
     // for a custom property that was not explicitly set.
     auto initialValue = [&]() -> const CSSCustomPropertyValue* {
-        if (auto* document = client.document()) {
+        if (document) {
             if (auto registered = document->customPropertyRegistry().get(customProperty))
                 return registered->initialValue();
         }
@@ -4043,13 +4045,13 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
     CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, customProperty, iterationCompositeOperation, currentIteration };
 
     {
-        auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));
+        auto [fromValue, toValue] = customPropertyValuesForBlending(client.document(), customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
             destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
     }
 
     {
-        auto [fromValue, toValue] = customPropertyValuesForBlending(client, customProperty, from.inheritedCustomProperties().get(customProperty), to.inheritedCustomProperties().get(customProperty));
+        auto [fromValue, toValue] = customPropertyValuesForBlending(client.document(), customProperty, from.inheritedCustomProperties().get(customProperty), to.inheritedCustomProperties().get(customProperty));
         if (fromValue && toValue)
             destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
     }
@@ -4098,7 +4100,7 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
                 return wrapper->requiresBlendingForAccumulativeIteration(a, b);
             return false;
         }, [&] (const AtomString& customProperty) {
-            auto [from, to] = customPropertyValuesForBlending(client, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            auto [from, to] = customPropertyValuesForBlending(client.document(), customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
             if (!from || !to)
                 return false;
 
@@ -4132,32 +4134,90 @@ bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(AnimatableProperty p
     );
 }
 
-bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b, const Document& document)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->equals(a, b);
             return true;
-        }, [&] (const AtomString&) {
-            // FIXME: implement support for whether custom property values are equal.
-            ASSERT_NOT_REACHED();
+        }, [&] (const AtomString& customProperty) {
+            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            if (!aCustomPropertyValue && !bCustomPropertyValue)
+                return true;
+            if (!aCustomPropertyValue || !bCustomPropertyValue)
+                return false;
+            if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(aCustomPropertyValue->value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(bCustomPropertyValue->value()))
+                return aCustomPropertyValue->equals(*bCustomPropertyValue);
+            if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(aCustomPropertyValue->value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(bCustomPropertyValue->value()))
+                return aCustomPropertyValue->equals(*bCustomPropertyValue);
             return false;
         }
     );
 }
 
-bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
+static bool typeOfSyntaxValueCanBeInterpolated(const CSSCustomPropertyValue::SyntaxValue& syntaxValue)
+{
+    return WTF::switchOn(syntaxValue,
+        [] (const Length&) {
+            return true;
+        },
+        [] (const StyleColor&) {
+            return true;
+        },
+        [] (CSSCustomPropertyValue::NumericSyntaxValue) {
+            return true;
+        },
+        [] (const CSSCustomPropertyValue::TransformSyntaxValue&) {
+            return true;
+        },
+        [] (RefPtr<StyleImage>) {
+            return false;
+        },
+        [] (auto&) {
+            return false;
+        }
+    );
+}
+
+bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b, const Document& document)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(propertyId))
                 return wrapper->canInterpolate(a, b, CompositeOperation::Replace);
             return true;
-        }, [&] (const AtomString&) {
-            // FIXME: implement support for whether custom property values can be interpolated.
-            ASSERT_NOT_REACHED();
-            return true;
+        }, [&] (const AtomString& customProperty) {
+            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            if (!aCustomPropertyValue || !bCustomPropertyValue || aCustomPropertyValue == bCustomPropertyValue)
+                return false;
+            auto& aVariantValue = aCustomPropertyValue->value();
+            auto& bVariantValue = bCustomPropertyValue->value();
+            if (aVariantValue.index() != bVariantValue.index())
+                return false;
+            return WTF::switchOn(aVariantValue,
+                [bVariantValue] (const CSSCustomPropertyValue::SyntaxValueList& aValueList) {
+                    auto bValueList = std::get<CSSCustomPropertyValue::SyntaxValueList>(bVariantValue);
+                    if (aValueList == bValueList)
+                        return false;
+                    if (auto firstValue = firstValueInSyntaxValueLists(aValueList, bValueList)) {
+                        // List sizes must match except for transform lists.
+                        if (!std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(*firstValue)
+                            && aValueList.values.size() != bValueList.values.size()) {
+                            return false;
+                        }
+                        return typeOfSyntaxValueCanBeInterpolated(*firstValue);
+                    }
+                    return false;
+                },
+                [bVariantValue] (const CSSCustomPropertyValue::SyntaxValue& aSyntaxValue) {
+                    auto bSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(bVariantValue);
+                    return aSyntaxValue != bSyntaxValue && typeOfSyntaxValueCanBeInterpolated(aSyntaxValue);
+                },
+                [] (auto&) {
+                    return false;
+                }
+            );
         }
     );
 }

@@ -952,7 +952,3 @@ skip:
 
     # Skip while https://bugs.webkit.org/show_bug.cgi?id=249330 is being investigated
     - test/built-ins/RegExp/named-groups/lookbehind.js 
-    - test/language/literals/regexp/invalid-optional-lookbehind.js 
-    - test/language/literals/regexp/invalid-optional-negative-lookbehind.js 
-    - test/language/literals/regexp/invalid-range-lookbehind.js 
-    - test/language/literals/regexp/invalid-range-negative-lookbehind.js 
