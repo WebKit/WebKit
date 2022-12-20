@@ -660,7 +660,7 @@ public:
 
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
-    void willBeRemovedFromFrame();
+    WEBCORE_EXPORT void willBeRemovedFromFrame();
 
     // Override ScriptExecutionContext methods to do additional work
     WEBCORE_EXPORT bool shouldBypassMainWorldContentSecurityPolicy() const final;
