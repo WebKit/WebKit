@@ -36,7 +36,8 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
 
-using namespace WebCore;
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/ShouldTreatAsContinuingLoad.h>
 
 namespace WebKit {
 
@@ -63,7 +64,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 
     LoadParameters loadParameters;
     loadParameters.request = request;
-    loadParameters.shouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
+    loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
     // FIXME: Add more parameters as appropriate.
 
     // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
@@ -106,7 +107,7 @@ void ProvisionalFrameProxy::decidePolicyForResponse(WebCore::FrameIdentifier fra
         page->decidePolicyForResponseShared(m_process.copyRef(), m_pageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID);
 }
 
-void ProvisionalFrameProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, std::optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
+void ProvisionalFrameProxy::didCommitLoadForFrame(WebCore::FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, std::optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frame.frameID().object());

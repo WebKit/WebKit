@@ -25,6 +25,8 @@
 
 #import "_WKNotificationData.h"
 
+#import <WebKit/WKWebsiteDataStore.h>
+
 namespace WebCore {
 struct NotificationData;
 };
