@@ -70,4 +70,8 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
 @interface AVStreamDataParser (AVStreamDataParserContentKeyEligibility) <AVContentKeyRecipient>
 @end
 
+@interface AVStreamDataParser (AVStreamDataParserSandboxedParsing)
+@property (nonatomic) BOOL preferSandboxedParsing;
+@end
+
 NS_ASSUME_NONNULL_END
