@@ -56,7 +56,7 @@
 - (unsigned short)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->typeForCSSOM();
+    return static_cast<unsigned short>(IMPL->type());
 }
 
 - (NSString *)cssText
