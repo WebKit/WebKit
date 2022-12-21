@@ -769,27 +769,14 @@ void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineText
     m_trailingTrimmableWidth = *trimmableWidth == logicalWidth ? m_trailingTrimmableWidth + logicalWidth : *trimmableWidth;
 }
 
-void InlineContentBreaker::ContinuousContent::appendTrailingHangingContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
-{
-    appendTextContent(inlineTextItem, style, hangingWidth, { });
-    m_trailingHangingContentWidth = hangingWidth;
-}
-
-void InlineContentBreaker::ContinuousContent::appendLeadingHangingContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
-{
-    ASSERT(runs().isEmpty());
-    appendTextContent(inlineTextItem, style, hangingWidth, { });
-    m_leadingHangingContentWidth = hangingWidth;
-}
-
 void InlineContentBreaker::ContinuousContent::reset()
 {
     m_logicalWidth = { };
     m_leadingTrimmableWidth = { };
     m_trailingTrimmableWidth = { };
-    m_trailingHangingContentWidth = { };
-    m_leadingHangingContentWidth = { };
+    m_hangingContentWidth = { };
     m_runs.clear();
 }
+
 }
 }

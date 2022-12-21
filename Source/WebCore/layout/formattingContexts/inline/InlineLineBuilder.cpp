@@ -243,13 +243,10 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
 
     if (inlineItem.isText()) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        auto isWhitespace = inlineTextItem.isWhitespace();
-
-        auto isTrailingHangingContent = isWhitespace && style.whiteSpace() == WhiteSpace::PreWrap;
-        if (isTrailingHangingContent)
-            return m_continuousContent.appendTrailingHangingContent(inlineTextItem, style, logicalWidth);
-
+        auto isTrailingHangingContent = inlineTextItem.isWhitespace() && style.whiteSpace() == WhiteSpace::PreWrap;
         auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
+            if (isTrailingHangingContent)
+                return { };
             if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isQuirkNonBreakingSpace()) {
                 // Fully trimmable trailing content.
                 return logicalWidth;
@@ -264,6 +261,9 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             return letterSpacing;
         };
         m_continuousContent.appendTextContent(inlineTextItem, style, logicalWidth, trimmableWidth());
+        // FIXME: Should reset this hanging content when not trailing anymore (probably never happens though).
+        if (isTrailingHangingContent)
+            m_continuousContent.setHangingContentWidth(logicalWidth);
         return;
     }
     ASSERT_NOT_REACHED();

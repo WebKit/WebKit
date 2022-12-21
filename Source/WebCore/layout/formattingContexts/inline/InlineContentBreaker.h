@@ -81,7 +81,7 @@ public:
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         InlineLayoutUnit leadingTrimmableWidth() const { return m_leadingTrimmableWidth; }
         InlineLayoutUnit trailingTrimmableWidth() const { return m_trailingTrimmableWidth; }
-        InlineLayoutUnit hangingContentWidth() const { return m_trailingHangingContentWidth + m_leadingHangingContentWidth; }
+        InlineLayoutUnit hangingContentWidth() const { return m_hangingContentWidth; }
         bool hasTrimmableContent() const { return trailingTrimmableWidth() || leadingTrimmableWidth(); }
         bool hasHangingContent() const { return hangingContentWidth(); }
         bool isFullyTrimmable() const;
@@ -89,8 +89,7 @@ public:
 
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> trimmableWidth);
-        void appendTrailingHangingContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit hangingWidth);
-        void appendLeadingHangingContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit hangingWidth);
+        void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
         void reset();
 
         struct Run {
@@ -112,9 +111,8 @@ public:
         RunList m_runs;
         InlineLayoutUnit m_logicalWidth { 0.f };
         InlineLayoutUnit m_leadingTrimmableWidth { 0.f };
-        InlineLayoutUnit m_leadingHangingContentWidth { 0.f };
         InlineLayoutUnit m_trailingTrimmableWidth { 0.f };
-        InlineLayoutUnit m_trailingHangingContentWidth { 0.f };
+        InlineLayoutUnit m_hangingContentWidth { 0.f };
     };
 
     struct LineStatus {
