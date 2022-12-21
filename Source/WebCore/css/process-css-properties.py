@@ -1318,6 +1318,10 @@ class PropertiesAndDescriptors:
     def all_descriptor_only(self):
         return (descriptor for descriptor in self.all_descriptors if descriptor.name not in self.style.all_by_name)
 
+    @property
+    def all_preserving_whitespace(self):
+        return (property for property in self.all_unique if property.codegen_properties.parser_grammar and property.codegen_properties.parser_grammar.preserve_whitespace)
+
     # Returns the set of settings-flags used by any property or descriptor. Uniqued and sorted lexically.
     @property
     def settings_flags(self):
@@ -1571,6 +1575,7 @@ class ReferenceTerm:
         BuiltinSchema.Entry("custom-ident", "consumeCustomIdent"),
         BuiltinSchema.Entry("dashed-ident", "consumeDashedIdent"),
         BuiltinSchema.Entry("url", "consumeURL"),
+        BuiltinSchema.Entry("declaration-value", "consumeDeclarationValue")
     )
 
     def __init__(self, **dictionary):
@@ -1912,6 +1917,12 @@ class Grammar:
 
     def perform_fixups_for_values_references(self, values):
         self.root_term = self.root_term.perform_fixups_for_values_references(values)
+
+    @property
+    def preserve_whitespace(self):
+        if isinstance(self.root_term, ReferenceTerm) and isinstance(self.root_term.builtin, BuiltinDeclarationValueConsumer):
+            return True
+        return False
 
     @property
     def has_fast_path_keyword_terms(self):
@@ -2650,6 +2661,12 @@ class GenerateCSSPropertyNames:
                 to=writer,
                 signature="bool CSSProperty::isDescriptorOnly(CSSPropertyID id)",
                 iterable=self.properties_and_descriptors.all_descriptor_only
+            )
+
+            self.generation_context.generate_property_id_switch_function_bool(
+                to=writer,
+                signature="bool CSSProperty::shouldPreserveWhitespace(CSSPropertyID id)",
+                iterable=self.properties_and_descriptors.all_preserving_whitespace
             )
 
             self._generate_css_property_settings_constructor(
@@ -4120,6 +4137,8 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return f"{builtin.consume_function_name}({range_string})"
             elif isinstance(builtin, BuiltinURLConsumer):
                 return f"{builtin.consume_function_name}({range_string})"
+            elif isinstance(builtin, BuiltinDeclarationValueConsumer):
+                return f"{builtin.consume_function_name}({range_string}, {context_string})"
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:
@@ -4157,6 +4176,8 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return False
             elif isinstance(builtin, BuiltinURLConsumer):
                 return False
+            elif isinstance(builtin, BuiltinDeclarationValueConsumer):
+                return True
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:

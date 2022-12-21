@@ -1163,11 +1163,13 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
     auto propertyID = token.parseAsCSSPropertyID();
     if (range.consume().type() != ColonToken)
         return; // Parse error
-    range.consumeWhitespace();
+
+    if (!CSSProperty::shouldPreserveWhitespace(propertyID))
+        range.consumeWhitespace();
 
     auto declarationValueEnd = range.end();
     bool important = false;
-    if (!range.atEnd()) {
+    if (!range.atEnd() && !CSSProperty::isDescriptorOnly(propertyID)) {
         auto end = range.end();
         removeTrailingWhitespace(range, end);
         declarationValueEnd = end;

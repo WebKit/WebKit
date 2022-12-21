@@ -317,6 +317,7 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 #endif
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
 
+RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 
 // @font-face descriptor consumers:
 
@@ -336,10 +337,6 @@ RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange&, const CSSParserCon
 RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
-
-// @property descriptor consumers:
-
-RefPtr<CSSValue> consumePropertyInitialValue(CSSParserTokenRange&);
 
 // Template and inline implementations are at the bottom of the file for readability.
 

@@ -205,10 +205,12 @@ void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<
 bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType)
 {
     int parsedPropertiesSize = parsedProperties.size();
+    
+    auto consumeWhitespace = !CSSProperty::shouldPreserveWhitespace(propertyID);
 
-    CSSPropertyParser parser(range, context, &parsedProperties);
+    CSSPropertyParser parser(range, context, &parsedProperties, consumeWhitespace);
+
     bool parseSuccess;
-
     if (ruleType == StyleRuleType::FontFace)
         parseSuccess = parser.parseFontFaceDescriptor(propertyID);
     else if (ruleType == StyleRuleType::FontPaletteValues)

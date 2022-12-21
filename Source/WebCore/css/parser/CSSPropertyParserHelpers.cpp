@@ -8445,12 +8445,9 @@ RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
     return consumeCounterStyleName(range);
 }
 
-// MARK: @property
-
-// https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
-RefPtr<CSSValue> consumePropertyInitialValue(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), strictCSSParserContext());
+    return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), context);
 }
 
 } // namespace CSSPropertyParserHelpers

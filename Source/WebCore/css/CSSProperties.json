@@ -8943,7 +8943,7 @@
             "initial-value": {
                 "codegen-properties": {
                     "settings-flag": "cssCustomPropertiesAndValuesEnabled",
-                    "parser-function": "consumePropertyInitialValue"
+                    "parser-grammar": "<declaration-value>"
                 },
                 "specification": {
                     "category": "css-properties-and-values",

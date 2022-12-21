@@ -88,6 +88,7 @@ public:
     static bool isInLogicalPropertyGroup(CSSPropertyID);
     static bool areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID, CSSPropertyID);
     static bool isDescriptorOnly(CSSPropertyID);
+    static bool shouldPreserveWhitespace(CSSPropertyID);
     static bool isColorProperty(CSSPropertyID);
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
