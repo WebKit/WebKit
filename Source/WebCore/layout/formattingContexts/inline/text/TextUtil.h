@@ -88,6 +88,7 @@ public:
     static bool hasHangablePunctuationEnd(const InlineTextItem&, const RenderStyle&);
     static float hangablePunctuationEndWidth(const InlineTextItem&, const RenderStyle&);
 
+    static bool hasHangableStopOrCommaEnd(const InlineTextItem&, const RenderStyle&);
     static float hangableStopOrCommaEndWidth(const InlineTextItem&, const RenderStyle&);
 
 };
