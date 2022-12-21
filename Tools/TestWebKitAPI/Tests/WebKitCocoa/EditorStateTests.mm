@@ -187,7 +187,7 @@ TEST(EditorStateTests, TypingAttributesTextAlignmentAbsoluteAlignmentOptions)
     [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
 
     [testHarness insertHTML:@"<span id='left'>left</span>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
-    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(left.childNodes[0], 0, left.childNodes[0], 6)"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(left.childNodes[0], 0, left.childNodes[0], 4)"];
     [testHarness alignLeftAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
 
     [testHarness selectAllAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
