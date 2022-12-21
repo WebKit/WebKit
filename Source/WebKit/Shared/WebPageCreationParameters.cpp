@@ -117,7 +117,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << gpuMachExtensionHandles;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    encoder << fontMachExtensionHandles;
+    encoder << fontMachExtensionHandle;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     encoder << accentColor;
@@ -201,8 +201,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << contentSecurityPolicyModeForExtension;
     encoder << mainFrameIdentifier;
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    encoder << machBootstrapHandle;
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    encoder << lookalikeCharacterStrings;
 #endif
 }
 
@@ -418,11 +418,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    std::optional<Vector<SandboxExtension::Handle>> fontMachExtensionHandles;
-    decoder >> fontMachExtensionHandles;
-    if (!fontMachExtensionHandles)
+    std::optional<std::optional<SandboxExtension::Handle>> fontMachExtensionHandle;
+    decoder >> fontMachExtensionHandle;
+    if (!fontMachExtensionHandle)
         return std::nullopt;
-    parameters.fontMachExtensionHandles = WTFMove(*fontMachExtensionHandles);
+    parameters.fontMachExtensionHandle = WTFMove(*fontMachExtensionHandle);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
@@ -639,12 +639,12 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.mainFrameIdentifier))
         return std::nullopt;
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    std::optional<SandboxExtension::Handle> machBootstrapHandle;
-    decoder >> machBootstrapHandle;
-    if (!machBootstrapHandle)
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    std::optional<Vector<String>> lookalikeCharacterStrings;
+    decoder >> lookalikeCharacterStrings;
+    if (!lookalikeCharacterStrings)
         return std::nullopt;
-    parameters.machBootstrapHandle = WTFMove(*machBootstrapHandle);
+    parameters.lookalikeCharacterStrings = WTFMove(*lookalikeCharacterStrings);
 #endif
 
     return { WTFMove(parameters) };

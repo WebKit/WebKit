@@ -253,11 +253,47 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
     m_contentLogicalWidth -= removedOrCollapsedContentWidth;
 }
 
-void Line::removeHangingGlyphs()
+void Line::handleTrailingHangingContent(std::optional<IntrinsicWidthMode> intrinsicWidthMode, InlineLayoutUnit horizontalAvailableSpaceForContent, bool isLastFormattedLine)
 {
-    ASSERT(m_trimmableTrailingContent.isEmpty());
-    m_contentLogicalWidth -= m_hangingContent.width();
-    m_hangingContent.resetTrailingContent();
+    if (!isLastFormattedLine)
+        m_hangingContent.resetTrailingPunctuation();
+
+    auto trimmTrailingHangingGlyphsIfApplicable = [&] {
+        if (!m_hangingContent.trailingWidth()) {
+            // Nothing to trim here.
+            return;
+        }
+        if (!intrinsicWidthMode) {
+            // Only trim such content during preferred width computation.
+            return;
+        }
+
+        // 1. The hanging glyph is also not taken into account when computing intrinsic sizes (min-content size and max-content size)
+        // 2. Glyphs that conditionally hang are not taken into account when computing min-content sizes, but they are taken into account for max-content sizes.
+        // https://drafts.csswg.org/css-text/#hanging
+        auto trimmTrailingHangingGlyphs = [&] {
+            ASSERT(m_trimmableTrailingContent.isEmpty());
+            m_contentLogicalWidth -= m_hangingContent.trailingWidth();
+            m_hangingContent.resetTrailingContent();
+        };
+
+        if (*intrinsicWidthMode == IntrinsicWidthMode::Minimum)
+            trimmTrailingHangingGlyphs();
+        else {
+            // A glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification
+            auto isTrailingHangingContentConditional = m_contentLogicalWidth > horizontalAvailableSpaceForContent;
+            // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
+            // by a forced line break, in which case it must conditionally hang the sequence is instead.
+            // Note that end of last line in a paragraph is considered a forced break.
+            auto lineEndsWithLineBreak = !runs().isEmpty() && runs().last().isLineBreak();
+            auto hasConditionalTrailingHangingWhitespace = m_hangingContent.trailingWhitespaceWidth() && (isLastFormattedLine || lineEndsWithLineBreak);
+
+            auto isConditionalHanging = hasConditionalTrailingHangingWhitespace || isTrailingHangingContentConditional;
+            if (!isConditionalHanging)
+                trimmTrailingHangingGlyphs();
+        }
+    };
+    trimmTrailingHangingGlyphsIfApplicable();
 }
 
 void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)

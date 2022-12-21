@@ -2,10 +2,10 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
- * Copyright (C) 2009, 2010, 2011, 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2015 Google Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -509,7 +509,9 @@ bool InputType::isInRange(const String& value) const
     StepRange stepRange(createStepRange(AnyStepHandling::Reject));
     if (!stepRange.hasRangeLimitations())
         return false;
-    
+
+    // This function should return true if both of validity.rangeUnderflow and
+    // validity.rangeOverflow are false. If the INPUT has no value, they are false.
     const Decimal numericValue = parseToNumberOrNaN(value);
     if (!numericValue.isFinite())
         return true;
@@ -526,9 +528,11 @@ bool InputType::isOutOfRange(const String& value) const
     if (!stepRange.hasRangeLimitations())
         return false;
 
+    // This function should return true if both of validity.rangeUnderflow and
+    // validity.rangeOverflow are true. If the INPUT has no value, they are false.
     const Decimal numericValue = parseToNumberOrNaN(value);
     if (!numericValue.isFinite())
-        return true;
+        return false;
 
     return numericValue < stepRange.minimum() || numericValue > stepRange.maximum();
 }

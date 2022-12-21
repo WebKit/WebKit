@@ -718,8 +718,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    if (parameters.fontMachExtensionHandles.size())
-        WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
+    if (parameters.fontMachExtensionHandle)
+        WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(*parameters.fontMachExtensionHandle));
 #endif
 
     pageConfiguration.mainFrameIdentifier = parameters.mainFrameIdentifier;
@@ -953,10 +953,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
-#endif
-
 #if HAVE(SANDBOX_STATE_FLAGS)
     if (!m_page->settings().offlineWebApplicationCacheEnabled()) {
         // This call is not meant to actually read a preference, but is only here to trigger a sandbox rule in the
@@ -964,7 +960,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         // This call should be replaced with proper API when available.
         CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.AppCacheDisabled"), nullptr);
     }
+#endif
 
+#if HAVE(SANDBOX_STATE_FLAGS)
     auto auditToken = WebProcess::singleton().auditTokenForSelf();
     auto experimentalSandbox = parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxEnabledKey());
     if (experimentalSandbox)
@@ -984,6 +982,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     updateThrottleState();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     updateImageAnimationEnabled();
+#endif
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    setLookalikeCharacterStrings(WTFMove(parameters.lookalikeCharacterStrings));
 #endif
 }
 
@@ -4333,10 +4334,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    m_sanitizeLookalikeCharactersInLinksEnabled = store.getBoolValueForKey(WebPreferencesKey::sanitizeLookalikeCharactersInLinksEnabledKey());
-#endif
-
     if (settings.showMediaStatsContextMenuItemEnabled())
         settings.setTrackConfigurationEnabled(true);
 
@@ -5062,16 +5059,10 @@ void WebPage::changeSelectedIndex(int32_t index)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&& machBootstrapHandle, SandboxExtension::Handle&& frontboardServicesSandboxExtensionHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
+void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData, SandboxExtension::Handle&& frontboardServicesSandboxExtensionHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
 {
     if (!m_activeOpenPanelResultListener)
         return;
-
-    auto machBootstrapSandboxExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
-    if (machBootstrapSandboxExtension) {
-        bool consumed = machBootstrapSandboxExtension->consume();
-        ASSERT_UNUSED(consumed, consumed);
-    }
 
 #if HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)
     auto frontboardServicesSandboxExtension = SandboxExtension::create(WTFMove(frontboardServicesSandboxExtensionHandle));
@@ -5087,7 +5078,6 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
         bool consumed = iconServicesSandboxExtension->consume();
         ASSERT_UNUSED(consumed, consumed);
     }
-
     RELEASE_ASSERT(!sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), "com.apple.iconservices"));
 
     RefPtr<Icon> icon;
@@ -5113,10 +5103,6 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
         ASSERT_UNUSED(revoked, revoked);
     }
 
-    if (machBootstrapSandboxExtension) {
-        bool revoked = machBootstrapSandboxExtension->revoke();
-        ASSERT_UNUSED(revoked, revoked);
-    }
 }
 #endif
 
@@ -5158,9 +5144,9 @@ void WebPage::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geol
 
 #if ENABLE(MEDIA_STREAM)
 
-void WebPage::userMediaAccessWasGranted(UserMediaRequestIdentifier userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, WebCore::MediaDeviceHashSalts&& mediaDeviceIdentifierHashSalts, Vector<SandboxExtension::Handle>&& handles, CompletionHandler<void()>&& completionHandler)
+void WebPage::userMediaAccessWasGranted(UserMediaRequestIdentifier userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, WebCore::MediaDeviceHashSalts&& mediaDeviceIdentifierHashSalts, SandboxExtension::Handle&& handle, CompletionHandler<void()>&& completionHandler)
 {
-    SandboxExtension::consumePermanently(handles);
+    SandboxExtension::consumePermanently(handle);
 
     m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(mediaDeviceIdentifierHashSalts), WTFMove(completionHandler));
 }
@@ -6887,10 +6873,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     m_elementsToExcludeFromRemoveBackground.clear();
 #endif
-
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    updateLookalikeCharacterStringsIfNeeded();
-#endif
 }
 
 void WebPage::didFinishDocumentLoad(WebFrame& frame)
@@ -8376,22 +8358,12 @@ bool WebPage::isUsingUISideCompositing() const
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
-void WebPage::updateLookalikeCharacterStringsIfNeeded()
+void WebPage::setLookalikeCharacterStrings(Vector<String>&& strings)
 {
-    if (!m_sanitizeLookalikeCharactersInLinksEnabled)
-        return;
-
-    RefPtr networkProcess = WebProcess::singleton().existingNetworkProcessConnection();
-    if (!networkProcess)
-        return;
-
-    if (!std::exchange(m_shouldUpdateLookalikeCharacterStrings, false))
-        return;
-
-    networkProcess->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestLookalikeCharacterStrings(), [weakPage = WeakPtr { *this }](auto&& strings) {
-        if (RefPtr page = weakPage.get())
-            page->m_lookalikeCharacterStrings = WTFMove(strings);
-    });
+    m_lookalikeCharacterStrings.clear();
+    m_lookalikeCharacterStrings.reserveInitialCapacity(strings.size());
+    for (auto& string : strings)
+        m_lookalikeCharacterStrings.add(string);
 }
 
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)

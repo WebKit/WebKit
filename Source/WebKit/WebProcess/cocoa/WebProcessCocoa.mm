@@ -297,7 +297,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::consumePermanently(parameters.audioCaptureExtensionHandle);
 #endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    Inspector::RemoteInspector::setNeedMachSandboxExtension(!SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandles));
+    Inspector::RemoteInspector::setNeedMachSandboxExtension(!SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandle));
 #endif
 #endif
 
@@ -1212,22 +1212,20 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
 }
 #endif
 
-void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle>&& assetServicesHandles)
+void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
 {
-    if (m_assetServicesExtensions.size())
+    if (m_assetServiceV2Extension)
         return;
-    for (auto& handle : assetServicesHandles) {
-        auto extension = SandboxExtension::create(WTFMove(handle));
-        extension->consume();
-        m_assetServicesExtensions.append(extension);
-    }
+    m_assetServiceV2Extension = SandboxExtension::create(WTFMove(mobileAssetV2Handle));
+    m_assetServiceV2Extension->consume();
 }
 
 void WebProcess::revokeAccessToAssetServices()
 {
-    for (auto extension : m_assetServicesExtensions)
-        extension->revoke();
-    m_assetServicesExtensions.clear();
+    if (!m_assetServiceV2Extension)
+        return;
+    m_assetServiceV2Extension->revoke();
+    m_assetServiceV2Extension = nullptr;
 }
 
 void WebProcess::disableURLSchemeCheckInDataDetectors() const
@@ -1238,9 +1236,9 @@ void WebProcess::disableURLSchemeCheckInDataDetectors() const
 #endif
 }
 
-void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtension::Handle>&& fontMachExtensionHandles)
+void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle)
 {
-    SandboxExtension::consumePermanently(fontMachExtensionHandles);
+    SandboxExtension::consumePermanently(fontMachExtensionHandle);
 #if HAVE(STATIC_FONT_REGISTRY)
     CTFontManagerEnableAllUserFonts(true);
 #endif
@@ -1329,17 +1327,9 @@ void WebProcess::systemDidWake()
 #endif
 
 #if PLATFORM(MAC)
-void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle, SandboxExtension::Handle&& machBootstrapHandle)
+void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
 {
-    auto bootstrapExtension = SandboxExtension::create(WTFMove(machBootstrapHandle));
-
-    if (bootstrapExtension)
-        bootstrapExtension->consume();
-    
     AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
-    
-    if (bootstrapExtension)
-        bootstrapExtension->revoke();
 }
 #endif
 

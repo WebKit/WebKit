@@ -34,9 +34,12 @@
 
 #import "CocoaHelpers.h"
 #import "SandboxUtilities.h"
+#import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxyMessages.h"
+#import "WebExtensionEventListenerType.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import <wtf/FileSystem.h>
@@ -231,6 +234,24 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
     for (auto& extensionContext : m_extensionContexts)
         extensions.addVoid(extensionContext->extension());
     return extensions;
+}
+
+// MARK: WebNavigation support
+
+void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+{
+    WebExtensionContext::EventListenerTypeSet listenerTypes;
+    listenerTypes.add(WebExtensionEventListenerType::WebNavigationOnBeforeNavigate);
+
+    for (auto& context : m_extensionContexts) {
+        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
+        if (!context->hasPermission(targetURL))
+            continue;
+
+        context->fireEvents(listenerTypes, [context, pageID, frameID, targetURL] {
+            context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnBeforeNavigate, Messages::WebExtensionContextProxy::DispatchWebNavigationOnBeforeNavigateEvent(pageID, frameID, targetURL));
+        });
+    }
 }
 
 } // namespace WebKit

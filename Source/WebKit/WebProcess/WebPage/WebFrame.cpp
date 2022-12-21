@@ -283,6 +283,10 @@ void WebFrame::didCommitLoadInAnotherProcess()
     if (!parent)
         return;
 
+    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(coreFrame.get());
+    if (auto* document = localFrame ? localFrame->document() : nullptr)
+        document->willBeRemovedFromFrame();
+
     RefPtr ownerElement = coreFrame->ownerElement();
     parent->tree().removeChild(*coreFrame);
     coreFrame->disconnectOwnerElement();

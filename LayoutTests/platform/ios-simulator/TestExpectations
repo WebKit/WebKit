@@ -68,6 +68,13 @@ imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.s
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Failure ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Failure ]
 
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html [ ImageOnlyFailure ]

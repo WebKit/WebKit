@@ -39,6 +39,10 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/CString.h>
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+#include "SandboxStateVariables.h"
+#endif
+
 namespace WebKit {
 
 class SandboxExtensionImpl {
@@ -317,16 +321,9 @@ auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral extensionCla
     return WTFMove(handle);
 }
 
-auto SandboxExtension::createHandleForMachBootstrapExtension() -> Handle
+auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> std::optional<Handle>
 {
-    auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.mach-bootstrap"_s);
-    if (handle)
-        return WTFMove(*handle);
-    return Handle();
-}
-
-auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> std::optional<Handle>
-{
+    UNUSED_PARAM(machBootstrapOptions);
     Handle handle;
     ASSERT(!handle.m_sandboxExtension);
     
@@ -336,21 +333,29 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
         return std::nullopt;
     }
     
+#if HAVE(SANDBOX_STATE_FLAGS)
+    // When launchd is blocked in the sandbox, we need to manually enable bootstrapping of new XPC connectons.
+    // This is done by unblocking launchd, since launchd access is required when creating Mach connections.
+    // Unblocking launchd is done by enabling a sandbox state variable.
+    if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap) {
+        if (auditToken) {
+            if (!sandbox_enable_state_flag(ENABLE_MACH_BOOTSTRAP, *auditToken))
+                RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, errno = %d.", errno);
+        } else
+            RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, no audit token provided.");
+    }
+#endif
+
     return WTFMove(handle);
 }
 
 auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
 {
-    auto handles = createHandlesForResources(services, [auditToken, flags] (ASCIILiteral service) -> std::optional<Handle> {
-        auto handle = createHandleForMachLookup(service, auditToken, flags);
+    return createHandlesForResources(services, [auditToken, machBootstrapOptions, flags] (ASCIILiteral service) -> std::optional<Handle> {
+        auto handle = createHandleForMachLookup(service, auditToken, machBootstrapOptions, flags);
         ASSERT(handle);
         return handle;
     });
-
-    if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap)
-        handles.append(createHandleForMachBootstrapExtension());
-
-    return handles;
 }
 
 auto SandboxExtension::createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>

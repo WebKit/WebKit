@@ -297,10 +297,6 @@ private:
     void getProcessDisplayName(audit_token_t, CompletionHandler<void(const String&)>&&);
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    void requestLookalikeCharacterStrings(CompletionHandler<void(const HashSet<String>&)>&&);
-#endif
-
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif

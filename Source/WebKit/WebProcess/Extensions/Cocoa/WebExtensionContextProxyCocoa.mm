@@ -23,13 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
+#include "config.h"
+#include "WebExtensionContextProxy.h"
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-messages -> WebExtensionController {
+#include "WebExtensionAPINamespace.h"
+#include "WebExtensionAPIWebNavigation.h"
+#include <WebCore/ProcessQualified.h>
+#include <wtf/ObjectIdentifier.h>
 
-    // webNavigation support.
-    DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+namespace WebKit {
 
+using namespace WebCore;
+
+// MARK: webNavigation support
+
+void WebExtensionContextProxy::dispatchWebNavigationOnBeforeNavigateEvent(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+{
+    NSDictionary *navigationDetails = @{
+        @"url": [(NSURL *)targetURL absoluteString],
+
+        // FIXME: We should be passing more arguments here and these arguments should have the correct values.
+        @"tabId": @(pageID.toUInt64()),
+        @"frameId": @(frameID.object().toUInt64())
+    };
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webNavigationObject = namespaceObject.webNavigation();
+        webNavigationObject.onBeforeNavigate().invokeListenersWithArgument(navigationDetails, targetURL);
+    });
 }
+
+} // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

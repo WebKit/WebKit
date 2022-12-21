@@ -35,6 +35,7 @@ namespace Layout {
 
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
+enum class IntrinsicWidthMode;
 
 class Line {
 public:
@@ -65,8 +66,8 @@ public:
 
     enum class TrailingContentAction : uint8_t { Remove, Preserve };
     void handleTrailingTrimmableContent(TrailingContentAction);
+    void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
-    void removeHangingGlyphs();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
     void truncate(InlineLayoutUnit logicalRight);

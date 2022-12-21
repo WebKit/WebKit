@@ -602,6 +602,8 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
             return JSValue::encode(jsNumber(-1));
 
         length = lengthValue.value();
+        if (!length)
+            return JSValue::encode(jsNumber(-1));
         index = std::min(length - 1, index);
     }
 

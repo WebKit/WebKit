@@ -3,5 +3,5 @@
 test if toblob returns p3 data from p3 color space canvas
 
 
-FAIL test if toblob returns p3 data from p3 color space canvas Type error
+PASS test if toblob returns p3 data from p3 color space canvas
 

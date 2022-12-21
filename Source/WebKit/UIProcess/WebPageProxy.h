@@ -2716,6 +2716,11 @@ private:
     static bool isInHardwareKeyboardMode();
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    static Vector<String>& cachedLookalikeStrings();
+    void updateLookalikeCharacterStringsIfNeeded();
+#endif
+
 #if USE(RUNNINGBOARD)
     void clearAudibleActivity();
 #endif
@@ -3325,6 +3330,10 @@ private:
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
     bool m_isLockdownModeExplicitlySet { false };
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    bool m_shouldUpdateLookalikeCharacterStrings { false };
+#endif
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;
 

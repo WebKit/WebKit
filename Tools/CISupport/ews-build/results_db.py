@@ -100,7 +100,16 @@ class ResultsDatabase(object):
     @defer.inlineCallbacks
     def is_test_expected_to(cls, test, result_type=None, commit=None, configuration=None, logger=None):
         logger = logger or (lambda log: None)
-        data = yield cls.get_results_summary(test, commit=commit, configuration=configuration, logger=logger)
+        has_commit = False
+        if commit:
+            has_commit = yield cls.has_commit(commit=commit)
+            if not has_commit:
+                logger(f"'{commit}' is not registered on '{cls.HOSTNAME}'\n")
+
+        data = yield cls.get_results_summary(
+            test, configuration=configuration, logger=logger,
+            commit=commit if has_commit else None,
+        )
         logger(f'{test}\n')
         for key, value in (data or dict()).items():
             if not value:
@@ -113,6 +122,15 @@ class ResultsDatabase(object):
         if result_type:
             return defer.returnValue(data.get(result_type.lower(), 0) > cls.PERCENT_THRESHOLD)
         return defer.returnValue(100 - (data.get('pass', 0) + data.get('warning', 0)) > cls.PERCENT_THRESHOLD)
+
+    @classmethod
+    @defer.inlineCallbacks
+    def has_commit(cls, commit, logger=None):
+        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/commits', params=dict(ref=commit), logger=logger)
+        if not response or response.status_code != 200:
+            defer.returnValue(False)
+        else:
+            defer.returnValue(True)
 
     @classmethod
     def main(cls, args=None):

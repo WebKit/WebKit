@@ -63,6 +63,9 @@ public:
 #if PLATFORM(COCOA)
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
     void serviceWorkerGlobalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
+
+    // webNavigation support.
+    void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, const URL&);
 #endif
 
 private:

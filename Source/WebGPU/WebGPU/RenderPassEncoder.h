@@ -98,7 +98,10 @@ private:
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;
-    MTLPrimitiveType m_primitiveType;
+    MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
+    id<MTLBuffer> m_indexBuffer { nil };
+    MTLIndexType m_indexType { MTLIndexTypeUInt16 };
+    NSUInteger m_indexBufferOffset { 0 };
 };
 
 } // namespace WebGPU

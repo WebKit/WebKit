@@ -461,7 +461,7 @@ public:
 
 #if PLATFORM(COCOA)
     std::optional<audit_token_t> auditToken() const;
-    Vector<SandboxExtension::Handle> fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions) const;
+    SandboxExtension::Handle fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions) const;
 #endif
 
     bool isConnectedToHardwareConsole() const { return m_isConnectedToHardwareConsole; }

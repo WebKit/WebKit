@@ -27,6 +27,9 @@
 
 messages -> WebExtensionContextProxy {
 
+    // webNavigation support
+    DispatchWebNavigationOnBeforeNavigateEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

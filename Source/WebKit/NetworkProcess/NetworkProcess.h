@@ -493,6 +493,10 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    void requestLookalikeCharacterStrings(CompletionHandler<void(const Vector<String>&)>&&);
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     void setIsHoldingLockedFiles(bool);
 #endif
