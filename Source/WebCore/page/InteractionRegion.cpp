@@ -117,17 +117,19 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     auto element = dynamicDowncast<Element>(regionRenderer.node());
     if (!element) 
         element = regionRenderer.node()->parentElement();
+    if (!element)
+        return std::nullopt;
+
     if (auto* linkElement = element->enclosingLinkEventParentOrSelf())
         element = linkElement;
     if (auto* buttonElement = ancestorsOfType<HTMLButtonElement>(*element).first())
         element = buttonElement;
 
-    if (!element || !element->renderer())
-        return std::nullopt;
-
     if (!shouldAllowElement(*element))
         return std::nullopt;
 
+    if (!element->renderer())
+        return std::nullopt;
     auto& renderer = *element->renderer();
 
     if (renderer.style().effectivePointerEvents() == PointerEvents::None)
