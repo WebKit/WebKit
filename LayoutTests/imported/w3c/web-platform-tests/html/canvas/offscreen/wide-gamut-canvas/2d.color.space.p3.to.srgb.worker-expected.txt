@@ -1,3 +1,3 @@
 
-FAIL test getImageData with srsb and uint8 from display p3 uint8 canvas Type error
+PASS test getImageData with srsb and uint8 from display p3 uint8 canvas
 
