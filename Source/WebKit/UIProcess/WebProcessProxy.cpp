@@ -604,6 +604,7 @@ void WebProcessProxy::shutDown()
     m_backgroundResponsivenessTimer.invalidate();
     m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = std::nullopt;
+    m_mediaStreamingActivity = std::nullopt;
 
     for (auto& page : pages()) {
         if (page)
@@ -748,6 +749,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     removeVisitedLinkStoreUser(webPage.visitedLinkStore(), webPage.identifier());
     updateRegistrationWithDataStore();
     updateAudibleMediaAssertions();
+    updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
 
     maybeShutDown();
@@ -1609,15 +1611,14 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 
 void WebProcessProxy::updateAudibleMediaAssertions()
 {
-    bool newHasAudibleWebPage = WTF::anyOf(pages(), [] (auto& page) {
+    bool hasAudibleWebPage = WTF::anyOf(pages(), [] (auto& page) {
         return page && page->isPlayingAudio();
     });
 
-    bool hasAudibleMediaActivity = !!m_audibleMediaActivity;
-    if (hasAudibleMediaActivity == newHasAudibleWebPage)
+    if (!!m_audibleMediaActivity == hasAudibleWebPage)
         return;
 
-    if (newHasAudibleWebPage) {
+    if (hasAudibleWebPage) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Taking MediaPlayback assertion for WebProcess");
         m_audibleMediaActivity = AudibleMediaActivity {
             ProcessAssertion::create(processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
@@ -1626,6 +1627,24 @@ void WebProcessProxy::updateAudibleMediaAssertions()
     } else {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Releasing MediaPlayback assertion for WebProcess");
         m_audibleMediaActivity = std::nullopt;
+    }
+}
+
+void WebProcessProxy::updateMediaStreamingActivity()
+{
+    bool hasMediaStreamingWebPage = WTF::anyOf(pages(), [] (auto& page) {
+        return page && page->hasMediaStreaming();
+    });
+
+    if (!!m_mediaStreamingActivity == hasMediaStreamingWebPage)
+        return;
+
+    if (hasMediaStreamingWebPage) {
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateMediaStreamingActivity: Start Media Networking Activity for WebProcess");
+        m_mediaStreamingActivity = processPool().webProcessWithMediaStreamingToken();
+    } else {
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateMediaStreamingActivity: Stop Media Networking Activity for WebProcess");
+        m_mediaStreamingActivity = std::nullopt;
     }
 }
 

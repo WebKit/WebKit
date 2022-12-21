@@ -2343,6 +2343,7 @@
 		4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle.cpp; sourceTree = "<group>"; };
 		4C453A43294A468200D91D2B /* Ahem-10000A.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Ahem-10000A.ttf"; sourceTree = "<group>"; };
 		4CC961E4294A36A000483F06 /* LockdownModeFonts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = LockdownModeFonts.html; path = Tests/WebKitCocoa/LockdownModeFonts.html; sourceTree = SOURCE_ROOT; };
+		5102ED872950538D0053243E /* WKPageHasMediaStreamingActivity.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPageHasMediaStreamingActivity.mm; sourceTree = "<group>"; };
 		5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IDBDeleteRecovery.sqlite3; sourceTree = "<group>"; };
 		510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-shm"; sourceTree = "<group>"; };
 		510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-wal"; sourceTree = "<group>"; };
@@ -4079,6 +4080,7 @@
 				DF4B273821A47727009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm */,
 				375E0E151D66674400EFEC2C /* WKNSNumber.mm */,
 				37B47E2E1D64E7CA005F4EFF /* WKObject.mm */,
+				5102ED872950538D0053243E /* WKPageHasMediaStreamingActivity.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFView.mm */,
 				1CC4C74A288909F600A3B23D /* WKPrinting.mm */,
 				3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */,
