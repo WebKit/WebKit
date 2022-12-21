@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Google Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -48,7 +48,7 @@ static int const ExponentMax = 1023;
 static int const ExponentMin = -1023;
 static int const Precision = 18;
 
-static const uint64_t MaxCoefficient = UINT64_C(0x16345785D89FFFF); // 999999999999999999 == 18 9's
+static const uint64_t MaxCoefficient = UINT64_C(0XDE0B6B3A763FFFF); // 999999999999999999 == 18 9's
 
 // This class handles Decimal special values.
 class SpecialValueHandler {
@@ -491,13 +491,18 @@ Decimal Decimal::operator/(const Decimal& rhs) const
     uint64_t remainder = lhs.m_data.coefficient();
     const uint64_t divisor = rhs.m_data.coefficient();
     uint64_t result = 0;
-    while (result < MaxCoefficient / 100) {
-        while (remainder < divisor) {
+    for (;;) {
+        while (remainder < divisor && result < MaxCoefficient / 10) {
             remainder *= 10;
             result *= 10;
             --resultExponent;
         }
-        result += remainder / divisor;
+        if (remainder < divisor)
+            break;
+        uint64_t quotient = remainder / divisor;
+        if (result > MaxCoefficient - quotient)
+            break;
+        result += quotient;
         remainder %= divisor;
         if (!remainder)
             break;
@@ -627,7 +632,7 @@ Decimal Decimal::ceiling() const
     uint64_t result = m_data.coefficient();
     const int numberOfDigits = countDigits(result);
     const int numberOfDropDigits = -exponent();
-    if (numberOfDigits < numberOfDropDigits)
+    if (numberOfDigits <= numberOfDropDigits)
         return isPositive() ? Decimal(1) : zero(Positive);
 
     result = scaleDown(result, numberOfDropDigits - 1);
