@@ -49,7 +49,10 @@ struct ByteTerm {
                     UChar32 hi;
                 } casedCharacter;
                 CharacterClass* characterClass;
-                unsigned subpatternId;
+                struct {
+                    unsigned subpatternId;
+                    unsigned lastSubpatternId;
+                } ids;
             };
             union {
                 ByteDisjunction* parenthesesDisjunction;
@@ -188,7 +191,7 @@ struct ByteTerm {
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
-        atom.subpatternId = subpatternId;
+        atom.ids.subpatternId = subpatternId;
         atom.parenthesesDisjunction = parenthesesInfo;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
@@ -213,7 +216,7 @@ struct ByteTerm {
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
-        atom.subpatternId = subpatternId;
+        atom.ids.subpatternId = subpatternId;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
@@ -226,7 +229,7 @@ struct ByteTerm {
         , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
-        atom.subpatternId = subpatternId;
+        atom.ids.subpatternId = subpatternId;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
@@ -367,6 +370,22 @@ struct ByteTerm {
         return type == Type::CharacterClass;
     }
 
+    bool containsAnyCaptures()
+    {
+        ASSERT(this->type == Type::ParentheticalAssertionBegin
+            || this->type == Type::ParentheticalAssertionEnd);
+        return lastSubpatternId() >= subpatternId();
+    }
+
+    unsigned subpatternId()
+    {
+        return atom.ids.subpatternId;
+    }
+
+    unsigned lastSubpatternId()
+    {
+        return atom.ids.lastSubpatternId;
+    }
     bool invert()
     {
         return m_invert;

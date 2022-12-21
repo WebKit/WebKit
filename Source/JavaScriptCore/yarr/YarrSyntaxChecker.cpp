@@ -50,7 +50,7 @@ public:
     void atomNamedBackReference(const String&) { }
     void atomNamedForwardReference(const String&) { }
     void quantifyAtom(unsigned, unsigned, bool) { }
-    void disjunction() { }
+    void disjunction(CreateDisjunctionPurpose) { }
     void resetForReparsing() { }
 };
 
