@@ -2032,11 +2032,11 @@ auto AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, B3::Type returnType
     RELEASE_ASSERT(!newSize.hasOverflowed());
 
     patchArgs.grow(newSize);
-    const Vector<ArgumentLocation> &constrainedArgLocations = wasmCalleeInfo.params;
+    const Vector<ArgumentLocation>& constrainedArgLocations = wasmCalleeInfo.params;
     for (unsigned i = 0; i < tmpArgs.size(); ++i)
         patchArgs[i + offset] = ConstrainedTmp(tmpArgs[i], constrainedArgLocations[i]);
 
-    const Vector<ArgumentLocation, 1> &constrainedResultLocations = wasmCalleeInfo.results;
+    const Vector<ArgumentLocation, 1>& constrainedResultLocations = wasmCalleeInfo.results;
     if (patchpoint->type() != B3::Void) {
         Vector<B3::ValueRep, 1> resultConstraints;
         for (auto resultLocation : constrainedResultLocations)

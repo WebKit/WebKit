@@ -3209,7 +3209,16 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             return { };
         }
 
-        emitUnlinkedWasmToWasmCall(self().emitCallPatchpoint(isWasmBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo));
+        auto data = self().emitCallPatchpoint(isWasmBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo);
+        auto* patchpoint = data.first;
+
+        // We need to clobber all potential pinned registers since we might be leaving the instance.
+        // We pessimistically assume we could be calling to something that is bounds checking.
+        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+        patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+
+        emitUnlinkedWasmToWasmCall(WTFMove(data));
+
         emitCallToEmbedder(self().emitCallPatchpoint(isEmbedderBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
 
         BasicBlock* continuation = m_code.addBlock();
