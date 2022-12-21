@@ -115,6 +115,9 @@ public:
     virtual void willStartAnimatedScroll() { }
     virtual void didStopAnimatedScroll() { }
 
+    virtual void willStartWheelEventScroll() { }
+    virtual void didStopWheelEventScroll() { }
+
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
 

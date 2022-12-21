@@ -4126,4 +4126,18 @@ String Page::sanitizeLookalikeCharacters(const String& urlString) const
     return urlString;
 }
 
+void Page::willBeginScrolling()
+{
+#if USE(APPKIT)
+    editorClient().setCaretDecorationVisibility(false);
+#endif
+}
+
+void Page::didFinishScrolling()
+{
+#if USE(APPKIT)
+    editorClient().setCaretDecorationVisibility(true);
+#endif
+}
+
 } // namespace WebCore

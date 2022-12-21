@@ -197,6 +197,8 @@ private:
 
     void setEditableElementIsFocused(bool) override;
 
+    void setCaretDecorationVisibility(bool) override;
+
     void registerInsertionUndoGrouping() override;
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

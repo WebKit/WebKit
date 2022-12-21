@@ -119,6 +119,11 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
         return false;
 
+    if (wheelEvent.isEndOfNonMomentumScroll() || wheelEvent.isEndOfMomentumScroll())
+        m_client.didStopWheelEventScroll();
+    else if (wheelEvent.isGestureStart() || wheelEvent.isTransitioningToMomentumScroll())
+        m_client.willStartWheelEventScroll();
+
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
         auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);

@@ -333,6 +333,8 @@ private:
     void uppercaseWord() final { }
     void lowercaseWord() final { }
     void capitalizeWord() final { }
+
+    void setCaretDecorationVisibility(bool) final { }
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

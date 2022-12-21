@@ -51,6 +51,7 @@
 #include "ScrollingStateTree.h"
 #include "Settings.h"
 #include "WheelEventTestMonitor.h"
+#include "pal/HysteresisActivity.h"
 #include <wtf/ProcessID.h>
 #include <wtf/text/TextStream.h>
 
@@ -59,7 +60,14 @@ namespace WebCore {
 AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
     : ScrollingCoordinator(page)
     , m_scrollingStateTree(makeUnique<ScrollingStateTree>(this))
+    , m_hysterisisActivity([this](auto state) { hysterisisTimerFired(state); }, 200_ms)
 {
+}
+
+void AsyncScrollingCoordinator::hysterisisTimerFired(PAL::HysteresisState state)
+{
+    if (state == PAL::HysteresisState::Stopped)
+        m_page->didFinishScrolling();
 }
 
 AsyncScrollingCoordinator::~AsyncScrollingCoordinator() = default;
@@ -456,12 +464,42 @@ void AsyncScrollingCoordinator::applyScrollUpdate(ScrollUpdate&& update, ScrollT
 
 void AsyncScrollingCoordinator::applyScrollPositionUpdate(ScrollUpdate&& update, ScrollType scrollType)
 {
-    if (update.updateType == ScrollUpdateType::AnimatedScrollDidEnd) {
+    switch (update.updateType) {
+    case ScrollUpdateType::AnimatedScrollWillStart:
+        animatedScrollWillStartForNode(update.nodeID);
+        return;
+
+    case ScrollUpdateType::AnimatedScrollDidEnd:
         animatedScrollDidEndForNode(update.nodeID);
         return;
-    }
 
-    updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction, scrollType);
+    case ScrollUpdateType::WheelEventScrollWillStart:
+        wheelEventScrollWillStartForNode(update.nodeID);
+        return;
+
+    case ScrollUpdateType::WheelEventScrollDidEnd:
+        wheelEventScrollDidEndForNode(update.nodeID);
+        return;
+
+    case ScrollUpdateType::PositionUpdate:
+        updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction, scrollType);
+        return;
+    }
+}
+
+void AsyncScrollingCoordinator::animatedScrollWillStartForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    m_hysterisisActivity.start();
+    m_page->willBeginScrolling();
 }
 
 void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scrollingNodeID)
@@ -477,6 +515,8 @@ void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scro
 
     LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::animatedScrollDidEndForNode node " << scrollingNodeID);
 
+    m_hysterisisActivity.stop();
+
     if (scrollingNodeID == frameView->scrollingNodeID()) {
         frameView->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
         return;
@@ -486,6 +526,35 @@ void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scro
         scrollableArea->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
         scrollableArea->animatedScrollDidEnd();
     }
+}
+
+void AsyncScrollingCoordinator::wheelEventScrollWillStartForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    m_hysterisisActivity.start();
+    m_page->willBeginScrolling();
+}
+
+void AsyncScrollingCoordinator::wheelEventScrollDidEndForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    m_hysterisisActivity.stop();
 }
 
 void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction scrollingLayerPositionAction, ScrollType scrollType)

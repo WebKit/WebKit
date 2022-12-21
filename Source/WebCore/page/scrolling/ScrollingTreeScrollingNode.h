@@ -141,7 +141,10 @@ protected:
     virtual bool startAnimatedScrollToPosition(FloatPoint);
     virtual void stopAnimatedScroll();
 
+    void willStartAnimatedScroll();
     void didStopAnimatedScroll();
+    void willStartWheelEventScroll();
+    void didStopWheelEventScroll();
 
     void setScrollAnimationInProgress(bool);
 

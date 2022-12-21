@@ -376,6 +376,8 @@ public:
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
     void setEditableElementIsFocused(bool);
 
+    void setCaretDecorationVisibility(bool);
+
     void startSpeaking();
     void stopSpeaking(id);
 

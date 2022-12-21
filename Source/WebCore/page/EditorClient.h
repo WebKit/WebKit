@@ -154,6 +154,8 @@ public:
     virtual void uppercaseWord() = 0;
     virtual void lowercaseWord() = 0;
     virtual void capitalizeWord() = 0;
+
+    virtual void setCaretDecorationVisibility(bool) = 0;
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

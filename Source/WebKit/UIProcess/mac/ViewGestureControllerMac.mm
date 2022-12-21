@@ -119,6 +119,12 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
 
     ASSERT(m_activeGestureType == ViewGestureType::None || m_activeGestureType == ViewGestureType::Magnification);
 
+    if (event.phase == NSEventPhaseBegan)
+        m_webPageProxy.setCaretDecorationVisibility(false);
+
+    if (event.phase == NSEventPhaseEnded || event.phase == NSEventPhaseCancelled)
+        m_webPageProxy.setCaretDecorationVisibility(true);
+
     if (m_activeGestureType == ViewGestureType::None) {
         if (event.phase != NSEventPhaseBegan)
             return;

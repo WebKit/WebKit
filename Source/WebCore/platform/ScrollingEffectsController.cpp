@@ -518,6 +518,8 @@ void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation& anima
     UNUSED_PARAM(animation);
 #endif
 
+    m_client.willStartAnimatedScroll();
+
     if (is<ScrollAnimationKeyboard>(animation)) {
         willBeginKeyboardScrolling();
         startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);

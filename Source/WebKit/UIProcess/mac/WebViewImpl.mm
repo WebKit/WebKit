@@ -5790,6 +5790,12 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 
 #endif // HAVE(TOUCH_BAR)
 
+#if !USE(APPLE_INTERNAL_SDK)
+void WebViewImpl::setCaretDecorationVisibility(bool)
+{
+}
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void WebViewImpl::setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate* coordinator)
 {

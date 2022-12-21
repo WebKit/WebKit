@@ -136,4 +136,16 @@ TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollUpdateType type)
+{
+    switch (type) {
+    case ScrollUpdateType::PositionUpdate: ts << "position update"; break;
+    case ScrollUpdateType::AnimatedScrollWillStart: ts << "animated scroll will start"; break;
+    case ScrollUpdateType::AnimatedScrollDidEnd: ts << "animated scroll did end"; break;
+    case ScrollUpdateType::WheelEventScrollWillStart: ts << "wheel event scroll will start"; break;
+    case ScrollUpdateType::WheelEventScrollDidEnd: ts << "wheel event scroll did end"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore
