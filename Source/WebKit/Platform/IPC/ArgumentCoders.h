@@ -107,8 +107,8 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
 
 template<typename... Types>
 struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
-    template<size_t Indices>
-    using ArrayReferenceTupleElementType = std::tuple_element_t<Indices, std::tuple<Types...>>;
+    template<size_t Index>
+    using ArrayReferenceTupleElementType = std::tuple_element_t<Index, std::tuple<Types...>>;
 
     template<typename Encoder>
     static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference)
@@ -124,39 +124,39 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
         if (UNLIKELY(!size))
             return;
 
-        (encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<Indices>()),
-            size * sizeof(ArrayReferenceTupleElementType<Indices>), alignof(ArrayReferenceTupleElementType<Indices>)) , ...);
+        (encoder << ... << Span<const ArrayReferenceTupleElementType<Indices>> { arrayReference.template data<Indices>(), size });
     }
 
     template<typename Decoder>
     static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
     {
-        auto size = decoder.template decode<uint64_t>();
-        if (UNLIKELY(!size))
+        auto decodedSize = decoder.template decode<uint64_t>();
+        if (UNLIKELY(!decodedSize))
             return std::nullopt;
-        if (UNLIKELY(!*size))
+        if (UNLIKELY(!*decodedSize))
             return ArrayReferenceTuple<Types...> { };
 
-        return decode(decoder, *size);
+        CheckedSize size { *decodedSize };
+        bool anyOverflow = (size.hasOverflowed() || ... || (size * sizeof(Types)).hasOverflowed());
+        if (UNLIKELY(anyOverflow))
+            return std::nullopt;
+
+        return decode(decoder, size);
     }
 
     template<typename Decoder, typename... DataPointerTypes>
-    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, uint64_t size, DataPointerTypes&&... dataPointers)
+    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, size_t size, DataPointerTypes&&... dataPointers)
     {
-        constexpr size_t Index = sizeof...(DataPointerTypes);
-        static_assert(Index <= sizeof...(Types));
+        constexpr size_t index = sizeof...(DataPointerTypes);
+        static_assert(index <= sizeof...(Types));
 
-        if constexpr (Index < sizeof...(Types)) {
-            using ElementType = ArrayReferenceTupleElementType<Index>;
-            auto dataSize = CheckedSize { size } * sizeof(ElementType);
-            if (UNLIKELY(dataSize.hasOverflowed()))
+        if constexpr (index < sizeof...(Types)) {
+            auto data = decoder.template decode<Span<const ArrayReferenceTupleElementType<index>>>();
+            if (UNLIKELY(!data || data->size() != size))
                 return std::nullopt;
-            const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(ElementType));
-            if (UNLIKELY(!data))
-                return std::nullopt;
-            return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., reinterpret_cast<const ElementType*>(data) );
+            return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., data->data());
         } else
-            return ArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., static_cast<size_t>(size) };
+            return ArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., size };
     }
 };
 
