@@ -63,7 +63,7 @@ void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
     m_backing->setPipeline(*convertedRenderPipeline);
 }
 
-void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, PAL::WebGPU::IndexFormat indexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
+void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, PAL::WebGPU::IndexFormat indexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
@@ -73,7 +73,7 @@ void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, PAL::Web
     m_backing->setIndexBuffer(*convertedBuffer, indexFormat, offset, size);
 }
 
-void RemoteRenderBundleEncoder::setVertexBuffer(PAL::WebGPU::Index32 slot, WebGPUIdentifier buffer, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
+void RemoteRenderBundleEncoder::setVertexBuffer(PAL::WebGPU::Index32 slot, WebGPUIdentifier buffer, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
@@ -83,16 +83,16 @@ void RemoteRenderBundleEncoder::setVertexBuffer(PAL::WebGPU::Index32 slot, WebGP
     m_backing->setVertexBuffer(slot, *convertedBuffer, offset, size);
 }
 
-void RemoteRenderBundleEncoder::draw(PAL::WebGPU::Size32 vertexCount, PAL::WebGPU::Size32 instanceCount,
-    PAL::WebGPU::Size32 firstVertex, PAL::WebGPU::Size32 firstInstance)
+void RemoteRenderBundleEncoder::draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+    std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance)
 {
     m_backing->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-void RemoteRenderBundleEncoder::drawIndexed(PAL::WebGPU::Size32 indexCount, PAL::WebGPU::Size32 instanceCount,
-    PAL::WebGPU::Size32 firstIndex,
-    PAL::WebGPU::SignedOffset32 baseVertex,
-    PAL::WebGPU::Size32 firstInstance)
+void RemoteRenderBundleEncoder::drawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+    std::optional<PAL::WebGPU::Size32> firstIndex,
+    std::optional<PAL::WebGPU::SignedOffset32> baseVertex,
+    std::optional<PAL::WebGPU::Size32> firstInstance)
 {
     m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }

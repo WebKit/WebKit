@@ -55,7 +55,7 @@ void RemoteRenderPassEncoderProxy::setPipeline(const PAL::WebGPU::RenderPipeline
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::setIndexBuffer(const PAL::WebGPU::Buffer& buffer, PAL::WebGPU::IndexFormat indexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
+void RemoteRenderPassEncoderProxy::setIndexBuffer(const PAL::WebGPU::Buffer& buffer, PAL::WebGPU::IndexFormat indexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
     ASSERT(convertedBuffer);
@@ -66,7 +66,7 @@ void RemoteRenderPassEncoderProxy::setIndexBuffer(const PAL::WebGPU::Buffer& buf
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::setVertexBuffer(PAL::WebGPU::Index32 slot, const PAL::WebGPU::Buffer& buffer, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
+void RemoteRenderPassEncoderProxy::setVertexBuffer(PAL::WebGPU::Index32 slot, const PAL::WebGPU::Buffer& buffer, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
     ASSERT(convertedBuffer);
@@ -77,17 +77,17 @@ void RemoteRenderPassEncoderProxy::setVertexBuffer(PAL::WebGPU::Index32 slot, co
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::draw(PAL::WebGPU::Size32 vertexCount, PAL::WebGPU::Size32 instanceCount,
-    PAL::WebGPU::Size32 firstVertex, PAL::WebGPU::Size32 firstInstance)
+void RemoteRenderPassEncoderProxy::draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+    std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance)
 {
     auto sendResult = send(Messages::RemoteRenderPassEncoder::Draw(vertexCount, instanceCount, firstVertex, firstInstance));
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::drawIndexed(PAL::WebGPU::Size32 indexCount, PAL::WebGPU::Size32 instanceCount,
-    PAL::WebGPU::Size32 firstIndex,
-    PAL::WebGPU::SignedOffset32 baseVertex,
-    PAL::WebGPU::Size32 firstInstance)
+void RemoteRenderPassEncoderProxy::drawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+    std::optional<PAL::WebGPU::Size32> firstIndex,
+    std::optional<PAL::WebGPU::SignedOffset32> baseVertex,
+    std::optional<PAL::WebGPU::Size32> firstInstance)
 {
     auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance));
     UNUSED_VARIABLE(sendResult);

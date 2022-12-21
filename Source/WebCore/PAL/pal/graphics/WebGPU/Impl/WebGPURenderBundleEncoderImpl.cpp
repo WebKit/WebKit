@@ -53,28 +53,28 @@ void RenderBundleEncoderImpl::setPipeline(const RenderPipeline& renderPipeline)
     wgpuRenderBundleEncoderSetPipeline(m_backing, m_convertToBackingContext->convertToBacking(renderPipeline));
 }
 
-void RenderBundleEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat indexFormat, Size64 offset, std::optional<Size64> size)
+void RenderBundleEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat indexFormat, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderBundleEncoderSetIndexBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset, size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderBundleEncoderSetIndexBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
-void RenderBundleEncoderImpl::setVertexBuffer(Index32 slot, const Buffer& buffer, Size64 offset, std::optional<Size64> size)
+void RenderBundleEncoderImpl::setVertexBuffer(Index32 slot, const Buffer& buffer, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderBundleEncoderSetVertexBuffer(m_backing, slot, m_convertToBackingContext->convertToBacking(buffer), offset, size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderBundleEncoderSetVertexBuffer(m_backing, slot, m_convertToBackingContext->convertToBacking(buffer), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
-void RenderBundleEncoderImpl::draw(Size32 vertexCount, Size32 instanceCount,
-    Size32 firstVertex, Size32 firstInstance)
+void RenderBundleEncoderImpl::draw(Size32 vertexCount, std::optional<Size32> instanceCount,
+    std::optional<Size32> firstVertex, std::optional<Size32> firstInstance)
 {
-    wgpuRenderBundleEncoderDraw(m_backing, vertexCount, instanceCount, firstVertex, firstInstance);
+    wgpuRenderBundleEncoderDraw(m_backing, vertexCount, instanceCount.value_or(1), firstVertex.value_or(0), firstInstance.value_or(0));
 }
 
-void RenderBundleEncoderImpl::drawIndexed(Size32 indexCount, Size32 instanceCount,
-    Size32 firstIndex,
-    SignedOffset32 baseVertex,
-    Size32 firstInstance)
+void RenderBundleEncoderImpl::drawIndexed(Size32 indexCount, std::optional<Size32> instanceCount,
+    std::optional<Size32> firstIndex,
+    std::optional<SignedOffset32> baseVertex,
+    std::optional<Size32> firstInstance)
 {
-    wgpuRenderBundleEncoderDrawIndexed(m_backing, indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    wgpuRenderBundleEncoderDrawIndexed(m_backing, indexCount, instanceCount.value_or(1), firstIndex.value_or(0), baseVertex.value_or(0), firstInstance.value_or(0));
 }
 
 void RenderBundleEncoderImpl::drawIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
