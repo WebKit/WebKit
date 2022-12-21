@@ -240,7 +240,11 @@ private:
     struct HangingContent {
         void setLeadingPunctuation(InlineLayoutUnit logicalWidth) { m_leadingPunctuationWidth = logicalWidth; }
         void setTrailingPunctuation(InlineLayoutUnit logicalWidth);
+        void setTrailingStopOrComma(InlineLayoutUnit logicalWidth);
         void setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth);
+
+        bool isTrailingContentWhitespace() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace; }
+        bool isTrailingContentStopOrComma() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::StopOrComma; }
 
         void resetTrailingContent() { m_trailingContent = { }; }
         void resetTrailingPunctuation();
@@ -255,7 +259,7 @@ private:
         InlineLayoutUnit m_leadingPunctuationWidth { 0.f };
         // There's either a whitespace or punctuation trailing content.
         struct TrailingContent {
-            enum class Type : uint8_t { Whitespace, Punctuation };
+            enum class Type : uint8_t { Whitespace, StopOrComma, Punctuation };
             Type type { Type::Whitespace };
             size_t length { 0 };
             InlineLayoutUnit width { 0.f };
@@ -300,6 +304,11 @@ inline void Line::HangingContent::setTrailingPunctuation(InlineLayoutUnit logica
     m_trailingContent = { TrailingContent::Type::Punctuation, 1, logicalWidth };
 }
 
+inline void Line::HangingContent::setTrailingStopOrComma(InlineLayoutUnit logicalWidth)
+{
+    m_trailingContent = { TrailingContent::Type::StopOrComma, 1, logicalWidth };
+}
+
 inline void Line::HangingContent::setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth)
 {
     m_trailingContent = { TrailingContent::Type::Whitespace, length, logicalWidth };
@@ -317,7 +326,7 @@ inline size_t Line::HangingContent::length() const
 
 inline void Line::HangingContent::resetTrailingPunctuation()
 {
-    if (!m_trailingContent || m_trailingContent->type == TrailingContent::Type::Whitespace)
+    if (!m_trailingContent || m_trailingContent->type != TrailingContent::Type::Punctuation)
         return;
     m_trailingContent = { };
 }
