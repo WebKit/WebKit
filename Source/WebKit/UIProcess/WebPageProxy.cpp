@@ -3061,7 +3061,8 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
         if (!handlingResult.needsMainThreadProcessing())
             return;
     }
-
+#else
+    handlingResult.steps = WheelEventProcessingSteps::MainThreadForScrolling;
 #endif
     if (!hasRunningProcess())
         return;
