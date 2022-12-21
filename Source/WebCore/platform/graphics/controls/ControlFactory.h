@@ -31,6 +31,7 @@ class MeterPart;
 class PlatformControl;
 class TextAreaPart;
 class TextFieldPart;
+class ToggleButtonPart;
 
 class ControlFactory {
     WTF_MAKE_FAST_ALLOCATED;
@@ -44,6 +45,7 @@ public:
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) = 0;
 };
 
 } // namespace WebCore

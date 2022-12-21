@@ -1744,6 +1744,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/controls/PlatformControl.h
     platform/graphics/controls/TextAreaPart.h
     platform/graphics/controls/TextFieldPart.h
+    platform/graphics/controls/ToggleButtonPart.h
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawingContext.h

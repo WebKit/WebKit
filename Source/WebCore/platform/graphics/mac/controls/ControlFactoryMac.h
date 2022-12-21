@@ -41,13 +41,18 @@ public:
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) override;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) override;
 
 private:
+    NSButtonCell *checkboxCell() const;
+    NSButtonCell *radioCell() const;
     NSLevelIndicatorCell* levelIndicatorCell() const;
     NSTextFieldCell* textFieldCell() const;
 
     mutable RetainPtr<WebControlView> m_drawingView;
 
+    mutable RetainPtr<NSButtonCell> m_checkboxCell;
+    mutable RetainPtr<NSButtonCell> m_radioCell;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };

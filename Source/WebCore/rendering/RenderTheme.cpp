@@ -57,6 +57,7 @@
 #include "TextAreaPart.h"
 #include "TextControlInnerElements.h"
 #include "TextFieldPart.h"
+#include "ToggleButtonPart.h"
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -493,6 +494,8 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     case ControlPartType::Checkbox:
     case ControlPartType::Radio:
+        return ToggleButtonPart::create(type);
+
     case ControlPartType::PushButton:
     case ControlPartType::SquareButton:
     case ControlPartType::Button:

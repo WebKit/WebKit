@@ -266,8 +266,10 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
 #if ENABLE(APPLE_PAY)
     case ControlPartType::ApplePayButton:
 #endif
+    case ControlPartType::Checkbox:
     case ControlPartType::Listbox:
     case ControlPartType::Meter:
+    case ControlPartType::Radio:
     case ControlPartType::TextArea:
     case ControlPartType::TextField:
         return true;
@@ -285,13 +287,16 @@ RenderThemeMac::RenderThemeMac()
 bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::Meter;
+    return type == ControlPartType::Checkbox
+        || type == ControlPartType::Meter
+        || type == ControlPartType::Radio;
 }
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::TextArea
+    return type == ControlPartType::Listbox
+        || type == ControlPartType::TextArea
         || type == ControlPartType::TextField;
 }
 

@@ -57,6 +57,24 @@ void ControlMac::setFocusRingClipRect(const FloatRect& clipBounds)
     [WebControlView setClipBounds:clipBounds];
 }
 
+NSControlSize ControlMac::calculateControlSize(const FloatSize& size, const ControlStyle& style) const
+{
+    if (style.states.contains(ControlStyle::State::LargeControls)
+        && size.width() >= static_cast<int>(cellSize(NSControlSizeLarge, style).width() * style.zoomFactor)
+        && size.height() >= static_cast<int>(cellSize(NSControlSizeLarge, style).height() * style.zoomFactor))
+        return NSControlSizeLarge;
+
+    if (size.width() >= static_cast<int>(cellSize(NSControlSizeRegular, style).width() * style.zoomFactor)
+        && size.height() >= static_cast<int>(cellSize(NSControlSizeRegular, style).height() * style.zoomFactor))
+        return NSControlSizeRegular;
+
+    if (size.width() >= static_cast<int>(cellSize(NSControlSizeSmall, style).width() * style.zoomFactor)
+        && size.height() >= static_cast<int>(cellSize(NSControlSizeSmall, style).height() * style.zoomFactor))
+        return NSControlSizeSmall;
+
+    return NSControlSizeMini;
+}
+
 void ControlMac::updateCellStates(const FloatRect&, const ControlStyle& style)
 {
     [WebControlWindow setHasKeyAppearance:!style.states.contains(ControlStyle::State::WindowInactive)];
