@@ -1250,7 +1250,7 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.h
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Skip ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Skip ]
 
-http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Failure ]
+http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure Pass ]
 
