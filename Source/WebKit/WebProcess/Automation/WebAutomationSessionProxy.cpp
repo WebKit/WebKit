@@ -639,8 +639,10 @@ static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::FrameVie
         return frameView->contentsToRootView(frameView->clientToDocumentRect(clientRect));
 
     // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
-    auto& frame = frameView->frame();
-    clientRect.scale(frame.pageZoomFactor() * frame.frameScaleFactor());
+    auto* frame = dynamicDowncast<LocalFrame>(frameView->frame());
+    if (!frame)
+        return { };
+    clientRect.scale(frame->pageZoomFactor() * frame->frameScaleFactor());
     clientRect.moveBy(frameView->contentsScrollPosition());
     return clientRect;
 }
@@ -651,8 +653,10 @@ static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::FrameV
         return frameView->contentsToRootView(frameView->clientToDocumentPoint(clientPoint));
 
     // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
-    auto& frame = frameView->frame();
-    clientPoint.scale(frame.pageZoomFactor() * frame.frameScaleFactor());
+    auto* frame = dynamicDowncast<LocalFrame>(frameView->frame());
+    if (!frame)
+        return { };
+    clientPoint.scale(frame->pageZoomFactor() * frame->frameScaleFactor());
     clientPoint.moveBy(frameView->contentsScrollPosition());
     return clientPoint;
 }

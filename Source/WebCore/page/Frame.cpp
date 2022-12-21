@@ -731,17 +731,18 @@ Frame* Frame::frameForWidget(const Widget& widget)
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
-    return &downcast<FrameView>(widget).frame();
+    return dynamicDowncast<LocalFrame>(downcast<FrameView>(widget).frame());
 }
 
 void Frame::clearTimers(FrameView *view, Document *document)
 {
-    if (view) {
-        view->layoutContext().unscheduleLayout();
-        if (auto* timelines = document->timelinesController())
-            timelines->suspendAnimations();
-        view->frame().eventHandler().stopAutoscrollTimer();
-    }
+    if (!view)
+        return;
+    view->layoutContext().unscheduleLayout();
+    if (auto* timelines = document->timelinesController())
+        timelines->suspendAnimations();
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(view->frame()))
+        localFrame->eventHandler().stopAutoscrollTimer();
 }
 
 void Frame::clearTimers()

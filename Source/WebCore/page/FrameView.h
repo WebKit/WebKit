@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
 
-    Frame& frame() const { return m_frame; }
+    AbstractFrame& frame() const { return m_frame; }
 
     WEBCORE_EXPORT RenderView* renderView() const;
 

@@ -187,11 +187,19 @@ void InspectorInstrumentation::didChangeRendererForDOMNodeImpl(InstrumentingAgen
 
 void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents& instrumentingAgents, FrameView& frameView)
 {
-    if (auto* cssAgent = instrumentingAgents.enabledCSSAgent()) {
-        auto* document = frameView.frame().document();
-        if (auto* documentElement = document ? document->documentElement() : nullptr)
-            cssAgent->didChangeRendererForDOMNode(*documentElement);
-    }
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
+    if (!localFrame)
+        return;
+    auto* cssAgent = instrumentingAgents.enabledCSSAgent();
+    if (!cssAgent)
+        return;
+    auto* document = localFrame->document();
+    if (!document)
+        return;
+    auto* documentElement = document->documentElement();
+    if (!documentElement)
+        return;
+    cssAgent->didChangeRendererForDOMNode(*documentElement);
 }
 
 void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents& instrumentingAgents, RenderObject& renderer)

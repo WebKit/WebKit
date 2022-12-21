@@ -242,8 +242,10 @@ LayoutRect AccessibilityScrollView::elementRect() const
 
 Document* AccessibilityScrollView::document() const
 {
-    if (is<FrameView>(m_scrollView))
-        return downcast<FrameView>(*m_scrollView).frame().document();
+    if (auto* frameView = dynamicDowncast<FrameView>(m_scrollView.get())) {
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame()))
+            return localFrame->document();
+    }
     return AccessibilityObject::document();
 }
 

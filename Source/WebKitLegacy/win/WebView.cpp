@@ -1266,7 +1266,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     if (uiPrivate)
         uiPrivate->drawBackground(this, bitmapDC, &rect);
 
-    if (frameView && frameView->frame().contentRenderer()) {
+    if (frameView && downcast<WebCore::LocalFrame>(frameView->frame()).contentRenderer()) {
         gc.save();
         gc.scale(FloatSize(scaleFactor, scaleFactor));
         gc.clip(logicalDirtyRect);

@@ -1045,9 +1045,10 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
     FrameView* view = renderer.document().view();
 
     LayoutRect rootRect = absoluteRect;
-    if (!view->frame().isMainFrame()) {
+    auto* localFrame = dynamicDowncast<LocalFrame>(view->frame());
+    if (localFrame && !localFrame->isMainFrame()) {
         IntRect rootViewRect = view->contentsToRootView(snappedIntRect(absoluteRect));
-        rootRect = view->frame().mainFrame().view()->rootViewToContents(rootViewRect);
+        rootRect = localFrame->mainFrame().view()->rootViewToContents(rootViewRect);
     }
 
     if (m_client->overridesShowPaintRects()) {

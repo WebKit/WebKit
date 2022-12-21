@@ -2158,14 +2158,14 @@ void Document::resolveStyle(ResolveStyleType type)
             frameView.layoutContext().scheduleLayout();
 
         // Usually this is handled by post-layout.
-        if (!frameView.needsLayout())
-            frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
+        if (!frameView.needsLayout() && is<LocalFrame>(frameView.frame()))
+            downcast<LocalFrame>(frameView.frame()).selection().scheduleAppearanceUpdateAfterStyleChange();
 
         // As a result of the style recalculation, the currently hovered element might have been
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
         // to check if any other elements ended up under the mouse pointer due to re-layout.
-        if (m_hoveredElement && !m_hoveredElement->renderer())
-            frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
+        if (m_hoveredElement && !m_hoveredElement->renderer() && is<LocalFrame>(frameView.frame()))
+            downcast<LocalFrame>(frameView.frame()).mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
 
         ++m_styleRecalcCount;
         // FIXME: Assert ASSERT(!needsStyleRecalc()) here. Do we still have some cases where it's not true?
@@ -2605,7 +2605,7 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
     RELEASE_ASSERT(cachedFrame.document() == this);
     ASSERT(cachedFrame.view());
     ASSERT(m_backForwardCacheState == Document::InBackForwardCache);
-    observeFrame(&cachedFrame.view()->frame());
+    observeFrame(dynamicDowncast<LocalFrame>(cachedFrame.view()->frame()));
 }
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
@@ -8239,7 +8239,7 @@ static std::optional<IntersectionObservationState> computeIntersectionState(Fram
         else
             localRootBounds = { FloatPoint(), rootRenderer->size() };
     } else {
-        ASSERT(frameView.frame().isMainFrame());
+        ASSERT(is<LocalFrame>(frameView.frame()) && downcast<LocalFrame>(frameView.frame()).isMainFrame());
         // FIXME: Handle the case of an implicit-root observer that has a target in a different frame tree.
         if (&targetRenderer->frame().mainFrame() != &frameView.frame())
             return std::nullopt;

@@ -2022,7 +2022,8 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
 
 void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWidth)
 {
-    Document* document = view().frameView().frame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(view().frameView().frame());
+    auto* document = localFrame ? localFrame->document() : nullptr;
     if (!document)
         return;
 
@@ -2052,7 +2053,8 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
 
 void RenderElement::resetTextAutosizing()
 {
-    Document* document = view().frameView().frame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(view().frameView().frame());
+    auto* document = localFrame ? localFrame->document() : nullptr;
     if (!document)
         return;
 

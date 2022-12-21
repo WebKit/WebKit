@@ -101,7 +101,8 @@ void DrawingAreaWC::updatePreferences(const WebPreferencesStore&)
 
 bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::FrameView& frameView) const
 {
-    return frameView.frame().isMainFrame();
+    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
+    return localFrame && localFrame->isMainFrame();
 }
 
 void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)

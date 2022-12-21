@@ -52,7 +52,7 @@ View::~View()
 
 Frame& View::frame() const
 {
-    return m_frameView.frame();
+    return downcast<LocalFrame>(m_frameView.frame());
 }
 
 Page* View::page() const

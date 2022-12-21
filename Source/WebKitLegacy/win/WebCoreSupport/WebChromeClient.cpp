@@ -872,7 +872,7 @@ void WebChromeClient::AXFinishFrameLoad()
 bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameView) const
 {
 #if !USE(CAIRO)
-    return frameView.frame().isMainFrame();
+    return downcast<WebCore::LocalFrame>(frameView.frame()).isMainFrame();
 #else
     return false;
 #endif

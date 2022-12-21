@@ -2333,10 +2333,17 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
         Widget* widget = downcast<RenderWidget>(*renderer).widget();
-        if (!is<FrameView>(widget))
+        auto* frameView = dynamicDowncast<FrameView>(widget);
+        if (!frameView)
             break;
-        Frame& frame = downcast<FrameView>(*widget).frame();
-        renderView = frame.document()->renderView();
+        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+        if (!localFrame)
+            break;
+        auto* document = localFrame->document();
+        if (!document)
+            break;
+
+        renderView = document->renderView();
 #if PLATFORM(MAC)
         frameView = downcast<FrameView>(widget);
 #endif
@@ -2923,7 +2930,11 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     if (!frameView)
         return nullptr;
 
-    Document* document = frameView->frame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+    if (!localFrame)
+        return nullptr;
+
+    auto* document = localFrame->document();
     if (!is<SVGDocument>(document))
         return nullptr;
 
