@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
 
 import logging
 import os
+import re
 import time
 
 from webkitpy.common.memoized import memoized
@@ -281,3 +282,9 @@ class DarwinPort(ApplePort):
         for name in ['DYLD_LIBRARY_PATH', '__XPC_DYLD_LIBRARY_PATH', 'DYLD_FRAMEWORK_PATH', '__XPC_DYLD_FRAMEWORK_PATH']:
             self._append_value_colon_separated(environment, name, build_root_path)
         return environment
+
+    def stderr_patterns_to_strip(self):
+        worthless_patterns = super(DarwinPort, self).stderr_patterns_to_strip()
+        # Suppress log message from <rdar://56920527>
+        worthless_patterns.append((re.compile('.*nil host used in call to allows.+HTTPSCertificateForHost.*\n'), ''))
+        return worthless_patterns
