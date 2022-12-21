@@ -36,7 +36,8 @@ from twisted.internet import defer, reactor
 class ResultsDatabase(object):
     HOSTNAME = 'https://results.webkit.org'
     # TODO: Support more suites (Note, the API we're talking to already does)
-    SUITE = 'layout-tests'
+    DEFAULT_SUITE = 'layout-tests'
+    SUITES = ('layout-tests', 'api-tests')
     PERCENT_THRESHOLD = 10
     PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 80
     CONFIGURATION_KEYS = [
@@ -53,11 +54,16 @@ class ResultsDatabase(object):
 
     @classmethod
     @defer.inlineCallbacks
-    def get_results_summary(cls, test, commit=None, configuration=None, logger=None):
+    def get_results_summary(cls, test, commit=None, configuration=None, logger=None, suite=None):
         logger = logger or (lambda log: None)
         params = dict()
+        suite = suite or cls.DEFAULT_SUITE
         if not test:
             logger('Test name not provided\n')
+            defer.returnValue({})
+            return
+        if suite not in cls.SUITES:
+            logger(f"'{suite}' is not a valid suite name\n")
             defer.returnValue({})
             return
         if not configuration:
@@ -69,7 +75,7 @@ class ResultsDatabase(object):
         if commit:
             params['ref'] = commit
 
-        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/results-summary/{cls.SUITE}/{test}', params=params, logger=logger)
+        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/results-summary/{suite}/{test}', params=params, logger=logger)
 
         if not response:
             logger(f'No response from {cls.HOSTNAME}\n')
@@ -83,9 +89,9 @@ class ResultsDatabase(object):
 
     @classmethod
     @defer.inlineCallbacks
-    def is_test_pre_existing_failure(cls, test, commit=None, configuration=None):
+    def is_test_pre_existing_failure(cls, test, commit=None, configuration=None, suite=None):
         logs = []
-        data = yield cls.get_results_summary(test, commit, configuration, logger=lambda log: logs.append(log))
+        data = yield cls.get_results_summary(test, commit, configuration, logger=lambda log: logs.append(log), suite=suite)
         pass_rate = data.get('pass', 100) + data.get('warning', 0)
         is_existing_failure = (pass_rate <= cls.PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE)
         output = {
@@ -98,7 +104,7 @@ class ResultsDatabase(object):
 
     @classmethod
     @defer.inlineCallbacks
-    def is_test_expected_to(cls, test, result_type=None, commit=None, configuration=None, logger=None):
+    def is_test_expected_to(cls, test, result_type=None, commit=None, configuration=None, logger=None, suite=None):
         logger = logger or (lambda log: None)
         has_commit = False
         if commit:
@@ -109,6 +115,7 @@ class ResultsDatabase(object):
         data = yield cls.get_results_summary(
             test, configuration=configuration, logger=logger,
             commit=commit if has_commit else None,
+            suite=suite,
         )
         logger(f'{test}\n')
         for key, value in (data or dict()).items():
@@ -148,6 +155,11 @@ class ResultsDatabase(object):
             help='Commit ref to focus on',
         )
         parser.add_argument(
+            '--suite',
+            type=str, default=None,
+            help=f'Suite test is found in ({cls.DEFAULT_SUITE} by default)',
+        )
+        parser.add_argument(
             '-r', '--result',
             type=str, default=None,
             help='Result to filter for (failure, crash, timeout, ect.)',
@@ -185,7 +197,12 @@ class ResultsDatabase(object):
             if attr:
                 configuration[key] = attr
 
-        d = cls.is_test_expected_to(parsed.test, result_type=parsed.result, commit=parsed.commit, logger=sys.stdout.write, configuration=configuration)
+        d = cls.is_test_expected_to(
+            parsed.test,
+            result_type=parsed.result, commit=parsed.commit,
+            logger=sys.stdout.write, configuration=configuration,
+            suite=getattr(parsed, 'suite', None)
+        )
 
         def callback(result):
             if result:
