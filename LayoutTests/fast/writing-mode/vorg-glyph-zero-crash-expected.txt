@@ -1,0 +1,3 @@
+Make sure assertion does not fail for glpyh ID 0 of a font that has a "VORG" table in vertical flow.
+
+￿

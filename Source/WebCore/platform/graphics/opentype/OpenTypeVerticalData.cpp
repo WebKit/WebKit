@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Koji Ishii <kojiishi@gmail.com>
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -523,6 +524,7 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, co
 
         // For Y, try VORG first.
         if (useVORG) {
+            if (glyph) {
             int16_t vertOriginYFUnit = m_vertOriginY.get(glyph);
             if (vertOriginYFUnit) {
                 outXYArray[1] = -vertOriginYFUnit * sizePerUnit;
@@ -532,6 +534,7 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, co
                 defaultVertOriginY = -m_defaultVertOriginY * sizePerUnit;
             outXYArray[1] = defaultVertOriginY;
             continue;
+            }
         }
 
         // If no VORG, try vmtx next.
