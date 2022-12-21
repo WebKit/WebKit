@@ -813,15 +813,6 @@ static bool shouldDisableHyphenation(const RenderStyle& rootStyle, unsigned succ
     return successiveHyphenatedLineCount >= limitLines;
 }
 
-static float trimmableTrailingContentWidth(const Line& line)
-{
-    if (auto trimmableWidth = line.trimmableTrailingWidth()) {
-        ASSERT(!line.hangingTrailingWhitespaceWidth());
-        return trimmableWidth;
-    }
-    return line.hangingTrailingWhitespaceWidth();
-}
-
 static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent& candidateContent, const Line& line, InlineLayoutUnit availableWidthForContent)
 {
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
@@ -929,7 +920,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
         auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
         if (lineIsConsideredEmpty)
             return true;
-        auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight() + trimmableTrailingContentWidth(m_line);
+        auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight() + m_line.trimmableTrailingWidth();
         return availableWidthForFloat >= boxGeometry.marginBoxWidth();
     };
     if (!shouldBePlaced()) {
@@ -1010,7 +1001,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     auto lineStatus = InlineContentBreaker::LineStatus {
         m_line.contentLogicalRight(),
         availableWidthForCandidateContent,
-        trimmableTrailingContentWidth(m_line),
+        m_line.trimmableTrailingWidth(),
         m_line.trailingSoftHyphenWidth(),
         m_line.isTrailingRunFullyTrimmable(),
         lineIsConsideredContentful,

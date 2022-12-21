@@ -58,7 +58,6 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
-    InlineLayoutUnit hangingTrailingWhitespaceWidth() const { return m_hangingContent.trailingWhitespaceWidth(); }
     InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
