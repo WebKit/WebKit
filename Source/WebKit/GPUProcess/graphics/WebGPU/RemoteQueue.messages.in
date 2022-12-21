@@ -25,7 +25,7 @@
 
 messages -> RemoteQueue NotRefCounted Stream {
     void Submit(Vector<WebKit::WebGPUIdentifier> commandBuffers)
-    void OnSubmittedWorkDone() -> () Synchronous
+    void OnSubmittedWorkDone() -> () Synchronous NotStreamEncodableReply
     void WriteBuffer(WebKit::WebGPUIdentifier identifier, PAL::WebGPU::Size64 bufferOffset, Vector<uint8_t> data)
     void WriteTexture(WebKit::WebGPU::ImageCopyTexture destination, Vector<uint8_t> data, WebKit::WebGPU::ImageDataLayout imageDataLayout, WebKit::WebGPU::Extent3D size)
     void CopyExternalImageToTexture(WebKit::WebGPU::ImageCopyExternalImage source, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize)
