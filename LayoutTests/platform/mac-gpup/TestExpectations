@@ -36,3 +36,11 @@ webxr [ Skip ]
 [ Ventura+ ] css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure Crash ]
 [ Ventura+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure Crash ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
+
+# rdar://102572503
+imported/w3c/web-platform/css/css-backgrounds/box-shadow-039.html [ ImageOnlyFailure ]
+imported/w3c/web-platform/css/css-backgrounds/box-shadow-040.html [ ImageOnlyFailure ]
+compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
+
+# rdar://102588345
+[ Ventura ] fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]

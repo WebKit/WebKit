@@ -408,74 +408,6 @@ static bool drawCellFocusRing(NSCell *cell, NSRect cellFrame, NSView *controlVie
     return false;
 }
 
-static void paintToggleButton(ControlPartType buttonType, ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    RetainPtr<NSButtonCell> toggleButtonCell = static_cast<NSButtonCell *>(controlStates.platformControl());
-    IntSize zoomedRectSize = IntSize(zoomedRect.size());
-
-    if (controlStates.isDirty()) {
-        if (!toggleButtonCell)
-            toggleButtonCell = createToggleButtonCell(buttonType);
-        configureToggleButton(toggleButtonCell.get(), buttonType, controlStates, zoomedRectSize, zoomFactor, true);
-    } else {
-        if (!toggleButtonCell) {
-            if (buttonType == ControlPartType::Checkbox)
-                toggleButtonCell = sharedCheckboxCell(controlStates, zoomedRectSize, zoomFactor);
-            else {
-                ASSERT(buttonType == ControlPartType::Radio);
-                toggleButtonCell = sharedRadioCell(controlStates, zoomedRectSize, zoomFactor);
-            }
-        }
-        configureToggleButton(toggleButtonCell.get(), buttonType, controlStates, zoomedRectSize, zoomFactor, false);
-    }
-    controlStates.setDirty(false);
-
-    GraphicsContextStateSaver stateSaver(context);
-
-    NSControlSize controlSize = [toggleButtonCell controlSize];
-    IntSize zoomedSize = buttonType == ControlPartType::Checkbox ? checkboxSizes()[controlSize] : radioSizes()[controlSize];
-    zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
-    zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
-    const int* controlMargins = buttonType == ControlPartType::Checkbox ? checkboxMargins(controlSize) : radioMargins(controlSize);
-    FloatRect inflatedRect = inflateRect(zoomedRect, zoomedSize, controlMargins, zoomFactor);
-
-    if (zoomFactor != 1.0f) {
-        inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
-        inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-        context.translate(inflatedRect.location());
-        context.scale(zoomFactor);
-        context.translate(-inflatedRect.location());
-    }
-    LocalCurrentGraphicsContext localContext(context);
-
-    NSView *view = ThemeMac::ensuredView(scrollView, controlStates, true /* useUnparentedView */);
-
-    bool needsRepaint = false;
-    bool isCellFocused = controlStates.states().contains(ControlStates::States::Focused);
-
-    if ([toggleButtonCell _stateAnimationRunning]) {
-        context.translate(inflatedRect.location());
-        context.scale(FloatSize(1, -1));
-        context.translate(0, -inflatedRect.height());
-
-        [toggleButtonCell _renderCurrentAnimationFrameInContext:context.platformContext() atLocation:NSMakePoint(0, 0)];
-        if (![toggleButtonCell _stateAnimationRunning] && isCellFocused)
-            needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, false, true, deviceScaleFactor);
-    } else
-        needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, true, isCellFocused, deviceScaleFactor);
-
-    [toggleButtonCell setControlView:nil];
-
-    needsRepaint |= [toggleButtonCell _stateAnimationRunning];
-    controlStates.setNeedsRepaint(needsRepaint);
-    if (needsRepaint)
-        controlStates.setPlatformControl(toggleButtonCell.get());
-
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
 // Buttons
 
 // Buttons really only constrain height. They respect width.
@@ -969,12 +901,6 @@ void ThemeMac::paint(ControlPartType type, ControlStates& states, GraphicsContex
     LocalDefaultSystemAppearance localAppearance(useDarkAppearance, tintColor);
 
     switch (type) {
-    case ControlPartType::Checkbox:
-        paintToggleButton(type, states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);
-        break;
-    case ControlPartType::Radio:
-        paintToggleButton(type, states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);
-        break;
     case ControlPartType::PushButton:
     case ControlPartType::DefaultButton:
     case ControlPartType::Button:

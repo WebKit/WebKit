@@ -4429,6 +4429,22 @@ ResizeObserverData* Element::resizeObserverData()
     return hasRareData() ? elementRareData()->resizeObserverData() : nullptr;
 }
 
+ResizeObserverSize* Element::lastRememberedSize() const
+{
+    return hasRareData() ? elementRareData()->lastRememberedSize() : nullptr;
+}
+
+void Element::setLastRememberedSize(Ref<ResizeObserverSize>&& size)
+{
+    ensureElementRareData().setLastRememberedSize(WTFMove(size));
+}
+
+void Element::clearLastRememberedSize()
+{
+    if (hasRareData())
+        elementRareData()->clearLastRememberedSize();
+}
+
 bool Element::isSpellCheckingEnabled() const
 {
     for (auto* ancestor = this; ancestor; ancestor = ancestor->parentOrShadowHostElement()) {

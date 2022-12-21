@@ -49,26 +49,26 @@ void GPURenderPassEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
     m_backing->setPipeline(renderPipeline.backing());
 }
 
-void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
     m_backing->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
-void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer& buffer, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer& buffer, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
     m_backing->setVertexBuffer(slot, buffer.backing(), offset, size);
 }
 
-void GPURenderPassEncoder::draw(GPUSize32 vertexCount, GPUSize32 instanceCount,
-    GPUSize32 firstVertex, GPUSize32 firstInstance)
+void GPURenderPassEncoder::draw(GPUSize32 vertexCount, std::optional<GPUSize32> instanceCount,
+    std::optional<GPUSize32> firstVertex, std::optional<GPUSize32> firstInstance)
 {
     m_backing->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, GPUSize32 instanceCount,
-    GPUSize32 firstIndex,
-    GPUSignedOffset32 baseVertex,
-    GPUSize32 firstInstance)
+void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, std::optional<GPUSize32> instanceCount,
+    std::optional<GPUSize32> firstIndex,
+    std::optional<GPUSignedOffset32> baseVertex,
+    std::optional<GPUSize32> firstInstance)
 {
     m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }

@@ -25,10 +25,10 @@
 
 messages -> RemoteRenderBundleEncoder NotRefCounted Stream {
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
-    void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, PAL::WebGPU::IndexFormat indexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
-    void SetVertexBuffer(PAL::WebGPU::Index32 slot, WebKit::WebGPUIdentifier identifier, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
-    void Draw(PAL::WebGPU::Size32 vertexCount, PAL::WebGPU::Size32 instanceCount, PAL::WebGPU::Size32 firstVertex, PAL::WebGPU::Size32 firstInstance)
-    void DrawIndexed(PAL::WebGPU::Size32 indexCount, PAL::WebGPU::Size32 instanceCount, PAL::WebGPU::Size32 firstIndex, PAL::WebGPU::SignedOffset32 baseVertex, PAL::WebGPU::Size32 firstInstance)
+    void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, PAL::WebGPU::IndexFormat indexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
+    void SetVertexBuffer(PAL::WebGPU::Index32 slot, WebKit::WebGPUIdentifier identifier, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
+    void Draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount, std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance)
+    void DrawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount, std::optional<PAL::WebGPU::Size32> firstIndex, std::optional<PAL::WebGPU::SignedOffset32> baseVertex, std::optional<PAL::WebGPU::Size32> firstInstance)
     void DrawIndirect(WebKit::WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
     void DrawIndexedIndirect(WebKit::WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
     void SetBindGroup(PAL::WebGPU::Index32 index, WebKit::WebGPUIdentifier identifier, std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>> dynamicOffsets)

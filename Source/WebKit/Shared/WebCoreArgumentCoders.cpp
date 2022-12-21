@@ -112,6 +112,7 @@
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextFieldPart.h>
 #include <WebCore/TextIndicator.h>
+#include <WebCore/ToggleButtonPart.h>
 #include <WebCore/TransformOperation.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
@@ -1598,6 +1599,8 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 
     case WebCore::ControlPartType::Checkbox:
     case WebCore::ControlPartType::Radio:
+        return WebCore::ToggleButtonPart::create(*type);
+
     case WebCore::ControlPartType::PushButton:
     case WebCore::ControlPartType::SquareButton:
     case WebCore::ControlPartType::Button:

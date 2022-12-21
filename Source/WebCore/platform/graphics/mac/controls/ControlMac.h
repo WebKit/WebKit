@@ -44,6 +44,11 @@ public:
 protected:
     static bool userPrefersContrast();
 
+    virtual IntSize cellSize(NSControlSize, const ControlStyle&) const { return { }; };
+    virtual IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const { return { }; };
+
+    NSControlSize calculateControlSize(const FloatSize&, const ControlStyle&) const;
+
     void setFocusRingClipRect(const FloatRect& clipBounds) override;
 
     void updateCellStates(const FloatRect&, const ControlStyle&) override;

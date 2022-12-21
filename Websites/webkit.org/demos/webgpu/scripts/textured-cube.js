@@ -272,9 +272,9 @@ async function helloCube() {
         
         renderPassEncoder.setPipeline(renderPipeline);
         const vertexBufferSlot = 0;
-        renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
+        renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer);
         renderPassEncoder.setBindGroup(1, uniformBindGroup);
-        renderPassEncoder.draw(36, 1, 0, 0); // 36 vertices, 1 instance, 0th vertex, 0th instance.
+        renderPassEncoder.draw(36); // 36 vertices
         renderPassEncoder.end();
         
         /* GPUComamndBuffer */

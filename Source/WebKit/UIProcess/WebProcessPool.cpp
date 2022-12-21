@@ -574,8 +574,21 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     remoteWorkerProcesses().add(*remoteWorkerProcessProxy);
 
-    auto& preferencesStore = processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store();
-    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore, registrableDomain, serviceWorkerPageIdentifier, [completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()] () mutable {
+    const WebPreferencesStore* preferencesStore = nullptr;
+    if (workerType == RemoteWorkerType::ServiceWorker) {
+        if (auto* preferences = websiteDataStore->serviceWorkerOverridePreferences())
+            preferencesStore = &preferences->store();
+    }
+
+    if (!preferencesStore && processPool->m_remoteWorkerPreferences)
+        preferencesStore = &processPool->m_remoteWorkerPreferences.value();
+
+    if (!preferencesStore)
+        preferencesStore = &processPool->m_defaultPageGroup->preferences().store();
+
+    ASSERT(preferencesStore);
+
+    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, *preferencesStore, registrableDomain, serviceWorkerPageIdentifier, [completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()] () mutable {
         completionHandler(remoteProcessIdentifier);
     });
 

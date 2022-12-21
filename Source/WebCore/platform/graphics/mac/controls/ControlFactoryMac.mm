@@ -31,6 +31,8 @@
 #import "MeterMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
+#import "ToggleButtonMac.h"
+#import "ToggleButtonPart.h"
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -58,6 +60,37 @@ NSView *ControlFactoryMac::drawingView(const FloatRect& rect, const ControlStyle
     UNUSED_PARAM(style);
 #endif
     return m_drawingView.get();
+}
+
+static RetainPtr<NSButtonCell> createToggleButtonCell()
+{
+    auto buttonCell = adoptNS([[NSButtonCell alloc] init]);
+    [buttonCell setTitle:nil];
+    [buttonCell setFocusRingType:NSFocusRingTypeExterior];
+    return buttonCell;
+}
+
+NSButtonCell* ControlFactoryMac::checkboxCell() const
+{
+    if (!m_checkboxCell) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        m_checkboxCell = createToggleButtonCell();
+        [m_checkboxCell setButtonType:NSButtonTypeSwitch];
+        [m_checkboxCell setAllowsMixedState:YES];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+    return m_checkboxCell.get();
+}
+
+NSButtonCell* ControlFactoryMac::radioCell() const
+{
+    if (!m_radioCell) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        m_radioCell = createToggleButtonCell();
+        [m_radioCell setButtonType:NSButtonTypeRadio];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+    return m_radioCell.get();
 }
 
 NSLevelIndicatorCell* ControlFactoryMac::levelIndicatorCell() const
@@ -101,6 +134,11 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextA
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextField(TextFieldPart& part)
 {
     return makeUnique<TextFieldMac>(part, *this, textFieldCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformToggleButton(ToggleButtonPart& part)
+{
+    return makeUnique<ToggleButtonMac>(part, *this, part.type() == ControlPartType::Checkbox ? checkboxCell() : radioCell());
 }
 
 } // namespace WebCore

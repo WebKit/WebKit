@@ -77,15 +77,15 @@ private:
 
     void setPipeline(WebGPUIdentifier);
 
-    void setIndexBuffer(WebGPUIdentifier, PAL::WebGPU::IndexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64>);
-    void setVertexBuffer(PAL::WebGPU::Index32 slot, WebGPUIdentifier, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64>);
+    void setIndexBuffer(WebGPUIdentifier, PAL::WebGPU::IndexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>);
+    void setVertexBuffer(PAL::WebGPU::Index32 slot, WebGPUIdentifier, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>);
 
-    void draw(PAL::WebGPU::Size32 vertexCount, PAL::WebGPU::Size32 instanceCount,
-        PAL::WebGPU::Size32 firstVertex, PAL::WebGPU::Size32 firstInstance);
-    void drawIndexed(PAL::WebGPU::Size32 indexCount, PAL::WebGPU::Size32 instanceCount,
-        PAL::WebGPU::Size32 firstIndex,
-        PAL::WebGPU::SignedOffset32 baseVertex,
-        PAL::WebGPU::Size32 firstInstance);
+    void draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+        std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance);
+    void drawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+        std::optional<PAL::WebGPU::Size32> firstIndex,
+        std::optional<PAL::WebGPU::SignedOffset32> baseVertex,
+        std::optional<PAL::WebGPU::Size32> firstInstance);
 
     void drawIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset);
     void drawIndexedIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset);

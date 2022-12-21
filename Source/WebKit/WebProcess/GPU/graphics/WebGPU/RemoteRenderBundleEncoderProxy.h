@@ -74,15 +74,15 @@ private:
 
     void setPipeline(const PAL::WebGPU::RenderPipeline&) final;
 
-    void setIndexBuffer(const PAL::WebGPU::Buffer&, PAL::WebGPU::IndexFormat, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64>) final;
-    void setVertexBuffer(PAL::WebGPU::Index32 slot, const PAL::WebGPU::Buffer&, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64>) final;
+    void setIndexBuffer(const PAL::WebGPU::Buffer&, PAL::WebGPU::IndexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>) final;
+    void setVertexBuffer(PAL::WebGPU::Index32 slot, const PAL::WebGPU::Buffer&, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>) final;
 
-    void draw(PAL::WebGPU::Size32 vertexCount, PAL::WebGPU::Size32 instanceCount,
-        PAL::WebGPU::Size32 firstVertex, PAL::WebGPU::Size32 firstInstance) final;
-    void drawIndexed(PAL::WebGPU::Size32 indexCount, PAL::WebGPU::Size32 instanceCount,
-        PAL::WebGPU::Size32 firstIndex,
-        PAL::WebGPU::SignedOffset32 baseVertex,
-        PAL::WebGPU::Size32 firstInstance) final;
+    void draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+        std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance) final;
+    void drawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
+        std::optional<PAL::WebGPU::Size32> firstIndex,
+        std::optional<PAL::WebGPU::SignedOffset32> baseVertex,
+        std::optional<PAL::WebGPU::Size32> firstInstance) final;
 
     void drawIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset) final;
     void drawIndexedIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset) final;

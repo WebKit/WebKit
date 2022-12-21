@@ -29,6 +29,7 @@
 #include "WebDeviceOrientationAndMotionAccessController.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebPreferences.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreConfiguration.h"
@@ -416,6 +417,9 @@ public:
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 
+    void setServiceWorkerOverridePreferences(WebPreferences* preferences) { m_serviceWorkerOverridePreferences = preferences; }
+    WebPreferences* serviceWorkerOverridePreferences() const { return m_serviceWorkerOverridePreferences.get(); }
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -536,6 +540,8 @@ private:
     mutable std::optional<WebCore::ThirdPartyCookieBlockingMode> m_thirdPartyCookieBlockingMode; // Lazily computed.
 #endif
     Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;
+
+    RefPtr<WebPreferences> m_serviceWorkerOverridePreferences;
 };
 
 }

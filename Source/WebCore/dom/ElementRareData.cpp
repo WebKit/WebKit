@@ -40,6 +40,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* intersectionObserverData;
     void* typedOMData[2];
     void* resizeObserverData;
+    void* resizeObserverSize;
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
 };
 
