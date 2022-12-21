@@ -471,6 +471,17 @@
 #endif
 }
 
++ (void)_setLookalikeCharacterStringsForTesting:(NSArray<NSString *> *)strings
+{
+    // FIXME: Remove this method and simply swizzle out the appropriate platform API, once we're able to
+    // call into the API from within the application process.
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    WebKit::WebPageProxy::cachedLookalikeStrings() = makeVector<String>(strings);
+#else
+    UNUSED_PARAM(strings);
+#endif
+}
+
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

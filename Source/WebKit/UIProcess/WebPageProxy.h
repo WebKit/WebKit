@@ -2096,6 +2096,10 @@ public:
     void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(bool)>&&);
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    static Vector<String>& cachedLookalikeStrings();
+#endif
+
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
 
 #if PLATFORM(COCOA)
@@ -2715,7 +2719,6 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    static Vector<String>& cachedLookalikeStrings();
     void updateLookalikeCharacterStringsIfNeeded();
 #endif
 
