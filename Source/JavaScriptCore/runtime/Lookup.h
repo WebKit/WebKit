@@ -198,8 +198,6 @@ struct HashTableValue {
             DECLARE_TYPE()
         } nativeFunction;
 
-#undef HASH_TABLE_VALUE_ATTR
-
         // Only used for null testing (e.g. hasGetter) and termination (e.g. the "End" entry).
         struct {
             intptr_t value1;

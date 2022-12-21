@@ -31,9 +31,6 @@
 
 namespace JSC {
 
-#define JSCALLBACK_FUNCTION_METHOD(method) \
-    WTF_VTBL_FUNCPTR_PTRAUTH_STR("JSCallbackFunction." #method) method
-
 class JSCallbackFunction final : public InternalFunction {
     friend struct APICallbackFunction;
 public:
@@ -62,10 +59,8 @@ private:
 
     JSObjectCallAsFunctionCallback functionCallback() { return m_callback; }
 
-    JSObjectCallAsFunctionCallback JSCALLBACK_FUNCTION_METHOD(m_callback) { nullptr };
+    JSObjectCallAsFunctionCallback m_callback { nullptr };
 };
-
-#undef JSCALLBACK_FUNCTION_METHOD
 
 } // namespace JSC
 
