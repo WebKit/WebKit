@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
-#define STATIC_VALUE_ENTRY_METHOD(method) \
-    WTF_VTBL_FUNCPTR_PTRAUTH_STR("StaticValueEntry." #method) method
-
 struct StaticValueEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -47,16 +44,11 @@ public:
     {
     }
     
-    JSObjectGetPropertyCallback STATIC_VALUE_ENTRY_METHOD(getProperty);
-    JSObjectSetPropertyCallback STATIC_VALUE_ENTRY_METHOD(setProperty);
+    JSObjectGetPropertyCallback getProperty;
+    JSObjectSetPropertyCallback setProperty;
     JSPropertyAttributes attributes;
     RefPtr<OpaqueJSString> propertyNameRef;
 };
-
-#undef STATIC_VALUE_ENTRY_METHOD
-
-#define STATIC_FUNCTION_ENTRY_METHOD(method) \
-    WTF_VTBL_FUNCPTR_PTRAUTH_STR("StaticFunctionEntry." #method) method
 
 struct StaticFunctionEntry {
     WTF_MAKE_FAST_ALLOCATED;
@@ -66,11 +58,9 @@ public:
     {
     }
 
-    JSObjectCallAsFunctionCallback STATIC_FUNCTION_ENTRY_METHOD(callAsFunction);
+    JSObjectCallAsFunctionCallback callAsFunction;
     JSPropertyAttributes attributes;
 };
-
-#undef STATIC_FUNCTION_ENTRY_METHOD
 
 typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<StaticValueEntry>> OpaqueJSClassStaticValuesTable;
 typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<StaticFunctionEntry>> OpaqueJSClassStaticFunctionsTable;
@@ -97,9 +87,6 @@ public:
     JSC::Weak<JSC::JSObject> cachedPrototype;
 };
 
-#define OPAQUE_JSCLASS_METHOD(method) \
-    WTF_VTBL_FUNCPTR_PTRAUTH_STR("OpaqueJSClass." #method) method
-
 struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     static Ref<OpaqueJSClass> create(const JSClassDefinition*);
     static Ref<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
@@ -113,17 +100,17 @@ struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     OpaqueJSClass* parentClass;
     OpaqueJSClass* prototypeClass;
     
-    JSObjectInitializeCallback OPAQUE_JSCLASS_METHOD(initialize);
-    JSObjectFinalizeCallback OPAQUE_JSCLASS_METHOD(finalize);
-    JSObjectHasPropertyCallback OPAQUE_JSCLASS_METHOD(hasProperty);
-    JSObjectGetPropertyCallback OPAQUE_JSCLASS_METHOD(getProperty);
-    JSObjectSetPropertyCallback OPAQUE_JSCLASS_METHOD(setProperty);
-    JSObjectDeletePropertyCallback OPAQUE_JSCLASS_METHOD(deleteProperty);
-    JSObjectGetPropertyNamesCallback OPAQUE_JSCLASS_METHOD(getPropertyNames);
-    JSObjectCallAsFunctionCallback OPAQUE_JSCLASS_METHOD(callAsFunction);
-    JSObjectCallAsConstructorCallback OPAQUE_JSCLASS_METHOD(callAsConstructor);
-    JSObjectHasInstanceCallback OPAQUE_JSCLASS_METHOD(hasInstance);
-    JSObjectConvertToTypeCallback OPAQUE_JSCLASS_METHOD(convertToType);
+    JSObjectInitializeCallback initialize;
+    JSObjectFinalizeCallback finalize;
+    JSObjectHasPropertyCallback hasProperty;
+    JSObjectGetPropertyCallback getProperty;
+    JSObjectSetPropertyCallback setProperty;
+    JSObjectDeletePropertyCallback deleteProperty;
+    JSObjectGetPropertyNamesCallback getPropertyNames;
+    JSObjectCallAsFunctionCallback callAsFunction;
+    JSObjectCallAsConstructorCallback callAsConstructor;
+    JSObjectHasInstanceCallback hasInstance;
+    JSObjectConvertToTypeCallback convertToType;
 
 private:
     friend struct OpaqueJSClassContextData;
@@ -139,7 +126,5 @@ private:
     std::unique_ptr<OpaqueJSClassStaticValuesTable> m_staticValues;
     std::unique_ptr<OpaqueJSClassStaticFunctionsTable> m_staticFunctions;
 };
-
-#undef OPAQUE_JSCLASS_METHOD
 
 #endif // JSClassRef_h
