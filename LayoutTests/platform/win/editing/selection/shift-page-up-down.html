@@ -25,7 +25,7 @@ function log(msg) {
 }
 
 function logSelection() {
-    log('Selected text:\n' + window.getSelection());
+    log('Selected text:\n' + a.value.substring(a.value.selectionStart, a.value.selectionEnd));
 }
 
 if (window.testRunner)
