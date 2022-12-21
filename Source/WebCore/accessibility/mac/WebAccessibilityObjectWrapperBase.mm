@@ -653,6 +653,11 @@ void AXAttributedStringSetFont(NSMutableAttributedString *attributedString, CTFo
     auto displayName = adoptCF(CTFontCopyDisplayName(font));
     if (displayName)
         [fontAttributes setValue:bridge_cast(displayName.get()) forKey:NSAccessibilityVisibleNameKey];
+    auto traits = CTFontGetSymbolicTraits(font);
+    if (traits & kCTFontTraitBold)
+        [fontAttributes setValue:@YES forKey:@"AXFontBold"];
+    if (traits & kCTFontTraitItalic)
+        [fontAttributes setValue:@YES forKey:@"AXFontItalic"];
 
     [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
 #endif

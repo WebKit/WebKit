@@ -19,6 +19,7 @@ Attributed string with range: ello
 }worl{
     AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
     AXFont =     {
+        AXFontBold = 1;
         AXFontFamily = Times;
         AXFontName = "Times-Bold";
         AXFontSize = 16;
