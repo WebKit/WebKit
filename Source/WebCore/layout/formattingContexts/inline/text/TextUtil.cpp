@@ -446,8 +446,8 @@ float TextUtil::hangablePunctuationStartWidth(const InlineTextItem& inlineTextIt
     ASSERT(inlineTextItem.length());
     if (!hasHangablePunctuationStart(inlineTextItem, style))
         return { };
-    auto startPosition = inlineTextItem.start();
-    return width(inlineTextItem, style.fontCascade(), startPosition, startPosition + 1, { });
+    auto leadingPosition = inlineTextItem.start();
+    return width(inlineTextItem, style.fontCascade(), leadingPosition, leadingPosition + 1, { });
 }
 
 bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, const RenderStyle& style)
@@ -455,7 +455,7 @@ bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, c
     ASSERT(inlineTextItem.length());
     if (!style.hangingPunctuation().contains(HangingPunctuation::Last))
         return false;
-    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.end()];
+    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.end() - 1];
     return U_GET_GC_MASK(trailingCharacter) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
 }
 
@@ -464,14 +464,14 @@ float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem
     ASSERT(inlineTextItem.length());
     if (!hasHangablePunctuationEnd(inlineTextItem, style))
         return { };
-    auto endPosition = inlineTextItem.end();
-    return width(inlineTextItem, style.fontCascade(), endPosition, endPosition + 1, { });
+    auto trailingPosition = inlineTextItem.end() - 1;
+    return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 
 float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
-    auto endPosition = inlineTextItem.end();
-    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[endPosition];
+    auto trailingPosition = inlineTextItem.end() - 1;
+    auto trailingCharacter = inlineTextItem.inlineTextBox().content()[trailingPosition];
     auto isHangableStopOrComma = trailingCharacter == 0x002C
         || trailingCharacter == 0x002E || trailingCharacter == 0x060C
         || trailingCharacter == 0x06D4 || trailingCharacter == 0x3001
@@ -481,7 +481,7 @@ float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem
         || trailingCharacter == 0xFF61 || trailingCharacter == 0xFF64;
     if (!isHangableStopOrComma)
         return { };
-    return width(inlineTextItem, style.fontCascade(), endPosition, endPosition + 1, { });
+    return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 
 }

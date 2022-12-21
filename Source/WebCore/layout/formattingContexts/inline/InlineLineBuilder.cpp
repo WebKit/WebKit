@@ -544,7 +544,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
 
-    auto trimTrailingContent = [&] {
+    auto handleTrailingContent = [&] {
         auto& quirks = m_inlineFormattingContext.formattingQuirks();
         auto lineHasOverflow = [&] {
             return horizontalAvailableSpace < m_line.contentLogicalWidth();
@@ -563,20 +563,9 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), lineHasOverflow()))
             m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
-        if (isInIntrinsicWidthMode()) {
-            // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
-            // https://drafts.csswg.org/css-text/#hanging
-            if (*intrinsicWidthMode() == IntrinsicWidthMode::Minimum)
-                m_line.removeHangingGlyphs();
-            else {
-                // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
-                auto isConditionalHanging = isLastLine || lineEndsWithLineBreak();
-                if (!isConditionalHanging)
-                    m_line.removeHangingGlyphs();
-            }
-        }
+        m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
     };
-    trimTrailingContent();
+    handleTrailingContent();
 
     // On each line, reset the embedding level of any sequence of whitespace characters at the end of the line
     // to the paragraph embedding level
