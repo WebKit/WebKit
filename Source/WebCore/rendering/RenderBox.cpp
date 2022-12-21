@@ -75,6 +75,7 @@
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ResizeObserverSize.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -5540,6 +5541,11 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
     if (style().containIntrinsicWidthType() == ContainIntrinsicSizeType::None)
         return std::nullopt;
 
+    if (element() && style().containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndLength && shouldSkipContent()) {
+        if (auto lastRememberedSize = element()->lastRememberedSize())
+            return isHorizontalWritingMode() ? LayoutUnit(lastRememberedSize->inlineSize()) : LayoutUnit(lastRememberedSize->blockSize());
+    }
+
     auto width = style().containIntrinsicWidth();
     ASSERT(width.has_value());
     return std::optional<LayoutUnit> { width->value() };
@@ -5550,6 +5556,11 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     ASSERT(shouldApplySizeContainment());
     if (style().containIntrinsicHeightType() == ContainIntrinsicSizeType::None)
         return std::nullopt;
+
+    if (element() && style().containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndLength && shouldSkipContent()) {
+        if (auto lastRememberedSize = element()->lastRememberedSize())
+            return isHorizontalWritingMode() ? LayoutUnit(lastRememberedSize->blockSize()) : LayoutUnit(lastRememberedSize->inlineSize());
+    }
 
     auto height = style().containIntrinsicHeight();
     ASSERT(height.has_value());

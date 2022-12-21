@@ -73,6 +73,7 @@ class PlatformWheelEvent;
 class PseudoElement;
 class RenderStyle;
 class RenderTreePosition;
+class ResizeObserverSize;
 class SpaceSplitString;
 class StylePropertyMap;
 class StylePropertyMapReadOnly;
@@ -679,6 +680,10 @@ public:
 
     ResizeObserverData& ensureResizeObserverData();
     ResizeObserverData* resizeObserverData();
+
+    ResizeObserverSize* lastRememberedSize() const;
+    void setLastRememberedSize(Ref<ResizeObserverSize>&&);
+    void clearLastRememberedSize();
 
     Element* findAnchorElementForLink(String& outAnchorName);
 

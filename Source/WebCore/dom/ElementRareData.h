@@ -33,6 +33,7 @@
 #include "PseudoElement.h"
 #include "RenderElement.h"
 #include "ResizeObserver.h"
+#include "ResizeObserverSize.h"
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
 #include "StylePropertyMap.h"
@@ -103,6 +104,10 @@ public:
     ResizeObserverData* resizeObserverData() { return m_resizeObserverData.get(); }
     void setResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { m_resizeObserverData = WTFMove(data); }
 
+    ResizeObserverSize* lastRememberedSize() const { return m_lastRememberedSize.get(); }
+    void setLastRememberedSize(RefPtr<ResizeObserverSize>&& size) { m_lastRememberedSize = WTFMove(size); }
+    void clearLastRememberedSize() { m_lastRememberedSize = nullptr; }
+
     const AtomString& nonce() const { return m_nonce; }
     void setNonce(const AtomString& value) { m_nonce = value; }
 
@@ -140,7 +145,7 @@ public:
             result.add(UseType::AttributeMap);
         if (m_intersectionObserverData)
             result.add(UseType::InteractionObserver);
-        if (m_resizeObserverData)
+        if (m_resizeObserverData || m_lastRememberedSize)
             result.add(UseType::ResizeObserver);
         if (!m_animationRareData.isEmpty())
             result.add(UseType::Animations);
@@ -177,6 +182,7 @@ private:
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
+    RefPtr<ResizeObserverSize> m_lastRememberedSize;
 
     Vector<std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 
