@@ -1,4 +1,4 @@
 This text should be visible.
 
-FAIL innerText on locked element. assert_equals: expected "This text should be visible." but got "This text should be visible.\n"
+PASS innerText on locked element.
 

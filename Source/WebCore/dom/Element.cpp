@@ -3618,6 +3618,9 @@ String Element::innerText()
     if (!renderer())
         return textContent(true);
 
+    if (renderer()->isSkippedContent())
+        return String();
+
     return plainText(makeRangeSelectingNodeContents(*this));
 }
 

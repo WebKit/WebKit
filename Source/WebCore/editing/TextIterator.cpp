@@ -478,6 +478,8 @@ void TextIterator::advance()
             if (!isRendererVisible(renderer, m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*m_node) && !renderer;
+            } else if (is<Element>(m_node) && renderer->shouldSkipContent()) {
+                m_handledChildren = true;
             } else {
                 // handle current node according to its type
                 if (renderer->isText() && m_node->isTextNode())
