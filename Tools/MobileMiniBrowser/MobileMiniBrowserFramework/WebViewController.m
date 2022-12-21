@@ -206,39 +206,6 @@ void* URLContext = &URLContext;
     [self.tabViewController.tableView reloadData];
 }
 
-- (NSString *)addProtocolIfNecessary:(NSString *)address
-{
-    if ([address rangeOfString:@"://"].length > 0)
-        return address;
-
-    if ([address hasPrefix:@"data:"])
-        return address;
-
-    if ([address hasPrefix:@"about:"])
-        return address;
-
-    return [@"http://" stringByAppendingString:address];
-}
-
-- (NSURL *)targetURLorDefaultURL
-{
-    NSArray *args = [[NSProcessInfo processInfo] arguments];
-    const NSUInteger targetURLIndex = [args indexOfObject:kURLArgumentString];
-
-    // FIXME: Add support for passing file URLs on the command line.
-    if (targetURLIndex != NSNotFound && targetURLIndex + 1 < [args count]) {
-        NSString *targetURL = [self addProtocolIfNecessary:[args objectAtIndex:targetURLIndex + 1]];
-        NSURL *url = [NSURL URLWithString:targetURL];
-        if (url)
-            return url;
-    }
-
-    if (NSProcessInfo.processInfo.arguments.count >= 2)
-        return [NSURL URLWithString:NSProcessInfo.processInfo.arguments[1]];
-
-    return [NSURL URLWithString:[self.settingsViewController defaultURL]];
-}
-
 #pragma mark Navigation Delegate
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
