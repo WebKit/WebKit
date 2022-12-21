@@ -546,6 +546,7 @@ class Benchmark {
                 if (__benchmark.prepareForNextIteration)
                     __benchmark.prepareForNextIteration();
 
+                ${this.preiterationCode}
                 let start = Date.now();
                 __benchmark.runIteration();
                 let end = Date.now();
@@ -566,6 +567,13 @@ class Benchmark {
     }
 
     get prerunCode() { return null; }
+
+    get preiterationCode() {
+        if (this.plan.deterministicRandom)
+            return `Math.random.__resetSeed();`;
+
+        return "";
+    }
 
     async run() {
         let code;
@@ -592,9 +600,11 @@ class Benchmark {
 
         if (!!this.plan.deterministicRandom) {
             addScript(`
-                Math.random = (function() {
-                    var seed = 49734321;
-                    return function() {
+                 (() => {
+                    const initialSeed = 49734321;
+                    let seed = initialSeed;
+
+                    Math.random = () => {
                         // Robert Jenkins' 32 bit integer hash function.
                         seed = ((seed + 0x7ed55d16) + (seed << 12))  & 0xffffffff;
                         seed = ((seed ^ 0xc761c23c) ^ (seed >>> 19)) & 0xffffffff;
@@ -604,9 +614,12 @@ class Benchmark {
                         seed = ((seed ^ 0xb55a4f09) ^ (seed >>> 16)) & 0xffffffff;
                         return (seed & 0xfffffff) / 0x10000000;
                     };
+
+                    Math.random.__resetSeed = () => {
+                        seed = initialSeed;
+                    };
                 })();
             `);
-
         }
 
         if (this.plan.preload) {
@@ -954,6 +967,7 @@ class AsyncBenchmark extends DefaultBenchmark {
             let __benchmark = new Benchmark();
             let results = [];
             for (let i = 0; i < ${this.iterations}; i++) {
+                ${this.preiterationCode}
                 let start = Date.now();
                 await __benchmark.runIteration();
                 let end = Date.now();
