@@ -527,4 +527,64 @@ TEST(Badging, Origin)
     // Having synchronously loaded, we should already have received the badging update
     EXPECT_EQ(badgeDelegate.get().originViolationCount, 1);
 }
+
+TEST(Badging, ServiceWorkerOverride)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { serviceWorkerMainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, serviceWorkerScriptBytes } }
+    });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    static bool workerRunning = false;
+    static bool badgingDone = false;
+    static bool javascriptDone = false;
+
+    auto testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
+    [testMessageHandler addMessage:@"RUNNING" withHandler:^{
+        workerRunning = true;
+    }];
+    [testMessageHandler addMessage:@"BADGINGDONE" withHandler:^{
+        badgingDone = true;
+    }];
+
+    // The WKWebView we're about to load and create will have app badge disabled.
+    // But the ServiceWorker should have it overidden to enabled.
+    configuration.get().preferences._appBadgeEnabled = NO;
+    WKPreferences *serviceWorkerOverride = [WKPreferences new];
+    serviceWorkerOverride._appBadgeEnabled = YES;
+    [configuration.get().websiteDataStore _setServiceWorkerOverridePreferences:serviceWorkerOverride];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto badgeDelegate = adoptNS([BadgeDelegate new]);
+    badgeDelegate.get().expectedAppBadgeSequence = @[@10, @0];
+    configuration.get().websiteDataStore._delegate = badgeDelegate.get();
+
+    [webView synchronouslyLoadRequest:server.request("/"_s)];
+
+    TestWebKitAPI::Util::run(&workerRunning);
+
+    // Confirm that the WKWebView's window object does NOT have the badging functions exposed
+    NSString *nsCheckForBadgeFunctions = [NSString stringWithUTF8String:checkForBadgeFunctions];
+    static bool done = false;
+    [webView callAsyncJavaScript:nsCheckForBadgeFunctions arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE([result isEqualToString:@"0 0 0 0 "]);
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // But then confirm that they DO work as expected in the service worker
+    [webView callAsyncJavaScript:@"channel.port1.postMessage('updateBadge');" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        javascriptDone = true;
+    }];
+    TestWebKitAPI::Util::run(&javascriptDone);
+    TestWebKitAPI::Util::run(&badgingDone);
+
+    EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
+    EXPECT_EQ(badgeDelegate.get().clientBadgeIndex, 0);
+}
 #endif // ENABLE(BADGING)

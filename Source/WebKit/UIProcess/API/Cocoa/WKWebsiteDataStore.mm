@@ -949,6 +949,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+-(void)_setServiceWorkerOverridePreferences:(WKPreferences *)preferences
+{
+#if ENABLE(SERVICE_WORKER)
+    _websiteDataStore->setServiceWorkerOverridePreferences(preferences ? preferences->_preferences.get() : nullptr);
+#endif
+}
+
 -(void)_deletePushAndNotificationRegistration:(WKSecurityOrigin *)securityOrigin completionHandler:(void(^)(NSError *))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
