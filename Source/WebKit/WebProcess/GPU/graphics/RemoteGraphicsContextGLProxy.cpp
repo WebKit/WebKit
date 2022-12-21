@@ -317,17 +317,18 @@ void RemoteGraphicsContextGLProxy::readnPixelsSharedMemory(GCGLint x, GCGLint y,
             markContextLost();
             return;
         }
-        auto handle = buffer->createHandle(SharedMemory::Protection::ReadWrite);
-        if (!handle || handle->isNull()) {
+        SharedMemory::Handle handle;
+        buffer->createHandle(handle, SharedMemory::Protection::ReadWrite);
+        if (handle.isNull()) {
             markContextLost();
             return;
         }
-        memcpy(buffer->data(), data.data(), data.size());
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels2(x, y, width, height, format, type, WTFMove(*handle)));
+        memcpy(buffer->data(), data.data, data.bufSize);
+        bool success = false;
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels2(x, y, width, height, format, type, WTFMove(handle)), Messages::RemoteGraphicsContextGL::ReadnPixels2::Reply(success));
         if (sendResult) {
-            auto [success] = sendResult.takeReply();
             if (success)
-                memcpy(data.data(), buffer->data(), data.size());
+                memcpy(data.data, buffer->data(), data.bufSize);
         } else
             markContextLost();
     }
