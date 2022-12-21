@@ -341,7 +341,6 @@ RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumePropertyInitialValue(CSSParserTokenRange&);
 
-
 // Template and inline implementations are at the bottom of the file for readability.
 
 template<typename... emptyBaseCase> bool identMatches(CSSValueID)

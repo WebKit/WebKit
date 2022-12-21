@@ -137,15 +137,15 @@ PASS syntax:'<custom-ident>+', initialValue:'foo unset bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo revert bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo revert-layer bar' is invalid
 PASS syntax:'<custom-ident>+', initialValue:'foo default bar' is invalid
-FAIL syntax:'*', initialValue:')' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'([)]' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'whee!' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'"
-' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'url(moo '')' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'semi;colon' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'var(invalid var ref)' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
-FAIL syntax:'*', initialValue:'var(--foo)' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
+PASS syntax:'*', initialValue:')' is invalid
+PASS syntax:'*', initialValue:'([)]' is invalid
+PASS syntax:'*', initialValue:'whee!' is invalid
+PASS syntax:'*', initialValue:'"
+' is invalid
+PASS syntax:'*', initialValue:'url(moo '')' is invalid
+PASS syntax:'*', initialValue:'semi;colon' is invalid
+PASS syntax:'*', initialValue:'var(invalid var ref)' is invalid
+PASS syntax:'*', initialValue:'var(--foo)' is invalid
 PASS syntax:'banana', initialValue:'bAnAnA' is invalid
 PASS syntax:'<length>', initialValue:'var(--moo)' is invalid
 PASS syntax:'<length>', initialValue:'10' is invalid

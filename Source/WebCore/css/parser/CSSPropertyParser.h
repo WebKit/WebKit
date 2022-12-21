@@ -45,13 +45,13 @@ class BuilderState;
 class CSSPropertyParser {
     WTF_MAKE_NONCOPYABLE(CSSPropertyParser);
 public:
-    static bool parseValue(CSSPropertyID, bool important,
-        const CSSParserTokenRange&, const CSSParserContext&,
-        Vector<CSSProperty, 256>&, StyleRuleType);
+    static bool parseValue(CSSPropertyID, bool important, const CSSParserTokenRange&, const CSSParserContext&, Vector<CSSProperty, 256>&, StyleRuleType);
 
     // Parses a non-shorthand CSS property
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const CSSParserTokenRange&, const CSSParserContext&);
+
     static bool canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax&, const CSSParserTokenRange&, const CSSParserContext&);
+    static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyInitialValue(const AtomString&, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
     static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, const CSSParserTokenRange&, Style::BuilderState&, const CSSParserContext&);
     static void collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax&, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange&, const CSSParserContext&);
 
@@ -64,6 +64,7 @@ private:
     bool parseValueStart(CSSPropertyID, bool important);
     bool consumeCSSWideKeyword(CSSPropertyID, bool important);
     RefPtr<CSSValue> parseSingleValue(CSSPropertyID, CSSPropertyID = CSSPropertyInvalid);
+    
     std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomPropertyValueWithSyntax(const CSSCustomPropertySyntax&);
     bool canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax&);
     RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, Style::BuilderState&);

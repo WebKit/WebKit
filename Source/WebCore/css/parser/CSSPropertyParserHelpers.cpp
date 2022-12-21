@@ -73,6 +73,7 @@
 #include "CSSTransformListValue.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
+#include "CSSVariableParser.h"
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
@@ -8449,7 +8450,7 @@ RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
 // https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
 RefPtr<CSSValue> consumePropertyInitialValue(CSSParserTokenRange& range)
 {
-    return CSSCustomPropertyValue::createSyntaxAll(nullAtom(), CSSVariableData::create(range.consumeAll()));
+    return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), strictCSSParserContext());
 }
 
 } // namespace CSSPropertyParserHelpers

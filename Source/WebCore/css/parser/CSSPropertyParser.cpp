@@ -269,6 +269,22 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     return value;
 }
 
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyInitialValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokens, Style::BuilderState& builderState, const CSSParserContext& context)
+{
+    if (syntax.isUniversal())
+        return CSSVariableParser::parseInitialValueForUniversalSyntax(name, tokens);
+
+    CSSPropertyParser parser(tokens, context, nullptr, false);
+    RefPtr<CSSCustomPropertyValue> value = parser.parseTypedCustomPropertyValue(name, syntax, builderState);
+    if (!value || !parser.m_range.atEnd())
+        return nullptr;
+
+    if (value->containsCSSWideKeyword())
+        return nullptr;
+
+    return value;
+}
+
 void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange& tokens, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr);

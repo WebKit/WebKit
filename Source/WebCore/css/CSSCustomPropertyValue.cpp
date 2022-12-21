@@ -138,15 +138,17 @@ Vector<CSSParserToken> CSSCustomPropertyValue::tokens() const
 
 bool CSSCustomPropertyValue::containsCSSWideKeyword() const
 {
-    return WTF::switchOn(m_value, [&](const CSSValueID& valueID) {
-        return WebCore::isCSSWideKeyword(valueID);
-    }, [&](const Ref<CSSVariableData>& value) {
-        auto range = CSSParserTokenRange { value->tokens() };
-        range.consumeWhitespace();
-        auto token = range.consumeIncludingWhitespace();
-        return range.atEnd() && token.type() == IdentToken && WebCore::isCSSWideKeyword(token.id());
-    }, [&](auto&) {
-        return false;
+    return std::holds_alternative<CSSValueID>(m_value) && WebCore::isCSSWideKeyword(std::get<CSSValueID>(m_value));
+}
+
+Ref<const CSSVariableData> CSSCustomPropertyValue::asVariableData() const
+{
+    return WTF::switchOn(m_value, [&](const Ref<CSSVariableData>& value) -> Ref<const CSSVariableData> {
+        return value.get();
+    }, [&](const Ref<CSSVariableReferenceValue>& value) -> Ref<const CSSVariableData> {
+        return value->data();
+    }, [&](auto&) -> Ref<const CSSVariableData> {
+        return CSSVariableData::create(tokens());
     });
 }
 

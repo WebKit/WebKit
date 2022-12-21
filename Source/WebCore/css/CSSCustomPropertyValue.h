@@ -111,6 +111,8 @@ public:
     Vector<CSSParserToken> tokens() const;
     bool equals(const CSSCustomPropertyValue&) const;
 
+    Ref<const CSSVariableData> asVariableData() const;
+
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
         : CSSValue(CustomPropertyClass)

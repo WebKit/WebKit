@@ -183,4 +183,20 @@ RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const At
     return CSSCustomPropertyValue::createUnresolved(variableName, type);
 }
 
+RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseInitialValueForUniversalSyntax(const AtomString& variableName, CSSParserTokenRange range)
+{
+    if (range.atEnd())
+        return nullptr;
+
+    bool hasReferences;
+    CSSValueID valueID = classifyVariableRange(range, hasReferences, strictCSSParserContext());
+
+    if (hasReferences)
+        return nullptr;
+    if (valueID != CSSValueInternalVariableValue)
+        return nullptr;
+
+    return CSSCustomPropertyValue::createSyntaxAll(variableName, CSSVariableData::create(range));
+}
+
 } // namespace WebCore
