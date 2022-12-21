@@ -54,6 +54,7 @@ public:
     CustomElementQueue& backupElementQueue();
 
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
+    WEBCORE_EXPORT static void didCompleteRenderingUpdate();
 
 private:
     static Ref<WindowEventLoop> create(const String&);
@@ -82,6 +83,7 @@ private:
 
     std::unique_ptr<CustomElementQueue> m_customElementQueue;
     bool m_processingBackupElementQueue { false };
+    static bool s_renderingUpdateIsImminent;
 };
 
 } // namespace WebCore

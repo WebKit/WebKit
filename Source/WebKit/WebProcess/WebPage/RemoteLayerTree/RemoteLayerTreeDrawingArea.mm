@@ -51,6 +51,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <WebCore/WindowEventLoop.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
@@ -62,7 +63,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaType::RemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
-    , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
+    , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRenderingTimerFired)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
     m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));
@@ -277,7 +278,16 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
         return;
     }
 
+    // Avoid running any more tasks before the runloop observer fires.
+    WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
+
     startRenderingUpdateTimer();
+}
+
+void RemoteLayerTreeDrawingArea::updateRenderingTimerFired()
+{
+    updateRendering();
+    WebCore::WindowEventLoop::didCompleteRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::addCommitHandlers()

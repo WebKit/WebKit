@@ -935,6 +935,7 @@ void TiledCoreAnimationDrawingArea::updateRenderingRunLoopCallback()
     tracePoint(RenderingUpdateRunLoopObserverEnd, 0);
 
     updateRendering();
+    WebCore::WindowEventLoop::didCompleteRenderingUpdate();
 }
 
 void TiledCoreAnimationDrawingArea::invalidateRenderingUpdateRunLoopObserver()

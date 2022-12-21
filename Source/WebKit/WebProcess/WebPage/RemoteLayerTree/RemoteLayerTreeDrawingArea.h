@@ -114,6 +114,7 @@ private:
     void addCommitHandlers();
     void updateRendering();
     void startRenderingUpdateTimer();
+    void updateRenderingTimerFired();
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
 

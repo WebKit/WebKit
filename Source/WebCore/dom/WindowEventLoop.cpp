@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+bool WindowEventLoop::s_renderingUpdateIsImminent = false;
+
 static MemoryCompactRobinHoodHashMap<String, WindowEventLoop*>& windowEventLoopMap()
 {
     RELEASE_ASSERT(isMainThread());
@@ -117,6 +119,10 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
 
 void WindowEventLoop::didReachTimeToRun()
 {
+    if (s_renderingUpdateIsImminent) {
+        scheduleToRun();
+        return;
+    }
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     run();
 }
@@ -159,6 +165,7 @@ CustomElementQueue& WindowEventLoop::backupElementQueue()
 
 void WindowEventLoop::breakToAllowRenderingUpdate()
 {
+    s_renderingUpdateIsImminent = true;
 #if PLATFORM(MAC)
     // On Mac rendering updates happen in a runloop observer.
     // Avoid running timers and doing other work (like processing asyncronous IPC) until it is completed.
@@ -168,6 +175,11 @@ void WindowEventLoop::breakToAllowRenderingUpdate()
 
     RunLoop::main().suspendFunctionDispatchForCurrentCycle();
 #endif
+}
+
+void WindowEventLoop::didCompleteRenderingUpdate()
+{
+    s_renderingUpdateIsImminent = false;
 }
 
 } // namespace WebCore
