@@ -470,7 +470,7 @@ void GraphicsContextGLANGLE::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, 
 
 bool GraphicsContextGLANGLE::readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
-    return readnPixelsImpl(x, y, width, height, format, type, data.bufSize, nullptr, nullptr, nullptr, data.data, false);
+    return readnPixelsImpl(x, y, width, height, format, type, data.size(), nullptr, nullptr, nullptr, data.data(), false);
 }
 
 void GraphicsContextGLANGLE::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)

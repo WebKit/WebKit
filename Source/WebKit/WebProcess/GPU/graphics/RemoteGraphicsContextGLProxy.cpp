@@ -284,7 +284,7 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
 
 void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
-    if (data.bufSize > readPixelsInlineSizeLimit) {
+    if (data.size() > readPixelsInlineSizeLimit) {
         readnPixelsSharedMemory(x, y, width, height, format, type, data);
         return;
     }
@@ -312,7 +312,7 @@ void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei w
 void RemoteGraphicsContextGLProxy::readnPixelsSharedMemory(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
     if (!isContextLost()) {
-        auto buffer = SharedMemory::allocate(data.bufSize);
+        auto buffer = SharedMemory::allocate(data.size());
         if (!buffer) {
             markContextLost();
             return;
@@ -322,12 +322,12 @@ void RemoteGraphicsContextGLProxy::readnPixelsSharedMemory(GCGLint x, GCGLint y,
             markContextLost();
             return;
         }
-        memcpy(buffer->data(), data.data, data.bufSize);
+        memcpy(buffer->data(), data.data(), data.size());
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels2(x, y, width, height, format, type, WTFMove(*handle)));
         if (sendResult) {
             auto [success] = sendResult.takeReply();
             if (success)
-                memcpy(data.data, buffer->data(), data.size);
+                memcpy(data.data(), buffer->data(), data.size());
         } else
             markContextLost();
     }
