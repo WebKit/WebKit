@@ -15,12 +15,6 @@
           request.send();
       }
 
-      function unloadVideo()
-      {
-          var video = document.getElementById('test-video');
-          video.src = "";
-      }
-
       function load(event)
       {
           source = new MediaSource();
@@ -42,7 +36,6 @@
     </p>
     <p>
         <button onclick="playVideo()">Play video</button>
-        <button onclick="unloadVideo()">Unload video</button>
     </p>
 </body>
 </html>
