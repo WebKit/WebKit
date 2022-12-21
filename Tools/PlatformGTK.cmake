@@ -1,9 +1,3 @@
-if (ENABLE_LAYOUT_TESTS)
-    add_subdirectory(TestRunnerShared)
-    add_subdirectory(WebKitTestRunner)
-    add_subdirectory(ImageDiff)
-endif ()
-
 if (DEVELOPER_MODE)
     add_subdirectory(flatpak)
 endif ()

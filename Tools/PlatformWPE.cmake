@@ -2,12 +2,6 @@ if (ENABLE_API_TESTS OR ENABLE_LAYOUT_TESTS OR ENABLE_MINIBROWSER)
     add_subdirectory(wpe/backends)
 endif ()
 
-if (ENABLE_LAYOUT_TESTS)
-    add_subdirectory(ImageDiff)
-    add_subdirectory(TestRunnerShared)
-    add_subdirectory(WebKitTestRunner)
-endif ()
-
 if (DEVELOPER_MODE)
     add_subdirectory(flatpak)
 endif ()
