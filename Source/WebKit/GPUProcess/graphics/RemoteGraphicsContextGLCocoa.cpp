@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "IPCTester.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
 
@@ -85,6 +86,7 @@ public:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
+    const WebCore::ProcessIdentity m_resourceOwner;
 };
 
 }
@@ -98,6 +100,7 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
     : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream))
+    , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
 {
 }
 
