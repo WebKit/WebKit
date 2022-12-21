@@ -141,10 +141,10 @@ std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(
     decoder >> length;
     if (!length)
         return std::nullopt;
-    auto* bytes = decoder.decodeFixedLengthReference(*length);
-    if (!bytes)
+    Span<const uint8_t> bytes = decoder.decodeFixedLengthReference(*length);
+    if (bytes.size() != *length)
         return std::nullopt;
-    auto trust = adoptCF(SecTrustDeserialize(adoptCF(CFDataCreate(nullptr, bytes, *length)).get(), nullptr));
+    auto trust = adoptCF(SecTrustDeserialize(adoptCF(CFDataCreate(nullptr, bytes.data(), bytes.size())).get(), nullptr));
     if (!trust)
         return std::nullopt;
     return WebCore::CertificateInfo(WTFMove(trust));
