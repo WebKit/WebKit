@@ -4,8 +4,8 @@ PASS Can set 'widows' to CSS-wide keywords: inherit
 PASS Can set 'widows' to CSS-wide keywords: unset
 PASS Can set 'widows' to CSS-wide keywords: revert
 PASS Can set 'widows' to var() references:  var(--A)
-FAIL Can set 'widows' to a number: 0 assert_approx_equals: expected 1 +/- 0.000001 but got 0
-FAIL Can set 'widows' to a number: -3.14 assert_approx_equals: expected 1 +/- 0.000001 but got 0
+PASS Can set 'widows' to a number: 0
+PASS Can set 'widows' to a number: -3.14
 PASS Can set 'widows' to a number: 3.14
 PASS Can set 'widows' to a number: calc(2 + 3)
 PASS Setting 'widows' to a length: 0px throws TypeError
