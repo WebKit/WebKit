@@ -1,5 +1,5 @@
 
-PASS Test that transferToImageBitmap returns an ImageBitmap with correct width and height
+FAIL Test that transferToImageBitmap returns an ImageBitmap with correct width and height The object is in an invalid state.
 FAIL Test that transferToImageBitmap returns an ImageBitmap with correct color assert_equals: Alpha channel of the pixel at (50, 25) expected 255 but got 0
 PASS Test that transferToImageBitmap won't change context's property
 PASS Test that transferToImageBitmap preserves transform

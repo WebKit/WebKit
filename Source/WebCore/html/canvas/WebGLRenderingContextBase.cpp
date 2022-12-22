@@ -30,6 +30,7 @@
 
 #include "ANGLEInstancedArrays.h"
 #include "CachedImage.h"
+#include "Chrome.h"
 #include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -486,16 +487,12 @@ static void removeActiveContext(WebGLRenderingContextBase& context)
 
 static GraphicsClient* getGraphicsClient(CanvasBase& canvas)
 {
-    if (auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas)) {
-        Document& document = canvasElement->document();
-        RefPtr<Frame> frame = document.frame();
-        if (!frame)
-            return nullptr;
-
-        return document.view()->root()->hostWindow();
-    }
     if (is<WorkerGlobalScope>(canvas.scriptExecutionContext()))
         return downcast<WorkerGlobalScope>(canvas.scriptExecutionContext())->workerClient();
+    else if (is<Document>(canvas.scriptExecutionContext())) {
+        ASSERT(downcast<Document>(canvas.scriptExecutionContext())->page());
+        return &downcast<Document>(canvas.scriptExecutionContext())->page()->chrome();
+    }
 
     return nullptr;
 }
