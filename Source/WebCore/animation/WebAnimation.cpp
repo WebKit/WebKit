@@ -1330,6 +1330,12 @@ void WebAnimation::resume()
     setSuspended(false);
 }
 
+void WebAnimation::stop()
+{
+    ActiveDOMObject::stop();
+    removeAllEventListeners();
+}
+
 bool WebAnimation::virtualHasPendingActivity() const
 {
     // Keep the JS wrapper alive if the animation is considered relevant or could become relevant again by virtue of having a timeline.

@@ -146,6 +146,7 @@ const char* ServiceWorker::activeDOMObjectName() const
 void ServiceWorker::stop()
 {
     m_isStopped = true;
+    removeAllEventListeners();
     scriptExecutionContext()->unregisterServiceWorker(*this);
     updatePendingActivityForEventDispatch();
 }

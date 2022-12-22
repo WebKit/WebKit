@@ -286,24 +286,6 @@ JSC::ScriptExecutionStatus ScriptExecutionContext::jscScriptExecutionStatus() co
     return JSC::ScriptExecutionStatus::Running;
 }
 
-void ScriptExecutionContext::removeAllEventListenersInContext()
-{
-    m_eventTargetsWithListeners.forEach([](auto& eventListener) {
-        eventListener.removeAllEventListeners();
-    });
-    m_eventTargetsWithListeners.clear();
-}
-
-void ScriptExecutionContext::addEventTargetWithListener(EventTarget& eventTarget)
-{
-    m_eventTargetsWithListeners.add(eventTarget);
-}
-
-void ScriptExecutionContext::removeEventTargetWithListener(EventTarget& eventTarget)
-{
-    m_eventTargetsWithListeners.remove(eventTarget);
-}
-
 void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
 {
     checkConsistency();

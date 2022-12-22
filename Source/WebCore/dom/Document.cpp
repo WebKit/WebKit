@@ -701,7 +701,7 @@ Document::~Document()
     m_scriptRunner = nullptr;
     m_moduleLoader = nullptr;
 
-    removeAllEventListenersInContext();
+    removeAllEventListeners();
 
     // Currently we believe that Document can never outlive the parser.
     // Although the Document may be replaced synchronously, DocumentParsers
@@ -2752,16 +2752,6 @@ void Document::willBeRemovedFromFrame()
     // was removed in an onpagehide event handler fired when the top-level frame is
     // about to enter the back/forward cache.
     RELEASE_ASSERT(m_backForwardCacheState != Document::InBackForwardCache);
-}
-
-void Document::removeAllEventListenersInContext()
-{
-    ScriptExecutionContext::removeAllEventListenersInContext();
-
-    // Document overrides removeAllEventListeners() and clears other things than listeners.
-    // Therefore, we must call it explicitly here to make sure it gets called even if the
-    // document itself has no listeners.
-    removeAllEventListeners();
 }
 
 void Document::removeAllEventListeners()
