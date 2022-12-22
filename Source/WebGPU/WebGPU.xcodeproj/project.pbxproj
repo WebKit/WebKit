@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D4D2E81294A89CF0000A1AB /* BindableResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D4D2E80294A89CF0000A1AB /* BindableResource.h */; };
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C0F41EF280940650005886D /* HardwareCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0F41ED280940650005886D /* HardwareCapabilities.h */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
@@ -134,6 +135,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D4D2E80294A89CF0000A1AB /* BindableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindableResource.h; sourceTree = "<group>"; };
 		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
@@ -570,6 +572,7 @@
 				1C5ACAB2273A426D0095F8D5 /* Adapter.h */,
 				1C5ACAA9273A426D0095F8D5 /* Adapter.mm */,
 				1C58301727E16823009B40F0 /* APIConversions.h */,
+				0D4D2E80294A89CF0000A1AB /* BindableResource.h */,
 				1C5ACAD5273A4D700095F8D5 /* BindGroup.h */,
 				1C5ACADE273A55AF0095F8D5 /* BindGroup.mm */,
 				1C5ACAD8273A4DC10095F8D5 /* BindGroupLayout.h */,
@@ -725,6 +728,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C58301827E16823009B40F0 /* APIConversions.h in Headers */,
+				0D4D2E81294A89CF0000A1AB /* BindableResource.h in Headers */,
 				1C5ACAD7273A4D700095F8D5 /* BindGroup.h in Headers */,
 				1C582FFA27E04131009B40F0 /* CommandsMixin.h in Headers */,
 				1C0F41EF280940650005886D /* HardwareCapabilities.h in Headers */,

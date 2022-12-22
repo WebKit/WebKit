@@ -5,8 +5,8 @@ PASS Can set 'column-count' to CSS-wide keywords: unset
 PASS Can set 'column-count' to CSS-wide keywords: revert
 PASS Can set 'column-count' to var() references:  var(--A)
 PASS Can set 'column-count' to the 'auto' keyword: auto
-FAIL Can set 'column-count' to a number: 0 assert_approx_equals: expected 1 +/- 0.000001 but got 0
-FAIL Can set 'column-count' to a number: -3.14 assert_approx_equals: expected 1 +/- 0.000001 but got 0
+PASS Can set 'column-count' to a number: 0
+PASS Can set 'column-count' to a number: -3.14
 PASS Can set 'column-count' to a number: 3.14
 PASS Can set 'column-count' to a number: calc(2 + 3)
 PASS Setting 'column-count' to a length: 0px throws TypeError

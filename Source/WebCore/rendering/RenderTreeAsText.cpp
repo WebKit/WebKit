@@ -641,7 +641,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         Widget* widget = downcast<RenderWidget>(o).widget();
         if (is<FrameView>(widget)) {
             FrameView& view = downcast<FrameView>(*widget);
-            if (RenderView* root = view.frame().contentRenderer()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
+            if (RenderView* root = localFrame ? localFrame->contentRenderer() : nullptr) {
                 if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)))
                     view.layoutContext().layout();
                 if (RenderLayer* layer = root->layer())

@@ -128,7 +128,11 @@ private:
 void CachedPage::restore(Page& page)
 {
     ASSERT(m_cachedMainFrame);
-    ASSERT(m_cachedMainFrame->view()->frame().isMainFrame());
+    ASSERT(m_cachedMainFrame->view());
+#if ASSERT_ENABLED
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_cachedMainFrame->view()->frame());
+#endif
+    ASSERT(localFrame && localFrame->isMainFrame());
     ASSERT(!page.subframeCount());
 
     CachedPageRestorationScope restorationScope(page);

@@ -218,8 +218,12 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!buffer)
         return nil;
 
-    auto oldSelection = frameView->frame().selection().selection();
-    frameView->frame().selection().setSelection(*makeRangeSelectingNode(*node), FrameSelection::DoNotSetFocus);
+    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView->frame());
+    if (!localFrame)
+        return nil;
+
+    auto oldSelection = localFrame->selection().selection();
+    localFrame->selection().setSelection(*makeRangeSelectingNode(*node), FrameSelection::DoNotSetFocus);
 
     auto oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(PaintBehavior::SelectionOnly);
@@ -227,7 +231,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     buffer->context().translate(-toFloatSize(rect.location()));
     frameView->paintContents(buffer->context(), roundedIntRect(rect));
 
-    frameView->frame().selection().setSelection(oldSelection);
+    localFrame->selection().setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
     auto image = ImageBuffer::sinkIntoImage(WTFMove(buffer));

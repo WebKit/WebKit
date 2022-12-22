@@ -561,10 +561,13 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
     // Find the next descendant of this attachment object so search can continue through frames.
     if (object->isAttachment()) {
         Widget* widget = object->widgetForAttachmentView();
-        if (!is<FrameView>(widget))
+        auto* frameView = dynamicDowncast<FrameView>(widget);
+        if (!frameView)
             return;
-        
-        Document* document = downcast<FrameView>(*widget).frame().document();
+        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+        if (!localFrame)
+            return;
+        auto* document = localFrame->document();
         if (!document || !document->hasLivingRenderTree())
             return;
         
@@ -1841,8 +1844,12 @@ Document* AccessibilityObject::document() const
     FrameView* frameView = documentFrameView();
     if (!frameView)
         return nullptr;
-    
-    return frameView->frame().document();
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+    if (!localFrame)
+        return nullptr;
+
+    return localFrame->document();
 }
     
 Page* AccessibilityObject::page() const

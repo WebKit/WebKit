@@ -72,7 +72,10 @@ protected:
     FloatPoint scrollOffset() const override;
     float pageScaleFactor() const override;
 
+    void willStartAnimatedScroll() override;
     void didStopAnimatedScroll() override;
+    void willStartWheelEventScroll() override;
+    void didStopWheelEventScroll() override;
     void willStartScrollSnapAnimation() override;
     void didStopScrollSnapAnimation() override;
 

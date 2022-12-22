@@ -9742,6 +9742,11 @@ void WebPageProxy::setEditableElementIsFocused(bool editableElementIsFocused)
     pageClient().setEditableElementIsFocused(editableElementIsFocused);
 }
 
+void WebPageProxy::setCaretDecorationVisibility(bool visibility)
+{
+    pageClient().setCaretDecorationVisibility(visibility);
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

@@ -209,6 +209,7 @@
     "web-platform-tests/dom/nodes/ParentNode-querySelector-All.xht": "skip",
     "web-platform-tests/dom/traversal": "import",
     "web-platform-tests/dom/traversal/unfinished": "skip",
+    "web-platform-tests/dom/xslt": "import",
     "web-platform-tests/domparsing": "import",
     "web-platform-tests/domxpath": "import",
     "web-platform-tests/domxpath/xml_xpath_runner.html": "skip",

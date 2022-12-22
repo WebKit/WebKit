@@ -17,6 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/xslt/README.md
 /LayoutTests/imported/w3c/web-platform-tests/dom/xslt/externalScript.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/xslt/invalid-output-encoding-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/sort-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/sort-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/xslt/sort.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/xslt/strip-space-crash.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/xslt/transformToFragment-on-node-from-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/xslt/transformToFragment.tentative.window.js

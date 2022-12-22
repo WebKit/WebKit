@@ -92,13 +92,15 @@ void CachedFrameBase::restore()
     if (m_isMainFrame)
         m_view->setParentVisible(true);
 
-    Ref frame = m_view->frame();
+    RefPtr frame = dynamicDowncast<LocalFrame>(m_view->frame());
+    if (!frame)
+        return;
     {
         Style::PostResolutionCallbackDisabler disabler(*m_document);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         NavigationDisabler disableNavigation { nullptr }; // Disable navigation globally.
 
-        m_cachedFrameScriptData->restore(frame.get());
+        m_cachedFrameScriptData->restore(*frame);
 
         if (m_document->svgExtensions())
             m_document->accessSVGExtensions().unpauseAnimations();
@@ -130,7 +132,7 @@ void CachedFrameBase::restore()
             // FIXME: Add SCROLL_LISTENER to the list of event types on Document, and use m_document->hasListenerType(). See <rdar://problem/9615482>.
             // FIXME: Can use Document::hasListenerType() now.
             if (domWindow->scrollEventListenerCount() && frame->page())
-                frame->page()->chrome().client().setNeedsScrollNotifications(frame, true);
+                frame->page()->chrome().client().setNeedsScrollNotifications(*frame, true);
         }
     }
 #endif
@@ -213,7 +215,8 @@ void CachedFrame::open()
     ASSERT(m_view);
     ASSERT(m_document);
 
-    m_view->frame().loader().open(*this);
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_view->frame()))
+        localFrame->loader().open(*this);
 }
 
 void CachedFrame::clear()
@@ -252,9 +255,10 @@ void CachedFrame::destroy()
 
     m_document->domWindow()->willDestroyCachedFrame();
 
-    if (!m_isMainFrame && m_view->frame().page()) {
-        m_view->frame().loader().detachViewsAndDocumentLoader();
-        m_view->frame().detachFromPage();
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_view->frame());
+    if (!m_isMainFrame && m_view->frame().page() && localFrame) {
+        localFrame->loader().detachViewsAndDocumentLoader();
+        localFrame->detachFromPage();
     }
     
     for (int i = m_childFrames.size() - 1; i >= 0; --i)

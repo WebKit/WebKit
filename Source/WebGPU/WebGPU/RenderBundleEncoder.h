@@ -26,9 +26,12 @@
 #pragma once
 
 #import "CommandsMixin.h"
+#import "RenderBundle.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 struct WGPURenderBundleEncoderImpl {
 };
@@ -45,9 +48,9 @@ class RenderPipeline;
 class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Device& device)
+    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, Device& device)
     {
-        return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer, device));
+        return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, device));
     }
     static Ref<RenderBundleEncoder> createInvalid(Device& device)
     {
@@ -75,17 +78,25 @@ public:
     bool isValid() const { return m_indirectCommandBuffer; }
 
 private:
-    RenderBundleEncoder(id<MTLIndirectCommandBuffer>, Device&);
+    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
     RenderBundleEncoder(Device&);
 
     bool validatePopDebugGroup() const;
+    id<MTLIndirectRenderCommand> currentRenderCommand();
 
     void makeInvalid() { m_indirectCommandBuffer = nil; }
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+    MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
-
+    uint64_t m_currentCommandIndex { 0 };
+    id<MTLBuffer> m_indexBuffer { nil };
+    MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
+    MTLIndexType m_indexType { MTLIndexTypeUInt16 };
+    NSUInteger m_indexBufferOffset { 0 };
+    Vector<WTF::Function<void(void)>> m_recordedCommands;
+    Vector<BindableResource> m_resources;
     const Ref<Device> m_device;
 };
 

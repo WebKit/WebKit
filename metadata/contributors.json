@@ -3171,6 +3171,17 @@
    },
    {
       "emails" : [
+         "iana@apple.com"
+      ],
+      "expertise" : "Clang modules",
+      "github" : "ian-twilightcoder",
+      "name" : "Ian Anderson",
+      "nicks" : [
+         "iana"
+      ]
+   },
+   {
+      "emails" : [
          "ian@ianhenderson.org",
          "ianh@apple.com"
       ],
@@ -4815,6 +4826,13 @@
       "nicks" : [
          "msanchez"
       ]
+   },
+   {
+      "emails" : [
+         "mark_gee@apple.com"
+      ],
+      "github" : "markcgee",
+      "name" : "Mark Gee"
    },
    {
       "emails" : [

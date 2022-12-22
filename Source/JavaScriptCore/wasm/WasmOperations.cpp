@@ -63,6 +63,10 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace Wasm {
 
+namespace WasmOperationsInternal {
+    static constexpr bool verbose = false;
+}
+
 #if ENABLE(WEBASSEMBLY_B3JIT)
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
 {

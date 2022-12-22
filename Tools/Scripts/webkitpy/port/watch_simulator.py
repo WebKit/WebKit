@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -95,9 +95,3 @@ class WatchSimulatorPort(WatchPort):
     @memoized
     def developer_dir(self):
         return self._executive.run_command(['xcode-select', '--print-path']).rstrip()
-
-    def logging_patterns_to_strip(self):
-        return []
-
-    def stderr_patterns_to_strip(self):
-        return []

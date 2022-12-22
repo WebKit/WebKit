@@ -51,6 +51,7 @@
 #include "ScrollingStateTree.h"
 #include "Settings.h"
 #include "WheelEventTestMonitor.h"
+#include "pal/HysteresisActivity.h"
 #include <wtf/ProcessID.h>
 #include <wtf/text/TextStream.h>
 
@@ -59,7 +60,14 @@ namespace WebCore {
 AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
     : ScrollingCoordinator(page)
     , m_scrollingStateTree(makeUnique<ScrollingStateTree>(this))
+    , m_hysterisisActivity([this](auto state) { hysterisisTimerFired(state); }, 200_ms)
 {
+}
+
+void AsyncScrollingCoordinator::hysterisisTimerFired(PAL::HysteresisState state)
+{
+    if (state == PAL::HysteresisState::Stopped)
+        m_page->didFinishScrolling();
 }
 
 AsyncScrollingCoordinator::~AsyncScrollingCoordinator() = default;
@@ -218,7 +226,8 @@ void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(FrameView& 
         return;
 
     setEventTrackingRegionsDirty();
-    DebugPageOverlays::didChangeEventHandlers(frameView.frame());
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame()))
+        DebugPageOverlays::didChangeEventHandlers(*localFrame);
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView)
@@ -307,7 +316,8 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
 
     setScrollingNodeScrollableAreaGeometry(scrollingNodeID, scrollableArea);
 
-    bool inBackForwardCache = frameView->frame().document()->backForwardCacheState() != Document::NotInBackForwardCache;
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+    bool inBackForwardCache = localFrame && localFrame->document()->backForwardCacheState() != Document::NotInBackForwardCache;
     bool isSnapshotting = m_page->isTakingSnapshotsForApplicationSuspension();
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
     if (inProgrammaticScroll || inBackForwardCache) {
@@ -456,12 +466,42 @@ void AsyncScrollingCoordinator::applyScrollUpdate(ScrollUpdate&& update, ScrollT
 
 void AsyncScrollingCoordinator::applyScrollPositionUpdate(ScrollUpdate&& update, ScrollType scrollType)
 {
-    if (update.updateType == ScrollUpdateType::AnimatedScrollDidEnd) {
+    switch (update.updateType) {
+    case ScrollUpdateType::AnimatedScrollWillStart:
+        animatedScrollWillStartForNode(update.nodeID);
+        return;
+
+    case ScrollUpdateType::AnimatedScrollDidEnd:
         animatedScrollDidEndForNode(update.nodeID);
         return;
-    }
 
-    updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction, scrollType);
+    case ScrollUpdateType::WheelEventScrollWillStart:
+        wheelEventScrollWillStartForNode(update.nodeID);
+        return;
+
+    case ScrollUpdateType::WheelEventScrollDidEnd:
+        wheelEventScrollDidEndForNode(update.nodeID);
+        return;
+
+    case ScrollUpdateType::PositionUpdate:
+        updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction, scrollType);
+        return;
+    }
+}
+
+void AsyncScrollingCoordinator::animatedScrollWillStartForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    m_hysterisisActivity.start();
+    m_page->willBeginScrolling();
 }
 
 void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scrollingNodeID)
@@ -477,6 +517,8 @@ void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scro
 
     LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::animatedScrollDidEndForNode node " << scrollingNodeID);
 
+    m_hysterisisActivity.stop();
+
     if (scrollingNodeID == frameView->scrollingNodeID()) {
         frameView->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
         return;
@@ -486,6 +528,35 @@ void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scro
         scrollableArea->setScrollAnimationStatus(ScrollAnimationStatus::NotAnimating);
         scrollableArea->animatedScrollDidEnd();
     }
+}
+
+void AsyncScrollingCoordinator::wheelEventScrollWillStartForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    m_hysterisisActivity.start();
+    m_page->willBeginScrolling();
+}
+
+void AsyncScrollingCoordinator::wheelEventScrollDidEndForNode(ScrollingNodeID scrollingNodeID)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+
+    m_hysterisisActivity.stop();
 }
 
 void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction scrollingLayerPositionAction, ScrollType scrollType)
@@ -502,8 +573,9 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll node " << scrollingNodeID << " " << scrollType << " scrollPosition " << scrollPosition << " action " << scrollingLayerPositionAction);
 
     auto& frameView = *frameViewPtr;
-    
-    if (!frameViewPtr->frame().isMainFrame()) {
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameViewPtr->frame());
+    if (localFrame && !localFrame->isMainFrame()) {
         if (scrollingLayerPositionAction == ScrollingLayerPositionAction::Set)
             m_page->editorClient().subFrameScrollPositionChanged();
     }
@@ -738,7 +810,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frame
 
     // For non-main frames, it is only possible to arrive in this function from
     // RenderLayerCompositor::updateBacking where the node has already been created.
-    ASSERT(frameView.frame().isMainFrame());
+    ASSERT(is<LocalFrame>(frameView.frame()) && downcast<LocalFrame>(frameView.frame()).isMainFrame());
     insertNode(ScrollingNodeType::MainFrame, frameView.scrollingNodeID(), 0, 0);
 }
 
@@ -777,7 +849,8 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     auto& settings = m_page->mainFrame().settings();
     auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*stateNode);
 
-    frameScrollingNode.setFrameScaleFactor(frameView.frame().frameScaleFactor());
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame()))
+        frameScrollingNode.setFrameScaleFactor(localFrame->frameScaleFactor());
     frameScrollingNode.setHeaderHeight(frameView.headerHeight());
     frameScrollingNode.setFooterHeight(frameView.footerHeight());
     frameScrollingNode.setTopContentInset(frameView.topContentInset());

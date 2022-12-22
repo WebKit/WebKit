@@ -998,6 +998,9 @@ public:
 
     BadgeClient& badgeClient() { return m_badgeClient.get(); }
 
+    void willBeginScrolling();
+    void didFinishScrolling();
+
 private:
     struct Navigation {
         RegistrableDomain domain;

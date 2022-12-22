@@ -368,6 +368,8 @@ messages -> WebPageProxy {
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
 
+    SetCaretDecorationVisibility(bool visibility)
+
     HandleAcceptsFirstMouse(bool acceptsFirstMouse)
 #endif
 

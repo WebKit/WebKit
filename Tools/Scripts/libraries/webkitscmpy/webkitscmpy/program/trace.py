@@ -215,7 +215,7 @@ class Trace(Command):
                 if not found:
                     try:
                         found = repository.find(ref)
-                    except ValueError:
+                    except (ValueError, repository.Exception):
                         continue
                 if not found:
                     continue

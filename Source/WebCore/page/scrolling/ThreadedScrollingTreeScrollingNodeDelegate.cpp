@@ -146,9 +146,24 @@ float ThreadedScrollingTreeScrollingNodeDelegate::pageScaleFactor() const
     return 1;
 }
 
+void ThreadedScrollingTreeScrollingNodeDelegate::willStartAnimatedScroll()
+{
+    scrollingNode().willStartAnimatedScroll();
+}
+
 void ThreadedScrollingTreeScrollingNodeDelegate::didStopAnimatedScroll()
 {
     scrollingNode().didStopAnimatedScroll();
+}
+
+void ThreadedScrollingTreeScrollingNodeDelegate::willStartWheelEventScroll()
+{
+    scrollingNode().willStartWheelEventScroll();
+}
+
+void ThreadedScrollingTreeScrollingNodeDelegate::didStopWheelEventScroll()
+{
+    scrollingNode().didStopWheelEventScroll();
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::willStartScrollSnapAnimation()

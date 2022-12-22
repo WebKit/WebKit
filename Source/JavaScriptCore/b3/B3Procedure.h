@@ -290,14 +290,13 @@ public:
     }
     bool usesSIMD() const
     {
+        // See also: WasmModuleInformation::isSIMDFunction().
         if (!Options::useWebAssemblySIMD())
             return false;
-        // The LLInt is responsible for discovering this.
-        // If we can't run using it, then we should be conservative.
-        if (!Options::useWasmLLInt())
-            return true;
         if (Options::forceAllFunctionsToUseSIMD())
             return true;
+        // The LLInt discovers this value.
+        ASSERT(Options::useWasmLLInt());
         return m_usesSIMD;
     }
 

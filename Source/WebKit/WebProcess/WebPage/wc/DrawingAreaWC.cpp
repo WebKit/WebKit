@@ -101,7 +101,8 @@ void DrawingAreaWC::updatePreferences(const WebPreferencesStore&)
 
 bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::FrameView& frameView) const
 {
-    return frameView.frame().isMainFrame();
+    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
+    return localFrame && localFrame->isMainFrame();
 }
 
 void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
@@ -321,10 +322,10 @@ void DrawingAreaWC::sendUpdateNonAC()
         m_webPage.drawRect(image->context(), rect);
     image->flushDrawingContextAsync();
 
-    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image]() mutable {
+    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image)]() mutable {
         if (auto flusher = image->createFlusher())
             flusher->flush();
-        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), image]() mutable {
+        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image)]() mutable {
             if (!weakThis)
                 return;
             if (stateID != m_backingStoreStateID) {

@@ -344,7 +344,7 @@ public:
         AtomString name;
         String syntax { };
         std::optional<bool> inherits { };
-        RefPtr<CSSVariableData> initialValue { };
+        RefPtr<const CSSVariableData> initialValue { };
     };
     static Ref<StyleRuleProperty> create(Descriptor&&);
     Ref<StyleRuleProperty> copy() const { return adoptRef(*new StyleRuleProperty(*this)); }

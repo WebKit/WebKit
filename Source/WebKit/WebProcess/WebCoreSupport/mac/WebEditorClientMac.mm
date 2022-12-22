@@ -179,6 +179,11 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 
 #endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
+void WebEditorClient::setCaretDecorationVisibility(bool visibility)
+{
+    m_page->send(Messages::WebPageProxy::SetCaretDecorationVisibility(visibility));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

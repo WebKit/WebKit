@@ -468,8 +468,11 @@ float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem
     return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 
-float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+bool TextUtil::hasHangableStopOrCommaEnd(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
+    ASSERT(inlineTextItem.length());
+    if (!style.hangingPunctuation().contains(HangingPunctuation::AllowEnd))
+        return false;
     auto trailingPosition = inlineTextItem.end() - 1;
     auto trailingCharacter = inlineTextItem.inlineTextBox().content()[trailingPosition];
     auto isHangableStopOrComma = trailingCharacter == 0x002C
@@ -479,8 +482,14 @@ float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem
         || trailingCharacter == 0xFF0E || trailingCharacter == 0xFE50
         || trailingCharacter == 0xFE51 || trailingCharacter == 0xFE52
         || trailingCharacter == 0xFF61 || trailingCharacter == 0xFF64;
-    if (!isHangableStopOrComma)
+    return isHangableStopOrComma;
+}
+
+float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
+{
+    if (!hasHangableStopOrCommaEnd(inlineTextItem, style))
         return { };
+    auto trailingPosition = inlineTextItem.end() - 1;
     return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 

@@ -60,7 +60,7 @@ public:
     }
 
     WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t);
-    const uint8_t* decodeFixedLengthReference(size_t);
+    Span<const uint8_t> decodeFixedLengthReference(size_t);
 
 private:
     WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContainBytes(size_t) const;

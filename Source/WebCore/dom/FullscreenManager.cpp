@@ -276,7 +276,7 @@ void FullscreenManager::cancelFullscreen()
 
     m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, &topDocument, identifier = LOGIDENTIFIER] {
         if (!topDocument.page()) {
-            INFO_LOG(LOGIDENTIFIER, "Top document has no page.");
+            INFO_LOG(identifier, "Top document has no page.");
             return;
         }
 
@@ -284,7 +284,7 @@ void FullscreenManager::cancelFullscreen()
         if (auto* fullscreenElement = topDocument.fullscreenManager().fullscreenElement())
             page()->chrome().client().exitFullScreenForElement(fullscreenElement);
         else
-            INFO_LOG(LOGIDENTIFIER, "Top document has no fullscreen element");
+            INFO_LOG(identifier, "Top document has no fullscreen element");
     });
 }
 

@@ -1022,17 +1022,10 @@ void FrameLoader::loadArchive(Ref<Archive>&& archive)
     if (!mainResource)
         return;
 
-    URL url { mainResource->url() };
-#if ENABLE(WEB_ARCHIVE)
-    constexpr auto webArchivePrefix { "webarchive+"_s };
-    if (url.protocol().startsWith(webArchivePrefix))
-        url.setProtocol({ url.protocol().substring(webArchivePrefix.length()) });
-#endif
-
     ResourceResponse response(URL(), mainResource->mimeType(), mainResource->data().size(), mainResource->textEncoding());
     SubstituteData substituteData(&mainResource->data(), URL(), response, SubstituteData::SessionHistoryVisibility::Hidden);
     
-    ResourceRequest request(url);
+    ResourceRequest request(mainResource->url());
 
     auto documentLoader = m_client->createDocumentLoader(request, substituteData);
     documentLoader->setArchive(WTFMove(archive));

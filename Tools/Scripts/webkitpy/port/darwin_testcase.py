@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import re
 import time
 
 from webkitpy.port import port_testcase
@@ -154,3 +155,19 @@ class DarwinTest(port_testcase.PortTestCase):
     def test_get_crash_log(self):
         port = self.make_port(port_name=self.port_name)
         port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
+
+    def test_stderr_patterns_to_strip(self):
+        content = '\n'.join([
+            'Some log line',
+            'nil host used in call to allowsAnyHTTPSCertificateForHost',
+            'nil host used in call to allowsSpecificHTTPSCertificateForHost',
+            'Some other log line',
+            '',
+        ])
+        port = self.make_port(port_name=self.port_name)
+        for pattern in port.stderr_patterns_to_strip():
+            content = re.sub(pattern[0], pattern[1], content)
+
+        self.assertEqual(
+            content, 'Some log line\nSome other log line\n'
+        )

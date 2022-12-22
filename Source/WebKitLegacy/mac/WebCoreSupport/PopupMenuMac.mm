@@ -180,7 +180,9 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int selectedIndex)
     }
     // Save the current event that triggered the popup, so we can clean up our event
     // state after the NSMenu goes away.
-    Ref<Frame> frame(v->frame());
+    RefPtr frame { dynamicDowncast<LocalFrame>(v->frame()) };
+    if (!frame)
+        return;
     RetainPtr<NSEvent> event = frame->eventHandler().currentNSEvent();
     
     Ref<PopupMenuMac> protector(*this);

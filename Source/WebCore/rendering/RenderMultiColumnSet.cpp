@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -240,6 +241,13 @@ LayoutUnit RenderMultiColumnSet::calculateBalancedHeight(bool initial) const
         // Too many forced breaks to allow any implicit breaks. Initial balancing should already
         // have set a good height. There's nothing more we should do.
         return m_computedColumnHeight + sizeContainmentShortage;
+    }
+
+    if (m_computedColumnHeight >= m_maxColumnHeight) {
+        // We cannot stretch any further. We'll just have to live with the overflowing columns. This
+        // typically happens if the max column height is less than the height of the tallest piece
+        // of unbreakable content (e.g. lines).
+        return m_computedColumnHeight;
     }
 
     // If the initial guessed column height wasn't enough, stretch it now. Stretch by the lowest

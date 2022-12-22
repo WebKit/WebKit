@@ -1,8 +1,6 @@
 
 PASS Test that offscreenCanvas's size is correct after being transferred to a worker.
-FAIL Test that transfer an OffscreenCanvas that has a context throws exception. assert_throws_dom: function "function () {
-            worker.postMessage({offscreenCanvas}, [offscreenCanvas]);
-        }" did not throw
+PASS Test that transfer an OffscreenCanvas that has a context throws exception.
 PASS Test that transfer an OffscreenCanvas twice throws exception.
 PASS Test that calling getContext('2d') on a detached OffscreenCanvas throws exception.
 PASS Test that calling getContext('webgl') on a detached OffscreenCanvas throws exception.

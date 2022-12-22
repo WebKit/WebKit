@@ -124,6 +124,8 @@ struct WKAppPrivacyReportTestingData {
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 
++ (void)_setLookalikeCharacterStringsForTesting:(NSArray<NSString *> *)strings;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

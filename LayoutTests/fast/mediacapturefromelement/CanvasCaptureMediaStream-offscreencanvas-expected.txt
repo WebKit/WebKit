@@ -1,4 +1,4 @@
 
 PASS capture of an OffscreenCanvas with 2D context
-FAIL capture of an OffscreenCanvas with WebGL context null is not an object (evaluating 'gl.clearColor')
+FAIL capture of an OffscreenCanvas with WebGL context ctx.commit is not a function. (In 'ctx.commit()', 'ctx.commit' is undefined)
 

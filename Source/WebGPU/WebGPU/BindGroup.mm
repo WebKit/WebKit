@@ -55,7 +55,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     if (descriptor.nextInChain)
         return BindGroup::createInvalid(*this);
 
-    Vector<BindGroupResource> resources;
+    Vector<BindableResource> resources;
 #if HAVE(TIER2_ARGUMENT_BUFFERS)
     if ([m_device argumentBuffersSupport] != MTLArgumentBuffersTier1) {
         const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
@@ -168,7 +168,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     return BindGroup::create(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), *this);
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindGroupResource>&& resources, Device& device)
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResource>&& resources, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)

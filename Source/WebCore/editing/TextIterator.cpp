@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -174,7 +175,8 @@ bool BitStack::top() const
     if (!m_size)
         return false;
     unsigned shift = (m_size - 1) & bitInWordMask;
-    return m_words.last() & (1U << shift);
+    unsigned index = (m_size - 1) / bitsInWord;
+    return m_words[index] & (1U << shift);
 }
 
 // --------
@@ -478,6 +480,8 @@ void TextIterator::advance()
             if (!isRendererVisible(renderer, m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*m_node) && !renderer;
+            } else if (is<Element>(m_node) && renderer->shouldSkipContent()) {
+                m_handledChildren = true;
             } else {
                 // handle current node according to its type
                 if (renderer->isText() && m_node->isTextNode())

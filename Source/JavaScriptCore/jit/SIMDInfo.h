@@ -172,50 +172,10 @@ constexpr unsigned elementByteSize(SIMDLane simdLane)
 
 namespace WTF {
 
-inline void printInternal(PrintStream& out, JSC::SIMDLane lane)
-{
-    switch (lane) {
-    case JSC::SIMDLane::i8x16:
-        out.print("i8x16");
-        break;
-    case JSC::SIMDLane::i16x8:
-        out.print("i16x8");
-        break;
-    case JSC::SIMDLane::i32x4:
-        out.print("i32x4");
-        break;
-    case JSC::SIMDLane::f32x4:
-        out.print("f32x4");
-        break;
-    case JSC::SIMDLane::i64x2:
-        out.print("i64x2");
-        break;
-    case JSC::SIMDLane::f64x2:
-        out.print("f64x2");
-        break;
-    case JSC::SIMDLane::v128:
-        out.print("v128");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
+void printInternal(PrintStream& out, JSC::SIMDLane lane);
 
-inline void printInternal(PrintStream& out, JSC::SIMDSignMode mode)
-{
-    switch (mode) {
-    case JSC::SIMDSignMode::None:
-        out.print("SignMode::None");
-        break;
-    case JSC::SIMDSignMode::Signed:
-        out.print("SignMode::Signed");
-        break;
-    case JSC::SIMDSignMode::Unsigned:
-        out.print("SignMode::Unsigned");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
+void printInternal(PrintStream& out, JSC::SIMDSignMode mode);
+
+void printInternal(PrintStream& out, JSC::v128_t v);
 
 } // namespace WTF

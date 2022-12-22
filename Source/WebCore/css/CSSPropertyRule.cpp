@@ -90,7 +90,7 @@ String CSSPropertyRule::cssText() const
         builder.append("inherits: ", *descriptor.inherits ? "true" : "false", "; ");
 
     if (descriptor.initialValue)
-        builder.append("initial-value: ", initialValue(), "; ");
+        builder.append("initial-value:", initialValue(), "; ");
 
     builder.append("}");
 

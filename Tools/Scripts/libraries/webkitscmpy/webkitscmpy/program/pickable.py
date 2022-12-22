@@ -179,9 +179,10 @@ class Pickable(Command):
         ))
 
         for commit in commits:
-            commits_story.add(commit)
             all_commits[str(commit)] = commit
             if any([ex(commit, repository=repository) if callable(ex) else ex.search(commit.message.splitlines()[0]) for ex in excluded]):
+                continue
+            if commit in commits_story:
                 continue
             filtered_in.add(str(commit))
 
@@ -256,6 +257,10 @@ class Pickable(Command):
             story = CommitsStory()
             for commit in repository.commits(begin=dict(argument=branch_point.hash), end=dict(argument=args.into)):
                 story.add(commit)
+                relationships = Trace.relationships(commit, repository)
+                for rel in relationships or []:
+                    if rel.type in Relationship.IDENTITY:
+                        story.add(rel.commit)
 
         commits = cls.pickable(commits, repository, commits_story=story, excluded=args.excluded)
         if not commits:

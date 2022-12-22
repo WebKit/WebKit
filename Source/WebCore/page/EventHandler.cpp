@@ -1370,7 +1370,7 @@ RefPtr<Frame> EventHandler::subframeForTargetNode(Node* node)
     if (!is<FrameView>(widget))
         return nullptr;
 
-    return &downcast<FrameView>(*widget).frame();
+    return dynamicDowncast<LocalFrame>(downcast<FrameView>(*widget).frame());
 }
 
 static bool isSubmitImage(Node* node)
@@ -4981,10 +4981,14 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 
 bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widget& widget, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
-    if (!is<FrameView>(widget))
+    auto* frameView = dynamicDowncast<FrameView>(widget);
+    if (!frameView)
+        return false;
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+    if (!localFrame)
         return false;
 
-    return Ref(downcast<FrameView>(widget).frame())->eventHandler().handleWheelEvent(event, processingSteps);
+    return localFrame->eventHandler().handleWheelEvent(event, processingSteps);
 }
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const

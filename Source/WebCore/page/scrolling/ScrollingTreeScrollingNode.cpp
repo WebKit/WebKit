@@ -236,10 +236,25 @@ void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
     scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
+void ScrollingTreeScrollingNode::willStartAnimatedScroll()
+{
+    scrollingTree().scrollingTreeNodeWillStartAnimatedScroll(*this);
+}
+
 void ScrollingTreeScrollingNode::didStopAnimatedScroll()
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
     scrollingTree().scrollingTreeNodeDidStopAnimatedScroll(*this);
+}
+
+void ScrollingTreeScrollingNode::willStartWheelEventScroll()
+{
+    scrollingTree().scrollingTreeNodeWillStartWheelEventScroll(*this);
+}
+
+void ScrollingTreeScrollingNode::didStopWheelEventScroll()
+{
+    scrollingTree().scrollingTreeNodeDidStopWheelEventScroll(*this);
 }
 
 bool ScrollingTreeScrollingNode::startAnimatedScrollToPosition(FloatPoint destinationPosition)

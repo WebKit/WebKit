@@ -68,6 +68,10 @@
 
 namespace JSC { namespace Wasm {
 
+namespace WasmAirIRGeneratorInternal {
+    static constexpr bool verbose = false;
+}
+
 using namespace B3::Air;
 
 /*
@@ -2776,8 +2780,10 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoopTierUpCheck(uint32_t l
         // First argument is the countdown location.
         ASSERT(params.value()->numChildren() >= 1);
         StackMap values(params.value()->numChildren() - 1);
-        for (unsigned i = 1; i < params.value()->numChildren(); ++i)
+        for (unsigned i = 1; i < params.value()->numChildren(); ++i) {
+            dataLogLnIf(WasmAirIRGeneratorInternal::verbose, "OSR loop patchpoint param[", i, "] = ", params[i]);
             values[i - 1] = OSREntryValue(params[i], params.value()->child(i)->type());
+        }
 
         OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex, WTFMove(values));
         OSREntryData* osrEntryDataPtr = &osrEntryData;
@@ -3209,7 +3215,16 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             return { };
         }
 
-        emitUnlinkedWasmToWasmCall(self().emitCallPatchpoint(isWasmBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo));
+        auto data = self().emitCallPatchpoint(isWasmBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo);
+        auto* patchpoint = data.first;
+
+        // We need to clobber all potential pinned registers since we might be leaving the instance.
+        // We pessimistically assume we could be calling to something that is bounds checking.
+        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+        patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+
+        emitUnlinkedWasmToWasmCall(WTFMove(data));
+
         emitCallToEmbedder(self().emitCallPatchpoint(isEmbedderBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
 
         BasicBlock* continuation = m_code.addBlock();

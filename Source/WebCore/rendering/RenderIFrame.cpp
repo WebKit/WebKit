@@ -69,7 +69,8 @@ bool RenderIFrame::requiresLayer() const
 RenderView* RenderIFrame::contentRootRenderer() const
 {
     FrameView* childFrameView = childView();
-    return childFrameView ? childFrameView->frame().contentRenderer() : 0;
+    auto* localFrame = childFrameView ? dynamicDowncast<LocalFrame>(childFrameView->frame()) : nullptr;
+    return localFrame ? localFrame->contentRenderer() : nullptr;
 }
 
 bool RenderIFrame::isFullScreenIFrame() const

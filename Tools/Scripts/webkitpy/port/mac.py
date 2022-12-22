@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -287,7 +287,7 @@ class MacPort(DarwinPort):
                     raise e
 
     def logging_patterns_to_strip(self):
-        logging_patterns = []
+        logging_patterns = super(MacPort, self).logging_patterns_to_strip()
 
         # FIXME: Remove this after <rdar://problem/35954459> is fixed.
         logging_patterns.append(('AVDCreateGPUAccelerator: Error loading GPU renderer\n', ''))
@@ -315,7 +315,7 @@ class MacPort(DarwinPort):
         return logging_detectors
 
     def stderr_patterns_to_strip(self):
-        worthless_patterns = []
+        worthless_patterns = super(MacPort, self).stderr_patterns_to_strip()
         worthless_patterns.append((re.compile('.*(Fig|fig|itemasync|vt|mv_|PullParamSetSPS|ccrp_|client).* signalled err=.*\n'), ''))
         worthless_patterns.append((re.compile('.*<<<< FigFilePlayer >>>>.*\n'), ''))
         worthless_patterns.append((re.compile('.*<<<< FigFile >>>>.*\n'), ''))

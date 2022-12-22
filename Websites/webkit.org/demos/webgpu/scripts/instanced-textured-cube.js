@@ -244,7 +244,8 @@ async function helloCube() {
             format: "depth24plus",
             depthWriteEnabled: true,
             depthCompare: "less-equal"
-        }
+        },
+        multisample: { count: 4 }
     };
 
     const deviceScaleFactor = window.devicePixelRatio || 1;

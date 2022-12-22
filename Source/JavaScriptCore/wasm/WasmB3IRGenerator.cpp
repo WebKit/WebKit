@@ -3753,7 +3753,7 @@ B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, B3::
 
     *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
 
-    const Vector<ArgumentLocation, 1> &constrainedResultLocations = wasmCalleeInfo.results;
+    const Vector<ArgumentLocation, 1>& constrainedResultLocations = wasmCalleeInfo.results;
     if (returnType != B3::Void) {
         Vector<B3::ValueRep, 1> resultConstraints;
         for (auto valueLocation : constrainedResultLocations)

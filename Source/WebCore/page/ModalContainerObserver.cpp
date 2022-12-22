@@ -194,7 +194,11 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         return;
     }
 
-    if (!view.frame().isMainFrame())
+    auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
+    if (!localFrame)
+        return;
+
+    if (!localFrame->isMainFrame())
         return;
 
     if (!view.hasViewportConstrainedObjects())
@@ -677,9 +681,13 @@ void ModalContainerObserver::hideUserInteractionBlockingElementIfNeeded()
 
     constexpr OptionSet hitTestTypes { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::DisallowUserAgentShadowContent };
 
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(view->frame());
+    if (!localFrame)
+        return;
+
     RefPtr<Element> foundElement;
     for (auto& location : locationsToHitTest) {
-        auto hitTestResult = view->frame().eventHandler().hitTestResultAtPoint(location, hitTestTypes);
+        auto hitTestResult = localFrame->eventHandler().hitTestResultAtPoint(location, hitTestTypes);
         auto target = hitTestResult.targetElement();
         if (!target || is<HTMLBodyElement>(*target) || target->isDocumentNode())
             return;

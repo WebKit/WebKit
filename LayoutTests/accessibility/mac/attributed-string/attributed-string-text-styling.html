@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="text-plain">The</p>
+<p id="text-bold" style="font-weight: bold">Fox</p>
+<p id="text-italic" style="font-style: italic">Jumped</p>
+<p id="text-bold-italic" style="font-style: italic; font-weight: bold;">Over</p>
+
+<script>
+    description("This test ensures that attributed string for text marker range includes text styling information.");        
+    if (window.accessibilityController) {
+        var textPlain = accessibilityController.accessibleElementById("text-plain");
+        var textPlainRange = textPlain.textMarkerRangeForElement(textPlain);
+        var textPlainAttributes = "AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, The";
+        shouldBe("textPlain.attributedStringForTextMarkerRange(textPlainRange)", "textPlainAttributes");
+
+        var textBold = accessibilityController.accessibleElementById("text-bold");
+        var textBoldRange = textBold.textMarkerRangeForElement(textBold);
+        var textBoldAttributes = "AXFont - {\n    AXFontBold = 1;\n    AXFontFamily = Times;\n    AXFontName = \"Times-Bold\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Bold\";\n}, Fox";
+        shouldBe("textBold.attributedStringForTextMarkerRange(textBoldRange)", "textBoldAttributes");
+
+        var textItalic = accessibilityController.accessibleElementById("text-italic");
+        var textItalicRange = textItalic.textMarkerRangeForElement(textItalic);
+        var textItalicAttributes = "AXFont - {\n    AXFontFamily = Times;\n    AXFontItalic = 1;\n    AXFontName = \"Times-Italic\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Italic\";\n}, Jumped";
+        shouldBe("textItalic.attributedStringForTextMarkerRange(textItalicRange)", "textItalicAttributes");
+
+        var textBoldItalic = accessibilityController.accessibleElementById("text-bold-italic");
+        var textBoldItalicRange = textBoldItalic.textMarkerRangeForElement(textBoldItalic);
+        var textBoldItalicAttributes = "AXFont - {\n    AXFontBold = 1;\n    AXFontFamily = Times;\n    AXFontItalic = 1;\n    AXFontName = \"Times-BoldItalic\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Bold Italic\";\n}, Over";
+        shouldBe("textBoldItalic.attributedStringForTextMarkerRange(textBoldItalicRange)", "textBoldItalicAttributes");
+    }
+</script>
+</body>
+</html>

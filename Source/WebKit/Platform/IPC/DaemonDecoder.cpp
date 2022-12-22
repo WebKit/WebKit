@@ -49,13 +49,13 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
     return true;
 }
 
-const uint8_t* Decoder::decodeFixedLengthReference(size_t size)
+Span<const uint8_t> Decoder::decodeFixedLengthReference(size_t size)
 {
     if (!bufferIsLargeEnoughToContainBytes(size))
-        return nullptr;
+        return { };
     const uint8_t* data = m_buffer.data() + m_bufferPosition;
     m_bufferPosition += size;
-    return data;
+    return { data, size };
 }
 
 } // namespace Daemon

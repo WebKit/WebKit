@@ -1,0 +1,19 @@
+This test ensures that attributed string for text marker range includes text styling information.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textPlain.attributedStringForTextMarkerRange(textPlainRange) is textPlainAttributes
+PASS textBold.attributedStringForTextMarkerRange(textBoldRange) is textBoldAttributes
+PASS textItalic.attributedStringForTextMarkerRange(textItalicRange) is textItalicAttributes
+PASS textBoldItalic.attributedStringForTextMarkerRange(textBoldItalicRange) is textBoldItalicAttributes
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The
+
+Fox
+
+Jumped
+
+Over

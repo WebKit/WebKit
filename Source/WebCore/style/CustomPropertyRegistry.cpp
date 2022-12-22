@@ -79,8 +79,15 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
     auto& document = m_scope.document();
 
     auto initialValue = [&]() -> RefPtr<CSSCustomPropertyValue> {
-        if (!descriptor.initialValue)
+        if (!descriptor.initialValue) {
+            // "If the value of the syntax descriptor is the universal syntax definition, then the initial-value descriptor is optional.
+            //  If omitted, the initial value of the property is the guaranteed-invalid value."
+            // https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
+            if (syntax->isUniversal())
+                return CSSCustomPropertyValue::createWithID(descriptor.name, CSSValueInvalid);
+
             return nullptr;
+        }
 
         auto tokenRange = descriptor.initialValue->tokenRange();
 
@@ -93,16 +100,10 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
         auto style = RenderStyle::clone(*m_scope.resolver().rootDefaultStyle());
         Style::Builder dummyBuilder(style, { document, style }, { }, { });
 
-        auto value = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, *syntax, tokenRange, dummyBuilder.state(), { document });
-        if (!value || !value->isResolved() || value->containsCSSWideKeyword())
-            return nullptr;
-
-        return value;
+        return CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenRange, dummyBuilder.state(), { document });
     }();
 
-    // "If the value of the syntax descriptor is the universal syntax definition, then the initial-value descriptor is optional."
-    // https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
-    if (!syntax->isUniversal() && !initialValue)
+    if (!initialValue)
         return;
 
     auto property = CSSRegisteredCustomProperty {
