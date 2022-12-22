@@ -47,7 +47,7 @@ namespace WebKit {
 RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle)))
     , m_objectHeap(WebGPU::ObjectHeap::create())
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
@@ -60,18 +60,14 @@ RemoteGPU::~RemoteGPU() = default;
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
-    m_streamConnection->open();
     workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
 {
     assertIsMainRunLoop();
-    m_streamConnection->invalidate();
-    m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     workQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();
     });
@@ -80,6 +76,9 @@ void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
 void RemoteGPU::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
+    m_streamConnection->open(workQueue());
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
+
 #if HAVE(WEBGPU_IMPLEMENTATION)
     // BEWARE: This is a retain cycle.
     // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
@@ -102,6 +101,8 @@ void RemoteGPU::workQueueInitialize()
 void RemoteGPU::workQueueUninitialize()
 {
     assertIsCurrent(workQueue());
+    m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
+    m_streamConnection->invalidate();
     m_streamConnection = nullptr;
     m_objectHeap->clear();
     m_backing = nullptr;

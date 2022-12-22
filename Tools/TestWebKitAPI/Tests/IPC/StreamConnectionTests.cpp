@@ -172,7 +172,7 @@ public:
     {
         WTF::initializeMainThread();
         auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(10000);
-        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), *m_workQueue);
+        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle));
         m_clientConnection = WTFMove(clientConnection);
         m_serverConnection = WTFMove(serverConnection);
     }
@@ -203,7 +203,7 @@ protected:
 TEST_F(StreamConnectionTest, OpenConnections)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
+    m_serverConnection->open(*m_workQueue);
     m_serverConnection->invalidate();
     m_mockClientReceiver.waitUntilClosed();
     m_clientConnection->invalidate();
@@ -212,7 +212,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
 TEST_F(StreamConnectionTest, SendMessage)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
+    m_serverConnection->open(*m_workQueue);
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), 77);
     for (uint64_t i = 0u; i < 55u; ++i)
@@ -237,7 +237,7 @@ TEST_F(StreamConnectionTest, SendMessage)
 TEST_F(StreamConnectionTest, SendAsyncReplyMessage)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
+    m_serverConnection->open(*m_workQueue);
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     mockServerReceiver->setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
         using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
@@ -266,7 +266,7 @@ TEST_F(StreamConnectionTest, SendAsyncReplyMessage)
 TEST_F(StreamConnectionTest, SendAsyncReplyMessageCancel)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
+    m_serverConnection->open(*m_workQueue);
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     mockServerReceiver->setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
         using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
