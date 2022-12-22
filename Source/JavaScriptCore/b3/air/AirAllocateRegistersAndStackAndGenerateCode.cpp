@@ -348,7 +348,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 void GenerateAndAllocateRegisters::prepareForGeneration()
 {
     // We pessimistically assume we use all callee saves.
-    handleCalleeSaves(m_code, RegisterSetBuilder::vmCalleeSaveRegisters());
+    handleCalleeSaves(m_code, RegisterSetBuilder::calleeSaveRegisters());
     allocateEscapedStackSlots(m_code);
 
     insertBlocksForFlushAfterTerminalPatchpoints();

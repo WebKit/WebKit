@@ -46,7 +46,7 @@ RegisterSetBuilder StackmapGenerationParams::unavailableRegisters() const
 {
     RegisterSetBuilder result = usedRegisters();
     
-    RegisterSetBuilder unsavedCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisters();
+    RegisterSetBuilder unsavedCalleeSaves = RegisterSetBuilder::calleeSaveRegisters();
     ASSERT(!unsavedCalleeSaves.hasAnyWideRegisters());
     unsavedCalleeSaves.exclude(m_context.code->calleeSaveRegisters());
 

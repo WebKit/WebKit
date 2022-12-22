@@ -113,7 +113,7 @@ void lowerAfterRegAlloc(Code& code)
     {
         RegisterSetBuilder disallowed;
         if (code.stackIsAllocated()) {
-            disallowed = RegisterSetBuilder::vmCalleeSaveRegisters();
+            disallowed = RegisterSetBuilder::calleeSaveRegisters();
             ASSERT(!disallowed.hasAnyWideRegisters());
             disallowed.exclude(code.calleeSaveRegisters());
         }

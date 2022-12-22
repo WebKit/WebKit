@@ -92,7 +92,7 @@ Code::Code(Procedure& proc)
             // Our use of DisallowMacroScratchRegisterUsage is not quite right, so for now...
             all.exclude(RegisterSetBuilder::macroClobberedRegisters());
 #endif // CPU(ARM)
-            auto calleeSave = RegisterSetBuilder::vmCalleeSaveRegisters();
+            auto calleeSave = RegisterSetBuilder::calleeSaveRegisters();
             all.buildAndValidate().forEach(
                 [&] (Reg reg) {
                     if (!calleeSave.contains(reg, IgnoreVectors))

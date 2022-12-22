@@ -103,25 +103,10 @@ T invoke(const Compilation& code, Arguments... arguments)
     T (*function)(Arguments...);
     T result;
 
-    // On some platforms, notably ARMv7, some C ABI callee save registers are in fact caller save
-    // in the JIT ABI. We need to store and restore these when invoking JIT code. Note the list of
-    // registers to save here is the same as those saved in the pushCalleeSaves macro in llint.
-#if CPU(ARM64) || CPU(ARM64E) || CPU(X86_64) || CPU(RISCV64)
-    // All C ABI callee save registers are also JIT callee save registers.
-#elif CPU(ARM)
-    asm goto("" ::: "r4", "r5", "r6", "r8", "r9", "d15" : clobber);
-#else
-#   error "Not implemented on platform"
-#endif
-
     executableAddress = untagCFunctionPtr<JITCompilationPtrTag>(code.code().taggedPtr());
     function = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     result = function(arguments...);
 
-#if CPU(ARM)
-clobber:
-    asm volatile(""); // Important: this is here to prevent tail call optimization.
-#endif
     return result;
 }
 
