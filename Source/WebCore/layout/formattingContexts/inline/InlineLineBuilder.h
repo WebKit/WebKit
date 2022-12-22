@@ -113,6 +113,8 @@ public:
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
+    InlineLayoutUnit leadingPunctuationWidthForLineCandiate(size_t firstInlineTextItemIndex, size_t candidateContentStartIndex) const;
+    InlineLayoutUnit trailingPunctuationWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const;
     size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
 
     struct UsedConstraints {

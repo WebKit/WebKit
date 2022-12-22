@@ -434,8 +434,7 @@ TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
 
 bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
-    ASSERT(inlineTextItem.length());
-    if (!style.hangingPunctuation().contains(HangingPunctuation::First))
+    if (!inlineTextItem.length() || !style.hangingPunctuation().contains(HangingPunctuation::First))
         return false;
     auto leadingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.start()];
     return U_GET_GC_MASK(leadingCharacter) & (U_GC_PS_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
@@ -443,17 +442,16 @@ bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem,
 
 float TextUtil::hangablePunctuationStartWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
-    ASSERT(inlineTextItem.length());
     if (!hasHangablePunctuationStart(inlineTextItem, style))
         return { };
+    ASSERT(inlineTextItem.length());
     auto leadingPosition = inlineTextItem.start();
     return width(inlineTextItem, style.fontCascade(), leadingPosition, leadingPosition + 1, { });
 }
 
 bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
-    ASSERT(inlineTextItem.length());
-    if (!style.hangingPunctuation().contains(HangingPunctuation::Last))
+    if (!inlineTextItem.length() || !style.hangingPunctuation().contains(HangingPunctuation::Last))
         return false;
     auto trailingCharacter = inlineTextItem.inlineTextBox().content()[inlineTextItem.end() - 1];
     return U_GET_GC_MASK(trailingCharacter) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK);
@@ -461,9 +459,9 @@ bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, c
 
 float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
-    ASSERT(inlineTextItem.length());
     if (!hasHangablePunctuationEnd(inlineTextItem, style))
         return { };
+    ASSERT(inlineTextItem.length());
     auto trailingPosition = inlineTextItem.end() - 1;
     return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
