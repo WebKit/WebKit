@@ -1,5 +1,4 @@
 #include "../../../../Configurations/Version.xcconfig"
-#include "../../../../Configurations/WebKitTargetConditionals.xcconfig"
 
 PRODUCT_NAME = ANGLEMetalLib;
 SKIP_INSTALL = YES;

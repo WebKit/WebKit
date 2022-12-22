@@ -28,15 +28,9 @@
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework OpenGL -framework IOKit;
 STRIP_STYLE = debugging;
 
-// Workaround for "WebKit is not available..." error (rdar://91668054)
-DISABLE_SDK_METADATA_PARSING[sdk=appletv*] = YES;
-DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES;
+SKIP_INSTALL[sdk=embedded*] = YES;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_PRODUCT_DEPENDENCY_NAMES_$(WK_WHICH_BUILD_SYSTEM));
 EXCLUDED_PRODUCT_DEPENDENCY_NAMES_legacy = WebKit.framework;
 
-INSTALL_PATH = $(INSTALL_PATH_$(CONFIGURATION))
-INSTALL_PATH_Release = $(INSTALL_PATH);
-INSTALL_PATH_Debug = $(INSTALL_PATH);
-INSTALL_PATH_Production = $(INSTALL_PATH_PREFIX)$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH);
-INSTALL_PATH_engineering = $(INSTALL_PATH);
+INSTALL_PATH = $(PRODUCTION_PUBLIC_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Resources;

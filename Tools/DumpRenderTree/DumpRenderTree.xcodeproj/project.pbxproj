@@ -372,7 +372,6 @@
 		BCB281EE0CFA713D007E533E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = mac/Configurations/Base.xcconfig; sourceTree = "<group>"; };
 		BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DumpRenderTree.xcconfig; path = mac/Configurations/DumpRenderTree.xcconfig; sourceTree = "<group>"; };
 		BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = mac/Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
-		BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = TestNetscapePlugIn.xcconfig; path = mac/Configurations/TestNetscapePlugIn.xcconfig; sourceTree = "<group>"; };
 		BCB284880CFA8202007E533E /* PixelDumpSupportCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PixelDumpSupportCG.cpp; path = cg/PixelDumpSupportCG.cpp; sourceTree = "<group>"; };
 		BCB284890CFA8202007E533E /* PixelDumpSupportCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PixelDumpSupportCG.h; path = cg/PixelDumpSupportCG.h; sourceTree = "<group>"; };
 		BCB2848A0CFA820F007E533E /* PixelDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PixelDumpSupport.h; sourceTree = "<group>"; };
@@ -769,7 +768,6 @@
 				A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */,
 				A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */,
 				A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */,
-				BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";

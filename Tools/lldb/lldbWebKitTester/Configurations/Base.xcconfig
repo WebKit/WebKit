@@ -21,13 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include? "../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
-#include "../../../../Configurations/SDKVariant.xcconfig"
-
-USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
-USE_INTERNAL_SDK_Production = YES;
-USE_INTERNAL_SDK_Debug = $(HAVE_INTERNAL_SDK);
-USE_INTERNAL_SDK_Release = $(HAVE_INTERNAL_SDK);
+#include "../../../../Configurations/CommonBase.xcconfig"
 
 ALWAYS_SEARCH_USER_PATHS = NO;
 
@@ -86,15 +80,6 @@ GCC_WARN_UNUSED_VARIABLE = NO;
 WARNING_CFLAGS = -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla;
 
 HEADER_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR}/usr/local/include;
-
-TARGET_MACOS_LEGACY_VERSION_IDENTIFIER = $(TARGET_MACOS_LEGACY_VERSION_IDENTIFIER_$(MACOSX_DEPLOYMENT_TARGET:base))
-TARGET_MACOS_LEGACY_VERSION_IDENTIFIER_10 = 10$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier)
-
-TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR_$(TARGET_MACOS_LEGACY_VERSION_IDENTIFIER))
-TARGET_MAC_OS_X_VERSION_MAJOR_ = $(MACOSX_DEPLOYMENT_TARGET:base:base)0000
-TARGET_MAC_OS_X_VERSION_MAJOR_10_13 = 101300
-TARGET_MAC_OS_X_VERSION_MAJOR_10_14 = 101400
-TARGET_MAC_OS_X_VERSION_MAJOR_10_15 = 101500
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 

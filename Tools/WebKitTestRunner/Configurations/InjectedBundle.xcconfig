@@ -37,10 +37,6 @@ OTHER_LDFLAGS_ = -framework Carbon -framework Cocoa -lAccessibility;
 
 STRIP_STYLE = debugging;
 
-// Workaround for "WebKit is not available..." error (rdar://91668054)
-DISABLE_SDK_METADATA_PARSING[sdk=appletv*] = YES;
-DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES;
-
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH));
 EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = AccessibilityControllerMac.mm AccessibilityTextMarkerMac.mm AccessibilityUIElementMac.mm ActivateFonts.mm InjectedBundleMac.mm InjectedBundlePageMac.mm;
 EXCLUDED_SOURCE_FILE_NAMES_ = *IOS.*;

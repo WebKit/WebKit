@@ -43,9 +43,6 @@ SKIP_INSTALL_ = YES;
 SKIP_INSTALL_NO = YES;
 SKIP_INSTALL_YES = NO;
 
-// Workaround for "JavaScriptCore is not available when building for watchOS." error (rdar://91668054)
-DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES
-
 DYLIB_INSTALL_NAME_BASE = $(DYLIB_INSTALL_NAME_BASE_$(CONFIGURATION));
 DYLIB_INSTALL_NAME_BASE_Production = $(INSTALL_PATH);
 DYLIB_INSTALL_NAME_BASE_Debug = @rpath;

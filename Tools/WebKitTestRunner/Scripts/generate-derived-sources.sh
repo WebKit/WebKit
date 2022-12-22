@@ -8,7 +8,8 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner"
 
 export WebKitTestRunner="${SRCROOT}"
-export WebCoreScripts="${WEBCORE_PRIVATE_HEADERS_DIR}"
+/bin/ln -sfh "${WEBCORE_PRIVATE_HEADERS_DIR}" WebCorePrivateHeaders
+export WebCoreScripts="WebCorePrivateHeaders"
 
 if [ ! "$CC" ]; then
     export CC="`xcrun -find clang`"
