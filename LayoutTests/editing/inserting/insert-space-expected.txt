@@ -1,16 +1,14 @@
 
 
-Harness Error (FAIL), message = Test named "Insert a &nbsp; instead of plain space when it is inserted before the text node that has a leading plain space" passed a function to `test` that returned a value.
-
 PASS insert a plain space in the middle of text node
 PASS insert a plain space between two inserted text nodes
 PASS Insert a &nbsp; instead of plain space when it is inserted before the empty text node
 PASS Insert a &nbsp; instead of plain space when it is inserted before the text node that has a leading plain space
-FAIL Insert spaces into the editable <div> that only has <br> and space as child LayoutTests/resources/assert-selection.js:588:30
+FAIL Insert spaces into the editable <div> that only has <br> and space as child resources/assert-selection.js:939:30
 	 expected <div contenteditable>   | </div>,
 	 but got  <div contenteditable>   |</div>,
 	 sameupto <div contenteditable>   |
-FAIL Insert spaces into the editable <div> that only has <br> and enter as child LayoutTests/resources/assert-selection.js:588:30
+FAIL Insert spaces into the editable <div> that only has <br> and enter as child resources/assert-selection.js:939:30
 	 expected <div contenteditable>   |
 </div>,
 	 but got  <div contenteditable>   |</div>,
