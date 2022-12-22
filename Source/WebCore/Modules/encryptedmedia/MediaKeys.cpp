@@ -136,6 +136,9 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 5.1. Use this object's cdm instance to process certificate.
     ALWAYS_LOG(identifier);
     m_instance->setServerCertificate(WTFMove(certificate), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto success) {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(this);
+#endif
         // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
         // 5.1. [Else,] Resolve promise with true.
         if (success == CDMInstance::Failed) {

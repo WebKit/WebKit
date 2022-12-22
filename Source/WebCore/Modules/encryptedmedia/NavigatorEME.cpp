@@ -70,15 +70,18 @@ struct LogArgument<std::optional<T>> {
 
 namespace WebCore {
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 template<typename... Arguments>
 inline void infoLog(Logger& logger, const Arguments&... arguments)
 {
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     logger.info(LogEME, arguments...);
-#else
-    UNUSED_PARAM(logger);
-#endif
 }
+#else
+template<typename... Arguments>
+inline void infoLog(Logger&, const Arguments&...)
+{
+}
+#endif
 
 static void tryNextSupportedConfiguration(Document&, RefPtr<CDM>&&, Vector<MediaKeySystemConfiguration>&&, RefPtr<DeferredPromise>&&, Ref<Logger>&&, Logger::LogSiteIdentifier&&);
 

@@ -577,7 +577,7 @@ void Session::switchToBrowsingContext(const String& toplevelBrowsingContext, con
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, toplevelBrowsingContext);
     parameters->setString("frameHandle"_s, browsingContext);
-    m_host->sendCommandToBackend("switchToBrowsingContext"_s, WTFMove(parameters), [this, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+    m_host->sendCommandToBackend("switchToBrowsingContext"_s, WTFMove(parameters), [completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
