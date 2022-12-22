@@ -133,6 +133,9 @@ typedef BackgroundWebProcessCounter::Token BackgroundWebProcessToken;
 enum WebProcessWithAudibleMediaCounterType { };
 using WebProcessWithAudibleMediaCounter = RefCounter<WebProcessWithAudibleMediaCounterType>;
 using WebProcessWithAudibleMediaToken = WebProcessWithAudibleMediaCounter::Token;
+enum WebProcessWithMediaStreamingCounterType { };
+using WebProcessWithMediaStreamingCounter = RefCounter<WebProcessWithMediaStreamingCounterType>;
+using WebProcessWithMediaStreamingToken = WebProcessWithMediaStreamingCounter::Token;
 enum class CheckBackForwardList : bool { No, Yes };
 
 class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
@@ -383,6 +386,7 @@ public:
 #endif
 
     void updateAudibleMediaAssertions();
+    void updateMediaStreamingActivity();
 
     void setRemoteWorkerUserAgent(const String&);
     void updateRemoteWorkerPreferencesStore(const WebPreferencesStore&);
@@ -716,6 +720,8 @@ private:
         WebProcessWithAudibleMediaToken token;
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;
+
+    std::optional<WebProcessWithMediaStreamingToken> m_mediaStreamingActivity;
 
     ShutdownPreventingScopeCounter m_shutdownPreventingScopeCounter;
 
