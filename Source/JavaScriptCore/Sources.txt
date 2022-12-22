@@ -697,6 +697,7 @@ jit/RegisterAtOffsetList.cpp
 jit/RegisterSet.cpp
 jit/ScratchRegisterAllocator.cpp
 jit/SetupVarargsFrame.cpp
+jit/SIMDInfo.cpp
 jit/SlowPathCall.cpp
 jit/TagRegistersMode.cpp
 jit/ThunkGenerators.cpp

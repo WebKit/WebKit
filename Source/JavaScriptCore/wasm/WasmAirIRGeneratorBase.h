@@ -68,6 +68,10 @@
 
 namespace JSC { namespace Wasm {
 
+namespace WasmAirIRGeneratorInternal {
+    static constexpr bool verbose = false;
+}
+
 using namespace B3::Air;
 
 /*
@@ -2776,8 +2780,10 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoopTierUpCheck(uint32_t l
         // First argument is the countdown location.
         ASSERT(params.value()->numChildren() >= 1);
         StackMap values(params.value()->numChildren() - 1);
-        for (unsigned i = 1; i < params.value()->numChildren(); ++i)
+        for (unsigned i = 1; i < params.value()->numChildren(); ++i) {
+            dataLogLnIf(WasmAirIRGeneratorInternal::verbose, "OSR loop patchpoint param[", i, "] = ", params[i]);
             values[i - 1] = OSREntryValue(params[i], params.value()->child(i)->type());
+        }
 
         OSREntryData& osrEntryData = m_tierUp->addOSREntryData(m_functionIndex, loopIndex, WTFMove(values));
         OSREntryData* osrEntryDataPtr = &osrEntryData;

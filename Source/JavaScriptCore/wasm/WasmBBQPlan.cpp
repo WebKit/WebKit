@@ -99,13 +99,17 @@ void BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::BBQMode))) {
         auto* disassembler = context.procedure->code().disassembler();
 
-        const char* airPrefix = "Air    ";
-        const char* asmPrefix = "asm          ";
+        const char* b3Prefix = "b3    ";
+        const char* airPrefix = "Air        ";
+        const char* asmPrefix = "asm              ";
 
         auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
-            if (inst.origin) {
+            if (inst.origin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
                     dataLogLn("\033[1;37m", string, "\033[0m");
+                dataLog(b3Prefix);
+                inst.origin->deepDump(context.procedure.get(), WTF::dataFile());
+                dataLogLn();
             }
         });
 
@@ -163,11 +167,11 @@ void BBQPlan::work(CompilationEffort effort)
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-    dataLogLnIf(Options::dumpDisassembly(), "Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
+    dataLogLnIf(shouldDumpDisassemblyFor(CompilationMode::BBQMode), "Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     dumpDisassembly(context, linkBuffer);
     bool dumpDisassemblyAgain = false;
     function->entrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF(dumpDisassemblyAgain, linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+        FINALIZE_CODE_IF(context.procedure->shouldDumpIR() || dumpDisassemblyAgain, linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     CodePtr<WasmEntryPtrTag> entrypoint;

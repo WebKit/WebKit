@@ -3854,6 +3854,7 @@
 		4B78E099294427D2003C6682 /* B3Const128Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Const128Value.h; path = b3/B3Const128Value.h; sourceTree = "<group>"; };
 		4B78E09A294427D2003C6682 /* B3SIMDValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3SIMDValue.h; path = b3/B3SIMDValue.h; sourceTree = "<group>"; };
 		4B78E09B294427D2003C6682 /* B3Const128Value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Const128Value.cpp; path = b3/B3Const128Value.cpp; sourceTree = "<group>"; };
+		4B8F57F32953B29600090D27 /* SIMDInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SIMDInfo.cpp; sourceTree = "<group>"; };
 		4BBA4CD428FF5FE5003EBFC4 /* Width.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Width.h; sourceTree = "<group>"; };
 		4BC18E5428FDE6C800ECD68D /* SIMDInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIMDInfo.h; sourceTree = "<group>"; };
 		4BDF15B128FF912800D36BA1 /* Width.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Width.cpp; sourceTree = "<group>"; };
@@ -6753,6 +6754,7 @@
 				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
 				0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */,
 				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
+				4B8F57F32953B29600090D27 /* SIMDInfo.cpp */,
 				4BC18E5428FDE6C800ECD68D /* SIMDInfo.h */,
 				6B731CC02647A8370014646F /* SlowPathCall.cpp */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
