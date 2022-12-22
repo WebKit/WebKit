@@ -47,9 +47,11 @@ test(function() {
 test(function() {
   inlineStyle.setProperty('--a', 'hi');
   inlineStyle.setProperty('--b', 'hi');
-  assert_equals(inlineStyle.getPropertyValue('--a'), 'hello');
+  assert_equals(inlineStyle.getPropertyValue('--a'), 'hi');
   assert_equals(inlineStyle.getPropertyValue('--b'), 'hi');
-}, "Values not matching the registered type can't be set");
+  assert_equals(computedStyle.getPropertyValue('--a'), '0px');
+  assert_equals(computedStyle.getPropertyValue('--b'), 'hi');
+}, "Values not matching the registered type can be set.");
 
 test(function() {
   inlineStyle.removeProperty('--a');
@@ -61,8 +63,8 @@ test(function() {
 }, "Values can be removed from inline styles");
 
 test(function() {
-  sheetStyle.setProperty('--a', 'banana'); // Invalid, no change
-  assert_equals(computedStyle.getPropertyValue('--a'), '160px');
+  sheetStyle.setProperty('--a', 'banana'); // Invalid, treated as initial value.
+  assert_equals(computedStyle.getPropertyValue('--a'), '0px');
   sheetStyle.setProperty('--a', '20px');
   assert_equals(computedStyle.getPropertyValue('--a'), '20px');
   sheetStyle.setProperty('--a', 'initial');

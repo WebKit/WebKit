@@ -346,7 +346,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
             auto stringValue = propertyAndValue.values[0];
             if (cssPropertyId == CSSPropertyCustom) {
                 auto customProperty = propertyAndValue.customProperty;
-                if (keyframeOutput.style->setCustomProperty(&document, customProperty, stringValue, false, parserContext))
+                if (keyframeOutput.style->setCustomProperty(customProperty, stringValue, false, parserContext))
                     keyframeOutput.customStyleStrings.set(customProperty, stringValue);
             } else if (keyframeOutput.style->setProperty(cssPropertyId, stringValue, false, parserContext))
                 keyframeOutput.styleStrings.set(cssPropertyId, stringValue);
@@ -388,7 +388,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
             // 2. Add the property-value pair, property name → v, to k.
             if (propertyName == CSSPropertyCustom) {
                 auto customProperty = m.customProperty;
-                if (k.style->setCustomProperty(&document, customProperty, v, false, parserContext))
+                if (k.style->setCustomProperty(customProperty, v, false, parserContext))
                     k.customStyleStrings.set(customProperty, v);
             } else if (k.style->setProperty(propertyName, v, false, parserContext))
                 k.styleStrings.set(propertyName, v);

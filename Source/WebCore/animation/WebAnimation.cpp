@@ -1592,7 +1592,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
             },
             [&] (const AtomString& customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
-                    return inlineStyle->setCustomProperty(&styledElement.document(), customProperty, cssValue->cssText(), false, { styledElement.document() });
+                    return inlineStyle->setCustomProperty(customProperty, cssValue->cssText(), false, { styledElement.document() });
                 return false;
             }
         );

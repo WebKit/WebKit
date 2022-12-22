@@ -256,12 +256,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, con
     return value;
 }
 
-bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax& syntax, const CSSParserTokenRange& tokens, const CSSParserContext& context)
-{
-    CSSPropertyParser parser(tokens, context, nullptr);
-    return parser.canParseTypedCustomPropertyValue(syntax);
-}
-
 RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, const CSSParserTokenRange& tokens, Style::BuilderState& builderState, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr, false);
@@ -427,20 +421,6 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
         }
     }
     return { nullptr, CSSCustomPropertySyntax::Type::Unknown };
-}
-
-bool CSSPropertyParser::canParseTypedCustomPropertyValue(const CSSCustomPropertySyntax& syntax)
-{
-    if (syntax.isUniversal())
-        return true;
-
-    m_range.consumeWhitespace();
-
-    if (maybeConsumeCSSWideKeyword(m_range))
-        return true;
-
-    auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(syntax);
-    return value;
 }
 
 void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax& syntax, bool isInitial, HashSet<CSSPropertyID>& dependencies)
