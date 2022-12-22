@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.38.3
+================
+
+What's new in WebKitGTK 2.38.3?
+
+ - Fix runtime critical warnings from media player.
+ - Fix network process crash when fetching website data on ephemeral session.
+ - Fix the build with Ruby 3.2.
+ - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.38.2
 ================
 
