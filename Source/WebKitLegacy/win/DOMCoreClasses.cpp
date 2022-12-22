@@ -41,6 +41,7 @@
 #include <WebCore/Event.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontCascade.h>
+#include <WebCore/FontSelectionAlgorithm.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLCollection.h>
 #include <WebCore/HTMLFormElement.h>

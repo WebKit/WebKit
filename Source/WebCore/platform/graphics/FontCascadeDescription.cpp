@@ -45,7 +45,10 @@ struct SameSizeAsFontCascadeDescription {
     FontVariantAlternates alternates;
     AtomString string;
     AtomString string2;
-    int16_t fontSelectionRequest[3];
+    struct {
+        float a[2];
+        std::optional<float> b;
+    } fontSelectionRequest;
     float size;
     std::optional<float> sizeAdjust;
     unsigned bitfields1;
@@ -66,25 +69,25 @@ FontCascadeDescription::FontCascadeDescription()
 {
 }
 
-FontSelectionValue FontCascadeDescription::lighterWeight(FontSelectionValue weight)
+float FontCascadeDescription::lighterWeight(float weight)
 {
-    if (weight < FontSelectionValue(100))
+    if (weight < 100)
         return weight;
-    if (weight < FontSelectionValue(550))
-        return FontSelectionValue(100);
-    if (weight < FontSelectionValue(750))
-        return FontSelectionValue(400);
-    return FontSelectionValue(700);
+    if (weight < 550)
+        return 100;
+    if (weight < 750)
+        return 400;
+    return 700;
 }
 
-FontSelectionValue FontCascadeDescription::bolderWeight(FontSelectionValue weight)
+float FontCascadeDescription::bolderWeight(float weight)
 {
-    if (weight < FontSelectionValue(350))
-        return FontSelectionValue(400);
-    if (weight < FontSelectionValue(550))
-        return FontSelectionValue(700);
-    if (weight < FontSelectionValue(900))
-        return FontSelectionValue(900);
+    if (weight < 350)
+        return 400;
+    if (weight < 550)
+        return 700;
+    if (weight < 900)
+        return 900;
     return weight;
 }
 

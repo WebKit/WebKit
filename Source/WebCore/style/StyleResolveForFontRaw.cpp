@@ -165,9 +165,9 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
             case CSSValueBold:
                 return boldWeightValue();
             case CSSValueBolder:
-                return FontCascadeDescription::bolderWeight(fontDescription.weight());
+                return FontSelectionValue::clampFloat(FontCascadeDescription::bolderWeight(fontDescription.weight()));
             case CSSValueLighter:
-                return FontCascadeDescription::lighterWeight(fontDescription.weight());
+                return FontSelectionValue::clampFloat(FontCascadeDescription::lighterWeight(fontDescription.weight()));
             default:
                 ASSERT_NOT_REACHED();
                 return normalWeightValue();

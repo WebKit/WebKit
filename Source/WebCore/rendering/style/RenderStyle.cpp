@@ -2107,7 +2107,7 @@ void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
     fontCascade().update(selector);
 }
 
-void RenderStyle::setFontWeight(FontSelectionValue value)
+void RenderStyle::setFontWeight(float value)
 {
     auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
@@ -2117,7 +2117,7 @@ void RenderStyle::setFontWeight(FontSelectionValue value)
     fontCascade().update(selector);
 }
 
-void RenderStyle::setFontStretch(FontSelectionValue value)
+void RenderStyle::setFontStretch(float value)
 {
     auto selector = fontCascade().fontSelector();
     auto description = fontDescription();
@@ -2127,7 +2127,7 @@ void RenderStyle::setFontStretch(FontSelectionValue value)
     fontCascade().update(selector);
 }
 
-void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
+void RenderStyle::setFontItalic(std::optional<float> value)
 {
     auto selector = fontCascade().fontSelector();
     auto description = fontDescription();

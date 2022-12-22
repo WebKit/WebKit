@@ -377,9 +377,9 @@ public:
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
     FontVariationSettings fontVariationSettings() const { return fontDescription().variationSettings(); }
-    FontSelectionValue fontWeight() const { return fontDescription().weight(); }
-    FontSelectionValue fontStretch() const { return fontDescription().stretch(); }
-    std::optional<FontSelectionValue> fontItalic() const { return fontDescription().italic(); }
+    float fontWeight() const { return fontDescription().weight(); }
+    float fontStretch() const { return fontDescription().stretch(); }
+    std::optional<float> fontItalic() const { return fontDescription().italic(); }
     FontPalette fontPalette() const { return fontDescription().fontPalette(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
@@ -1043,9 +1043,9 @@ public:
     void setFontSizeAdjust(std::optional<float>);
 
     void setFontVariationSettings(FontVariationSettings);
-    void setFontWeight(FontSelectionValue);
-    void setFontStretch(FontSelectionValue);
-    void setFontItalic(std::optional<FontSelectionValue>);
+    void setFontWeight(float);
+    void setFontStretch(float);
+    void setFontItalic(std::optional<float>);
     void setFontPalette(FontPalette);
 
     void setColor(const Color&);

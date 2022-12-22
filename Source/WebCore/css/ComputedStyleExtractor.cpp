@@ -2278,9 +2278,9 @@ static Ref<CSSPrimitiveValue> fontPalette(const RenderStyle& style)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Ref<CSSPrimitiveValue> fontWeight(FontSelectionValue weight)
+static Ref<CSSPrimitiveValue> fontWeight(float weight)
 {
-    return CSSValuePool::singleton().createValue(static_cast<float>(weight), CSSUnitType::CSS_NUMBER);
+    return CSSValuePool::singleton().createValue(weight, CSSUnitType::CSS_NUMBER);
 }
 
 static Ref<CSSPrimitiveValue> fontWeight(const RenderStyle& style)
@@ -2288,9 +2288,9 @@ static Ref<CSSPrimitiveValue> fontWeight(const RenderStyle& style)
     return fontWeight(style.fontDescription().weight());
 }
 
-static Ref<CSSPrimitiveValue> fontStretch(FontSelectionValue stretch)
+static Ref<CSSPrimitiveValue> fontStretch(float stretch)
 {
-    return CSSValuePool::singleton().createValue(static_cast<float>(stretch), CSSUnitType::CSS_PERCENTAGE);
+    return CSSValuePool::singleton().createValue(stretch, CSSUnitType::CSS_PERCENTAGE);
 }
 
 static Ref<CSSPrimitiveValue> fontStretch(const RenderStyle& style)
@@ -2298,7 +2298,7 @@ static Ref<CSSPrimitiveValue> fontStretch(const RenderStyle& style)
     return fontStretch(style.fontDescription().stretch());
 }
 
-static Ref<CSSValue> fontStyle(std::optional<FontSelectionValue> italic, FontStyleAxis axis)
+static Ref<CSSValue> fontStyle(std::optional<float> italic, FontStyleAxis axis)
 {
     if (auto keyword = fontStyleKeyword(italic, axis))
         return CSSValuePool::singleton().createIdentifierValue(keyword.value());
@@ -2802,7 +2802,7 @@ String ComputedStyleExtractor::customPropertyText(const AtomString& propertyName
 static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
     auto& description = style.fontDescription();
-    auto fontStretch = fontStretchKeyword(description.stretch());
+    auto fontStretch = fontStretchKeyword(FontSelectionValue::clampFloat(description.stretch()));
     auto fontStyle = fontStyleKeyword(description.italic(), description.fontStyleAxis());
 
     auto propertiesResetByShorthandAreExpressible = [&] {

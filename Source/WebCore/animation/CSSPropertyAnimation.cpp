@@ -589,7 +589,7 @@ static inline FontSelectionValue blendFunc(FontSelectionValue from, FontSelectio
     return FontSelectionValue(std::max(0.0f, blendFunc(static_cast<float>(from), static_cast<float>(to), context)));
 }
 
-static inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSelectionValue> from, std::optional<FontSelectionValue> to, const CSSPropertyBlendingContext& context)
+static inline std::optional<float> blendFunc(std::optional<float> from, std::optional<float> to, const CSSPropertyBlendingContext& context)
 {
     return blendFunc(*from, *to, context);
 }
@@ -2465,7 +2465,7 @@ private:
     void (RenderStyle::*m_setter)(const StyleColor&);
 };
 
-class PropertyWrapperFontWeight final : public PropertyWrapper<FontSelectionValue> {
+class PropertyWrapperFontWeight final : public PropertyWrapper<float> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontWeight()
@@ -2481,7 +2481,7 @@ private:
     }
 };
 
-class PropertyWrapperFontStyle final : public PropertyWrapper<std::optional<FontSelectionValue>> {
+class PropertyWrapperFontStyle final : public PropertyWrapper<std::optional<float>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontStyle()
@@ -3448,7 +3448,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         new PropertyWrapperFontSizeAdjust,
         new PropertyWrapperFontWeight,
-        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
+        new PropertyWrapper<float>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
         new PropertyWrapperFontStyle,
         new PropertyWrapper<TextDecorationThickness>(CSSPropertyTextDecorationThickness, &RenderStyle::textDecorationThickness, &RenderStyle::setTextDecorationThickness),
         new PropertyWrapper<TextUnderlineOffset>(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset, &RenderStyle::setTextUnderlineOffset),

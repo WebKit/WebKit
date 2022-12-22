@@ -46,10 +46,10 @@ public:
 
     float computedSize() const { return m_computedSize; }
     unsigned computedPixelSize() const { return unsigned(m_computedSize + 0.5f); }
-    std::optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }
+    std::optional<float> italic() const { return m_fontSelectionRequest.slope; }
     std::optional<float> fontSizeAdjust() const { return m_sizeAdjust; }
-    FontSelectionValue stretch() const { return m_fontSelectionRequest.width; }
-    FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
+    float stretch() const { return m_fontSelectionRequest.width; }
+    float weight() const { return m_fontSelectionRequest.weight; }
     FontSelectionRequest fontSelectionRequest() const { return m_fontSelectionRequest; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
@@ -109,10 +109,10 @@ public:
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setFontSizeAdjust(std::optional<float> sizeAdjust) { m_sizeAdjust = sizeAdjust; }
-    void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
-    void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
+    void setItalic(std::optional<float> italic) { m_fontSelectionRequest.slope = italic; }
+    void setStretch(float stretch) { m_fontSelectionRequest.width = stretch; }
     void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
-    void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
+    void setWeight(float weight) { m_fontSelectionRequest.weight = weight; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = static_cast<unsigned>(rendering); }
     void setOrientation(FontOrientation orientation) { m_orientation = static_cast<unsigned>(orientation); }

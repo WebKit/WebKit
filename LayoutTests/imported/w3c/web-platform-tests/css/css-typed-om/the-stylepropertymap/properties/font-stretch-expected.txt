@@ -15,7 +15,7 @@ FAIL Can set 'font-stretch' to the 'extra-expanded' keyword: extra-expanded asse
 FAIL Can set 'font-stretch' to the 'ultra-expanded' keyword: ultra-expanded assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
 PASS Can set 'font-stretch' to a percent: 0%
 FAIL Can set 'font-stretch' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
-FAIL Can set 'font-stretch' to a percent: 3.14% assert_approx_equals: expected 3.14 +/- 0.000001 but got 3
+PASS Can set 'font-stretch' to a percent: 3.14%
 PASS Can set 'font-stretch' to a percent: calc(0% + 0%)
 PASS Setting 'font-stretch' to a length: 0px throws TypeError
 PASS Setting 'font-stretch' to a length: -3.14em throws TypeError

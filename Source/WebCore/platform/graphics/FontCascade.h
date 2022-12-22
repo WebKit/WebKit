@@ -164,8 +164,8 @@ public:
     const AtomString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
 
     // A std::nullopt return value indicates "font-style: normal".
-    std::optional<FontSelectionValue> italic() const { return m_fontDescription.italic(); }
-    FontSelectionValue weight() const { return m_fontDescription.weight(); }
+    std::optional<FontSelectionValue> italic() const { return m_fontDescription.italic() ? std::optional { FontSelectionValue::clampFloat(*m_fontDescription.italic()) } : std::nullopt; }
+    FontSelectionValue weight() const { return FontSelectionValue::clampFloat(m_fontDescription.weight()); }
     FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
 
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }

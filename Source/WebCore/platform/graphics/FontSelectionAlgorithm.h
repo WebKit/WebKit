@@ -195,9 +195,9 @@ constexpr FontSelectionValue italicThreshold()
     return FontSelectionValue { 20 };
 }
 
-constexpr bool isItalic(std::optional<FontSelectionValue> fontWeight)
+constexpr bool isItalic(std::optional<float> fontWeight)
 {
-    return fontWeight && fontWeight.value() >= italicThreshold();
+    return fontWeight && FontSelectionValue::clampFloat(fontWeight.value()) >= italicThreshold();
 }
 
 constexpr FontSelectionValue normalItalicValue()
@@ -233,6 +233,11 @@ constexpr FontSelectionValue lightWeightValue()
 constexpr bool isFontWeightBold(FontSelectionValue fontWeight)
 {
     return fontWeight >= boldThreshold();
+}
+
+constexpr bool isFontWeightBold(float fontWeight)
+{
+    return isFontWeightBold(FontSelectionValue::clampFloat(fontWeight));
 }
 
 constexpr FontSelectionValue lowerWeightSearchThreshold()
@@ -377,10 +382,10 @@ inline void add(Hasher& hasher, const FontSelectionRange& range)
 }
 
 struct FontSelectionRequest {
-    using Value = FontSelectionValue;
+    using Value = float;
 
-    Value weight;
-    Value width;
+    float weight;
+    float width;
 
     // FIXME: We are using an optional here to be able to distinguish between an explicit
     // or implicit slope (for "italic" and "oblique") and the "normal" value which has no

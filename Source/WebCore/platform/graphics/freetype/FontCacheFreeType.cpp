@@ -86,7 +86,7 @@ bool FontCache::configurePatternForFontDescription(FcPattern* pattern, const Fon
 {
     if (!FcPatternAddInteger(pattern, FC_SLANT, fontDescription.italic() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
         return false;
-    if (!FcPatternAddInteger(pattern, FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
+    if (!FcPatternAddInteger(pattern, FC_WEIGHT, fontWeightToFontconfigWeight(FontSelectionValue::clampFloat(fontDescription.weight()))))
         return false;
     if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fontDescription.computedPixelSize()))
         return false;

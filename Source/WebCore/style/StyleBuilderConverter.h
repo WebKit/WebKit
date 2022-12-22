@@ -145,12 +145,12 @@ public:
 #endif
     static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
     static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
-    static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
+    static float convertFontWeightFromValue(const CSSValue&);
+    static float convertFontStretchFromValue(const CSSValue&);
     static FontSelectionValue convertFontStyleAngle(const CSSValue&);
     static std::optional<FontSelectionValue> convertFontStyleFromValue(const CSSValue&);
-    static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
+    static float convertFontWeight(BuilderState&, const CSSValue&);
+    static float convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
     static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
     static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
@@ -1418,12 +1418,12 @@ inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderS
     return settings;
 }
 
-inline FontSelectionValue BuilderConverter::convertFontWeightFromValue(const CSSValue& value)
+inline float BuilderConverter::convertFontWeightFromValue(const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isNumber())
-        return FontSelectionValue::clampFloat(primitiveValue.floatValue());
+        return primitiveValue.floatValue();
 
     ASSERT(primitiveValue.isValueID());
     switch (primitiveValue.valueID()) {
@@ -1440,12 +1440,12 @@ inline FontSelectionValue BuilderConverter::convertFontWeightFromValue(const CSS
     }
 }
 
-inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CSSValue& value)
+inline float BuilderConverter::convertFontStretchFromValue(const CSSValue& value)
 {
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isPercentage())
-        return FontSelectionValue::clampFloat(primitiveValue.floatValue());
+        return primitiveValue.floatValue();
 
     ASSERT(primitiveValue.isValueID());
     if (auto value = fontStretchValue(primitiveValue.valueID()))
@@ -1472,7 +1472,7 @@ inline std::optional<FontSelectionValue> BuilderConverter::convertFontStyleFromV
     return italicValue();
 }
 
-inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& builderState, const CSSValue& value)
+inline float BuilderConverter::convertFontWeight(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isValueID()) {
@@ -1482,12 +1482,12 @@ inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& buil
         if (valueID == CSSValueLighter)
             return FontCascadeDescription::lighterWeight(builderState.parentStyle().fontDescription().weight());
         if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
-            return SystemFontDatabase::singleton().systemFontShorthandWeight(CSSPropertyParserHelpers::lowerFontShorthand(valueID));
+            return static_cast<float>(SystemFontDatabase::singleton().systemFontShorthandWeight(CSSPropertyParserHelpers::lowerFontShorthand(valueID)));
     }
     return convertFontWeightFromValue(value);
 }
 
-inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, const CSSValue& value)
+inline float BuilderConverter::convertFontStretch(BuilderState&, const CSSValue& value)
 {
     return convertFontStretchFromValue(value);
 }

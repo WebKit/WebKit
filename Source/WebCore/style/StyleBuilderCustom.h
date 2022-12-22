@@ -1847,7 +1847,7 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
     return 0.25f;
 }
 
-static inline void applyFontStyle(BuilderState& state, std::optional<FontSelectionValue> slope, FontStyleAxis axis)
+static inline void applyFontStyle(BuilderState& state, std::optional<float> slope, FontStyleAxis axis)
 {
     auto& description = state.fontDescription();
     if (description.italic() == slope && description.fontStyleAxis() == axis)

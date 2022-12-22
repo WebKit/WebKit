@@ -1221,7 +1221,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     if (!fullName.isEmpty())
         m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
 
-    auto result = lookupFallbackFont(platformData.font(), description.weight(), description.computedLocale(), description.shouldAllowUserInstalledFonts(), characters, length);
+    auto result = lookupFallbackFont(platformData.font(), FontSelectionValue::clampFloat(description.weight()), description.computedLocale(), description.shouldAllowUserInstalledFonts(), characters, length);
     result = preparePlatformFont(result.get(), description, { });
 
     if (!result)

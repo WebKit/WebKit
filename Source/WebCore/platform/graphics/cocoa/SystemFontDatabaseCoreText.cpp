@@ -256,8 +256,8 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     result.italic = isItalic(description.italic());
     result.allowUserInstalledFonts = allowUserInstalledFonts;
 
-    result.weight = mapWeight(description.weight());
-    result.width = mapWidth(description.stretch());
+    result.weight = mapWeight(FontSelectionValue::clampFloat(description.weight()));
+    result.width = mapWidth(FontSelectionValue::clampFloat(description.stretch()));
 
     switch (systemFontKind) {
     case SystemFontKind::SystemUI: {

@@ -116,11 +116,14 @@ inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
     }
 }
 
-inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
+inline std::optional<CSSValueID> fontStyleKeyword(std::optional<float> style, FontStyleAxis axis)
 {
-    if (!style || style.value() == normalItalicValue())
+    if (!style)
         return CSSValueNormal;
-    if (style.value() == italicValue())
+    auto clampedStyle = FontSelectionValue::clampFloat(*style);
+    if (clampedStyle == normalItalicValue())
+        return CSSValueNormal;
+    if (clampedStyle == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;
     return std::nullopt;
 }

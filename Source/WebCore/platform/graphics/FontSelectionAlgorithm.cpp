@@ -45,28 +45,29 @@ auto FontSelectionAlgorithm::stretchDistance(Capabilities capabilities) const ->
 {
     auto width = capabilities.width;
     ASSERT(width.isValid());
-    if (width.includes(m_request.width))
-        return { FontSelectionValue(), m_request.width };
+    auto requestWidth = FontSelectionValue::clampFloat(m_request.width);
+    if (width.includes(requestWidth))
+        return { FontSelectionValue(), requestWidth };
 
-    if (m_request.width > normalStretchValue()) {
-        if (width.minimum > m_request.width)
-            return { width.minimum - m_request.width, width.minimum };
-        ASSERT(width.maximum < m_request.width);
-        auto threshold = std::max(m_request.width, m_capabilitiesBounds.width.maximum);
+    if (requestWidth > normalStretchValue()) {
+        if (width.minimum > requestWidth)
+            return { width.minimum - requestWidth, width.minimum };
+        ASSERT(width.maximum < requestWidth);
+        auto threshold = std::max(requestWidth, m_capabilitiesBounds.width.maximum);
         return { threshold - width.maximum, width.maximum };
     }
 
-    if (width.maximum < m_request.width)
-        return { m_request.width - width.maximum, width.maximum };
-    ASSERT(width.minimum > m_request.width);
-    auto threshold = std::min(m_request.width, m_capabilitiesBounds.width.minimum);
+    if (width.maximum < requestWidth)
+        return { requestWidth - width.maximum, width.maximum };
+    ASSERT(width.minimum > requestWidth);
+    auto threshold = std::min(requestWidth, m_capabilitiesBounds.width.minimum);
     return { width.minimum - threshold, width.minimum };
 }
 
 auto FontSelectionAlgorithm::styleDistance(Capabilities capabilities) const -> DistanceResult
 {
     auto slope = capabilities.slope;
-    auto requestSlope = m_request.slope.value_or(normalItalicValue());
+    auto requestSlope = m_request.slope ? FontSelectionValue::clampFloat(*m_request.slope) : normalItalicValue();
     ASSERT(slope.isValid());
     if (slope.includes(requestSlope))
         return { FontSelectionValue(), requestSlope };
@@ -110,30 +111,31 @@ auto FontSelectionAlgorithm::weightDistance(Capabilities capabilities) const -> 
 {
     auto weight = capabilities.weight;
     ASSERT(weight.isValid());
-    if (weight.includes(m_request.weight))
-        return { FontSelectionValue(), m_request.weight };
+    auto requestWeight = FontSelectionValue::clampFloat(m_request.weight);
+    if (weight.includes(requestWeight))
+        return { FontSelectionValue(), requestWeight };
 
-    if (m_request.weight >= lowerWeightSearchThreshold() && m_request.weight <= upperWeightSearchThreshold()) {
-        if (weight.minimum > m_request.weight && weight.minimum <= upperWeightSearchThreshold())
-            return { weight.minimum - m_request.weight, weight.minimum };
-        if (weight.maximum < m_request.weight)
+    if (requestWeight >= lowerWeightSearchThreshold() && requestWeight <= upperWeightSearchThreshold()) {
+        if (weight.minimum > requestWeight && weight.minimum <= upperWeightSearchThreshold())
+            return { weight.minimum - requestWeight, weight.minimum };
+        if (weight.maximum < requestWeight)
             return { upperWeightSearchThreshold() - weight.maximum, weight.maximum };
         ASSERT(weight.minimum > upperWeightSearchThreshold());
-        auto threshold = std::min(m_request.weight, m_capabilitiesBounds.weight.minimum);
+        auto threshold = std::min(requestWeight, m_capabilitiesBounds.weight.minimum);
         return { weight.minimum - threshold, weight.minimum };
     }
-    if (m_request.weight < lowerWeightSearchThreshold()) {
-        if (weight.maximum < m_request.weight)
-            return { m_request.weight - weight.maximum, weight.maximum };
-        ASSERT(weight.minimum > m_request.weight);
-        auto threshold = std::min(m_request.weight, m_capabilitiesBounds.weight.minimum);
+    if (requestWeight < lowerWeightSearchThreshold()) {
+        if (weight.maximum < requestWeight)
+            return { requestWeight - weight.maximum, weight.maximum };
+        ASSERT(weight.minimum > requestWeight);
+        auto threshold = std::min(requestWeight, m_capabilitiesBounds.weight.minimum);
         return { weight.minimum - threshold, weight.minimum };
     }
-    ASSERT(m_request.weight >= upperWeightSearchThreshold());
-    if (weight.minimum > m_request.weight)
-        return { weight.minimum - m_request.weight, weight.minimum };
-    ASSERT(weight.maximum < m_request.weight);
-    auto threshold = std::max(m_request.weight, m_capabilitiesBounds.weight.maximum);
+    ASSERT(requestWeight >= upperWeightSearchThreshold());
+    if (weight.minimum > requestWeight)
+        return { weight.minimum - requestWeight, weight.minimum };
+    ASSERT(weight.maximum < requestWeight);
+    auto threshold = std::max(requestWeight, m_capabilitiesBounds.weight.maximum);
     return { threshold - weight.maximum, weight.maximum };
 }
 

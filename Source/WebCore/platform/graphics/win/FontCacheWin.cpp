@@ -655,7 +655,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // This masks rounding errors related to the HFONT metrics being  different from the CGFont metrics.
     // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
     // look as nice. That may be solvable though.
-    LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
+    LONG weight = adjustedGDIFontWeight(toGDIFontWeight(FontSelectionValue::clampFloat(fontDescription.weight())), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.italic()),
         fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
 

@@ -175,12 +175,12 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
         auto result0 = Style::BuilderConverter::convertFontWeightFromValue(value0);
         auto result1 = Style::BuilderConverter::convertFontWeightFromValue(value1);
-        return { result0, result1 };
+        return { FontSelectionValue::clampFloat(result0), FontSelectionValue::clampFloat(result1) };
     }
 
     ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = Style::BuilderConverter::convertFontWeightFromValue(primitiveValue);
+    auto result = FontSelectionValue::clampFloat(Style::BuilderConverter::convertFontWeightFromValue(primitiveValue));
     return { result, result };
 }
 
@@ -212,12 +212,12 @@ static FontSelectionRange calculateStretchRange(CSSValue& value)
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
         auto result0 = Style::BuilderConverter::convertFontStretchFromValue(value0);
         auto result1 = Style::BuilderConverter::convertFontStretchFromValue(value1);
-        return { result0, result1 };
+        return { FontSelectionValue::clampFloat(result0), FontSelectionValue::clampFloat(result1) };
     }
 
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = Style::BuilderConverter::convertFontStretchFromValue(primitiveValue);
+    FontSelectionValue result = FontSelectionValue::clampFloat(Style::BuilderConverter::convertFontStretchFromValue(primitiveValue));
     return { result, result };
 }
 

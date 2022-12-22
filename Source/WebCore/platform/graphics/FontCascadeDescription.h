@@ -66,10 +66,10 @@ public:
 
     float specifiedSize() const { return m_specifiedSize; }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
-    FontSelectionValue lighterWeight() const { return lighterWeight(weight()); }
-    FontSelectionValue bolderWeight() const { return bolderWeight(weight()); }
-    static FontSelectionValue lighterWeight(FontSelectionValue);
-    static FontSelectionValue bolderWeight(FontSelectionValue);
+    float lighterWeight() const { return lighterWeight(weight()); }
+    float bolderWeight() const { return bolderWeight(weight()); }
+    static float lighterWeight(float);
+    static float bolderWeight(float);
 
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily() == monospaceFamily; }
