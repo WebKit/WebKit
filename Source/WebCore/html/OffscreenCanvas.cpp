@@ -538,12 +538,7 @@ CSSValuePool& OffscreenCanvas::cssValuePool()
 void OffscreenCanvas::createImageBuffer() const
 {
     m_hasCreatedImageBuffer = true;
-
-    if (!width() || !height())
-        return;
-
-    auto colorSpace = m_context ? m_context->colorSpace() : DestinationColorSpace::SRGB();
-    setImageBuffer(ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), colorSpace));
+    CanvasBase::createImageBuffer(false, false);
 }
 
 void OffscreenCanvas::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
