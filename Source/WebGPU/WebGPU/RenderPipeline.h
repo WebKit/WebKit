@@ -41,9 +41,9 @@ class Device;
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, Device& device)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, uint32_t vertexShaderInputBufferCount, Device& device)
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilState, device));
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilState, vertexShaderInputBufferCount, device));
     }
 
     static Ref<RenderPipeline> createInvalid(Device& device)
@@ -65,9 +65,10 @@ public:
     MTLCullMode cullMode() const { return m_cullMode; }
 
     Device& device() const { return m_device; }
+    uint32_t vertexShaderInputBufferCount() const { return m_vertexShaderInputBufferCount; }
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, id<MTLDepthStencilState>, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, id<MTLDepthStencilState>, uint32_t, Device&);
     RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
@@ -78,6 +79,7 @@ private:
     MTLWinding m_frontFace;
     MTLCullMode m_cullMode;
     id<MTLDepthStencilState> m_depthStencilState;
+    uint32_t m_vertexShaderInputBufferCount { 0 };
 };
 
 } // namespace WebGPU

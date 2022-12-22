@@ -102,6 +102,7 @@ private:
     id<MTLBuffer> m_indexBuffer { nil };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
+    uint32_t m_vertexShaderInputBufferCount { 0 };
 };
 
 } // namespace WebGPU
