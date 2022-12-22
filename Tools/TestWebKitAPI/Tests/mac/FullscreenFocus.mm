@@ -55,7 +55,12 @@ static bool didExitFullscreen;
 
 namespace TestWebKitAPI {
 
+// FIXME: Re-enable this test once webkit.org/b/248093 is resolved.
+#if !defined(NDEBUG)
+TEST(Fullscreen, DISABLED_Focus)
+#else
 TEST(Fullscreen, Focus)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
