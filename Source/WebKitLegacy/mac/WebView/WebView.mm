@@ -1263,6 +1263,8 @@ static const NSUInteger orderedListSegment = 2;
 #else
 - (float)_deviceScaleFactor;
 #endif
+- (void)_willStartRenderingUpdateDisplay;
+- (void)_didCompleteRenderingUpdateDisplay;
 @end
 
 @implementation WebView (AllWebViews)
@@ -7059,6 +7061,21 @@ static WebFrameView *containingFrameView(NSView *view)
     return responder;
 }
 
+- (void)_willStartRenderingUpdateDisplay
+{
+    if (_private->page)
+        _private->page->willStartRenderingUpdateDisplay();
+}
+
+- (void)_didCompleteRenderingUpdateDisplay
+{
+    if (_private->page)
+        _private->page->didCompleteRenderingUpdateDisplay();
+
+    if (_private->layerFlushController)
+        _private->layerFlushController->didCompleteRenderingUpdateDisplay();
+}
+
 @end
 
 @implementation WebView (WebIBActions)
@@ -8864,6 +8881,19 @@ bool LayerFlushController::flushLayers()
 #endif // PLATFORM(MAC)
 
     [m_webView _updateRendering];
+
+    if (!m_haveRegisteredCommitHandlers) {
+        WebView* webView = m_webView;
+        [CATransaction addCommitHandler:^{
+            [webView _willStartRenderingUpdateDisplay];
+        } forPhase:kCATransactionPhasePreLayout];
+
+        [CATransaction addCommitHandler:^{
+            [webView _didCompleteRenderingUpdateDisplay];
+        } forPhase:kCATransactionPhasePostCommit];
+        
+        m_haveRegisteredCommitHandlers = true;
+    }
 
 #if PLATFORM(MAC)
     // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.

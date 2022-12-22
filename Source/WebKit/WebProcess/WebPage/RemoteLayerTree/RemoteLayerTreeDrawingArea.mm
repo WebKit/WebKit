@@ -44,7 +44,6 @@
 #import <WebCore/DebugPageOverlays.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/InspectorController.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
@@ -282,29 +281,6 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
     startRenderingUpdateTimer();
 }
 
-void RemoteLayerTreeDrawingArea::addCommitHandlers()
-{
-    if (m_webPage.firstFlushAfterCommit())
-        return;
-
-    [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
-        if (Page* corePage = retainedPage->corePage()) {
-            if (Frame* coreFrame = retainedPage->mainFrame())
-                corePage->inspectorController().willComposite(*coreFrame);
-        }
-    } forPhase:kCATransactionPhasePreLayout];
-    
-    [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
-        if (Page* corePage = retainedPage->corePage()) {
-            if (Frame* coreFrame = retainedPage->mainFrame())
-                corePage->inspectorController().didComposite(*coreFrame);
-        }
-        retainedPage->setFirstFlushAfterCommit(false);
-    } forPhase:kCATransactionPhasePostCommit];
-    
-    m_webPage.setFirstFlushAfterCommit(true);
-}
-
 void RemoteLayerTreeDrawingArea::updateRendering()
 {
     if (m_isRenderingSuspended) {
@@ -329,13 +305,13 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (auto exposedRect = m_webPage.mainFrameView()->viewExposedRect())
         visibleRect.intersect(*exposedRect);
 
-    addCommitHandlers();
-
     OptionSet<FinalizeRenderingUpdateFlags> flags;
     if (m_nextRenderingUpdateRequiresSynchronousImageDecoding)
         flags.add(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes);
 
     m_webPage.finalizeRenderingUpdate(flags);
+
+    willStartRenderingUpdateDisplay();
 
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)
@@ -360,11 +336,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
 
-    layerTransaction.setNewlyReachedPaintingMilestones(m_pendingNewlyReachedPaintingMilestones);
-    m_pendingNewlyReachedPaintingMilestones = { };
-
-    layerTransaction.setActivityStateChangeID(m_activityStateChangeID);
-    m_activityStateChangeID = ActivityStateChangeAsynchronous;
+    layerTransaction.setNewlyReachedPaintingMilestones(std::exchange(m_pendingNewlyReachedPaintingMilestones, { }));
+    layerTransaction.setActivityStateChangeID(std::exchange(m_activityStateChangeID, ActivityStateChangeAsynchronous));
 
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
@@ -393,12 +366,19 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     dispatch_async(m_commitQueue.get(), [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
         backingStoreFlusher->flush();
 
-        MonotonicTime timestamp = MonotonicTime::now();
-        RunLoop::main().dispatch([pageID, timestamp] {
-            if (WebPage* webPage = WebProcess::singleton().webPage(pageID))
-                webPage->didFlushLayerTreeAtTime(timestamp);
+        RunLoop::main().dispatch([pageID] {
+            if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
+                if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea()))
+                    drawingArea->didCompleteRenderingUpdateDisplay();
+            }
         });
     });
+}
+
+void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
+{
+    m_webPage.didFlushLayerTreeAtTime(MonotonicTime::now());
+    DrawingArea::didCompleteRenderingUpdateDisplay();
 }
 
 void RemoteLayerTreeDrawingArea::displayDidRefresh()

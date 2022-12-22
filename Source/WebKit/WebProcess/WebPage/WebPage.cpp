@@ -4513,18 +4513,18 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 #endif
 }
 
-void WebPage::willStartPlatformRenderingUpdate()
+void WebPage::willStartRenderingUpdateDisplay()
 {
     if (m_isClosed)
         return;
-    m_page->willStartPlatformRenderingUpdate();
+    m_page->willStartRenderingUpdateDisplay();
 }
 
-void WebPage::didCompletePlatformRenderingUpdate()
+void WebPage::didCompleteRenderingUpdateDisplay()
 {
     if (m_isClosed)
         return;
-    m_page->didCompletePlatformRenderingUpdate();
+    m_page->didCompleteRenderingUpdateDisplay();
 }
 
 void WebPage::releaseMemory(Critical)

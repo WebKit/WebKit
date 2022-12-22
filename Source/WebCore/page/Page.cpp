@@ -1916,8 +1916,10 @@ void Page::renderingUpdateCompleted()
     }
 }
 
-void Page::willStartPlatformRenderingUpdate()
+void Page::willStartRenderingUpdateDisplay()
 {
+    LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " willStartRenderingUpdateDisplay()");
+
     // Inspector's use of "composite" is rather innacurate. On Apple platforms, the "composite" step happens
     // in another process; these hooks wrap the non-WebKit CA commit time which is mostly painting-related.
     m_inspectorController->willComposite(mainFrame());
@@ -1926,8 +1928,10 @@ void Page::willStartPlatformRenderingUpdate()
         m_scrollingCoordinator->willStartPlatformRenderingUpdate();
 }
 
-void Page::didCompletePlatformRenderingUpdate()
+void Page::didCompleteRenderingUpdateDisplay()
 {
+    LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " didCompleteRenderingUpdateDisplay()");
+
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->didCompletePlatformRenderingUpdate();
 
