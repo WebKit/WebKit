@@ -11,8 +11,9 @@ async function helloTriangle() {
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
     
+    const deviceScaleFactor = window.devicePixelRatio || 1;
     const msaaRenderTarget = device.createTexture({
-        size: [ canvas.width, canvas.height ],
+        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
         sampleCount: 4,
         format: 'bgra8unorm',
         usage: GPUTextureUsage.RENDER_ATTACHMENT,

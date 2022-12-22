@@ -72,19 +72,10 @@ async function helloCube() {
         -.5, .5, -.5, 1,  0, 1, 0, 1,  0, 0,
     ]);
     vertexBuffer.unmap();
-
-    const instanceRows = 3;
-    const instanceColumns = 3;
-    const instanceCount = instanceRows * instanceColumns;
-    const uniformBufferSize = 12 * instanceCount;
+    
+    const uniformBufferSize = 12;
     const uniformBuffer = device.createBuffer({
         size: uniformBufferSize,
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    });
-    
-    const translationBufferSize = 4 * 4 * instanceCount;
-    const translationBuffer = device.createBuffer({
-        size: translationBufferSize,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
     
@@ -130,9 +121,8 @@ async function helloCube() {
     
     const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [
         { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {} },
-        { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: {} },
-        { binding: 2, visibility: GPUShaderStage.FRAGMENT, texture: {} },
-        { binding: 3, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
+        { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {} },
+        { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
     ] });
 
     const uniformBindGroup = device.createBindGroup({
@@ -147,17 +137,10 @@ async function helloCube() {
           },
           {
             binding: 1,
-            resource: {
-              buffer: translationBuffer,
-              offset: 0
-            },
-          },
-          {
-            binding: 2,
             resource: texture.createView(),
           },
           {
-            binding: 3,
+            binding: 2,
             resource: sampler,
           },
         ],
@@ -181,7 +164,6 @@ async function helloCube() {
     
                 struct VertexShaderArguments {
                     device float *time [[id(0)]];
-                    device float4 *translation [[id(1)]];
                 };
     
                 struct FragmentShaderArguments {
@@ -189,13 +171,12 @@ async function helloCube() {
                     sampler textureSampler;
                 };
     
-                vertex VertexOut vsmain(const device float *vertices [[buffer(0)]], const device VertexShaderArguments &values [[buffer(1)]], unsigned VertexIndex [[vertex_id]], unsigned InstanceIndex [[instance_id]])
+                vertex VertexOut vsmain(const device float *vertices [[buffer(0)]], const device VertexShaderArguments &values [[buffer(1)]], unsigned VertexIndex [[vertex_id]])
                 {
                     VertexOut vout;
-                    unsigned offset = InstanceIndex * 3;
-                    float alpha = values.time[offset];
-                    float beta = values.time[offset + 1];
-                    float gamma = values.time[offset + 2];
+                    float alpha = values.time[0];
+                    float beta = values.time[1];
+                    float gamma = values.time[2];
                     float cA = cos(alpha);
                     float sA = sin(alpha);
                     float cB = cos(beta);
@@ -207,11 +188,9 @@ async function helloCube() {
                                           cA*sB*sG - sA*cG,  sA*sB*sG + cA*cG,   cB * sG, 0,
                                           cA*sB*cG + sA*sG, sA*sB*cG - cA*sG, cB * cG, 0,
                                           0,     0,     0, 1);
-                    float4 translation = values.translation[InstanceIndex];
-
                     VertexIn vin = *(device VertexIn*)(vertices + VertexIndex * vertexInputPackedFloatSize);
-                    vout.position = vin.position * m + translation;
-                    vout.position.z = 1 - (vout.position.z + 0.5) * 0.5;
+                    vout.position = vin.position * m;
+                    vout.position.z = (vout.position.z + 0.5) * 0.5;
                     vout.color = vin.color;
                     vout.uv = vin.uv;
                     return vout;
@@ -238,63 +217,30 @@ async function helloCube() {
         fragment: fragmentStageDescriptor,
         primitive: {
             topology: "triangle-list",
-            cullMode: "none"
+            cullMode: "back"
         },
-        depthStencil: {
-            format: "depth24plus",
-            depthWriteEnabled: true,
-            depthCompare: "less-equal"
-        },
-        multisample: { count: 4 }
     };
-
-    const deviceScaleFactor = window.devicePixelRatio || 1;
-    const depthTexture = device.createTexture({
-        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
-        format: 'depth24plus',
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
-        sampleCount: 4
-    });
-
-    const msaaRenderTarget = device.createTexture({
-        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
-        sampleCount: 4,
-        format: 'bgra8unorm',
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
-    });
-
-    const depthTextureView = depthTexture.createView();
-
+    
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
+
+    const renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ["bgra8unorm"] });
+    const vertexBufferSlot = 0;
+    renderBundleEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
+    renderBundleEncoder.setBindGroup(1, uniformBindGroup);
+    renderBundleEncoder.draw(36, 1, 0, 0); // 36 vertices, 1 instance, 0th vertex, 0th instance.
+    
+    renderBundle = renderBundleEncoder.finish();
     
     /*** Swap Chain Setup ***/
     function frameUpdate() {
+        const secondsBuffer = new Float32Array(3);
         const d = new Date();
         const seconds = d.getMilliseconds() / 1000.0 + d.getSeconds();
-        const secondsBuffer = new Float32Array(instanceCount * 3);
-        const translations = new Float32Array(instanceCount * 4);
-        const pi = 6.28318530718;
-        for (let i = 0; i < instanceCount; ++i) {
-            const offset = (pi * i) / instanceCount;
-            const speed = 2;
-            secondsBuffer[i * 3] = seconds * speed * (pi / 60.0) + offset;
-            secondsBuffer[i * 3 + 1] = seconds * (speed * 0.5) * (pi / 60.0) + offset;
-            secondsBuffer[i * 3 + 2] = seconds * (speed * 0.1) * (pi / 60.0) + offset;
-
-            const x = i % instanceColumns;
-            const y = i / instanceColumns;
-
-            const xOffset = Math.floor((x - (instanceColumns - 1) / 2));
-            const yOffset = Math.floor((y - (instanceColumns - 1) / 2));
-            translations[i * 4] = xOffset;
-            translations[i * 4 + 1] = yOffset;
-            translations[i * 4 + 2] = 0;
-            translations[i * 4 + 3] = 1;
-        }
-
-        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer, 0, uniformBufferSize);
-        device.queue.writeBuffer(translationBuffer, 0, translations, 0, translationBufferSize);
+        secondsBuffer.set([seconds*10 * (6.28318530718 / 60.0),
+                          seconds*5 * (6.28318530718 / 60.0),
+                          seconds*1 * (6.28318530718 / 60.0)]);
+        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer, 0, 12);
 
         const gpuContext = canvas.getContext("webgpu");
         
@@ -316,26 +262,14 @@ async function helloCube() {
         
         /* GPURenderPassColorATtachmentDescriptor */
         const colorAttachmentDescriptor = {
-            view: msaaRenderTarget.createView(),
-            resolveTarget: renderAttachment,
+            view: renderAttachment,
             loadOp: "clear",
             storeOp: "store",
             clearColor: darkBlue
         };
         
         /* GPURenderPassDescriptor */
-        const depthAttachment = {
-            view: depthTextureView,
-            depthClearValue: 1.0,
-            depthLoadOp: "clear",
-            depthStoreOp: "store",
-            stencilLoadOp: "clear",
-            stencilStoreOp: "store",
-        };
-        const renderPassDescriptor = {
-            colorAttachments: [colorAttachmentDescriptor],
-            depthStencilAttachment: depthAttachment
-        };
+        const renderPassDescriptor = { colorAttachments: [colorAttachmentDescriptor] };
         
         /*** Rendering ***/
         
@@ -343,12 +277,8 @@ async function helloCube() {
         const commandEncoder = device.createCommandEncoder();
         /* GPURenderPassEncoder */
         const renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-        
         renderPassEncoder.setPipeline(renderPipeline);
-        const vertexBufferSlot = 0;
-        renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
-        renderPassEncoder.setBindGroup(1, uniformBindGroup);
-        renderPassEncoder.draw(36, instanceCount, 0, 0); // 36 vertices, 10 instances, 0th vertex, 0th instance.
+        renderPassEncoder.executeBundles([renderBundle]);
         renderPassEncoder.end();
         
         /* GPUComamndBuffer */

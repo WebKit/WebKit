@@ -108,7 +108,14 @@ void RenderPassEncoder::endPipelineStatisticsQuery()
 
 void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const RenderBundle>>&& bundles)
 {
-    UNUSED_PARAM(bundles);
+    for (auto& bundle : bundles) {
+        const auto& renderBundle = bundle.get();
+        for (const auto& resource : renderBundle.resources())
+            [m_renderCommandEncoder useResource:resource.mtlResource usage:resource.usage stages:resource.renderStages];
+
+        id<MTLIndirectCommandBuffer> icb = renderBundle.indirectCommandBuffer();
+        [m_renderCommandEncoder executeCommandsInBuffer:icb withRange:NSMakeRange(0, icb.size)];
+    }
 }
 
 void RenderPassEncoder::insertDebugMarker(String&& markerLabel)

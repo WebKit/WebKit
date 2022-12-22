@@ -238,6 +238,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         return RenderPipeline::createInvalid(*this);
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES
+    mtlRenderPipelineDescriptor.supportIndirectCommandBuffers = YES;
 
     {
         if (descriptor.vertex.nextInChain)

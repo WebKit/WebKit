@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "BindableResource.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -37,17 +38,11 @@ namespace WebGPU {
 
 class Device;
 
-struct BindGroupResource {
-    id<MTLResource> mtlResource;
-    MTLResourceUsage usage;
-    MTLRenderStages renderStages;
-};
-
 // https://gpuweb.github.io/gpuweb/#gpubindgroup
 class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindGroupResource>&& resources, Device& device)
+    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResource>&& resources, Device& device)
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), device));
     }
@@ -66,12 +61,12 @@ public:
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
     id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
 
-    const Vector<BindGroupResource>& resources() const { return m_resources; }
+    const Vector<BindableResource>& resources() const { return m_resources; }
 
     Device& device() const { return m_device; }
 
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindGroupResource>&&, Device&);
+    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResource>&&, Device&);
     BindGroup(Device&);
 
     const id<MTLBuffer> m_vertexArgumentBuffer { nil };
@@ -79,7 +74,7 @@ private:
     const id<MTLBuffer> m_computeArgumentBuffer { nil };
 
     const Ref<Device> m_device;
-    Vector<BindGroupResource> m_resources;
+    Vector<BindableResource> m_resources;
 };
 
 } // namespace WebGPU

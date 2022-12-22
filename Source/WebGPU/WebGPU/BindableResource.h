@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RenderBundle.h"
+#pragma once
 
-#import "APIConversions.h"
+#import <Metal/Metal.h>
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
-    : m_indirectCommandBuffer(indirectCommandBuffer)
-    , m_device(device)
-    , m_resources(WTFMove(resources))
-{
-}
-
-RenderBundle::RenderBundle(Device& device)
-    : m_device(device)
-{
-}
-
-RenderBundle::~RenderBundle() = default;
-
-void RenderBundle::setLabel(String&& label)
-{
-    m_indirectCommandBuffer.label = label;
-}
+struct BindableResource {
+    id<MTLResource> mtlResource;
+    MTLResourceUsage usage;
+    MTLRenderStages renderStages;
+};
 
 } // namespace WebGPU
-
-#pragma mark WGPU Stubs
-
-void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
-{
-    WebGPU::fromAPI(renderBundle).deref();
-}
-
-void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, const char* label)
-{
-    WebGPU::fromAPI(renderBundle).setLabel(WebGPU::fromAPI(label));
-}

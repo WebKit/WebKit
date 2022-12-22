@@ -25,9 +25,11 @@
 
 #pragma once
 
+#import "BindableResource.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 struct WGPURenderBundleImpl {
 };
@@ -40,9 +42,9 @@ class Device;
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Device& device)
+    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
     {
-        return adoptRef(*new RenderBundle(indirectCommandBuffer, device));
+        return adoptRef(*new RenderBundle(indirectCommandBuffer, WTFMove(resources), device));
     }
     static Ref<RenderBundle> createInvalid(Device& device)
     {
@@ -58,14 +60,16 @@ public:
     id<MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
 
     Device& device() const { return m_device; }
+    const Vector<BindableResource>& resources() const { return m_resources; }
 
 private:
-    RenderBundle(id<MTLIndirectCommandBuffer>, Device&);
+    RenderBundle(id<MTLIndirectCommandBuffer>, Vector<BindableResource>&&, Device&);
     RenderBundle(Device&);
 
     const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     const Ref<Device> m_device;
+    Vector<BindableResource> m_resources;
 };
 
 } // namespace WebGPU

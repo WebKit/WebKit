@@ -131,6 +131,7 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     computePipelineDescriptor.maxTotalThreadsPerThreadgroup = computeInformation.workgroupSize.width * computeInformation.workgroupSize.height * computeInformation.workgroupSize.depth;
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i)
         computePipelineDescriptor.buffers[i].mutability = MTLMutabilityImmutable; // Argument buffers are always immutable in WebGPU.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES
     computePipelineDescriptor.supportIndirectCommandBuffers = YES;
     computePipelineDescriptor.label = label;
     NSError *error = nil;
