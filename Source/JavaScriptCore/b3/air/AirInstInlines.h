@@ -181,6 +181,26 @@ inline std::optional<unsigned> Inst::shouldTryAliasingDef()
     return std::nullopt;
 }
 
+inline bool isAddZeroExtend64Valid(const Inst& inst)
+{
+#if CPU(ARM64)
+    return inst.args[1] != Tmp(ARM64Registers::sp);
+#else
+    UNUSED_PARAM(inst);
+    return true;
+#endif
+}
+
+inline bool isAddSignExtend64Valid(const Inst& inst)
+{
+#if CPU(ARM64)
+    return inst.args[1] != Tmp(ARM64Registers::sp);
+#else
+    UNUSED_PARAM(inst);
+    return true;
+#endif
+}
+
 inline bool isShiftValid(const Inst& inst)
 {
 #if CPU(X86) || CPU(X86_64)

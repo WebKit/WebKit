@@ -1191,6 +1191,34 @@ void testWasmAddress()
         CHECK_EQ(numToStore, value);
 }
 
+void testWasmAddressWithOffset()
+{
+    Procedure proc;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR2;
+    proc.pinRegister(pinnedGPR);
+
+    Vector<uint8_t> values(3);
+    values[0] = 20;
+    values[1] = 21;
+    values[2] = 22;
+    uint8_t numToStore = 42;
+
+    BasicBlock* root = proc.addBlock();
+
+    // Root
+    Value* offset = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* valueToStore = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* pointer = root->appendNew<Value>(proc, ZExt32, Origin(), offset);
+    root->appendNew<MemoryValue>(proc, Store8, Origin(), valueToStore, root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR), 1);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+    invoke<void>(*code, 1, numToStore, values.data());
+    CHECK_EQ(20U, values[0]);
+    CHECK_EQ(21U, values[1]);
+    CHECK_EQ(42U, values[2]);
+}
+
 void testFastTLSLoad()
 {
 #if ENABLE(FAST_TLS_JIT)
