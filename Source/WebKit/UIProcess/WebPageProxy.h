@@ -1562,6 +1562,8 @@ public:
     void negotiatedLegacyTLS();
     void didNegotiateModernTLS(const URL&);
 
+    void didFailLoadDueToNetworkConnectionIntegrity(const URL&);
+
     SpellDocumentTag spellDocumentTag();
 
     void didFinishCheckingText(TextCheckerRequestID, const Vector<WebCore::TextCheckingResult>&);

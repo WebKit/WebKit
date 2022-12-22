@@ -1078,7 +1078,10 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 
     if (m_parameters.pageHasResourceLoadClient)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidCompleteWithError(m_parameters.webPageProxyID, resourceLoadInfo(), { }, error), 0);
-
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    if (error.compromisedNetworkConnectionIntegrity())
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidFailLoadDueToNetworkConnectionIntegrity(m_parameters.webPageProxyID, error.failingURL()), 0);
+#endif
     cleanup(LoadResult::Failure);
 }
 

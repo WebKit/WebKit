@@ -25,6 +25,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     NegotiatedLegacyTLS(WebKit::WebPageProxyIdentifier pageID)
     DidNegotiateModernTLS(WebKit::WebPageProxyIdentifier pageID, URL url)
 
+    DidFailLoadDueToNetworkConnectionIntegrity(WebKit::WebPageProxyIdentifier pageID, URL url)
+
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
     TerminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 
