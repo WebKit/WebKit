@@ -45,7 +45,7 @@
     [CEReactions, CustomGetter, Reflect=aria_describedby, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute FrozenArray<Element>? ariaDescribedByElements;
     [CEReactions, CustomGetter, Reflect=aria_details, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute FrozenArray<Element>? ariaDetailsElements;
     [CEReactions, Reflect=aria_disabled, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaDisabled;
-    [CEReactions, CustomGetter, Reflect=aria_errormessage, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute FrozenArray<Element>? ariaErrorMessageElements;
+    [CEReactions, Reflect=aria_errormessage, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute Element? ariaErrorMessageElement;
     [CEReactions, Reflect=aria_expanded, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaExpanded;
     [CEReactions, CustomGetter, Reflect=aria_flowto, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute FrozenArray<Element>? ariaFlowToElements;
     [CEReactions, Reflect=aria_haspopup, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaHasPopup;

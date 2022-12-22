@@ -9,7 +9,6 @@
 <div id="details1" class="details">some details</div>
 <div id="details2" class="details">other details</div>
 <div id="error1" class="error">some error</div>
-<div id="error2" class="error">other error</div>
 <script>
 
 class CustomElement extends HTMLElement {
@@ -20,16 +19,14 @@ class CustomElement extends HTMLElement {
         internals.role = 'checkbox';
         internals.ariaDescribedByElements = Array.from(document.querySelectorAll('.note'));
         internals.ariaDetailsElements = Array.from(document.querySelectorAll('.details'));
-        internals.ariaErrorMessageElements = Array.from(document.querySelectorAll('.error'));
+        internals.ariaErrorMessageElement = document.querySelector('.error');          
         shouldBe('internals.ariaDescribedByElements.length', '2');
         shouldBe('internals.ariaDescribedByElements[0]', 'document.querySelectorAll(".note")[0]');
         shouldBe('internals.ariaDescribedByElements[1]', 'document.querySelectorAll(".note")[1]');
         shouldBe('internals.ariaDetailsElements.length', '2');
         shouldBe('internals.ariaDetailsElements[0]', 'document.querySelectorAll(".details")[0]');
         shouldBe('internals.ariaDetailsElements[1]', 'document.querySelectorAll(".details")[1]');
-        shouldBe('internals.ariaErrorMessageElements.length', '2');
-        shouldBe('internals.ariaErrorMessageElements[0]', 'document.querySelectorAll(".error")[0]');
-        shouldBe('internals.ariaErrorMessageElements[1]', 'document.querySelectorAll(".error")[1]');
+        shouldBe('internals.ariaErrorMessageElement', 'document.querySelector(".error")');
     }
 }
 customElements.define('custom-element', CustomElement);
@@ -48,9 +45,8 @@ else {
     shouldBe('accessibilityController.accessibleElementById("custom-1").detailsElements().length', '2');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[0].domIdentifier', 'details1');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[1].domIdentifier', 'details2');
-    shouldBe('accessibilityController.accessibleElementById("custom-1").errorMessageElements().length', '2');
+    shouldBe('accessibilityController.accessibleElementById("custom-1").errorMessageElements().length', '1');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").errorMessageElements()[0].domIdentifier', 'error1');
-    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").errorMessageElements()[1].domIdentifier', 'error2');
 }
 
 </script>

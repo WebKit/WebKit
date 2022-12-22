@@ -128,11 +128,6 @@ JSValue JSElement::ariaDetailsElements(JSGlobalObject& lexicalGlobalObject) cons
     return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_detailsAttr);
 }
 
-JSValue JSElement::ariaErrorMessageElements(JSGlobalObject& lexicalGlobalObject) const
-{
-    return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_errormessageAttr);
-}
-
 JSValue JSElement::ariaFlowToElements(JSGlobalObject& lexicalGlobalObject) const
 {
     return getElementsArrayAttribute(lexicalGlobalObject, *this, WebCore::HTMLNames::aria_flowtoAttr);

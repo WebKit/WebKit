@@ -21,7 +21,7 @@ customElements.define('custom-element', class CustomElement extends HTMLElement 
         internals.role = 'checkbox';
         internals.ariaDescribedByElements = Array.from(document.querySelectorAll('.note'));
         internals.ariaDetailsElements = Array.from(document.querySelectorAll('.details'));
-        internals.ariaErrorMessageElements = Array.from(document.querySelectorAll('.error'));
+        internals.ariaErrorMessageElement = document.querySelector('.error');
     }
 });
 
@@ -34,9 +34,8 @@ else {
     shouldBe('accessibilityController.accessibleElementById("custom-1").detailsElements().length', '2');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[0].domIdentifier', 'details1');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[1].domIdentifier', 'details2');
-    shouldBe('accessibilityController.accessibleElementById("custom-1").errorMessageElements().length', '2');
+    shouldBe('accessibilityController.accessibleElementById("custom-1").errorMessageElements().length', '1');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").errorMessageElements()[0].domIdentifier', 'error1');
-    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").errorMessageElements()[1].domIdentifier', 'error2');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").role', 'AXRole: AXCheckBox');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").helpText', 'AXHelp: some description');
     shouldBe('accessibilityController.accessibleElementById("custom-2").detailsElements().length', '1');
