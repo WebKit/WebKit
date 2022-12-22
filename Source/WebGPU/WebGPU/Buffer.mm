@@ -329,6 +329,7 @@ void Buffer::unmap()
 #endif
 
     m_state = State::Unmapped;
+    m_mappedRanges = MappedRanges();
 }
 
 void Buffer::setLabel(String&& label)

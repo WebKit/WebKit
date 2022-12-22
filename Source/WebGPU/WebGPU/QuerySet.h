@@ -28,6 +28,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 struct WGPUQuerySetImpl {
 };
@@ -40,6 +41,10 @@ class Device;
 class QuerySet : public WGPUQuerySetImpl, public RefCounted<QuerySet> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<QuerySet> create(id<MTLBuffer> visibilityBuffer, Device& device)
+    {
+        return adoptRef(*new QuerySet(visibilityBuffer, device));
+    }
     static Ref<QuerySet> create(id<MTLCounterSampleBuffer> counterSampleBuffer, Device& device)
     {
         return adoptRef(*new QuerySet(counterSampleBuffer, device));
@@ -54,19 +59,23 @@ public:
     void destroy();
     void setLabel(String&&);
 
-    bool isValid() const { return m_counterSampleBuffer; }
-
-    id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
+    bool isValid() const { return m_queryCount > 0; }
 
     Device& device() const { return m_device; }
+    Vector<MTLTimestamp> resolveTimestamps() const;
+    uint32_t queryCount() const { return m_queryCount; }
+    id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
+    id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_timestampBuffer; }
 
 private:
+    QuerySet(id<MTLBuffer>, Device&);
     QuerySet(id<MTLCounterSampleBuffer>, Device&);
     QuerySet(Device&);
 
-    id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
-
     const Ref<Device> m_device;
+    id<MTLBuffer> m_visibilityBuffer { nil };
+    id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
+    uint32_t m_queryCount { 0 };
 };
 
 } // namespace WebGPU

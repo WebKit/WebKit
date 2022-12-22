@@ -35,9 +35,10 @@
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, Device& device)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
+    , m_visibilityResultBufferSize(visibilityResultBufferSize)
 {
 }
 
@@ -54,7 +55,10 @@ RenderPassEncoder::~RenderPassEncoder()
 
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
-    UNUSED_PARAM(queryIndex);
+    if (queryIndex < m_visibilityResultBufferSize) {
+        m_visibilityResultBufferOffset = queryIndex;
+        [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
+    }
 }
 
 void RenderPassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
@@ -93,7 +97,7 @@ void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indi
 
 void RenderPassEncoder::endOcclusionQuery()
 {
-
+    [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeDisabled offset:m_visibilityResultBufferOffset];
 }
 
 void RenderPassEncoder::endPass()
