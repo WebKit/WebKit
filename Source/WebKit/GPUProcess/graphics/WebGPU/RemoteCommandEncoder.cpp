@@ -92,7 +92,7 @@ void RemoteCommandEncoder::copyBufferToBuffer(
 {
     auto convertedSource = m_objectHeap.convertBufferFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectHeap.convertBufferFromBacking(source);
+    auto convertedDestination = m_objectHeap.convertBufferFromBacking(destination);
     ASSERT(convertedDestination);
     if (!convertedSource || !convertedDestination)
         return;

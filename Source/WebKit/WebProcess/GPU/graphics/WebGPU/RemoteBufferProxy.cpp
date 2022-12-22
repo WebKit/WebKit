@@ -60,6 +60,9 @@ void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::We
 
 auto RemoteBufferProxy::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size) -> MappedRange
 {
+    if (m_data.has_value())
+        return { m_data->data() + offset, static_cast<size_t>(size.value_or(m_data->size() - offset)) };
+
     // FIXME: Implement error handling.
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
     auto [data] = sendResult.takeReplyOr(std::nullopt);

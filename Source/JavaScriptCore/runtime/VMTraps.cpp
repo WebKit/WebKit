@@ -186,7 +186,7 @@ void VMTraps::invalidateCodeBlocksOnStack(Locker<Lock>&, CallFrame* topCallFrame
         return; // Not running JS code. Nothing to invalidate.
 
     while (callFrame) {
-        CodeBlock* codeBlock = callFrame->codeBlock();
+        CodeBlock* codeBlock = callFrame->isAnyWasmCallee() ? nullptr : callFrame->codeBlock();
         if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()))
             codeBlock->jettison(Profiler::JettisonDueToVMTraps);
         callFrame = callFrame->callerFrame(entryFrame);

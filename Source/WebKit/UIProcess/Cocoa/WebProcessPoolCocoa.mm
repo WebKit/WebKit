@@ -170,7 +170,9 @@ static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorP
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+static NSString * const WebKitMediaStreamingActivity = @"WebKitMediaStreamingActivity";
+
+#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
 
@@ -465,7 +467,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 #endif
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
 
@@ -1259,5 +1261,10 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
     } };
 }
 #endif // PLATFORM(MAC) || PLATFORM(IOS)
+
+void WebProcessPool::notifyMediaStreamingActivity(bool activity)
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebKitMediaStreamingActivity object:[NSNumber numberWithBool:activity]];
+}
 
 } // namespace WebKit

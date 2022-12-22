@@ -119,6 +119,12 @@ public:
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() { return m_explicitlySetAttrElementsMap; }
 
+    bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
+    void setHasDuplicateAttribute(bool hasDuplicateAttribute) { m_hasDuplicateAttribute = hasDuplicateAttribute; };
+
+    bool displayContentsChanged() const { return m_displayContentsChanged; }
+    void setDisplayContentsChanged(bool changed) { m_displayContentsChanged = changed; }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {

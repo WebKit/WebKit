@@ -328,7 +328,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->jsCallee(), callFrame->callerFrame());
             bool isTailDeleted = false;
             JSScope* scope = nullptr;
-            CodeBlock* codeBlock = callFrame->codeBlock();
+            CodeBlock* codeBlock = callFrame->isAnyWasmCallee() ? nullptr : callFrame->codeBlock();
             JSValue scopeValue = callFrame->bytecodeIndex() && codeBlock && codeBlock->scopeRegister().isValid()
                 ? callFrame->registers()[codeBlock->scopeRegister().offset()].jsValue()
                 : jsUndefined();

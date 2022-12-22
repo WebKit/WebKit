@@ -47,9 +47,9 @@ class RenderPipeline;
 class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, Device& device)
+    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, device));
+        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, visibilityResultBufferSize, device));
     }
     static Ref<RenderPassEncoder> createInvalid(Device& device)
     {
@@ -86,7 +86,7 @@ public:
     bool isValid() const { return m_renderCommandEncoder; }
 
 private:
-    RenderPassEncoder(id<MTLRenderCommandEncoder>, Device&);
+    RenderPassEncoder(id<MTLRenderCommandEncoder>, NSUInteger, Device&);
     RenderPassEncoder(Device&);
 
     bool validatePopDebugGroup() const;
@@ -102,6 +102,9 @@ private:
     id<MTLBuffer> m_indexBuffer { nil };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
+    NSUInteger m_vertexShaderInputBufferCount { 0 };
+    NSUInteger m_visibilityResultBufferOffset { 0 };
+    NSUInteger m_visibilityResultBufferSize { 0 };
 };
 
 } // namespace WebGPU

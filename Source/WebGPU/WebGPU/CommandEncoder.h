@@ -69,7 +69,7 @@ public:
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
-    void writeTimestamp(const QuerySet&, uint32_t queryIndex);
+    void writeTimestamp(QuerySet&, uint32_t queryIndex);
     void setLabel(String&&);
 
     Device& device() const { return m_device; }

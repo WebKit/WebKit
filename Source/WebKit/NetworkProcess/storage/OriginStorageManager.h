@@ -30,8 +30,14 @@
 #include "WebsiteDataType.h"
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct ClientOrigin;
+}
+
 namespace WebKit {
 
+class CacheStorageManager;
+class CacheStorageRegistry;
 class FileSystemStorageHandleRegistry;
 class FileSystemStorageManager;
 class IDBStorageManager;
@@ -46,7 +52,7 @@ class OriginStorageManager {
 public:
     static String originFileIdentifier();
 
-    OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& cacheStoragePath, bool shouldUseCustomPaths);
+    OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, FileSystem::Salt cacheStorageSalt, bool shouldUseCustomPaths);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
@@ -61,6 +67,10 @@ public:
     SessionStorageManager* existingSessionStorageManager();
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&);
     IDBStorageManager* existingIDBStorageManager();
+    CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
+    CacheStorageManager* existingCacheStorageManager();
+    uint64_t cacheStorageSize();
+    void closeCacheStorageManager();
     String resolvedPath(WebsiteDataType);
     bool isActive();
     bool isEmpty();
@@ -86,6 +96,7 @@ private:
     String m_customLocalStoragePath;
     String m_customIDBStoragePath;
     String m_cacheStoragePath;
+    FileSystem::Salt m_cacheStorageSalt;
     uint64_t m_quota;
     QuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
     RefPtr<QuotaManager> m_quotaManager;

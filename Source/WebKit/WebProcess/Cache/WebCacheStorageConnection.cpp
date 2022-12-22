@@ -26,11 +26,10 @@
 #include "config.h"
 #include "WebCacheStorageConnection.h"
 
-#include "CacheStorageEngine.h"
-#include "CacheStorageEngineConnectionMessages.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkProcessMessages.h"
+#include "NetworkStorageManagerMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -64,32 +63,32 @@ void WebCacheStorageConnection::open(const WebCore::ClientOrigin& origin, const 
         }
         callback(WTFMove(result));
     };
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::Open(origin, cacheName), WTFMove(newCallback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageOpenCache(origin, cacheName), WTFMove(newCallback));
 }
 
 void WebCacheStorageConnection::remove(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::Remove(cacheIdentifier), WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRemoveCache(cacheIdentifier), WTFMove(callback));
 }
 
 void WebCacheStorageConnection::retrieveCaches(const WebCore::ClientOrigin& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::Caches(origin, updateCounter), WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageAllCaches(origin, updateCounter), WTFMove(callback));
 }
 
 void WebCacheStorageConnection::retrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::RetrieveRecords(cacheIdentifier, options), WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRetrieveRecords(cacheIdentifier, options), WTFMove(callback));
 }
 
 void WebCacheStorageConnection::batchDeleteOperation(WebCore::DOMCacheIdentifier cacheIdentifier, const WebCore::ResourceRequest& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::DeleteMatchingRecords(cacheIdentifier, request, options), WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRemoveRecords(cacheIdentifier, request, options), WTFMove(callback));
 }
 
 void WebCacheStorageConnection::batchPutOperation(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::PutRecords(cacheIdentifier, records), WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStoragePutRecords(cacheIdentifier, records), WTFMove(callback));
 }
 
 void WebCacheStorageConnection::reference(WebCore::DOMCacheIdentifier cacheIdentifier)
@@ -97,7 +96,7 @@ void WebCacheStorageConnection::reference(WebCore::DOMCacheIdentifier cacheIdent
     if (!m_connectedIdentifiers.contains(cacheIdentifier))
         return;
 
-    connection().send(Messages::CacheStorageEngineConnection::Reference(cacheIdentifier), 0);
+    connection().send(Messages::NetworkStorageManager::CacheStorageReference(cacheIdentifier), 0);
 }
 
 void WebCacheStorageConnection::dereference(WebCore::DOMCacheIdentifier cacheIdentifier)
@@ -105,17 +104,17 @@ void WebCacheStorageConnection::dereference(WebCore::DOMCacheIdentifier cacheIde
     if (!m_connectedIdentifiers.contains(cacheIdentifier))
         return;
 
-    connection().send(Messages::CacheStorageEngineConnection::Dereference(cacheIdentifier), 0);
+    connection().send(Messages::NetworkStorageManager::CacheStorageDereference(cacheIdentifier), 0);
 }
 
 void WebCacheStorageConnection::clearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation { origin }, WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageClearMemoryRepresentation { origin }, WTFMove(callback));
 }
 
 void WebCacheStorageConnection::engineRepresentation(CompletionHandler<void(const String&)>&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::EngineRepresentation { }, WTFMove(callback));
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRepresentation { }, WTFMove(callback));
 }
 
 void WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin& origin)

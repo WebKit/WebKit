@@ -27,13 +27,20 @@
 #include "CanvasBase.h"
 
 #include "CanvasRenderingContext.h"
+#include "Chrome.h"
+#include "Document.h"
 #include "Element.h"
 #include "FloatRect.h"
+#include "GraphicsClient.h"
 #include "GraphicsContext.h"
+#include "HTMLCanvasElement.h"
+#include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"
+#include "WorkerClient.h"
+#include "WorkerGlobalScope.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <atomic>
@@ -50,6 +57,9 @@ const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::L
 #else
 const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Default;
 #endif
+
+static std::optional<size_t> maxCanvasAreaForTesting;
+static std::optional<size_t> maxActivePixelMemoryForTesting;
 
 CanvasBase::CanvasBase(IntSize size)
     : m_size(size)
@@ -119,6 +129,49 @@ size_t CanvasBase::externalMemoryCost() const
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->externalMemoryCost();
+}
+
+size_t CanvasBase::maxActivePixelMemory()
+{
+    if (maxActivePixelMemoryForTesting)
+        return *maxActivePixelMemoryForTesting;
+
+    static size_t maxPixelMemory;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(IOS_FAMILY)
+        maxPixelMemory = ramSize() / 4;
+#else
+        maxPixelMemory = std::max(ramSize() / 4, 2151 * MB);
+#endif
+    });
+
+    return maxPixelMemory;
+}
+
+void CanvasBase::setMaxPixelMemoryForTesting(std::optional<size_t> size)
+{
+    maxActivePixelMemoryForTesting = size;
+}
+
+static inline size_t maxCanvasArea()
+{
+    if (maxCanvasAreaForTesting)
+        return *maxCanvasAreaForTesting;
+
+    // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
+    // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
+    // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
+#if PLATFORM(IOS_FAMILY)
+    return 4096 * 4096;
+#else
+    return 16384 * 16384;
+#endif
+}
+
+void CanvasBase::setMaxCanvasAreaForTesting(std::optional<size_t> size)
+{
+    maxCanvasAreaForTesting = size;
 }
 
 void CanvasBase::addObserver(CanvasObserver& observer)
@@ -229,6 +282,77 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
     }
 
     return returnBuffer;
+}
+
+GraphicsClient* CanvasBase::graphicsClient() const
+{
+    if (scriptExecutionContext()->isDocument() && downcast<Document>(scriptExecutionContext())->page())
+        return &downcast<Document>(scriptExecutionContext())->page()->chrome();
+    if (is<WorkerGlobalScope>(scriptExecutionContext()))
+        return downcast<WorkerGlobalScope>(scriptExecutionContext())->workerClient();
+
+    return nullptr;
+}
+
+bool CanvasBase::shouldAccelerate(const IntSize& size) const
+{
+    auto checkedArea = size.area<RecordOverflow>();
+    if (checkedArea.hasOverflowed())
+        return false;
+
+    return shouldAccelerate(checkedArea.value());
+}
+
+bool CanvasBase::shouldAccelerate(unsigned area) const
+{
+    if (area > scriptExecutionContext()->settingsValues().maximumAccelerated2dCanvasSize)
+        return false;
+
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    return scriptExecutionContext()->settingsValues().canvasUsesAcceleratedDrawing;
+#else
+    return false;
+#endif
+}
+
+void CanvasBase::createImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const
+{
+    auto checkedArea = size().area<RecordOverflow>();
+
+    if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea()) {
+        auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea(), ").");
+        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+        return;
+    }
+
+    // Make sure we don't use more pixel memory than the system can support.
+    auto checkedRequestedPixelMemory = (4 * checkedArea) + activePixelMemory();
+    if (checkedRequestedPixelMemory.hasOverflowed() || checkedRequestedPixelMemory > maxActivePixelMemory()) {
+        auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
+        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+        return;
+    }
+
+    unsigned area = checkedArea.value();
+    if (!area)
+        return;
+
+    OptionSet<ImageBufferOptions> bufferOptions;
+    if (shouldAccelerate(area))
+        bufferOptions.add(ImageBufferOptions::Accelerated);
+    // FIXME: Add a new setting for DisplayList drawing on canvas.
+    if (usesDisplayListDrawing || scriptExecutionContext()->settingsValues().displayListDrawingEnabled)
+        bufferOptions.add(ImageBufferOptions::UseDisplayList);
+
+    auto [colorSpace, pixelFormat] = [&] {
+        if (renderingContext())
+            return std::pair { renderingContext()->colorSpace(), renderingContext()->pixelFormat() };
+        return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
+    }();
+    ImageBufferCreationContext context = { };
+    context.graphicsClient = graphicsClient();
+    context.avoidIOSurfaceSizeCheckInWebProcessForTesting = avoidBackendSizeCheckForTesting;
+    setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context));
 }
 
 size_t CanvasBase::activePixelMemory()

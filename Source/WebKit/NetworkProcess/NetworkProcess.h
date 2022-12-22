@@ -124,10 +124,6 @@ class Cache;
 enum class CacheOption : uint8_t;
 }
 
-namespace CacheStorage {
-class Engine;
-}
-
 class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);

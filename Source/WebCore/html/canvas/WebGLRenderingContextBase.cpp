@@ -485,18 +485,6 @@ static void removeActiveContext(WebGLRenderingContextBase& context)
     ASSERT_UNUSED(didContain, didContain);
 }
 
-static GraphicsClient* getGraphicsClient(CanvasBase& canvas)
-{
-    if (is<WorkerGlobalScope>(canvas.scriptExecutionContext()))
-        return downcast<WorkerGlobalScope>(canvas.scriptExecutionContext())->workerClient();
-    else if (is<Document>(canvas.scriptExecutionContext())) {
-        ASSERT(downcast<Document>(canvas.scriptExecutionContext())->page());
-        return &downcast<Document>(canvas.scriptExecutionContext())->page()->chrome();
-    }
-
-    return nullptr;
-}
-
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
@@ -511,7 +499,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     UNUSED_PARAM(type);
 #endif
 
-    GraphicsClient* graphicsClient = getGraphicsClient(canvas);
+    GraphicsClient* graphicsClient = canvas.graphicsClient();
 
     auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
 
@@ -5527,7 +5515,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!scriptExecutionContext->settingsValues().webGLEnabled)
         return;
 
-    GraphicsClient* graphicsClient = getGraphicsClient(canvasBase());
+    GraphicsClient* graphicsClient = canvasBase().graphicsClient();
     if (!graphicsClient)
         return;
 

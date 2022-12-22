@@ -126,17 +126,11 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    bool shouldAccelerate(const IntSize&) const;
-    bool shouldAccelerate(unsigned area) const;
-
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
 
     // FIXME: Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
-
-    WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(std::optional<size_t>);
-    WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
 
     bool needsPreparationForDisplay();
     void prepareForDisplay();
@@ -145,8 +139,6 @@ public:
     bool isSnapshotting() const { return m_isSnapshotting; }
 
     bool isControlledByOffscreen() const;
-
-    WEBCORE_EXPORT static size_t maxActivePixelMemory();
 
 #if PLATFORM(COCOA)
     GraphicsContext* drawingContext() const final;

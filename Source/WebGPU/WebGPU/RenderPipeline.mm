@@ -189,12 +189,9 @@ bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descript
     // FIXME: we additionally reject valid descriptors using unimplemented features.
     // Remove these checks once we support them.
 
+    UNUSED_PARAM(descriptor);
     // Does not support module constants in vertex shaders
     if (descriptor.vertex.constantCount)
-        return false;
-
-    // Does not support vertex shader input buffers
-    if (descriptor.vertex.bufferCount)
         return false;
 
     if (descriptor.fragment) {
@@ -230,6 +227,110 @@ static MTLCompareFunction convertToMTLCompare(WGPUCompareFunction comparison)
     case WGPUCompareFunction_Force32:
         return MTLCompareFunctionAlways;
     }
+}
+
+static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
+{
+    switch (vertexFormat) {
+    case WGPUVertexFormat_Uint8x2:
+        return MTLVertexFormatUInt2;
+    case WGPUVertexFormat_Uint8x4:
+        return MTLVertexFormatUInt4;
+    case WGPUVertexFormat_Sint8x2:
+        return MTLVertexFormatInt2;
+    case WGPUVertexFormat_Sint8x4:
+        return MTLVertexFormatInt4;
+    case WGPUVertexFormat_Unorm8x2:
+        return MTLVertexFormatUChar2Normalized;
+    case WGPUVertexFormat_Unorm8x4:
+        return MTLVertexFormatUChar4Normalized;
+    case WGPUVertexFormat_Snorm8x2:
+        return MTLVertexFormatChar2Normalized;
+    case WGPUVertexFormat_Snorm8x4:
+        return MTLVertexFormatChar4Normalized;
+    case WGPUVertexFormat_Uint16x2:
+        return MTLVertexFormatUShort2;
+    case WGPUVertexFormat_Uint16x4:
+        return MTLVertexFormatUShort4;
+    case WGPUVertexFormat_Sint16x2:
+        return MTLVertexFormatShort2;
+    case WGPUVertexFormat_Sint16x4:
+        return MTLVertexFormatShort4;
+    case WGPUVertexFormat_Unorm16x2:
+        return MTLVertexFormatUShort2Normalized;
+    case WGPUVertexFormat_Unorm16x4:
+        return MTLVertexFormatUShort4Normalized;
+    case WGPUVertexFormat_Snorm16x2:
+        return MTLVertexFormatShort2Normalized;
+    case WGPUVertexFormat_Snorm16x4:
+        return MTLVertexFormatShort4Normalized;
+    case WGPUVertexFormat_Float16x2:
+        return MTLVertexFormatHalf2;
+    case WGPUVertexFormat_Float16x4:
+        return MTLVertexFormatHalf4;
+    case WGPUVertexFormat_Float32:
+        return MTLVertexFormatFloat;
+    case WGPUVertexFormat_Float32x2:
+        return MTLVertexFormatFloat2;
+    case WGPUVertexFormat_Float32x3:
+        return MTLVertexFormatFloat3;
+    case WGPUVertexFormat_Float32x4:
+        return MTLVertexFormatFloat4;
+    case WGPUVertexFormat_Uint32:
+        return MTLVertexFormatUInt;
+    case WGPUVertexFormat_Uint32x2:
+        return MTLVertexFormatUInt2;
+    case WGPUVertexFormat_Uint32x3:
+        return MTLVertexFormatUInt3;
+    case WGPUVertexFormat_Uint32x4:
+        return MTLVertexFormatUInt4;
+    case WGPUVertexFormat_Sint32:
+        return MTLVertexFormatInt;
+    case WGPUVertexFormat_Sint32x2:
+        return MTLVertexFormatInt2;
+    case WGPUVertexFormat_Sint32x3:
+        return MTLVertexFormatInt3;
+    case WGPUVertexFormat_Sint32x4:
+        return MTLVertexFormatInt4;
+    case WGPUVertexFormat_Force32:
+    case WGPUVertexFormat_Undefined:
+        ASSERT_NOT_REACHED();
+        return MTLVertexFormatFloat;
+    }
+}
+
+static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode)
+{
+    switch (stepMode) {
+    case WGPUVertexStepMode_Vertex:
+        return MTLVertexStepFunctionPerVertex;
+    case WGPUVertexStepMode_Instance:
+        return MTLVertexStepFunctionPerInstance;
+    case WGPUVertexStepMode_Force32:
+        ASSERT_NOT_REACHED();
+        return MTLVertexStepFunctionPerVertex;
+    }
+}
+
+static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
+{
+    MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
+
+    for (size_t bufferIndex = 0; bufferIndex < vertexState.bufferCount; ++bufferIndex) {
+        auto& buffer = vertexState.buffers[bufferIndex];
+        vertexDescriptor.layouts[bufferIndex].stride = buffer.arrayStride;
+        vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode);
+        // FIXME: need to assign stepRate with per-instance data?
+        for (size_t i = 0; i < buffer.attributeCount; ++i) {
+            auto& attribute = buffer.attributes[i];
+            const auto& mtlAttribute = vertexDescriptor.attributes[i];
+            mtlAttribute.format = vertexFormat(attribute.format);
+            mtlAttribute.bufferIndex = bufferIndex;
+            mtlAttribute.offset = attribute.offset;
+        }
+    }
+
+    return vertexDescriptor;
 }
 
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
@@ -310,6 +411,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
 
+    if (descriptor.vertex.bufferCount)
+        mtlRenderPipelineDescriptor.vertexDescriptor = createVertexDescriptor(descriptor.vertex);
+
     if (descriptor.primitive.nextInChain)
         return RenderPipeline::createInvalid(*this);
 
@@ -329,7 +433,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     if (!renderPipelineState)
         return RenderPipeline::createInvalid(*this);
 
-    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthStencilState, *this);
+    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthStencilState, descriptor.vertex.bufferCount, *this);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
@@ -341,7 +445,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, uint32_t vertexShaderInputBufferCount, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
@@ -349,6 +453,7 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_frontFace(frontFace)
     , m_cullMode(cullMode)
     , m_depthStencilState(depthStencilState)
+    , m_vertexShaderInputBufferCount(vertexShaderInputBufferCount)
 {
 }
 

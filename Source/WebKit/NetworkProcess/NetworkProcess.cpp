@@ -1510,12 +1510,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
     }
 
-    if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session) {
-        CacheStorage::Engine::fetchEntries(*session, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(entries);
-        });
-    }
-
 #if PLATFORM(COCOA) || USE(SOUP)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
         callbackAggregator->m_websiteData.hostNamesWithHSTSCache = hostNamesWithHSTSCache(sessionID);
@@ -1588,9 +1582,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
             session->credentialStorage().clearCredentials();
         WebCore::CredentialStorage::clearSessionCredentials();
     }
-
-    if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session)
-        CacheStorage::Engine::clearAllCaches(*session, [clearTasksHandler] { });
 
 #if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
@@ -1691,11 +1682,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             session->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host), [clearTasksHandler] { });
     }
 
-    if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session) {
-        for (auto& originData : originDatas)
-            CacheStorage::Engine::clearCachesForOrigin(*session, SecurityOriginData { originData }, [clearTasksHandler] { });
-    }
-
 #if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && !sessionID.isEphemeral() && session) {
@@ -1760,17 +1746,6 @@ static Vector<String> filterForRegistrableDomains(const Vector<RegistrableDomain
     Vector<String> result;
     for (const auto& value : foundValues) {
         if (registrableDomains.contains(RegistrableDomain::uncheckedCreateFromHost(value)))
-            result.append(value);
-    }
-    
-    return result;
-}
-
-static Vector<WebsiteData::Entry> filterForRegistrableDomains(const Vector<RegistrableDomain>& registrableDomains, const Vector<WebsiteData::Entry>& foundValues)
-{
-    Vector<WebsiteData::Entry> result;
-    for (const auto& value : foundValues) {
-        if (registrableDomains.contains(RegistrableDomain::uncheckedCreateFromHost(value.origin.host)))
             result.append(value);
     }
     
@@ -1885,21 +1860,6 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         auto origins = WebCore::CredentialStorage::originsWithSessionCredentials();
         auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
         WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originsToDelete);
-    }
-    
-    if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session) {
-        CacheStorage::Engine::fetchEntries(*session, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [domainsToDeleteAllScriptWrittenStorageFor, session = WeakPtr { session }, callbackAggregator](auto entries) mutable {
-            
-            auto entriesToDelete = filterForRegistrableDomains(domainsToDeleteAllScriptWrittenStorageFor, entries);
-
-            for (const auto& entry : entriesToDelete)
-                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
-
-            if (session) {
-                for (auto& entry : entriesToDelete)
-                    CacheStorage::Engine::clearCachesForOrigin(*session, SecurityOriginData { entry.origin }, [callbackAggregator] { });
-            }
-        });
     }
     
 #if ENABLE(SERVICE_WORKER)
@@ -2034,12 +1994,6 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
         }
-    }
-    
-    if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session) {
-        CacheStorage::Engine::fetchEntries(*session, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator](auto entries) mutable {
-            callbackAggregator->m_websiteData.entries.appendVector(entries);
-        });
     }
     
 #if ENABLE(SERVICE_WORKER)

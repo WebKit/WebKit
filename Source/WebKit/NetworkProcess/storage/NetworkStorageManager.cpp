@@ -26,7 +26,9 @@
 #include "config.h"
 #include "NetworkStorageManager.h"
 
-#include "CacheStorageEngine.h"
+#include "CacheStorageCache.h"
+#include "CacheStorageManager.h"
+#include "CacheStorageRegistry.h"
 #include "FileSystemStorageHandleRegistry.h"
 #include "FileSystemStorageManager.h"
 #include "IDBStorageConnectionToClient.h"
@@ -42,15 +44,13 @@
 #include "StorageAreaBase.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageAreaRegistry.h"
+#include "StorageUtilities.h"
 #include "WebsiteDataType.h"
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
-#include <WebCore/WebCorePersistentCoders.h>
 #include <pal/crypto/CryptoDigest.h>
-#include <wtf/Scope.h>
 #include <wtf/SuspendableWorkQueue.h>
-#include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -58,53 +58,6 @@ namespace WebKit {
 #if PLATFORM(IOS_FAMILY)
 static const Seconds defaultBackupExclusionPeriod { 24_h };
 #endif
-
-static std::optional<WebCore::ClientOrigin> readOriginFromFile(const String& filePath)
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (filePath.isEmpty() || !FileSystem::fileExists(filePath))
-        return std::nullopt;
-
-    auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Read);
-    auto closeFile = makeScopeExit([&] {
-        FileSystem::closeFile(originFileHandle);
-    });
-
-    if (!FileSystem::isHandleValid(originFileHandle))
-        return std::nullopt;
-
-    auto originContent = FileSystem::readEntireFile(originFileHandle);
-    if (!originContent)
-        return std::nullopt;
-
-    WTF::Persistence::Decoder decoder({ originContent->data(), originContent->size() });
-    std::optional<WebCore::ClientOrigin> origin;
-    decoder >> origin;
-    return origin;
-}
-
-static bool writeOriginToFile(const String& filePath, const WebCore::ClientOrigin& origin)
-{
-    if (filePath.isEmpty() || FileSystem::fileExists(filePath))
-        return false;
-
-    FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
-    auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::ReadWrite);
-    auto closeFile = makeScopeExit([&] {
-        FileSystem::closeFile(originFileHandle);
-    });
-
-    if (!FileSystem::isHandleValid(originFileHandle)) {
-        LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8().data());
-        return false;
-    }
-
-    WTF::Persistence::Encoder encoder;
-    encoder << origin;
-    FileSystem::writeToFile(originFileHandle, encoder.buffer(), encoder.bufferSize());
-    return true;
-}
 
 static String encode(const String& string, FileSystem::Salt salt)
 {
@@ -187,6 +140,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
+        m_cacheStorageRegistry = makeUnique<CacheStorageRegistry>();
         m_shouldUseCustomPaths = shouldUseCustomPaths;
         m_path = path;
         m_customLocalStoragePath = customLocalStoragePath;
@@ -217,7 +171,8 @@ bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)
     return types.contains(WebsiteDataType::LocalStorage)
         || types.contains(WebsiteDataType::SessionStorage)
         || types.contains(WebsiteDataType::FileSystem)
-        || types.contains(WebsiteDataType::IndexedDBDatabases);
+        || types.contains(WebsiteDataType::IndexedDBDatabases)
+        || types.contains(WebsiteDataType::DOMCache);
 }
 
 void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
@@ -335,12 +290,13 @@ OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore:
         auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
         auto localStoragePath = LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, origin);
         auto idbStoragePath = IDBStorageManager::idbStorageOriginDirectory(m_customIDBStoragePath, origin);
-        auto cacheStoragePath = CacheStorage::Engine::storagePath(m_customCacheStoragePath, origin);
+        auto cacheStorageSalt = CacheStorageManager::cacheStorageSalt(m_customCacheStoragePath);
+        auto cacheStoragePath = CacheStorageManager::cacheStorageOriginDirectory(m_customCacheStoragePath, cacheStorageSalt, origin);
         uint64_t quota = origin.topOrigin == origin.clientOrigin ? m_defaultOriginQuota : m_defaultThirdPartyOriginQuota;
         QuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
             IPC::Connection::send(connection, Messages::NetworkProcessProxy::IncreaseQuota(sessionID, origin, identifier, currentQuota, currentUsage, requestedIncrease), 0);
         };
-        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_shouldUseCustomPaths);
+        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), cacheStorageSalt, m_shouldUseCustomPaths);
     }).iterator->value;
 
     if (shouldWriteOriginFile == ShouldWriteOriginFile::Yes)
@@ -592,6 +548,9 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
         allOrigins.add(WebCore::ClientOrigin { origin, origin });
 
     for (auto& origin : IDBStorageManager::originsOfIDBStorageData(m_customIDBStoragePath))
+        allOrigins.add(origin);
+
+    for (auto& origin : CacheStorageManager::originsOfCacheStorageData(m_customCacheStoragePath))
         allOrigins.add(origin);
 
     return allOrigins;
@@ -1195,6 +1154,122 @@ void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& conn
     auto& connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestIdentifier.connectionIdentifier());
     auto result = originStorageManager(origin).idbStorageManager(*m_idbStorageRegistry).getAllDatabaseNamesAndVersions();
     connectionToClient.didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(result));
+}
+
+void NetworkStorageManager::cacheStorageOpenCache(const WebCore::ClientOrigin& origin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+{
+    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).openCache(cacheName, WTFMove(callback));
+}
+
+void NetworkStorageManager::cacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    auto* cacheStorageManager = cache->manager();
+    if (!cacheStorageManager)
+        return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cacheStorageManager->removeCache(cacheIdentifier, WTFMove(callback));
+}
+
+void NetworkStorageManager::cacheStorageAllCaches(const WebCore::ClientOrigin& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
+{
+    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).allCaches(updateCounter, WTFMove(callback));
+}
+
+void NetworkStorageManager::cacheStorageReference(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return;
+
+    auto* cacheStorageManager = cache->manager();
+    if (!cacheStorageManager)
+        return;
+
+    cacheStorageManager->reference(connection.uniqueID(), cacheIdentifier);
+}
+
+void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return;
+
+    auto* cacheStorageManager = cache->manager();
+    if (!cacheStorageManager)
+        return;
+
+    cacheStorageManager->dereference(connection.uniqueID(), cacheIdentifier);
+}
+
+void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cache->retrieveRecords(WTFMove(options), WTFMove(callback));
+}
+
+void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cache->removeRecords(WTFMove(request), WTFMove(options), WTFMove(callback));
+}
+
+void NetworkStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cache->putRecords(WTFMove(records), WTFMove(callback));
+}
+
+void NetworkStorageManager::cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&& callback)
+{
+    auto iterator = m_originStorageManagers.find(origin);
+    if (iterator == m_originStorageManagers.end())
+        return callback(std::nullopt);
+
+    iterator->value->closeCacheStorageManager();
+    callback(std::nullopt);
+}
+
+void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(String&&)>&& callback)
+{
+    Vector<String> originStrings;
+    auto targetTypes = OptionSet<WebsiteDataType> { WebsiteDataType::DOMCache };
+    for (auto& origin : getAllOrigins()) {
+        auto fetchedTypes = originStorageManager(origin).fetchDataTypesInList(targetTypes, false);
+        if (!fetchedTypes.isEmpty()) {
+            StringBuilder originBuilder;
+            originBuilder.append("\n{ \"origin\" : { \"topOrigin\" : \"", origin.topOrigin.toString(), "\", \"clientOrigin\": \"", origin.clientOrigin.toString(), "\" }, \"caches\" : ");
+            originBuilder.append(originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).representationString());
+            originBuilder.append('}');
+            originStrings.append(originBuilder.toString());
+        }
+        removeOriginStorageManagerIfPossible(origin);
+    }
+
+    std::sort(originStrings.begin(), originStrings.end(), [](auto& a, auto& b) {
+        return codePointCompareLessThan(a, b);
+    });
+    StringBuilder builder;
+    builder.append("{ \"path\": \"", m_customCacheStoragePath, "\", \"origins\": [");
+    const char* divider = "";
+    for (auto& origin : originStrings) {
+        builder.append(divider, origin);
+        divider = ",";
+    }
+    builder.append("]}");
+    callback(builder.toString());
 }
 
 } // namespace WebKit

@@ -84,6 +84,24 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseBase::R
 {
 }
 
+ResourceResponseBase::CrossThreadData ResourceResponseBase::CrossThreadData::copy() const
+{
+    ResourceResponseBase::CrossThreadData result;
+    result.url = url;
+    result.mimeType = mimeType;
+    result.expectedContentLength = expectedContentLength;
+    result.textEncodingName = textEncodingName;
+    result.httpStatusCode = httpStatusCode;
+    result.httpVersion = httpVersion;
+    result.httpHeaderFields = httpHeaderFields;
+    result.networkLoadMetrics = networkLoadMetrics;
+    result.type = type;
+    result.tainting = tainting;
+    result.isRedirected = isRedirected;
+    result.isRangeRequested = isRangeRequested;
+    return result;
+}
+
 ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() const
 {
     CrossThreadData data;

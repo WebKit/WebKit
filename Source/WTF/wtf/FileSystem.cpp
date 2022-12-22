@@ -573,6 +573,22 @@ std::optional<Vector<uint8_t>> readEntireFile(const String& path)
     return contents;
 }
 
+int overwriteEntireFile(const String& path, Span<uint8_t> span)
+{
+    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite);
+    auto closeFile = makeScopeExit([&] {
+        FileSystem::closeFile(fileHandle);
+    });
+
+    if (!FileSystem::isHandleValid(fileHandle))
+        return -1;
+
+    if (!FileSystem::truncateFile(fileHandle, 0))
+        return -1;
+
+    return FileSystem::writeToFile(fileHandle, span.data(), span.size());
+}
+
 void deleteAllFilesModifiedSince(const String& directory, WallTime time)
 {
     // This function may delete directory folder.

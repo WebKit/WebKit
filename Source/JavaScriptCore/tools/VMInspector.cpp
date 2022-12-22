@@ -361,7 +361,7 @@ void VMInspector::dumpCallFrame(VM* vm, CallFrame* callFrame, unsigned framesToS
 
 void VMInspector::dumpRegisters(CallFrame* callFrame)
 {
-    CodeBlock* codeBlock = callFrame->codeBlock();
+    CodeBlock* codeBlock = callFrame->isAnyWasmCallee() ? nullptr : callFrame->codeBlock();
     if (!codeBlock) {
         dataLog("Dumping host frame registers not supported.\n");
         return;

@@ -149,7 +149,7 @@ DebuggerScope* DebuggerCallFrame::scope(VM& vm)
 
     if (!m_scope) {
         JSScope* scope;
-        CodeBlock* codeBlock = m_validMachineFrame->codeBlock();
+        CodeBlock* codeBlock = m_validMachineFrame->isAnyWasmCallee() ? nullptr : m_validMachineFrame->codeBlock();
         if (isTailDeleted())
             scope = m_shadowChickenFrame.scope;
         else if (codeBlock && codeBlock->scopeRegister().isValid())
@@ -192,7 +192,7 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
         codeBlock = m_shadowChickenFrame.codeBlock;
     } else {
         thisValue = m_validMachineFrame->thisValue();
-        codeBlock = m_validMachineFrame->codeBlock();
+        codeBlock = m_validMachineFrame->isAnyWasmCallee() ? nullptr : m_validMachineFrame->codeBlock();
     }
 
     if (!thisValue)
@@ -219,7 +219,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
             if (debuggerCallFrame->isTailDeleted())
                 codeBlock = debuggerCallFrame->m_shadowChickenFrame.codeBlock;
             else
-                codeBlock = callFrame->codeBlock();
+                codeBlock = callFrame->isAnyWasmCallee() ? nullptr : callFrame->codeBlock();
         }
 
         if (callFrame && codeBlock)
@@ -318,8 +318,10 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
 {
     if (!callFrame)
         return noSourceID;
+    if (callFrame->isAnyWasmCallee())
+        return noSourceID;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    if (!codeBlock || callFrame->callee().isWasm())
+    if (!codeBlock)
         return noSourceID;
     return codeBlock->ownerExecutable()->sourceID();
 }

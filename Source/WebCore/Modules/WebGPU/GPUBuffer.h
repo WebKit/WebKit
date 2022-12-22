@@ -58,6 +58,7 @@ public:
     PAL::WebGPU::Buffer& backing() { return m_backing; }
     const PAL::WebGPU::Buffer& backing() const { return m_backing; }
 
+    ~GPUBuffer() { destroy(); }
 private:
     GPUBuffer(Ref<PAL::WebGPU::Buffer>&& backing)
         : m_backing(WTFMove(backing))

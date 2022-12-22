@@ -1025,7 +1025,6 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
             jit.storePtr(calleeGPR, calleeSlot.withOffset(PayloadOffset));
             if constexpr (is32Bit())
                 jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
-            jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
         }
 
         {

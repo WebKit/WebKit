@@ -75,6 +75,8 @@ public:
         CrossThreadData& operator=(const CrossThreadData&) = delete;
         CrossThreadData() = default;
         CrossThreadData(CrossThreadData&&) = default;
+        CrossThreadData& operator=(CrossThreadData&&) = default;
+        WEBCORE_EXPORT CrossThreadData copy() const;
 
         URL url;
         String mimeType;
@@ -114,8 +116,8 @@ public:
         bool m_isRangeRequested;
     };
 
-    CrossThreadData crossThreadData() const;
-    static ResourceResponse fromCrossThreadData(CrossThreadData&&);
+    WEBCORE_EXPORT CrossThreadData crossThreadData() const;
+    WEBCORE_EXPORT static ResourceResponse fromCrossThreadData(CrossThreadData&&);
 
     bool isNull() const { return m_isNull; }
     WEBCORE_EXPORT bool isInHTTPFamily() const;

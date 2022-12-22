@@ -1611,6 +1611,7 @@ public:
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::IsPlayingAudio); }
+    bool hasMediaStreaming() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::HasStreamingActivity); }
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
     void updateReportedMediaCaptureState();
 

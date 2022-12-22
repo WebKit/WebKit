@@ -177,7 +177,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         inline SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const;
         inline JSScope* scope(int scopeRegisterOffset) const;
 
-        JS_EXPORT_PRIVATE bool isAnyWasmCallee();
+        JS_EXPORT_PRIVATE bool isAnyWasmCallee() const;
 
         // Global object in which the currently executing code was defined.
         // Differs from VM::deprecatedVMEntryGlobalObject() during function calls across web browser frames.
