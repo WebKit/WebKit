@@ -964,13 +964,14 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
         if (!frameView)
             continue;
 
-        const HashSet<ScrollableArea*>* scrollableAreas = frameView->scrollableAreas();
+        auto scrollableAreas = frameView->scrollableAreas();
         if (!scrollableAreas)
             continue;
 
-        for (auto& scrollableArea : *scrollableAreas) {
+        for (auto& area : *scrollableAreas) {
+            CheckedPtr<ScrollableArea> scrollableArea(area);
             ASSERT(scrollableArea->scrollbarsCanBeActive() || m_page.shouldSuppressScrollbarAnimations());
-            contentAreaDidShowOrHide(scrollableArea, contentIsVisible);
+            contentAreaDidShowOrHide(scrollableArea.get(), contentIsVisible);
         }
     }
 }

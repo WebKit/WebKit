@@ -2961,7 +2961,7 @@ unsigned Internals::numberOfScrollableAreas()
     unsigned count = 0;
     Frame* frame = document->frame();
     if (frame->view()->scrollableAreas())
-        count += frame->view()->scrollableAreas()->size();
+        count += frame->view()->scrollableAreas()->computeSize();
 
     for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
@@ -2971,7 +2971,7 @@ unsigned Internals::numberOfScrollableAreas()
         if (!frameView)
             continue;
         if (frameView->scrollableAreas())
-            count += frameView->scrollableAreas()->size();
+            count += frameView->scrollableAreas()->computeSize();
     }
 
     return count;

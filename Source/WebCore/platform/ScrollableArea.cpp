@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-struct SameSizeAsScrollableArea {
+struct SameSizeAsScrollableArea : public CanMakeCheckedPtr {
     virtual ~SameSizeAsScrollableArea();
 #if ASSERT_ENABLED
     bool weakPtrFactorWasConstructedOnMainThread;

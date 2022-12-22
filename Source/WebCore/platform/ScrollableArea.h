@@ -31,6 +31,7 @@
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "Scrollbar.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -63,7 +64,7 @@ inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orient
     return 0;
 }
 
-class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
+class ScrollableArea : public CanMakeWeakPtr<ScrollableArea>, public CanMakeCheckedPtr {
 public:
     virtual bool isScrollView() const { return false; }
     virtual bool isRenderLayer() const { return false; }

@@ -820,8 +820,10 @@ void FrameView::invalidateScrollbarsForAllScrollableAreas()
     if (!m_scrollableAreas)
         return;
 
-    for (auto* scrollableArea : *m_scrollableAreas)
+    for (auto& area : *m_scrollableAreas) {
+        CheckedPtr<ScrollableArea> scrollableArea(area);
         scrollableArea->invalidateScrollbars();
+    }
 }
 
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
@@ -4447,7 +4449,8 @@ void FrameView::notifyScrollableAreasThatContentAreaWillPaint() const
     if (!m_scrollableAreas)
         return;
 
-    for (auto& scrollableArea : *m_scrollableAreas) {
+    for (auto& area : *m_scrollableAreas) {
+        CheckedPtr<ScrollableArea> scrollableArea(area);
         // ScrollView ScrollableAreas will be handled via the Frame tree traversal above.
         if (!is<ScrollView>(scrollableArea))
             scrollableArea->contentAreaWillPaint();
@@ -5550,13 +5553,13 @@ void FrameView::addScrollableAreaForAnimatedScroll(ScrollableArea* scrollableAre
     if (!m_scrollableAreasForAnimatedScroll)
         m_scrollableAreasForAnimatedScroll = makeUnique<ScrollableAreaSet>();
     
-    m_scrollableAreasForAnimatedScroll->add(scrollableArea);
+    m_scrollableAreasForAnimatedScroll->add(*scrollableArea);
 }
 
 void FrameView::removeScrollableAreaForAnimatedScroll(ScrollableArea* scrollableArea)
 {
     if (m_scrollableAreasForAnimatedScroll)
-        m_scrollableAreasForAnimatedScroll->remove(scrollableArea);
+        m_scrollableAreasForAnimatedScroll->remove(*scrollableArea);
 }
 
 bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
@@ -5564,7 +5567,7 @@ bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
     if (!m_scrollableAreas)
         m_scrollableAreas = makeUnique<ScrollableAreaSet>();
     
-    if (m_scrollableAreas->add(scrollableArea).isNewEntry) {
+    if (m_scrollableAreas->add(*scrollableArea).isNewEntry) {
         scrollableAreaSetChanged();
         return true;
     }
@@ -5574,7 +5577,7 @@ bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
 
 bool FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
 {
-    if (m_scrollableAreas && m_scrollableAreas->remove(scrollableArea)) {
+    if (m_scrollableAreas && m_scrollableAreas->remove(*scrollableArea)) {
         scrollableAreaSetChanged();
         return true;
     }
@@ -5583,7 +5586,7 @@ bool FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
 
 bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
 {
-    return m_scrollableAreas && m_scrollableAreas->contains(scrollableArea);
+    return m_scrollableAreas && m_scrollableAreas->contains(*scrollableArea);
 }
 
 void FrameView::scrollableAreaSetChanged()
