@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+content::part(part0),set {}
+fieldset:enabled { }
+*:defined { all;animation-name: keyframes3,keyframes0;text-underline-mode: 100%;-webkit-animation-fill-mode: forwards;user-zoom: }
+b:focus,circle { }
+#x41,select,#x43 { }
+@keyframes {}
+@keyframes keyframes3 {}
+</style>
+<script>
+var runcount = 0;
+function main() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        window.testRunner.dumpAsText();
+    }
+    v121 = window.parent;
+    v121.onwebkitanimationend = f2;
+}
+function f1() {
+    sheet0 = document.styleSheets[0];
+    sheet0.deleteRule(94 % sheet0.cssRules.length);
+}
+function f2() {
+    runcount++; 
+    if(runcount > 1) { 
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return; 
+    }
+    var x35 = document.getElementById("x35");
+    v24 = x10.getAnimations();
+    v82 = v24[56 % v24.length];
+    x10.addEventListener("DOMCharacterDataModified",f1);
+    v100 = new KeyframeEffect(x35,{ "inset-inline-start": ["0px", ], },{ delay: 100, direction: "reverse", duration: 100, easing: "cubic-bezier(1,0.63,1,0)", endDelay: 300, fill: "both", iterationStart: 0 });
+    v82.effect = v100;
+    x34.outerText = "PASS if no crash.";
+}
+</script>
+</head>
+<body onload="main()">
+<data id="x10">
+<iframe id="x34" importance="low"></iframe>
+</data>
+</body>
+</html>
