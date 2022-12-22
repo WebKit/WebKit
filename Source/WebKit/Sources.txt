@@ -149,6 +149,11 @@ NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
 
+NetworkProcess/storage/CacheStorageCache.cpp
+NetworkProcess/storage/CacheStorageMemoryStore.cpp
+NetworkProcess/storage/CacheStorageManager.cpp
+NetworkProcess/storage/CacheStorageDiskStore.cpp
+NetworkProcess/storage/CacheStorageRegistry.cpp
 NetworkProcess/storage/FileSystemStorageManager.cpp
 NetworkProcess/storage/FileSystemStorageHandle.cpp
 NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp

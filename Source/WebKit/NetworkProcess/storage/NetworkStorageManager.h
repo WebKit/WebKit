@@ -36,6 +36,7 @@
 #include "WebsiteData.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/DOMCacheEngine.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
@@ -62,6 +63,7 @@ struct IDBGetRecordData;
 struct IDBGetAllRecordsData;
 struct IDBIterateCursorData;
 struct IDBKeyRangeData;
+struct RetrieveRecordsOptions;
 enum class StorageType : uint8_t;
 }
 
@@ -180,6 +182,18 @@ private:
     void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
     void getAllDatabaseNamesAndVersions(IPC::Connection&, const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&);
 
+    // Message handlers for CacheStorage.
+    void cacheStorageOpenCache(const WebCore::ClientOrigin&, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void cacheStorageRemoveCache(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
+    void cacheStorageAllCaches(const WebCore::ClientOrigin&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
+    void cacheStorageReference(IPC::Connection&, WebCore::DOMCacheIdentifier);
+    void cacheStorageDereference(IPC::Connection&, WebCore::DOMCacheIdentifier);
+    void cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RecordsCallback&&);
+    void cacheStorageRemoveRecords(WebCore::DOMCacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void cacheStoragePutRecords(WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    void cacheStorageRepresentation(CompletionHandler<void(String&&)>&&);
+
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
 
     PAL::SessionID m_sessionID;
@@ -192,6 +206,7 @@ private:
     std::unique_ptr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
     std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
     std::unique_ptr<IDBStorageRegistry> m_idbStorageRegistry;
+    std::unique_ptr<CacheStorageRegistry> m_cacheStorageRegistry;
     String m_customLocalStoragePath;
     String m_customIDBStoragePath;
     String m_customCacheStoragePath;

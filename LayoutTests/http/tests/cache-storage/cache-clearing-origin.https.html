@@ -36,10 +36,7 @@ promise_test(() => {
 
             representation = JSON.parse(await internals.cacheStorageEngineRepresentation()).origins;
             test(() => {
-                representation.sort(compareClientOrigins);
-                assert_equals(representation[0].origin.topOrigin, "https://127.0.0.1:8443", "top origin of cache 1");
-                assert_equals(representation[0].origin.clientOrigin, "https://localhost:8443", "client origin of cache 1");
-                assert_array_equals(representation[0].caches.persistent, []);
+                assert_equals(representation.length, 0);
             }, "Validating cache representation after clearing");
             resolve();
         });

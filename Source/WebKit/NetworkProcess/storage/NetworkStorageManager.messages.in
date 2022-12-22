@@ -75,4 +75,15 @@
     OpenCursor(WebCore::IDBRequestData requestData, WebCore::IDBCursorInfo info)
     IterateCursor(WebCore::IDBRequestData requestData, struct WebCore::IDBIterateCursorData data)
     GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
+
+    CacheStorageOpenCache(struct WebCore::ClientOrigin origin, String cacheName) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result)
+    CacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier) -> (WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError result)
+    CacheStorageAllCaches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
+    CacheStorageReference(WebCore::DOMCacheIdentifier cacheIdentifier) WantsConnection
+    CacheStorageDereference(WebCore::DOMCacheIdentifier cacheIdentifier) WantsConnection
+    CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::RecordsOrError result)
+    CacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
+    CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
+    CacheStorageClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::DOMCacheEngine::Error> error)
+    CacheStorageRepresentation() -> (String representation)
 }
