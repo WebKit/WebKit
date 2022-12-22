@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,10 +64,12 @@ private:
     void registerForDeviceNotifications();
     void updateCachedAVCaptureDevices();
     Vector<CaptureDevice> retrieveCaptureDevices();
+    RetainPtr<NSArray> currentCameras();
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
     Vector<CaptureDevice> m_devices;
     RetainPtr<NSMutableArray> m_avCaptureDevices;
+    RetainPtr<NSArray> m_avCaptureDeviceTypes;
     bool m_isInitialized { false };
 
     Ref<WorkQueue> m_dispatchQueue;
