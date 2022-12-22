@@ -1950,15 +1950,7 @@ auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnVal
 
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
-
-        // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
-        // the macro assembler might assert scratch register usage on load operations emitted by emitRestore.
-        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM64E());
-
-        jit.emitRestore(calleeSaves);
-        jit.emitFunctionEpilogue();
-        jit.ret();
+        params.code().emitEpilogue(jit);
     });
     patch->effects.terminal = true;
 

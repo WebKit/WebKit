@@ -1050,10 +1050,7 @@ auto AirIRGenerator32::addReturn(const ControlData& data, const Stack& returnVal
 
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
-        jit.emitRestore(calleeSaves);
-        jit.emitFunctionEpilogue();
-        jit.ret();
+        params.code().emitEpilogue(jit);
     });
     patch->effects.terminal = true;
 

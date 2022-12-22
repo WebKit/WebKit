@@ -131,6 +131,9 @@ void Code::emitDefaultPrologue(CCallHelpers& jit)
 void Code::emitEpilogue(CCallHelpers& jit)
 {
     if (frameSize()) {
+        // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
+        // the macro assembler might assert scratch register usage on load operations emitted by emitRestore.
+        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
         jit.emitRestore(calleeSaveRegisterAtOffsetList());
         jit.emitFunctionEpilogue();
     } else

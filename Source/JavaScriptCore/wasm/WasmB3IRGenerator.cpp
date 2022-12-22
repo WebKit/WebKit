@@ -3592,15 +3592,7 @@ auto B3IRGenerator::addReturn(const ControlData&, const Stack& returnValues) -> 
 
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
-
-        // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
-        // the macro assembler might assert scratch register usage on load operations emitted by emitRestore.
-        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM64E());
-
-        jit.emitRestore(calleeSaves);
-        jit.emitFunctionEpilogue();
-        jit.ret();
+        params.code().emitEpilogue(jit);
     });
     patch->effects.terminal = true;
 
