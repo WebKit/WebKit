@@ -644,6 +644,11 @@ InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(size_t firs
     if (!isFirstLineFirstContent)
         return { };
 
+    auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[firstInlineTextItemIndex]);
+    auto& style = isFirstFormattedLine() ? inlineTextItem.firstLineStyle() : inlineTextItem.style();
+    if (!TextUtil::hasHangablePunctuationStart(inlineTextItem, style))
+        return { };
+
     if (firstInlineTextItemIndex) {
         // The text content is not the first in the candidate list. However it may be the first contentful one.
         for (size_t index = firstInlineTextItemIndex; index-- > candidateContentStartIndex;) {
@@ -658,14 +663,17 @@ InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(size_t firs
                 return { };
         }
     }
-    auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[firstInlineTextItemIndex]);
-    auto& style = isFirstFormattedLine() ? inlineTextItem.firstLineStyle() : inlineTextItem.style();
     // This candidate leading content may have hanging punctuation start.
     return TextUtil::hangablePunctuationStartWidth(inlineTextItem, style);
 }
 
 InlineLayoutUnit LineBuilder::trailingPunctuationWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const
 {
+    auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[lastInlineTextItemIndex]);
+    auto& style = isFirstFormattedLine() ? inlineTextItem.firstLineStyle() : inlineTextItem.style();
+    if (!TextUtil::hasHangablePunctuationEnd(inlineTextItem, style))
+        return { };
+
     // FIXME: If this turns out to be problematic (finding out if this is the last formatted line that is), we
     // may have to fallback to a post-process setup, where after finishing laying out the content, we go back and re-layout
     // the last (2?) line(s) when there's trailing hanging punctuation.
@@ -680,8 +688,6 @@ InlineLayoutUnit LineBuilder::trailingPunctuationWidthForLineCandiate(size_t las
         if (isContentful)
             return { };
     }
-    auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[lastInlineTextItemIndex]);
-    auto& style = isFirstFormattedLine() ? inlineTextItem.firstLineStyle() : inlineTextItem.style();
     // This candidate leading content may have hanging punctuation start.
     return TextUtil::hangablePunctuationEndWidth(inlineTextItem, style);
 }
