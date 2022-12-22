@@ -174,6 +174,7 @@ void CSSAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
         m_overriddenProperties.add(Property::Direction);
         m_overriddenProperties.add(Property::Delay);
         m_overriddenProperties.add(Property::FillMode);
+        m_overriddenProperties.add(Property::Keyframes);
         m_overriddenProperties.add(Property::CompositeOperation);
     }
 }
