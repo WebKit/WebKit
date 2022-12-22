@@ -325,9 +325,11 @@ protected:
     // Used by ElementRareData. Defined here for better packing in 64-bit.
     int m_unusualTabIndex { 0 };
     unsigned short m_childIndex { 0 };
+    bool m_hasDuplicateAttribute : 1 { false };
+    bool m_displayContentsChanged : 1 { false };
 
 private:
-    bool m_isElementRareData;
+    bool m_isElementRareData : 1;
 
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
