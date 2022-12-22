@@ -4636,6 +4636,12 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebViewImplAdditions.mm>
 #else
+static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *string)
+{
+    return { };
+}
+#endif
+
 static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
 {
     Vector<WebCore::CompositionUnderline> result;
@@ -4660,7 +4666,6 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
 
     return result;
 }
-#endif
 
 static bool eventKeyCodeIsZeroOrNumLockOrFn(NSEvent *event)
 {
@@ -4934,7 +4939,8 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
-        underlines = extractUnderlines(string);
+        auto initialUnderlines = extractInitialUnderlines(string);
+        underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
     } else {
         text = string;
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));

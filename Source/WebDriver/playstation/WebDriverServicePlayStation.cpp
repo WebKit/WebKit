@@ -50,7 +50,7 @@ Capabilities WebDriverService::platformCapabilities()
     return capabilities;
 }
 
-bool WebDriverService::platformCompareBrowserVersions(const String& requiredVersion, const String& proposedVersion)
+bool WebDriverService::platformCompareBrowserVersions(const String&, const String&)
 {
     return true;
 }

@@ -133,6 +133,7 @@ public:
     
     // FIXME: Rename to use 'updateRendering' terminology.
     bool flushLayers();
+    void didCompleteRenderingUpdateDisplay() { m_haveRegisteredCommitHandlers = false; }
     
     void scheduleLayerFlush();
     void invalidate();
@@ -142,6 +143,7 @@ private:
     
     WebView* m_webView;
     WebViewLayerFlushScheduler m_layerFlushScheduler;
+    bool m_haveRegisteredCommitHandlers { false };
 };
 
 @interface WebWindowVisibilityObserver : NSObject {

@@ -23,7 +23,7 @@ PASS Setting 'text-indent' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'text-indent' to a flexible length: 0fr throws TypeError
 PASS Setting 'text-indent' to a flexible length: 1fr throws TypeError
 PASS Setting 'text-indent' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'text-indent' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'text-indent' to a number: 0 throws TypeError
 PASS Setting 'text-indent' to a number: -3.14 throws TypeError
 PASS Setting 'text-indent' to a number: 3.14 throws TypeError
 PASS Setting 'text-indent' to a number: calc(2 + 3) throws TypeError

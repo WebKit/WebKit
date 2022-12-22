@@ -460,6 +460,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("converter", allowed_types=[str]),
         Schema.Entry("custom", allowed_types=[str]),
         Schema.Entry("custom-parser", allowed_types=[bool]),
+        Schema.Entry("custom-parser-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
@@ -970,6 +971,7 @@ class DescriptorCodeGenProperties:
     schema = Schema(
         Schema.Entry("aliases", allowed_types=[list], default_value=[]),
         Schema.Entry("comment", allowed_types=[str]),
+        Schema.Entry("custom-parser-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("internal-only", allowed_types=[bool], default_value=False),
         Schema.Entry("longhands", allowed_types=[list]),
@@ -1317,10 +1319,6 @@ class PropertiesAndDescriptors:
     @property
     def all_descriptor_only(self):
         return (descriptor for descriptor in self.all_descriptors if descriptor.name not in self.style.all_by_name)
-
-    @property
-    def all_preserving_whitespace(self):
-        return (property for property in self.all_unique if property.codegen_properties.parser_grammar and property.codegen_properties.parser_grammar.preserve_whitespace)
 
     # Returns the set of settings-flags used by any property or descriptor. Uniqued and sorted lexically.
     @property
@@ -1917,12 +1915,6 @@ class Grammar:
 
     def perform_fixups_for_values_references(self, values):
         self.root_term = self.root_term.perform_fixups_for_values_references(values)
-
-    @property
-    def preserve_whitespace(self):
-        if isinstance(self.root_term, ReferenceTerm) and isinstance(self.root_term.builtin, BuiltinDeclarationValueConsumer):
-            return True
-        return False
 
     @property
     def has_fast_path_keyword_terms(self):
@@ -2560,6 +2552,25 @@ class GenerateCSSPropertyNames:
         to.write(f"}}")
         to.newline()
 
+    def _term_matches_number_or_integer(self, term):
+        if isinstance(term, ReferenceTerm):
+            if term.name.name == "number" or term.name.name == "integer":
+                return True
+        elif isinstance(term, MatchOneTerm):
+            for inner_term in term.terms:
+                if self._term_matches_number_or_integer(inner_term):
+                    return True
+        elif isinstance(term, RepetitionTerm):
+            return self._term_matches_number_or_integer(term.repeated_term)
+        return False
+
+    def _property_matches_number_or_integer(self, p):
+        if p.codegen_properties.custom_parser_allows_number_or_integer_input:
+            return True
+        if not p.codegen_properties.parser_grammar:
+            return False
+        return self._term_matches_number_or_integer(p.codegen_properties.parser_grammar.root_term)
+
     def generate_css_property_names_gperf(self):
         with open('CSSPropertyNames.gperf', 'w') as output_file:
             writer = Writer(output_file)
@@ -2627,6 +2638,12 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
+                signature="bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)",
+                iterable=(p for p in self.properties_and_descriptors.style.all if self._property_matches_number_or_integer(p))
+            )
+
+            self.generation_context.generate_property_id_switch_function_bool(
+                to=writer,
                 signature="bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)",
                 iterable=self.properties_and_descriptors.style.all_direction_aware_properties
             )
@@ -2661,12 +2678,6 @@ class GenerateCSSPropertyNames:
                 to=writer,
                 signature="bool CSSProperty::isDescriptorOnly(CSSPropertyID id)",
                 iterable=self.properties_and_descriptors.all_descriptor_only
-            )
-
-            self.generation_context.generate_property_id_switch_function_bool(
-                to=writer,
-                signature="bool CSSProperty::shouldPreserveWhitespace(CSSPropertyID id)",
-                iterable=self.properties_and_descriptors.all_preserving_whitespace
             )
 
             self._generate_css_property_settings_constructor(

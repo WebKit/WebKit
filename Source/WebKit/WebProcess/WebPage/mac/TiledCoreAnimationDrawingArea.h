@@ -92,8 +92,10 @@ private:
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones) override;
 
     void addCommitHandlers();
+
     enum class UpdateRenderingType { Normal, TransientZoom };
     void updateRendering(UpdateRenderingType = UpdateRenderingType::Normal);
+    void didCompleteRenderingUpdateDisplay() override;
 
     // Message handlers.
     void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
@@ -175,6 +177,7 @@ private:
     bool m_needsSendEnterAcceleratedCompositingMode { true };
     bool m_needsSendDidFirstLayerFlush { true };
     bool m_shouldHandleActivityStateChangeCallbacks { false };
+    bool m_haveRegisteredHandlersForNextCommit { false };
 };
 
 inline bool TiledCoreAnimationDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)

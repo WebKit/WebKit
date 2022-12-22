@@ -240,7 +240,8 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
 
     // All the objects returned from the tree should be already placed.
     ASSERT(floatingObject.isPlaced());
-    ASSERT(rangesIntersect(m_renderer->logicalTopForFloat(floatingObject), m_renderer->logicalBottomForFloat(floatingObject), m_belowLogicalHeight, LayoutUnit::max()));
+    // FIXME: Remove floor(). See <https://webkit.org/b/125831>.
+    ASSERT(rangesIntersect(m_renderer->logicalTopForFloat(floatingObject).floor(), m_renderer->logicalBottomForFloat(floatingObject).floor(), m_belowLogicalHeight, LayoutUnit::max()));
 
     LayoutUnit floatBottom = m_renderer->logicalBottomForFloat(floatingObject);
     if (m_nextLogicalBottom && m_nextLogicalBottom.value() < floatBottom)
@@ -328,8 +329,8 @@ void FloatingObjects::decreaseObjectsCount(FloatingObject::Type type)
 
 FloatingObjectInterval FloatingObjects::intervalForFloatingObject(FloatingObject* floatingObject)
 {
-    // FIXME The endpoints of the floating object interval shouldn't need to be
-    // floored. See http://wkb.ug/125831 for more details.
+    // FIXME: The endpoints of the floating object interval shouldn't need to be
+    // floored. See <https://webkit.org/b/125831> for more details.
     if (m_horizontalWritingMode)
         return FloatingObjectInterval(floatingObject->frameRect().y().floor(), floatingObject->frameRect().maxY().floor(), floatingObject);
     return FloatingObjectInterval(floatingObject->frameRect().x().floor(), floatingObject->frameRect().maxX().floor(), floatingObject);
@@ -481,7 +482,8 @@ inline void ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const Int
 
     // All the objects returned from the tree should be already placed.
     ASSERT(floatingObject.isPlaced());
-    ASSERT(rangesIntersect(m_renderer->logicalTopForFloat(floatingObject), m_renderer->logicalBottomForFloat(floatingObject), m_lineTop, m_lineBottom));
+    // FIXME: Remove floor(). See <https://webkit.org/b/125831>.
+    ASSERT(rangesIntersect(m_renderer->logicalTopForFloat(floatingObject).floor(), m_renderer->logicalBottomForFloat(floatingObject).floor(), m_lineTop, m_lineBottom));
 
     bool floatIsNewExtreme = updateOffsetIfNeeded(floatingObject);
     if (floatIsNewExtreme)

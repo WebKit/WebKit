@@ -50,7 +50,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
-#import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/RenderView.h>
@@ -400,8 +399,7 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()
     if (!m_pendingNewlyReachedPaintingMilestones)
         return;
 
-    m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedPaintingMilestones));
-    m_pendingNewlyReachedPaintingMilestones = { };
+    m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(std::exchange(m_pendingNewlyReachedPaintingMilestones, { })));
 }
 
 void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
@@ -410,24 +408,30 @@ void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callback
     triggerRenderingUpdate();
 }
 
+void TiledCoreAnimationDrawingArea::didCompleteRenderingUpdateDisplay()
+{
+    m_haveRegisteredHandlersForNextCommit = false;
+
+    sendPendingNewlyReachedPaintingMilestones();
+    DrawingArea::didCompleteRenderingUpdateDisplay();
+}
+
 void TiledCoreAnimationDrawingArea::addCommitHandlers()
 {
-    if (m_webPage.firstFlushAfterCommit())
+    if (m_haveRegisteredHandlersForNextCommit)
         return;
 
     [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
-        retainedPage->willStartPlatformRenderingUpdate();
+        if (auto* drawingArea = dynamicDowncast<TiledCoreAnimationDrawingArea>(retainedPage->drawingArea()))
+            drawingArea->willStartRenderingUpdateDisplay();
     } forPhase:kCATransactionPhasePreLayout];
 
     [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
-        if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
-            drawingArea->sendPendingNewlyReachedPaintingMilestones();
-
-        retainedPage->setFirstFlushAfterCommit(false);
-        retainedPage->didCompletePlatformRenderingUpdate();
+        if (auto* drawingArea = dynamicDowncast<TiledCoreAnimationDrawingArea>(retainedPage->drawingArea()))
+            drawingArea->didCompleteRenderingUpdateDisplay();
     } forPhase:kCATransactionPhasePostCommit];
     
-    m_webPage.setFirstFlushAfterCommit(true);
+    m_haveRegisteredHandlersForNextCommit = true;
 }
 
 void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushType)

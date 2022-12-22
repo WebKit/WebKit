@@ -45,10 +45,12 @@ static constexpr bool mediaSourceEnabledValue = false;
 static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
+#if ENABLE(GPU_PROCESS)
 #if PLATFORM(IOS_FAMILY)
 static constexpr bool fullGPUProcessEnabledValue = true;
 #else
 static constexpr bool fullGPUProcessEnabledValue = false;
+#endif
 #endif
 
 #if PLATFORM(MAC)

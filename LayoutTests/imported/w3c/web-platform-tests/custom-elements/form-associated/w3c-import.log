@@ -15,13 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-NotSupportedError.html
-/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-accessibility.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-form.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-labels.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-reportValidity-bubble-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-reportValidity-bubble-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-reportValidity-bubble.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-setFormValue.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-target-element-is-held-strongly.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/fieldset-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/form-associated-callback.html

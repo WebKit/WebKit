@@ -260,16 +260,9 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
         return { };
 
     bool changed;
-    if (UNLIKELY(propertyID == CSSPropertyCustom)) {
-        Document* document = nullptr;
-
-        if (parentElement())
-            document = &parentElement()->document();
-        else if (parentStyleSheet())
-            document = parentStyleSheet()->ownerDocument();
-
-        changed = m_propertySet->setCustomProperty(document, propertyName, value, important, cssParserContext());
-    } else
+    if (UNLIKELY(propertyID == CSSPropertyCustom))
+        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext());
+    else
         changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 
     didMutate(changed ? PropertyChanged : NoChanges);

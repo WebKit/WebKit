@@ -111,9 +111,9 @@ private:
 
     void updateRootLayers();
 
-    void addCommitHandlers();
     void updateRendering();
     void startRenderingUpdateTimer();
+    void didCompleteRenderingUpdateDisplay() override;
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
 

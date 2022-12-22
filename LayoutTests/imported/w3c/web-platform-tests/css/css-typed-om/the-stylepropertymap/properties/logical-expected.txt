@@ -23,7 +23,7 @@ PASS Setting 'margin-block-start' to an angle: calc(0rad + 0deg) throws TypeErro
 PASS Setting 'margin-block-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-block-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-block-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-block-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-block-start' to a number: 0 throws TypeError
 PASS Setting 'margin-block-start' to a number: -3.14 throws TypeError
 PASS Setting 'margin-block-start' to a number: 3.14 throws TypeError
 PASS Setting 'margin-block-start' to a number: calc(2 + 3) throws TypeError
@@ -54,7 +54,7 @@ PASS Setting 'margin-block-end' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'margin-block-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-block-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-block-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-block-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-block-end' to a number: 0 throws TypeError
 PASS Setting 'margin-block-end' to a number: -3.14 throws TypeError
 PASS Setting 'margin-block-end' to a number: 3.14 throws TypeError
 PASS Setting 'margin-block-end' to a number: calc(2 + 3) throws TypeError
@@ -85,7 +85,7 @@ PASS Setting 'margin-inline-start' to an angle: calc(0rad + 0deg) throws TypeErr
 PASS Setting 'margin-inline-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-inline-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-inline-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-inline-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-inline-start' to a number: 0 throws TypeError
 PASS Setting 'margin-inline-start' to a number: -3.14 throws TypeError
 PASS Setting 'margin-inline-start' to a number: 3.14 throws TypeError
 PASS Setting 'margin-inline-start' to a number: calc(2 + 3) throws TypeError
@@ -116,7 +116,7 @@ PASS Setting 'margin-inline-end' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'margin-inline-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-inline-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-inline-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-inline-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-inline-end' to a number: 0 throws TypeError
 PASS Setting 'margin-inline-end' to a number: -3.14 throws TypeError
 PASS Setting 'margin-inline-end' to a number: 3.14 throws TypeError
 PASS Setting 'margin-inline-end' to a number: calc(2 + 3) throws TypeError
@@ -209,7 +209,7 @@ PASS Setting 'padding-block-start' to an angle: calc(0rad + 0deg) throws TypeErr
 PASS Setting 'padding-block-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-block-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-block-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-block-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-block-start' to a number: 0 throws TypeError
 PASS Setting 'padding-block-start' to a number: -3.14 throws TypeError
 PASS Setting 'padding-block-start' to a number: 3.14 throws TypeError
 PASS Setting 'padding-block-start' to a number: calc(2 + 3) throws TypeError
@@ -240,7 +240,7 @@ PASS Setting 'padding-block-end' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'padding-block-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-block-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-block-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-block-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-block-end' to a number: 0 throws TypeError
 PASS Setting 'padding-block-end' to a number: -3.14 throws TypeError
 PASS Setting 'padding-block-end' to a number: 3.14 throws TypeError
 PASS Setting 'padding-block-end' to a number: calc(2 + 3) throws TypeError
@@ -271,7 +271,7 @@ PASS Setting 'padding-inline-start' to an angle: calc(0rad + 0deg) throws TypeEr
 PASS Setting 'padding-inline-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-inline-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-inline-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-inline-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-inline-start' to a number: 0 throws TypeError
 PASS Setting 'padding-inline-start' to a number: -3.14 throws TypeError
 PASS Setting 'padding-inline-start' to a number: 3.14 throws TypeError
 PASS Setting 'padding-inline-start' to a number: calc(2 + 3) throws TypeError
@@ -302,7 +302,7 @@ PASS Setting 'padding-inline-end' to an angle: calc(0rad + 0deg) throws TypeErro
 PASS Setting 'padding-inline-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-inline-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-inline-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-inline-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-inline-end' to a number: 0 throws TypeError
 PASS Setting 'padding-inline-end' to a number: -3.14 throws TypeError
 PASS Setting 'padding-inline-end' to a number: 3.14 throws TypeError
 PASS Setting 'padding-inline-end' to a number: calc(2 + 3) throws TypeError
@@ -395,7 +395,7 @@ PASS Setting 'inset-block-start' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'inset-block-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'inset-block-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'inset-block-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'inset-block-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'inset-block-start' to a number: 0 throws TypeError
 PASS Setting 'inset-block-start' to a number: -3.14 throws TypeError
 PASS Setting 'inset-block-start' to a number: 3.14 throws TypeError
 PASS Setting 'inset-block-start' to a number: calc(2 + 3) throws TypeError
@@ -426,7 +426,7 @@ PASS Setting 'inset-block-end' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'inset-block-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'inset-block-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'inset-block-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'inset-block-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'inset-block-end' to a number: 0 throws TypeError
 PASS Setting 'inset-block-end' to a number: -3.14 throws TypeError
 PASS Setting 'inset-block-end' to a number: 3.14 throws TypeError
 PASS Setting 'inset-block-end' to a number: calc(2 + 3) throws TypeError
@@ -457,7 +457,7 @@ PASS Setting 'inset-inline-start' to an angle: calc(0rad + 0deg) throws TypeErro
 PASS Setting 'inset-inline-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'inset-inline-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'inset-inline-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'inset-inline-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'inset-inline-start' to a number: 0 throws TypeError
 PASS Setting 'inset-inline-start' to a number: -3.14 throws TypeError
 PASS Setting 'inset-inline-start' to a number: 3.14 throws TypeError
 PASS Setting 'inset-inline-start' to a number: calc(2 + 3) throws TypeError
@@ -488,7 +488,7 @@ PASS Setting 'inset-inline-end' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'inset-inline-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'inset-inline-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'inset-inline-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'inset-inline-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'inset-inline-end' to a number: 0 throws TypeError
 PASS Setting 'inset-inline-end' to a number: -3.14 throws TypeError
 PASS Setting 'inset-inline-end' to a number: 3.14 throws TypeError
 PASS Setting 'inset-inline-end' to a number: calc(2 + 3) throws TypeError
@@ -616,7 +616,7 @@ PASS Setting 'border-block-start-width' to an angle: calc(0rad + 0deg) throws Ty
 PASS Setting 'border-block-start-width' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-block-start-width' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-block-start-width' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-block-start-width' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-block-start-width' to a number: 0 throws TypeError
 PASS Setting 'border-block-start-width' to a number: -3.14 throws TypeError
 PASS Setting 'border-block-start-width' to a number: 3.14 throws TypeError
 PASS Setting 'border-block-start-width' to a number: calc(2 + 3) throws TypeError
@@ -747,7 +747,7 @@ PASS Setting 'border-block-end-width' to an angle: calc(0rad + 0deg) throws Type
 PASS Setting 'border-block-end-width' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-block-end-width' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-block-end-width' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-block-end-width' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-block-end-width' to a number: 0 throws TypeError
 PASS Setting 'border-block-end-width' to a number: -3.14 throws TypeError
 PASS Setting 'border-block-end-width' to a number: 3.14 throws TypeError
 PASS Setting 'border-block-end-width' to a number: calc(2 + 3) throws TypeError
@@ -878,7 +878,7 @@ PASS Setting 'border-inline-start-width' to an angle: calc(0rad + 0deg) throws T
 PASS Setting 'border-inline-start-width' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-inline-start-width' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-inline-start-width' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-inline-start-width' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-inline-start-width' to a number: 0 throws TypeError
 PASS Setting 'border-inline-start-width' to a number: -3.14 throws TypeError
 PASS Setting 'border-inline-start-width' to a number: 3.14 throws TypeError
 PASS Setting 'border-inline-start-width' to a number: calc(2 + 3) throws TypeError
@@ -1009,7 +1009,7 @@ PASS Setting 'border-inline-end-width' to an angle: calc(0rad + 0deg) throws Typ
 PASS Setting 'border-inline-end-width' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-inline-end-width' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-inline-end-width' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-inline-end-width' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-inline-end-width' to a number: 0 throws TypeError
 PASS Setting 'border-inline-end-width' to a number: -3.14 throws TypeError
 PASS Setting 'border-inline-end-width' to a number: 3.14 throws TypeError
 PASS Setting 'border-inline-end-width' to a number: calc(2 + 3) throws TypeError
@@ -1367,7 +1367,7 @@ PASS Setting 'border-start-start-radius' to an angle: calc(0rad + 0deg) throws T
 PASS Setting 'border-start-start-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-start-start-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-start-start-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-start-start-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-start-start-radius' to a number: 0 throws TypeError
 PASS Setting 'border-start-start-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-start-start-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-start-start-radius' to a number: calc(2 + 3) throws TypeError
@@ -1398,7 +1398,7 @@ PASS Setting 'border-start-end-radius' to an angle: calc(0rad + 0deg) throws Typ
 PASS Setting 'border-start-end-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-start-end-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-start-end-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-start-end-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-start-end-radius' to a number: 0 throws TypeError
 PASS Setting 'border-start-end-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-start-end-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-start-end-radius' to a number: calc(2 + 3) throws TypeError
@@ -1429,7 +1429,7 @@ PASS Setting 'border-end-start-radius' to an angle: calc(0rad + 0deg) throws Typ
 PASS Setting 'border-end-start-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-end-start-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-end-start-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-end-start-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-end-start-radius' to a number: 0 throws TypeError
 PASS Setting 'border-end-start-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-end-start-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-end-start-radius' to a number: calc(2 + 3) throws TypeError
@@ -1460,7 +1460,7 @@ PASS Setting 'border-end-end-radius' to an angle: calc(0rad + 0deg) throws TypeE
 PASS Setting 'border-end-end-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-end-end-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-end-end-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-end-end-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-end-end-radius' to a number: 0 throws TypeError
 PASS Setting 'border-end-end-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-end-end-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-end-end-radius' to a number: calc(2 + 3) throws TypeError

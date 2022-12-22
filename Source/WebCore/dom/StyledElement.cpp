@@ -229,7 +229,7 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const Strin
 
 bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, bool important)
 {
-    bool changes = ensureMutableInlineStyle().setCustomProperty(&document(), property.string(), value, important, CSSParserContext(document()));
+    bool changes = ensureMutableInlineStyle().setCustomProperty(property.string(), value, important, CSSParserContext(document()));
     if (changes)
         inlineStyleChanged();
     return changes;

@@ -23,7 +23,7 @@ PASS Setting 'x' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'x' to a flexible length: 0fr throws TypeError
 PASS Setting 'x' to a flexible length: 1fr throws TypeError
 PASS Setting 'x' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'x' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'x' to a number: 0 throws TypeError
 PASS Setting 'x' to a number: -3.14 throws TypeError
 PASS Setting 'x' to a number: 3.14 throws TypeError
 PASS Setting 'x' to a number: calc(2 + 3) throws TypeError
@@ -54,7 +54,7 @@ PASS Setting 'y' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'y' to a flexible length: 0fr throws TypeError
 PASS Setting 'y' to a flexible length: 1fr throws TypeError
 PASS Setting 'y' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'y' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'y' to a number: 0 throws TypeError
 PASS Setting 'y' to a number: -3.14 throws TypeError
 PASS Setting 'y' to a number: 3.14 throws TypeError
 PASS Setting 'y' to a number: calc(2 + 3) throws TypeError

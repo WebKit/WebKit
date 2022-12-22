@@ -23,7 +23,7 @@ PASS Setting 'border-top-left-radius' to an angle: calc(0rad + 0deg) throws Type
 PASS Setting 'border-top-left-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-top-left-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-top-left-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-top-left-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-top-left-radius' to a number: 0 throws TypeError
 PASS Setting 'border-top-left-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-top-left-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-top-left-radius' to a number: calc(2 + 3) throws TypeError
@@ -54,7 +54,7 @@ PASS Setting 'border-top-right-radius' to an angle: calc(0rad + 0deg) throws Typ
 PASS Setting 'border-top-right-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-top-right-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-top-right-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-top-right-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-top-right-radius' to a number: 0 throws TypeError
 PASS Setting 'border-top-right-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-top-right-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-top-right-radius' to a number: calc(2 + 3) throws TypeError
@@ -85,7 +85,7 @@ PASS Setting 'border-bottom-left-radius' to an angle: calc(0rad + 0deg) throws T
 PASS Setting 'border-bottom-left-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-bottom-left-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-bottom-left-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-bottom-left-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-bottom-left-radius' to a number: 0 throws TypeError
 PASS Setting 'border-bottom-left-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-bottom-left-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-bottom-left-radius' to a number: calc(2 + 3) throws TypeError
@@ -116,7 +116,7 @@ PASS Setting 'border-bottom-right-radius' to an angle: calc(0rad + 0deg) throws 
 PASS Setting 'border-bottom-right-radius' to a flexible length: 0fr throws TypeError
 PASS Setting 'border-bottom-right-radius' to a flexible length: 1fr throws TypeError
 PASS Setting 'border-bottom-right-radius' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'border-bottom-right-radius' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'border-bottom-right-radius' to a number: 0 throws TypeError
 PASS Setting 'border-bottom-right-radius' to a number: -3.14 throws TypeError
 PASS Setting 'border-bottom-right-radius' to a number: 3.14 throws TypeError
 PASS Setting 'border-bottom-right-radius' to a number: calc(2 + 3) throws TypeError

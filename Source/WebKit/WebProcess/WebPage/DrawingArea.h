@@ -122,6 +122,9 @@ public:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void triggerRenderingUpdate() = 0;
 
+    virtual void willStartRenderingUpdateDisplay();
+    virtual void didCompleteRenderingUpdateDisplay();
+
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 
     virtual void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler) { completionHandler(); };

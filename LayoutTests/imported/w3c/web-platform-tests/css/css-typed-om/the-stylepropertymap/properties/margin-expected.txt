@@ -24,7 +24,7 @@ PASS Setting 'margin-top' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'margin-top' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-top' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-top' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-top' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-top' to a number: 0 throws TypeError
 PASS Setting 'margin-top' to a number: -3.14 throws TypeError
 PASS Setting 'margin-top' to a number: 3.14 throws TypeError
 PASS Setting 'margin-top' to a number: calc(2 + 3) throws TypeError
@@ -56,7 +56,7 @@ PASS Setting 'margin-left' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'margin-left' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-left' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-left' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-left' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-left' to a number: 0 throws TypeError
 PASS Setting 'margin-left' to a number: -3.14 throws TypeError
 PASS Setting 'margin-left' to a number: 3.14 throws TypeError
 PASS Setting 'margin-left' to a number: calc(2 + 3) throws TypeError
@@ -88,7 +88,7 @@ PASS Setting 'margin-right' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'margin-right' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-right' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-right' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-right' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-right' to a number: 0 throws TypeError
 PASS Setting 'margin-right' to a number: -3.14 throws TypeError
 PASS Setting 'margin-right' to a number: 3.14 throws TypeError
 PASS Setting 'margin-right' to a number: calc(2 + 3) throws TypeError
@@ -120,7 +120,7 @@ PASS Setting 'margin-bottom' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'margin-bottom' to a flexible length: 0fr throws TypeError
 PASS Setting 'margin-bottom' to a flexible length: 1fr throws TypeError
 PASS Setting 'margin-bottom' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'margin-bottom' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'margin-bottom' to a number: 0 throws TypeError
 PASS Setting 'margin-bottom' to a number: -3.14 throws TypeError
 PASS Setting 'margin-bottom' to a number: 3.14 throws TypeError
 PASS Setting 'margin-bottom' to a number: calc(2 + 3) throws TypeError

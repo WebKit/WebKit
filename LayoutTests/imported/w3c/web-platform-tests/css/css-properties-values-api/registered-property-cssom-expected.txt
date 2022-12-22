@@ -1,9 +1,9 @@
 
-FAIL CSSOM setters function as expected for unregistered properties assert_equals: expected " 10px" but got "10px"
+PASS CSSOM setters function as expected for unregistered properties
 PASS CSS.registerProperty
-FAIL Formerly valid values are still readable from inline styles but are computed as the unset value assert_equals: expected "5" but got ""
-FAIL Values not matching the registered type can still be set assert_equals: expected "hi" but got ""
+PASS Formerly valid values are still readable from inline styles but are computed as the unset value
+PASS Values not matching the registered type can still be set
 PASS Values can be removed from inline styles
-FAIL Stylesheets can be modified by CSSOM assert_equals: expected "0px" but got "10px"
+PASS Stylesheets can be modified by CSSOM
 PASS Valid values can be set on inline styles
 
