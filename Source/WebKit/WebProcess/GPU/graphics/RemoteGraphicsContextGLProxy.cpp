@@ -284,7 +284,7 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
 
 void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
-    if (data.size() > readPixelsInlineSizeLimit) {
+    if (data.bufSize > readPixelsInlineSizeLimit) {
         readnPixelsSharedMemory(x, y, width, height, format, type, data);
         return;
     }
@@ -312,7 +312,7 @@ void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei w
 void RemoteGraphicsContextGLProxy::readnPixelsSharedMemory(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
     if (!isContextLost()) {
-        auto buffer = SharedMemory::allocate(data.size());
+        auto buffer = SharedMemory::allocate(data.bufSize);
         if (!buffer) {
             markContextLost();
             return;
