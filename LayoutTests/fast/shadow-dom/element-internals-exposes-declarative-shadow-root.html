@@ -20,15 +20,10 @@
     </template>
 </component-3>
 <component-4>
-    <template shadowrootmode="closed">
+    <template shadowrootmode="open">
         <slot>hello, world.</slot>
     </template>
 </component-4>
-<component-5>
-    <template shadowrootmode="closed">
-        <slot>hello, world.</slot>
-    </template>
-</component-5>
 <script>
 
 promise_test(async function () {
@@ -72,10 +67,10 @@ promise_test(async function () {
         }
     });
     assert_true(!!internals);
-    assert_equals(internals.shadowRoot, null);
+    assert_true(!!internals.shadowRoot);
     assert_equals(shadowRoot.mode, 'closed');
     assert_equals(shadowRoot.innerHTML, '');
-}, 'Declarative Shadow DOM in "closed" mode is not exposed via ElementInternals.prototype.shadowRoot after calling attachShadow');
+}, 'Declarative Shadow DOM in "closed" mode is exposed via ElementInternals.prototype.shadowRoot after calling attachShadow');
 
 promise_test(async function () {
     let internals = null;
@@ -88,10 +83,10 @@ promise_test(async function () {
         }
     });
     assert_true(!!internals);
-    assert_equals(internals.shadowRoot, null);
-    assert_equals(shadowRoot.mode, 'closed');
+    assert_true(!!internals.shadowRoot);
+    assert_equals(shadowRoot.mode, 'open');
     assert_equals(shadowRoot.innerHTML, '');
-}, 'Declarative Shadow DOM in "open" mode is not exposed via ElementInternals.prototype.shadowRoot after calling attachShadow');
+}, 'Declarative Shadow DOM in "open" mode is exposed via ElementInternals.prototype.shadowRoot after calling attachShadow');
 
 </script>
 </body>

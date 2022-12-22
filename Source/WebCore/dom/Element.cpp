@@ -2779,6 +2779,7 @@ ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, b
         return exceptionOrShadowRoot.releaseException();
     auto& shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
     shadowRoot.setIsDeclarativeShadowRoot(true);
+    shadowRoot.setIsAvailableToElementInternals(true);
     return shadowRoot;
 }
 

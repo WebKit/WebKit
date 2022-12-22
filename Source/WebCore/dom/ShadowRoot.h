@@ -81,6 +81,7 @@ public:
     bool isCloneable() const { return m_isCloneable; }
 
     bool isAvailableToElementInternals() const { return m_availableToElementInternals; }
+    void setIsAvailableToElementInternals(bool flag) { m_availableToElementInternals = flag; }
     bool isDeclarativeShadowRoot() const { return m_isDeclarativeShadowRoot; }
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
