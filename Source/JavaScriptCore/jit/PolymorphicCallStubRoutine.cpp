@@ -75,8 +75,10 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
     for (unsigned index = 0; index < cases.size(); ++index) {
         const PolymorphicCallCase& callCase = cases[index];
         m_variants[index].set(vm, owner, callCase.variant().rawCalleeCell());
-        if (shouldDumpDisassemblyFor(callerFrame->codeBlock()))
-            dataLog("Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
+        if (!callerFrame->isAnyWasmCallee()) {
+            if (shouldDumpDisassemblyFor(callerFrame->codeBlock()))
+                dataLog("Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
+        }
         if (CodeBlock* codeBlock = callCase.codeBlock())
             codeBlock->linkIncomingPolymorphicCall(callerFrame, m_callNodes.add(&info));
     }

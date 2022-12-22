@@ -111,10 +111,15 @@ void linkMonomorphicCall(
     // this from Wasm, we ensure the callee is a cell.
     ASSERT(callerFrame->callee().isCell());
 
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssemblyModule(callerFrame->callee().asCell()) ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
+    CodeBlock* callerCodeBlock = nullptr;
+    JSCell* owner = nullptr;
+    if (callerFrame->isAnyWasmCallee())
+        owner = webAssemblyOwner(callerFrame->callee().asCell());
+    else {
+        callerCodeBlock = callerFrame->codeBlock();
+        owner = callerCodeBlock;
+    }
     ASSERT(owner);
 
     ASSERT(!callLinkInfo.isLinked());
@@ -1609,6 +1614,7 @@ void linkDirectCall(
 {
     ASSERT(!callLinkInfo.stub());
     
+    // DirectCall is only used from DFG / FTL.
     CodeBlock* callerCodeBlock = callFrame->codeBlock();
 
     VM& vm = callerCodeBlock->vm();
@@ -1624,18 +1630,17 @@ void linkDirectCall(
         calleeCodeBlock->linkIncomingCall(callFrame, &callLinkInfo);
 }
 
-void linkSlowFor(CallFrame* callFrame, CallLinkInfo& callLinkInfo)
-{
-    CodeBlock* callerCodeBlock = callFrame->callerFrame()->codeBlock();
-    VM& vm = callerCodeBlock->vm();
-    
-    linkSlowFor(vm, callLinkInfo);
-}
-
 static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo)
 {
     CallFrame* callerFrame = callFrame->callerFrame();
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+    // Our caller must have a cell for a callee. When calling
+    // this from Wasm, we ensure the callee is a cell.
+    ASSERT(callerFrame->callee().isCell());
+
+    // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    CodeBlock* callerCodeBlock = nullptr;
+    if (!callerFrame->isAnyWasmCallee())
+        callerCodeBlock = callerFrame->codeBlock();
 
     dataLogLnIf(shouldDumpDisassemblyFor(callerCodeBlock),
         "Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()));
@@ -1672,11 +1677,16 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     // this from Wasm, we ensure the callee is a cell.
     ASSERT(callerFrame->callee().isCell());
 
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-    bool isWebAssembly = isWebAssemblyModule(callerFrame->callee().asCell());
-
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    JSCell* owner = isWebAssembly ? webAssemblyOwner(callerFrame->callee().asCell()) : callerCodeBlock;
+    CodeBlock* callerCodeBlock = nullptr;
+    JSCell* owner = nullptr;
+    bool isWebAssembly = callerFrame->isAnyWasmCallee();
+    if (isWebAssembly)
+        owner = webAssemblyOwner(callerFrame->callee().asCell());
+    else {
+        callerCodeBlock = callerFrame->codeBlock();
+        owner = callerCodeBlock;
+    }
     ASSERT(owner);
 
     CallVariantList list;

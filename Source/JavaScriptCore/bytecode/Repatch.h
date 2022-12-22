@@ -74,7 +74,6 @@ void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, 
 void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue, JSValue prototype, StructureStubInfo&, bool wasFound);
 void linkMonomorphicCall(VM&, CallFrame*, CallLinkInfo&, CodeBlock*, JSObject* callee, CodePtr<JSEntryPtrTag>);
 void linkDirectCall(CallFrame*, OptimizingCallLinkInfo&, CodeBlock*, CodePtr<JSEntryPtrTag>);
-void linkSlowFor(CallFrame*, CallLinkInfo&);
 void unlinkCall(VM&, CallLinkInfo&);
 void linkPolymorphicCall(JSGlobalObject*, CallFrame*, CallLinkInfo&, CallVariant);
 void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);

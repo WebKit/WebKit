@@ -928,16 +928,6 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(),
             getCalleePatchpoint,
             m_currentBlock->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), offsetOfCallee));
-
-        // FIXME: We shouldn't have to store zero into the CodeBlock* spot in the call frame,
-        // but there are places that interpret non-null CodeBlock slot to mean a valid CodeBlock.
-        // When doing unwinding, we'll need to verify that the entire runtime is OK with a non-null
-        // CodeBlock not implying that the CodeBlock is valid.
-        // https://bugs.webkit.org/show_bug.cgi?id=165321
-        B3::Value* offsetOfCodeBlock = m_currentBlock->appendNew<B3::Const64Value>(m_proc, Origin(), CallFrameSlot::codeBlock * sizeof(Register));
-        m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(),
-            m_currentBlock->appendNew<B3::Const64Value>(m_proc, Origin(), 0),
-            m_currentBlock->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), offsetOfCodeBlock));
     }
 
     {

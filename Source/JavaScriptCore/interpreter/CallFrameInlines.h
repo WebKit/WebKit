@@ -59,6 +59,7 @@ inline JSObject* CallFrame::jsCallee() const
 
 inline CodeBlock* CallFrame::codeBlock() const
 {
+    ASSERT(!callee().isWasm());
     return this[static_cast<int>(CallFrameSlot::codeBlock)].Register::codeBlock();
 }
 

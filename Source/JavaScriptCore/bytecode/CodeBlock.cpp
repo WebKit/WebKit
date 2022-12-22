@@ -2344,7 +2344,7 @@ public:
             m_foundStartCallFrame = true;
 
         if (m_foundStartCallFrame) {
-            if (visitor->callFrame()->codeBlock() == m_codeBlock) {
+            if (visitor->codeBlock() == m_codeBlock) {
                 m_didRecurse = true;
                 return IterationStatus::Done;
             }
@@ -2370,7 +2370,7 @@ void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
 {
     RELEASE_ASSERT(!m_isJettisoned);
 
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+    CodeBlock* callerCodeBlock = callerFrame->isAnyWasmCallee() ? nullptr : callerFrame->codeBlock();
     
     dataLogLnIf(Options::verboseCallLink(), "Noticing call link from ", pointerDump(callerCodeBlock), " to ", *this);
     

@@ -44,7 +44,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     auto scope = DECLARE_CATCH_SCOPE(vm);
     CallFrame* topJSCallFrame = vm.topJSCallFrame();
     if (UNLIKELY(Options::breakOnThrow())) {
-        CodeBlock* codeBlock = topJSCallFrame->codeBlock();
+        CodeBlock* codeBlock = topJSCallFrame->isAnyWasmCallee() ? nullptr : topJSCallFrame->codeBlock();
         dataLog("In call frame ", RawPointer(topJSCallFrame), " for code block ", codeBlock, "\n");
         WTFBreakpointTrap();
     }

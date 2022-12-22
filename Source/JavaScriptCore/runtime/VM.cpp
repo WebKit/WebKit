@@ -877,7 +877,7 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
 
     CallFrame* throwOriginFrame = topJSCallFrame();
     if (UNLIKELY(Options::breakOnThrow())) {
-        CodeBlock* codeBlock = throwOriginFrame ? throwOriginFrame->codeBlock() : nullptr;
+        CodeBlock* codeBlock = throwOriginFrame && !throwOriginFrame->isAnyWasmCallee() ? throwOriginFrame->codeBlock() : nullptr;
         dataLog("Throwing exception in call frame ", RawPointer(throwOriginFrame), " for code block ", codeBlock, "\n");
         CRASH();
     }

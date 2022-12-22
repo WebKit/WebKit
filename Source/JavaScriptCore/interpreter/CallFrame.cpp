@@ -160,7 +160,7 @@ Register* CallFrame::topOfFrameInternal()
     return registers() + codeBlock->stackPointerOffset();
 }
 
-bool CallFrame::isAnyWasmCallee()
+bool CallFrame::isAnyWasmCallee() const
 {
     CalleeBits callee = this->callee();
     if (callee.isWasm())
@@ -264,6 +264,9 @@ JSGlobalObject* CallFrame::globalObjectOfClosestCodeBlock(VM& vm, CallFrame* cal
 
 String CallFrame::friendlyFunctionName()
 {
+    if (this->isAnyWasmCallee())
+        return emptyString();
+
     CodeBlock* codeBlock = this->codeBlock();
     if (!codeBlock)
         return emptyString();
@@ -287,21 +290,23 @@ String CallFrame::friendlyFunctionName()
 
 void CallFrame::dump(PrintStream& out) const
 {
-    if (CodeBlock* codeBlock = this->codeBlock()) {
-        out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
+    if (!this->isAnyWasmCallee()) {
+        if (CodeBlock* codeBlock = this->codeBlock()) {
+            out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
 
-        out.print("(");
-        thisValue().dumpForBacktrace(out);
+            out.print("(");
+            thisValue().dumpForBacktrace(out);
 
-        for (size_t i = 0; i < argumentCount(); ++i) {
-            out.print(", ");
-            JSValue value = argument(i);
-            value.dumpForBacktrace(out);
+            for (size_t i = 0; i < argumentCount(); ++i) {
+                out.print(", ");
+                JSValue value = argument(i);
+                value.dumpForBacktrace(out);
+            }
+
+            out.print(")");
+
+            return;
         }
-
-        out.print(")");
-
-        return;
     }
 
     out.print(RawPointer(returnPCForInspection()));
