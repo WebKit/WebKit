@@ -328,11 +328,11 @@ CSSCustomPropertiesAndValuesEnabled:
   humanReadableDescription: "Enable CSS Custom Properties and Values API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSGradientInterpolationColorSpacesEnabled:
   type: bool
