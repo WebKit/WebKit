@@ -14,10 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/CustomElementRegistry-constructor-and-callbacks-are-held-strongly.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/CustomElementRegistry.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/ElementInternals-accessibility.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-attachInternals.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/META.yml
@@ -26,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/builtin-coverage.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/cross-realm-callback-report-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-reaction-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/customized-built-in-constructor-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/disconnected-callbacks.html
@@ -47,4 +50,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-xml-parser.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/when-defined-reentry-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/xhtml-crash.xhtml
