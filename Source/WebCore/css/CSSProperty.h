@@ -93,6 +93,7 @@ public:
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
     static Ref<CSSValueList> createListForProperty(CSSPropertyID);
+    static bool allowsNumberOrIntegerInput(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
 

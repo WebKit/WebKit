@@ -23,7 +23,7 @@ PASS Setting 'padding-top' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'padding-top' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-top' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-top' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-top' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-top' to a number: 0 throws TypeError
 PASS Setting 'padding-top' to a number: -3.14 throws TypeError
 PASS Setting 'padding-top' to a number: 3.14 throws TypeError
 PASS Setting 'padding-top' to a number: calc(2 + 3) throws TypeError
@@ -54,7 +54,7 @@ PASS Setting 'padding-left' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'padding-left' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-left' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-left' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-left' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-left' to a number: 0 throws TypeError
 PASS Setting 'padding-left' to a number: -3.14 throws TypeError
 PASS Setting 'padding-left' to a number: 3.14 throws TypeError
 PASS Setting 'padding-left' to a number: calc(2 + 3) throws TypeError
@@ -85,7 +85,7 @@ PASS Setting 'padding-right' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'padding-right' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-right' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-right' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-right' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-right' to a number: 0 throws TypeError
 PASS Setting 'padding-right' to a number: -3.14 throws TypeError
 PASS Setting 'padding-right' to a number: 3.14 throws TypeError
 PASS Setting 'padding-right' to a number: calc(2 + 3) throws TypeError
@@ -116,7 +116,7 @@ PASS Setting 'padding-bottom' to an angle: calc(0rad + 0deg) throws TypeError
 PASS Setting 'padding-bottom' to a flexible length: 0fr throws TypeError
 PASS Setting 'padding-bottom' to a flexible length: 1fr throws TypeError
 PASS Setting 'padding-bottom' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'padding-bottom' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'padding-bottom' to a number: 0 throws TypeError
 PASS Setting 'padding-bottom' to a number: -3.14 throws TypeError
 PASS Setting 'padding-bottom' to a number: 3.14 throws TypeError
 PASS Setting 'padding-bottom' to a number: calc(2 + 3) throws TypeError

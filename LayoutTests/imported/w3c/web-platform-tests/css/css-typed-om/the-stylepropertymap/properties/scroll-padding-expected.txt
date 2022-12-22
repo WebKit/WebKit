@@ -23,7 +23,7 @@ PASS Setting 'scroll-padding-top' to an angle: calc(0rad + 0deg) throws TypeErro
 PASS Setting 'scroll-padding-top' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-top' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-top' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-top' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-top' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-top' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-top' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-top' to a number: calc(2 + 3) throws TypeError
@@ -54,7 +54,7 @@ PASS Setting 'scroll-padding-left' to an angle: calc(0rad + 0deg) throws TypeErr
 PASS Setting 'scroll-padding-left' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-left' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-left' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-left' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-left' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-left' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-left' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-left' to a number: calc(2 + 3) throws TypeError
@@ -85,7 +85,7 @@ PASS Setting 'scroll-padding-right' to an angle: calc(0rad + 0deg) throws TypeEr
 PASS Setting 'scroll-padding-right' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-right' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-right' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-right' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-right' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-right' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-right' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-right' to a number: calc(2 + 3) throws TypeError
@@ -116,7 +116,7 @@ PASS Setting 'scroll-padding-bottom' to an angle: calc(0rad + 0deg) throws TypeE
 PASS Setting 'scroll-padding-bottom' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-bottom' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-bottom' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-bottom' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-bottom' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-bottom' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-bottom' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-bottom' to a number: calc(2 + 3) throws TypeError
@@ -147,7 +147,7 @@ PASS Setting 'scroll-padding-inline-start' to an angle: calc(0rad + 0deg) throws
 PASS Setting 'scroll-padding-inline-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-inline-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-inline-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-inline-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-inline-start' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-inline-start' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-inline-start' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-inline-start' to a number: calc(2 + 3) throws TypeError
@@ -178,7 +178,7 @@ PASS Setting 'scroll-padding-block-start' to an angle: calc(0rad + 0deg) throws 
 PASS Setting 'scroll-padding-block-start' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-block-start' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-block-start' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-block-start' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-block-start' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-block-start' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-block-start' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-block-start' to a number: calc(2 + 3) throws TypeError
@@ -209,7 +209,7 @@ PASS Setting 'scroll-padding-inline-end' to an angle: calc(0rad + 0deg) throws T
 PASS Setting 'scroll-padding-inline-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-inline-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-inline-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-inline-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-inline-end' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-inline-end' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-inline-end' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-inline-end' to a number: calc(2 + 3) throws TypeError
@@ -240,7 +240,7 @@ PASS Setting 'scroll-padding-block-end' to an angle: calc(0rad + 0deg) throws Ty
 PASS Setting 'scroll-padding-block-end' to a flexible length: 0fr throws TypeError
 PASS Setting 'scroll-padding-block-end' to a flexible length: 1fr throws TypeError
 PASS Setting 'scroll-padding-block-end' to a flexible length: -3.14fr throws TypeError
-FAIL Setting 'scroll-padding-block-end' to a number: 0 throws TypeError assert_throws_js: function "() => styleMap.set(propertyName, example.input)" did not throw
+PASS Setting 'scroll-padding-block-end' to a number: 0 throws TypeError
 PASS Setting 'scroll-padding-block-end' to a number: -3.14 throws TypeError
 PASS Setting 'scroll-padding-block-end' to a number: 3.14 throws TypeError
 PASS Setting 'scroll-padding-block-end' to a number: calc(2 + 3) throws TypeError

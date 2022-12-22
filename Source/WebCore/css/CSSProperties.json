@@ -189,6 +189,11 @@
         "the property name. For instance, if 'font-size' requires a custom parser, it",
         "would be named 'consumeFontSize'.",
         "",
+        "* custom-parser-allows-number-or-integer-input:",
+        "Indicates that the properties allows <number> or <integer> as input. We'd",
+        "normally rely on the grammar to detect this but it is not available when using",
+        "custom parsing",
+        "",
         "* parser-function:",
         "Indicates that the property requires a custom parser and that the parser function",
         "will be named whatever string is provided as the value.",
@@ -469,6 +474,7 @@
         "font-weight": {
             "inherited": true,
             "codegen-properties": {
+                "custom-parser-allows-number-or-integer-input": true,
                 "name-for-methods": "Weight",
                 "font-property": true,
                 "high-priority": true,
@@ -1894,7 +1900,8 @@
         "border-image-outset": {
             "codegen-properties": {
                 "custom": "All",
-                "custom-parser": true
+                "custom-parser": true,
+                "custom-parser-allows-number-or-integer-input": true
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1915,6 +1922,7 @@
             "codegen-properties": {
                 "custom": "All",
                 "custom-parser": true,
+                "custom-parser-allows-number-or-integer-input": true,
                 "parser-requires-current-property": true
             },
             "specification": {
@@ -1936,6 +1944,7 @@
             "codegen-properties": {
                 "custom": "All",
                 "custom-parser": true,
+                "custom-parser-allows-number-or-integer-input": true,
                 "parser-requires-current-property": true
             },
             "specification": {
@@ -4876,7 +4885,8 @@
                 "name-for-methods": "StrokeDashArray",
                 "converter": "StrokeDashArray",
                 "svg": true,
-                "custom-parser": true
+                "custom-parser": true,
+                "custom-parser-allows-number-or-integer-input": true
             },
             "specification": {
                 "category": "svg",
