@@ -123,7 +123,9 @@ if (ENABLE_DEVELOPER_MODE)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS PRIVATE ON)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LAYOUT_TESTS PRIVATE ON)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MINIBROWSER PUBLIC ON)
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_COG PRIVATE ON)
+    # FIXME: this is temporarily off to make it easier to land API changes.
+    # Turn this back to ON around time of 2.39.90 release.
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_COG PRIVATE OFF)
 endif ()
 
 # Enable variation fonts when cairo >= 1.16, fontconfig >= 2.13.0, freetype >= 2.9.0 and harfbuzz >= 1.4.2.
