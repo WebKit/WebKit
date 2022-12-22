@@ -314,6 +314,8 @@ void IDBDatabase::stop()
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
+    removeAllEventListeners();
+
     for (auto& id : copyToVector(m_activeTransactions.keys())) {
         if (auto* transaction = m_activeTransactions.get(id))
             transaction->stop();

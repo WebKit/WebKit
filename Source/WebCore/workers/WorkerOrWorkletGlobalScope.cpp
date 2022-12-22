@@ -63,7 +63,7 @@ void WorkerOrWorkletGlobalScope::prepareForDestruction()
 
     // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
     // which become dangling once Heap is destroyed.
-    removeAllEventListenersInContext();
+    removeAllEventListeners();
 
     // MicrotaskQueue and RejectedPromiseTracker reference Heap.
     if (m_eventLoop)

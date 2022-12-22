@@ -170,19 +170,10 @@ void WorkerGlobalScope::prepareForDestruction()
         m_fileSystemStorageConnection->scopeClosed();
 }
 
-void WorkerGlobalScope::removeAllEventListenersInContext()
-{
-    WorkerOrWorkletGlobalScope::removeAllEventListenersInContext();
-
-    // WorkerGlobalScope overrides removeAllEventListeners() and clears other things than listeners.
-    // Therefore, we must call it explicitly here to make sure it gets called even if the
-    // global scope itself has no listeners.
-    removeAllEventListeners();
-}
-
 void WorkerGlobalScope::removeAllEventListeners()
 {
     WorkerOrWorkletGlobalScope::removeAllEventListeners();
+    m_performance->removeAllEventListeners();
     m_performance->removeAllObservers();
 }
 
