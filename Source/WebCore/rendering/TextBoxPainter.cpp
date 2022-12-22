@@ -597,7 +597,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPaint
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/TextBoxPainterAdditions.cpp>
 #else
-static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline&, size_t, size_t)
+static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline&, unsigned, unsigned)
 {
     return FloatRoundedRect::Radii { 0 };
 }
@@ -634,9 +634,24 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
     auto& underlines = m_renderer.frame().editor().customCompositionUnderlines();
     auto underlineCount = underlines.size();
 
-    auto hasLiveConversion = std::find_if(underlines.begin(), underlines.end(), [](const auto& underline) {
-        return underline.thick;
-    }) != underlines.end();
+    if (!underlineCount)
+        return;
+
+    auto hasLiveConversion = false;
+
+    auto markedTextStartOffset = underlines[0].startOffset;
+    auto markedTextEndOffset = underlines[0].endOffset;
+
+    for (const auto& underline : underlines) {
+        if (underline.thick)
+            hasLiveConversion = true;
+
+        if (underline.startOffset < markedTextStartOffset)
+            markedTextStartOffset = underline.startOffset;
+
+        if (underline.endOffset > markedTextEndOffset)
+            markedTextEndOffset = underline.endOffset;
+    }
 
     for (size_t i = 0; i < underlineCount; ++i) {
         auto& underline = underlines[i];
@@ -650,7 +665,7 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
         if (underline.startOffset >= textBox().end())
             break; // Underline is completely after this run, bail. A later run will paint it.
 
-        auto underlineRadii = radiiForUnderline(underline, underlineCount, i);
+        auto underlineRadii = radiiForUnderline(underline, markedTextStartOffset, markedTextEndOffset);
 
         // Underline intersects this run. Paint it.
         paintCompositionUnderline(underline, underlineRadii, hasLiveConversion);
