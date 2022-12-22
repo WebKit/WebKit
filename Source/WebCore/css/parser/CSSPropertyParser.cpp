@@ -206,9 +206,7 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
 {
     int parsedPropertiesSize = parsedProperties.size();
     
-    auto consumeWhitespace = !CSSProperty::shouldPreserveWhitespace(propertyID);
-
-    CSSPropertyParser parser(range, context, &parsedProperties, consumeWhitespace);
+    CSSPropertyParser parser(range, context, &parsedProperties);
 
     bool parseSuccess;
     if (ruleType == StyleRuleType::FontFace)

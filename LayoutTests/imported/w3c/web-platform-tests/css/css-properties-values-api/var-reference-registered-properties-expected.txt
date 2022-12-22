@@ -1,5 +1,5 @@
 
-FAIL var() references work with registered properties assert_equals: expected " 20px" but got "20px"
+PASS var() references work with registered properties
 PASS References to registered var()-properties work in registered lists
 PASS References to mixed registered and unregistered var()-properties work in registered lists
 PASS Registered lists may be concatenated
