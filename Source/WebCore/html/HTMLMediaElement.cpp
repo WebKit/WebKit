@@ -156,7 +156,6 @@
 #if ENABLE(MEDIA_SOURCE)
 #include "DOMWindow.h"
 #include "MediaSource.h"
-#include "SourceBufferList.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -8436,8 +8435,6 @@ void HTMLMediaElement::scheduleUpdateMediaState()
     });
 }
 
-#endif
-
 void HTMLMediaElement::updateMediaState()
 {
     MediaProducerMediaStateFlags state = mediaState();
@@ -8445,12 +8442,11 @@ void HTMLMediaElement::updateMediaState()
         return;
 
     m_mediaState = state;
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mediaSession().mediaStateDidChange(m_mediaState);
-#endif
 
     document().updateIsPlayingMedia();
 }
+#endif
 
 MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
 {
@@ -8479,12 +8475,6 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
         state.add(MediaProducerMediaState::DidPlayToEnd);
 #else
     UNUSED_VARIABLE(hasAudio);
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-    // We can assume that if we have active source buffers, later networking activity (such as stream or XHR requests) will be media related.
-    if (m_mediaSource && m_mediaSource->activeSourceBuffers() && m_mediaSource->activeSourceBuffers()->length())
-        state.add(MediaProducerMediaState::HasStreamingActivity);
 #endif
 
     if (!isPlaying())
