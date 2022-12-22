@@ -94,15 +94,8 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
 
     bool listenerCreatedFromScript = is<JSEventListener>(listener) && !downcast<JSEventListener>(listener.get()).wasCreatedFromMarkup();
 
-    auto& eventListenerMap = ensureEventTargetData().eventListenerMap;
-    bool wasEventListenerMapEmpty = eventListenerMap.isEmpty();
-    if (!eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once }))
+    if (!ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once }))
         return false;
-
-    if (wasEventListenerMapEmpty) {
-        if (auto* context = scriptExecutionContext())
-            context->addEventTargetWithListener(*this);
-    }
 
     if (options.signal) {
         options.signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, listener = WeakPtr { listener }, capture = options.capture] {
@@ -161,10 +154,6 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
         if (eventNames().isWheelEventType(eventType))
             invalidateEventListenerRegions();
 
-        if (data->eventListenerMap.isEmpty()) {
-            if (auto* context = scriptExecutionContext())
-                context->removeEventTargetWithListener(*this);
-        }
         eventListenersDidChange();
         return true;
     }
@@ -417,10 +406,6 @@ void EventTarget::removeAllEventListeners()
             invalidateEventListenerRegions();
 
         data->eventListenerMap.clear();
-
-        if (auto* context = scriptExecutionContext())
-            context->removeEventTargetWithListener(*this);
-
         eventListenersDidChange();
     }
 

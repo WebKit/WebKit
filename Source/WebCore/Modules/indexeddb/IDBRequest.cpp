@@ -272,6 +272,8 @@ void IDBRequest::stop()
 
     cancelForStop();
 
+    removeAllEventListeners();
+
     clearWrappers();
 }
 

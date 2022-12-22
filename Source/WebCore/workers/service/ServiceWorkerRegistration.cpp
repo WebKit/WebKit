@@ -259,6 +259,11 @@ const char* ServiceWorkerRegistration::activeDOMObjectName() const
     return "ServiceWorkerRegistration";
 }
 
+void ServiceWorkerRegistration::stop()
+{
+    removeAllEventListeners();
+}
+
 bool ServiceWorkerRegistration::virtualHasPendingActivity() const
 {
     return getNewestWorker() && hasEventListeners();
