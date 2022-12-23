@@ -161,6 +161,8 @@ public:
 
     void clearBackingStore();
 
+    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
+
 private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 

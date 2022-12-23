@@ -138,7 +138,7 @@ public:
     static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
     static FloatRect clampedRect(const FloatRect&);
 
-    RefPtr<ImageBuffer> clone() const;
+    WEBCORE_EXPORT RefPtr<ImageBuffer> clone() const;
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> cloneForDifferentThread();
 
     WEBCORE_EXPORT virtual GraphicsContext& context() const;

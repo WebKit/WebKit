@@ -181,6 +181,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     }
 }
 
+void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(GraphicsLayer::PlatformLayerID layerID, ImageBufferBackendHandle&& handle)
+{
+    m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTFMove(handle));
+}
+
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime)
 {
     send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime));

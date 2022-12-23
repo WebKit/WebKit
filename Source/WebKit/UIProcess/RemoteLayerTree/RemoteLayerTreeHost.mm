@@ -41,6 +41,7 @@
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
@@ -168,6 +169,16 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         layerForID(newlyUnreachableLayerID).contents = nullptr;
 
     return rootLayerChanged;
+}
+
+void RemoteLayerTreeHost::asyncSetLayerContents(GraphicsLayer::PlatformLayerID layerID, ImageBufferBackendHandle&& handle)
+{
+    auto* node = nodeForID(layerID);
+    if (!node)
+        return;
+
+    RetainPtr<id> contents = RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(WTFMove(handle), layerContentsType());
+    node->layer().contents = contents.get();
 }
 
 RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(GraphicsLayer::PlatformLayerID layerID) const

@@ -554,39 +554,44 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context,
     }
 }
 
+RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&& backendHandle, LayerContentsType contentsType)
+{
+    RetainPtr<id> contents;
+    WTF::switchOn(backendHandle,
+        [&] (ShareableBitmapHandle& handle) {
+            if (auto bitmap = ShareableBitmap::create(handle))
+                contents = bridge_id_cast(bitmap->makeCGImageCopy());
+        },
+        [&] (MachSendRight& machSendRight) {
+            switch (contentsType) {
+            case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
+                auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
+                contents = surface ? surface->asLayerContents() : nil;
+                break;
+            }
+            case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
+                contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
+                break;
+            }
+        }
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , [&] (CGDisplayList& handle) {
+            ASSERT_NOT_REACHED();
+        }
+#endif
+    );
+
+    return contents;
+}
+
 void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
 {
     layer.contentsOpaque = m_parameters.isOpaque;
 
     RetainPtr<id> contents;
     // m_bufferHandle can be unset here if IPC with the GPU process timed out.
-    if (m_bufferHandle) {
-        WTF::switchOn(*m_bufferHandle,
-            [&] (ShareableBitmapHandle& handle) {
-                ASSERT(m_parameters.type == Type::Bitmap);
-                if (auto bitmap = ShareableBitmap::create(handle))
-                    contents = bridge_id_cast(bitmap->makeCGImageCopy());
-            },
-            [&] (MachSendRight& machSendRight) {
-                ASSERT(m_parameters.type == Type::IOSurface);
-                switch (contentsType) {
-                case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
-                    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
-                    contents = surface ? surface->asLayerContents() : nil;
-                    break;
-                }
-                case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
-                    contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
-                    break;
-                }
-            }
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-            , [&] (CGDisplayList& handle) {
-                ASSERT_NOT_REACHED();
-            }
-#endif
-        );
-    }
+    if (m_bufferHandle)
+        contents = layerContentsBufferFromBackendHandle(WTFMove(*m_bufferHandle), contentsType);
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_displayListBufferHandle) {

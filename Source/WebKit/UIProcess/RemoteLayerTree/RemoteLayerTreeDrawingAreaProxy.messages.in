@@ -24,4 +24,5 @@ messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy NotRefCounted {
     void SetPreferredFramesPerSecond(unsigned preferredFramesPerSecond)
     void WillCommitLayerTree(WebKit::TransactionID transactionID)
     void CommitLayerTree(WebKit::RemoteLayerTreeTransaction layerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction scrollingTreeTransaction)
+    void AsyncSetLayerContents(WebCore::GraphicsLayer::PlatformLayerID layer, WebKit::ImageBufferBackendHandle handle)
 }
