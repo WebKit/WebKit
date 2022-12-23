@@ -43,6 +43,7 @@ public:
     void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     LayoutUnit offsetForChild(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
+    LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
 
 private:
     GridSpan gridAxisPositionUsingPackAutoFlow(const RenderBox& item) const;
