@@ -918,7 +918,7 @@ writeH("OpcodeGenerated") {
                         outp.puts "if (args[#{index}].isStack() && args[#{index}].stackSlot()->isSpill())"
                         outp.puts "OPGEN_RETURN(false);"
                     end
-                    outp.puts "if (!Arg::isValidAddrForm(args[#{index}].offset()))"
+                    outp.puts "if (!Arg::isValidAddrForm(this->kind.opcode, args[#{index}].offset()))"
                     outp.puts "OPGEN_RETURN(false);"
                 when "ExtendedOffsetAddr"
                     if arg.role == "UA"

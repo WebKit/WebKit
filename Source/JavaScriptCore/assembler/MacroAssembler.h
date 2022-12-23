@@ -103,10 +103,17 @@ namespace JSC {
 
 namespace Probe {
 
+enum class SavedFPWidth {
+    SaveVectors,
+    DontSaveVectors
+};
+
 class Context;
 typedef void (*Function)(Context&);
 
 } // namespace Probe
+
+using Probe::SavedFPWidth;
 
 namespace Printer {
 
@@ -2160,7 +2167,7 @@ public:
     //
     // Note: this version of probe() should be implemented by the target specific
     // MacroAssembler.
-    void probe(Probe::Function, void* arg);
+    void probe(Probe::Function, void* arg, SavedFPWidth = SavedFPWidth::DontSaveVectors);
 
     // This leaks memory. Must not be used for production.
     JS_EXPORT_PRIVATE void probeDebug(Function<void(Probe::Context&)>);

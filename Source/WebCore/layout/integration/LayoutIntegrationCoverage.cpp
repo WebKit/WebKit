@@ -398,10 +398,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         auto& listMarker = downcast<RenderListMarker>(renderer);
         auto* associatedListItem = listMarker.listItem();
         for (auto* ancestor = listMarker.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            if (ancestor->containsFloats())
-                SET_REASON_AND_RETURN_IF_NEEDED(ChildIsUnsupportedListItem, reasons, includeReasons);
             if (ancestor == associatedListItem)
                 break;
+            if (ancestor->containsFloats())
+                SET_REASON_AND_RETURN_IF_NEEDED(ChildIsUnsupportedListItem, reasons, includeReasons);
         }
         return reasons;
     }

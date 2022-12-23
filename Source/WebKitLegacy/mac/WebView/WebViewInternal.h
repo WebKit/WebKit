@@ -145,7 +145,13 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
+
 - (void)_scheduleUpdateRendering;
+- (void)_updateRendering;
+
+- (void)_willStartRenderingUpdateDisplay;
+- (void)_didCompleteRenderingUpdateDisplay;
+
 - (BOOL)_flushCompositingChanges;
 
 #if USE(AUTOCORRECTION_PANEL)

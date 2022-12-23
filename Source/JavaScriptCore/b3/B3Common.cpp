@@ -72,10 +72,12 @@ bool shouldSaveIRBeforePhase()
 
 GPRReg extendedOffsetAddrRegister()
 {
-    RELEASE_ASSERT(isARM64() || isRISCV64());
+    RELEASE_ASSERT(isARM64() || isRISCV64() || isARM());
 #if CPU(ARM64) || CPU(RISCV64)
     return MacroAssembler::linkRegister;
-#elif CPU(X86_64) || CPU(ARM)
+#elif CPU(ARM)
+    return MacroAssembler::dataTempRegister;
+#elif CPU(X86_64)
     return GPRReg::InvalidGPRReg;
 #else
 #error Unhandled architecture.

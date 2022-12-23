@@ -34,6 +34,7 @@
 #import "WebSelectionServiceController.h"
 #import "WebViewGroup.h"
 #import "WebViewInternal.h"
+#import "WebViewRenderingUpdateScheduler.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/HistoryItem.h>
@@ -47,9 +48,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebGeolocationProviderIOS.h"
-#import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/WebCoreThread.h>
-#import <WebCore/WebCoreThreadInternal.h>
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
@@ -63,82 +61,6 @@
 
 BOOL applicationIsTerminating = NO;
 int pluginDatabaseClientCount = 0;
-
-static CFRunLoopRef currentRunLoop()
-{
-#if PLATFORM(IOS_FAMILY)
-    // A race condition during WebView deallocation can lead to a crash if the layer sync run loop
-    // observer is added to the main run loop <rdar://problem/9798550>. However, for responsiveness,
-    // we still allow this, see <rdar://problem/7403328>. Since the race condition and subsequent
-    // crash are especially troublesome for iBooks, we never allow the observer to be added to the
-    // main run loop in iBooks.
-    if (WebCore::CocoaApplication::isIBooks())
-        return WebThreadRunLoop();
-#endif
-    return CFRunLoopGetCurrent();
-}
-
-void LayerFlushController::scheduleLayerFlush()
-{
-    m_layerFlushScheduler.schedule();
-}
-
-void LayerFlushController::invalidate()
-{
-    m_layerFlushScheduler.invalidate();
-    m_webView = nullptr;
-}
-
-LayerFlushController::LayerFlushController(WebView* webView)
-    : m_webView(webView)
-    , m_layerFlushScheduler(this)
-{
-    ASSERT_ARG(webView, webView);
-}
-
-WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flushController)
-    : m_flushController(flushController)
-{
-    m_runLoopObserver = makeUnique<WebCore::RunLoopObserver>(static_cast<CFIndex>(WebCore::RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
-        this->layerFlushCallback();
-    });
-}
-
-WebViewLayerFlushScheduler::~WebViewLayerFlushScheduler()
-{
-}
-
-void WebViewLayerFlushScheduler::schedule()
-{
-    if (m_insideCallback)
-        m_rescheduledInsideCallback = true;
-
-    m_runLoopObserver->schedule(currentRunLoop());
-}
-
-void WebViewLayerFlushScheduler::invalidate()
-{
-    m_runLoopObserver->invalidate();
-}
-
-void WebViewLayerFlushScheduler::layerFlushCallback()
-{
-#if PLATFORM(IOS_FAMILY)
-    // Normally the layer flush callback happens before the web lock auto-unlock observer runs.
-    // However if the flush is rescheduled from the callback it may get pushed past it, to the next cycle.
-    WebThreadLock();
-#endif
-
-    @autoreleasepool {
-        RefPtr<LayerFlushController> protector = m_flushController;
-
-        SetForScope insideCallbackScope(m_insideCallback, true);
-        m_rescheduledInsideCallback = false;
-
-        if (m_flushController->flushLayers() && !m_rescheduledInsideCallback)
-            invalidate();
-    }
-}
 
 #if PLATFORM(MAC)
 

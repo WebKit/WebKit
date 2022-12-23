@@ -55,6 +55,7 @@ After adding scrollable content to frame:
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer
+                                  (anchor 0.00 0.00)
                                 )
                               )
                             )

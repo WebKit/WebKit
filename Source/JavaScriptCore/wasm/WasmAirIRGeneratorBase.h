@@ -707,7 +707,16 @@ protected:
                 break;
             case B3::ValueRep::StackArgument: {
                 Arg arg = Arg::callArg(tmp.rep.offsetFromSP());
-                append(basicBlock, moveForType(toB3Type(tmp.tmp.type())), tmp.tmp.tmp(), arg);
+                B3::Air::Opcode opcode = moveForType(toB3Type(tmp.tmp.type()));
+                if (arg.isValidForm(opcode, pointerWidth()))
+                    append(basicBlock, opcode, tmp.tmp, arg);
+                else {
+                    typename Derived::ExpressionType immTmp = self().gPtr();
+                    typename Derived::ExpressionType newPtr = self().gPtr();
+                    append(basicBlock, Move, Arg::bigImm(arg.offset()), immTmp);
+                    append(basicBlock, Derived::AddPtr, Tmp(MacroAssembler::stackPointerRegister), immTmp, newPtr);
+                    append(basicBlock, opcode, tmp.tmp, Arg::addr(newPtr));
+                }
                 ASSERT(arg.canRepresent(patch->child(i)->type()));
                 inst.args.append(arg);
                 break;
@@ -1154,6 +1163,7 @@ void AirIRGeneratorBase<Derived, ExpressionType>::finalizeEntrypoints()
         Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
 
         for (size_t i = 0; i < temps.size(); ++i) {
+            // Note that we should never load a vector here, since these values come from the LLInt and it does not support SIMD.
             size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
             self().emitLoad(basePtr, offset, temps[i]);
         }
@@ -1173,8 +1183,8 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(
 
     if (restoreCachedStackLimit == RestoreCachedStackLimit::Yes) {
         // The Instance caches the stack limit, but also knows where its canonical location is.
-        RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfPointerToActualStackLimit(), pointerWidth()));
-        RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfCachedStackLimit(), pointerWidth()));
+        RELEASE_ASSERT(Arg::isValidAddrForm(Move, Instance::offsetOfPointerToActualStackLimit(), pointerWidth()));
+        RELEASE_ASSERT(Arg::isValidAddrForm(Move, Instance::offsetOfCachedStackLimit(), pointerWidth()));
         auto temp = self().gPtr();
         append(block, Move, Arg::addr(instanceValue(), Instance::offsetOfPointerToActualStackLimit()), temp);
         append(block, Move, Arg::addr(temp), temp);
@@ -1487,9 +1497,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCurrentMemory(ExpressionTyp
     auto temp1 = self().gPtr();
     auto temp2 = self().gPtr();
 
-    RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfMemory(), pointerWidth()));
-    RELEASE_ASSERT(Arg::isValidAddrForm(Memory::offsetOfHandle(), pointerWidth()));
-    RELEASE_ASSERT(Arg::isValidAddrForm(BufferMemoryHandle::offsetOfSize(), pointerWidth()));
+    RELEASE_ASSERT(Arg::isValidAddrForm(Move, Instance::offsetOfMemory(), pointerWidth()));
+    RELEASE_ASSERT(Arg::isValidAddrForm(Move, Memory::offsetOfHandle(), pointerWidth()));
+    RELEASE_ASSERT(Arg::isValidAddrForm(Move, BufferMemoryHandle::offsetOfSize(), pointerWidth()));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfMemory()), temp1);
     append(Move, Arg::addr(temp1, Memory::offsetOfHandle()), temp1);
     append(Move, Arg::addr(temp1, BufferMemoryHandle::offsetOfSize()), temp1);
@@ -1606,7 +1616,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::getGlobal(uint32_t index, Expr
     result = tmpForType(type);
 
     auto temp = self().gPtr();
-    RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfGlobals(), pointerWidth()));
+    RELEASE_ASSERT(Arg::isValidAddrForm(moveForType(toB3Type(result.type())), Instance::offsetOfGlobals(), pointerWidth()));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
 
     int32_t offset = safeCast<int32_t>(index * sizeof(Global::Value));
@@ -1630,7 +1640,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::setGlobal(uint32_t index, Expr
 {
     auto temp = self().gPtr();
 
-    RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfGlobals(), pointerWidth()));
+    RELEASE_ASSERT(Arg::isValidAddrForm(moveForType(toB3Type(value.type())), Instance::offsetOfGlobals(), pointerWidth()));
     append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
 
     const Wasm::GlobalInformation& global = m_info.globals[index];
@@ -1822,7 +1832,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::fixupPointerPlusOffsetForAtomi
 {
     ASSERT(pointer);
     uint32_t offset = fixupPointerPlusOffset(pointer, uoffset);
-    if (Arg::isValidAddrForm(offset, widthForBytes(sizeOfAtomicOpMemoryAccess(op)))) {
+    if (Arg::isValidAddrForm(Derived::LeaPtr, offset, widthForBytes(sizeOfAtomicOpMemoryAccess(op)))) {
         if (!offset)
             return pointer;
         auto newPtr = self().gPtr();
@@ -2764,12 +2774,15 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoopTierUpCheck(uint32_t l
 
     Vector<ConstrainedTmp> patchArgs;
     patchArgs.append(countdownPtr);
-    for (const auto& tmp : liveValues)
+    for (const auto& tmp : liveValues) {
+        dataLogLnIf(WasmAirIRGeneratorInternal::verbose, "OSR loop patch param before allocation: ", tmp);
         patchArgs.append(ConstrainedTmp(tmp, B3::ValueRep::ColdAny));
+    }
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
     static_assert(sizeof(TierUpCount::TriggerReason) == 1, "branchTest8 assumes this size");
+    SavedFPWidth savedFPWidth = m_proc.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
     patch->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         CCallHelpers::Jump forceOSREntry = jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::AbsoluteAddress(forceEntryTrigger));
@@ -2792,7 +2805,7 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoopTierUpCheck(uint32_t l
             forceOSREntry.link(&jit);
             tierUp.link(&jit);
 
-            jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr);
+            jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr, savedFPWidth);
             jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
             jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
         });
@@ -3278,9 +3291,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
     ExpressionType instancesBuffer = self().gPtr();
     ExpressionType callableFunctionBufferLength = self().gPtr();
     {
-        RELEASE_ASSERT(Arg::isValidAddrForm(FuncRefTable::offsetOfFunctions(), pointerWidth()));
-        RELEASE_ASSERT(Arg::isValidAddrForm(FuncRefTable::offsetOfInstances(), pointerWidth()));
-        RELEASE_ASSERT(Arg::isValidAddrForm(FuncRefTable::offsetOfLength(), pointerWidth()));
+        RELEASE_ASSERT(Arg::isValidAddrForm(Move, FuncRefTable::offsetOfFunctions(), pointerWidth()));
+        RELEASE_ASSERT(Arg::isValidAddrForm(Move, FuncRefTable::offsetOfInstances(), pointerWidth()));
+        RELEASE_ASSERT(Arg::isValidAddrForm(Move32, FuncRefTable::offsetOfLength(), pointerWidth()));
 
         self().emitLoad(instanceValue().tmp(), Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex), callableFunctionBufferLength);
         append(Move, Arg::addr(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);

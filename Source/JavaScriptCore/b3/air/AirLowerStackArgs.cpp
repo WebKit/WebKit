@@ -120,11 +120,11 @@ void lowerStackArgs(Code& code)
                         }
 
                         Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-                        if (result.isValidForm(width))
+                        if (result.isValidForm(Move, width))
                             return result;
 
                         result = Arg::addr(Air::Tmp(MacroAssembler::stackPointerRegister), offsetFromSP);
-                        if (result.isValidForm(width))
+                        if (result.isValidForm(Move, width))
                             return result;
 
                         if (inst.kind.opcode == Patch)
@@ -139,7 +139,7 @@ void lowerStackArgs(Code& code)
                         result = Arg::addr(tmp, 0);
                         return result;
 #elif CPU(ARM)
-                        // We solve this from the macro assembler for now
+                        // We solve this in AirAllocateRegistersAndStackAndGenerateCode.cpp.
                         UNUSED_PARAM(instIndex);
                         return result;
 #elif CPU(X86_64)

@@ -551,7 +551,9 @@ private:
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     Arg effectiveAddr(Value* address, Int offset, Width width)
     {
-        ASSERT(Arg::isValidAddrForm(offset, width));
+        // This function currently is currently only used for loads/stores, so
+        // using Air::Move is appropriate.
+        ASSERT(Arg::isValidAddrForm(Air::Move, offset, width));
         
         auto fallback = [&] () -> Arg {
             return Arg::addr(tmp(address), offset);
@@ -642,7 +644,7 @@ private:
         Width width = value->accessWidth();
 
         Arg result = effectiveAddr(value->lastChild(), offset, width);
-        RELEASE_ASSERT(result.isValidForm(width));
+        RELEASE_ASSERT(result.isValidForm(Air::Move, width));
 
         return result;
     }
@@ -1146,11 +1148,11 @@ private:
                 default:
                     break;
                 case Air::Move32:
-                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width32))
+                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width32))
                         return Inst(Store32, m_value, zeroReg(), dest);
                     break;
                 case Air::Move:
-                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width64))
+                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width64))
                         return Inst(Store64, m_value, zeroReg(), dest);
                     break;
                 }
@@ -1291,9 +1293,20 @@ private:
         auto lane = value->simdLane();
         bool isFloatingPoint = scalarTypeIsFloatingPoint(lane);
         auto cond = isFloatingPoint ? doubleCond : relCond;
+        auto condKind = isFloatingPoint ? Arg::DoubleCond : Arg::RelCond;
         RELEASE_ASSERT(cond);
-        append(isFloatingPoint ? Air::CompareFloatingPointVector : Air::CompareIntegerVector, 
-            cond, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value));
+        Air::Opcode airOp = isFloatingPoint ? Air::CompareFloatingPointVector : Air::CompareIntegerVector;
+        if (isValidForm(airOp, condKind, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp,
+                cond, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value));
+            return;
+        }
+        if (isValidForm(airOp, condKind, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp,
+                cond, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value), m_code.newTmp(FP));
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void emitSIMDCompare(Air::Arg cond)
@@ -1331,7 +1344,16 @@ private:
     void emitSIMDUnaryOp(Air::Opcode op)
     {
         SIMDValue* value = m_value->as<SIMDValue>();
-        append(op, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value));
+
+        if (isValidForm(op, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp)) {
+            append(op, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value));
+            return;
+        }
+        if (isValidForm(op, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(op, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value), m_code.newTmp(FP));
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void emitSIMDMonomorphicUnaryOp(Air::Opcode op)
@@ -3796,8 +3818,11 @@ private:
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
-            append(op, scalar, tmp(value));
-            return;
+            if (isValidForm(op, Arg::Tmp, Arg::Tmp)) {
+                append(op, scalar, tmp(value));
+                return;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
         case B3::VectorShr:
@@ -3812,9 +3837,9 @@ private:
 
             Tmp shiftAmount = m_code.newTmp(B3::GP);
             Tmp shiftVector = m_code.newTmp(B3::FP);
-            append(And32, Arg::bitImm(mask), shift, shiftAmount);
 
             if constexpr (isARM64()) {
+                append(And32, Arg::bitImm(mask), shift, shiftAmount);
                 if (value->opcode() == VectorShr) {
                     // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to
                     // left shift is negative, it's a right shift by the absolute value of that amount.
@@ -3827,7 +3852,37 @@ private:
             }
             
             if constexpr (isX86()) {
-                append(VectorSplatInt8, shiftAmount, shiftVector);
+                append(Move, shift, shiftAmount);
+                append(And32, Arg::imm(mask), shiftAmount);
+                if (value->opcode() == VectorShr && value->signMode() == SIMDSignMode::Signed && value->simdLane() == SIMDLane::i64x2) {
+                    // x86 has no SIMD 64-bit signed right shift instruction, so we scalarize it here.
+                    Tmp lower = m_code.newTmp(B3::GP);
+                    Tmp upper = m_code.newTmp(B3::GP);
+                    Tmp result = tmp(value);
+
+                    append(Move, shiftAmount, m_ecx);
+                    append(VectorExtractLaneInt64, Arg::imm(0), v, lower);
+                    append(VectorExtractLaneInt64, Arg::imm(1), v, upper);
+                    append(Rshift64, m_ecx, lower);
+                    append(Rshift64, m_ecx, upper);
+                    append(VectorReplaceLaneInt64, Arg::imm(0), lower, result);
+                    append(VectorReplaceLaneInt64, Arg::imm(1), upper, result);
+                    return;
+                }
+
+                // Unlike ARM, x86 expects the shift provided as a *scalar*, stored in the lower 64 bits of a vector register.
+                // So, we don't need to splat the shift amount like we do on ARM.
+                append(Move64ToDouble, shiftAmount, shiftVector);
+
+                // 8-bit shifts are pretty involved to implement on Intel, so they get their own instruction type with extra temps.
+                if (value->opcode() == VectorShl && value->simdLane() == SIMDLane::i8x16) {
+                    append(VectorUshl8, v, shiftVector, tmp(value), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
+                    return;
+                }
+                if (value->opcode() == VectorShr && value->simdLane() == SIMDLane::i8x16) {
+                    append(value->signMode() == SIMDSignMode::Signed ? VectorSshr8 : VectorUshr8, v, shiftVector, tmp(value), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
+                    return;
+                }
 
                 if (value->opcode() == VectorShl)
                     append(VectorUshl, Arg::simdInfo(value->simdInfo()), v, shiftVector, tmp(value));
@@ -3885,7 +3940,12 @@ private:
             emitSIMDBinaryOp(Air::VectorMul);
             return;
         case B3::VectorDotProduct:
-            emitSIMDMonomorphicBinaryOp</* scratch = */ 1>(Air::VectorDotProduct);
+            if (isX86())
+                emitSIMDMonomorphicBinaryOp(Air::VectorDotProduct);
+            else if (isARM64())
+                emitSIMDMonomorphicBinaryOp</* scratch = */ 1>(Air::VectorDotProduct);
+            else
+                RELEASE_ASSERT_NOT_REACHED();
             return; 
         case B3::VectorDiv:
             emitSIMDBinaryOp(Air::VectorDiv);
@@ -3897,11 +3957,25 @@ private:
             emitSIMDBinaryOp(Air::VectorMax);
             return;
         case B3::VectorPmin:
-            emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorPmin);
-            return;
+            if (isX86()) {
+                emitSIMDBinaryOp(Air::VectorPmin);
+                return;
+            }
+            if (isARM64()) {
+                emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorPmin);
+                return;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
         case B3::VectorPmax:
-            emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorPmax);
-            return; 
+            if (isX86()) {
+                emitSIMDBinaryOp(Air::VectorPmax);
+                return;
+            }
+            if (isARM64()) {
+                emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorPmax);
+                return;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
         case B3::VectorNarrow:
             emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorNarrow);
             return; 
@@ -3921,6 +3995,11 @@ private:
             emitSIMDUnaryOp(Air::VectorNot);
             return;
         case B3::VectorAbs:
+            if (isX86() && m_value->as<SIMDValue>()->simdLane() == SIMDLane::i64x2) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                append(VectorAbsInt64, tmp(value->child(0)), tmp(value), m_code.newTmp(B3::FP));
+                return;
+            }
             emitSIMDUnaryOp(Air::VectorAbs);
             return;
         case B3::VectorNeg:
@@ -3939,12 +4018,47 @@ private:
             emitSIMDUnaryOp(Air::VectorTrunc);
             return;
         case B3::VectorTruncSat:
+            if (isX86()) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                Tmp v = tmp(value->child(0));
+                Tmp result = tmp(value);
+
+                switch (value->simdLane()) {
+                case SIMDLane::f64x2:
+                    if (value->signMode() == SIMDSignMode::Signed)
+                        append(VectorTruncSatSignedFloat64, v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP));
+                    else
+                        append(VectorTruncSatUnsignedFloat64, v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP));
+                    return;
+                case SIMDLane::f32x4:
+                    if (value->signMode() == SIMDSignMode::Signed)
+                        append(Air::VectorTruncSat, Arg::simdInfo(value->simdInfo()), v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
+                    else
+                        append(VectorTruncSatUnsignedFloat32, v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
+                    return;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
             emitSIMDUnaryOp(Air::VectorTruncSat);
             return;
         case B3::VectorConvert:
+            if (isX86() && m_value->as<SIMDValue>()->signMode() == SIMDSignMode::Unsigned) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                append(VectorConvertUnsigned, tmp(value->child(0)), tmp(value), m_code.newTmp(B3::FP));
+                return;
+            }
             emitSIMDUnaryOp(Air::VectorConvert);
             return;
         case B3::VectorConvertLow:
+            if (isX86()) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                if (value->signMode() == SIMDSignMode::Signed)
+                    append(VectorConvertLowSignedInt32, tmp(value->child(0)), tmp(value));
+                else
+                    append(VectorConvertLowUnsignedInt32, tmp(value->child(0)), tmp(value), m_code.newTmp(B3::GP), m_code.newTmp(B3::FP));
+                return;
+            }
             emitSIMDUnaryOp(Air::VectorConvertLow);
             return;
         case B3::VectorNearest:
@@ -3986,9 +4100,22 @@ private:
             return;
         }
         case B3::VectorExtaddPairwise:
+            if (isX86()) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                if (value->simdLane() == SIMDLane::i16x8 && value->signMode() == SIMDSignMode::Unsigned)
+                    append(VectorExtaddPairwiseUnsignedInt16, tmp(value->child(0)), tmp(value), m_code.newTmp(B3::FP));
+                else
+                    append(Air::VectorExtaddPairwise, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value), m_code.newTmp(B3::GP), m_code.newTmp(B3::FP));
+                return;
+            }
             emitSIMDUnaryOp(Air::VectorExtaddPairwise);
             return;
         case B3::VectorMulSat:
+            if constexpr (isX86()) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                append(Air::VectorMulSat, tmp(value->child(0)), tmp(value->child(1)), tmp(value), m_code.newTmp(GP), m_code.newTmp(FP));
+                return;
+            }
             emitSIMDMonomorphicBinaryOp(Air::VectorMulSat);
             return;
         case B3::VectorSwizzle:
@@ -4095,6 +4222,7 @@ private:
 
         case Const128: {
             // We expect that the moveConstants() phase has run, and any constant vector referenced from stackmaps get fused.
+            RELEASE_ASSERT(!m_value->asV128().u64x2[0] && !m_value->asV128().u64x2[1]);
             append(MoveZeroToVector, tmp(m_value));
             return;
         }

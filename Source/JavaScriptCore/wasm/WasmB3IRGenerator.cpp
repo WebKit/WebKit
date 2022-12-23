@@ -391,6 +391,7 @@ public:
         B3_OP_CASE(TruncSat)
         B3_OP_CASE(Not)
         B3_OP_CASE(Neg)
+
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(v)));
         return { };
@@ -465,6 +466,7 @@ public:
                 break;
             }
         }
+
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(lhs), get(rhs)));
         return { };
@@ -492,6 +494,7 @@ public:
         B3_OP_CASE(SubSat)
         B3_OP_CASE(Max)
         B3_OP_CASE(Min)
+
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(a), get(b)));
         return { };
@@ -3200,6 +3203,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
 
     if (!m_tierUp)
         return;
+    ASSERT(!m_proc.usesSIMD() || isAnyBBQ(m_compilationMode));
 
     Origin origin = this->origin();
     ASSERT(m_tierUp->osrEntryTriggers().size() == loopIndex);
@@ -3243,6 +3247,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
     static_assert(sizeof(TierUpCount::TriggerReason) == 1, "branchTest8 assumes this size");
+    SavedFPWidth savedFPWidth = m_proc.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
     patch->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         CCallHelpers::Jump forceOSREntry = jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::AbsoluteAddress(forceEntryTrigger));
@@ -3263,7 +3268,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
             forceOSREntry.link(&jit);
             tierUp.link(&jit);
 
-            jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr);
+            jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr, savedFPWidth);
             jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
             jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
         });
@@ -3272,7 +3277,8 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
 
 Value* B3IRGenerator::loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type type)
 {
-    size_t offset = sizeof(uint64_t) * indexInBuffer++;
+    unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
+    size_t offset = valueSize * sizeof(uint64_t) * (indexInBuffer++);
     RELEASE_ASSERT(type.isNumeric());
     return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, type, origin(), pointer, offset);
 }
@@ -3331,7 +3337,9 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
         connectControlAtEntrypoint(indexInBuffer, pointer, block, enclosingStack, block);
         connectControlAtEntrypoint(indexInBuffer, pointer, block, newStack, block, true);
 
-        m_osrEntryScratchBufferSize = indexInBuffer;
+        ASSERT(!m_proc.usesSIMD() || m_compilationMode == CompilationMode::OMGForOSREntryMode);
+        unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
+        m_osrEntryScratchBufferSize = valueSize * indexInBuffer;
         m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
         body->addPredecessor(m_currentBlock);
     }

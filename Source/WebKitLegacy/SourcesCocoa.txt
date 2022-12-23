@@ -185,3 +185,4 @@ mac/WebView/WebScriptDebugger.mm
 mac/WebView/WebScriptDebugDelegate.mm
 mac/WebView/WebScriptWorld.mm
 mac/WebView/WebView.mm
+mac/WebView/WebViewRenderingUpdateScheduler.mm

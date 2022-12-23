@@ -399,8 +399,9 @@ private:
     // GraphicsLayerClient implementation
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
+    bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
-    
+
     // GraphicsLayerUpdaterClient implementation
     void flushLayersSoon(GraphicsLayerUpdater&) final;
     DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() final;

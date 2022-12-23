@@ -236,16 +236,16 @@ public:
         AIR_OP_CASE(AnyTrue)
         AIR_OP_CASE(AllTrue)
         result = tmpForType(Types::I32);
-        if (isX86() && (op == SIMDLaneOperation::AllTrue || op == SIMDLaneOperation::Bitmask)) {
-            append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::V128));
-            return { };
-        }
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, v, result);
             return { };
         }
         if (isValidForm(airOp, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp)) {
             append(airOp, Arg::simdInfo(info), v, result);
+            return { };
+        }
+        if (isValidForm(airOp, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::V128));
             return { };
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -357,14 +357,6 @@ public:
                 return { };
             }
 
-            if (airOp == B3::Air::VectorExtaddPairwise) {
-                if (info.lane == SIMDLane::i16x8 && info.signMode == SIMDSignMode::Unsigned)
-                    append(VectorExtaddPairwiseUnsignedInt16, v, result, tmpForType(Types::V128));
-                else
-                    append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
-                return { };
-            }
-
             if (airOp == B3::Air::VectorConvert && info.signMode == SIMDSignMode::Unsigned) {
                 append(VectorConvertUnsigned, v, result, tmpForType(Types::V128));
                 return { };
@@ -398,6 +390,10 @@ public:
             }
         }
 
+        if (isX86() && airOp == VectorExtaddPairwise) {
+            append(airOp, Arg::simdInfo(info), v, result, tmpForType(Types::I64), tmpForType(Types::V128));
+            return { };
+        }
         if (isValidForm(airOp, Arg::Tmp, Arg::Tmp)) {
             append(airOp, v, result);
             return { };
@@ -458,6 +454,8 @@ public:
                     break;
                 case MacroAssembler::GreaterThanOrEqual:
                     if (info.lane == SIMDLane::i64x2) {
+                        // Note: rhs and lhs are reversed here, we are semantically negating LessThan. GreaterThan is
+                        // just better supported on AVX.
                         append(airOp, Arg::relCond(MacroAssembler::GreaterThan), Arg::simdInfo(info), rhs, lhs, result, scratch);
                         append(VectorXor, Arg::simdInfo({ SIMDLane::v128, SIMDSignMode::None }), result, addConstant(allOnes), result);
                     } else
@@ -641,7 +639,7 @@ private:
 
     B3::Air::Arg materializeAddrArg(Tmp base, size_t offset, Width width)
     {
-        if (Arg::isValidAddrForm(offset, width))
+        if (Arg::isValidAddrForm(Move, offset, width))
             return Arg::addr(base, offset);
 
         auto temp = g64();
@@ -1901,8 +1899,9 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, instanceValue(), m_currentBlock);
 
     unsigned indexInBuffer = 0;
+    unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
     auto loadFromScratchBuffer = [&] (TypedTmp result) {
-        size_t offset = sizeof(uint64_t) * indexInBuffer;
+        size_t offset = valueSize * sizeof(uint64_t) * indexInBuffer;
         ++indexInBuffer;
         Tmp bufferPtr = Tmp(GPRInfo::argumentGPR0);
         emitLoad(bufferPtr, offset, result);

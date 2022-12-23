@@ -88,9 +88,7 @@ Code::Code(Procedure& proc)
                     all.remove(reg);
             }
 #endif
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=243890
-            // Our use of DisallowMacroScratchRegisterUsage is not quite right, so for now...
-            all.exclude(RegisterSetBuilder::macroClobberedRegisters());
+            all.remove(MacroAssembler::fpTempRegister);
 #endif // CPU(ARM)
             auto calleeSave = RegisterSetBuilder::calleeSaveRegisters();
             all.buildAndValidate().forEach(
@@ -116,6 +114,10 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
+#if CPU(ARM_THUMB2)
+    if (auto reg = extendedOffsetAddrRegister())
+        pinRegister(reg);
+#endif
     m_pinnedRegs.add(MacroAssembler::framePointerRegister, IgnoreVectors);
 }
 

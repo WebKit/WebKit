@@ -445,7 +445,7 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(AtomStringTable& stringTable, St
 // When removing a string from the table, we know it's already the one in the table, so no need for a string equality check.
 struct AtomStringTableRemovalHashTranslator {
     static unsigned hash(AtomStringImpl* string) { return string->hash(); }
-    static bool equal(const AtomStringTable::StringEntry& a, AtomStringImpl* b) { return a.get() == b; }
+    static bool equal(const AtomStringTable::StringEntry& a, AtomStringImpl* b) { return a == b; }
 };
 
 void AtomStringImpl::remove(AtomStringImpl* string)

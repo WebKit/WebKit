@@ -26,9 +26,12 @@
 #include "config.h"
 #include "GraphicsLayerCARemote.h"
 
+#include "ImageBufferBackendHandleSharing.h"
 #include "PlatformCAAnimationRemote.h"
 #include "PlatformCALayerRemote.h"
 #include "RemoteLayerTreeContext.h"
+#include "RemoteLayerTreeDrawingAreaProxyMessages.h"
+#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformScreen.h>
 
@@ -89,5 +92,48 @@ void GraphicsLayerCARemote::moveToContext(RemoteLayerTreeContext& context)
 
     context.graphicsLayerDidEnterContext(*this);
 }
+
+class GraphicsLayerCARemoteAsyncContentsDisplayDelegate : public GraphicsLayerAsyncContentsDisplayDelegate {
+public:
+    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::GraphicsLayer::PlatformLayerID layerID)
+        : m_connection(connection)
+        , m_drawingArea(identifier)
+        , m_layerID(layerID)
+    { }
+
+    bool tryCopyToLayer(ImageBuffer& buffer) final
+    {
+        auto clone = buffer.clone();
+        if (!clone)
+            return false;
+        auto* backend = clone->ensureBackendCreated();
+        if (!backend)
+            return false;
+
+        clone->flushDrawingContext();
+
+        auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(backend->toBackendSharing());
+        if (!sharing)
+            return false;
+
+        auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
+        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(m_layerID, backendHandle), m_drawingArea.toUInt64());
+        return true;
+    }
+
+private:
+    Ref<IPC::Connection> m_connection;
+    DrawingAreaIdentifier m_drawingArea;
+    WebCore::GraphicsLayer::PlatformLayerID m_layerID;
+};
+
+RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate()
+{
+    if (!m_context || !m_context->drawingAreaIdentifier() || !WebProcess::singleton().parentProcessConnection())
+        return nullptr;
+
+    return adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier(), primaryLayerID()));
+}
+
 
 } // namespace WebKit

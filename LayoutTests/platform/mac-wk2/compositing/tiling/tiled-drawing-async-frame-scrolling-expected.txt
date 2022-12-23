@@ -79,6 +79,7 @@
                               (in window 1)
                               (children 1
                                 (GraphicsLayer
+                                  (anchor 0.00 0.00)
                                   (backingStoreAttached 0)
                                   (visible rect 0.00, 0.00 0.00 x 0.00)
                                   (coverage rect 0.00, 0.00 285.00 x 135.00)
@@ -185,6 +186,7 @@
                               (in window 1)
                               (children 1
                                 (GraphicsLayer
+                                  (anchor 0.00 0.00)
                                   (backingStoreAttached 0)
                                   (visible rect 0.00, 0.00 0.00 x 0.00)
                                   (coverage rect 0.00, 0.00 285.00 x 135.00)
@@ -309,6 +311,7 @@
                                   (in window 1)
                                   (children 1
                                     (GraphicsLayer
+                                      (anchor 0.00 0.00)
                                       (backingStoreAttached 0)
                                       (visible rect 0.00, 0.00 0.00 x 0.00)
                                       (coverage rect 0.00, 0.00 285.00 x 135.00)

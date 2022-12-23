@@ -143,20 +143,14 @@ void GenerateAndAllocateRegisters::insertBlocksForFlushAfterTerminalPatchpoints(
     blockInsertionSet.execute();
 }
 
-static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(CCallHelpers& jit, intptr_t offsetFromFP)
+static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(Air::Opcode opcode, CCallHelpers& jit, intptr_t offsetFromFP)
 {
     if (isX86()) {
-        ASSERT(Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP).isValidForm(Width64));
-        return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
-    }
-
-    if (isARM()) {
-        // For now, we can just solve this in the macro assembler ...
-        return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
+        ASSERT(Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP).isValidForm(Move, Width64));
     }
 
     auto addr = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-    if (addr.isValidForm(registerWidth()))
+    if (addr.isValidForm(opcode, registerWidth()))
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
     GPRReg reg = extendedOffsetAddrRegister();
     jit.move(CCallHelpers::TrustedImmPtr(offsetFromFP), reg);
@@ -182,13 +176,13 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
     intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
     JIT_COMMENT(*m_jit, "Flush(", tmp, ", ", reg, ", offset=", offset, ")");
     if (tmp.isGP())
-        m_jit->storeRegWord(reg.gpr(), callFrameAddr(*m_jit, offset));
+        m_jit->storeRegWord(reg.gpr(), callFrameAddr(Air::Move, *m_jit, offset));
     else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
         ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
-        m_jit->storeDouble(reg.fpr(), callFrameAddr(*m_jit, offset));
+        m_jit->storeDouble(reg.fpr(), callFrameAddr(Air::Move, *m_jit, offset));
     } else {
         ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
-        m_jit->storeVector(reg.fpr(), callFrameAddr(*m_jit, offset));
+        m_jit->storeVector(reg.fpr(), callFrameAddr(Air::MoveDouble, *m_jit, offset));
     }
 }
 
@@ -218,13 +212,13 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         JIT_COMMENT(*m_jit, "Alloc(", tmp, ", ", reg, ", role=", role, ")");
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
         if (tmp.bank() == GP)
-            m_jit->loadRegWord(callFrameAddr(*m_jit, offset), reg.gpr());
+            m_jit->loadRegWord(callFrameAddr(Air::Move, *m_jit, offset), reg.gpr());
         else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
             ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
-            m_jit->loadDouble(callFrameAddr(*m_jit, offset), reg.fpr());
+            m_jit->loadDouble(callFrameAddr(Air::MoveDouble, *m_jit, offset), reg.fpr());
         } else {
             ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
-            m_jit->loadVector(callFrameAddr(*m_jit, offset), reg.fpr());
+            m_jit->loadVector(callFrameAddr(Air::MoveDouble, *m_jit, offset), reg.fpr());
         }
     }
 }
@@ -498,11 +492,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     CompilerTimingScope timingScope("Air", "GenerateAndAllocateRegisters::generate");
 
-#if !CPU(ARM)
-    // On ARM, we still rely on the macro assembler to handle large immediates.
-    // On other platforms, we can use the macro scratch registers.
     DisallowMacroScratchRegisterUsage disallowScratch(*m_jit);
-#endif
 
     buildLiveRanges(*m_liveness);
 
@@ -838,7 +828,18 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                             arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                         }
                     });
-
+                    int pinnedRegisterUses = 0;
+                    inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
+                        if (arg.isAddr() && arg.isAnyUse(role) && !arg.isValidForm(inst.kind.opcode)) {
+                            GPRReg reg = extendedOffsetAddrRegister();
+                            m_jit->move(CCallHelpers::TrustedImmPtr(arg.offset()), reg);
+                            m_jit->addPtr(arg.base().gpr(), reg);
+                            arg = Arg::addr(Tmp(reg));
+                            ++pinnedRegisterUses;
+                            RELEASE_ASSERT(pinnedRegisterUses < 2);
+                            return;
+                        }
+                    });
                     --instIndex;
                     isReplayingSameInst = true;
                     continue;

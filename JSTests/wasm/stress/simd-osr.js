@@ -1,7 +1,5 @@
-//@ requireOptions("--useWebAssemblySIMD=1")
+//@ requireOptions("--useWebAssemblySIMD=1", "--useConcurrentJIT=0")
 //@ skip if $architecture != "arm64" && $architecture != "x86_64"
-//@ skip
-//FIXME: this test is currently broken.
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 
@@ -27,7 +25,7 @@ let wat = `
             br_if $loop)
 
         (i32x4.extract_lane 0)
-        (i32x4.extract_lane 3 (local.get $r))
+        (i32x4.extract_lane 0 (local.get $r))
         i32.add
     )
 )
@@ -38,7 +36,7 @@ async function test() {
     const { test } = instance.exports
 
     for (let i = 0; i < 10000; ++i) {
-        assert.eq(test(), 1000*4 + 42)
+        assert.eq(test(), 1000*1 + 42)
     }
 }
 

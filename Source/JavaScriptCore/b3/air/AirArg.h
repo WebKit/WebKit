@@ -27,6 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirOpcode.h"
 #include "AirTmp.h"
 #include "B3Bank.h"
 #include "B3Common.h"
@@ -1301,8 +1302,11 @@ public:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    static bool isValidAddrForm(Int offset, std::optional<Width> width = std::nullopt)
+    static bool isValidAddrForm(Air::Opcode opcode, Int offset, std::optional<Width> width = std::nullopt)
     {
+#if !CPU(ARM_THUM2)
+        UNUSED_PARAM(opcode);
+#endif
         if (isX86())
             return true;
 
@@ -1328,10 +1332,20 @@ public:
         }
 
 #if CPU(ARM_THUMB2)
-        return MacroAssemblerARMv7::BoundsNonDoubleWordOffset::within(offset);
-#else
-        return false;
+        switch (opcode) {
+        case Move:
+        case Move32:
+            return MacroAssemblerARMv7::BoundsNonDoubleWordOffset::within(offset);
+        case MoveDouble:
+        case MoveFloat:
+            if (!std::is_signed<Int>::value)
+                return !((offset & 3) || (offset > (255 * 4)));
+            return !((offset & 3) || (offset > (255 * 4)) || (static_cast<std::make_signed<Int>::type>(offset) < -(255 * 4)));
+        default:
+            return false;
+        }
 #endif
+        return false;
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
@@ -1357,7 +1371,7 @@ public:
     // If you don't pass a width then this optimistically assumes that you're using the right width. But
     // the width is relevant to validity, so passing a null width is only useful for assertions. Don't
     // pass null widths when cascading through Args in the instruction selector!
-    bool isValidForm(std::optional<Width> width = std::nullopt) const
+    bool isValidForm(Air::Opcode opcode, std::optional<Width> width = std::nullopt) const
     {
         switch (kind()) {
         case Invalid:
@@ -1380,7 +1394,7 @@ public:
         case Addr:
         case Stack:
         case CallArg:
-            return isValidAddrForm(offset(), width);
+            return isValidAddrForm(opcode, offset(), width);
         case Index:
             return isValidIndexForm(scale(), offset(), width);
         case PreIndex:

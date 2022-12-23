@@ -37,7 +37,6 @@ inline Air::Opcode moveForType(Type type)
     case Int32:
         return Move32;
     case Int64:
-        RELEASE_ASSERT(is64Bit());
         return Move;
     case Float:
         return MoveFloat;

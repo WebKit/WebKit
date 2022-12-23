@@ -201,8 +201,8 @@ private:
 
     B3::Type toB3ResultType(BlockSignature);
     static B3::Air::Opcode moveOpForValueType(Type);
-    void emitLoad(Tmp base, size_t offset, const TypedTmp& result);
-    void emitStore(const TypedTmp& value, Tmp base, size_t offset);
+    void emitLoad(Tmp base, intptr_t offset, const TypedTmp& result);
+    void emitStore(const TypedTmp& value, Tmp base, intptr_t offset);
     void emitMove(const TypedTmp& src, const TypedTmp& dst);
     void emitMove(const ValueLocation&, const TypedTmp& dst);
     void emitMove(const ArgumentLocation&, const TypedTmp& dst);
@@ -360,9 +360,17 @@ void AirIRGenerator32::emitZeroInitialize(BasicBlock* block, ExpressionType valu
         append(block, Move32ToFloat, temp, value);
         break;
     }
-    case TypeKind::F64:
+    case TypeKind::F64: {
+#if CPU(ARM_THUMB2)
+        TypedTmp zeroPtr = gPtr();
+        static double zeroConstant = 0.;
+        append(block, Move, Arg::immPtr(&zeroConstant), zeroPtr);
+        append(block, MoveDouble, Arg::addr(zeroPtr), value);
+#else
         append(block, MoveZeroToDouble, value);
+#endif
         break;
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -425,10 +433,10 @@ B3::Type AirIRGenerator32::toB3ResultType(BlockSignature returnType)
     return result.iterator->value;
 }
 
-void AirIRGenerator32::emitLoad(Tmp base, size_t offset, const TypedTmp& result)
+void AirIRGenerator32::emitLoad(Tmp base, intptr_t offset, const TypedTmp& result)
 {
     auto const largestOffsetUsed = result.isGPPair() ? offset + 4 : offset;
-    if (!Arg::isValidAddrForm(largestOffsetUsed, B3::widthForType(toB3Type(result.type())))) {
+    if (!Arg::isValidAddrForm(moveForType(toB3Type(result.type())), largestOffsetUsed, B3::widthForType(toB3Type(result.type())))) {
         auto address = gPtr();
         append(Move, Arg::bigImm(offset), address);
         append(Add32, base, address, address);
@@ -443,10 +451,10 @@ void AirIRGenerator32::emitLoad(Tmp base, size_t offset, const TypedTmp& result)
         append(moveOpForValueType(result.type()), Arg::addr(base, offset), result);
 }
 
-void AirIRGenerator32::emitStore(const TypedTmp& value, Tmp base, size_t offset)
+void AirIRGenerator32::emitStore(const TypedTmp& value, Tmp base, intptr_t offset)
 {
     auto const largestOffsetUsed = value.isGPPair() ? offset + 4 : offset;
-    if (!Arg::isValidAddrForm(largestOffsetUsed, B3::widthForType(toB3Type(value.type())))) {
+    if (!Arg::isValidAddrForm(moveForType(toB3Type(value.type())), largestOffsetUsed, B3::widthForType(toB3Type(value.type())))) {
         auto address = gPtr();
         append(Move, Arg::bigImm(offset), address);
         append(Add32, base, address, address);
@@ -561,7 +569,16 @@ auto AirIRGenerator32::emitCheckAndPreparePointer(ExpressionType pointer, uint32
     append(AddPtr, memoryBase, result);
     return result;
 }
-
+inline bool isFPLoadOp(LoadOpType op)
+{
+    switch (op) {
+    case LoadOpType::F32Load:
+    case LoadOpType::F64Load:
+        return true;
+    default:
+        return false;
+    }
+}
 TypedTmp AirIRGenerator32::emitLoadOp(LoadOpType op, ExpressionType pointer, uint32_t uoffset)
 {
     uint32_t offset = fixupPointerPlusOffset(pointer, uoffset);
@@ -571,7 +588,12 @@ TypedTmp AirIRGenerator32::emitLoadOp(LoadOpType op, ExpressionType pointer, uin
     TypedTmp result;
 
     auto getAddr = [&](uint32_t offset) {
-        if (Arg::isValidAddrForm(offset, widthForBytes(sizeOfLoadOp(op))))
+        JSC::B3::Air::Opcode opcode = Move;
+#if CPU(ARM_THUMB2)
+        if (isFPLoadOp(op))
+            opcode = MoveDouble;
+#endif
+        if (Arg::isValidAddrForm(opcode, offset, widthForBytes(sizeOfLoadOp(op))))
             return Arg::addr(pointer, offset);
         immTmp = gPtr();
         newPtr = gPtr();
@@ -737,6 +759,17 @@ auto AirIRGenerator32::load(LoadOpType op, ExpressionType pointer, ExpressionTyp
     return { };
 }
 
+inline bool isFPStoreOp(StoreOpType op)
+{
+    switch (op) {
+    case StoreOpType::F32Store:
+    case StoreOpType::F64Store:
+        return true;
+    default:
+        return false;
+    }
+}
+
 inline void AirIRGenerator32::emitStoreOp(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t uoffset)
 {
     uint32_t offset = fixupPointerPlusOffset(pointer, uoffset);
@@ -745,7 +778,12 @@ inline void AirIRGenerator32::emitStoreOp(StoreOpType op, ExpressionType pointer
     TypedTmp newPtr;
 
     auto const getAddr = [&](uint32_t offset) {
-        if (Arg::isValidAddrForm(offset, widthForBytes(sizeOfStoreOp(op))))
+        JSC::B3::Air::Opcode opcode = Move;
+#if CPU(ARM_THUMB2)
+        if (isFPStoreOp(op))
+            opcode = MoveDouble;
+#endif
+        if (Arg::isValidAddrForm(opcode, offset, widthForBytes(sizeOfStoreOp(op))))
             return Arg::addr(pointer, offset);
         immTmp = gPtr();
         newPtr = gPtr();

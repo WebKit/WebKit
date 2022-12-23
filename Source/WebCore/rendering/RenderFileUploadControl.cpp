@@ -46,18 +46,22 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFileUploadControl);
 
-const int afterButtonSpacing = 4;
-#if !PLATFORM(IOS_FAMILY)
-const int iconHeight = 16;
-const int iconWidth = 16;
-const int iconFilenameSpacing = 2;
-const int defaultWidthNumChars = 34;
-#else
-// On iOS the icon height matches the button height, to maximize the icon size.
-const int iconFilenameSpacing = afterButtonSpacing;
-const int defaultWidthNumChars = 38;
+constexpr int afterButtonSpacing = 4;
+constexpr int buttonShadowHeight = 2;
+
+#if !PLATFORM(COCOA)
+// On Cocoa platforms the icon height matches the button height, to maximize the icon size.
+constexpr int iconHeight = 16;
+constexpr int iconWidth = 16;
 #endif
-const int buttonShadowHeight = 2;
+
+#if !PLATFORM(IOS_FAMILY)
+constexpr int iconFilenameSpacing = 2;
+constexpr int defaultWidthNumChars = 34;
+#else
+constexpr int iconFilenameSpacing = afterButtonSpacing;
+constexpr int defaultWidthNumChars = 38;
+#endif
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, RenderStyle&& style)
     : RenderBlockFlow(input, WTFMove(style))
@@ -97,7 +101,7 @@ static int nodeWidth(Node* node)
     return (node && node->renderBox()) ? roundToInt(node->renderBox()->size().width()) : 0;
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 static int nodeHeight(Node* node)
 {
     return (node && node->renderBox()) ? roundToInt(node->renderBox()->size().height()) : 0;
@@ -106,7 +110,7 @@ static int nodeHeight(Node* node)
 
 int RenderFileUploadControl::maxFilenameWidth() const
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     int iconWidth = nodeHeight(uploadButton());
 #endif
     return std::max(0, snappedIntRect(contentBoxRect()).width() - nodeWidth(uploadButton()) - afterButtonSpacing
@@ -142,8 +146,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
         const String& displayedFilename = fileTextValue();
         const FontCascade& font = style().fontCascade();
         TextRun textRun = constructTextRun(displayedFilename, style(), ExpansionBehavior::allowRightOnly(), RespectDirection | RespectDirectionOverride);
-
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
         int iconHeight = nodeHeight(uploadButton());
         int iconWidth = iconHeight;
 #endif

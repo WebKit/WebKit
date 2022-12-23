@@ -117,6 +117,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebValidationMessageClient.h"
 #import "WebViewGroup.h"
+#import "WebViewRenderingUpdateScheduler.h"
 #import "WebVisitedLinkStore.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
@@ -1263,8 +1264,6 @@ static const NSUInteger orderedListSegment = 2;
 #else
 - (float)_deviceScaleFactor;
 #endif
-- (void)_willStartRenderingUpdateDisplay;
-- (void)_didCompleteRenderingUpdateDisplay;
 @end
 
 @implementation WebView (AllWebViews)
@@ -1720,19 +1719,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];
     return self;
-}
-
-- (void)_updateRendering
-{
-#if PLATFORM(IOS_FAMILY)
-    // Ensure fixed positions layers are where they should be.
-    [self _synchronizeCustomFixedPositionLayoutRect];
-#endif
-
-    if (_private->page) {
-        _private->page->updateRendering();
-        _private->page->finalizeRenderingUpdate({ });
-    }
 }
 
 + (NSArray *)_supportedMIMETypes
@@ -2514,9 +2500,9 @@ static bool fastDocumentTeardownEnabled()
     }
 #endif
 
-    if (_private->layerFlushController) {
-        _private->layerFlushController->invalidate();
-        _private->layerFlushController = nullptr;
+    if (_private->renderingUpdateScheduler) {
+        _private->renderingUpdateScheduler->invalidate();
+        _private->renderingUpdateScheduler = nullptr;
     }
 
     [[self _notificationProvider] unregisterWebView:self];
@@ -5537,9 +5523,9 @@ static bool needsWebViewInitThreadWorkaround()
     [self _close];
 
 #if PLATFORM(IOS_FAMILY)
-    if (_private->layerFlushController) {
-        _private->layerFlushController->invalidate();
-        _private->layerFlushController = nullptr;
+    if (_private->renderingUpdateScheduler) {
+        _private->renderingUpdateScheduler->invalidate();
+        _private->renderingUpdateScheduler = nullptr;
     }
 #endif
 }
@@ -7059,21 +7045,6 @@ static WebFrameView *containingFrameView(NSView *view)
             responder = mainFrameView;
     }
     return responder;
-}
-
-- (void)_willStartRenderingUpdateDisplay
-{
-    if (_private->page)
-        _private->page->willStartRenderingUpdateDisplay();
-}
-
-- (void)_didCompleteRenderingUpdateDisplay
-{
-    if (_private->page)
-        _private->page->didCompleteRenderingUpdateDisplay();
-
-    if (_private->layerFlushController)
-        _private->layerFlushController->didCompleteRenderingUpdateDisplay();
 }
 
 @end
@@ -8826,6 +8797,7 @@ FORWARD(toggleUnderline)
     networkingContext->storageSession()->credentialStorage().clearCredentials();
 }
 
+// FIXME: One-shot drawing synchronization is no longer necessary since all AppKit rendering is driven by Core Animation.
 - (BOOL)_needsOneShotDrawingSynchronization
 {
     return _private->needsOneShotDrawingSynchronization;
@@ -8836,78 +8808,6 @@ FORWARD(toggleUnderline)
     _private->needsOneShotDrawingSynchronization = needsSynchronization;
 }
 
-/*
-    The order of events with compositing updates is this:
-
-   Start of runloop                                        End of runloop
-        |                                                       |
-      --|-------------------------------------------------------|--
-           ^         ^                                        ^
-           |         |                                        |
-    NSWindow update, |                                     CA commit
-     NSView drawing  |
-        flush        |
-                layerSyncRunLoopObserverCallBack
-
-    To avoid flashing, we have to ensure that compositing changes (rendered via
-    the CoreAnimation rendering display link) appear on screen at the same time
-    as content painted into the window via the normal WebCore rendering path.
-
-    CoreAnimation will commit any layer changes at the end of the runloop via
-    its "CA commit" observer. Those changes can then appear onscreen at any time
-    when the display link fires, which can result in unsynchronized rendering.
-
-    To fix this, the GraphicsLayerCA code in WebCore does not change the CA
-    layer tree during style changes and layout; it stores up all changes and
-    commits them via flushCompositingState(). There are then two situations in
-    which we can call flushCompositingState():
-
-    1. When painting. FrameView::paintContents() makes a call to flushCompositingState().
-
-    2. When style changes/layout have made changes to the layer tree which do not
-       result in painting. In this case we need a run loop observer to do a
-       flushCompositingState() at an appropriate time. The observer will keep firing
-       until the time is right (essentially when there are no more pending layouts).
-
-*/
-bool LayerFlushController::flushLayers()
-{
-#if PLATFORM(IOS_FAMILY)
-    WebThreadLock();
-#endif
-
-#if PLATFORM(MAC)
-    NSWindow *window = [m_webView window];
-#endif // PLATFORM(MAC)
-
-    [m_webView _updateRendering];
-
-    if (!m_haveRegisteredCommitHandlers) {
-        WebView* webView = m_webView;
-        [CATransaction addCommitHandler:^{
-            [webView _willStartRenderingUpdateDisplay];
-        } forPhase:kCATransactionPhasePreLayout];
-
-        [CATransaction addCommitHandler:^{
-            [webView _didCompleteRenderingUpdateDisplay];
-        } forPhase:kCATransactionPhasePostCommit];
-        
-        m_haveRegisteredCommitHandlers = true;
-    }
-
-#if PLATFORM(MAC)
-    // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
-    // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
-    // updates here.
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (![window isFlushWindowDisabled])
-        [window _enableScreenUpdatesIfNeeded];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-
-    return true;
-}
-
 - (void)_scheduleUpdateRendering
 {
 #if PLATFORM(IOS_FAMILY)
@@ -8915,9 +8815,38 @@ bool LayerFlushController::flushLayers()
         return;
 #endif
 
-    if (!_private->layerFlushController)
-        _private->layerFlushController = LayerFlushController::create(self);
-    _private->layerFlushController->scheduleLayerFlush();
+    if (!_private->renderingUpdateScheduler)
+        _private->renderingUpdateScheduler = makeUnique<WebViewRenderingUpdateScheduler>(self);
+
+    _private->renderingUpdateScheduler->scheduleRenderingUpdate();
+}
+
+- (void)_updateRendering
+{
+#if PLATFORM(IOS_FAMILY)
+    // Ensure fixed position layers are where they should be.
+    [self _synchronizeCustomFixedPositionLayoutRect];
+#endif
+
+    if (_private->page) {
+        _private->page->updateRendering();
+        _private->page->finalizeRenderingUpdate({ });
+    }
+}
+
+- (void)_willStartRenderingUpdateDisplay
+{
+    if (_private->page)
+        _private->page->willStartRenderingUpdateDisplay();
+}
+
+- (void)_didCompleteRenderingUpdateDisplay
+{
+    if (_private->page)
+        _private->page->didCompleteRenderingUpdateDisplay();
+
+    if (_private->renderingUpdateScheduler)
+        _private->renderingUpdateScheduler->didCompleteRenderingUpdateDisplay();
 }
 
 - (BOOL)_flushCompositingChanges

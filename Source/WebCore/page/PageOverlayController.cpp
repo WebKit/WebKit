@@ -435,6 +435,14 @@ bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, OptionSe
     return !options.contains(LayerTreeAsTextOptions::IncludePageOverlayLayers);
 }
 
+bool PageOverlayController::shouldDumpPropertyForLayer(const GraphicsLayer* layer, const char* propertyName, OptionSet<LayerTreeAsTextOptions>) const
+{
+    if (!strcmp(propertyName, "anchorPoint"))
+        return layer->anchorPoint() != FloatPoint3D(0.5f, 0.5f, 0);
+
+    return true;
+}
+
 void PageOverlayController::tiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)
 {
     if (usingTiledBacking)

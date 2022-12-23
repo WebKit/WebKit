@@ -667,29 +667,44 @@ InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(size_t firs
     return TextUtil::hangablePunctuationStartWidth(inlineTextItem, style);
 }
 
-InlineLayoutUnit LineBuilder::trailingPunctuationWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const
+InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t candidateContentEnd, size_t layoutRangeEnd) const
 {
+    ASSERT(candidateContentEnd <= layoutRangeEnd);
     auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[lastInlineTextItemIndex]);
     auto& style = isFirstFormattedLine() ? inlineTextItem.firstLineStyle() : inlineTextItem.style();
-    if (!TextUtil::hasHangablePunctuationEnd(inlineTextItem, style))
-        return { };
 
-    // FIXME: If this turns out to be problematic (finding out if this is the last formatted line that is), we
-    // may have to fallback to a post-process setup, where after finishing laying out the content, we go back and re-layout
-    // the last (2?) line(s) when there's trailing hanging punctuation.
-    // For now let's probe the content all the way to layoutRangeEnd.
-    for (auto index = lastInlineTextItemIndex + 1; index < layoutRangeEnd; ++index) {
-        auto& inlineItem = m_inlineItems[index];
+    auto isContentfulInlineItem = [&](auto& inlineItem) {
         if (inlineItem.isFloat())
-            continue;
-        auto isContentful = inlineItem.isBox() || inlineItem.isText()
+            return false;
+        return inlineItem.isBox()
+            || inlineItem.isText()
             || (inlineItem.isInlineBoxStart() && formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingStart())
             || (inlineItem.isInlineBoxEnd() && formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingEnd());
-        if (isContentful)
-            return { };
+    };
+
+    auto index = lastInlineTextItemIndex + 1;
+    if (TextUtil::hasHangableStopOrCommaEnd(inlineTextItem, style)) {
+        // Stop or comma does apply to all lines not just the last formatted one.
+        for (; index < candidateContentEnd; ++index) {
+            if (isContentfulInlineItem(m_inlineItems[index]))
+                return { };
+        }
+        return TextUtil::hangableStopOrCommaEndWidth(inlineTextItem, style);
     }
-    // This candidate leading content may have hanging punctuation start.
-    return TextUtil::hangablePunctuationEndWidth(inlineTextItem, style);
+
+    if (TextUtil::hasHangablePunctuationEnd(inlineTextItem, style)) {
+        // FIXME: If this turns out to be problematic (finding out if this is the last formatted line that is), we
+        // may have to fallback to a post-process setup, where after finishing laying out the content, we go back and re-layout
+        // the last (2?) line(s) when there's trailing hanging punctuation.
+        // For now let's probe the content all the way to layoutRangeEnd.
+        for (; index < layoutRangeEnd; ++index) {
+            if (isContentfulInlineItem(m_inlineItems[index]))
+                return { };
+        }
+        return TextUtil::hangablePunctuationEndWidth(inlineTextItem, style);
+    }
+
+    return { };
 }
 
 void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, InlineLayoutUnit currentLogicalRight)
@@ -765,7 +780,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto hangingContentWidth = lineCandidate.inlineContent.continuousContent().hangingContentWidth();
         // Do not even try to check for trailing punctuation when the candidate content already has whitespace type of hanging content.
         if (!hangingContentWidth && lastInlineTextItemIndex)
-            hangingContentWidth += trailingPunctuationWidthForLineCandiate(*lastInlineTextItemIndex, layoutRange.end);
+            hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(*lastInlineTextItemIndex, softWrapOpportunityIndex, layoutRange.end);
         if (firstInlineTextItemIndex)
             hangingContentWidth += leadingPunctuationWidthForLineCandiate(*firstInlineTextItemIndex, currentInlineItemIndex);
         lineCandidate.inlineContent.setHangingContentWidth(hangingContentWidth);

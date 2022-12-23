@@ -255,22 +255,16 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
 
 void Line::handleTrailingHangingContent(std::optional<IntrinsicWidthMode> intrinsicWidthMode, InlineLayoutUnit horizontalAvailableSpaceForContent, bool isLastFormattedLine)
 {
+    // https://drafts.csswg.org/css-text/#hanging
     if (!m_hangingContent.trailingWidth())
         return;
 
-    if (!isLastFormattedLine)
-        m_hangingContent.resetTrailingPunctuation();
+    if (m_hangingContent.isTrailingContentPunctuation() && !isLastFormattedLine)
+        m_hangingContent.resetTrailingContent();
 
-    // https://drafts.csswg.org/css-text/#hanging
     auto hangingTrailingContentIsConditional = [&] {
-        // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
-        // by a forced line break, in which case it must conditionally hang the sequence is instead.
-        // Note that end of last line in a paragraph is considered a forced break.
-        auto lineEndsWithLineBreak = !runs().isEmpty() && runs().last().isLineBreak();
-        auto hasConditionalTrailingHangingWhitespace = m_hangingContent.isTrailingContentWhitespace() && (isLastFormattedLine || lineEndsWithLineBreak);
-        // A stop or comma at the end of a line conditionally hangs.
-        auto hasConditionalTrailingStopOrComma = m_hangingContent.isTrailingContentStopOrComma();
-        return hasConditionalTrailingHangingWhitespace || hasConditionalTrailingStopOrComma;
+        auto lineEndsWithForcedLineBreak = isLastFormattedLine || (!runs().isEmpty() && runs().last().isLineBreak());
+        return m_hangingContent.isTrailingContentConditional() || (m_hangingContent.isTrailingContentConditionalWhenFollowedByForcedLineBreak() && lineEndsWithForcedLineBreak);
     }();
 
     if (!intrinsicWidthMode) {
@@ -528,7 +522,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             return;
         }
         if (TextUtil::hasHangableStopOrCommaEnd(inlineTextItem, style)) {
-            m_hangingContent.setTrailingStopOrComma(TextUtil::hangableStopOrCommaEndWidth(inlineTextItem, style));
+            auto isConditionalHanging = style.hangingPunctuation().contains(HangingPunctuation::AllowEnd);
+            m_hangingContent.setTrailingStopOrComma(TextUtil::hangableStopOrCommaEndWidth(inlineTextItem, style), isConditionalHanging);
             return;
         }
         m_hangingContent.resetTrailingContent();
