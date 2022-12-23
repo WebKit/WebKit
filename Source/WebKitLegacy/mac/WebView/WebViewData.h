@@ -96,8 +96,8 @@ class WebMediaPlaybackTargetPicker;
 extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
 
-class LayerFlushController;
 class WebViewGroup;
+class WebViewRenderingUpdateScheduler;
 
 #if ENABLE(SERVICE_CONTROLS)
 class WebSelectionServiceController;
@@ -106,45 +106,6 @@ class WebSelectionServiceController;
 #if HAVE(TOUCH_BAR)
 @class WebTextTouchBarItemController;
 #endif
-
-class WebViewLayerFlushScheduler {
-public:
-    WebViewLayerFlushScheduler(LayerFlushController*);
-    ~WebViewLayerFlushScheduler();
-
-    void schedule();
-    void invalidate();
-
-private:
-    void layerFlushCallback();
-    
-    LayerFlushController* m_flushController;
-    std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
-    bool m_insideCallback { false };
-    bool m_rescheduledInsideCallback { false };
-};
-
-class LayerFlushController : public RefCounted<LayerFlushController> {
-public:
-    static Ref<LayerFlushController> create(WebView* webView)
-    {
-        return adoptRef(*new LayerFlushController(webView));
-    }
-    
-    // FIXME: Rename to use 'updateRendering' terminology.
-    bool flushLayers();
-    void didCompleteRenderingUpdateDisplay() { m_haveRegisteredCommitHandlers = false; }
-    
-    void scheduleLayerFlush();
-    void invalidate();
-    
-private:
-    LayerFlushController(WebView*);
-    
-    WebView* m_webView;
-    WebViewLayerFlushScheduler m_layerFlushScheduler;
-    bool m_haveRegisteredCommitHandlers { false };
-};
 
 @interface WebWindowVisibilityObserver : NSObject {
     WebView *_view;
@@ -311,7 +272,7 @@ private:
     // so that the NSView drawing is visually synchronized with CALayer updates.
     BOOL needsOneShotDrawingSynchronization;
     BOOL postsAcceleratedCompositingNotifications;
-    RefPtr<LayerFlushController> layerFlushController;
+    std::unique_ptr<WebViewRenderingUpdateScheduler> renderingUpdateScheduler;
 
 #if !PLATFORM(IOS_FAMILY)
     NSPasteboard *insertionPasteboard;

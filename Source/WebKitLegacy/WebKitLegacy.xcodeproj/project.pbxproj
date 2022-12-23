@@ -38,6 +38,7 @@
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
 		072E5F451ABF88750003B164 /* WebMediaPlaybackTargetPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */; };
 		072E5F461ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */; };
+		0FBE258429551487009DA69F /* WebViewRenderingUpdateScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBE258229551487009DA69F /* WebViewRenderingUpdateScheduler.h */; };
 		1430C12C1B2C5DF700DEA01D /* WebViewGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */; };
 		1430C12D1B2C5DF700DEA01D /* WebViewGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1430C12B1B2C5DF700DEA01D /* WebViewGroup.h */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
@@ -729,6 +730,8 @@
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
 		072E5F431ABF88750003B164 /* WebMediaPlaybackTargetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaPlaybackTargetPicker.h; sourceTree = "<group>"; };
 		072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMediaPlaybackTargetPicker.mm; sourceTree = "<group>"; };
+		0FBE258129551486009DA69F /* WebViewRenderingUpdateScheduler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewRenderingUpdateScheduler.mm; sourceTree = "<group>"; };
+		0FBE258229551487009DA69F /* WebViewRenderingUpdateScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewRenderingUpdateScheduler.h; sourceTree = "<group>"; };
 		1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebViewGroup.cpp; path = WebCoreSupport/WebViewGroup.cpp; sourceTree = SOURCE_ROOT; };
 		1430C12B1B2C5DF700DEA01D /* WebViewGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewGroup.h; path = WebCoreSupport/WebViewGroup.h; sourceTree = SOURCE_ROOT; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
@@ -2060,6 +2063,8 @@
 				BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
+				0FBE258229551487009DA69F /* WebViewRenderingUpdateScheduler.h */,
+				0FBE258129551486009DA69F /* WebViewRenderingUpdateScheduler.mm */,
 				C1D8112C202CED0600EE74F9 /* WebWindowAnimation.h */,
 				C1D8112D202CED0700EE74F9 /* WebWindowAnimation.mm */,
 			);
@@ -3130,6 +3135,7 @@
 				1430C12D1B2C5DF700DEA01D /* WebViewGroup.h in Headers */,
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
+				0FBE258429551487009DA69F /* WebViewRenderingUpdateScheduler.h in Headers */,
 				A10C1D761820300E0036883A /* WebVisiblePosition.h in Headers */,
 				A10C1D781820300E0036883A /* WebVisiblePositionInternal.h in Headers */,
 				1AC7176F1A26568A002E3115 /* WebVisitedLinkStore.h in Headers */,
