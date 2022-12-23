@@ -30,6 +30,7 @@
 #include "CPU.h"
 #include "JITOperationValidation.h"
 #include "LLIntCommon.h"
+#include "MacroAssembler.h"
 #include "MinimumReservedZoneSize.h"
 #include <algorithm>
 #include <limits>
@@ -577,6 +578,7 @@ void Options::notifyOptionsChanged()
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
+    Options::useWebAssemblySIMD() = false;
 #endif
 
     if (!Options::allowDoubleShape())
@@ -661,6 +663,11 @@ void Options::notifyOptionsChanged()
 
         if (!Options::useBBQJIT() && Options::useOMGJIT())
             Options::wasmLLIntTiersUpToBBQ() = false;
+
+#if CPU(X86_64)
+        if (!MacroAssembler::supportsAVX())
+            Options::useWebAssemblySIMD() = false;
+#endif
 
         if (Options::forceAllFunctionsToUseSIMD() && !Options::useWebAssemblySIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
