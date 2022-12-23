@@ -96,11 +96,7 @@ private:
             m_memoryStream = adoptGRef(g_memory_input_stream_new_from_data(data, size, nullptr));
         }
 
-        ~InnerDecoder()
-        {
-            disconnectSimpleBusMessageCallback(m_pipeline.get());
-            gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-        }
+        ~InnerDecoder();
 
         void run();
         EncodedDataStatus encodedDataStatus() const;
