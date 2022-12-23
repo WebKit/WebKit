@@ -46,6 +46,7 @@ public:
     void commit();
 
     void setFont(const String&);
+    std::optional<FilterOperations> createFilterOperations(const String&) const final;
     CanvasDirection direction() const;
     void fillText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);

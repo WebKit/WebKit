@@ -35,9 +35,20 @@ class CSSValue;
 class Document;
 class RenderStyle;
 
+enum CSSParserMode : uint8_t;
+
 namespace Style {
 
-std::optional<FilterOperations> createFilterOperations(const Document&, RenderStyle&, const CSSToLengthConversionData&, const CSSValue&);
+struct FilterParserContext {
+    std::function<Color(const CSSPrimitiveValue*)> resolvedColor;
+    std::function<AtomString(const String&)> resolvedUrl;
+};
+
+const FilterParserContext& defaultFilterParserContext();
+FilterParserContext documentFilterParserContext(const Document&, RenderStyle&);
+
+std::optional<FilterOperations> createFilterOperations(const CSSToLengthConversionData&, const CSSValue&, const FilterParserContext& = defaultFilterParserContext());
+std::optional<FilterOperations> createFilterOperations(const String&, CSSParserMode, const FilterParserContext& = defaultFilterParserContext());
 
 } // namespace Style
 

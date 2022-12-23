@@ -472,7 +472,7 @@ PASS CanvasRenderingContext2D interface: attribute shadowOffsetX
 PASS CanvasRenderingContext2D interface: attribute shadowOffsetY
 PASS CanvasRenderingContext2D interface: attribute shadowBlur
 PASS CanvasRenderingContext2D interface: attribute shadowColor
-FAIL CanvasRenderingContext2D interface: attribute filter assert_true: The prototype object must have a property "filter" expected true got false
+PASS CanvasRenderingContext2D interface: attribute filter
 PASS CanvasRenderingContext2D interface: operation clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation strokeRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
@@ -569,7 +569,7 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowOffsetY" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowBlur" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "shadowColor" with the proper type
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "filter" with the proper type assert_inherits: property "filter" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "filter" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type
@@ -788,7 +788,7 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetX
 PASS OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetY
 PASS OffscreenCanvasRenderingContext2D interface: attribute shadowBlur
 PASS OffscreenCanvasRenderingContext2D interface: attribute shadowColor
-FAIL OffscreenCanvasRenderingContext2D interface: attribute filter assert_true: The prototype object must have a property "filter" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute filter
 PASS OffscreenCanvasRenderingContext2D interface: operation clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation strokeRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)

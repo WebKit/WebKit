@@ -233,6 +233,9 @@ public:
     CanvasTextBaseline textBaseline() const { return state().canvasTextBaseline(); }
     void setTextBaseline(CanvasTextBaseline);
 
+    String filterString() const { return state().filterString; }
+    void setFilterString(const String&);
+
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
@@ -293,6 +296,9 @@ public:
         String unparsedFont;
         FontProxy font;
 
+        String filterString;
+        FilterOperations filterOperations;
+
         CanvasLineCap canvasLineCap() const;
         CanvasLineJoin canvasLineJoin() const;
         CanvasTextAlign canvasTextAlign() const;
@@ -312,6 +318,8 @@ protected:
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
     GraphicsContext* drawingContext() const;
+
+    virtual std::optional<FilterOperations> createFilterOperations(const String&) const { return std::nullopt; }
 
     static String normalizeSpaces(const String&);
 

@@ -27,16 +27,47 @@
 #include "FilterOperationsBuilder.h"
 
 #include "CSSFunctionValue.h"
+#include "CSSParserMode.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSShadowValue.h"
 #include "CSSToLengthConversionData.h"
+#include "CSSTokenizer.h"
 #include "ColorFromPrimitiveValue.h"
 #include "Document.h"
 #include "RenderStyle.h"
 #include "TransformFunctions.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
 namespace Style {
+
+const FilterParserContext& defaultFilterParserContext()
+{
+    static NeverDestroyed<FilterParserContext> context = FilterParserContext {
+        [](const CSSPrimitiveValue* value) -> Color {
+            return value && value->isColor() ? value->color() : Color();
+        },
+        [](const String& filterURL) -> AtomString {
+            return AtomString(filterURL);
+        }
+    };
+    return context;
+}
+
+FilterParserContext documentFilterParserContext(const Document& document, RenderStyle& style)
+{
+    ASSERT(RunLoop::isMain());
+
+    return FilterParserContext {
+        [&](const CSSPrimitiveValue* value) -> Color {
+            return value ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, *value) : style.color();
+        },
+        [&](const String& filterURL) -> AtomString {
+            return document.completeURL(filterURL).fragmentIdentifier().toAtomString();
+        }
+    };
+}
 
 static FilterOperation::Type filterOperationForType(CSSValueID type)
 {
@@ -72,7 +103,7 @@ static FilterOperation::Type filterOperationForType(CSSValueID type)
     return FilterOperation::Type::None;
 }
 
-std::optional<FilterOperations> createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& cssToLengthConversionData, const CSSValue& inValue)
+std::optional<FilterOperations> createFilterOperations(const CSSToLengthConversionData& cssToLengthConversionData, const CSSValue& inValue, const FilterParserContext& context)
 {
     FilterOperations operations;
 
@@ -92,7 +123,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
                 continue;
 
             auto filterURL = primitiveValue.stringValue();
-            auto fragment = document.completeURL(filterURL).fragmentIdentifier().toAtomString();
+            auto fragment = context.resolvedUrl(filterURL);
             operations.operations().append(ReferenceFilterOperation::create(filterURL, WTFMove(fragment)));
             continue;
         }
@@ -183,7 +214,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             int y = item.y->computeLength<int>(cssToLengthConversionData);
             IntPoint location(x, y);
             int blur = item.blur ? item.blur->computeLength<int>(cssToLengthConversionData) : 0;
-            auto color = item.color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, *item.color) : style.color();
+            auto color = context.resolvedColor(item.color.get());
 
             operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;
@@ -195,6 +226,20 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
     }
 
     return operations;
+}
+
+std::optional<FilterOperations> createFilterOperations(const String& string, CSSParserMode mode, const FilterParserContext& context)
+{
+    CSSTokenizer tokenizer(string);
+    CSSParserTokenRange range(tokenizer.tokenRange());
+    range.consumeWhitespace();
+
+    auto allowedFunctions = CSSPropertyParserHelpers::AllowedFilterFunctions::PixelFilters;
+    auto parsedValue = CSSPropertyParserHelpers::consumeFilter(range, CSSParserContext(mode), allowedFunctions);
+    if (!parsedValue)
+        return std::nullopt;
+
+    return createFilterOperations(CSSToLengthConversionData(), *parsedValue, context);
 }
 
 } // namespace Style

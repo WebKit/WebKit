@@ -38,11 +38,15 @@
 #include "CSSFontSelector.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "DeprecatedGlobalSettings.h"
+#include "Document.h"
+#include "FilterOperationsBuilder.h"
 #include "InspectorInstrumentation.h"
 #include "RenderStyle.h"
 #include "ScriptExecutionContext.h"
 #include "StyleResolveForFontRaw.h"
 #include "TextMetrics.h"
+#include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -115,6 +119,26 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
         ASSERT(context.cssFontSelector());
         modifiableState().font.initialize(*context.cssFontSelector(), *fontCascade);
     }
+}
+
+std::optional<FilterOperations> OffscreenCanvasRenderingContext2D::createFilterOperations(const String&) const
+{
+    auto& context = *canvasBase().scriptExecutionContext();
+
+    if (context.isWorkerGlobalScope()) {
+        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
+        if (!workerGlobalScope.settingsValues().canvasFiltersEnabled)
+            return std::nullopt;
+    } else if (context.isDocument()) {
+        auto& document = downcast<Document>(context);
+        if (!document.settings().canvasFiltersEnabled())
+            return std::nullopt;
+    } else
+        return std::nullopt;
+
+    // FIXME: createFilterOperations() is not thread safe. CSSPropertyParserHelpers::consumeFilter()
+    // will end up calling CSSValuePool::singleton() which assume it is called on the main thread.
+    return std::nullopt;
 }
 
 CanvasDirection OffscreenCanvasRenderingContext2D::direction() const

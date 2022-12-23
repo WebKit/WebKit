@@ -37,6 +37,8 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "DeprecatedGlobalSettings.h"
+#include "FilterOperationsBuilder.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -155,6 +157,22 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     modifiableState().font.initialize(document.fontSelector(), *fontCascade);
     ASSERT(state().font.realized());
     ASSERT(state().font.isPopulated());
+}
+
+std::optional<FilterOperations> CanvasRenderingContext2D::createFilterOperations(const String& filterString) const
+{
+    auto& document = canvas().document();
+    if (!document.settings().canvasFiltersEnabled())
+        return std::nullopt;
+
+    document.updateStyleIfNeeded();
+
+    const auto* style = canvas().computedStyle();
+    if (!style)
+        return std::nullopt;
+
+    auto parserMode = strictToCSSParserMode(!usesCSSCompatibilityParseMode());
+    return Style::createFilterOperations(filterString, parserMode, Style::documentFilterParserContext(document, const_cast<RenderStyle&>(*style)));
 }
 
 inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const RenderStyle** computedStyle) const

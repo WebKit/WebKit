@@ -61,6 +61,8 @@ private:
 
     void setFontWithoutUpdatingStyle(const String&);
 
+    std::optional<FilterOperations> createFilterOperations(const String&) const final;
+
     void drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
 
     void drawFocusIfNeededInternal(const Path&, Element&);

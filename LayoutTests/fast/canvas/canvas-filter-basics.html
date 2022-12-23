@@ -1,0 +1,66 @@
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        description("This tests canavs filter setter");
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        debug("");
+        debug("context.filter should be initialized with 'none'");
+        shouldBeEqualToString("context.filter", "none");
+
+        context.filter = "invert( 75% ) sepia(1) url(#svgDropShadow)";
+        shouldBeEqualToString("context.filter", "invert( 75% ) sepia(1) url(#svgDropShadow)");
+        context.filter = "invert( 75% ) sepia(1)";
+        shouldBeEqualToString("context.filter", "invert( 75% ) sepia(1)");
+        context.filter = "invert( 75% )";
+        shouldBeEqualToString("context.filter", "invert( 75% )");
+        context.filter = "invert(75%)";
+        shouldBeEqualToString("context.filter", "invert(75%)");
+
+        debug("");
+        debug("Empty string , null and undefined should leave context.filter unchanged");
+        context.filter = "";
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        context.filter = null;
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        context.filter = undefined;
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        let foo;
+        context.filter = foo;
+        shouldBeEqualToString("context.filter", "invert(75%)");
+
+        debug("");
+        debug("Unparsable strings should leave context.filter unchanged");
+        context.filter = "inherit";
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        context.filter = "inherit(#svgDropShadow)";
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        context.filter = 'initial';
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        context.filter = 'unset';
+        shouldBeEqualToString("context.filter", "invert(75%)");
+
+        debug("");
+        debug("context.filter = 'none'; should disable filters for the context");
+        context.filter = "none";
+        shouldBeEqualToString("context.filter", "none");
+
+        debug("");
+        debug("context.filter is part of the context state");
+        context.filter = "invert(75%)";
+        shouldBeEqualToString("context.filter", "invert(75%)");
+        context.save();
+        context.filter = "sepia(1)";
+        shouldBeEqualToString("context.filter", "sepia(1)");
+        context.restore();
+        shouldBeEqualToString("context.filter", "invert(75%)");
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

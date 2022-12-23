@@ -91,6 +91,7 @@ static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQ
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
 const ASCIILiteral CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif"_s;
 static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
+static constexpr ASCIILiteral DefaultFilter = "none"_s;
 
 static CanvasLineCap toCanvasLineCap(LineCap lineCap)
 {
@@ -293,6 +294,7 @@ CanvasRenderingContext2DBase::State::State()
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
     , unparsedFont(DefaultFont)
+    , filterString(DefaultFilter)
 {
 }
 
@@ -743,6 +745,23 @@ void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& ope
     c->setCompositeOperation(op, blendMode);
 }
 
+void CanvasRenderingContext2DBase::setFilterString(const String& filterString)
+{
+    if (state().filterString == filterString)
+        return;
+
+    auto filterOperations = createFilterOperations(filterString);
+    if (!filterOperations)
+        return;
+
+    realizeSaves();
+
+    // Spec: context.filter = "none" filters will be disabled for the context.
+    // Spec: Only parseable inputs should change the current filter.
+    modifiableState().filterString = filterString;
+    modifiableState().filterOperations = WTFMove(*filterOperations);
+}
+
 void CanvasRenderingContext2DBase::scale(double sx, double sy)
 {
     GraphicsContext* c = drawingContext();
@@ -1085,7 +1104,7 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         repaintEntireCanvas = true;
     } else
         c->fillPath(path);
-    
+
     didDraw(repaintEntireCanvas, [&] {
         return path.fastBoundingRect();
     });
