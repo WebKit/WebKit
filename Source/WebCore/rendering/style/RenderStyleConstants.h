@@ -1034,6 +1034,14 @@ enum class TextOverflow : uint8_t {
     Ellipsis
 };
 
+enum class TextWrap : uint8_t {
+    Wrap,
+    NoWrap,
+    Balance,
+    Stable,
+    Pretty
+};
+
 enum class ImageRendering : uint8_t {
     Auto = 0,
     OptimizeSpeed,
@@ -1351,6 +1359,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextOverflow);
 WTF::TextStream& operator<<(WTF::TextStream&, TextSecurity);
 WTF::TextStream& operator<<(WTF::TextStream&, TextTransform);
 WTF::TextStream& operator<<(WTF::TextStream&, TextUnderlinePosition);
+WTF::TextStream& operator<<(WTF::TextStream&, TextWrap);
 WTF::TextStream& operator<<(WTF::TextStream&, LeadingTrim);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEdgeType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextZoom);

@@ -130,6 +130,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textJustify(static_cast<unsigned>(RenderStyle::initialTextJustify()))
     , textDecorationSkipInk(static_cast<unsigned>(RenderStyle::initialTextDecorationSkipInk()))
     , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition()))
+    , textWrap(static_cast<unsigned>(RenderStyle::initialTextWrap()))
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
     , textZoom(static_cast<unsigned>(RenderStyle::initialTextZoom()))
 #if PLATFORM(IOS_FAMILY)
@@ -227,6 +228,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textJustify(o.textJustify)
     , textDecorationSkipInk(o.textDecorationSkipInk)
     , textUnderlinePosition(o.textUnderlinePosition)
+    , textWrap(o.textWrap)
     , rubyPosition(o.rubyPosition)
     , textZoom(o.textZoom)
 #if PLATFORM(IOS_FAMILY)
@@ -356,6 +358,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textJustify == o.textJustify
         && textDecorationSkipInk == o.textDecorationSkipInk
         && textUnderlinePosition == o.textUnderlinePosition
+        && textWrap == o.textWrap
         && rubyPosition == o.rubyPosition
         && textZoom == o.textZoom
         && lineSnap == o.lineSnap

@@ -1,0 +1,11 @@
+
+PASS e.style['text-wrap'] = "auto" should not set the property value
+PASS e.style['text-wrap'] = "none" should not set the property value
+PASS e.style['text-wrap'] = "wrap nowrap" should not set the property value
+PASS e.style['text-wrap'] = "nowrap balance" should not set the property value
+PASS e.style['text-wrap'] = "balance wrap" should not set the property value
+PASS e.style['text-wrap'] = "stable wrap" should not set the property value
+PASS e.style['text-wrap'] = "pretty wrap" should not set the property value
+PASS e.style['text-wrap'] = "delicious wrap" should not set the property value
+PASS e.style['text-wrap'] = "5px" should not set the property value
+

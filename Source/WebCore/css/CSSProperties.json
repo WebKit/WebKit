@@ -5399,6 +5399,23 @@
                 "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-width"
             }
         },
+        "text-wrap": {
+            "inherited": true,
+            "values": [
+                "wrap",
+                "nowrap",
+                "balance",
+                "stable",
+                "pretty"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextWrapEnabled"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-4/#text-wrap"
+            }
+        },
         "top": {
             "codegen-properties": {
                 "initial": "initialOffset",
