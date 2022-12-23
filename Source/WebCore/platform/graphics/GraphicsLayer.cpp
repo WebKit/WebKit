@@ -819,7 +819,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     if (m_boundsOrigin != FloatPoint())
         ts << indent << "(bounds origin " << m_boundsOrigin.x() << " " << m_boundsOrigin.y() << ")\n";
 
-    if (m_anchorPoint != FloatPoint3D(0.5f, 0.5f, 0)) {
+    if (client().shouldDumpPropertyForLayer(this, "anchorPoint", options)) {
         ts << indent << "(anchor " << m_anchorPoint.x() << " " << m_anchorPoint.y();
         if (m_anchorPoint.z())
             ts << " " << m_anchorPoint.z();

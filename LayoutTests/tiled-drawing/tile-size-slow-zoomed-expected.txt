@@ -7,7 +7,6 @@
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
-      (anchor 0.00 0.00)
       (bounds 785.00 585.00)
       (contentsOpaque 1)
       (transform [1.70 0.00 0.00 0.00] [0.00 1.70 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])

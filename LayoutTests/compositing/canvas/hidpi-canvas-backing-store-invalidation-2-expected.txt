@@ -35,7 +35,6 @@ Tests whether we switch back to a hidpi backing store when we zoom out (and woul
   (device scale 2.00)
   (children 1
     (GraphicsLayer
-      (anchor 0.00 0.00)
       (bounds 2008.00 1561.00)
       (contentsOpaque 1)
       (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])

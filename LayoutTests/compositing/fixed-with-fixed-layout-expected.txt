@@ -4,7 +4,6 @@ Top Left Right bottom
   (bounds 806.00 1616.00)
   (children 1
     (GraphicsLayer
-      (anchor 0.00 0.00)
       (bounds 1008.00 2021.00)
       (contentsOpaque 1)
       (transform [0.80 0.00 0.00 0.00] [0.00 0.80 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])

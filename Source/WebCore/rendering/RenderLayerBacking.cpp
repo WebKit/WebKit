@@ -668,6 +668,10 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
 void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer)
 {
     auto defaultAnchorPoint = FloatPoint3D { 0.5, 0.5, 0 };
+
+    if (m_owningLayer.isRenderViewLayer())
+        defaultAnchorPoint = { };
+
     if (!renderer().hasTransformRelatedProperty()) {
         m_graphicsLayer->setAnchorPoint(defaultAnchorPoint);
         if (m_contentsContainmentLayer)
@@ -3787,6 +3791,16 @@ bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, 
         if (!strcmp(propertyName, "repaintRects"))
             return false;
     }
+
+    if (m_owningLayer.isRenderViewLayer() && (layer == m_graphicsLayer.get() || layer == m_contentsContainmentLayer.get())) {
+        if (!strcmp(propertyName, "anchorPoint"))
+            return layer->anchorPoint() != FloatPoint3D { };
+
+        return true;
+    }
+
+    if (!strcmp(propertyName, "anchorPoint"))
+        return layer->anchorPoint() != FloatPoint3D(0.5f, 0.5f, 0);
 
     return true;
 }

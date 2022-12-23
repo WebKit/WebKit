@@ -4,7 +4,6 @@ Image
   (bounds 2355.00 1755.00)
   (children 1
     (GraphicsLayer
-      (anchor 0.00 0.00)
       (bounds 785.00 585.00)
       (contentsOpaque 1)
       (transform [3.00 0.00 0.00 0.00] [0.00 3.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
