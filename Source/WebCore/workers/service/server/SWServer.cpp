@@ -184,17 +184,20 @@ void SWServer::registrationStoreDatabaseFailedToOpen()
         registrationStoreImportComplete();
 }
 
-void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
+void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(isMainThread());
+
     // Pages should not have been able to make a new registration to this key while the import was still taking place.
     ASSERT(!m_scopeToRegistrationMap.contains(data.registration.key));
 
     LOG(ServiceWorker, "Adding registration from store for %s", data.registration.key.loggingString().utf8().data());
 
     auto registrableDomain = WebCore::RegistrableDomain(data.scriptURL);
-    validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, m_scopeToRegistrationMap.contains(data.registration.key), [this, weakThis = WeakPtr { *this }, data = WTFMove(data)] (bool isValid) mutable {
+    validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, m_scopeToRegistrationMap.contains(data.registration.key), [this, weakThis = WeakPtr { *this }, data = WTFMove(data), completionHandler = WTFMove(completionHandler)] (bool isValid) mutable {
+        ASSERT(isMainThread());
         if (!weakThis)
-            return;
+            return completionHandler();
         if (m_hasServiceWorkerEntitlement || isValid) {
             auto registration = makeUnique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL, data.serviceWorkerPageIdentifier, WTFMove(data.navigationPreloadState));
             registration->setLastUpdateTime(data.registration.lastUpdateTime);
@@ -205,6 +208,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
             registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
             worker->setState(ServiceWorkerState::Activated);
         }
+        completionHandler();
     });
 }
 

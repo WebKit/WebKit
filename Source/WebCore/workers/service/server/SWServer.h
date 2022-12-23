@@ -199,7 +199,7 @@ public:
 
     void resolveRegistrationReadyRequests(SWServerRegistration&);
 
-    void addRegistrationFromStore(ServiceWorkerContextData&&);
+    void addRegistrationFromStore(ServiceWorkerContextData&&, CompletionHandler<void()>&&);
     void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
     void registrationStoreImportComplete();
     void registrationStoreDatabaseFailedToOpen();
