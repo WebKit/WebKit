@@ -551,7 +551,9 @@ private:
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     Arg effectiveAddr(Value* address, Int offset, Width width)
     {
-        ASSERT(Arg::isValidAddrForm(offset, width));
+        // This function currently is currently only used for loads/stores, so
+        // using Air::Move is appropriate.
+        ASSERT(Arg::isValidAddrForm(Air::Move, offset, width));
         
         auto fallback = [&] () -> Arg {
             return Arg::addr(tmp(address), offset);
@@ -642,7 +644,7 @@ private:
         Width width = value->accessWidth();
 
         Arg result = effectiveAddr(value->lastChild(), offset, width);
-        RELEASE_ASSERT(result.isValidForm(width));
+        RELEASE_ASSERT(result.isValidForm(Air::Move, width));
 
         return result;
     }
@@ -1146,11 +1148,11 @@ private:
                 default:
                     break;
                 case Air::Move32:
-                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width32))
+                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width32))
                         return Inst(Store32, m_value, zeroReg(), dest);
                     break;
                 case Air::Move:
-                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width64))
+                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width64))
                         return Inst(Store64, m_value, zeroReg(), dest);
                     break;
                 }

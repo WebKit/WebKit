@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
+#include "AirOpcode.h"
 #include "B3AtomicValue.h"
 
 namespace JSC { namespace B3 {
@@ -39,8 +40,10 @@ inline bool MemoryValue::isLegalOffsetImpl(int32_t offset) const
     // So far only X86 allows exotic loads to have an offset.
     if (requiresSimpleAddr())
         return !offset;
-    
-    return Air::Arg::isValidAddrForm(offset, accessWidth());
+
+    // The opcode is only used on ARM and Air::Move is appropriate for
+    // loads/stores.
+    return Air::Arg::isValidAddrForm(Air::Move, offset, accessWidth());
 }
 
 inline bool MemoryValue::requiresSimpleAddr() const

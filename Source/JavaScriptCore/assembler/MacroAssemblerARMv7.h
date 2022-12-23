@@ -1120,6 +1120,7 @@ public:
 
     void store32(TrustedImm32 imm, const void* address)
     {
+        RELEASE_ASSERT(m_allowScratchRegister);
         move(imm, dataTempRegister);
         store32(dataTempRegister, address);
     }
@@ -1956,10 +1957,25 @@ public:
             m_assembler.movt(dest, ARMThumbImmediate::makeUInt16(value >> 16));
     }
 
+
+    bool cachedRegisterGetValue(CachedTempRegister& cachedRegister, intptr_t &currentRegisterContents)
+    {
+        if (!m_allowScratchRegister)
+            return false;
+        return cachedRegister.value(currentRegisterContents);
+    }
+
+    void cachedRegisterSetValue(CachedTempRegister& cachedRegister, intptr_t value)
+    {
+        if (!m_allowScratchRegister)
+            return;
+        cachedRegister.setValue(value);
+    }
+
     bool short_move(RegisterID dest, CachedTempRegister& cachedRegister, intptr_t valueAsInt)
     {
         intptr_t currentRegisterContents;
-        if (cachedRegister.value(currentRegisterContents)) {
+        if (cachedRegisterGetValue(cachedRegister, currentRegisterContents)) {
             intptr_t valueDelta = valueAsInt - currentRegisterContents;
             intptr_t valueDeltaSave = valueDelta;
             if (valueDelta < 0) {
@@ -1997,10 +2013,10 @@ public:
             m_assembler.mov(dest, armImm);
         else if ((armImm = ARMThumbImmediate::makeEncodedImm(~value)).isValid())
             m_assembler.mvn(dest, armImm);
-        else if (dest == addressTempRegister) {
+        else if (m_allowScratchRegister && (dest == addressTempRegister)) {
             if (!short_move(dest, cachedAddressTempRegister(), valueAsInt))
                 long_move(imm, dest);
-        } else if (dest == dataTempRegister) {
+        } else if (m_allowScratchRegister && (dest == dataTempRegister)) {
             if (!short_move(dest, cachedDataTempRegister(), valueAsInt))
                 long_move(imm, dest);
         } else {
@@ -2008,10 +2024,9 @@ public:
         }
 
         if (dest == addressTempRegister)
-            cachedAddressTempRegister().setValue(valueAsInt);
+            cachedRegisterSetValue(m_cachedAddressTempRegister, valueAsInt);
         else if (dest == dataTempRegister)
-            cachedDataTempRegister().setValue(valueAsInt);
-
+            cachedRegisterSetValue(m_cachedDataTempRegister, valueAsInt);
     }
 
     void move(RegisterID src, RegisterID dest)
@@ -2959,6 +2974,7 @@ protected:
                 RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
                 m_assembler.add(scratch, address.base, imm);
             } else {
+                RELEASE_ASSERT(m_allowScratchRegister);
                 move(TrustedImm32(address.offset), addressTempRegister);
                 m_assembler.add(addressTempRegister, addressTempRegister, address.base);
                 cachedAddressTempRegister().invalidate();
@@ -2974,6 +2990,7 @@ protected:
         if (BoundsNonDoubleWordOffset::within(address.offset))
             return ArmAddress(address.base, address.offset);
 
+        RELEASE_ASSERT(m_allowScratchRegister);
         move(TrustedImm32(address.offset), addressTempRegister);
         return ArmAddress(address.base, addressTempRegister);
     }
@@ -2983,7 +3000,7 @@ protected:
     {
         intptr_t addressAsInt = reinterpret_cast<uintptr_t>(address.m_ptr);
         intptr_t currentRegisterContents;
-        if (cachedRegister.value(currentRegisterContents)) {
+        if (cachedRegisterGetValue(cachedRegister, currentRegisterContents)) {
             intptr_t addressDelta = addressAsInt - currentRegisterContents;
             if (Bounds::within(addressDelta))
                 return reinterpret_cast<int32_t>(addressDelta);
@@ -3024,9 +3041,9 @@ protected:
         uint32_t value = imm.m_value;
         intptr_t valueAsInt = reinterpret_cast<intptr_t>(reinterpret_cast<void *>(value));
         if (dst == dataTempRegister)
-            cachedDataTempRegister().setValue(valueAsInt);
+            cachedRegisterSetValue(cachedDataTempRegister(), valueAsInt);
         else if (dst == addressTempRegister)
-            cachedAddressTempRegister().setValue(valueAsInt);
+            cachedRegisterSetValue(cachedAddressTempRegister(), valueAsInt);
         m_assembler.movT3(dst, ARMThumbImmediate::makeUInt16(value & 0xffff));
         m_assembler.movt(dst, ARMThumbImmediate::makeUInt16(value >> 16));
     }

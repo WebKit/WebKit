@@ -641,7 +641,7 @@ private:
 
     B3::Air::Arg materializeAddrArg(Tmp base, size_t offset, Width width)
     {
-        if (Arg::isValidAddrForm(offset, width))
+        if (Arg::isValidAddrForm(Move, offset, width))
             return Arg::addr(base, offset);
 
         auto temp = g64();
