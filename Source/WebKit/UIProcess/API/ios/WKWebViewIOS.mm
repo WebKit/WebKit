@@ -1768,6 +1768,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
+    if (_resizeAnimationView)
+        return nil;
+
     ASSERT(_scrollView == scrollView);
     return self._currentContentView;
 }
