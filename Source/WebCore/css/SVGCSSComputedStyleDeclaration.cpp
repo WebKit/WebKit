@@ -56,8 +56,14 @@ static Ref<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>&
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
 
     auto list = CSSValueList::createCommaSeparated();
-    for (auto& length : dashes)
-        list->append(length.toCSSPrimitiveValue());
+    for (auto& length : dashes) {
+        auto primitiveValue = length.toCSSPrimitiveValue();
+        // Computed lengths should always be in 'px' unit.
+        if (primitiveValue->isLength() && primitiveValue->primitiveType() != CSSUnitType::CSS_PX)
+            list->append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX));
+        else
+            list->append(WTFMove(primitiveValue));
+    }
 
     return list;
 }
