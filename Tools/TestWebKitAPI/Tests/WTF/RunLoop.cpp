@@ -297,7 +297,7 @@ TEST(WTF_RunLoop, Create)
 
 // Tests that RunLoop::dispatch() respects run loop iteration isolation. E.g. all functions
 // dispatched within a run loop iteration will be executed on subsequent iteration.
-// Note: At the time of writing, run loop iteration isolation is not respected by 
+// Note: At the time of writing, run loop iteration isolation is not respected by
 // RunLoop::dispatchAfter().
 TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1)
 {
@@ -368,6 +368,149 @@ TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration2)
     });
     while (!done)
         runLoop.cycle();
+}
+
+namespace {
+struct DispatchAfterLeakCounter {
+    DispatchAfterLeakCounter()
+    {
+        instances++;
+    }
+    DispatchAfterLeakCounter(DispatchAfterLeakCounter&&)
+    {
+        instances++;
+    }
+    ~DispatchAfterLeakCounter()
+    {
+        instances--;
+    }
+    static std::atomic<size_t> instances;
+};
+
+std::atomic<size_t> DispatchAfterLeakCounter::instances;
+
+}
+
+
+#if USE(COCOA_EVENT_LOOP)
+#define MAYBE_DispatchAfterStopNoLeaks DispatchAfterStopNoLeaks
+#define MAYBE_DispatchAfterStopToOtherRunLoopNoLeaks DispatchAfterStopToOtherRunLoopNoLeaks
+#define MAYBE_DispatchAfterStopIsThreadSafe DispatchAfterStopIsThreadSafe
+#else
+#define MAYBE_DispatchAfterStopNoLeaks DISABLED_DispatchAfterStopNoLeaks
+#define MAYBE_DispatchAfterStopToOtherRunLoopNoLeaks DISABLED_DispatchAfterStopToOtherRunLoopNoLeaks
+#define MAYBE_DispatchAfterStopIsThreadSafe DISABLED_DispatchAfterStopIsThreadSafe
+#endif
+
+TEST(WTF_RunLoop, MAYBE_DispatchAfterStopNoLeaks)
+{
+    WTF::initializeMainThread();
+
+    Vector<Ref<RunLoop::DelayedDispatch>> pendingTasks;
+    size_t tasksRun = 0;
+
+    // Tasks that are not yet dispatched should not leak when stopped.
+    for (size_t i = 0; i < 777; ++i) {
+        pendingTasks.append(RunLoop::current().dispatchAfter(700_s, [&, counter = DispatchAfterLeakCounter { }] {
+            tasksRun++;
+        }));
+    }
+
+    Util::runFor(0.5_s);
+    EXPECT_EQ(0u, tasksRun);
+    // Captured tasks should not leak after being completed.
+    for (size_t i = 0; i < 82; ++i) {
+        pendingTasks.append(RunLoop::current().dispatchAfter(0.2_s, [&, counter = DispatchAfterLeakCounter { }] {
+            tasksRun++;
+        }));
+    }
+
+    // Uncaptured tasks should not leak after being completed.
+    for (size_t i = 0; i < 56; ++i) {
+        RunLoop::current().dispatchAfter(0.2_s, [&, counter = DispatchAfterLeakCounter { }] {
+            tasksRun++;
+        });
+    }
+    EXPECT_EQ(777u + 82u + 56u,  DispatchAfterLeakCounter::instances);
+    Util::runFor(0.5_s);
+    EXPECT_EQ(777u,  DispatchAfterLeakCounter::instances);
+    EXPECT_EQ(82u + 56u, tasksRun);
+
+    for (auto& task : pendingTasks)
+        task->invalidate();
+    pendingTasks.clear();
+
+    EXPECT_EQ(0u,  DispatchAfterLeakCounter::instances);
+    EXPECT_EQ(82u + 56u, tasksRun);
+}
+
+TEST(WTF_RunLoop, MAYBE_DispatchAfterStopToOtherRunLoopNoLeaks)
+{
+    WTF::initializeMainThread();
+    std::atomic<size_t> dones = 0;
+
+    Vector<RefPtr<RunLoop>> runLoops;
+    for (size_t i = 0; i < 500; ++i)
+        runLoops.append(RunLoop::create("DispatchAfterStopToOtherRunLoopNoLeaks"_s, ThreadType::Unknown));
+
+    for (auto& runLoop : runLoops) {
+        runLoop->dispatch([&] {
+            Vector<Ref<RunLoop::DelayedDispatch>> pendingTasks;
+            for (auto& runLoop : runLoops) {
+                pendingTasks.append(runLoop->dispatchAfter(0.002_s, [counter = DispatchAfterLeakCounter { }] {
+                }));
+            }
+            sleep(0.001_s); // Race to stop some tasks but maybe not all.
+            for (auto& task : pendingTasks)
+                task->invalidate();
+            dones++;
+        });
+    }
+
+    // Ensure all task schedule dispatches are done.
+    while (dones != runLoops.size())
+        RunLoop::current().cycle();
+
+    // Those tasks that started executing before stop() might still be running. Wait until those are done.
+    dones = 0;
+    for (auto& runLoop : runLoops) {
+        runLoop->dispatch([&] {
+            dones++;
+        });
+    }
+    while (dones != runLoops.size())
+        RunLoop::current().cycle();
+    EXPECT_EQ(0u,  DispatchAfterLeakCounter::instances);
+}
+
+TEST(WTF_RunLoop, MAYBE_DispatchAfterStopIsThreadSafe)
+{
+    WTF::initializeMainThread();
+
+    Vector<RefPtr<RunLoop>> runLoops;
+    for (size_t i = 0; i < 500; ++i)
+        runLoops.append(RunLoop::create("DispatchAfterStopToOtherRunLoopNoLeaks"_s, ThreadType::Unknown));
+
+    for (size_t i = 0; i < 1000; ++i) {
+        std::atomic<size_t> dispatchAfterTaskDone = 0;
+        auto task = RunLoop::current().dispatchAfter(10_s, [&dispatchAfterTaskDone, counter = DispatchAfterLeakCounter { }]() {
+            dispatchAfterTaskDone++;
+        });
+        std::atomic<size_t> invalidatesDone = 0;
+        for (auto& runLoop : runLoops) {
+            runLoop->dispatch([&invalidatesDone, task = task.copyRef()] {
+                task->invalidate();
+                invalidatesDone++;
+            });
+        }
+        // Poll with sleep instead cycle because run loops cannot cycle for short intervals
+        // and so RunLoop::cycle() would make the test take very long time for nothing.
+        while (invalidatesDone != runLoops.size())
+            sleep(0.0002_s);
+
+        EXPECT_EQ(0u, dispatchAfterTaskDone);
+        EXPECT_EQ(0u, DispatchAfterLeakCounter::instances);
+    }
 }
 
 } // namespace TestWebKitAPI

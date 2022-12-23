@@ -75,7 +75,7 @@ JSValue WaiterListManager::waitImpl(JSGlobalObject* globalObject, VM& vm, ValueT
                 list->addLast(listLocker, waiter);
 
                 if (timeout != Seconds::infinity()) {
-                    Ref<RunLoop::DispatchTimer> timer = RunLoop::current().dispatchAfter(timeout, [this, ptr, waiter = waiter.copyRef()]() mutable {
+                    Ref<RunLoop::DelayedDispatch> timer = RunLoop::current().dispatchAfter(timeout, [this, ptr, waiter = waiter.copyRef()]() mutable {
                         timeoutAsyncWaiter(ptr, WTFMove(waiter));
                     });
                     waiter->setTimer(listLocker, WTFMove(timer));

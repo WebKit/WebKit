@@ -91,7 +91,7 @@ public:
         return std::exchange(m_ticket, nullptr);
     }
 
-    void setTimer(const AbstractLocker&, Ref<RunLoop::DispatchTimer>&& timer)
+    void setTimer(const AbstractLocker&, Ref<RunLoop::DelayedDispatch>&& timer)
     {
         ASSERT(m_isAsync);
         m_timer = WTFMove(timer);
@@ -108,14 +108,14 @@ public:
         // If the timeout for AsyncWaiter is infinity, we won't dispatch any timer.
         if (!m_timer)
             return;
-        m_timer->stop();
+        m_timer->invalidate();
         m_timer = nullptr;
     }
 
 private:
     VM* m_vm { nullptr };
     DeferredWorkTimer::Ticket m_ticket { nullptr };
-    RefPtr<RunLoop::DispatchTimer> m_timer { nullptr };
+    RefPtr<RunLoop::DelayedDispatch> m_timer { nullptr };
     Condition m_condition;
     bool m_isAsync { false };
 };

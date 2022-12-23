@@ -149,4 +149,23 @@ Seconds RunLoop::TimerBase::secondsUntilFire() const
     return 0_s;
 }
 
+Ref<RunLoop::DelayedDispatch> RunLoop::dispatchBlockAfter(Seconds delay, BlockPtr<void(CFRunLoopTimerRef)>&& function)
+{
+    RetainPtr<CFRunLoopTimerRef> timer = adoptCF(CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + delay.seconds(), 0, 0, 0, function.get()));
+    CFRunLoopAddTimer(m_runLoop.get(), timer.get(), kCFRunLoopCommonModes);
+    return adoptRef(*new DelayedDispatch(WTFMove(timer)));
+}
+
+void RunLoop::DelayedDispatch::invalidate()
+{
+    RetainPtr<CFRunLoopTimerRef> timer;
+    {
+        Locker locker { m_lock };
+        if (UNLIKELY(!m_timer))
+            return;
+        std::swap(timer, m_timer);
+    }
+    CFRunLoopTimerInvalidate(timer.get());
+}
+
 } // namespace WTF
