@@ -587,7 +587,7 @@ $architecture = determineArchitecture unless $architecture
 $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "windows" || $hostOS == "playstation")
 # Special case armv7, we want to run the wasm tests temporarily without B3/Air support
 $isWasmPlatform = $isFTLPlatform || $architecture == "arm"
-$isSIMDPlatform = $architecture == "arm64"
+$isSIMDPlatform = $architecture == "arm64" || $architecture == "x86_64"
 
 if $architecture == "x86"
     # The JIT is temporarily disabled on this platform since

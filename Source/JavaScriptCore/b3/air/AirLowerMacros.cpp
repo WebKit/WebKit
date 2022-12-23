@@ -375,6 +375,20 @@ void lowerMacros(Code& code)
                 inst = Inst();
             };
 
+            auto handleVectorExtaddPairwise = [&] {
+                SIMDInfo simdInfo = inst.args[0].simdInfo();
+
+                if (!isX86() || simdInfo.lane != SIMDLane::i16x8 || simdInfo.signMode != SIMDSignMode::Unsigned)
+                    return;
+
+                Tmp vec = inst.args[1].tmp();
+                Tmp dst = inst.args[2].tmp();
+                auto* origin = inst.origin;
+
+                insertionSet.insert(instIndex, VectorExtaddPairwiseUnsignedInt16, origin, vec, dst, code.newTmp(FP));
+                inst = Inst();
+            };
+
             auto handleVectorBitmask = [&] {
                 if (!isARM64())
                     return;
@@ -480,6 +494,9 @@ void lowerMacros(Code& code)
                 break;
             case VectorMax:
                 handleVectorMax();
+                break;
+            case VectorExtaddPairwise:
+                handleVectorExtaddPairwise();
                 break;
             default:
                 break;

@@ -391,6 +391,7 @@ public:
         B3_OP_CASE(TruncSat)
         B3_OP_CASE(Not)
         B3_OP_CASE(Neg)
+
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(v)));
         return { };
@@ -465,6 +466,7 @@ public:
                 break;
             }
         }
+
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(lhs), get(rhs)));
         return { };
@@ -492,6 +494,7 @@ public:
         B3_OP_CASE(SubSat)
         B3_OP_CASE(Max)
         B3_OP_CASE(Min)
+
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(a), get(b)));
         return { };
