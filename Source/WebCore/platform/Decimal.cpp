@@ -619,6 +619,11 @@ Decimal::AlignedOperands Decimal::alignOperands(const Decimal& lhs, const Decima
     return alignedOperands;
 }
 
+static bool isMultiplePowersOfTen(uint64_t coefficient, int n)
+{
+    return !coefficient || !(coefficient % scaleUp(1, n));
+}
+
 // Round toward positive infinity.
 // Note: Mac ports defines ceil(x) as wtf_ceil(x), so we can't use name "ceil" here.
 Decimal Decimal::ceiling() const
@@ -635,10 +640,9 @@ Decimal Decimal::ceiling() const
     if (numberOfDigits <= numberOfDropDigits)
         return isPositive() ? Decimal(1) : zero(Positive);
 
-    result = scaleDown(result, numberOfDropDigits - 1);
-    if (sign() == Positive && result % 10 > 0)
-        result += 10;
-    result /= 10;
+    result = scaleDown(result, numberOfDropDigits);
+    if (isPositive() && !isMultiplePowersOfTen(m_data.coefficient(), numberOfDropDigits))
+        ++result;
     return Decimal(sign(), 0, result);
 }
 
@@ -677,10 +681,9 @@ Decimal Decimal::floor() const
     if (numberOfDigits < numberOfDropDigits)
         return isPositive() ? zero(Positive) : Decimal(-1);
 
-    result = scaleDown(result, numberOfDropDigits - 1);
-    if (isNegative() && result % 10 > 0)
-        result += 10;
-    result /= 10;
+    result = scaleDown(result, numberOfDropDigits);
+    if (isNegative() && !isMultiplePowersOfTen(m_data.coefficient(), numberOfDropDigits))
+        ++result;
     return Decimal(sign(), 0, result);
 }
 
