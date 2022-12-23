@@ -86,7 +86,7 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
     return request;
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_form_submission_request_get_text_fields:
  * @request: a #WebKitFormSubmissionRequest

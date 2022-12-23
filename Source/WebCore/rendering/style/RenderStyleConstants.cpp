@@ -1160,6 +1160,18 @@ TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, TextWrap wrap)
+{
+    switch (wrap) {
+    case TextWrap::Wrap: ts << "wrap"; break;
+    case TextWrap::NoWrap: ts << "nowrap"; break;
+    case TextWrap::Balance: ts << "balance"; break;
+    case TextWrap::Stable: ts << "stable"; break;
+    case TextWrap::Pretty: ts << "pretty"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, LeadingTrim leadingTrim)
 {
     switch (leadingTrim) {

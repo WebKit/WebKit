@@ -18,7 +18,6 @@ set(GPUProcess_OUTPUT_NAME WPEGPUProcess)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_JSC_DIR})
 
 configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h)
@@ -68,29 +67,10 @@ add_custom_command(
 )
 
 add_custom_command(
-    OUTPUT ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
-    DEPENDS ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM
-    COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
-    VERBATIM
-)
-
-add_custom_command(
     OUTPUT ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
     DEPENDS ${JAVASCRIPTCORE_DIR}/API/glib/
     COMMAND ln -n -s -f ${JAVASCRIPTCORE_DIR}/API/glib ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
     VERBATIM
-)
-
-add_custom_target(webkitwpe-fake-api-headers
-    DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/wpe
-            ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
-            ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
-            ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
-)
-
-list(APPEND WebKit_DEPENDENCIES
-    webkitwpe-fake-api-headers
-    webkitwpe-forwarding-headers
 )
 
 list(APPEND WebProcess_SOURCES
@@ -177,7 +157,6 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitJavascriptResult.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMemoryPressureSettings.h.in
-    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNavigationAction.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNavigationPolicyDecision.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNetworkProxySettings.h.in
@@ -187,7 +166,6 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitOptionMenuItem.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPermissionStateQuery.h.in
-    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPolicyDecision.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitResponsePolicyDecision.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitScriptDialog.h.in
@@ -226,16 +204,9 @@ set(WPE_API_INSTALLED_HEADERS
 
 set(WPE_WEB_EXTENSION_API_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitWebProcessEnumTypes.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/webkitdom.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMDefines.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMDocument.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMElement.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMNode.h
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMObject.h
 )
 
 set(WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitFrame.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebEditor.h.in
@@ -245,6 +216,25 @@ set(WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebPage.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/webkit-web-extension.h.in
+)
+
+set(WPE_FAKE_API_HEADERS
+    ${FORWARDING_HEADERS_WPE_DIR}/wpe
+    ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
+    ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
+)
+
+if (NOT ENABLE_2022_GLIB_API)
+    include(PlatformWPEDeprecated.cmake)
+endif ()
+
+add_custom_target(webkitwpe-fake-api-headers
+    DEPENDS ${WPE_FAKE_API_HEADERS}
+)
+
+list(APPEND WebKit_DEPENDENCIES
+    webkitwpe-fake-api-headers
+    webkitwpe-forwarding-headers
 )
 
 GENERATE_API_HEADERS(WPE_API_HEADER_TEMPLATES
@@ -321,7 +311,6 @@ add_custom_command(
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WPE_API_DIR}"
     "${FORWARDING_HEADERS_WPE_DIR}"
-    "${FORWARDING_HEADERS_WPE_DOM_DIR}"
     "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
@@ -352,9 +341,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/soup"
     "${WEBKIT_DIR}/UIProcess/wpe"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib"
-    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe"
-    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
@@ -598,6 +585,7 @@ GI_INTROSPECT(WPEWebExtension ${WPE_API_VERSION} wpe/webkit-web-extension.h
         -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
     SOURCES
         ${WPE_WEB_EXTENSION_API_INSTALLED_HEADERS}
+        ${WPE_DOM_SOURCES_FOR_INTROSPECTION}
         ${DERIVED_SOURCES_WPE_API_DIR}/WebKitContextMenu.h
         ${DERIVED_SOURCES_WPE_API_DIR}/WebKitContextMenuActions.h
         ${DERIVED_SOURCES_WPE_API_DIR}/WebKitContextMenuItem.h
@@ -611,7 +599,6 @@ GI_INTROSPECT(WPEWebExtension ${WPE_API_VERSION} wpe/webkit-web-extension.h
         Shared/API/glib/WebKitUserMessage.cpp
         Shared/API/glib/WebKitURIRequest.cpp
         Shared/API/glib/WebKitURIResponse.cpp
-        WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp
         WebProcess/InjectedBundle/API/glib
     NO_IMPLICIT_SOURCES
 )

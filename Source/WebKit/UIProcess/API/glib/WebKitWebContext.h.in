@@ -160,20 +160,24 @@ webkit_web_context_set_cache_model                  (WebKitWebContext           
 WEBKIT_API WebKitCacheModel
 webkit_web_context_get_cache_model                  (WebKitWebContext              *context);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED void
 webkit_web_context_set_web_process_count_limit      (WebKitWebContext              *context,
                                                      guint                          limit);
 
 WEBKIT_DEPRECATED guint
 webkit_web_context_get_web_process_count_limit      (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API void
 webkit_web_context_clear_cache                      (WebKitWebContext              *context);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_set_network_proxy_settings) void
 webkit_web_context_set_network_proxy_settings       (WebKitWebContext              *context,
                                                      WebKitNetworkProxyMode         proxy_mode,
                                                      WebKitNetworkProxySettings    *proxy_settings);
+#endif
 
 WEBKIT_API WebKitDownload *
 webkit_web_context_download_uri                     (WebKitWebContext              *context,
@@ -197,6 +201,7 @@ webkit_web_context_get_favicon_database_directory   (WebKitWebContext           
 WEBKIT_API WebKitSecurityManager *
 webkit_web_context_get_security_manager             (WebKitWebContext              *context);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED void
 webkit_web_context_set_additional_plugins_directory (WebKitWebContext              *context,
                                                      const gchar                   *directory);
@@ -211,6 +216,8 @@ WEBKIT_DEPRECATED GList *
 webkit_web_context_get_plugins_finish               (WebKitWebContext              *context,
                                                      GAsyncResult                  *result,
                                                      GError                       **error);
+#endif
+
 WEBKIT_API void
 webkit_web_context_register_uri_scheme              (WebKitWebContext              *context,
                                                      const gchar                   *scheme,
@@ -247,12 +254,14 @@ WEBKIT_API void
 webkit_web_context_set_preferred_languages          (WebKitWebContext              *context,
                                                      const gchar * const           *languages);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_set_tls_errors_policy) void
 webkit_web_context_set_tls_errors_policy            (WebKitWebContext              *context,
                                                      WebKitTLSErrorsPolicy          policy);
 
 WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_get_tls_errors_policy) WebKitTLSErrorsPolicy
 webkit_web_context_get_tls_errors_policy            (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API void
 webkit_web_context_set_web_extensions_directory     (WebKitWebContext              *context,
@@ -267,7 +276,7 @@ WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
                                                      const gchar                   *hostname);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED_FOR(webkit_web_context_new_with_website_data_manager) void
 webkit_web_context_set_disk_cache_directory         (WebKitWebContext              *context,
                                                      const gchar                   *directory);

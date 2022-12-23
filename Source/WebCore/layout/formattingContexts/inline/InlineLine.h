@@ -243,11 +243,13 @@ private:
         void setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth);
 
         void resetTrailingContent() { m_trailingContent = { }; }
-
         InlineLayoutUnit trailingWidth() const { return m_trailingContent ? m_trailingContent->width : 0.f; }
+        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace ? m_trailingContent->width : 0.f; }
+
         InlineLayoutUnit width() const { return m_leadingPunctuationWidth + trailingWidth(); }
 
         size_t length() const;
+        size_t trailingWhitespaceLength() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace ? m_trailingContent->length : 0; }
 
         bool isTrailingContentPunctuation() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Punctuation; }
         bool isTrailingContentConditional() const { return m_trailingContent && m_trailingContent->isConditional == TrailingContent::IsConditional::Yes; }

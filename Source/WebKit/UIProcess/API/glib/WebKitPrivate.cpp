@@ -114,6 +114,7 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE;
     case API::Error::Policy::CannotUseRestrictedPort:
         return WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT;
+#if !ENABLE(2022_GLIB_API)
     case API::Error::Plugin::CannotFindPlugIn:
         return WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN;
     case API::Error::Plugin::CannotLoadPlugIn:
@@ -124,6 +125,7 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED;
     case API::Error::Plugin::PlugInWillHandleLoad:
         return WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD;
+#endif
     case API::Error::Download::Transport:
         return WEBKIT_DOWNLOAD_ERROR_NETWORK;
     case API::Error::Download::CancelledByUser:
@@ -159,6 +161,7 @@ unsigned toWebCoreError(unsigned webKitError)
         return API::Error::Policy::FrameLoadInterruptedByPolicyChange;
     case WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT:
         return API::Error::Policy::CannotUseRestrictedPort;
+#if !ENABLE(2022_GLIB_API)
     case WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN:
         return API::Error::Plugin::CannotFindPlugIn;
     case WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN:
@@ -169,6 +172,7 @@ unsigned toWebCoreError(unsigned webKitError)
         return API::Error::Plugin::PlugInCancelledConnection;
     case WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD:
         return API::Error::Plugin::PlugInWillHandleLoad;
+#endif
     case WEBKIT_DOWNLOAD_ERROR_NETWORK:
         return API::Error::Download::Transport;
     case WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER:

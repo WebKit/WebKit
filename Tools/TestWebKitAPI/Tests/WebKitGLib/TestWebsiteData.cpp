@@ -160,6 +160,7 @@ public:
     GList* m_dataList { nullptr };
 };
 
+#if !ENABLE(2022_GLIB_API)
 static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -277,6 +278,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
+#endif
 
 static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
 {
@@ -293,6 +295,7 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert_null(webkit_website_data_manager_get_base_data_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_base_cache_directory(manager.get()));
 
+#if !ENABLE(2022_GLIB_API)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     g_assert_null(webkit_website_data_manager_get_local_storage_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_disk_cache_directory(manager.get()));
@@ -302,6 +305,7 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert_null(webkit_website_data_manager_get_itp_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_service_worker_registrations_directory(manager.get()));
     ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
     // Configuration is ignored when is-ephemeral is used.
     manager = adoptGRef(WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "base-data-directory", Test::dataDirectory(), "is-ephemeral", TRUE, nullptr)));
@@ -700,6 +704,7 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     webkit_settings_set_enable_mock_capture_devices(settings, enabled);
 }
 
+#if !ENABLE(2022_GLIB_API)
 static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -753,6 +758,7 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
 
     g_rmdir(itpDirectory);
 }
+#endif
 
 static void testWebsiteDataServiceWorkerRegistrations(WebsiteDataTest* test, gconstpointer)
 {
@@ -875,7 +881,9 @@ void beforeAll()
     prepopulateHstsData();
 #endif
 
+#if !ENABLE(2022_GLIB_API)
     WebsiteDataTest::add("WebKitWebsiteData", "configuration", testWebsiteDataConfiguration);
+#endif
     WebViewTest::add("WebKitWebsiteData", "ephemeral", testWebsiteDataEphemeral);
     WebsiteDataTest::add("WebKitWebsiteData", "cache", testWebsiteDataCache);
     WebsiteDataTest::add("WebKitWebsiteData", "storage", testWebsiteDataStorage);
@@ -886,7 +894,10 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "hsts", testWebsiteDataHsts);
 #endif
     WebsiteDataTest::add("WebKitWebsiteData", "deviceidhashsalt", testWebsiteDataDeviceIdHashSalt);
+#if !ENABLE(2022_GLIB_API)
+    // FIXME: find a way to test this without deprecated API.
     WebsiteDataTest::add("WebKitWebsiteData", "itp", testWebsiteDataITP);
+#endif
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
     WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
     MemoryPressureTest::add("WebKitWebsiteData", "memory-pressure", testMemoryPressureSettings);

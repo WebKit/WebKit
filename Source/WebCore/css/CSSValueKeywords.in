@@ -806,6 +806,15 @@ clip
 ellipsis
 
 //
+// CSS_PROP_TEXT_WRAP
+//
+// wrap
+// nowrap
+// balance
+stable
+pretty
+
+//
 // CSS_PROP__KHTML_MARGIN_COLLAPSE
 //
 // collapse

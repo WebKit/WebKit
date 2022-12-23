@@ -50,7 +50,7 @@ private:
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert_true(WEBKIT_IS_FRAME(frame));
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_assert_nonnull(webkit_frame_get_javascript_global_context(frame));
         G_GNUC_END_IGNORE_DEPRECATIONS;
@@ -72,6 +72,7 @@ private:
         g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
+#if !ENABLE(2022_GLIB_API)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
@@ -85,6 +86,11 @@ private:
 
         GRefPtr<JSCValue> value = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
         g_assert_true(value.get() == jsDocument.get());
+#else
+        GRefPtr<JSCValue> jsDocument = adoptGRef(jsc_context_get_value(jsContext.get(), "document"));
+        g_assert_true(JSC_IS_VALUE(jsDocument.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsDocument.get()));
+#endif
 
         GRefPtr<JSCValue> jsP = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, "paragraph", G_TYPE_NONE));
         g_assert_true(JSC_IS_VALUE(jsP.get()));
@@ -92,7 +98,11 @@ private:
         g_assert_true(jsc_value_is_object(jsP.get()));
         g_assert_true(jsc_value_get_context(jsP.get()) == jsContext.get());
 
+#if ENABLE(2022_GLIB_API)
+        GRefPtr<JSCValue> value = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('paragraph')", -1));
+#else
         value = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('paragraph')", -1));
+#endif
         g_assert_true(value.get() == jsP.get());
 
         value = adoptGRef(jsc_value_object_get_property(jsP.get(), "innerText"));
@@ -107,12 +117,14 @@ private:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsImage.get()));
         g_assert_true(jsc_value_is_object(jsImage.get()));
 
+#if !ENABLE(2022_GLIB_API)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         WebKitDOMNode* image = webkit_dom_node_for_js_value(jsImage.get());
         g_assert_true(WEBKIT_DOM_IS_ELEMENT(image));
         G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(image));
-#if PLATFORM(GTK)
+#endif
+#if PLATFORM(GTK) && !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_assert_true(webkit_dom_document_get_element_by_id(document, "image") == WEBKIT_DOM_ELEMENT(image));
         G_GNUC_END_IGNORE_DEPRECATIONS;

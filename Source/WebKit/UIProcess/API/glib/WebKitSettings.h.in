@@ -135,6 +135,7 @@ webkit_settings_get_enable_html5_database                      (WebKitSettings *
 WEBKIT_API void
 webkit_settings_set_enable_html5_database                      (WebKitSettings *settings,
                                                                 gboolean        enabled);
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED gboolean
 webkit_settings_get_enable_xss_auditor                         (WebKitSettings *settings);
 
@@ -162,6 +163,7 @@ webkit_settings_get_enable_java                                (WebKitSettings *
 WEBKIT_DEPRECATED void
 webkit_settings_set_enable_java                                (WebKitSettings *settings,
                                                                 gboolean        enabled);
+#endif
 
 WEBKIT_API gboolean
 webkit_settings_get_javascript_can_open_windows_automatically  (WebKitSettings *settings);
@@ -254,7 +256,7 @@ WEBKIT_API void
 webkit_settings_set_default_charset                            (WebKitSettings *settings,
                                                                 const gchar    *default_charset);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED gboolean
 webkit_settings_get_enable_private_browsing                    (WebKitSettings *settings);
 
@@ -399,12 +401,14 @@ WEBKIT_API void
 webkit_settings_set_enable_smooth_scrolling                    (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED gboolean
 webkit_settings_get_enable_accelerated_2d_canvas               (WebKitSettings *settings);
 
 WEBKIT_DEPRECATED void
 webkit_settings_set_enable_accelerated_2d_canvas               (WebKitSettings *settings,
                                                                 gboolean        enabled);
+#endif
 
 WEBKIT_API gboolean
 webkit_settings_get_enable_write_console_messages_to_stdout    (WebKitSettings *settings);

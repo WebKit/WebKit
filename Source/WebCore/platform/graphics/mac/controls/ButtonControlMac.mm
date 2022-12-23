@@ -41,6 +41,8 @@ ButtonControlMac::ButtonControlMac(ControlPart& part, ControlFactoryMac& control
 
 void ButtonControlMac::updateCellStates(const FloatRect& rect, const ControlStyle& style)
 {
+    ControlMac::updateCellStates(rect, style);
+
     const auto& states = style.states;
 
     // Pressed state

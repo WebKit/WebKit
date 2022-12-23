@@ -581,7 +581,7 @@ static void testUserContentManagerScriptMessageWithReplyReceived(UserScriptMessa
     test->unregisterHandler("msg", "WebExtensionTestScriptWorld");
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 static void testUserContentManagerScriptMessageFromDOMBindings(UserScriptMessageTest* test, gconstpointer)
 {
     g_assert_true(test->registerHandler("dom"));
@@ -691,7 +691,7 @@ void beforeAll()
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-received", testUserContentManagerScriptMessageReceived);
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-in-world-received", testUserContentManagerScriptMessageInWorldReceived);
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-with-reply-received", testUserContentManagerScriptMessageWithReplyReceived);
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-from-dom-bindings", testUserContentManagerScriptMessageFromDOMBindings);
 #endif
     WebViewTest::add("WebKitUserContentManager", "content-filter", testUserContentManagerContentFilter);

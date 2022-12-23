@@ -59,7 +59,7 @@ WEBKIT_DEFINE_TYPE(WebKitNavigationPolicyDecision, webkit_navigation_policy_deci
 enum {
     PROP_0,
     PROP_NAVIGATION_ACTION,
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     PROP_NAVIGATION_TYPE,
     PROP_MOUSE_BUTTON,
     PROP_MODIFIERS,
@@ -75,7 +75,7 @@ static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint pro
     case PROP_NAVIGATION_ACTION:
         g_value_set_boxed(value, webkit_navigation_policy_decision_get_navigation_action(decision));
         break;
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     case PROP_NAVIGATION_TYPE:
         g_value_set_enum(value, webkit_navigation_action_get_navigation_type(decision->priv->navigationAction));
         break;
@@ -120,7 +120,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
             WEBKIT_TYPE_NAVIGATION_ACTION,
             WEBKIT_PARAM_READABLE));
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     /**
      * WebKitNavigationPolicyDecision:navigation-type:
      *
@@ -227,7 +227,7 @@ WebKitNavigationAction* webkit_navigation_policy_decision_get_navigation_action(
     return decision->priv->navigationAction;
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_navigation_policy_decision_get_navigation_type:
  * @decision: a #WebKitNavigationPolicyDecision

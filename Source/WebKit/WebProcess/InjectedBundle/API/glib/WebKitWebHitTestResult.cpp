@@ -22,7 +22,6 @@
 
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleScriptWorld.h"
-#include "WebKitDOMNodePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
 #include "WebKitWebHitTestResultPrivate.h"
 #include <JavaScriptCore/APICast.h>
@@ -37,6 +36,10 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitDOMNodePrivate.h"
+#endif
 
 using namespace WebKit;
 using namespace WebCore;

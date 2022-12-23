@@ -224,6 +224,9 @@ PASS text-shadow: shadow
 PASS text-transform (type: discrete) has testAccumulation function
 PASS text-transform: "uppercase" onto "capitalize"
 PASS text-transform: "capitalize" onto "uppercase"
+PASS text-wrap (type: discrete) has testAccumulation function
+PASS text-wrap: "nowrap" onto "wrap"
+PASS text-wrap: "wrap" onto "nowrap"
 PASS touch-action (type: discrete) has testAccumulation function
 PASS touch-action: "none" onto "auto"
 PASS touch-action: "auto" onto "none"

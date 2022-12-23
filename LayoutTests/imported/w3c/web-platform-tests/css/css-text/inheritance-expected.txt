@@ -11,6 +11,8 @@ PASS Property overflow-wrap has initial value normal
 PASS Property overflow-wrap inherits
 PASS Property tab-size has initial value 8
 PASS Property tab-size inherits
+PASS Property text-align has initial value start
+PASS Property text-align inherits
 FAIL Property text-align-all has initial value start assert_true: text-align-all doesn't seem to be supported in the computed style expected true got false
 FAIL Property text-align-all inherits assert_true: text-align-all doesn't seem to be supported in the computed style expected true got false
 PASS Property text-align-last has initial value auto
@@ -21,6 +23,8 @@ PASS Property text-justify has initial value auto
 PASS Property text-justify inherits
 PASS Property text-transform has initial value none
 PASS Property text-transform inherits
+PASS Property text-wrap has initial value wrap
+PASS Property text-wrap inherits
 PASS Property white-space has initial value normal
 PASS Property white-space inherits
 PASS Property word-break has initial value normal

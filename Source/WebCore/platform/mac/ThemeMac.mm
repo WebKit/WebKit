@@ -118,6 +118,11 @@ static bool _useFormSemanticContext;
     return self;
 }
 
+- (NSWindow *)_viewRoot
+{
+    return _window.get();
+}
+
 - (void)addSubview:(NSView *)subview
 {
     // By doing nothing in this method we forbid controls from adding subviews.

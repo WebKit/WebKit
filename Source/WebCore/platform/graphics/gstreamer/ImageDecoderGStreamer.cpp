@@ -228,6 +228,16 @@ const ImageDecoderGStreamerSample* ImageDecoderGStreamer::sampleAtIndex(size_t i
     return toSample(iter);
 }
 
+ImageDecoderGStreamer::InnerDecoder::~InnerDecoder()
+{
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Destructing decoder");
+    g_signal_handlers_disconnect_by_func(m_decodebin.get(), reinterpret_cast<gpointer>(decodebinPadAddedCallback), this);
+    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
+    disconnectSimpleBusMessageCallback(m_pipeline.get());
+    gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+}
+
 void ImageDecoderGStreamer::InnerDecoder::decodebinPadAddedCallback(ImageDecoderGStreamer::InnerDecoder* decoder, GstPad* pad)
 {
     decoder->connectDecoderPad(pad);

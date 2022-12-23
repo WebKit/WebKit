@@ -160,8 +160,8 @@ ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOME
 ADD_WK2_TEST(TestGeolocationManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestGeolocationManager.cpp)
 ADD_WK2_TEST(TestInputMethodContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp)
 
-# FIXME: Enable for WPE
-if (PORT STREQUAL "GTK")
+# FIXME: Enable for WPE and GTK4
+if (PORT STREQUAL "GTK" AND NOT USE_GTK4)
     ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp)
 endif ()
 

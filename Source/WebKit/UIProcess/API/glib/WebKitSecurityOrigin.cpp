@@ -227,6 +227,7 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
     return origin->securityOriginData.port.value_or(0);
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_security_origin_is_opaque:
  * @origin: a #WebKitSecurityOrigin
@@ -249,6 +250,7 @@ gboolean webkit_security_origin_is_opaque(WebKitSecurityOrigin* origin)
 
     return FALSE;
 }
+#endif
 
 /**
  * webkit_security_origin_to_string:

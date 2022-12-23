@@ -273,6 +273,10 @@ PASS text-transform (type: discrete) has testInterpolation function
 PASS text-transform uses discrete animation when animating between "capitalize" and "uppercase" with linear easing
 PASS text-transform uses discrete animation when animating between "capitalize" and "uppercase" with effect easing
 PASS text-transform uses discrete animation when animating between "capitalize" and "uppercase" with keyframe easing
+PASS text-wrap (type: discrete) has testInterpolation function
+PASS text-wrap uses discrete animation when animating between "wrap" and "nowrap" with linear easing
+PASS text-wrap uses discrete animation when animating between "wrap" and "nowrap" with effect easing
+PASS text-wrap uses discrete animation when animating between "wrap" and "nowrap" with keyframe easing
 PASS touch-action (type: discrete) has testInterpolation function
 PASS touch-action uses discrete animation when animating between "auto" and "none" with linear easing
 PASS touch-action uses discrete animation when animating between "auto" and "none" with effect easing

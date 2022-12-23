@@ -503,6 +503,18 @@ CSSTextJustifyEnabled:
     WebCore:
       default: false
 
+CSSTextWrapEnabled:
+  type: bool
+  humanReadableName: "CSS text-wrap property"
+  humanReadableDescription: "Enable text-wrap CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTypedOMColorEnabled:
   type: bool
   humanReadableName: "CSS Typed OM: Color Support"

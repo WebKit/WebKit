@@ -86,7 +86,7 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
     }
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_javascript_result_get_global_context: (skip)
  * @js_result: a #WebKitJavascriptResult

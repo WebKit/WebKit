@@ -27,11 +27,13 @@
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitScriptWorld.h>
 
+#if !ENABLE(2022_GLIB_API)
 #if PLATFORM(GTK)
 #include <JavaScriptCore/JSBase.h>
 #include <webkitdom/webkitdom.h>
 #elif PLATFORM(WPE)
 #include <wpe/webkitdom.h>
+#endif
 #endif
 
 G_BEGIN_DECLS
@@ -70,7 +72,7 @@ webkit_frame_is_main_frame                               (WebKitFrame       *fra
 WEBKIT_API const gchar *
 webkit_frame_get_uri                                     (WebKitFrame       *frame);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED_FOR(webkit_frame_get_js_context) JSGlobalContextRef
 webkit_frame_get_javascript_global_context               (WebKitFrame       *frame);
 
@@ -86,6 +88,7 @@ WEBKIT_API JSCContext *
 webkit_frame_get_js_context_for_script_world             (WebKitFrame       *frame,
                                                           WebKitScriptWorld *world);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED JSCValue *
 webkit_frame_get_js_value_for_dom_object                 (WebKitFrame       *frame,
                                                           WebKitDOMObject   *dom_object);
@@ -94,6 +97,7 @@ WEBKIT_DEPRECATED JSCValue *
 webkit_frame_get_js_value_for_dom_object_in_script_world (WebKitFrame       *frame,
                                                           WebKitDOMObject   *dom_object,
                                                           WebKitScriptWorld *world);
+#endif
 
 G_END_DECLS
 

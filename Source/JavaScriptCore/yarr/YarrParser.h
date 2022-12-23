@@ -36,8 +36,6 @@
 
 namespace JSC { namespace Yarr {
 
-enum class CreateDisjunctionPurpose : uint8_t { NotForNextAlternative, ForNextAlternative };
-
 // The Parser class should not be used directly - only via the Yarr::parse() method.
 template<class Delegate, typename CharType>
 class Parser {
@@ -765,7 +763,7 @@ private:
             switch (peek()) {
             case '|':
                 consume();
-                m_delegate.disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+                m_delegate.disjunction();
                 lastTokenType = TokenType::NotAtom;
                 break;
 
@@ -1281,7 +1279,7 @@ private:
  *
  *    void quantifyAtom(unsigned min, unsigned max, bool greedy);
  *
- *    void disjunction(CreateDisjunctionPurpose purpose);
+ *    void disjunction();
  *
  *    void resetForReparsing();
  *

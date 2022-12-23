@@ -3647,6 +3647,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPixelValue(style.textStrokeWidth(), style);
     case CSSPropertyTextTransform:
         return cssValuePool.createValue(style.textTransform());
+    case CSSPropertyTextWrap:
+        return cssValuePool.createValue(style.textWrap());
     case CSSPropertyTop:
         return positionOffsetValue(style, CSSPropertyTop, renderer);
     case CSSPropertyUnicodeBidi:

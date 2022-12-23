@@ -528,4 +528,23 @@ TEST(AnimatedResize, ResizeWithWithSubsequentNoOpResizeIsNotCancelled)
     }
 }
 
+TEST(AnimatedResize, ScaleDuringAnimatedResizeDoesNotMoveContentViewFrameOrigin)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);
+    [webView synchronouslyLoadTestPageNamed:@"large-red-square-image"];
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
+    }];
+
+    [webView _endAnimatedResize];
+
+    [[webView scrollView] setZoomScale:2];
+    [webView waitForNextPresentationUpdate];
+
+    auto frameOrigin = [webView wkContentView].frame.origin;
+    EXPECT_EQ(frameOrigin.x, 0);
+    EXPECT_EQ(frameOrigin.y, 0);
+}
+
 #endif

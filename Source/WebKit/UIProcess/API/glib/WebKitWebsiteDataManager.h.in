@@ -92,6 +92,7 @@ webkit_website_data_manager_get_base_data_directory                   (WebKitWeb
 WEBKIT_API const gchar *
 webkit_website_data_manager_get_base_cache_directory                  (WebKitWebsiteDataManager *manager);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_local_storage_directory               (WebKitWebsiteDataManager *manager);
 
@@ -118,6 +119,7 @@ webkit_website_data_manager_get_service_worker_registrations_directory(WebKitWeb
 
 WEBKIT_DEPRECATED const gchar *
 webkit_website_data_manager_get_dom_cache_directory                   (WebKitWebsiteDataManager *manager);
+#endif
 
 WEBKIT_API WebKitCookieManager *
 webkit_website_data_manager_get_cookie_manager                        (WebKitWebsiteDataManager *manager);
