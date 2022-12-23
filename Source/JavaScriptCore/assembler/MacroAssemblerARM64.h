@@ -336,6 +336,18 @@ public:
         store64(dataTempRegister, address.m_ptr);
     }
 
+    void addZeroExtend64(RegisterID src, RegisterID srcExtend, RegisterID dest)
+    {
+        ASSERT(srcExtend != ARM64Registers::sp);
+        m_assembler.add<64>(dest, src, srcExtend, Assembler::UXTW, 0);
+    }
+
+    void addSignExtend64(RegisterID src, RegisterID srcExtend, RegisterID dest)
+    {
+        ASSERT(srcExtend != ARM64Registers::sp);
+        m_assembler.add<64>(dest, src, srcExtend, Assembler::SXTW, 0);
+    }
+
     void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
     {
         add64(imm, srcDest);

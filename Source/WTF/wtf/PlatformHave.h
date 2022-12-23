@@ -1382,3 +1382,9 @@
     || PLATFORM(APPLETV)
 #define HAVE_MEDIAPLAYBACKD 1
 #endif
+
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && defined(__has_include)
+#if __has_include(<gio/gdesktopappinfo.h>)
+#define HAVE_GDESKTOPAPPINFO 1
+#endif
+#endif

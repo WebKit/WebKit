@@ -80,7 +80,7 @@ public:
         return true;
     }
 
-    void forEach(const Function<void(T&)>& callback)
+    Vector<Ref<T>> values()
     {
         Vector<Ref<T>> strongReferences;
         {
@@ -95,8 +95,13 @@ public:
             });
             m_operationCountSinceLastCleanup = 0;
         }
+        return strongReferences;
+    }
 
-        for (auto& item : strongReferences)
+    template<typename Functor>
+    void forEach(const Functor& callback)
+    {
+        for (auto& item : values())
             callback(item.get());
     }
 

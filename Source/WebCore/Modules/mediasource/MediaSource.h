@@ -161,7 +161,6 @@ private:
 
     void regenerateActiveSourceBuffers();
     void updateBufferedIfNeeded();
-    void notifyElementUpdateMediaState() const;
 
     void completeSeek();
 

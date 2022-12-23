@@ -48,12 +48,14 @@ enum class CSSUnitType : uint8_t;
 enum class CalculationCategory : uint8_t;
 enum class ValueRange : uint8_t;
 
+enum class ShouldClampToNonNegative : bool { No, Yes };
+
 class CSSCalcValue final : public CSSValue {
 public:
     static RefPtr<CSSCalcValue> create(CSSValueID function, const CSSParserTokenRange&, CalculationCategory destinationCategory, ValueRange, const CSSCalcSymbolTable&, bool allowsNegativePercentage = false);
     static RefPtr<CSSCalcValue> create(CSSValueID function, const CSSParserTokenRange&, CalculationCategory destinationCategory, ValueRange);
     static RefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
-    static RefPtr<CSSCalcValue> create(Ref<CSSCalcExpressionNode>&&, bool allowsNegativePercentage = false);
+    static RefPtr<CSSCalcValue> create(Ref<CSSCalcExpressionNode>&&, ShouldClampToNonNegative = ShouldClampToNonNegative::No);
     ~CSSCalcValue();
 
     CalculationCategory category() const;
@@ -79,7 +81,7 @@ public:
     const CSSCalcExpressionNode& expressionNode() const { return m_expression; }
 
 private:
-    CSSCalcValue(Ref<CSSCalcExpressionNode>&&, bool shouldClampToNonNegative);
+    CSSCalcValue(Ref<CSSCalcExpressionNode>&&, ShouldClampToNonNegative);
 
     double clampToPermittedRange(double) const;
 

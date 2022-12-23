@@ -116,19 +116,19 @@ PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SV
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
 
 Test string: 'defer xMinYMin'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMIN
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMin'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMIN
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMin'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMid'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMID
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMid'
@@ -136,35 +136,35 @@ PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SV
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMid'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMID
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMax'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMAX
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMax'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMAX
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMax'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMAX
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMin meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMIN
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMin meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMIN
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMin meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMid meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMID
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMid meet'
@@ -172,56 +172,56 @@ PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SV
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMid meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMID
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMax meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMAX
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMax meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMAX
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMax meet'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMAX
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
 PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMin slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMIN
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMin slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMIN
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMin slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMid slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMID
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMid slice'
 PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMid slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMID
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMinYMax slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMAX
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMidYMax slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMAX
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Test string: 'defer xMaxYMax slice'
-PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMAX
-PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS imageElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
 
 Tests for some whitespace cases.
 

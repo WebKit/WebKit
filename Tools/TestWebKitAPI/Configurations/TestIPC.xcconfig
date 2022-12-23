@@ -21,8 +21,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "../../../Configurations/WebKitTargetConditionals.xcconfig"
-
 PRODUCT_NAME = TestIPC;
 
 PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
@@ -30,10 +28,6 @@ PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BUILDING_TEST_IPC GTEST_API_=
-
-// Workaround for "WebKit is not available..." error (rdar://91668054)
-DISABLE_SDK_METADATA_PARSING[sdk=appletv*] = YES;
-DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES;
 
 WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;

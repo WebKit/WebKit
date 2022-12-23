@@ -33,12 +33,7 @@ Ref<ThreadGroup> ThreadGroup::create()
     return adoptRef(*new ThreadGroup);
 }
 
-ThreadGroup::~ThreadGroup()
-{
-    Locker locker { m_lock };
-    for (auto& thread : m_threads)
-        thread->removeFromThreadGroup(locker, *this);
-}
+ThreadGroup::~ThreadGroup() = default;
 
 ThreadGroupAddResult ThreadGroup::add(const AbstractLocker& locker, Thread& thread)
 {

@@ -1507,12 +1507,14 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
         if (!frameView)
             continue;
 
-        const HashSet<ScrollableArea*>* scrollableAreas = frameView->scrollableAreas();
+        auto scrollableAreas = frameView->scrollableAreas();
         if (!scrollableAreas)
             continue;
 
-        for (auto& scrollableArea : *scrollableAreas)
+        for (auto& area : *scrollableAreas) {
+            CheckedPtr<ScrollableArea> scrollableArea(area);
             scrollableArea->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
+        }
     }
 }
     
@@ -2565,7 +2567,8 @@ void Page::stopKeyboardScrollAnimation()
         if (!scrollableAreas)
             continue;
 
-        for (auto& scrollableArea : *scrollableAreas) {
+        for (auto& area : *scrollableAreas) {
+            CheckedPtr<ScrollableArea> scrollableArea(area);
             // First call stopAsyncAnimatedScroll() to prepare for the keyboard scroller running on the scrolling thread.
             scrollableArea->stopAsyncAnimatedScroll();
             scrollableArea->stopKeyboardScrollAnimation();

@@ -1171,6 +1171,7 @@ void testFloatMaxMin();
 void testDoubleMaxMin();
 
 void testWasmAddressDoesNotCSE();
+void testWasmAddressWithOffset();
 void testStoreAfterClobberExitsSideways();
 void testStoreAfterClobberDifferentWidth();
 void testStoreAfterClobberDifferentWidthSuccessor();

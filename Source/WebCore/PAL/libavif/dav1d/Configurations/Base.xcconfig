@@ -21,15 +21,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include? "../../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
-#include "../../../../../Configurations/SDKVariant.xcconfig"
+#include "../../../../../Configurations/CommonBase.xcconfig"
 
 CODE_SIGN_IDENTITY = -;
-
-USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
-USE_INTERNAL_SDK_Production = YES;
-USE_INTERNAL_SDK_Debug = $(HAVE_INTERNAL_SDK);
-USE_INTERNAL_SDK_Release = $(HAVE_INTERNAL_SDK);
 
 ALWAYS_SEARCH_USER_PATHS = NO;
 
@@ -91,16 +85,6 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wconditional-uninitialized -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wno-unknown-warning-option -Wliteral-conversion -Wthread-safety;
 
-TARGET_MACOS_LEGACY_VERSION_IDENTIFIER = $(TARGET_MACOS_LEGACY_VERSION_IDENTIFIER_$(MACOSX_DEPLOYMENT_TARGET:base))
-TARGET_MACOS_LEGACY_VERSION_IDENTIFIER_10 = 10$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier)
-
-TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR_$(TARGET_MACOS_LEGACY_VERSION_IDENTIFIER))
-TARGET_MAC_OS_X_VERSION_MAJOR_ = $(MACOSX_DEPLOYMENT_TARGET:base:base)0000
-TARGET_MAC_OS_X_VERSION_MAJOR_10_14 = 101400
-TARGET_MAC_OS_X_VERSION_MAJOR_10_15 = 101500
-
-WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // iOS 9.3 => 9
-
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;
 
@@ -121,16 +105,6 @@ STRIP_INSTALLED_PRODUCT = YES;
 STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 
 SDKROOT = macosx.internal;
-
-WK_COCOA_TOUCH = $(WK_COCOA_TOUCH_$(WK_PLATFORM_NAME));
-WK_COCOA_TOUCH_iphoneos = cocoatouch;
-WK_COCOA_TOUCH_iphonesimulator = cocoatouch;
-WK_COCOA_TOUCH_maccatalyst = cocoatouch;
-WK_COCOA_TOUCH_watchos = cocoatouch;
-WK_COCOA_TOUCH_watchsimulator = cocoatouch;
-WK_COCOA_TOUCH_appletvos = cocoatouch;
-WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
-WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
 
 LLVM_LTO = $(WK_LLVM_LTO_$(WK_XCODE_SUPPORTS_LTO));
 WK_LLVM_LTO_NO = NO;

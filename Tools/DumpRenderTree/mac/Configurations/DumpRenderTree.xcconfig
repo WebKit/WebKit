@@ -30,15 +30,10 @@ OTHER_LDFLAGS_ = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpR
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 STRIP_STYLE = debugging;
 PRODUCT_NAME = DumpRenderTree;
-SKIP_INSTALL[sdk=macosx*] = NO;
-SKIP_INSTALL[sdk=embedded*] = YES;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = *.ttf *.TTF *.otf;
 
-INSTALL_PATH = $(INSTALL_PATH_$(CONFIGURATION))
-INSTALL_PATH_Release = $(INSTALL_PATH);
-INSTALL_PATH_Debug = $(INSTALL_PATH);
-INSTALL_PATH_Production = $(INSTALL_PATH_PREFIX)$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH);
-INSTALL_PATH_engineering = $(INSTALL_PATH);
+SKIP_INSTALL[sdk=embedded*] = YES;
+
+INSTALL_PATH = $(PRODUCTION_PUBLIC_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Resources;
 
 CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = mac/Configurations/DumpRenderTree.entitlements;
 

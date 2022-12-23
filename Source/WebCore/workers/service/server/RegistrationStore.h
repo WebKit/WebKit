@@ -61,7 +61,7 @@ public:
     void removeRegistration(const ServiceWorkerRegistrationKey&);
 
     // Callbacks from the database
-    void addRegistrationFromDatabase(ServiceWorkerContextData&&);
+    void addRegistrationFromDatabase(ServiceWorkerContextData&&, CompletionHandler<void()>&&);
     void databaseFailedToOpen();
     void databaseOpenedAndRecordsImported();
     void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);

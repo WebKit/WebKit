@@ -2,6 +2,8 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2010 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -92,20 +94,6 @@ template<typename CharacterType> bool SVGPreserveAspectRatioValue::parseInternal
 
     if (!skipOptionalSVGSpaces(buffer))
         return false;
-
-    if (*buffer == 'd') {
-        if (!skipCharactersExactly(buffer, deferDesc<CharacterType>)) {
-            LOG_ERROR("Skipped to parse except for *defer* value.");
-            return false;
-        }
-
-        // FIXME: We just ignore the "defer" here.
-        if (buffer.atEnd())
-            return true;
-
-        if (!skipOptionalSVGSpaces(buffer))
-            return false;
-    }
 
     if (*buffer == 'n') {
         if (!skipCharactersExactly(buffer, noneDesc<CharacterType>)) {

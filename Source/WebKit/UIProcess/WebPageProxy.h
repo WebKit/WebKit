@@ -1565,6 +1565,8 @@ public:
     void negotiatedLegacyTLS();
     void didNegotiateModernTLS(const URL&);
 
+    void didFailLoadDueToNetworkConnectionIntegrity(const URL&);
+
     SpellDocumentTag spellDocumentTag();
 
     void didFinishCheckingText(TextCheckerRequestID, const Vector<WebCore::TextCheckingResult>&);
@@ -1611,7 +1613,6 @@ public:
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::IsPlayingAudio); }
-    bool hasMediaStreaming() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::HasStreamingActivity); }
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
     void updateReportedMediaCaptureState();
 

@@ -34,21 +34,16 @@ MODULEMAP_FILE_cocoatouch_NO = Modules/iOS.modulemap;
 MODULEMAP_FILE_cocoatouch_YES = Modules/MacCatalyst.modulemap;
 MODULEMAP_FILE__NO = Modules/OSX.modulemap;
 
-INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WEBKIT_FRAMEWORKS_DIR);
+INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR);
 
-// Workaround for "JavaScriptCore is not available when building for watchOS." error (rdar://91668054)
-DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES
-
-DYLIB_INSTALL_NAME_BASE = $(DYLIB_INSTALL_NAME_BASE_$(WK_USE_ALTERNATE_FRAMEWORKS_DIR));
-DYLIB_INSTALL_NAME_BASE_NO = $(NORMAL_WEBKIT_FRAMEWORKS_DIR);
-DYLIB_INSTALL_NAME_BASE_YES = $(WEBKIT_FRAMEWORKS_DIR);
+DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR);
 
 ALTERNATE_ROOT_PATH = $(NORMAL_WEBKIT_FRAMEWORKS_DIR);
 
 OUTPUT_ALTERNATE_ROOT_PATH = $(OUTPUT_ALTERNATE_ROOT_PATH_$(USE_SYSTEM_CONTENT_PATH)_$(WK_NOT_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR)));
 OUTPUT_ALTERNATE_ROOT_PATH_YES_YES = $(DSTROOT)$(ALTERNATE_ROOT_PATH)/$(FULL_PRODUCT_NAME);
 
-LIBRARY_SEARCH_PATHS = $(inherited) "$(LIBWEBRTC_LIBRARY_DIR)";
+LIBRARY_SEARCH_PATHS = $(inherited) "$(WEBCORE_LIBRARY_DIR)";
 
 WK_ACCESSIBILITY_LDFLAGS = $(WK_ACCESSIBILITY_LDFLAGS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
 WK_ACCESSIBILITY_LDFLAGS_COCOA_TOUCH_YES = -lAccessibility;
@@ -182,12 +177,6 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio
 
 // Prevent C++ standard library basic_stringstream, operator new, delete and their related exception types from being exported as weak symbols.
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol -Wl,__ZTVNSt3__117bad_function_callE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE;
-
-LIBWEBRTC_LIBRARY_DIR = $(LIBWEBRTC_LIBRARY_DIR_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
-LIBWEBRTC_LIBRARY_DIR_COCOA_TOUCH_YES = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks
-LIBWEBRTC_LIBRARY_DIR_COCOA_TOUCH_NO = $(LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
-LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_NO = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Versions/A/Frameworks;
-LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
 
 WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS = -Xlinker -no_inits;
 WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(ENABLE_ANY_SANITIZER)_$(ENABLE_LLVM_PROFILE_GENERATION));

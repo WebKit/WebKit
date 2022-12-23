@@ -29,7 +29,3 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=embedded*] = -lobjc -framework UIKit;
 FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=macosx*] = -framework JavaScriptCore -framework WebKit -framework CoreGraphics -framework Cocoa;
 
 OTHER_LDFLAGS = $(inherited) $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
-
-// Workaround for "WebKit is not available..." error (rdar://91668054)
-DISABLE_SDK_METADATA_PARSING[sdk=appletv*] = YES;
-DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES;

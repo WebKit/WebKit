@@ -137,9 +137,6 @@ typedef struct _CARenderContext CARenderContext;
 @property (getter=isSeparated) BOOL separated;
 #endif
 @property BOOL toneMapToStandardDynamicRange;
-#if HAVE(CALAYER_ALLOWS_SORTS_SUBLAYERS)
-@property BOOL allowsSortsSublayers;
-#endif
 @end
 
 #if ENABLE(FILTERS_LEVEL_2)
@@ -206,6 +203,12 @@ typedef enum {
 #endif // __OBJC__
 
 #endif
+
+@interface CALayer ()
+#if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
+@property BOOL usesWebKitBehavior;
+#endif
+@end
 
 WTF_EXTERN_C_BEGIN
 

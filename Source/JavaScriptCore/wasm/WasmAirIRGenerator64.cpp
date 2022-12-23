@@ -962,7 +962,6 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
     ASSERT(m_memoryBaseGPR);
 
     auto result = g64();
-    append(Move32, pointer, result);
 
     switch (m_mode) {
     case MemoryMode::BoundsChecking: {
@@ -972,7 +971,12 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
         ASSERT(sizeOfOperation + offset > offset);
         auto temp = g64();
         append(Move, Arg::bigImm(static_cast<uint64_t>(sizeOfOperation) + offset - 1), temp);
-        append(Add64, result, temp);
+        if constexpr (isARM64())
+            append(AddZeroExtend64, temp, pointer, temp);
+        else {
+            append(Move32, pointer, result);
+            append(Add64, result, temp);
+        }
 
         emitCheck([&] {
             return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, Tmp(m_boundsCheckingSizeGPR));
@@ -994,11 +998,17 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
         // PROT_NONE region, but it's better if we use a smaller immediate because it can codegens better. We know that anything equal to or greater
         // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
         // any access equal to or greater than 4GiB will trap, no need to add the redzone.
+        if constexpr (!isARM64())
+            append(Move32, pointer, result);
         if (offset >= Memory::fastMappedRedzoneBytes()) {
             uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
             auto temp = g64();
             append(Move, Arg::bigImm(static_cast<uint64_t>(sizeOfOperation) + offset - 1), temp);
-            append(Add64, result, temp);
+            if constexpr (isARM64())
+                append(AddZeroExtend64, temp, pointer, temp);
+            else
+                append(Add64, result, temp);
+
             auto sizeMax = addConstant(Types::I64, maximum);
 
             emitCheck([&] {
@@ -1012,7 +1022,10 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
 #endif
     }
 
-    append(Add64, Tmp(m_memoryBaseGPR), result);
+    if constexpr (isARM64())
+        append(AddZeroExtend64, Tmp(m_memoryBaseGPR), pointer, result);
+    else
+        append(Add64, Tmp(m_memoryBaseGPR), result);
     return result;
 }
 
@@ -1937,15 +1950,7 @@ auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnVal
 
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
-
-        // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
-        // the macro assembler might assert scratch register usage on load operations emitted by emitRestore.
-        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM64E());
-
-        jit.emitRestore(calleeSaves);
-        jit.emitFunctionEpilogue();
-        jit.ret();
+        params.code().emitEpilogue(jit);
     });
     patch->effects.terminal = true;
 

@@ -1,5 +1,3 @@
-#include "../../../../Configurations/WebKitTargetConditionals.xcconfig"
-
 PRODUCT_NAME = opus;
 
 CLANG_WARN_BOOL_CONVERSION = YES;

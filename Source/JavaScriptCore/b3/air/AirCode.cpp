@@ -92,7 +92,7 @@ Code::Code(Procedure& proc)
             // Our use of DisallowMacroScratchRegisterUsage is not quite right, so for now...
             all.exclude(RegisterSetBuilder::macroClobberedRegisters());
 #endif // CPU(ARM)
-            auto calleeSave = RegisterSetBuilder::vmCalleeSaveRegisters();
+            auto calleeSave = RegisterSetBuilder::calleeSaveRegisters();
             all.buildAndValidate().forEach(
                 [&] (Reg reg) {
                     if (!calleeSave.contains(reg, IgnoreVectors))
@@ -131,6 +131,9 @@ void Code::emitDefaultPrologue(CCallHelpers& jit)
 void Code::emitEpilogue(CCallHelpers& jit)
 {
     if (frameSize()) {
+        // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
+        // the macro assembler might assert scratch register usage on load operations emitted by emitRestore.
+        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
         jit.emitRestore(calleeSaveRegisterAtOffsetList());
         jit.emitFunctionEpilogue();
     } else

@@ -6,7 +6,7 @@ PASS Can set 'z-index' to CSS-wide keywords: revert
 PASS Can set 'z-index' to var() references:  var(--A)
 PASS Can set 'z-index' to the 'auto' keyword: auto
 PASS Can set 'z-index' to a number: 0
-FAIL Can set 'z-index' to a number: -3.14 assert_approx_equals: expected -3 +/- 0.000001 but got 0
+PASS Can set 'z-index' to a number: -3.14
 PASS Can set 'z-index' to a number: 3.14
 PASS Can set 'z-index' to a number: calc(2 + 3)
 PASS Setting 'z-index' to a length: 0px throws TypeError

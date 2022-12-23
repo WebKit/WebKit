@@ -4469,7 +4469,7 @@ void Document::setNeedsVisualViewportScrollEvent()
     m_needsVisualViewportScrollEvent = true;
 }
 
-static bool serviceScrollAnimationForScrollableArea(ScrollableArea* scrollableArea, MonotonicTime time)
+static bool serviceScrollAnimationForScrollableArea(const ScrollableArea* scrollableArea, MonotonicTime time)
 {
     if (!scrollableArea)
         return false;
@@ -4488,13 +4488,18 @@ void Document::runScrollSteps()
     if (frameView) {
         MonotonicTime now = MonotonicTime::now();
         bool scrollAnimationsInProgress = serviceScrollAnimationForScrollableArea(frameView.get(), now);
-        HashSet<ScrollableArea*> scrollableAreasToUpdate;
-        if (auto userScrollableAreas = frameView->scrollableAreas())
-            scrollableAreasToUpdate.add(userScrollableAreas->begin(), userScrollableAreas->end());
-        if (auto nonUserScrollableAreas = frameView->scrollableAreasForAnimatedScroll())
-            scrollableAreasToUpdate.add(nonUserScrollableAreas->begin(), nonUserScrollableAreas->end());
-        for (auto* scrollableArea : scrollableAreasToUpdate) {
-            if (serviceScrollAnimationForScrollableArea(scrollableArea, now))
+        HashSet<CheckedPtr<ScrollableArea>> scrollableAreasToUpdate;
+        if (auto userScrollableAreas = frameView->scrollableAreas()) {
+            for (auto& area : *userScrollableAreas)
+                scrollableAreasToUpdate.add(CheckedPtr<ScrollableArea>(area));
+        }
+            
+        if (auto nonUserScrollableAreas = frameView->scrollableAreasForAnimatedScroll()) {
+            for (auto& area : *nonUserScrollableAreas)
+                scrollableAreasToUpdate.add(CheckedPtr<ScrollableArea>(area));
+        }
+        for (auto& scrollableArea : scrollableAreasToUpdate) {
+            if (serviceScrollAnimationForScrollableArea(scrollableArea.get(), now))
                 scrollAnimationsInProgress = true;
         }
         if (scrollAnimationsInProgress)

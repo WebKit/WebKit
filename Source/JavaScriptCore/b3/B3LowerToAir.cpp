@@ -3728,6 +3728,25 @@ private:
         case WasmAddress: {
             WasmAddressValue* address = m_value->as<WasmAddressValue>();
 
+            if constexpr (isARM64()) {
+                Value* index = m_value->child(0);
+                if (canBeInternal(index)) {
+                    // Maybe, the ideal approach is to introduce a decorator (Index@EXT) to the Air operand
+                    // to provide an extension opportunity for the specific form under the Air opcode.
+                    if (isMergeableValue(index, ZExt32)) {
+                        append(AddZeroExtend64, Arg(address->pinnedGPR()), tmp(index->child(0)), tmp(address));
+                        commitInternal(index);
+                        return;
+                    }
+
+                    if (isMergeableValue(index, SExt32)) {
+                        append(AddSignExtend64, Arg(address->pinnedGPR()), tmp(index->child(0)), tmp(address));
+                        commitInternal(index);
+                        return;
+                    }
+                }
+            }
+
             append(Add64, Arg(address->pinnedGPR()), tmp(m_value->child(0)), tmp(address));
             return;
         }
