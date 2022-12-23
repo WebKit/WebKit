@@ -416,7 +416,7 @@ gboolean webkit_cookie_manager_delete_cookie_finish(WebKitCookieManager* manager
     return g_task_propagate_boolean(G_TASK(result), error);
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_cookie_manager_get_domains_with_cookies:
  * @cookie_manager: a #WebKitCookieManager

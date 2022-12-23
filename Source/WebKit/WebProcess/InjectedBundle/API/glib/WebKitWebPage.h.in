@@ -29,10 +29,12 @@
 #include <@API_INCLUDE_PREFIX@/WebKitWebEditor.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWebFormManager.h>
 
+#if !ENABLE(2022_GLIB_API)
 #if PLATFORM(GTK)
 #include <webkitdom/webkitdom.h>
 #elif PLATFORM(WPE)
 #include <wpe/webkitdom.h>
+#endif
 #endif
 
 G_BEGIN_DECLS
@@ -51,6 +53,7 @@ typedef struct _WebKitWebPagePrivate WebKitWebPagePrivate;
 /* Forward declarations */
 typedef struct _WebKitWebEditor      WebKitWebEditor;
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * WebKitFormSubmissionStep:
  * @WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT: indicates the form's
@@ -69,6 +72,7 @@ typedef enum {
     WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT,
     WEBKIT_FORM_SUBMISSION_WILL_COMPLETE,
 } WebKitFormSubmissionStep;
+#endif
 
 struct _WebKitWebPage {
     GObject parent;
@@ -84,8 +88,10 @@ struct _WebKitWebPageClass {
 WEBKIT_API GType
 webkit_web_page_get_type                    (void);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED WebKitDOMDocument *
 webkit_web_page_get_dom_document            (WebKitWebPage *web_page);
+#endif
 
 WEBKIT_API guint64
 webkit_web_page_get_id                      (WebKitWebPage *web_page);

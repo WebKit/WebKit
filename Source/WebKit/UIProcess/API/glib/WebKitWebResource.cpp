@@ -153,6 +153,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
         WEBKIT_TYPE_URI_REQUEST,
         WEBKIT_TYPE_URI_RESPONSE);
 
+#if !ENABLE(2022_GLIB_API)
     /**
      * WebKitWebResource::received-data:
      * @resource: the #WebKitWebResource
@@ -174,6 +175,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 1,
         G_TYPE_UINT64);
+#endif
 
     /**
      * WebKitWebResource::finished:

@@ -351,6 +351,7 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_javascript_markup(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_javascript_markup(settings));
 
+#if !ENABLE(2022_GLIB_API)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Accelerated 2D canvas is deprecated and always disabled.
     g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
@@ -375,6 +376,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     g_assert_false(webkit_settings_get_enable_java(settings));
     Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
     g_object_unref(G_OBJECT(settings));
 }

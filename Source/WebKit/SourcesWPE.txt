@@ -145,7 +145,6 @@ UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp @no-uni
 UIProcess/API/glib/WebKitJavascriptResult.cpp @no-unify
 UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitMemoryPressureSettings.cpp @no-unify
-UIProcess/API/glib/WebKitMimeInfo.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationAction.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationClient.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp @no-unify
@@ -157,7 +156,6 @@ UIProcess/API/glib/WebKitOptionMenu.cpp @no-unify
 UIProcess/API/glib/WebKitOptionMenuItem.cpp @no-unify
 UIProcess/API/glib/WebKitPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitPermissionStateQuery.cpp @no-unify
-UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 UIProcess/API/glib/WebKitPolicyDecision.cpp @no-unify
 UIProcess/API/glib/WebKitPrivate.cpp @no-unify
 UIProcess/API/glib/WebKitProtocolHandler.cpp @no-unify
@@ -249,14 +247,6 @@ WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 
 WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
 
-WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
-WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify
-WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElement.cpp @no-unify
-WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp @no-unify
-WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMObject.cpp @no-unify
-WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMPrivate.cpp @no-unify
-
-WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp @no-unify

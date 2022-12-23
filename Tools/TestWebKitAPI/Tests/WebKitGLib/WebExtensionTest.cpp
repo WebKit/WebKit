@@ -159,7 +159,7 @@ static void emitDocumentLoaded(GDBusConnection* connection)
 
 static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* extension)
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     GRefPtr<WebKitDOMDOMWindow> window = adoptGRef(webkit_dom_document_get_default_view(document));
@@ -319,10 +319,12 @@ static void emitFormControlsAssociated(GDBusConnection* connection, const char* 
     g_assert_true(ok);
 }
 
+#if !ENABLE(2022_GLIB_API)
 static void formControlsAssociatedForFrameCallback(WebKitWebPage*, GPtrArray*, WebKitFrame*, WebKitWebExtension*)
 {
     g_assert_not_reached();
 }
+#endif
 
 static void formControlsAssociatedCallback(WebKitWebFormManager*, WebKitFrame*, GPtrArray* formElements, WebKitWebExtension* extension)
 {
@@ -360,10 +362,12 @@ static void emitFormSubmissionEvent(GDBusConnection* connection, const char* met
     g_assert_true(ok);
 }
 
+#if !ENABLE(2022_GLIB_API)
 static void willSubmitFormDeprecatedCallback(WebKitWebPage*, WebKitDOMElement*, WebKitFormSubmissionStep, WebKitFrame*, WebKitFrame*, GPtrArray*, GPtrArray*, WebKitWebExtension*)
 {
     g_assert_not_reached();
 }
+#endif
 
 static void handleFormSubmissionCallback(WebKitWebExtension* extension, DelayedSignalType delayedSignalType, const char* methodName, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame)
 {
@@ -514,8 +518,10 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
     g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
+#if !ENABLE(2022_GLIB_API)
     g_signal_connect(webPage, "form-controls-associated-for-frame", G_CALLBACK(formControlsAssociatedForFrameCallback), extension);
     g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormDeprecatedCallback), extension);
+#endif
     g_signal_connect(webPage, "user-message-received", G_CALLBACK(pageMessageReceivedCallback), extension);
 
     auto* formManager = webkit_web_page_get_form_manager(webPage, nullptr);

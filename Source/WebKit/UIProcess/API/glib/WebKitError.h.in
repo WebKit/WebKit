@@ -29,7 +29,9 @@ G_BEGIN_DECLS
 
 #define WEBKIT_NETWORK_ERROR             webkit_network_error_quark ()
 #define WEBKIT_POLICY_ERROR              webkit_policy_error_quark ()
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_PLUGIN_ERROR              webkit_plugin_error_quark ()
+#endif
 #define WEBKIT_DOWNLOAD_ERROR            webkit_download_error_quark ()
 #define WEBKIT_JAVASCRIPT_ERROR          webkit_javascript_error_quark ()
 #define WEBKIT_SNAPSHOT_ERROR            webkit_snapshot_error_quark ()
@@ -75,6 +77,7 @@ typedef enum {
     WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT = 103
 } WebKitPolicyError;
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * WebKitPluginError:
  * @WEBKIT_PLUGIN_ERROR_FAILED: Generic plugin load failure. Deprecated 2.32
@@ -94,6 +97,7 @@ typedef enum {
     WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED = 203,
     WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD = 204,
 } WebKitPluginError;
+#endif
 
 /**
  * WebKitDownloadError:
@@ -165,8 +169,10 @@ webkit_network_error_quark             (void);
 WEBKIT_API GQuark
 webkit_policy_error_quark              (void);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API GQuark
 webkit_plugin_error_quark              (void);
+#endif
 
 WEBKIT_API GQuark
 webkit_download_error_quark            (void);

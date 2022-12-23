@@ -71,7 +71,9 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
         WebsiteDataType::OfflineWebApplicationCache,
         WebsiteDataType::SessionStorage,
         WebsiteDataType::LocalStorage,
+#if !ENABLE(2022_GLIB_API)
         WebsiteDataType::WebSQLDatabases,
+#endif
         WebsiteDataType::IndexedDBDatabases,
         WebsiteDataType::HSTSCache,
         WebsiteDataType::Cookies,
@@ -97,8 +99,10 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_SESSION_STORAGE;
     if (types.contains(WebsiteDataType::LocalStorage))
         returnValue |= WEBKIT_WEBSITE_DATA_LOCAL_STORAGE;
+#if !ENABLE(2022_GLIB_API)
     if (types.contains(WebsiteDataType::WebSQLDatabases))
         returnValue |= WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES;
+#endif
     if (types.contains(WebsiteDataType::IndexedDBDatabases))
         returnValue |= WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES;
     if (types.contains(WebsiteDataType::HSTSCache))

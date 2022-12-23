@@ -145,7 +145,7 @@ webkit_cookie_manager_delete_cookie_finish            (WebKitCookieManager      
                                                        GAsyncResult                 *result,
                                                        GError                      **error);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_fetch) void
 webkit_cookie_manager_get_domains_with_cookies        (WebKitCookieManager          *cookie_manager,
                                                        GCancellable                 *cancellable,

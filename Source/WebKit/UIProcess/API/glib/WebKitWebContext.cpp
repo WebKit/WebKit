@@ -117,7 +117,7 @@ using namespace WebKit;
 
 enum {
     PROP_0,
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     PROP_LOCAL_STORAGE_DIRECTORY,
 #endif
     PROP_WEBSITE_DATA_MANAGER,
@@ -334,7 +334,7 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     WebKitWebContext* context = WEBKIT_WEB_CONTEXT(object);
 
     switch (propID) {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     case PROP_LOCAL_STORAGE_DIRECTORY:
         g_value_set_string(value, context->priv->localStorageDirectory.data());
         break;
@@ -363,7 +363,7 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     WebKitWebContext* context = WEBKIT_WEB_CONTEXT(object);
 
     switch (propID) {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     case PROP_LOCAL_STORAGE_DIRECTORY:
         context->priv->localStorageDirectory = g_value_get_string(value);
         break;
@@ -489,7 +489,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
     gObjectClass->constructed = webkitWebContextConstructed;
     gObjectClass->dispose = webkitWebContextDispose;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     /**
      * WebKitWebContext:local-storage-directory:
      *
@@ -975,6 +975,7 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
     websiteDataStore.removeData(websiteDataTypes, -WallTime::infinity(), [] { });
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_network_proxy_settings:
  * @context: a #WebKitWebContext
@@ -1001,6 +1002,7 @@ void webkit_web_context_set_network_proxy_settings(WebKitWebContext* context, We
 
     webkit_website_data_manager_set_network_proxy_settings(context->priv->websiteDataManager.get(), proxyMode, proxySettings);
 }
+#endif
 
 typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;
 
@@ -1186,6 +1188,7 @@ WebKitSecurityManager* webkit_web_context_get_security_manager(WebKitWebContext*
     return priv->securityManager.get();
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_additional_plugins_directory:
  * @context: a #WebKitWebContext
@@ -1244,6 +1247,7 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
 
     return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
 }
+#endif
 
 /**
  * webkit_web_context_register_uri_scheme:
@@ -1544,6 +1548,7 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
     context->priv->processPool->setOverrideLanguages(WTFMove(languages));
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_tls_errors_policy:
  * @context: a #WebKitWebContext
@@ -1576,6 +1581,7 @@ WebKitTLSErrorsPolicy webkit_web_context_get_tls_errors_policy(WebKitWebContext*
 
     return webkit_website_data_manager_get_tls_errors_policy(context->priv->websiteDataManager.get());
 }
+#endif
 
 /**
  * webkit_web_context_set_web_extensions_directory:
@@ -1622,7 +1628,7 @@ void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebCon
     context->priv->webExtensionsInitializationUserData = userData;
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_web_context_set_disk_cache_directory:
  * @context: a #WebKitWebContext
@@ -1748,6 +1754,7 @@ WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* contex
     return context->priv->processModel;
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_web_process_count_limit:
  * @context: the #WebKitWebContext
@@ -1791,6 +1798,7 @@ guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
 
     return 0;
 }
+#endif
 
 static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* map, bool allowed)
 {

@@ -75,6 +75,7 @@ enum {
 
     PROP_BASE_DATA_DIRECTORY,
     PROP_BASE_CACHE_DIRECTORY,
+#if !ENABLE(2022_GLIB_API)
     PROP_LOCAL_STORAGE_DIRECTORY,
     PROP_DISK_CACHE_DIRECTORY,
     PROP_APPLICATION_CACHE_DIRECTORY,
@@ -84,6 +85,7 @@ enum {
     PROP_ITP_DIRECTORY,
     PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY,
     PROP_DOM_CACHE_DIRECTORY,
+#endif
     PROP_IS_EPHEMERAL
 };
 
@@ -96,6 +98,7 @@ struct _WebKitWebsiteDataManagerPrivate {
 
     GRefPtr<WebKitCookieManager> cookieManager;
 
+#if !ENABLE(2022_GLIB_API)
     // These manual directory overrides are deprecated. Please don't add more.
     GUniquePtr<char> localStorageDirectory;
     GUniquePtr<char> diskCacheDirectory;
@@ -106,6 +109,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> itpDirectory;
     GUniquePtr<char> swRegistrationsDirectory;
     GUniquePtr<char> domCacheDirectory;
+#endif
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT)
@@ -114,7 +118,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
 {
     WebKitWebsiteDataManager* manager = WEBKIT_WEBSITE_DATA_MANAGER(object);
 
+#if !ENABLE(2022_GLIB_API)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#endif
     switch (propID) {
     case PROP_BASE_DATA_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_base_data_directory(manager));
@@ -122,6 +128,7 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
     case PROP_BASE_CACHE_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_base_cache_directory(manager));
         break;
+#if !ENABLE(2022_GLIB_API)
     case PROP_LOCAL_STORAGE_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_local_storage_directory(manager));
         break;
@@ -149,13 +156,16 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
     case PROP_DOM_CACHE_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_dom_cache_directory(manager));
         break;
+#endif
     case PROP_IS_EPHEMERAL:
         g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
+#if !ENABLE(2022_GLIB_API)
     ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 }
 
 static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* paramSpec)
@@ -169,6 +179,7 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_BASE_CACHE_DIRECTORY:
         manager->priv->baseCacheDirectory.reset(g_value_dup_string(value));
         break;
+#if !ENABLE(2022_GLIB_API)
     case PROP_LOCAL_STORAGE_DIRECTORY:
         manager->priv->localStorageDirectory.reset(g_value_dup_string(value));
         break;
@@ -196,6 +207,7 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_DOM_CACHE_DIRECTORY:
         manager->priv->domCacheDirectory.reset(g_value_dup_string(value));
         break;
+#endif
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = WebKit::WebsiteDataStore::createNonPersistent();
@@ -210,6 +222,7 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_website_data_manager_parent_class)->constructed(object);
 
     WebKitWebsiteDataManagerPrivate* priv = WEBKIT_WEBSITE_DATA_MANAGER(object)->priv;
+#if !ENABLE(2022_GLIB_API)
     if (priv->baseDataDirectory) {
         if (!priv->localStorageDirectory)
             priv->localStorageDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "localstorage", nullptr));
@@ -233,6 +246,7 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
         if (!priv->domCacheDirectory)
             priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "CacheStorage", nullptr));
     }
+#endif
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     if (priv->websiteDataStore)
@@ -283,6 +297,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
+#if !ENABLE(2022_GLIB_API)
     /**
      * WebKitWebsiteDataManager:local-storage-directory:
      *
@@ -453,6 +468,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             _("The directory where DOM cache will be stored"),
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
+#endif
 
     /**
      * WebKitWebsiteDataManager:is-ephemeral:
@@ -480,6 +496,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
         auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String::fromUTF8(priv->baseCacheDirectory.get()), String::fromUTF8(priv->baseDataDirectory.get()));
+#if !ENABLE(2022_GLIB_API)
         if (priv->localStorageDirectory)
             configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
         if (priv->diskCacheDirectory)
@@ -498,6 +515,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             configuration->setServiceWorkerRegistrationDirectory(FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
         if (priv->domCacheDirectory)
             configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
+#endif
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
         priv->websiteDataStore->setIgnoreTLSErrors(priv->tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     }
@@ -605,6 +623,7 @@ const gchar* webkit_website_data_manager_get_base_cache_directory(WebKitWebsiteD
     return manager->priv->baseCacheDirectory.get();
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_website_data_manager_get_local_storage_directory:
  * @manager: a #WebKitWebsiteDataManager
@@ -831,6 +850,7 @@ const gchar* webkit_website_data_manager_get_dom_cache_directory(WebKitWebsiteDa
         priv->domCacheDirectory.reset(g_strdup(WebKit::WebsiteDataStore::defaultCacheStorageDirectory().utf8().data()));
     return priv->domCacheDirectory.get();
 }
+#endif
 
 /**
  * webkit_website_data_manager_get_cookie_manager:
@@ -1021,8 +1041,10 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::SessionStorage);
     if (types & WEBKIT_WEBSITE_DATA_LOCAL_STORAGE)
         returnValue.add(WebsiteDataType::LocalStorage);
+#if !ENABLE(2022_GLIB_API)
     if (types & WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES)
         returnValue.add(WebsiteDataType::WebSQLDatabases);
+#endif
     if (types & WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES)
         returnValue.add(WebsiteDataType::IndexedDBDatabases);
     if (types & WEBKIT_WEBSITE_DATA_HSTS_CACHE)

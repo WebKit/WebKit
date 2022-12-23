@@ -41,6 +41,7 @@ private:
         g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(page));
 
+#if !USE(GTK4)
         // Transfer none
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_autoptr(WebKitDOMDocument) document = WEBKIT_DOM_DOCUMENT(g_object_ref(G_OBJECT(webkit_web_page_get_dom_document(page))));
@@ -61,6 +62,7 @@ private:
         g_assert_true(WEBKIT_DOM_IS_RANGE(range));
         G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(range));
+#endif
 
         return true;
     }

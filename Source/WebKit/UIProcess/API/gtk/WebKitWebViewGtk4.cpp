@@ -23,6 +23,27 @@
 #include <gtk/gtk.h>
 
 #if USE(GTK4)
+/**
+ * WebKitWebsiteDataTypes:
+ * @WEBKIT_WEBSITE_DATA_MEMORY_CACHE: Memory cache.
+ * @WEBKIT_WEBSITE_DATA_DISK_CACHE: HTTP disk cache.
+ * @WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE: Offline web application cache.
+ * @WEBKIT_WEBSITE_DATA_SESSION_STORAGE: Session storage data.
+ * @WEBKIT_WEBSITE_DATA_LOCAL_STORAGE: Local storage data.
+ * @WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES: IndexedDB databases.
+ * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
+ * @WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT: Hash salt used to generate the device ids used by webpages.
+ * @WEBKIT_WEBSITE_DATA_HSTS_CACHE: HSTS cache.
+ * @WEBKIT_WEBSITE_DATA_ITP: Intelligent Tracking Prevention data.
+ * @WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS: Service worker registrations.
+ * @WEBKIT_WEBSITE_DATA_DOM_CACHE: DOM (CacheStorage) cache.
+ * @WEBKIT_WEBSITE_DATA_ALL: All types.
+ *
+ * Enum values with flags representing types of Website data.
+ *
+ * Since: 2.16
+ */
+
 guint createContextMenuSignal(WebKitWebViewClass* webViewClass)
 {
     /**

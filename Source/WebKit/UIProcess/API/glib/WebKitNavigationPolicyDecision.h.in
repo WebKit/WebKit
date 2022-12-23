@@ -64,7 +64,7 @@ webkit_navigation_policy_decision_get_type            (void);
 WEBKIT_API WebKitNavigationAction *
 webkit_navigation_policy_decision_get_navigation_action (WebKitNavigationPolicyDecision *decision);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) WebKitNavigationType
 webkit_navigation_policy_decision_get_navigation_type   (WebKitNavigationPolicyDecision *decision);
 

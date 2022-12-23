@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitFrame.h"
 
-#include "WebKitDOMNodePrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
 #include "WebKitWebFormManagerPrivate.h"
@@ -33,6 +32,10 @@
 #include <jsc/JSCContextPrivate.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitDOMNodePrivate.h"
+#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -151,7 +154,7 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
     return frame->priv->uri.data();
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_frame_get_javascript_global_context: (skip)
  * @frame: a #WebKitFrame
@@ -231,6 +234,7 @@ JSCContext* webkit_frame_get_js_context_for_script_world(WebKitFrame* frame, Web
     return jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(webkitScriptWorldGetInjectedBundleScriptWorld(world))).leakRef();
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_frame_get_js_value_for_dom_object:
  * @frame: a #WebKitFrame
@@ -289,3 +293,4 @@ JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* 
 
     return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue).leakRef() : nullptr;
 }
+#endif

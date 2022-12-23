@@ -715,6 +715,7 @@ public:
         quitMainLoop();
     }
 
+#if !USE(GTK4)
     GHashTable* getTextFieldsAsHashTable()
     {
 #pragma GCC diagnostic push
@@ -722,6 +723,7 @@ public:
         return webkit_form_submission_request_get_text_fields(m_request.get());
 #pragma GCC diagnostic pop
     }
+#endif
 
     GPtrArray* getTextFieldNames()
     {
@@ -777,6 +779,7 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
     test->loadHtml(formHTML, "file:///");
     test->waitUntilLoadFinished();
 
+#if !USE(GTK4)
     test->submitFormAtPosition(5, 5);
     GHashTable* tableValues = test->getTextFieldsAsHashTable();
     g_assert_nonnull(tableValues);
@@ -785,6 +788,7 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
     g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "")), ==, "value3");
     g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "text2")), ==, "");
     g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "password")), ==, "secret");
+#endif
 
     GPtrArray* names = test->getTextFieldNames();
     g_assert_nonnull(names);

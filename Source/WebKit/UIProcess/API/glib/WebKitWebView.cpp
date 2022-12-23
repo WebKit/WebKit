@@ -507,7 +507,9 @@ WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
 static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, const char* failingURI, GError* error)
 {
     if (g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED)
+#if !ENABLE(2022_GLIB_API)
         || g_error_matches(error, WEBKIT_PLUGIN_ERROR, WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD)
+#endif
         || g_error_matches(error, WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE))
         return FALSE;
 
@@ -2084,7 +2086,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_INSECURE_CONTENT_EVENT);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     /**
      * WebKitWebView::web-process-crashed:
      * @web_view: the #WebKitWebView
@@ -3809,7 +3811,7 @@ WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView
     return webView->priv->findController.get();
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_web_view_get_javascript_global_context: (skip)
  * @web_view: a #WebKitWebView

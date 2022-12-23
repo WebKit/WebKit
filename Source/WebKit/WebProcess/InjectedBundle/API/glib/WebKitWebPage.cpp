@@ -23,11 +23,7 @@
 #include "APIString.h"
 #include "InjectedBundle.h"
 #include "WebContextMenuItem.h"
-#include "WebKitConsoleMessage.h"
 #include "WebKitContextMenuPrivate.h"
-#include "WebKitDOMDocumentPrivate.h"
-#include "WebKitDOMElementPrivate.h"
-#include "WebKitDOMNodePrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitScriptWorldPrivate.h"
@@ -55,6 +51,13 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitConsoleMessage.h"
+#include "WebKitDOMDocumentPrivate.h"
+#include "WebKitDOMElementPrivate.h"
+#include "WebKitDOMNodePrivate.h"
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -68,8 +71,10 @@ enum {
     DOCUMENT_LOADED,
     SEND_REQUEST,
     CONTEXT_MENU,
+#if !ENABLE(2022_GLIB_API)
     CONSOLE_MESSAGE_SENT,
     FORM_CONTROLS_ASSOCIATED,
+#endif
     FORM_CONTROLS_ASSOCIATED_FOR_FRAME,
     WILL_SUBMIT_FORM,
     USER_MESSAGE_RECEIVED,
@@ -306,8 +311,11 @@ public:
             auto* wkTargetFrame = webkitFrameGetOrCreate(frame);
             for (const auto& it : m_webPage->priv->formManagerMap)
                 webkitWebFormManagerWillSubmitForm(it.value.get(), webkitFrameGetJSCValueForElementInWorld(wkFrame, *formElement, it.key), wkFrame, wkTargetFrame);
-        } else
-            fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_COMPLETE, formElement, frame, sourceFrame, values);
+            return;
+        }
+#if !ENABLE(2022_GLIB_API)
+        fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_COMPLETE, formElement, frame, sourceFrame, values);
+#endif
     }
 
     void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) override
@@ -320,8 +328,11 @@ public:
             auto* wkTargetFrame = webkitFrameGetOrCreate(frame);
             for (const auto& it : m_webPage->priv->formManagerMap)
                 webkitWebFormManagerWillSendSubmitEvent(it.value.get(), webkitFrameGetJSCValueForElementInWorld(wkFrame, *formElement, it.key), wkFrame, wkTargetFrame);
-        } else
-            fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT, formElement, frame, sourceFrame, values);
+            return;
+        }
+#if !ENABLE(2022_GLIB_API)
+        fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT, formElement, frame, sourceFrame, values);
+#endif
     }
 
     void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements, WebFrame* frame) override
@@ -333,17 +344,20 @@ public:
             return;
         }
 
+#if !ENABLE(2022_GLIB_API)
         GRefPtr<GPtrArray> formElements = adoptGRef(g_ptr_array_sized_new(elements.size()));
         for (size_t i = 0; i < elements.size(); ++i)
             g_ptr_array_add(formElements.get(), WebKit::kit(elements[i].get()));
 
         g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED], 0, formElements.get());
         g_signal_emit(m_webPage, signals[FORM_CONTROLS_ASSOCIATED_FOR_FRAME], 0, formElements.get(), wkFrame);
+#endif
     }
 
     bool shouldNotifyOnFormChanges(WebPage*) override { return true; }
 
 private:
+#if !ENABLE(2022_GLIB_API)
     void fireFormSubmissionEvent(WebKitFormSubmissionStep step, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values)
     {
         WebKitFrame* webkitTargetFrame = webkitFrameGetOrCreate(frame);
@@ -360,6 +374,7 @@ private:
         g_signal_emit(m_webPage, signals[WILL_SUBMIT_FORM], 0, WEBKIT_DOM_ELEMENT(WebKit::kit(static_cast<Node*>(formElement))), step, webkitSourceFrame, webkitTargetFrame, textFieldNames.get(), textFieldValues.get());
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
+#endif
 
     WebKitWebPage* m_webPage;
 };
@@ -420,8 +435,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * This signal is emitted when the DOM document of a #WebKitWebPage has been
      * loaded.
      *
-     * You can wait for this signal to get the DOM document with
-     * webkit_web_page_get_dom_document().
+     * You can wait for this signal to get the DOM document
      */
     signals[DOCUMENT_LOADED] = g_signal_new(
         "document-loaded",
@@ -477,7 +491,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * build its own context menu or pass user data to the UI Process.
      * This signal is useful when the information available in the UI Process
      * is not enough to build or customize the context menu, for example, to
-     * add menu entries depending on the #WebKitDOMNode at the coordinates of the
+     * add menu entries depending on the node at the coordinates of the
      * @hit_test_result. Otherwise, it's recommended to use #WebKitWebView::context-menu
      * signal instead.
      *
@@ -496,6 +510,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         WEBKIT_TYPE_CONTEXT_MENU,
         WEBKIT_TYPE_WEB_HIT_TEST_RESULT);
 
+#if !ENABLE(2022_GLIB_API)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     /**
      * WebKitWebPage::console-message-sent:
@@ -522,7 +537,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         G_TYPE_NONE, 1,
         WEBKIT_TYPE_CONSOLE_MESSAGE | G_SIGNAL_TYPE_STATIC_SCOPE);
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
+#if !ENABLE(2022_GLIB_API)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     /**
      * WebKitWebPage::form-controls-associated:
@@ -645,6 +662,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         G_TYPE_PTR_ARRAY,
         G_TYPE_PTR_ARRAY);
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
     /**
      * WebKitWebPage::user-message-received:
@@ -701,6 +719,7 @@ void webkitWebPageDidReceiveUserMessage(WebKitWebPage* webPage, UserMessage&& me
     g_signal_emit(webPage, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_page_get_dom_document:
  * @web_page: a #WebKitWebPage
@@ -721,6 +740,7 @@ WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 
     return nullptr;
 }
+#endif
 
 /**
  * webkit_web_page_get_id:

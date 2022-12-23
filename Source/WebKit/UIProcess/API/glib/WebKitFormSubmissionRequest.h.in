@@ -58,7 +58,7 @@ struct _WebKitFormSubmissionRequestClass {
 WEBKIT_API GType
 webkit_form_submission_request_get_type         (void);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED_FOR(webkit_form_submission_request_list_text_fields) GHashTable *
 webkit_form_submission_request_get_text_fields  (WebKitFormSubmissionRequest  *request);
 #endif

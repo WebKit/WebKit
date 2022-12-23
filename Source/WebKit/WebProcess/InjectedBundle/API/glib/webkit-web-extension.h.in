@@ -36,7 +36,9 @@
 
 #define __WEBKIT_WEB_EXTENSION_H_INSIDE__
 
+#if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitConsoleMessage.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenuActions.h>
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenuItem.h>

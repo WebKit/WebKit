@@ -46,7 +46,7 @@ webkit_javascript_result_ref                (WebKitJavascriptResult *js_result);
 WEBKIT_API void
 webkit_javascript_result_unref              (WebKitJavascriptResult *js_result);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED JSGlobalContextRef
 webkit_javascript_result_get_global_context (WebKitJavascriptResult *js_result);
 
