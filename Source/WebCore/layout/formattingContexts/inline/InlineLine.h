@@ -239,20 +239,19 @@ private:
     struct HangingContent {
         void setLeadingPunctuation(InlineLayoutUnit logicalWidth) { m_leadingPunctuationWidth = logicalWidth; }
         void setTrailingPunctuation(InlineLayoutUnit logicalWidth);
-        void setTrailingStopOrComma(InlineLayoutUnit logicalWidth);
+        void setTrailingStopOrComma(InlineLayoutUnit logicalWidth, bool isConditional);
         void setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth);
 
-        bool isTrailingContentWhitespace() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace; }
-        bool isTrailingContentStopOrComma() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::StopOrComma; }
-
         void resetTrailingContent() { m_trailingContent = { }; }
-        void resetTrailingPunctuation();
 
-        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace ? m_trailingContent->width : 0.f; }
         InlineLayoutUnit trailingWidth() const { return m_trailingContent ? m_trailingContent->width : 0.f; }
         InlineLayoutUnit width() const { return m_leadingPunctuationWidth + trailingWidth(); }
 
         size_t length() const;
+
+        bool isTrailingContentPunctuation() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Punctuation; }
+        bool isTrailingContentConditional() const { return m_trailingContent && m_trailingContent->isConditional == TrailingContent::IsConditional::Yes; }
+        bool isTrailingContentConditionalWhenFollowedByForcedLineBreak() const { return m_trailingContent && m_trailingContent->isConditional == TrailingContent::IsConditional::WhenFollowedByForcedLineBreak; }
 
     private:
         InlineLayoutUnit m_leadingPunctuationWidth { 0.f };
@@ -260,6 +259,9 @@ private:
         struct TrailingContent {
             enum class Type : uint8_t { Whitespace, StopOrComma, Punctuation };
             Type type { Type::Whitespace };
+
+            enum class IsConditional : uint8_t { Yes, No, WhenFollowedByForcedLineBreak };
+            IsConditional isConditional { IsConditional::No };
             size_t length { 0 };
             InlineLayoutUnit width { 0.f };
         };
@@ -300,17 +302,20 @@ inline void Line::TrimmableTrailingContent::reset()
 
 inline void Line::HangingContent::setTrailingPunctuation(InlineLayoutUnit logicalWidth)
 {
-    m_trailingContent = { TrailingContent::Type::Punctuation, 1, logicalWidth };
+    m_trailingContent = { TrailingContent::Type::Punctuation, TrailingContent::IsConditional::No, 1, logicalWidth };
 }
 
-inline void Line::HangingContent::setTrailingStopOrComma(InlineLayoutUnit logicalWidth)
+inline void Line::HangingContent::setTrailingStopOrComma(InlineLayoutUnit logicalWidth, bool isConditional)
 {
-    m_trailingContent = { TrailingContent::Type::StopOrComma, 1, logicalWidth };
+    m_trailingContent = { TrailingContent::Type::StopOrComma, isConditional ? TrailingContent::IsConditional::Yes : TrailingContent::IsConditional::No, 1, logicalWidth };
 }
 
 inline void Line::HangingContent::setTrailingWhitespace(size_t length, InlineLayoutUnit logicalWidth)
 {
-    m_trailingContent = { TrailingContent::Type::Whitespace, length, logicalWidth };
+    // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
+    // by a forced line break, in which case it must conditionally hang the sequence is instead.
+    // Note that end of last line in a paragraph is considered a forced break.
+    m_trailingContent = { TrailingContent::Type::Whitespace, TrailingContent::IsConditional::WhenFollowedByForcedLineBreak, length, logicalWidth };
 }
 
 inline size_t Line::HangingContent::length() const
@@ -321,13 +326,6 @@ inline size_t Line::HangingContent::length() const
     if (m_trailingContent)
         length += m_trailingContent->length;
     return length;
-}
-
-inline void Line::HangingContent::resetTrailingPunctuation()
-{
-    if (!m_trailingContent || m_trailingContent->type != TrailingContent::Type::Punctuation)
-        return;
-    m_trailingContent = { };
 }
 
 inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
