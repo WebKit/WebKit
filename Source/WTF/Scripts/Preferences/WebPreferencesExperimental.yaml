@@ -522,12 +522,11 @@ CSSTypedOMEnabled:
   humanReadableDescription: "Enable the CSS Typed OM"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)": true
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CanvasColorSpaceEnabled:
   type: bool
