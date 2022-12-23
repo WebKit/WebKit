@@ -5,7 +5,7 @@ PASS Can set 'r' to CSS-wide keywords: unset
 PASS Can set 'r' to CSS-wide keywords: revert
 PASS Can set 'r' to var() references:  var(--A)
 PASS Can set 'r' to a percent: 0%
-FAIL Can set 'r' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'r' to a percent: -3.14%
 PASS Can set 'r' to a percent: 3.14%
 PASS Can set 'r' to a percent: calc(0% + 0%)
 PASS Can set 'r' to a length: 0px
@@ -37,7 +37,7 @@ PASS Can set 'rx' to CSS-wide keywords: revert
 PASS Can set 'rx' to var() references:  var(--A)
 PASS Can set 'rx' to the 'auto' keyword: auto
 PASS Can set 'rx' to a percent: 0%
-FAIL Can set 'rx' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'rx' to a percent: -3.14%
 PASS Can set 'rx' to a percent: 3.14%
 PASS Can set 'rx' to a percent: calc(0% + 0%)
 PASS Can set 'rx' to a length: 0px
@@ -69,7 +69,7 @@ PASS Can set 'ry' to CSS-wide keywords: revert
 PASS Can set 'ry' to var() references:  var(--A)
 PASS Can set 'ry' to the 'auto' keyword: auto
 PASS Can set 'ry' to a percent: 0%
-FAIL Can set 'ry' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'ry' to a percent: -3.14%
 PASS Can set 'ry' to a percent: 3.14%
 PASS Can set 'ry' to a percent: calc(0% + 0%)
 PASS Can set 'ry' to a length: 0px
