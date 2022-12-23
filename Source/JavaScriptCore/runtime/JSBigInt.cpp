@@ -1174,13 +1174,9 @@ JSValue JSBigInt::bitwiseNot(JSGlobalObject* globalObject, JSBigInt* x)
 }
 
 #if USE(JSVALUE32_64)
-#define HAVE_TWO_DIGIT 1
-typedef uint64_t TwoDigit;
-#elif HAVE(INT128_T)
-#define HAVE_TWO_DIGIT 1
-typedef __uint128_t TwoDigit;
+using TwoDigit = uint64_t;
 #else
-#define HAVE_TWO_DIGIT 0
+using TwoDigit = UInt128;
 #endif
 
 // {carry} must point to an initialized Digit and will either be incremented
@@ -1204,40 +1200,9 @@ inline JSBigInt::Digit JSBigInt::digitSub(Digit a, Digit b, Digit& borrow)
 // Returns the low half of the result. High half is in {high}.
 inline JSBigInt::Digit JSBigInt::digitMul(Digit a, Digit b, Digit& high)
 {
-#if HAVE(TWO_DIGIT)
     TwoDigit result = static_cast<TwoDigit>(a) * static_cast<TwoDigit>(b);
-    high = result >> digitBits;
-
+    high = static_cast<Digit>(result >> digitBits);
     return static_cast<Digit>(result);
-#else
-    // Multiply in half-pointer-sized chunks.
-    // For inputs [AH AL]*[BH BL], the result is:
-    //
-    //            [AL*BL]  // rLow
-    //    +    [AL*BH]     // rMid1
-    //    +    [AH*BL]     // rMid2
-    //    + [AH*BH]        // rHigh
-    //    = [R4 R3 R2 R1]  // high = [R4 R3], low = [R2 R1]
-    //
-    // Where of course we must be careful with carries between the columns.
-    Digit aLow = a & halfDigitMask;
-    Digit aHigh = a >> halfDigitBits;
-    Digit bLow = b & halfDigitMask;
-    Digit bHigh = b >> halfDigitBits;
-    
-    Digit rLow = aLow * bLow;
-    Digit rMid1 = aLow * bHigh;
-    Digit rMid2 = aHigh * bLow;
-    Digit rHigh = aHigh * bHigh;
-    
-    Digit carry = 0;
-    Digit low = digitAdd(rLow, rMid1 << halfDigitBits, carry);
-    low = digitAdd(low, rMid2 << halfDigitBits, carry);
-
-    high = (rMid1 >> halfDigitBits) + (rMid2 >> halfDigitBits) + rHigh + carry;
-
-    return low;
-#endif
 }
 
 // Raises {base} to the power of {exponent}. Does not check for overflow.
