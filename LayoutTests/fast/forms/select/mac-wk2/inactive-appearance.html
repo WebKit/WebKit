@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../../resources/js-test.js"></script>
+        <script src="../../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+    <select>
+        <option>Test</option>
+    </select>
+</body>
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    if (window.internals)
+        window.internals.setPageIsFocusedAndActive(false);
+
+    await UIHelper.renderingUpdate();
+    finishJSTest();
+});
+
+</script>
+</html>
