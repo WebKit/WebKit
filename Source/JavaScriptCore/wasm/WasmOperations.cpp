@@ -113,24 +113,38 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
     }
 }
 
-void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint64_t* buffer)
+void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint64_t* buffer, SavedFPWidth savedFPWidth)
 {
+    ASSERT(Options::useWebAssemblySIMD() || savedFPWidth == SavedFPWidth::DontSaveVectors);
+    unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
+
+    dataLogLnIf(WasmOperationsInternal::verbose, "loadValuesIntoBuffer: valueSize = ", valueSize, "; values.size() = ", values.size());
     for (unsigned index = 0; index < values.size(); ++index) {
         const OSREntryValue& value = values[index];
-        dataLogLnIf(Options::verboseOSR(), "OMG OSR entry values[", index, "] ", value.type(), " ", value);
+        dataLogLnIf(Options::verboseOSR() || WasmOperationsInternal::verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
         if (value.isGPR()) {
             switch (value.type().kind()) {
             case B3::Float:
             case B3::Double:
                 RELEASE_ASSERT_NOT_REACHED();
             default:
-                *bitwise_cast<uint64_t*>(buffer + index) = context.gpr(value.gpr());
+                *bitwise_cast<uint64_t*>(buffer + index * valueSize) = context.gpr(value.gpr());
             }
         } else if (value.isFPR()) {
             switch (value.type().kind()) {
             case B3::Float:
             case B3::Double:
-                *bitwise_cast<double*>(buffer + index) = context.fpr(value.fpr());
+                dataLogLnIf(WasmOperationsInternal::verbose, "FPR for value ", index, " ", value.fpr(), " = ", context.fpr(value.fpr(), savedFPWidth));
+                *bitwise_cast<double*>(buffer + index * valueSize) = context.fpr(value.fpr(), savedFPWidth);
+                break;
+            case B3::V128:
+                RELEASE_ASSERT(valueSize == 2);
+#if CPU(X86_64) || CPU(ARM64)
+                dataLogLnIf(WasmOperationsInternal::verbose, "Vector FPR for value ", index, " ", value.fpr(), " = ", context.vector(value.fpr()));
+                *bitwise_cast<v128_t*>(buffer + index * valueSize) = context.vector(value.fpr());
+#else
+                UNREACHABLE_FOR_PLATFORM();
+#endif
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -138,24 +152,39 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
         } else if (value.isConstant()) {
             switch (value.type().kind()) {
             case B3::Float:
-                *bitwise_cast<float*>(buffer + index) = value.floatValue();
+                *bitwise_cast<float*>(buffer + index * valueSize) = value.floatValue();
                 break;
             case B3::Double:
-                *bitwise_cast<double*>(buffer + index) = value.doubleValue();
+                *bitwise_cast<double*>(buffer + index * valueSize) = value.doubleValue();
+                break;
+            case B3::V128:
+                RELEASE_ASSERT_NOT_REACHED();
                 break;
             default:
-                *bitwise_cast<uint64_t*>(buffer + index) = value.value();
+                *bitwise_cast<uint64_t*>(buffer + index * valueSize) = value.value();
             }
         } else if (value.isStack()) {
+            auto* baseLoad = bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
+            auto* baseStore = bitwise_cast<uint8_t*>(buffer + index * valueSize);
+
+            if (WasmOperationsInternal::verbose && (value.type().isFloat() || value.type().isVector())) {
+                dataLogLn("Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
+                    *bitwise_cast<v128_t*>(baseLoad),
+                    " or double ", *bitwise_cast<double*>(baseLoad));
+            }
+
             switch (value.type().kind()) {
             case B3::Float:
-                *bitwise_cast<float*>(buffer + index) = *bitwise_cast<float*>(bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP());
+                *bitwise_cast<float*>(baseStore) = *bitwise_cast<float*>(baseLoad);
                 break;
             case B3::Double:
-                *bitwise_cast<double*>(buffer + index) = *bitwise_cast<double*>(bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP());
+                *bitwise_cast<double*>(baseStore) = *bitwise_cast<double*>(baseLoad);
+                break;
+            case B3::V128:
+                *bitwise_cast<v128_t*>(baseStore) = *bitwise_cast<v128_t*>(baseLoad);
                 break;
             default:
-                *bitwise_cast<uint64_t*>(buffer + index) = *bitwise_cast<uint64_t*>(bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP());
+                *bitwise_cast<uint64_t*>(baseStore) = *bitwise_cast<uint64_t*>(baseLoad);
                 break;
             }
         } else
@@ -170,7 +199,8 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
         context.gpr(GPRInfo::argumentGPR0) = 0;
     };
 
-    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == osrEntryData.values().size());
+    unsigned valueSize = (callee.savedFPWidth() == SavedFPWidth::SaveVectors) ? 2 : 1;
+    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == valueSize * osrEntryData.values().size());
 
     uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryCallee.osrEntryScratchBufferSize());
     if (!buffer)
@@ -179,7 +209,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     dataLogLnIf(Options::verboseOSR(), osrEntryData.functionIndex(), ":OMG OSR entry: got entry callee ", RawPointer(&osrEntryCallee));
 
     // 1. Place required values in scratch buffer.
-    loadValuesIntoBuffer(context, osrEntryData.values(), buffer);
+    loadValuesIntoBuffer(context, osrEntryData.values(), buffer, callee.savedFPWidth());
 
     // 2. Restore callee saves.
     auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
@@ -189,7 +219,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = *bitwise_cast<UCPURegister*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
         else
-            context.fpr(entry.reg().fpr()) = *bitwise_cast<double*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
+            context.fpr(entry.reg().fpr(), callee.savedFPWidth()) = *bitwise_cast<double*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
     }
 
     // 3. Function epilogue, like a tail-call.

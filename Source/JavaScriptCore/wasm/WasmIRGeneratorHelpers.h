@@ -163,18 +163,23 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
     });
 }
 
+template<SavedFPWidth savedFPWidth>
 static inline void buildEntryBufferForCatch(Probe::Context& context)
 {
+    unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
     CallFrame* callFrame = context.fp<CallFrame*>();
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
     OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asWasmCallee());
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
     VM* vm = context.gpr<VM*>(GPRInfo::regT0);
-    uint64_t* buffer = vm->wasmContext.scratchBufferForSize(stackmap.size() * 8);
-    loadValuesIntoBuffer(context, stackmap, buffer);
+    uint64_t* buffer = vm->wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
+    loadValuesIntoBuffer(context, stackmap, buffer, savedFPWidth);
 
     context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<uintptr_t>(buffer);
 }
+
+static inline void buildEntryBufferForCatchSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::SaveVectors>(context); }
+static inline void buildEntryBufferForCatchNoSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::DontSaveVectors>(context); }
 
 static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& jit)
 {
@@ -215,7 +220,8 @@ static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& ji
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, JSWebAssemblyInstance::offsetOfInstance()), GPRInfo::regT3);
     jit.storeWasmContextInstance(GPRInfo::regT3);
 
-    jit.probe(tagCFunction<JITProbePtrTag>(buildEntryBufferForCatch), nullptr);
+    jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD : buildEntryBufferForCatchNoSIMD), nullptr,
+        code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
 
     jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 }

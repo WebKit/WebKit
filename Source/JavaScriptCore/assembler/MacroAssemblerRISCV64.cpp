@@ -169,38 +169,38 @@ static_assert(PROBE_OFFSETOF(cpu.gprs[RISCV64Registers::x31]) == PROBE_CPU_X31_O
 
 static_assert(PROBE_OFFSETOF(cpu.sprs[RISCV64Registers::pc]) == PROBE_CPU_PC_OFFSET);
 
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f0]) == PROBE_CPU_F0_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f1]) == PROBE_CPU_F1_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f2]) == PROBE_CPU_F2_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f3]) == PROBE_CPU_F3_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f4]) == PROBE_CPU_F4_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f5]) == PROBE_CPU_F5_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f6]) == PROBE_CPU_F6_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f7]) == PROBE_CPU_F7_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f8]) == PROBE_CPU_F8_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f9]) == PROBE_CPU_F9_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f10]) == PROBE_CPU_F10_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f11]) == PROBE_CPU_F11_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f12]) == PROBE_CPU_F12_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f13]) == PROBE_CPU_F13_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f14]) == PROBE_CPU_F14_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f15]) == PROBE_CPU_F15_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f16]) == PROBE_CPU_F16_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f17]) == PROBE_CPU_F17_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f18]) == PROBE_CPU_F18_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f19]) == PROBE_CPU_F19_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f20]) == PROBE_CPU_F20_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f21]) == PROBE_CPU_F21_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f22]) == PROBE_CPU_F22_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f23]) == PROBE_CPU_F23_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f24]) == PROBE_CPU_F24_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f25]) == PROBE_CPU_F25_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f26]) == PROBE_CPU_F26_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f27]) == PROBE_CPU_F27_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f28]) == PROBE_CPU_F28_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f29]) == PROBE_CPU_F29_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f30]) == PROBE_CPU_F30_OFFSET);
-static_assert(PROBE_OFFSETOF(cpu.fprs[RISCV64Registers::f31]) == PROBE_CPU_F31_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f0]) == PROBE_CPU_F0_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f1]) == PROBE_CPU_F1_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f2]) == PROBE_CPU_F2_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f3]) == PROBE_CPU_F3_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f4]) == PROBE_CPU_F4_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f5]) == PROBE_CPU_F5_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f6]) == PROBE_CPU_F6_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f7]) == PROBE_CPU_F7_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f8]) == PROBE_CPU_F8_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f9]) == PROBE_CPU_F9_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f10]) == PROBE_CPU_F10_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f11]) == PROBE_CPU_F11_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f12]) == PROBE_CPU_F12_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f13]) == PROBE_CPU_F13_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f14]) == PROBE_CPU_F14_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f15]) == PROBE_CPU_F15_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f16]) == PROBE_CPU_F16_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f17]) == PROBE_CPU_F17_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f18]) == PROBE_CPU_F18_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f19]) == PROBE_CPU_F19_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f20]) == PROBE_CPU_F20_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f21]) == PROBE_CPU_F21_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f22]) == PROBE_CPU_F22_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f23]) == PROBE_CPU_F23_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f24]) == PROBE_CPU_F24_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f25]) == PROBE_CPU_F25_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f26]) == PROBE_CPU_F26_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f27]) == PROBE_CPU_F27_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f28]) == PROBE_CPU_F28_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f29]) == PROBE_CPU_F29_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f30]) == PROBE_CPU_F30_OFFSET);
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[RISCV64Registers::f31]) == PROBE_CPU_F31_OFFSET);
 
 static_assert(sizeof(Probe::State) == PROBE_SIZE);
 
@@ -497,7 +497,7 @@ asm(
 
     "ret" "\n");
 
-void MacroAssembler::probe(Probe::Function function, void* arg)
+void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth)
 {
     sub64(TrustedImm32(sizeof(IncomingProbeRecord)), sp);
     store64(ra, Address(sp, offsetof(IncomingProbeRecord, x1)));

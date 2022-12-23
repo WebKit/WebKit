@@ -327,9 +327,13 @@ private:
                 for (unsigned childIndex = 0; childIndex < value->numChildren(); ++childIndex) {
                     if (!value->constrainedChild(childIndex).rep().isAny())
                         continue;
-                    
+
                     Value*& child = value->child(childIndex);
                     if (!goesInTable(child))
+                        continue;
+
+                    // This is still the best representation for vectors
+                    if (child->type().isVector())
                         continue;
 
                     ValueKey key = child->key();

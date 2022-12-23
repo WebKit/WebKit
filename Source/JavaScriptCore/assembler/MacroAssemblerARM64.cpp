@@ -59,6 +59,8 @@ namespace JSC {
 
 JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
+JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampolineSIMD, void, ());
+JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampolineSIMD);
 
 using namespace ARM64Registers;
 
@@ -152,7 +154,7 @@ using namespace ARM64Registers;
 #define PROBE_CPU_Q29_OFFSET (PROBE_FIRST_FPREG_OFFSET + (29 * FPREG_SIZE))
 #define PROBE_CPU_Q30_OFFSET (PROBE_FIRST_FPREG_OFFSET + (30 * FPREG_SIZE))
 #define PROBE_CPU_Q31_OFFSET (PROBE_FIRST_FPREG_OFFSET + (31 * FPREG_SIZE))
-#define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (32 * FPREG_SIZE))
+#define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (32 * 2 * FPREG_SIZE))
 
 #define SAVED_PROBE_RETURN_PC_OFFSET        (PROBE_SIZE + (0 * GPREG_SIZE))
 #define PROBE_SIZE_PLUS_EXTRAS              (PROBE_SIZE + (3 * GPREG_SIZE))
@@ -207,39 +209,39 @@ static_assert(PROBE_OFFSETOF(cpu.sprs[ARM64Registers::fpsr]) == PROBE_CPU_FPSR_O
 
 static_assert(!(PROBE_CPU_Q0_OFFSET & 0x7), "Probe::State::cpu.fprs[q0]'s offset should be 8 byte aligned");
 
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q0]) == PROBE_CPU_Q0_OFFSET, "Probe::State::cpu.fprs[q0]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q1]) == PROBE_CPU_Q1_OFFSET, "Probe::State::cpu.fprs[q1]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q2]) == PROBE_CPU_Q2_OFFSET, "Probe::State::cpu.fprs[q2]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q3]) == PROBE_CPU_Q3_OFFSET, "Probe::State::cpu.fprs[q3]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q4]) == PROBE_CPU_Q4_OFFSET, "Probe::State::cpu.fprs[q4]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q5]) == PROBE_CPU_Q5_OFFSET, "Probe::State::cpu.fprs[q5]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q6]) == PROBE_CPU_Q6_OFFSET, "Probe::State::cpu.fprs[q6]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q7]) == PROBE_CPU_Q7_OFFSET, "Probe::State::cpu.fprs[q7]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q8]) == PROBE_CPU_Q8_OFFSET, "Probe::State::cpu.fprs[q8]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q9]) == PROBE_CPU_Q9_OFFSET, "Probe::State::cpu.fprs[q9]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q10]) == PROBE_CPU_Q10_OFFSET, "Probe::State::cpu.fprs[q10]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q11]) == PROBE_CPU_Q11_OFFSET, "Probe::State::cpu.fprs[q11]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q12]) == PROBE_CPU_Q12_OFFSET, "Probe::State::cpu.fprs[q12]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q13]) == PROBE_CPU_Q13_OFFSET, "Probe::State::cpu.fprs[q13]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q14]) == PROBE_CPU_Q14_OFFSET, "Probe::State::cpu.fprs[q14]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q15]) == PROBE_CPU_Q15_OFFSET, "Probe::State::cpu.fprs[q15]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q0]) == PROBE_CPU_Q0_OFFSET, "Probe::State::cpu.fprs[q0]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q1]) == PROBE_CPU_Q1_OFFSET, "Probe::State::cpu.fprs[q1]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q2]) == PROBE_CPU_Q2_OFFSET, "Probe::State::cpu.fprs[q2]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q3]) == PROBE_CPU_Q3_OFFSET, "Probe::State::cpu.fprs[q3]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q4]) == PROBE_CPU_Q4_OFFSET, "Probe::State::cpu.fprs[q4]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q5]) == PROBE_CPU_Q5_OFFSET, "Probe::State::cpu.fprs[q5]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q6]) == PROBE_CPU_Q6_OFFSET, "Probe::State::cpu.fprs[q6]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q7]) == PROBE_CPU_Q7_OFFSET, "Probe::State::cpu.fprs[q7]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q8]) == PROBE_CPU_Q8_OFFSET, "Probe::State::cpu.fprs[q8]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q9]) == PROBE_CPU_Q9_OFFSET, "Probe::State::cpu.fprs[q9]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q10]) == PROBE_CPU_Q10_OFFSET, "Probe::State::cpu.fprs[q10]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q11]) == PROBE_CPU_Q11_OFFSET, "Probe::State::cpu.fprs[q11]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q12]) == PROBE_CPU_Q12_OFFSET, "Probe::State::cpu.fprs[q12]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q13]) == PROBE_CPU_Q13_OFFSET, "Probe::State::cpu.fprs[q13]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q14]) == PROBE_CPU_Q14_OFFSET, "Probe::State::cpu.fprs[q14]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q15]) == PROBE_CPU_Q15_OFFSET, "Probe::State::cpu.fprs[q15]'s offset matches ctiMasmProbeTrampoline");
 
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q16]) == PROBE_CPU_Q16_OFFSET, "Probe::State::cpu.fprs[q16]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q17]) == PROBE_CPU_Q17_OFFSET, "Probe::State::cpu.fprs[q17]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q18]) == PROBE_CPU_Q18_OFFSET, "Probe::State::cpu.fprs[q18]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q19]) == PROBE_CPU_Q19_OFFSET, "Probe::State::cpu.fprs[q19]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q20]) == PROBE_CPU_Q20_OFFSET, "Probe::State::cpu.fprs[q20]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q21]) == PROBE_CPU_Q21_OFFSET, "Probe::State::cpu.fprs[q21]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q22]) == PROBE_CPU_Q22_OFFSET, "Probe::State::cpu.fprs[q22]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q23]) == PROBE_CPU_Q23_OFFSET, "Probe::State::cpu.fprs[q23]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q24]) == PROBE_CPU_Q24_OFFSET, "Probe::State::cpu.fprs[q24]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q25]) == PROBE_CPU_Q25_OFFSET, "Probe::State::cpu.fprs[q25]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q26]) == PROBE_CPU_Q26_OFFSET, "Probe::State::cpu.fprs[q26]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q27]) == PROBE_CPU_Q27_OFFSET, "Probe::State::cpu.fprs[q27]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q28]) == PROBE_CPU_Q28_OFFSET, "Probe::State::cpu.fprs[q28]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q29]) == PROBE_CPU_Q29_OFFSET, "Probe::State::cpu.fprs[q29]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q30]) == PROBE_CPU_Q30_OFFSET, "Probe::State::cpu.fprs[q30]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q31]) == PROBE_CPU_Q31_OFFSET, "Probe::State::cpu.fprs[q31]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q16]) == PROBE_CPU_Q16_OFFSET, "Probe::State::cpu.fprs[q16]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q17]) == PROBE_CPU_Q17_OFFSET, "Probe::State::cpu.fprs[q17]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q18]) == PROBE_CPU_Q18_OFFSET, "Probe::State::cpu.fprs[q18]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q19]) == PROBE_CPU_Q19_OFFSET, "Probe::State::cpu.fprs[q19]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q20]) == PROBE_CPU_Q20_OFFSET, "Probe::State::cpu.fprs[q20]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q21]) == PROBE_CPU_Q21_OFFSET, "Probe::State::cpu.fprs[q21]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q22]) == PROBE_CPU_Q22_OFFSET, "Probe::State::cpu.fprs[q22]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q23]) == PROBE_CPU_Q23_OFFSET, "Probe::State::cpu.fprs[q23]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q24]) == PROBE_CPU_Q24_OFFSET, "Probe::State::cpu.fprs[q24]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q25]) == PROBE_CPU_Q25_OFFSET, "Probe::State::cpu.fprs[q25]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q26]) == PROBE_CPU_Q26_OFFSET, "Probe::State::cpu.fprs[q26]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q27]) == PROBE_CPU_Q27_OFFSET, "Probe::State::cpu.fprs[q27]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q28]) == PROBE_CPU_Q28_OFFSET, "Probe::State::cpu.fprs[q28]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q29]) == PROBE_CPU_Q29_OFFSET, "Probe::State::cpu.fprs[q29]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q30]) == PROBE_CPU_Q30_OFFSET, "Probe::State::cpu.fprs[q30]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs.fprs[ARM64Registers::q31]) == PROBE_CPU_Q31_OFFSET, "Probe::State::cpu.fprs[q31]'s offset matches ctiMasmProbeTrampoline");
 
 static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State's size matches ctiMasmProbeTrampoline");
 
@@ -250,6 +252,8 @@ static_assert(!(PROBE_SIZE_PLUS_EXTRAS & 0xf), "PROBE_SIZE_PLUS_EXTRAS should be
 #undef PROBE_OFFSETOF
 
 #define FPR_OFFSET(fpr) (PROBE_CPU_##fpr##_OFFSET - PROBE_CPU_Q0_OFFSET)
+
+#define VECTOR_OFFSET(fpr) (2 * (PROBE_CPU_##fpr##_OFFSET - PROBE_CPU_Q0_OFFSET))
 
 struct IncomingProbeRecord {
     UCPURegister x24;
@@ -574,15 +578,271 @@ asm (
 #endif
     ".previous" "\n"
 );
+
+// And now, the slower version that saves the full width of FP registers:
+asm (
+    ".text" "\n"
+    ".balign 16" "\n"
+    ".globl " SYMBOL_STRING(ctiMasmProbeTrampolineSIMD) "\n"
+    HIDE_SYMBOL(ctiMasmProbeTrampolineSIMD) "\n"
+    SYMBOL_STRING(ctiMasmProbeTrampolineSIMD) ":" "\n"
+
+    // MacroAssemblerARM64::probe() has already generated code to store some values in an
+    // IncomingProbeRecord. sp points to the IncomingProbeRecord.
+    //
+    // Incoming register values:
+    //     x24: probe function
+    //     x25: probe arg
+    //     x26: scratch, was ctiMasmProbeTrampoline
+    //     x30: return address
+
+    "str       x27, [sp, #" STRINGIZE_VALUE_OF(IN_X27_OFFSET) "]" "\n"
+    "mov       x26, sp" "\n"
+    "sub       x27, sp, #" STRINGIZE_VALUE_OF(PROBE_SIZE_PLUS_EXTRAS + OUT_SIZE) "\n"
+    "bic       sp, x27, #0xf" "\n" // The ARM EABI specifies that the stack needs to be 16 byte aligned.
+
+    "stp       x24, x25, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n" // Store the probe handler function and arg (preloaded into x24 and x25
+
+    "stp       x0, x1, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X0_OFFSET) "]" "\n"
+    "mrs       x0, nzcv" "\n" // Preload nzcv.
+    "stp       x2, x3, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X2_OFFSET) "]" "\n"
+    "stp       x4, x5, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X4_OFFSET) "]" "\n"
+    "mrs       x1, fpsr" "\n" // Preload fpsr.
+    "stp       x6, x7, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X6_OFFSET) "]" "\n"
+    "stp       x8, x9, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X8_OFFSET) "]" "\n"
+
+    "ldp       x2, x3, [x26, #" STRINGIZE_VALUE_OF(IN_X24_OFFSET) "]" "\n" // Preload saved x24 and x25.
+    "ldp       x4, x5, [x26, #" STRINGIZE_VALUE_OF(IN_X26_OFFSET) "]" "\n" // Preload saved x26 and lr.
+    "ldr       x27, [x26, #" STRINGIZE_VALUE_OF(IN_X27_OFFSET) "]" "\n"
+
+    "add       x26, x26, #" STRINGIZE_VALUE_OF(IN_SIZE) "\n" // Compute the sp before the probe.
+
+    "stp       x10, x11, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X10_OFFSET) "]" "\n"
+    "stp       x12, x13, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X12_OFFSET) "]" "\n"
+    "stp       x14, x15, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X14_OFFSET) "]" "\n"
+    "stp       x16, x17, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X16_OFFSET) "]" "\n"
+    "stp       x18, x19, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X18_OFFSET) "]" "\n"
+    "stp       x20, x21, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X20_OFFSET) "]" "\n"
+    "stp       x22, x23, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X22_OFFSET) "]" "\n"
+    "stp       x2,  x3,  [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X24_OFFSET) "]" "\n" // Store saved r24 and r25 (preloaded into x2 and x3 above).
+    "stp       x4,  x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X26_OFFSET) "]" "\n" // Store saved r26 (preloaded into x4) and r27.
+    "stp       x28, x29, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X28_OFFSET) "]" "\n"
+    "stp       x5,  x26, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n" // Save values lr and sp (original sp value computed into x26 above).
+
+    "add       x30, x30, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The PC after the probe is at 2 instructions past the return point.
+#if CPU(ARM64E)
+    "movz      x27, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "pacib     x30, x27" "\n"
+#endif
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Save a duplicate copy of return pc (in lr).
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
+
+    "stp       x0, x1, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n" // Store nzcv and fpsr (preloaded into x0 and x1 above).
+
+    "add       x9, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_Q0_OFFSET) "\n"
+    "stp       q0,   q1, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q0)) "]" "\n"
+    "stp       q2,   q3, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q2)) "]" "\n"
+    "stp       q4,   q5, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q4)) "]" "\n"
+    "stp       q6,   q7, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q6)) "]" "\n"
+    "stp       q8,   q9, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q8)) "]" "\n"
+    "stp       q10, q11, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q10)) "]" "\n"
+    "stp       q12, q13, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q12)) "]" "\n"
+    "stp       q14, q15, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q14)) "]" "\n"
+    "stp       q16, q17, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q16)) "]" "\n"
+    "stp       q18, q19, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q18)) "]" "\n"
+    "stp       q20, q21, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q20)) "]" "\n"
+    "stp       q22, q23, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q22)) "]" "\n"
+    "stp       q24, q25, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q24)) "]" "\n"
+    "stp       q26, q27, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q26)) "]" "\n"
+    "stp       q28, q29, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q28)) "]" "\n"
+    "stp       q30, q31, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q30)) "]" "\n"
+
+    "mov       x27, sp" "\n" // Save the Probe::State* in a callee saved register.
+
+    // Note: we haven't changed the value of fp. Hence, it is still pointing to the frame of
+    // the caller of the probe (which is what we want in order to play nice with debuggers e.g. lldb).
+    "mov       x0, sp" "\n" // Set the Probe::State* arg.
+    "bl      " SYMBOL_STRING(executeJSCJITProbe) "\n"
+
+    // Make sure the Probe::State is entirely below the result stack pointer so
+    // that register values are still preserved when we call the initializeStack
+    // function.
+    "ldr       x1, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // Result sp.
+    "add       x2, x27, #" STRINGIZE_VALUE_OF(PROBE_SIZE_PLUS_EXTRAS + OUT_SIZE) "\n" // End of Probe::State + buffer.
+    "cmp       x1, x2" "\n"
+    "bge     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafeSIMD) "\n"
+
+    // Allocate a safe place on the stack below the result stack pointer to stash the Probe::State.
+    "sub       x1, x1, #" STRINGIZE_VALUE_OF(PROBE_SIZE_PLUS_EXTRAS + OUT_SIZE) "\n"
+    "bic       x1, x1, #0xf" "\n" // The ARM EABI specifies that the stack needs to be 16 byte aligned.
+    "mov       sp, x1" "\n" // Set the new sp to protect that memory from interrupts before we copy the Probe::State.
+
+    // Copy the Probe::State to the safe place.
+    // Note: we have to copy from low address to higher address because we're moving the
+    // Probe::State to a lower address.
+    "mov       x5, x27" "\n"
+    "mov       x6, x1" "\n"
+    "add       x7, x27, #" STRINGIZE_VALUE_OF(PROBE_SIZE_PLUS_EXTRAS) "\n"
+
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoopSIMD) ":" "\n"
+    "ldp       x3, x4, [x5], #16" "\n"
+    "stp       x3, x4, [x6], #16" "\n"
+    "cmp       x5, x7" "\n"
+    "blt     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoopSIMD) "\n"
+
+    "mov       x27, x1" "\n"
+
+    // Call initializeStackFunction if present.
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafeSIMD) ":" "\n"
+    "ldr       x2, [x27, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
+    "cbz       x2, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegistersSIMD) "\n"
+
+    "mov       x0, x27" "\n" // Set the Probe::State* arg.
+#if CPU(ARM64E)
+    "movz      lr, #" STRINGIZE_VALUE_OF(JIT_PROBE_STACK_INITIALIZATION_FUNCTION_PTR_TAG) "\n"
+    "blrab     x2, lr" "\n" // Call the initializeStackFunction (loaded into x2 above).all the probe handler.
+#else
+    "blr       x2" "\n" // Call the initializeStackFunction (loaded into x2 above).
+#endif
+
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegistersSIMD) ":" "\n"
+
+    "mov       sp, x27" "\n"
+
+    // To enable probes to modify register state, we copy all registers
+    // out of the Probe::State before returning. That is except for x18.
+    // x18 is "reserved for the platform. Conforming software should not make use of it."
+    // Hence, the JITs would not be using it, and the probe should also not be modifying it.
+    // See https://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html.
+
+    "add       x9, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_Q0_OFFSET) "\n"
+    "ldp       q0,   q1, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q0)) "]" "\n"
+    "ldp       q2,   q3, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q2)) "]" "\n"
+    "ldp       q4,   q5, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q4)) "]" "\n"
+    "ldp       q6,   q7, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q6)) "]" "\n"
+    "ldp       q8,   q9, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q8)) "]" "\n"
+    "ldp       q10, q11, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q10)) "]" "\n"
+    "ldp       q12, q13, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q12)) "]" "\n"
+    "ldp       q14, q15, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q14)) "]" "\n"
+    "ldp       q16, q17, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q16)) "]" "\n"
+    "ldp       q18, q19, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q18)) "]" "\n"
+    "ldp       q20, q21, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q20)) "]" "\n"
+    "ldp       q22, q23, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q22)) "]" "\n"
+    "ldp       q24, q25, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q24)) "]" "\n"
+    "ldp       q26, q27, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q26)) "]" "\n"
+    "ldp       q28, q29, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q28)) "]" "\n"
+    "ldp       q30, q31, [x9, #" STRINGIZE_VALUE_OF(VECTOR_OFFSET(Q30)) "]" "\n"
+
+    "ldp       x0, x1, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X0_OFFSET) "]" "\n"
+    "ldp       x2, x3, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X2_OFFSET) "]" "\n"
+    "ldp       x4, x5, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X4_OFFSET) "]" "\n"
+    "ldp       x6, x7, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X6_OFFSET) "]" "\n"
+    "ldp       x8, x9, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X8_OFFSET) "]" "\n"
+    "ldp       x10, x11, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X10_OFFSET) "]" "\n"
+    "ldp       x12, x13, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X12_OFFSET) "]" "\n"
+    "ldp       x14, x15, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X14_OFFSET) "]" "\n"
+    "ldp       x16, x17, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X16_OFFSET) "]" "\n"
+    // x18 should not be modified by the probe. See comment above for details.
+    "ldp       x19, x20, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X19_OFFSET) "]" "\n"
+    "ldp       x21, x22, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X21_OFFSET) "]" "\n"
+    "ldp       x23, x24, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X23_OFFSET) "]" "\n"
+    "ldp       x25, x26, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X25_OFFSET) "]" "\n"
+
+    // Remaining registers to restore are: fpsr, nzcv, x27, x28, fp, lr, sp, and pc.
+
+    // The only way to set the pc on ARM64 (from user space) is via an indirect branch
+    // or a ret, which means we'll need a free register to do so. For our purposes, lr
+    // happens to be available in applications of the probe where we may want to
+    // continue executing at a different location (i.e. change the pc) after the probe
+    // returns. So, the ARM64 probe implementation will allow the probe handler to
+    // either modify lr or pc, but not both in the same probe invocation. The probe
+    // mechanism ensures that we never try to modify both lr and pc with a RELEASE_ASSERT
+    // in Probe::executeJSCJITProbe().
+
+    // Determine if the probe handler changed the pc.
+    "ldr       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // preload the target sp.
+    "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n"
+    "ldr       x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
+    "cmp       x27, x28" "\n"
+    "bne     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEndSIMD) "\n"
+
+     // We didn't change the PC. So, let's prepare for setting a potentially new lr value.
+
+     // 1. Make room for the LRRestorationRecord. The probe site will pop this off later.
+    "sub       x30, x30, #" STRINGIZE_VALUE_OF(LR_RESTORATION_SIZE) "\n"
+     // 2. Store the lp value to restore at the probe return site.
+    "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
+    "str       x27, [x30, #" STRINGIZE_VALUE_OF(LR_RESTORATION_LR_OFFSET) "]" "\n"
+     // 3. Force the return ramp to return to the probe return site.
+    "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n"
+#if CPU(ARM64E)
+    "movz      x28, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "autib     x27, x28" "\n"
+    "mov       x28, x27" "\n"
+    "xpaci     x28" "\n"
+    "cmp       x28, x27" "\n"
+    "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDoneSIMD) "\n"
+    "brk       #0xc471" "\n"
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDoneSIMD) ":" "\n"
+#endif
+    "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
+#if CPU(ARM64E)
+    "movz      x28, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "pacib     x27, x28" "\n"
+#endif
+    "str       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
+
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEndSIMD) ":" "\n"
+
+    // Fill in the OutgoingProbeRecord.
+    "sub       x30, x30, #" STRINGIZE_VALUE_OF(OUT_SIZE) "\n"
+
+    "ldp       x27, x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n"
+    "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_NZCV_OFFSET) "]" "\n"
+    "ldp       x27, x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n"
+    "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_X27_OFFSET) "]" "\n"
+    "ldr       x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n" // Set up the outgoing record so that we'll jump to the new PC.
+#if CPU(ARM64E)
+    "movz      x27, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "autib     x28, x27" "\n"
+    "mov       x27, x28" "\n"
+    "xpaci     x27" "\n"
+    "cmp       x27, x28" "\n"
+    "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2SIMD) "\n"
+    "brk       #0xc471" "\n"
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2SIMD) ":" "\n"
+    "add       x27, x30, #48" "\n" // Compute sp at return point.
+    "pacib     x28, x27" "\n"
+#endif
+    "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
+    "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_FP_OFFSET) "]" "\n"
+    "mov       sp, x30" "\n"
+
+    // Restore the remaining registers and pop the OutgoingProbeRecord.
+    "ldp       x27, x28, [sp], #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n"
+    "msr       nzcv, x27" "\n"
+    "msr       fpsr, x28" "\n"
+    "ldp       x27, x28, [sp], #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n"
+    "ldp       x29, x30, [sp], #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n"
+#if CPU(ARM64E)
+    "retab" "\n"
+#else
+    "ret" "\n"
+#endif
+    ".previous" "\n"
+);
 #endif // COMPILER(GCC_COMPATIBLE)
 
-void MacroAssembler::probe(Probe::Function function, void* arg)
+void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth savedFPWidth)
 {
     sub64(TrustedImm32(sizeof(IncomingProbeRecord)), sp);
 
     storePair64(x24, x25, sp, TrustedImm32(offsetof(IncomingProbeRecord, x24)));
     storePair64(x26, x30, sp, TrustedImm32(offsetof(IncomingProbeRecord, x26))); // Note: x30 is lr.
-    move(TrustedImmPtr(tagCFunction<OperationPtrTag>(ctiMasmProbeTrampoline)), x26);
+    if (savedFPWidth == SavedFPWidth::SaveVectors)
+        move(TrustedImmPtr(tagCFunction<OperationPtrTag>(ctiMasmProbeTrampolineSIMD)), x26);
+    else
+        move(TrustedImmPtr(tagCFunction<OperationPtrTag>(ctiMasmProbeTrampoline)), x26);
 #if CPU(ARM64E)
     assertIsTaggedWith<JITProbePtrTag>(function);
 #endif

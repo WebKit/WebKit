@@ -43,11 +43,14 @@ struct CPUState {
     static inline const char* fprName(FPRegisterID id) { return MacroAssembler::fprName(id); }
     inline UCPURegister& gpr(RegisterID);
     inline UCPURegister& spr(SPRegisterID);
-    inline double& fpr(FPRegisterID);
+    template<SavedFPWidth = SavedFPWidth::DontSaveVectors> inline double& fpr(FPRegisterID);
+#if CPU(X86_64) || CPU(ARM64)
+    inline v128_t& vector(FPRegisterID);
+#endif
 
     template<typename T> T gpr(RegisterID) const;
     template<typename T> T spr(SPRegisterID) const;
-    template<typename T> T fpr(FPRegisterID) const;
+    template<typename T, SavedFPWidth = SavedFPWidth::DontSaveVectors> T fpr(FPRegisterID) const;
 
     void*& pc();
     void*& fp();
@@ -58,7 +61,12 @@ struct CPUState {
 
     UCPURegister gprs[MacroAssembler::numberOfRegisters()];
     UCPURegister sprs[MacroAssembler::numberOfSPRegisters()];
-    double fprs[MacroAssembler::numberOfFPRegisters()];
+    union {
+        double fprs[MacroAssembler::numberOfFPRegisters()];
+#if CPU(X86_64) || CPU(ARM64)
+        v128_t vectors[MacroAssembler::numberOfFPRegisters()] = { };
+#endif
+    } fprs;
 };
 
 inline UCPURegister& CPUState::gpr(RegisterID id)
@@ -73,11 +81,25 @@ inline UCPURegister& CPUState::spr(SPRegisterID id)
     return sprs[id];
 }
 
+template<SavedFPWidth savedFPWidth>
 inline double& CPUState::fpr(FPRegisterID id)
 {
     ASSERT(id >= MacroAssembler::firstFPRegister() && id <= MacroAssembler::lastFPRegister());
-    return fprs[id];
+#if CPU(X86_64) || CPU(ARM64)
+    return (savedFPWidth == SavedFPWidth::SaveVectors) ? fprs.vectors[id].f64x2[0] : fprs.fprs[id];
+#else
+    ASSERT(savedFPWidth == SavedFPWidth::DontSaveVectors);
+    return fprs.fprs[id];
+#endif
 }
+
+#if CPU(X86_64) || CPU(ARM64)
+inline v128_t& CPUState::vector(FPRegisterID id)
+{
+    ASSERT(id >= MacroAssembler::firstFPRegister() && id <= MacroAssembler::lastFPRegister());
+    return fprs.vectors[id];
+}
+#endif
 
 template<typename T>
 T CPUState::gpr(RegisterID id) const
@@ -99,11 +121,11 @@ T CPUState::spr(SPRegisterID id) const
     return to;
 }
 
-template<typename T>
+template<typename T, SavedFPWidth savedFPWidth>
 T CPUState::fpr(FPRegisterID id) const
 {
     CPUState* cpu = const_cast<CPUState*>(this);
-    return bitwise_cast<T>(cpu->fpr(id));
+    return bitwise_cast<T>(cpu->fpr<savedFPWidth>(id));
 }
 
 inline void*& CPUState::pc()
@@ -214,7 +236,15 @@ public:
 
     UCPURegister& gpr(RegisterID id) { return cpu.gpr(id); }
     UCPURegister& spr(SPRegisterID id) { return cpu.spr(id); }
-    double& fpr(FPRegisterID id) { return cpu.fpr(id); }
+    double& fpr(FPRegisterID id, SavedFPWidth savedFPWidth = SavedFPWidth::DontSaveVectors)
+    {
+        if (savedFPWidth == SavedFPWidth::SaveVectors)
+            return cpu.fpr<SavedFPWidth::SaveVectors>(id);
+        return cpu.fpr<SavedFPWidth::DontSaveVectors>(id);
+    }
+#if CPU(X86_64) || CPU(ARM64)
+    v128_t& vector(FPRegisterID id) { return cpu.vector(id); }
+#endif
     const char* gprName(RegisterID id) { return cpu.gprName(id); }
     const char* sprName(SPRegisterID id) { return cpu.sprName(id); }
     const char* fprName(FPRegisterID id) { return cpu.fprName(id); }

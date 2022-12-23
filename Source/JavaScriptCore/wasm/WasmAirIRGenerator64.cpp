@@ -1901,8 +1901,9 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, instanceValue(), m_currentBlock);
 
     unsigned indexInBuffer = 0;
+    unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
     auto loadFromScratchBuffer = [&] (TypedTmp result) {
-        size_t offset = sizeof(uint64_t) * indexInBuffer;
+        size_t offset = valueSize * sizeof(uint64_t) * indexInBuffer;
         ++indexInBuffer;
         Tmp bufferPtr = Tmp(GPRInfo::argumentGPR0);
         emitLoad(bufferPtr, offset, result);

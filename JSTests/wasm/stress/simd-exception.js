@@ -1,7 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1")
 //@ skip if $architecture != "arm64" && $architecture != "x86_64"
-//@ skip
-//FIXME: this test is currently failing.
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

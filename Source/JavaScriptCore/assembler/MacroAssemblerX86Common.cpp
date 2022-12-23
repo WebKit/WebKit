@@ -43,6 +43,10 @@ namespace JSC {
 
 JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
+#if CPU(X86_64)
+JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampolineSIMD, void, ());
+JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampolineSIMD);
+#endif
 
 // The following are offsets for Probe::State fields accessed by the ctiMasmProbeTrampoline stub.
 
@@ -106,7 +110,28 @@ JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
 #define PROBE_CPU_XMM13_OFFSET (PROBE_FIRST_XMM_OFFSET + (13 * XMM_SIZE))
 #define PROBE_CPU_XMM14_OFFSET (PROBE_FIRST_XMM_OFFSET + (14 * XMM_SIZE))
 #define PROBE_CPU_XMM15_OFFSET (PROBE_FIRST_XMM_OFFSET + (15 * XMM_SIZE))
-#define PROBE_SIZE (PROBE_CPU_XMM15_OFFSET + XMM_SIZE)
+
+// For the case when we want to save 128 bits for each XMM register, the layout is different.
+#define PROBE_CPU_XMM0_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (0 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM1_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (1 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM2_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (2 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM3_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (3 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM4_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (4 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM5_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (5 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM6_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (6 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM7_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (7 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM8_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (8 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM9_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (9 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM10_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (10 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM11_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (11 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM12_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (12 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM13_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (13 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM14_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (14 * 2 * XMM_SIZE))
+#define PROBE_CPU_XMM15_VECTOR_OFFSET (PROBE_FIRST_XMM_OFFSET + (15 * 2 * XMM_SIZE))
+// We save extra room for XMM registers in case we save vectors, but normally
+// we the doubles together. This is to match ARM64, where we store pair in the
+// non-vector case.
+#define PROBE_SIZE (PROBE_FIRST_XMM_OFFSET + 16 * 2 * XMM_SIZE)
 #endif // CPU(X86_64)
 
 #if COMPILER(MSVC) || CPU(X86)
@@ -150,24 +175,24 @@ static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r15) == PROBE_CPU_R15_O
 
 static_assert(!(PROBE_CPU_XMM0_OFFSET & 0x7), "Probe::State::cpu.fprs[xmm0]'s offset should be 8 byte aligned");
 
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm0) == PROBE_CPU_XMM0_OFFSET, "Probe::State::cpu.fprs[xmm0]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm1) == PROBE_CPU_XMM1_OFFSET, "Probe::State::cpu.fprs[xmm1]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm2) == PROBE_CPU_XMM2_OFFSET, "Probe::State::cpu.fprs[xmm2]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm3) == PROBE_CPU_XMM3_OFFSET, "Probe::State::cpu.fprs[xmm3]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm4) == PROBE_CPU_XMM4_OFFSET, "Probe::State::cpu.fprs[xmm4]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm5) == PROBE_CPU_XMM5_OFFSET, "Probe::State::cpu.fprs[xmm5]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm6) == PROBE_CPU_XMM6_OFFSET, "Probe::State::cpu.fprs[xmm6]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm7) == PROBE_CPU_XMM7_OFFSET, "Probe::State::cpu.fprs[xmm7]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm0) == PROBE_CPU_XMM0_OFFSET, "Probe::State::cpu.fprs[xmm0]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm1) == PROBE_CPU_XMM1_OFFSET, "Probe::State::cpu.fprs[xmm1]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm2) == PROBE_CPU_XMM2_OFFSET, "Probe::State::cpu.fprs[xmm2]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm3) == PROBE_CPU_XMM3_OFFSET, "Probe::State::cpu.fprs[xmm3]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm4) == PROBE_CPU_XMM4_OFFSET, "Probe::State::cpu.fprs[xmm4]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm5) == PROBE_CPU_XMM5_OFFSET, "Probe::State::cpu.fprs[xmm5]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm6) == PROBE_CPU_XMM6_OFFSET, "Probe::State::cpu.fprs[xmm6]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm7) == PROBE_CPU_XMM7_OFFSET, "Probe::State::cpu.fprs[xmm7]'s offset matches ctiMasmProbeTrampoline");
 
 #if CPU(X86_64)
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm8) == PROBE_CPU_XMM8_OFFSET, "Probe::State::cpu.fprs[xmm8]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm9) == PROBE_CPU_XMM9_OFFSET, "Probe::State::cpu.fprs[xmm9]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm10) == PROBE_CPU_XMM10_OFFSET, "Probe::State::cpu.fprs[xmm10]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm11) == PROBE_CPU_XMM11_OFFSET, "Probe::State::cpu.fprs[xmm11]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm12) == PROBE_CPU_XMM12_OFFSET, "Probe::State::cpu.fprs[xmm12]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm13) == PROBE_CPU_XMM13_OFFSET, "Probe::State::cpu.fprs[xmm13]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm14) == PROBE_CPU_XMM14_OFFSET, "Probe::State::cpu.fprs[xmm14]'s offset matches ctiMasmProbeTrampoline");
-static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm15) == PROBE_CPU_XMM15_OFFSET, "Probe::State::cpu.fprs[xmm15]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm8) == PROBE_CPU_XMM8_OFFSET, "Probe::State::cpu.fprs[xmm8]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm9) == PROBE_CPU_XMM9_OFFSET, "Probe::State::cpu.fprs[xmm9]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm10) == PROBE_CPU_XMM10_OFFSET, "Probe::State::cpu.fprs[xmm10]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm11) == PROBE_CPU_XMM11_OFFSET, "Probe::State::cpu.fprs[xmm11]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm12) == PROBE_CPU_XMM12_OFFSET, "Probe::State::cpu.fprs[xmm12]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm13) == PROBE_CPU_XMM13_OFFSET, "Probe::State::cpu.fprs[xmm13]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm14) == PROBE_CPU_XMM14_OFFSET, "Probe::State::cpu.fprs[xmm14]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs.fprs, X86Registers::xmm15) == PROBE_CPU_XMM15_OFFSET, "Probe::State::cpu.fprs[xmm15]'s offset matches ctiMasmProbeTrampoline");
 #endif // CPU(X86_64)
 
 static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State::size's matches ctiMasmProbeTrampoline");
@@ -716,6 +741,204 @@ asm (
     "ret" "\n"
     ".previous" "\n"
 );
+
+// And now, the slower version that saves the full width of vectors in xmm registers.
+
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(ctiMasmProbeTrampolineSIMD) "\n"
+    HIDE_SYMBOL(ctiMasmProbeTrampolineSIMD) "\n"
+    SYMBOL_STRING(ctiMasmProbeTrampolineSIMD) ":" "\n"
+
+    "pushq %rbp" "\n"
+    "movq  %rsp, %rbp" "\n"
+
+    "pushfq" "\n"
+
+    // MacroAssemblerX86Common::probe() has already generated code to store some values.
+    // Together with the rbp and rflags pushed above, the top of stack now looks like this:
+    //     rbp[-1 * ptrSize]: rflags
+    //     rbp[0 * ptrSize]: rbp / previousCallFrame
+    //     rbp[1 * ptrSize]: return address / saved rip
+    //     rbp[2 * ptrSize]: saved rbx
+    //     rbp[3 * ptrSize]: saved rdx
+    //     rbp[4 * ptrSize]: saved rax
+    //
+    // Incoming registers contain:
+    //     rdx: probe function
+    //     rbx: probe arg
+    //     rax: scratch (was ctiMasmProbeTrampoline)
+
+    "subq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rsp" "\n"
+
+    // The X86_64 ABI specifies that the worse case stack alignment requirement is 32 bytes.
+    "andq $~0x1f, %rsp" "\n"
+    // Since sp points to the Probe::State, we've ensured that it's protected from interrupts before we initialize it.
+
+    "movq %rdx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rsp)" "\n"
+    "movq %rbx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%rsp)" "\n"
+    "movq %rsi, " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rsp)" "\n"
+    "movq %rdi, " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rsp)" "\n"
+
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rsp)" "\n"
+
+    "movq -1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EFLAGS_OFFSET) "(%rsp)" "\n"
+    "movq 0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rsp)" "\n"
+    "movq 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rsp)" "\n"
+    "movq 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rsp)" "\n"
+    "movq 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rsp)" "\n"
+    "movq 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rsp)" "\n"
+
+    "movq %rbp, %rcx" "\n"
+    "addq $" STRINGIZE_VALUE_OF(6 * PTR_SIZE) ", %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rsp)" "\n"
+
+    "movq %r8, " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rsp)" "\n"
+    "movq %r9, " STRINGIZE_VALUE_OF(PROBE_CPU_R9_OFFSET) "(%rsp)" "\n"
+    "movq %r10, " STRINGIZE_VALUE_OF(PROBE_CPU_R10_OFFSET) "(%rsp)" "\n"
+    "movq %r11, " STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET) "(%rsp)" "\n"
+    "movq %r12, " STRINGIZE_VALUE_OF(PROBE_CPU_R12_OFFSET) "(%rsp)" "\n"
+    "movq %r13, " STRINGIZE_VALUE_OF(PROBE_CPU_R13_OFFSET) "(%rsp)" "\n"
+    "movq %r14, " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rsp)" "\n"
+    "movq %r15, " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rsp)" "\n"
+
+    "vmovaps %xmm0,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm1,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm2,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm3,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm4,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm5,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm6,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm7,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm8,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm9,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm10, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm11, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm12, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm13, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm14, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rsp)" "\n"
+    "vmovaps %xmm15, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_VECTOR_OFFSET) "(%rsp)" "\n"
+
+    "movq %rsp, %rdi" "\n" // the Probe::State* arg.
+    "call " SYMBOL_STRING(executeJSCJITProbe) "\n"
+
+    // Make sure the Probe::State is entirely below the result stack pointer so
+    // that register values are still preserved when we call the initializeStack
+    // function.
+    "movq %rsp, %rbp" "\n"
+    "movq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rcx" "\n"
+    "movq %rsp, %rax" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rdx" "\n"
+    "addq %rcx, %rax" "\n"
+    "cmpq %rax, %rdx" "\n"
+    "jge " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafeSIMD) "\n"
+
+    // Allocate a safe place on the stack below the result stack pointer to stash the Probe::State.
+    "subq %rcx, %rdx" "\n"
+    "andq $~0x1f, %rdx" "\n" // Keep the stack pointer 32 bytes aligned.
+    "xorq %rax, %rax" "\n"
+    "movq %rdx, %rsp" "\n"
+
+    "movq $" STRINGIZE_VALUE_OF(PROBE_SIZE) ", %rcx" "\n"
+
+    // Copy the Probe::State to the safe place.
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoopSIMD) ":" "\n"
+    "movq (%rbp, %rax), %rdx" "\n"
+    "movq %rdx, (%rsp, %rax)" "\n"
+    "addq $" STRINGIZE_VALUE_OF(PTR_SIZE) ", %rax" "\n"
+    "cmpq %rax, %rcx" "\n"
+    "jg " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoopSIMD) "\n"
+
+    "movq %rsp, %rbp" "\n"
+
+    // Call initializeStackFunction if present.
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafeSIMD) ":" "\n"
+    "xorq %rcx, %rcx" "\n"
+    "addq " STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "(%rbp), %rcx" "\n"
+    "je " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegistersSIMD) "\n"
+
+    "movq %rbp, %rdi" "\n" // the Probe::State* arg.
+    "call *%rcx" "\n"
+
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegistersSIMD) ":" "\n"
+
+    // To enable probes to modify register state, we copy all registers
+    // out of the Probe::State before returning.
+
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rbp), %rdx" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rbp), %rbx" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rbp), %rsi" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rbp), %rdi" "\n"
+
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rbp), %r8" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R9_OFFSET) "(%rbp), %r9" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R10_OFFSET) "(%rbp), %r10" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET) "(%rbp), %r11" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R12_OFFSET) "(%rbp), %r12" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R13_OFFSET) "(%rbp), %r13" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rbp), %r14" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rbp), %r15" "\n"
+
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rbp), %xmm0" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rbp), %xmm1" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rbp), %xmm2" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rbp), %xmm3" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rbp), %xmm4" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rbp), %xmm5" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rbp), %xmm6" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rbp), %xmm7" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rbp), %xmm8" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rbp), %xmm9" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rbp), %xmm10" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rbp), %xmm11" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rbp), %xmm12" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rbp), %xmm13" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rbp), %xmm14" "\n"
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_VECTOR_OFFSET) "(%rbp), %xmm15" "\n"
+
+    // There are 6 more registers left to restore:
+    //     rax, rcx, rbp, rsp, rip, and rflags.
+
+    // The restoration process at ctiMasmProbeTrampolineEnd below works by popping
+    // 5 words off the stack into rflags, rax, rcx, rbp, and rip. These 5 words need
+    // to be pushed on top of the final esp value so that just by popping the 5 words,
+    // we'll get the esp that the probe wants to set. Let's call this area (for storing
+    // these 5 words) the restore area.
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rcx" "\n"
+    "subq $5 * " STRINGIZE_VALUE_OF(PTR_SIZE) ", %rcx" "\n"
+
+    // rcx now points to the restore area.
+
+    // Copy remaining restore values from the Probe::State to the restore area.
+    // Note: We already ensured above that the Probe::State is in a safe location before
+    // calling the initializeStackFunction. The initializeStackFunction is not allowed to
+    // change the stack pointer again.
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EFLAGS_OFFSET) "(%rbp), %rax" "\n"
+    "movq %rax, 0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp), %rax" "\n"
+    "movq %rax, 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rbp), %rax" "\n"
+    "movq %rax, 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rbp), %rax" "\n"
+    "movq %rax, 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rbp), %rax" "\n"
+    "movq %rax, 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
+    "movq %rcx, %rsp" "\n"
+
+    // Do the remaining restoration by popping off the restore area.
+    "popfq" "\n"
+    "popq %rax" "\n"
+    "popq %rcx" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
+    ".previous" "\n"
+);
 #endif // COMPILER(GCC_COMPATIBLE)
 #endif // CPU(X86_64)
 
@@ -758,7 +981,7 @@ asm (
 // position before we push the Probe::State frame. The saved rip will point to
 // the address of the instruction immediately following the probe. 
 
-void MacroAssembler::probe(Probe::Function function, void* arg)
+void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth savedFPWidth)
 {
 #if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
     // Extra push so that the total number of pushes pad out to 32-bytes, and the
@@ -766,7 +989,16 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     push(RegisterID::eax);
 #endif
     push(RegisterID::eax);
-    move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
+
+#if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
+    if (savedFPWidth == SavedFPWidth::SaveVectors)
+        move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampolineSIMD)), RegisterID::eax);
+    else
+#else
+    UNUSED_PARAM(savedFPWidth);
+#endif
+        move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
+
 #if COMPILER(MSVC) || CPU(X86)
     push(RegisterID::ecx);
     move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeJSCJITProbe)), RegisterID::ecx);

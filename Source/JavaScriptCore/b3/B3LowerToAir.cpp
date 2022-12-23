@@ -4097,6 +4097,7 @@ private:
 
         case Const128: {
             // We expect that the moveConstants() phase has run, and any constant vector referenced from stackmaps get fused.
+            RELEASE_ASSERT(!m_value->asV128().u64x2[0] && !m_value->asV128().u64x2[1]);
             append(MoveZeroToVector, tmp(m_value));
             return;
         }
