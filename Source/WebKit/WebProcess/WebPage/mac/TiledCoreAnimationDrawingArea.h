@@ -137,9 +137,13 @@ private:
 
     void sendPendingNewlyReachedPaintingMilestones();
 
-    void updateRenderingRunLoopCallback();
-    void invalidateRenderingUpdateRunLoopObserver();
     void scheduleRenderingUpdateRunLoopObserver();
+    void invalidateRenderingUpdateRunLoopObserver();
+    void renderingUpdateRunLoopCallback();
+
+    void schedulePostRenderingUpdateRunLoopObserver();
+    void invalidatePostRenderingUpdateRunLoopObserver();
+    void postRenderingUpdateRunLoopCallback();
 
     void startRenderThrottlingTimer();
     void renderThrottlingTimerFired();
@@ -167,7 +171,8 @@ private:
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
     Vector<CallbackID> m_pendingCallbackIDs;
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_renderUpdateRunLoopObserver;
+    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
+    std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;
 
     bool m_isPaintingSuspended { false };
     bool m_inUpdateGeometry { false };

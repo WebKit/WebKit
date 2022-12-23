@@ -40,8 +40,12 @@ WebViewRenderingUpdateScheduler::WebViewRenderingUpdateScheduler(WebView* webVie
 {
     ASSERT_ARG(webView, webView);
 
-    m_renderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(static_cast<CFIndex>(WebCore::RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
+    m_renderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(static_cast<CFIndex>(WebCore::RunLoopObserver::WellKnownRunLoopOrders::RenderingUpdate), [this]() {
         this->renderingUpdateRunLoopObserverCallback();
+    });
+
+    m_postRenderingUpdateRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(static_cast<CFIndex>(WebCore::RunLoopObserver::WellKnownRunLoopOrders::PostRenderingUpdate), [this]() {
+        this->postRenderingUpdateCallback();
     });
 }
 
@@ -59,11 +63,18 @@ void WebViewRenderingUpdateScheduler::invalidate()
 {
     m_webView = nullptr;
     m_renderingUpdateRunLoopObserver->invalidate();
+    m_postRenderingUpdateRunLoopObserver->invalidate();
 }
 
 void WebViewRenderingUpdateScheduler::didCompleteRenderingUpdateDisplay()
 {
     m_haveRegisteredCommitHandlers = false;
+    schedulePostRenderingUpdate();
+}
+
+void WebViewRenderingUpdateScheduler::schedulePostRenderingUpdate()
+{
+    m_postRenderingUpdateRunLoopObserver->schedule();
 }
 
 void WebViewRenderingUpdateScheduler::registerCACommitHandlers()
@@ -99,6 +110,14 @@ void WebViewRenderingUpdateScheduler::renderingUpdateRunLoopObserverCallback()
 
     if (!m_rescheduledInsideCallback)
         m_renderingUpdateRunLoopObserver->invalidate();
+}
+
+void WebViewRenderingUpdateScheduler::postRenderingUpdateCallback()
+{
+    @autoreleasepool {
+        [m_webView _didCompleteRenderingFrame];
+        m_postRenderingUpdateRunLoopObserver->invalidate();
+    }
 }
 
 /*

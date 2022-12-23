@@ -1940,6 +1940,15 @@ void Page::didCompleteRenderingUpdateDisplay()
     m_inspectorController->didComposite(mainFrame());
 }
 
+void Page::didCompleteRenderingFrame()
+{
+    LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " didCompleteRenderingFrame()");
+
+    // FIXME: This is where we'd call requestPostAnimationFrame callbacks: webkit.org/b/249798.
+    // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
+    // FIXME: Drive InspectorFrameEnd from here; webkit.org/b/249796.
+}
+
 void Page::prioritizeVisibleResources()
 {
     if (loadSchedulingMode() == LoadSchedulingMode::Direct)

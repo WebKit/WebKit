@@ -4527,6 +4527,13 @@ void WebPage::didCompleteRenderingUpdateDisplay()
     m_page->didCompleteRenderingUpdateDisplay();
 }
 
+void WebPage::didCompleteRenderingFrame()
+{
+    if (m_isClosed)
+        return;
+    m_page->didCompleteRenderingFrame();
+}
+
 void WebPage::releaseMemory(Critical)
 {
 #if ENABLE(GPU_PROCESS)

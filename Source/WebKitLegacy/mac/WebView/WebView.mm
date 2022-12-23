@@ -8849,6 +8849,12 @@ FORWARD(toggleUnderline)
         _private->renderingUpdateScheduler->didCompleteRenderingUpdateDisplay();
 }
 
+- (void)_didCompleteRenderingFrame
+{
+    if (_private->page)
+        _private->page->didCompleteRenderingFrame();
+}
+
 - (BOOL)_flushCompositingChanges
 {
     auto* frame = [self _mainCoreFrame];

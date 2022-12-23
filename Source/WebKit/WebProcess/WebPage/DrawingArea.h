@@ -124,6 +124,8 @@ public:
 
     virtual void willStartRenderingUpdateDisplay();
     virtual void didCompleteRenderingUpdateDisplay();
+    // Called after didCompleteRenderingUpdateDisplay, but in the same run loop iteration.
+    virtual void didCompleteRenderingFrame();
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 

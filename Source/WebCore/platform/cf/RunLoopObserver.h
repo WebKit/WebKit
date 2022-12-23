@@ -51,10 +51,11 @@ public:
 
     enum class WellKnownRunLoopOrders : CFIndex {
         CoreAnimationCommit     = 2000000,
-        LayerFlush              = CoreAnimationCommit - 1,
+        RenderingUpdate         = CoreAnimationCommit - 1,
         ActivityStateChange     = CoreAnimationCommit - 2,
         InspectorFrameBegin     = 0,
-        InspectorFrameEnd       = CoreAnimationCommit + 1 
+        InspectorFrameEnd       = CoreAnimationCommit + 1,
+        PostRenderingUpdate     = CoreAnimationCommit + 2,
     };
 
 protected:
