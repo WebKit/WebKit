@@ -201,6 +201,20 @@ public:
 
     bool isHashTableDeletedValue() const { return m_ptr == hashDeletedStorageValue; }
 
+    template<typename U>
+    friend bool operator==(const CompactPtr& a, const CompactPtr<U>& b)
+    {
+        return a.m_ptr == b.m_ptr;
+    }
+
+    template<typename U>
+    friend bool operator!=(const CompactPtr& a, const CompactPtr<U>& b)
+    {
+        return a.m_ptr != b.m_ptr;
+    }
+
+    StorageType storage() const { return m_ptr; }
+
 private:
     template <typename X>
     friend class CompactPtr;
@@ -211,6 +225,30 @@ private:
 
     StorageType m_ptr { 0 };
 };
+
+template<typename T, typename U>
+inline bool operator==(const CompactPtr<T>& a, U* b)
+{
+    return a.get() == b;
+}
+
+template<typename T, typename U>
+inline bool operator==(T* a, const CompactPtr<U>& b)
+{
+    return a == b.get();
+}
+
+template<typename T, typename U>
+inline bool operator!=(const CompactPtr<T>& a, U* b)
+{
+    return !(a == b);
+}
+
+template<typename T, typename U>
+inline bool operator!=(T* a, const CompactPtr<U>& b)
+{
+    return !(a == b);
+}
 
 template <typename T>
 struct GetPtrHelper<CompactPtr<T>> {
@@ -244,7 +282,12 @@ struct CompactPtrTraits {
     static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr.isHashTableDeletedValue(); }
 };
 
-template<typename P> struct DefaultHash<CompactPtr<P>> : PtrHash<CompactPtr<P>> { };
+template<typename P> struct DefaultHash<CompactPtr<P>> {
+    using PtrType = CompactPtr<P>;
+    static unsigned hash(PtrType key) { return IntHash<typename PtrType::StorageType>::hash(key.storage()); }
+    static bool equal(PtrType a, PtrType b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
 
 } // namespace WTF
 
