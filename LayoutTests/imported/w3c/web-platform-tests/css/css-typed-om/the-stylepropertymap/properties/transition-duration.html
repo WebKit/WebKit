@@ -13,7 +13,17 @@
 'use strict';
 
 runListValuedPropertyTests('transition-duration', [
-  { syntax: '<time>' },
+  {
+    syntax: '<time>',
+    specified: assert_is_equal_with_range_handling,
+    computed: (input, result) => {
+      const time = input.to('s').value;
+      if (time < 0)
+        assert_style_value_equals(result, new CSSUnitValue(0, 's'));
+      else
+        assert_style_value_equals(result, new CSSUnitValue(time, 's'));
+    }
+  },
 ]);
 
 </script>

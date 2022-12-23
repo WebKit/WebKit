@@ -254,6 +254,7 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     case CSSPropertyStrokeDasharray:
     case CSSPropertyStrokeMiterlimit:
     case CSSPropertyStrokeWidth:
+    case CSSPropertyTransitionDuration:
         return value < 0;
     case CSSPropertyFontWeight:
         return value < 1 || value > 1000;
