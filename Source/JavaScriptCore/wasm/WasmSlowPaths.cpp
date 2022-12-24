@@ -578,17 +578,16 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
     if (functionIndex >= table->length())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
 
-    Wasm::Instance* targetInstance = table->instance(functionIndex);
-    const Wasm::WasmToWasmImportableFunction& function = table->function(functionIndex);
+    const Wasm::FuncRefTable::Function& function = table->function(functionIndex);
 
-    if (function.typeIndex == Wasm::TypeDefinition::invalidIndex)
+    if (function.m_function.typeIndex == Wasm::TypeDefinition::invalidIndex)
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
     const auto& callSignature = CALLEE()->signature(typeIndex);
-    if (callSignature.index() != function.typeIndex)
+    if (callSignature.index() != function.m_function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
-    WASM_CALL_RETURN(targetInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(function.m_instance, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect)

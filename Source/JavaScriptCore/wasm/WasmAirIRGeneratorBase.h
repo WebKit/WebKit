@@ -3280,17 +3280,19 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     ExpressionType callableFunctionBuffer = self().gPtr();
-    ExpressionType instancesBuffer = self().gPtr();
     ExpressionType callableFunctionBufferLength = self().gPtr();
     {
         RELEASE_ASSERT(Arg::isValidAddrForm(Move, FuncRefTable::offsetOfFunctions(), pointerWidth()));
-        RELEASE_ASSERT(Arg::isValidAddrForm(Move, FuncRefTable::offsetOfInstances(), pointerWidth()));
         RELEASE_ASSERT(Arg::isValidAddrForm(Move32, FuncRefTable::offsetOfLength(), pointerWidth()));
 
         self().emitLoad(instanceValue().tmp(), Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex), callableFunctionBufferLength);
         append(Move, Arg::addr(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
-        append(Move, Arg::addr(callableFunctionBufferLength, FuncRefTable::offsetOfInstances()), instancesBuffer);
-        append(Move32, Arg::addr(callableFunctionBufferLength, Table::offsetOfLength()), callableFunctionBufferLength);
+        ASSERT(tableIndex < m_info.tableCount());
+        auto& tableInformation = m_info.table(tableIndex);
+        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial())
+            callableFunctionBufferLength = self().addConstant(Types::I32, tableInformation.initial());
+        else
+            append(Move32, Arg::addr(callableFunctionBufferLength, Table::offsetOfLength()), callableFunctionBufferLength);
     }
 
     append(Move32, calleeIndex, calleeIndex);
@@ -3303,21 +3305,23 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
     });
 
     ExpressionType calleeCode = self().gPtr();
+    ExpressionType calleeInstance = self().gPtr();
     {
         static_assert(sizeof(TypeIndex) == sizeof(void*));
         ExpressionType calleeSignatureIndex = self().gPtr();
         // Compute the offset in the table index space we are looking for.
-        append(Move, Arg::imm(sizeof(WasmToWasmImportableFunction)), calleeSignatureIndex);
+        append(Move, Arg::imm(sizeof(FuncRefTable::Function)), calleeSignatureIndex);
         append(Derived::MulPtr, calleeIndex, calleeSignatureIndex);
         append(Derived::AddPtr, callableFunctionBuffer, calleeSignatureIndex);
 
-        append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
+        append(Move, Arg::addr(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
+        append(Move, Arg::addr(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
 
         // FIXME: This seems wasteful to do two checks just for a nicer error message.
         // We should move just to use a single branch and then figure out what
         // error to use in the exception handler.
 
-        append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
+        append(Move, Arg::addr(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
 
         emitCheck([&] {
             static_assert(!TypeDefinition::invalidIndex, "");
@@ -3334,9 +3338,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
             this->emitThrowException(jit, ExceptionType::BadSignature);
         });
     }
-
-    auto calleeInstance = self().gPtr();
-    append(Move, Arg::index(instancesBuffer, calleeIndex, sizeof(void*), 0), calleeInstance);
 
     return self().emitIndirectCall(calleeInstance, calleeCode, signature, args, results, callType);
 }

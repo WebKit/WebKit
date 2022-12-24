@@ -4010,17 +4010,16 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     Value* callableFunctionBuffer;
-    Value* instancesBuffer;
     Value* callableFunctionBufferLength;
     {
-        Value* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            instanceValue(), safeCast<int32_t>(Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex)));
-        callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(FuncRefTable::offsetOfFunctions()));
-        instancesBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(FuncRefTable::offsetOfInstances()));
-        callableFunctionBufferLength = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-            table, safeCast<int32_t>(Table::offsetOfLength()));
+        Value* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex)));
+        callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(FuncRefTable::offsetOfFunctions()));
+        ASSERT(tableIndex < m_info.tableCount());
+        auto& tableInformation = m_info.table(tableIndex);
+        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial())
+            callableFunctionBufferLength = constant(B3::Int32, tableInformation.initial(), origin());
+        else
+            callableFunctionBufferLength = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), table, safeCast<int32_t>(Table::offsetOfLength()));
     }
 
     // Check the index we are looking for is valid.
@@ -4038,14 +4037,13 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     Value* callableFunction;
     {
         // Compute the offset in the table index space we are looking for.
-        Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
-            calleeIndex, constant(pointerType(), sizeof(WasmToWasmImportableFunction)));
+        Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), calleeIndex, constant(pointerType(), sizeof(FuncRefTable::Function)));
         callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
         static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
-        Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex()));
+        Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()));
         {
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
                 m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
@@ -4069,13 +4067,10 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
         }
     }
 
-    Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
-        calleeIndex, constant(pointerType(), sizeof(Instance*)));
-    Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-        m_currentBlock->appendNew<Value>(m_proc, Add, origin(), instancesBuffer, offset));
+    Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfInstance()));
     Value* calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction,
-            safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation())));
+            safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation())));
 
     return emitIndirectCall(calleeInstance, calleeCode, signature, args, results, callType);
 }

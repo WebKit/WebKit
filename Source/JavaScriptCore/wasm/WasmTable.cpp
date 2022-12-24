@@ -115,8 +115,6 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
     if (auto* funcRefTable = asFuncrefTable()) {
         if (!checkedGrow(funcRefTable->m_importableFunctions, [](auto&) { }))
             return std::nullopt;
-        if (!checkedGrow(funcRefTable->m_instances, [](auto&) { }))
-            return std::nullopt;
     }
 
     VM& vm = m_owner->vm();
@@ -140,9 +138,9 @@ void Table::clear(uint32_t index)
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
     if (auto* funcRefTable = asFuncrefTable()) {
-        funcRefTable->m_importableFunctions.get()[index] = WasmToWasmImportableFunction();
-        ASSERT(funcRefTable->m_importableFunctions.get()[index].typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
-        funcRefTable->m_instances.get()[index] = nullptr;
+        funcRefTable->m_importableFunctions.get()[index] = FuncRefTable::Function { };
+        ASSERT(funcRefTable->m_importableFunctions.get()[index].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
+        ASSERT(!funcRefTable->m_importableFunctions.get()[index].m_instance);
     }
     m_jsValues.get()[index].setStartingValue(jsNull());
 }
@@ -192,17 +190,16 @@ FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum)
 {
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction, VMMalloc>::malloc(sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length)));
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_instances = MallocPtr<Instance*, VMMalloc>::malloc(sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length)));
+    m_importableFunctions = MallocPtr<Function, VMMalloc>::malloc(sizeof(Function) * Checked<size_t>(allocatedLength(m_length)));
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
-        new (&m_importableFunctions.get()[i]) WasmToWasmImportableFunction();
-        ASSERT(m_importableFunctions.get()[i].typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
-        m_instances.get()[i] = nullptr;
+        new (&m_importableFunctions.get()[i]) Function();
+        ASSERT(m_importableFunctions.get()[i].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
+        ASSERT(!m_importableFunctions.get()[i].m_instance);
     }
 }
 
-void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmToWasmImportableFunction function, Instance* instance)
+void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, Function function)
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
@@ -210,17 +207,11 @@ void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmTo
     if (optionalWrapper)
         m_jsValues.get()[index].set(m_owner->vm(), m_owner, optionalWrapper);
     m_importableFunctions.get()[index] = function;
-    m_instances.get()[index] = instance;
 }
 
-const WasmToWasmImportableFunction& FuncRefTable::function(uint32_t index) const
+const FuncRefTable::Function& FuncRefTable::function(uint32_t index) const
 {
     return m_importableFunctions.get()[index];
-}
-
-Instance* FuncRefTable::instance(uint32_t index) const
-{
-    return m_instances.get()[index];
 }
 
 void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex)
@@ -230,7 +221,7 @@ void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex,
         return;
     }
 
-    setFunction(dstIndex, jsCast<JSObject*>(srcTable->get(srcIndex)), srcTable->function(srcIndex), srcTable->instance(srcIndex));
+    setFunction(dstIndex, jsCast<JSObject*>(srcTable->get(srcIndex)), srcTable->function(srcIndex));
 }
 
 } } // namespace JSC::Table

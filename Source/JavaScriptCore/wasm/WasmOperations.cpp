@@ -752,9 +752,9 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, uint32_
         if (isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction)) {
             ASSERT(!!wasmFunction || !!wasmWrapperFunction);
             if (wasmFunction)
-                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
+                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), FuncRefTable::Function { wasmFunction->importableFunction(), &wasmFunction->instance()->instance() });
             else
-                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmWrapperFunction->importableFunction(), &wasmWrapperFunction->instance()->instance());
+                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), FuncRefTable::Function { wasmWrapperFunction->importableFunction(), &wasmWrapperFunction->instance()->instance() });
         } else if (value.isNull())
             instance->table(tableIndex)->clear(index);
         else
