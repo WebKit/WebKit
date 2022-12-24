@@ -87,7 +87,11 @@ public:
         InlineLayoutUnit lineLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalRight { 0.f };
-        InlineLayoutUnit hangingContentWidth { 0.f };
+        struct HangingContent {
+            bool shouldContributeToScrollableOverflow { false };
+            InlineLayoutUnit width { 0.f };
+        };
+        HangingContent hangingContent;
         enum class FirstFormattedLine : uint8_t {
             No,
             WithinIFC,

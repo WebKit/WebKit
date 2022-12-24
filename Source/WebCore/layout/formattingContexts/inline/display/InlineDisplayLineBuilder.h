@@ -45,7 +45,7 @@ private:
         InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom;
         InlineRect scrollableOverflowRect;
     };
-    EnclosingLineGeometry collectEnclosingLineGeometry(const LineBox&, const InlineRect& lineBoxRect) const;
+    EnclosingLineGeometry collectEnclosingLineGeometry(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxRect) const;
     InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect&, WritingMode) const;
     std::optional<FloatRect> trailingEllipsisRect(const LineBuilder::LineContent&, const LineBox&, const FloatRect& lineBoxVisualRect) const;
 
