@@ -5136,6 +5136,23 @@
                 "url": "https://www.w3.org/TR/CSS2/text.html#propdef-text-decoration"
             }
         },
+        "text-group-align": {
+            "values": [
+                "none",
+                "start",
+                "end",
+                "left",
+                "right",
+                "center"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextGroupAlignEnabled"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text-4/#text-group-align-property"
+            }
+        },
         "text-indent": {
             "inherited": true,
             "codegen-properties": {

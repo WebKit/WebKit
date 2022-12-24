@@ -151,6 +151,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 - (void)_willStartRenderingUpdateDisplay;
 - (void)_didCompleteRenderingUpdateDisplay;
+- (void)_didCompleteRenderingFrame;
 
 - (BOOL)_flushCompositingChanges;
 

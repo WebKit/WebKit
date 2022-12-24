@@ -84,8 +84,12 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     [m_hostingLayer setOpaque:YES];
     [m_hostingLayer setGeometryFlipped:YES];
 
-    m_renderUpdateRunLoopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
-        this->updateRenderingRunLoopCallback();
+    m_renderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::RenderingUpdate), [this]() {
+        this->renderingUpdateRunLoopCallback();
+    });
+
+    m_postRenderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::PostRenderingUpdate), [this]() {
+        this->postRenderingUpdateRunLoopCallback();
     });
 
     updateLayerHostingContext();
@@ -102,6 +106,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
     invalidateRenderingUpdateRunLoopObserver();
+    invalidatePostRenderingUpdateRunLoopObserver();
     for (auto& callback : m_nextActivityStateChangeCallbacks)
         callback();
 }
@@ -204,6 +209,7 @@ void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStat
 
     if (m_layerTreeStateIsFrozen) {
         invalidateRenderingUpdateRunLoopObserver();
+        invalidatePostRenderingUpdateRunLoopObserver();
     } else {
         // Immediate flush as any delay in unfreezing can result in flashes.
         scheduleRenderingUpdateRunLoopObserver();
@@ -376,8 +382,10 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
 
     m_webPage.corePage()->scrollingCoordinator()->commitTreeStateIfNeeded();
 
-    if (!m_layerTreeStateIsFrozen)
+    if (!m_layerTreeStateIsFrozen) {
         invalidateRenderingUpdateRunLoopObserver();
+        invalidatePostRenderingUpdateRunLoopObserver();
+    }
 
     ScrollingThread::dispatchBarrier([this, retainedPage = Ref { m_webPage }, function = WTFMove(function)] {
         // It is possible for the drawing area to be destroyed before the bound block is invoked.
@@ -414,6 +422,8 @@ void TiledCoreAnimationDrawingArea::didCompleteRenderingUpdateDisplay()
 
     sendPendingNewlyReachedPaintingMilestones();
     DrawingArea::didCompleteRenderingUpdateDisplay();
+    
+    schedulePostRenderingUpdateRunLoopObserver();
 }
 
 void TiledCoreAnimationDrawingArea::addCommitHandlers()
@@ -936,34 +946,56 @@ void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
     m_layerHostingContext->setFencePort(fencePort.sendRight());
 }
 
-void TiledCoreAnimationDrawingArea::updateRenderingRunLoopCallback()
+void TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver()
+{
+    if (m_renderingUpdateRunLoopObserver->isScheduled())
+        return;
+
+    tracePoint(RenderingUpdateRunLoopObserverStart);
+    
+    m_renderingUpdateRunLoopObserver->schedule();
+
+    // Avoid running any more tasks before the runloop observer fires.
+    WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
+}
+
+void TiledCoreAnimationDrawingArea::invalidateRenderingUpdateRunLoopObserver()
+{
+    if (!m_renderingUpdateRunLoopObserver->isScheduled())
+        return;
+
+    tracePoint(RenderingUpdateRunLoopObserverEnd, 1);
+
+    m_renderingUpdateRunLoopObserver->invalidate();
+}
+
+void TiledCoreAnimationDrawingArea::renderingUpdateRunLoopCallback()
 {
     tracePoint(RenderingUpdateRunLoopObserverEnd, 0);
 
     updateRendering();
 }
 
-void TiledCoreAnimationDrawingArea::invalidateRenderingUpdateRunLoopObserver()
+void TiledCoreAnimationDrawingArea::schedulePostRenderingUpdateRunLoopObserver()
 {
-    if (!m_renderUpdateRunLoopObserver->isScheduled())
+    if (m_postRenderingUpdateRunLoopObserver->isScheduled())
         return;
 
-    tracePoint(RenderingUpdateRunLoopObserverEnd, 1);
-
-    m_renderUpdateRunLoopObserver->invalidate();
+    m_postRenderingUpdateRunLoopObserver->schedule();
 }
 
-void TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver()
+void TiledCoreAnimationDrawingArea::invalidatePostRenderingUpdateRunLoopObserver()
 {
-    if (m_renderUpdateRunLoopObserver->isScheduled())
+    if (!m_postRenderingUpdateRunLoopObserver->isScheduled())
         return;
 
-    tracePoint(RenderingUpdateRunLoopObserverStart);
-    
-    m_renderUpdateRunLoopObserver->schedule(CFRunLoopGetCurrent());
+    m_postRenderingUpdateRunLoopObserver->invalidate();
+}
 
-    // Avoid running any more tasks before the runloop observer fires.
-    WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
+void TiledCoreAnimationDrawingArea::postRenderingUpdateRunLoopCallback()
+{
+    didCompleteRenderingFrame();
+    invalidatePostRenderingUpdateRunLoopObserver();
 }
 
 } // namespace WebKit

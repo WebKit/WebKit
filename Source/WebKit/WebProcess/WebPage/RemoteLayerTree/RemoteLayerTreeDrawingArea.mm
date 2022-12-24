@@ -368,8 +368,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
         RunLoop::main().dispatch([pageID] {
             if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
-                if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea()))
+                if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea())) {
                     drawingArea->didCompleteRenderingUpdateDisplay();
+                    drawingArea->didCompleteRenderingFrame();
+                }
             }
         });
     });

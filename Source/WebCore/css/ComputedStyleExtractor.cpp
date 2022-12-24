@@ -3610,6 +3610,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         list->append(currentColorOrValidColor(style, style.textEmphasisColor()));
         return list;
     }
+    case CSSPropertyTextGroupAlign:
+        return cssValuePool.createValue(style.textGroupAlign());
     case CSSPropertyTextIndent: {
         auto textIndent = zoomAdjustedPixelValueForLength(style.textIndent(), style);
         if (style.textIndentLine() == TextIndentLine::EachLine || style.textIndentType() == TextIndentType::Hanging) {

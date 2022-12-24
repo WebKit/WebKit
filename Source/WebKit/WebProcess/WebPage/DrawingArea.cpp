@@ -127,6 +127,11 @@ void DrawingArea::didCompleteRenderingUpdateDisplay()
     m_webPage.didCompleteRenderingUpdateDisplay();
 }
 
+void DrawingArea::didCompleteRenderingFrame()
+{
+    m_webPage.didCompleteRenderingFrame();
+}
+
 bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
 {
     switch (type) {

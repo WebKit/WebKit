@@ -257,6 +257,10 @@ PASS text-emphasis-style (type: discrete) has testInterpolation function
 PASS text-emphasis-style uses discrete animation when animating between "circle" and "open dot" with linear easing
 PASS text-emphasis-style uses discrete animation when animating between "circle" and "open dot" with effect easing
 PASS text-emphasis-style uses discrete animation when animating between "circle" and "open dot" with keyframe easing
+PASS text-group-align (type: discrete) has testInterpolation function
+PASS text-group-align uses discrete animation when animating between "none" and "center" with linear easing
+PASS text-group-align uses discrete animation when animating between "none" and "center" with effect easing
+PASS text-group-align uses discrete animation when animating between "none" and "center" with keyframe easing
 PASS text-overflow (type: discrete) has testInterpolation function
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with linear easing
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with effect easing

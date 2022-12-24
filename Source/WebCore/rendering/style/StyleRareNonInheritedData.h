@@ -218,6 +218,8 @@ public:
     unsigned textDecorationStyle : 3; // TextDecorationStyle
     TextDecorationThickness textDecorationThickness;
 
+    unsigned textGroupAlign : 3; // TextGroupAlign
+
     unsigned aspectRatioType : 2; // AspectRatioType
     unsigned contentVisibility : 2; // ContentVisibility
 

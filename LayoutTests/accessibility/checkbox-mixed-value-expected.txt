@@ -1,16 +1,10 @@
-Tests whether mixed values are reported properly on native checkboxes.
+This test ensures mixed values are reported properly on native checkboxes.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-1: AXRole: AXCheckBox
-Indeterminate status: true
-
-2: AXRole: AXCheckBox
-Indeterminate status: false
-
-3: AXRole: AXCheckBox
-Indeterminate status: false
+PASS: accessibilityController.accessibleElementById('checkbox').isIndeterminate === false
+document.getElementById('checkbox').indeterminate = true
+PASS: accessibilityController.accessibleElementById('checkbox').isIndeterminate === true
+document.getElementById('checkbox').indeterminate = false
+PASS: accessibilityController.accessibleElementById('checkbox').isIndeterminate === false
 
 PASS successfullyParsed is true
 

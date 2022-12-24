@@ -67,7 +67,6 @@ public:
     bool isMenuItem() const override;
     bool isMenuRelated() const override;
     bool isMultiSelectable() const override;
-    virtual bool isNativeCheckboxOrRadio() const;
     bool isNativeImage() const;
     bool isNativeTextControl() const override;
     bool isPasswordField() const override;

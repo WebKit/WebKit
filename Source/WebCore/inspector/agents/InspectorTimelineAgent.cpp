@@ -207,6 +207,7 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
         m_runLoopNestingLevel++;
     });
 
+    // FIXME: This won't work correctly with RemoteLayerTreeDrawingArea: webkit.org/b/249796. Detecting FrameEnd needs to be handled at the DrawingArea level.
     m_frameStopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameEnd), [this]() {
         if (!m_tracking || m_environment.debugger()->isPaused())
             return;

@@ -434,6 +434,8 @@ public:
 
     void willStartRenderingUpdateDisplay();
     void didCompleteRenderingUpdateDisplay();
+    // Called after didCompleteRenderingUpdateDisplay, but in the same run loop iteration.
+    void didCompleteRenderingFrame();
 
     void releaseMemory(WTF::Critical);
 
