@@ -73,10 +73,12 @@ void Font::platformInit()
     GetTextMetrics(dc, &textMetrics);
     float ascent = textMetrics.tmAscent * metricsMultiplier;
     float descent = textMetrics.tmDescent * metricsMultiplier;
+    float capHeight = (textMetrics.tmAscent - textMetrics.tmInternalLeading) * metricsMultiplier;
     float lineGap = textMetrics.tmExternalLeading * metricsMultiplier;
 
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setCapHeight(capHeight);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_avgCharWidth = textMetrics.tmAveCharWidth * metricsMultiplier;

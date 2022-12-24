@@ -1025,12 +1025,6 @@ webkit.org/b/215041 webgl/webgl-texture-image-buffer-reuse.html [ Skip ]
 
 webkit.org/b/117322 fast/css/text-indent-first-line-006.html [ ImageOnlyFailure ]
 fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html [ Pass Timeout ]
-webkit.org/b/136484 fast/css-generated-content/initial-letter-basic.html [ Pass Failure ]
-webkit.org/b/136484 fast/css-generated-content/initial-letter-border-padding.html [ Pass Failure ]
-webkit.org/b/136484 fast/css-generated-content/initial-letter-clearance.html [ Pass Failure ]
-webkit.org/b/136484 fast/css-generated-content/initial-letter-descender.html [ Pass Failure ]
-webkit.org/b/136484 fast/css-generated-content/initial-letter-raised.html [ Pass Failure ]
-webkit.org/b/136484 fast/css-generated-content/initial-letter-sunken.html [ Pass Failure ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-first-line-wrapping.html  [ ImageOnlyFailure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
@@ -1077,10 +1071,7 @@ css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
 fast/css/apple-system-colors.html [ Failure ]
 fast/css/image-rendering-parsing.html [ Failure Pass ]
 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
-fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-raised.html [ ImageOnlyFailure ]
-fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
-fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 
 # color-filters are off by default
 webkit.org/b/185076 css3/color-filters [ Skip ]
