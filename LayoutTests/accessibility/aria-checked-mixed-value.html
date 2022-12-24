@@ -1,41 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
-
-<div id="content">
+<body>
 
 <div id="element1" role="radio" aria-checked="mixed"></div> <!-- treat as false for radio roles -->
 <div id="element2" role="menuitemradio" aria-checked="mixed"></div> <!-- treat as false for menuitemradio roles -->
-<div id="element3" role="checkbox" aria-checked="mixed"></div>
-<div id="element4" role="menuitemcheckbox" aria-checked="mixed"></div>
-<div id="element5" role="checkbox" indeterminate="true"></div>
-<div id="element6" role="checkbox" indeterminate="false"></div>
-
-</div>
-
-<p id="description"></p>
-<div id="console"></div>
+<div id="element3" role="menuitemcheckbox" aria-checked="mixed"></div>
+<div id="element4" role="checkbox"></div>
+<div id="element5" role="checkbox" aria-checked="mixed"></div>
 
 <script>
+var output = "This test ensures mixed values are reported correctly.\n\n";
 
-    description("Tests whether mixed values are reported properly.");
-
-    if (window.accessibilityController) {
-          for (var i = 1; i < 7; i++) {
-              var element = accessibilityController.accessibleElementById("element" + i);
-              debug("Role: " + element.role);
-              debug("Mixed: " + element.isIndeterminate);
-              debug("\n");
-          }
-
-          document.getElementById("content").style.visibility = "hidden";
+if (window.accessibilityController) {
+    for (var i = 1; i < 6; i++) {
+        const id = `element${i}`;
+        output += `${escapeHTML(document.getElementById(id).outerHTML)}\n`;
+        const axElement = accessibilityController.accessibleElementById(id);
+        output += `Role: ${axElement.role}\n`;
+        output += `Mixed: ${axElement.isIndeterminate}\n\n`;
     }
 
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

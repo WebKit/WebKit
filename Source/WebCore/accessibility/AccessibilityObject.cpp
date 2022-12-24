@@ -3134,7 +3134,7 @@ bool AccessibilityObject::supportsRowCountChange() const
 
 AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 {
-    // If this is a real checkbox or radio button, AccessibilityRenderObject will handle.
+    // If this is a real checkbox or radio button, AccessibilityNodeObject will handle.
     // If it's an ARIA checkbox, radio, or switch the aria-checked attribute should be used.
     // If it's a toggle button, the aria-pressed attribute is consulted.
 
@@ -3157,9 +3157,6 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
             return AccessibilityButtonState::Off;
         return AccessibilityButtonState::Mixed;
     }
-    
-    if (isIndeterminate())
-        return AccessibilityButtonState::Mixed;
     
     return AccessibilityButtonState::Off;
 }

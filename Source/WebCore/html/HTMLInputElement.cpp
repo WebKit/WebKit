@@ -984,6 +984,9 @@ void HTMLInputElement::setIndeterminate(bool newValue)
 
     if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
         renderer->theme().stateChanged(*renderer, ControlStates::States::Checked);
+
+    if (auto* cache = document().existingAXObjectCache())
+        cache->valueChanged(this);
 }
 
 bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
