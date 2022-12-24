@@ -103,6 +103,8 @@ public:
     // nested subgrids, where ancestor may not be our direct parent.
     bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor);
 
+    bool isMasonry() const;
+    bool isMasonry(GridTrackSizingDirection) const;
     bool areMasonryRows() const;
     bool areMasonryColumns() const;
 
