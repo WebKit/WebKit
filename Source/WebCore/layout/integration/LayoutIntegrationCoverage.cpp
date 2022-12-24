@@ -94,8 +94,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
-    case AvoidanceReason::FlowHasHangingPunctuation:
-        stream << "hanging punctuation";
+    case AvoidanceReason::FlowHasUnsupportedHangingPunctuation:
+        stream << "unsupported hanging punctuation";
         break;
     case AvoidanceReason::FlowIsPaginated:
         stream << "paginated";
@@ -300,8 +300,8 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     OptionSet<AvoidanceReason> reasons;
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
-    if (!style.hangingPunctuation().isEmpty())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons)
+    if (style.hangingPunctuation().containsAny({ HangingPunctuation::AllowEnd, HangingPunctuation::ForceEnd }))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedHangingPunctuation, reasons, includeReasons)
     if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.
