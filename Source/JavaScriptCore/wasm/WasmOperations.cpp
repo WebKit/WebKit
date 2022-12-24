@@ -44,6 +44,7 @@
 #include "ProbeContext.h"
 #include "ReleaseHeapAccessScope.h"
 #include "TypedArrayController.h"
+#include "WaiterListManager.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
@@ -924,27 +925,10 @@ static int32_t wait(VM& vm, ValueType* pointer, ValueType expectedValue, int64_t
     Seconds timeout = Seconds::infinity();
     if (timeoutInNanoseconds >= 0)
         timeout = Seconds::fromNanoseconds(timeoutInNanoseconds);
-    bool didPassValidation = false;
-    ParkingLot::ParkResult result;
-    {
-        ReleaseHeapAccessScope releaseHeapAccessScope(vm.heap);
-        result = ParkingLot::parkConditionally(
-            pointer,
-            [&] () -> bool {
-                didPassValidation = WTF::atomicLoad(pointer) == expectedValue;
-                return didPassValidation;
-            },
-            [] () { },
-            MonotonicTime::now() + timeout);
-    }
-    if (!didPassValidation)
-        return 1;
-    if (!result.wasUnparked)
-        return 2;
-    return 0;
+    return static_cast<int32_t>(WaiterListManager::singleton().waitSync(vm, pointer, expectedValue, timeout));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instance, unsigned base, unsigned offset, uint32_t value, int64_t timeoutInNanoseconds))
+JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds))
 {
     VM& vm = instance->vm();
     uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
@@ -958,11 +942,11 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instan
         return -1;
     if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread())
         return -1;
-    uint32_t* pointer = bitwise_cast<uint32_t*>(bitwise_cast<uint8_t*>(instance->memory()->memory()) + offsetInMemory);
-    return wait<uint32_t>(vm, pointer, value, timeoutInNanoseconds);
+    int32_t* pointer = bitwise_cast<int32_t*>(bitwise_cast<uint8_t*>(instance->memory()->memory()) + offsetInMemory);
+    return wait<int32_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait64, int32_t, (Instance* instance, unsigned base, unsigned offset, uint64_t value, int64_t timeoutInNanoseconds))
+JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait64, int32_t, (Instance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds))
 {
     VM& vm = instance->vm();
     uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
@@ -976,8 +960,8 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait64, int32_t, (Instance* instan
         return -1;
     if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread())
         return -1;
-    uint64_t* pointer = bitwise_cast<uint64_t*>(bitwise_cast<uint8_t*>(instance->memory()->memory()) + offsetInMemory);
-    return wait<uint64_t>(vm, pointer, value, timeoutInNanoseconds);
+    int64_t* pointer = bitwise_cast<int64_t*>(bitwise_cast<uint8_t*>(instance->memory()->memory()) + offsetInMemory);
+    return wait<int64_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance* instance, unsigned base, unsigned offset, int32_t countValue))
@@ -995,7 +979,8 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance* instan
     unsigned count = UINT_MAX;
     if (countValue >= 0)
         count = static_cast<unsigned>(countValue);
-    return ParkingLot::unparkCount(pointer, count);
+
+    return static_cast<int32_t>(WaiterListManager::singleton().notifyWaiter(pointer, count));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmMemoryInit, size_t, (Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))

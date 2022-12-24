@@ -204,12 +204,19 @@ private:
 
 class WaiterListManager {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     static WaiterListManager& singleton();
 
-    JS_EXPORT_PRIVATE JSValue wait(JSGlobalObject*, VM&, int32_t* ptr, int32_t expected, Seconds timeout, AtomicsWaitType);
-    JS_EXPORT_PRIVATE JSValue wait(JSGlobalObject*, VM&, int64_t* ptr, int64_t expected, Seconds timeout, AtomicsWaitType);
+    enum class WaitSyncResult : int32_t {
+        OK = 0,
+        NotEqual = 1,
+        TimedOut = 2,
+    };
+
+    JS_EXPORT_PRIVATE WaitSyncResult waitSync(VM&, int32_t* ptr, int32_t expected, Seconds timeout);
+    JS_EXPORT_PRIVATE WaitSyncResult waitSync(VM&, int64_t* ptr, int64_t expected, Seconds timeout);
+    JS_EXPORT_PRIVATE JSValue waitAsync(JSGlobalObject*, VM&, int32_t* ptr, int32_t expected, Seconds timeout);
+    JS_EXPORT_PRIVATE JSValue waitAsync(JSGlobalObject*, VM&, int64_t* ptr, int64_t expected, Seconds timeout);
 
     enum class ResolveResult : uint8_t { Ok, Timeout };
     unsigned notifyWaiter(void* ptr, unsigned count);
@@ -222,7 +229,9 @@ public:
 
 private:
     template <typename ValueType>
-    JSValue waitImpl(JSGlobalObject*, VM&, ValueType* ptr, ValueType expectedValue, Seconds timeout, AtomicsWaitType);
+    WaitSyncResult waitSyncImpl(VM&, ValueType* ptr, ValueType expectedValue, Seconds timeout);
+    template <typename ValueType>
+    JSValue waitAsyncImpl(JSGlobalObject*, VM&, ValueType* ptr, ValueType expectedValue, Seconds timeout);
 
     void notifyWaiterImpl(const AbstractLocker&, Ref<Waiter>&&, const ResolveResult);
 

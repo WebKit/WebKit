@@ -455,7 +455,20 @@ JSValue atomicsWaitImpl(JSGlobalObject* globalObject, JSArrayType* typedArray, u
         return { };
     }
 
-    return WaiterListManager::singleton().wait(globalObject, vm, ptr, expectedValue, timeout, type);
+    if (type == AtomicsWaitType::Async)
+        return WaiterListManager::singleton().waitAsync(globalObject, vm, ptr, expectedValue, timeout);
+
+    auto result = WaiterListManager::singleton().waitSync(vm, ptr, expectedValue, timeout);
+    switch (result) {
+    case WaiterListManager::WaitSyncResult::OK:
+        return vm.smallStrings.okString();
+    case WaiterListManager::WaitSyncResult::NotEqual:
+        return vm.smallStrings.notEqualString();
+    case WaiterListManager::WaitSyncResult::TimedOut:
+        return vm.smallStrings.timedOutString();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
 }
 
 JSC_DEFINE_HOST_FUNCTION(atomicsFuncWait, (JSGlobalObject* globalObject, CallFrame* callFrame))

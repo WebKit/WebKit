@@ -51,46 +51,8 @@ WaiterListManager& WaiterListManager::singleton()
 }
 
 template <typename ValueType>
-JSValue WaiterListManager::waitImpl(JSGlobalObject* globalObject, VM& vm, ValueType* ptr, ValueType expectedValue, Seconds timeout, AtomicsWaitType type)
+WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueType* ptr, ValueType expectedValue, Seconds timeout)
 {
-    if (type == AtomicsWaitType::Async) {
-        JSObject* object = constructEmptyObject(globalObject);
-
-        bool isAsync = false;
-        JSValue value;
-
-        Ref<WaiterList> list = findOrCreateList(ptr);
-        JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-
-        {
-            Locker listLocker { list->lock };
-            if (WTF::atomicLoad(ptr) != expectedValue)
-                value = vm.smallStrings.notEqualString();
-            else if (!timeout)
-                value = vm.smallStrings.timedOutString();
-            else {
-                isAsync = true;
-
-                Ref<Waiter> waiter = adoptRef(*new Waiter(promise));
-                list->addLast(listLocker, waiter);
-
-                if (timeout != Seconds::infinity()) {
-                    Ref<RunLoop::DispatchTimer> timer = RunLoop::current().dispatchAfter(timeout, [this, ptr, waiter = waiter.copyRef()]() mutable {
-                        timeoutAsyncWaiter(ptr, WTFMove(waiter));
-                    });
-                    waiter->setTimer(listLocker, WTFMove(timer));
-                    dataLogLnIf(WaiterListsManagerInternal::verbose, "WaiterListManager added a new AsyncWaiter ", RawPointer(waiter.ptr()), " to a waiterList for ptr ", RawPointer(ptr));
-                }
-
-                value = promise;
-            }
-        }
-
-        object->putDirect(vm, vm.propertyNames->async, jsBoolean(isAsync));
-        object->putDirect(vm, vm.propertyNames->value, value);
-        return object;
-    }
-
     Ref<Waiter> syncWaiter = vm.syncWaiter();
     Ref<WaiterList> list = findOrCreateList(ptr);
     MonotonicTime time = MonotonicTime::now() + timeout;
@@ -98,7 +60,7 @@ JSValue WaiterListManager::waitImpl(JSGlobalObject* globalObject, VM& vm, ValueT
     {
         Locker listLocker { list->lock };
         if (WTF::atomicLoad(ptr) != expectedValue)
-            return vm.smallStrings.notEqualString();
+            return WaitSyncResult::NotEqual;
 
         list->addLast(listLocker, syncWaiter);
         dataLogLnIf(WaiterListsManagerInternal::verbose, "WaiterListManager added a new SyncWaiter ", RawPointer(&syncWaiter), " to a waiterList for ptr ", RawPointer(ptr));
@@ -111,22 +73,72 @@ JSValue WaiterListManager::waitImpl(JSGlobalObject* globalObject, VM& vm, ValueT
         bool didGetDequeued = !syncWaiter->vm();
         ASSERT(didGetDequeued || syncWaiter->vm() == &vm);
         if (didGetDequeued)
-            return vm.smallStrings.okString();
+            return WaitSyncResult::OK;
 
         didGetDequeued = list->findAndRemove(listLocker, syncWaiter);
         ASSERT(didGetDequeued);
-        return vm.smallStrings.timedOutString();
+        return WaitSyncResult::TimedOut;
     }
 }
 
-JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, int32_t* ptr, int32_t expected, Seconds timeout, AtomicsWaitType waitType)
+template <typename ValueType>
+JSValue WaiterListManager::waitAsyncImpl(JSGlobalObject* globalObject, VM& vm, ValueType* ptr, ValueType expectedValue, Seconds timeout)
 {
-    return waitImpl(globalObject, vm, ptr, expected, timeout, waitType);
+    JSObject* object = constructEmptyObject(globalObject);
+
+    bool isAsync = false;
+    JSValue value;
+
+    Ref<WaiterList> list = findOrCreateList(ptr);
+    JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
+    {
+        Locker listLocker { list->lock };
+        if (WTF::atomicLoad(ptr) != expectedValue)
+            value = vm.smallStrings.notEqualString();
+        else if (!timeout)
+            value = vm.smallStrings.timedOutString();
+        else {
+            isAsync = true;
+
+            Ref<Waiter> waiter = adoptRef(*new Waiter(promise));
+            list->addLast(listLocker, waiter);
+
+            if (timeout != Seconds::infinity()) {
+                Ref<RunLoop::DispatchTimer> timer = RunLoop::current().dispatchAfter(timeout, [this, ptr, waiter = waiter.copyRef()]() mutable {
+                    timeoutAsyncWaiter(ptr, WTFMove(waiter));
+                });
+                waiter->setTimer(listLocker, WTFMove(timer));
+                dataLogLnIf(WaiterListsManagerInternal::verbose, "WaiterListManager added a new AsyncWaiter ", RawPointer(waiter.ptr()), " to a waiterList for ptr ", RawPointer(ptr));
+            }
+
+            value = promise;
+        }
+    }
+
+    object->putDirect(vm, vm.propertyNames->async, jsBoolean(isAsync));
+    object->putDirect(vm, vm.propertyNames->value, value);
+    return object;
 }
 
-JSValue WaiterListManager::wait(JSGlobalObject* globalObject, VM& vm, int64_t* ptr, int64_t expected, Seconds timeout, AtomicsWaitType waitType)
+JSValue WaiterListManager::waitAsync(JSGlobalObject* globalObject, VM& vm, int32_t* ptr, int32_t expected, Seconds timeout)
 {
-    return waitImpl(globalObject, vm, ptr, expected, timeout, waitType);
+    return waitAsyncImpl(globalObject, vm, ptr, expected, timeout);
+}
+
+JSValue WaiterListManager::waitAsync(JSGlobalObject* globalObject, VM& vm, int64_t* ptr, int64_t expected, Seconds timeout)
+{
+    return waitAsyncImpl(globalObject, vm, ptr, expected, timeout);
+}
+
+WaiterListManager::WaitSyncResult WaiterListManager::waitSync(VM& vm, int32_t* ptr, int32_t expected, Seconds timeout)
+{
+    return waitSyncImpl(vm, ptr, expected, timeout);
+}
+
+WaiterListManager::WaitSyncResult WaiterListManager::waitSync(VM& vm, int64_t* ptr, int64_t expected, Seconds timeout)
+{
+    return waitSyncImpl(vm, ptr, expected, timeout);
 }
 
 void WaiterListManager::timeoutAsyncWaiter(void* ptr, Ref<Waiter>&& waiter)
