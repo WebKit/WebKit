@@ -1027,7 +1027,7 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memor
             GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
             GPRReg scratch = params.gpScratch(0);
             jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs->boundsCheckingSizeRegister);
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs->boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* nonNull */ true);
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs->boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ true);
         });
     }
 }
@@ -1406,7 +1406,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
             ASSERT(pinnedRegs.boundsCheckingSizeRegister != calleeInstance);
             GPRReg scratch = params.gpScratch(0);
             jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* nonNull */ true);
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ true);
         });
         doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
