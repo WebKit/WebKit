@@ -588,9 +588,6 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
     if (callSignature.index() != function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
-    if (targetInstance != instance)
-        targetInstance->setCachedStackLimit(instance->cachedStackLimit());
-
     WASM_CALL_RETURN(targetInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }
 
@@ -611,6 +608,7 @@ WASM_SLOW_PATH_DECL(call_indirect_no_tls)
 inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned typeIndex)
 {
     UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(callerInstance);
 
     if (targetReference.isNull())
         WASM_THROW(Wasm::ExceptionType::NullReference);
@@ -622,9 +620,6 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
     auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
     Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
     Wasm::Instance* calleeInstance = &wasmFunction->instance()->instance();
-
-    if (calleeInstance != callerInstance)
-        calleeInstance->setCachedStackLimit(callerInstance->cachedStackLimit());
 
     ASSERT(function.typeIndex == CALLEE()->signature(typeIndex).index());
     UNUSED_PARAM(typeIndex);

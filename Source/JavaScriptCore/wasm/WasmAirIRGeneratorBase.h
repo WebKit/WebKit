@@ -855,8 +855,7 @@ protected:
     ExpressionType WARN_UNUSED_RETURN fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType, ExpressionType, uint32_t);
 
     void restoreWasmContextInstance(BasicBlock*, ExpressionType);
-    enum class RestoreCachedStackLimit { No, Yes };
-    void restoreWebAssemblyGlobalState(RestoreCachedStackLimit, const MemoryInformation&, ExpressionType instance, BasicBlock*);
+    void restoreWebAssemblyGlobalState(const MemoryInformation&, ExpressionType instance, BasicBlock*);
 
     B3::Origin origin();
 
@@ -1087,14 +1086,20 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
                     jit.store32(CCallHelpers::TrustedImm32(PatchpointExceptionHandle::s_invalidCallSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
                 GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
+                GPRReg scratch2 = wasmCallingConvention().prologueScratchGPRs[1];
                 jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), GPRInfo::callFrameRegister, scratch);
                 MacroAssembler::JumpList overflow;
                 if (UNLIKELY(needUnderflowCheck))
                     overflow.append(jit.branchPtr(CCallHelpers::Above, scratch, GPRInfo::callFrameRegister));
-                overflow.append(jit.branchPtr(CCallHelpers::Below, scratch, CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfCachedStackLimit())));
+                jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfVM()), scratch2);
+                overflow.append(jit.branchPtr(CCallHelpers::Below, scratch, CCallHelpers::Address(scratch2, VM::offsetOfSoftStackLimit())));
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });
+                if (m_prologueWasmContextGPR == wasmCallingConvention().prologueScratchGPRs[1]) {
+                    ASSERT(Context::useFastTLS());
+                    jit.loadWasmContextInstance(m_prologueWasmContextGPR);
+                }
             }
 
         }
@@ -1177,19 +1182,9 @@ void AirIRGeneratorBase<Derived, ExpressionType>::finalizeEntrypoints()
 }
 
 template<typename Derived, typename ExpressionType>
-void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restoreCachedStackLimit, const MemoryInformation& memory, ExpressionType instance, BasicBlock* block)
+void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(const MemoryInformation& memory, ExpressionType instance, BasicBlock* block)
 {
     restoreWasmContextInstance(block, instance);
-
-    if (restoreCachedStackLimit == RestoreCachedStackLimit::Yes) {
-        // The Instance caches the stack limit, but also knows where its canonical location is.
-        RELEASE_ASSERT(Arg::isValidAddrForm(Move, Instance::offsetOfPointerToActualStackLimit(), pointerWidth()));
-        RELEASE_ASSERT(Arg::isValidAddrForm(Move, Instance::offsetOfCachedStackLimit(), pointerWidth()));
-        auto temp = self().gPtr();
-        append(block, Move, Arg::addr(instanceValue(), Instance::offsetOfPointerToActualStackLimit()), temp);
-        append(block, Move, Arg::addr(temp), temp);
-        append(block, Move, temp, Arg::addr(instanceValue(), Instance::offsetOfCachedStackLimit()));
-    }
 
     if (!!memory && Derived::supportsPinnedStateRegisters) {
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
@@ -1210,11 +1205,8 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
             GPRReg scratch = params.gpScratch(0);
-
-            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs->boundsCheckingSizeRegister);
-            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), baseMemory);
-
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs->boundsCheckingSizeRegister, scratch);
+            jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs->boundsCheckingSizeRegister);
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs->boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* nonNull */ true);
         });
 
         emitPatchpoint(block, patchpoint, ExpressionType(), instance);
@@ -1486,7 +1478,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addGrowMemory(ExpressionType d
 {
     result = self().g32();
     emitCCall(&operationGrowMemory, result, ExpressionType { Tmp(GPRInfo::callFrameRegister), Types::IPtr }, instanceValue(), delta);
-    restoreWebAssemblyGlobalState(RestoreCachedStackLimit::No, m_info.memory, instanceValue(), m_currentBlock);
+    restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
     return { };
 }
@@ -3247,7 +3239,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
         isWasmBlock->setSuccessors(continuation);
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
-        restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, continuation);
+        restoreWebAssemblyGlobalState(m_info.memory, currentInstance, continuation);
 
         return { };
 
@@ -3268,7 +3260,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
     emitUnlinkedWasmToWasmCall(WTFMove(data));
 
     if (m_info.callCanClobberInstance(functionIndex))
-        self().restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, m_currentBlock);
+        self().restoreWebAssemblyGlobalState(m_info.memory, currentInstance, m_currentBlock);
 
     return { };
 }
@@ -3406,11 +3398,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg calleeInstance = params[0].gpr();
-            GPRReg oldContextInstance = params[1].gpr();
             GPRReg scratch = params.gpScratch(0);
             ASSERT(scratch != calleeInstance);
-            jit.loadPtr(CCallHelpers::Address(oldContextInstance, Instance::offsetOfCachedStackLimit()), scratch);
-            jit.storePtr(scratch, CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedStackLimit()));
+            UNUSED_PARAM(scratch);
             jit.storeWasmContextInstance(calleeInstance);
 
             if constexpr (Derived::supportsPinnedStateRegisters) {
@@ -3419,13 +3409,12 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
                 //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
                 ASSERT(pinnedRegs.boundsCheckingSizeRegister != calleeInstance);
                 ASSERT(pinnedRegs.baseMemoryPointer != calleeInstance);
-                jit.loadPtr(CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister); // Bound checking size.
-                jit.loadPtr(CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedMemory()), pinnedRegs.baseMemoryPointer); // Memory::void*.
-                jit.cageConditionallyAndUntag(Gigacage::Primitive, pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister, scratch);
+                jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister);
+                jit.cageConditionallyAndUntag(Gigacage::Primitive, pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* nonNull */ true);
             }
         });
 
-        emitPatchpoint(doContextSwitch, patchpoint, ExpressionType(), calleeInstance, currentInstance);
+        emitPatchpoint(doContextSwitch, patchpoint, ExpressionType(), calleeInstance);
         append(doContextSwitch, Jump);
         doContextSwitch->setSuccessors(continuation);
 
@@ -3480,7 +3469,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
     });
 
     // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
-    restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, m_currentBlock);
+    restoreWebAssemblyGlobalState(m_info.memory, currentInstance, m_currentBlock);
 
     return { };
 }

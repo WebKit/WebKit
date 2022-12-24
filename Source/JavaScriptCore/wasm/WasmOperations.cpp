@@ -946,7 +946,7 @@ static int32_t wait(VM& vm, ValueType* pointer, ValueType expectedValue, int64_t
 
 JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instance, unsigned base, unsigned offset, uint32_t value, int64_t timeoutInNanoseconds))
 {
-    VM& vm = instance->owner<JSWebAssemblyInstance>()->vm();
+    VM& vm = instance->vm();
     uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x4 - 1))
         return -1;
@@ -964,7 +964,7 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instan
 
 JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicWait64, int32_t, (Instance* instance, unsigned base, unsigned offset, uint64_t value, int64_t timeoutInNanoseconds))
 {
-    VM& vm = instance->owner<JSWebAssemblyInstance>()->vm();
+    VM& vm = instance->vm();
     uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x8 - 1))
         return -1;

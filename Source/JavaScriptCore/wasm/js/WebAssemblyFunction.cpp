@@ -109,20 +109,11 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
         if (UNLIKELY((sp < stackSpaceUsed) || ((sp - stackSpaceUsed) < bitwise_cast<uintptr_t>(vm.softStackLimit()))))
             return JSValue::encode(throwException(globalObject, scope, createStackOverflowError(globalObject)));
     }
-    vm.wasmContext.store(wasmInstance, vm.softStackLimit());
+    vm.wasmContext.store(wasmInstance);
     ASSERT(wasmFunction->instance());
     ASSERT(&wasmFunction->instance()->instance() == vm.wasmContext.load());
     EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->jsEntrypoint(MustCheckArity).taggedPtr(), &vm, &protoCallFrame);
-    if (prevWasmInstance != wasmInstance) {
-        // This is just for some extra safety instead of leaving a cached
-        // value in there. If we ever forget to set the value to be a real
-        // bounds, this will force every stack overflow check to immediately
-        // fire. The stack limit never changes while executing except when
-        // WebAssembly is used through the JSC API: API users can ask the code
-        // to migrate threads.
-        wasmInstance->setCachedStackLimit(bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()));
-    }
-    vm.wasmContext.store(prevWasmInstance, vm.softStackLimit());
+    vm.wasmContext.store(prevWasmInstance);
     RETURN_IF_EXCEPTION(scope, { });
 
     // We need to make sure this is in a register or on the stack since it's stored in Vector<JSValue>.
@@ -234,7 +225,6 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         Wasm::wasmCallingConvention().prologueScratchGPRs[1]
     };
     GPRReg stackLimitGPR = Wasm::wasmCallingConvention().prologueScratchGPRs[0];
-    bool stackLimitGPRIsClobbered = false;
     jit.loadPtr(vm.addressOfSoftStackLimit(), stackLimitGPR);
 
     CCallHelpers::JumpList slowPath;
@@ -290,7 +280,6 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                     slowPath.append(isNull);
                 slowPath.append(jit.branchIfNotCell(scratchJSR));
 
-                stackLimitGPRIsClobbered = true;
                 jit.emitLoadStructure(vm, scratchJSR.payloadGPR(), scratchJSR.payloadGPR());
                 jit.loadCompactPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Structure::classInfoOffset()), scratchJSR.payloadGPR());
 
@@ -333,7 +322,6 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 #if USE(JSVALUE64)
             slowPath.append(jit.branchIfNotNumber(scratchJSR, InvalidGPRReg));
 #elif USE(JSVALUE32_64)
-            stackLimitGPRIsClobbered = true;
             slowPath.append(jit.branchIfNotNumber(scratchJSR, stackLimitGPR));
 #endif
             auto isInt32 = jit.branchIfInt32(scratchJSR);
@@ -386,9 +374,6 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         jit.move(scratchJSR.payloadGPR(), pinnedRegs.wasmContextInstancePointer);
         jit.storePtr(scratchJSR.payloadGPR(), vm.wasmContext.pointerToInstance());
     }
-    if (stackLimitGPRIsClobbered)
-        jit.loadPtr(vm.addressOfSoftStackLimit(), stackLimitGPR);
-    jit.storePtr(stackLimitGPR, CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedStackLimit()));
 
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     if (!!instance()->instance().module().moduleInformation().memory) {
@@ -401,13 +386,13 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
             else
                 scratchOrBoundsCheckingSize = stackLimitGPR;
-            jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedBoundsCheckingSize()), scratchOrBoundsCheckingSize);
+            jit.loadPairPtr(scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, scratchOrBoundsCheckingSize);
         } else {
             if (mode == MemoryMode::BoundsChecking)
-                jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister);
+                jit.loadPairPtr(scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
+            else
+                jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedMemory()), baseMemory);
         }
-
-        jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedMemory()), baseMemory);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR());
     }
 #endif

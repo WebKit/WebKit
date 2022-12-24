@@ -604,7 +604,7 @@ public:
         CalleeBits callee = visitor->callee();
         if (callee.isCell()) {
             if (auto* jsToWasmICCallee = jsDynamicCast<JSToWasmICCallee*>(callee.asCell()))
-                m_vm.wasmContext.store(jsToWasmICCallee->function()->previousInstance(m_callFrame), m_vm.softStackLimit());
+                m_vm.wasmContext.store(jsToWasmICCallee->function()->previousInstance(m_callFrame));
         }
 
         if (m_catchableFromWasm && callee.isWasm()) {
