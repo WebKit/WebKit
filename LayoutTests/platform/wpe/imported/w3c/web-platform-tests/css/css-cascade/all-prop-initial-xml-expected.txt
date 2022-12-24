@@ -304,6 +304,7 @@ PASS text-decoration-thickness
 PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style
+PASS text-group-align
 PASS text-indent
 PASS text-justify
 PASS text-orientation

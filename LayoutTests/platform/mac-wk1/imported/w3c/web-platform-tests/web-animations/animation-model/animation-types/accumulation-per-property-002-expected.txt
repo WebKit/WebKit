@@ -210,6 +210,9 @@ PASS text-emphasis-position: "over" onto "under left"
 PASS text-emphasis-style (type: discrete) has testAccumulation function
 PASS text-emphasis-style: "open dot" onto "circle"
 PASS text-emphasis-style: "circle" onto "open dot"
+PASS text-group-align (type: discrete) has testAccumulation function
+PASS text-group-align: "center" onto "none"
+PASS text-group-align: "none" onto "center"
 PASS text-overflow (type: discrete) has testAccumulation function
 PASS text-overflow: "ellipsis" onto "clip"
 PASS text-overflow: "clip" onto "ellipsis"

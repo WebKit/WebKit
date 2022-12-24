@@ -99,6 +99,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , textDecorationStyle(static_cast<unsigned>(RenderStyle::initialTextDecorationStyle()))
     , textDecorationThickness(RenderStyle::initialTextDecorationThickness())
+    , textGroupAlign(static_cast<unsigned>(RenderStyle::initialTextGroupAlign()))
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
     , contentVisibility(static_cast<unsigned>(RenderStyle::initialContentVisibility()))
 #if ENABLE(CSS_COMPOSITING)
@@ -212,6 +213,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , effectiveAppearance(o.effectiveAppearance)
     , textDecorationStyle(o.textDecorationStyle)
     , textDecorationThickness(o.textDecorationThickness)
+    , textGroupAlign(o.textGroupAlign)
     , aspectRatioType(o.aspectRatioType)
     , contentVisibility(o.contentVisibility)
 #if ENABLE(CSS_COMPOSITING)
@@ -327,6 +329,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && effectiveAppearance == o.effectiveAppearance
         && textDecorationStyle == o.textDecorationStyle
         && textDecorationThickness == o.textDecorationThickness
+        && textGroupAlign == o.textGroupAlign
         && arePointingToEqualData(rotate, o.rotate)
         && arePointingToEqualData(scale, o.scale)
         && arePointingToEqualData(translate, o.translate)

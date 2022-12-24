@@ -491,6 +491,18 @@ CSSTextAlignLastEnabled:
     WebCore:
       default: true
 
+CSSTextGroupAlignEnabled:
+  type: bool
+  humanReadableName: "CSS text-group-align property"
+  humanReadableDescription: "Enable text-group-align CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextJustifyEnabled:
   type: bool
   humanReadableName: "CSS text-justify property"
