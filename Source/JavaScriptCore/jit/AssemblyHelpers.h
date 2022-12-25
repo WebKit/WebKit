@@ -1701,9 +1701,9 @@ public:
         ok.link(this);
     }
 
-    JS_EXPORT_PRIVATE void cageWithoutUntagging(Gigacage::Kind, GPRReg storage);
+    JS_EXPORT_PRIVATE void cageWithoutUntagging(Gigacage::Kind, GPRReg storage, bool mayBeNull = true);
     // length may be the same register as scratch.
-    JS_EXPORT_PRIVATE void cageConditionallyAndUntag(Gigacage::Kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth = true);
+    JS_EXPORT_PRIVATE void cageConditionallyAndUntag(Gigacage::Kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth = true, bool mayBeNull = true);
 
     void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)
     {

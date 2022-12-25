@@ -40,7 +40,7 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode t
     auto& runs = lineContent.runs;
     auto contentLogicalRight = lineContent.contentLogicalRight;
     auto lineLogicalRight = lineContent.lineLogicalWidth;
-    if (lineContent.hangingContentWidth) {
+    if (lineContent.hangingContent.width) {
         ASSERT(!runs.isEmpty());
         // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
         // by a forced line break, in which case it must conditionally hang the sequence is instead.
@@ -51,7 +51,7 @@ static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode t
             // FIXME: Conditional hanging needs partial overflow trimming at glyph boundary, one by one until they fit.
             contentLogicalRight = std::min(contentLogicalRight, lineLogicalRight);
         } else
-            contentLogicalRight -= lineContent.hangingContentWidth;
+            contentLogicalRight -= lineContent.hangingContent.width;
     }
     auto extraHorizontalSpace = lineLogicalRight - contentLogicalRight;
     if (extraHorizontalSpace <= 0)
@@ -129,7 +129,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
     auto& lineContent = this->lineContent();
     auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle().textAlign(), rootStyle().textAlignLast(), lineContent, lineContent.inlineBaseDirection == TextDirection::LTR));
     // FIXME: The overflowing hanging content should be part of the ink overflow.  
-    auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContentWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContent.width, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
@@ -492,7 +492,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
             logicalLeft += std::max(0_lu, marginStart);
             auto initialLogicalWidth = rootInlineBox.logicalWidth() - (logicalLeft - rootInlineBox.logicalLeft());
-            ASSERT(initialLogicalWidth >= 0 || lineContent().hangingContentWidth || std::isnan(initialLogicalWidth));
+            ASSERT(initialLogicalWidth >= 0 || lineContent().hangingContent.width || std::isnan(initialLogicalWidth));
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();

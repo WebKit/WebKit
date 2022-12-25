@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2010 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,8 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
+// https://www.w3.org/TR/SVG2/struct.html#InterfaceSVGSVGElement
 
 [
     JSGenerateToNativeObject,
@@ -59,8 +61,8 @@
     undefined pauseAnimations();
     undefined unpauseAnimations();
     boolean animationsPaused();
-    unrestricted float getCurrentTime();
-    undefined setCurrentTime(optional unrestricted float seconds = NaN);
+    float getCurrentTime();
+    undefined setCurrentTime(float seconds);
 
     // Deprecated SVG redrawing
     unsigned long suspendRedraw(optional unsigned long maxWaitMilliseconds = 0);

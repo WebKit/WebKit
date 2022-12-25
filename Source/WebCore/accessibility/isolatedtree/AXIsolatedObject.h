@@ -53,6 +53,11 @@ public:
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
 
+    AXIsolatedObject* parentObject() const override { return parentObjectUnignored(); }
+    AXIsolatedObject* editableAncestor() override { return Accessibility::editableAncestor(*this); };
+    bool canSetFocusAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
+    bool isTextControl() const override { return boolAttributeValue(AXPropertyName::IsTextControl); }
+
 private:
     void detachRemoteParts(AccessibilityDetachmentType) override;
     void detachPlatformWrapper(AccessibilityDetachmentType) override;
@@ -175,7 +180,6 @@ private:
     bool isMenuList() const override { return boolAttributeValue(AXPropertyName::IsMenuList); }
     bool isMenuListPopup() const override { return boolAttributeValue(AXPropertyName::IsMenuListPopup); }
     bool isMenuListOption() const override { return boolAttributeValue(AXPropertyName::IsMenuListOption); }
-    bool isTextControl() const override { return boolAttributeValue(AXPropertyName::IsTextControl); }
     bool isButton() const override { return boolAttributeValue(AXPropertyName::IsButton); }
     bool isStyleFormatGroup() const override { return boolAttributeValue(AXPropertyName::IsStyleFormatGroup); }
     bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
@@ -190,7 +194,6 @@ private:
     FloatRect relativeFrame() const override;
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const override { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
-    bool canSetFocusAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
     bool canSetTextRangeAttributes() const override { return boolAttributeValue(AXPropertyName::CanSetTextRangeAttributes); }
     bool canSetValueAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
     bool canSetNumericValue() const override { return boolAttributeValue(AXPropertyName::CanSetNumericValue); }
@@ -236,8 +239,7 @@ private:
     Vector<String> determineDropEffects() const override;
     AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* focusedUIElement() const override;
-    AXCoreObject* parentObject() const override { return parentObjectUnignored(); }
-    AXCoreObject* parentObjectUnignored() const override;
+    AXIsolatedObject* parentObjectUnignored() const override;
     AccessibilityChildrenVector linkedObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
     AXCoreObject* titleUIElement() const override { return objectAttributeValue(AXPropertyName::TitleUIElement); }
     AXCoreObject* scrollBar(AccessibilityOrientation) override;
@@ -311,9 +313,8 @@ private:
 #if PLATFORM(MAC)
     bool caretBrowsingEnabled() const override { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }
 #endif
-    AXCoreObject* focusableAncestor() override { return objectAttributeValue(AXPropertyName::FocusableAncestor); }
-    AXCoreObject* editableAncestor() override { return objectAttributeValue(AXPropertyName::EditableAncestor); }
-    AXCoreObject* highestEditableAncestor() override { return objectAttributeValue(AXPropertyName::HighestEditableAncestor); }
+    AXIsolatedObject* focusableAncestor() override { return Accessibility::focusableAncestor(*this); }
+    AXIsolatedObject* highestEditableAncestor() override { return Accessibility::highestEditableAncestor(*this); }
     AccessibilityOrientation orientation() const override { return static_cast<AccessibilityOrientation>(intAttributeValue(AXPropertyName::Orientation)); }
     unsigned hierarchicalLevel() const override { return unsignedAttributeValue(AXPropertyName::HierarchicalLevel); }
     String language() const override { return stringAttributeValue(AXPropertyName::Language); }
@@ -324,7 +325,7 @@ private:
     void tabChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::TabChildren, children); }
     AccessibilityChildrenVector contents() override;
     bool hasARIAValueNow() const override { return boolAttributeValue(AXPropertyName::HasARIAValueNow); }
-    AtomString tagName() const override { return AtomString { stringAttributeValue(AXPropertyName::TagName) }; }
+    AtomString tagName() const override;
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void updateChildrenIfNecessary() override;
     bool isDetachedFromParent() override;

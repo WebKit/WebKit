@@ -366,7 +366,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
         , m_line.contentLogicalRight()
-        , m_line.hangingTrailingContentWidth()
+        , { !m_line.isHangingTrailingContentWhitespace(), m_line.hangingTrailingContentWidth() }
         , isFirstFormattedLine() ? LineContent::FirstFormattedLine::WithinIFC : LineContent::FirstFormattedLine::No
         , isLastLine
         , m_line.nonSpanningInlineLevelBoxCount()
@@ -667,28 +667,13 @@ InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(size_t firs
     return TextUtil::hangablePunctuationStartWidth(inlineTextItem, style);
 }
 
-InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t candidateContentEnd, size_t layoutRangeEnd) const
+InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const
 {
-    ASSERT(candidateContentEnd <= layoutRangeEnd);
     auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[lastInlineTextItemIndex]);
     auto& style = isFirstFormattedLine() ? inlineTextItem.firstLineStyle() : inlineTextItem.style();
 
-    auto isContentfulInlineItem = [&](auto& inlineItem) {
-        if (inlineItem.isFloat())
-            return false;
-        return inlineItem.isBox()
-            || inlineItem.isText()
-            || (inlineItem.isInlineBoxStart() && formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingStart())
-            || (inlineItem.isInlineBoxEnd() && formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingEnd());
-    };
-
-    auto index = lastInlineTextItemIndex + 1;
     if (TextUtil::hasHangableStopOrCommaEnd(inlineTextItem, style)) {
         // Stop or comma does apply to all lines not just the last formatted one.
-        for (; index < candidateContentEnd; ++index) {
-            if (isContentfulInlineItem(m_inlineItems[index]))
-                return { };
-        }
         return TextUtil::hangableStopOrCommaEndWidth(inlineTextItem, style);
     }
 
@@ -697,8 +682,22 @@ InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandia
         // may have to fallback to a post-process setup, where after finishing laying out the content, we go back and re-layout
         // the last (2?) line(s) when there's trailing hanging punctuation.
         // For now let's probe the content all the way to layoutRangeEnd.
-        for (; index < layoutRangeEnd; ++index) {
-            if (isContentfulInlineItem(m_inlineItems[index]))
+        for (auto index = lastInlineTextItemIndex + 1; index < layoutRangeEnd; ++index) {
+            auto isContentfulInlineItem = [&] {
+                auto& inlineItem = m_inlineItems[index];
+                if (inlineItem.isFloat())
+                    return false;
+                if (inlineItem.isText()) {
+                    auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+                    if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isEmpty() || inlineTextItem.isWordSeparator() || inlineTextItem.isZeroWidthSpaceSeparator() || inlineTextItem.isQuirkNonBreakingSpace())
+                        return false;
+                    return true;
+                }
+                return inlineItem.isBox()
+                    || (inlineItem.isInlineBoxStart() && formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingStart())
+                    || (inlineItem.isInlineBoxEnd() && formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingEnd());
+            }();
+            if (isContentfulInlineItem)
                 return { };
         }
         return TextUtil::hangablePunctuationEndWidth(inlineTextItem, style);
@@ -780,7 +779,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto hangingContentWidth = lineCandidate.inlineContent.continuousContent().hangingContentWidth();
         // Do not even try to check for trailing punctuation when the candidate content already has whitespace type of hanging content.
         if (!hangingContentWidth && lastInlineTextItemIndex)
-            hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(*lastInlineTextItemIndex, softWrapOpportunityIndex, layoutRange.end);
+            hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(*lastInlineTextItemIndex, layoutRange.end);
         if (firstInlineTextItemIndex)
             hangingContentWidth += leadingPunctuationWidthForLineCandiate(*firstInlineTextItemIndex, currentInlineItemIndex);
         lineCandidate.inlineContent.setHangingContentWidth(hangingContentWidth);
@@ -879,18 +878,32 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][inline box start][inline box end][ample]
-            // where [ex-] is startContent and [ample] is the nextContent.
-            for (auto candidateIndex = *previousInlineItemIndex + 1; candidateIndex < index; ++candidateIndex) {
-                if (m_inlineItems[candidateIndex].isInlineBoxStart()) {
-                    // inline content and [inline box start] and [inline box end] form unbreakable content.
-                    // ex-<span></span>ample  : wrap opportunity is after "ex-".
-                    // ex-</span></span>ample : wrap opportunity is after "ex-</span></span>".
-                    // ex-</span><span>ample</span> : wrap opportunity is after "ex-</span>".
-                    // ex-<span><span>ample</span></span> : wrap opportunity is after "ex-".
-                    return candidateIndex;
-                }
+            // where [ex-] is previousInlineItemIndex and [ample] is index.
+
+            // inline content and their inline boxes form unbreakable content.
+            // ex-<span></span>ample               : wrap opportunity is after "ex-<span></span>".
+            // ex-<span>ample                      : wrap opportunity is after "ex-".
+            // ex-<span><span></span></span>ample  : wrap opportunity is after "ex-<span><span></span></span>".
+            // ex-</span></span>ample              : wrap opportunity is after "ex-</span></span>".
+            // ex-</span><span>ample               : wrap opportunity is after "ex-</span>".
+            // ex-<span><span>ample                : wrap opportunity is after "ex-".
+            struct InlineBoxPosition {
+                const Box* inlineBox { nullptr };
+                size_t index { 0 };
+            };
+            Vector<InlineBoxPosition> inlineBoxStack;
+            auto start = *previousInlineItemIndex;
+            auto end = index;
+            // Soft wrap opportunity is at the first inline box that encloses the trailing content.
+            for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
+                auto& inlineItem = m_inlineItems[candidateIndex];
+                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+                if (inlineItem.isInlineBoxStart())
+                    inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
+                else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())
+                    inlineBoxStack.removeLast();
             }
-            return index;
+            return inlineBoxStack.isEmpty() ? index : inlineBoxStack.first().index;
         }
         previousInlineItemIndex = index;
     }

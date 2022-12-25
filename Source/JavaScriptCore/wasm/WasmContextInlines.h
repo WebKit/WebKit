@@ -53,17 +53,15 @@ inline Instance* Context::load() const
     return instance;
 }
 
-inline void Context::store(Instance* inst, void* softStackLimit)
+inline void Context::store(Instance* inst)
 {
-    if (inst)
-        inst->setCachedStackLimit(softStackLimit);
-
 #if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
+    if (useFastTLS()) {
         _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(inst));
-    else
+        return;
+    }
 #endif
-        instance = inst;
+    instance = inst;
 }
 
 inline Instance* Context::tryLoadInstanceFromTLS()

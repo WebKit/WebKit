@@ -1,12 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-  <script src="../../resources/js-test-pre.js"></script>
+  <script src="../../resources/js-test.js"></script>
 </head>
 
 <body>
-  <h1>SVG 1.1 dynamic animation tests</h1>
-
   <svg id='outer-svg' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve'>
     <!-- sequential animations -->
     <rect id='plain' x='0' y='0' width='32' height='32' fill='green'>
@@ -37,6 +35,9 @@
     </svg>
 
     <script>
+    description("SVG 1.1 dynamic animation tests");
+    self.jsTestIsAsync = true;
+
     var svg = document.getElementById('outer-svg'),
         nestedsvg = document.getElementById('nested-svg');
     var tests, curIdx = 0;
@@ -46,22 +47,28 @@
     var accumulating = document.getElementById('accumulating');
     var repeating = document.getElementById('repeating');
     var nested = document.getElementById('nested');
+    var test;
 
     function runTest() {
-      var test = tests[curIdx++];
+      test = tests[curIdx++];
 
-      svg.setCurrentTime(test.time[0]);
-      nestedsvg.setCurrentTime(test.time[1]);
+      if (test.throws && test.throws[0])
+        shouldThrow("svg.setCurrentTime(test.time[0])");
+      else
+        svg.setCurrentTime(test.time[0]);
+
+      if (test.throws && test.throws[1])
+        shouldThrow("nestedsvg.setCurrentTime(test.time[1])");
+      else
+        nestedsvg.setCurrentTime(test.time[1]);
 
       setTimeout(function() {
         for (var attr in test.values) {
           shouldBe(attr + '.animVal.value', String(test.values[attr]));
         }
 
-        if (curIdx == tests.length) {
-          if (window.testRunner)
-            testRunner.notifyDone();
-        }
+        if (curIdx == tests.length)
+          finishJSTest();
         else
           runTest();
       }, 0);
@@ -73,7 +80,7 @@
 
       tests = [
         // Test invalid values.
-        { time: ['tintin', NaN], values: { 'plain.x':   0, 'sequential.x':   0, 'accumulating.x':   0, 'repeating.x':   0, 'nested.x':   0 } },
+        { time: ['tintin', NaN], throws: [true, true], values: { 'plain.x':   0, 'sequential.x':   0, 'accumulating.x':   0, 'repeating.x':   0, 'nested.x':   0 } },
 
         // Test out-of-range values.
         { time: [-1, -1], values: { 'plain.x':   0, 'sequential.x':   0, 'accumulating.x':   0, 'repeating.x':   0, 'nested.x':   0 } },
@@ -117,4 +124,3 @@
   <div id="console"></div>
 </body>
 </html>
-

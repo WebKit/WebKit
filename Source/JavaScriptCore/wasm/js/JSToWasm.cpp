@@ -385,13 +385,13 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
         if (isARM64E()) {
             if (mode == MemoryMode::BoundsChecking)
                 size = pinnedRegs.boundsCheckingSizeRegister;
-            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), size);
+            jit.loadPairPtr(currentInstanceGPR, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, size);
         } else {
             if (mode == MemoryMode::BoundsChecking)
-                jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister);
+                jit.loadPairPtr(currentInstanceGPR, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
+            else
+                jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
         }
-
-        jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, size, scratch);
     }
 #endif

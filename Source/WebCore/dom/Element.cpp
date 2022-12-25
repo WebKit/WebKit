@@ -148,13 +148,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Element);
 
-struct SameSizeAsElement : public ContainerNode {
-    QualifiedName tagName;
-    void* elementData;
-};
-
-static_assert(sizeof(Element) == sizeof(SameSizeAsElement), "Element should stay small");
-
 using namespace HTMLNames;
 using namespace XMLNames;
 
@@ -5161,26 +5154,6 @@ StylePropertyMapReadOnly* Element::computedStyleMap()
     auto map = ComputedStylePropertyMapReadOnly::create(*this);
     rareData.setComputedStyleMap(WTFMove(map));
     return rareData.computedStyleMap();
-}
-
-bool Element::hasDuplicateAttribute() const
-{
-    return hasRareData() ? elementRareData()->hasDuplicateAttribute() : false;
-}
-
-void Element::setHasDuplicateAttribute(bool hasDuplicateAttribute)
-{
-    ensureElementRareData().setHasDuplicateAttribute(hasDuplicateAttribute);
-}
-
-bool Element::displayContentsChanged() const
-{
-    return hasRareData() ? elementRareData()->displayContentsChanged() : false;
-}
-
-void Element::setDisplayContentsChanged(bool changed)
-{
-    ensureElementRareData().setDisplayContentsChanged(changed);
 }
 
 } // namespace WebCore

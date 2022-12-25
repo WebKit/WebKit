@@ -519,7 +519,7 @@ struct WasmToWasmImportableFunction {
 
     // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
     TypeIndex typeIndex { TypeDefinition::invalidIndex };
-    LoadLocation entrypointLoadLocation;
+    LoadLocation entrypointLoadLocation { };
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 

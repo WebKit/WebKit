@@ -34,6 +34,24 @@
 
 namespace JSC { namespace Wasm {
 
+template<typename Visitor> constexpr decltype(auto) Table::visitDerived(Visitor&& visitor)
+{
+    switch (type()) {
+    case TableElementType::Externref:
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<ExternRefTable&>(*this));
+    case TableElementType::Funcref:
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<FuncRefTable&>(*this));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+template<typename Visitor> constexpr decltype(auto) Table::visitDerived(Visitor&& visitor) const
+{
+    return const_cast<Table&>(*this).visitDerived([&](auto& value) {
+        return std::invoke(std::forward<Visitor>(visitor), std::as_const(value));
+    });
+}
+
 uint32_t Table::allocatedLength(uint32_t length)
 {
     return WTF::roundUpToPowerOfTwo(length);
@@ -45,6 +63,14 @@ void Table::setLength(uint32_t length)
     ASSERT(isValidLength(length));
 }
 
+void Table::operator delete(Table* table, std::destroying_delete_t)
+{
+    table->visitDerived([](auto& table) {
+        std::destroy_at(&table);
+        std::decay_t<decltype(table)>::freeAfterDestruction(&table);
+    });
+}
+
 Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
     : m_type(type)
     , m_maximum(maximum)
@@ -52,15 +78,6 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType
 {
     setLength(initial);
     ASSERT(!m_maximum || *m_maximum >= m_length);
-
-    // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
-    // But for now, we're not doing that.
-    // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc(sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length)));
-    for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
-        new (&m_jsValues.get()[i]) WriteBarrier<Unknown>();
-        m_jsValues.get()[i].setStartingValue(jsNull());
-    }
 }
 
 RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
@@ -68,10 +85,10 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum
     if (!isValidLength(initial))
         return nullptr;
     switch (type) {
+    case TableElementType::Externref:
+        return adoptRef(new ExternRefTable(initial, maximum));
     case TableElementType::Funcref:
         return adoptRef(new FuncRefTable(initial, maximum));
-    case TableElementType::Externref:
-        return adoptRef(new Table(initial, maximum));
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -112,16 +129,25 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
         return true;
     };
 
-    if (auto* funcRefTable = asFuncrefTable()) {
-        if (!checkedGrow(funcRefTable->m_importableFunctions, [](auto&) { }))
-            return std::nullopt;
-        if (!checkedGrow(funcRefTable->m_instances, [](auto&) { }))
-            return std::nullopt;
-    }
-
     VM& vm = m_owner->vm();
-    if (!checkedGrow(m_jsValues, [&](WriteBarrier<Unknown>& slot) { slot.set(vm, m_owner, defaultValue); }))
-        return std::nullopt;
+    switch (type()) {
+    case TableElementType::Externref: {
+        bool success = checkedGrow(static_cast<ExternRefTable*>(this)->m_jsValues, [&](auto& slot) {
+            slot.set(vm, m_owner, defaultValue);
+        });
+        if (UNLIKELY(!success))
+            return std::nullopt;
+        break;
+    }
+    case TableElementType::Funcref: {
+        bool success = checkedGrow(static_cast<FuncRefTable*>(this)->m_importableFunctions, [&](auto& slot) {
+            slot.m_value.set(vm, m_owner, defaultValue);
+        });
+        if (UNLIKELY(!success))
+            return std::nullopt;
+        break;
+    }
+    }
 
     setLength(newLength);
     return newLength;
@@ -139,12 +165,9 @@ void Table::clear(uint32_t index)
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
-    if (auto* funcRefTable = asFuncrefTable()) {
-        funcRefTable->m_importableFunctions.get()[index] = WasmToWasmImportableFunction();
-        ASSERT(funcRefTable->m_importableFunctions.get()[index].typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
-        funcRefTable->m_instances.get()[index] = nullptr;
-    }
-    m_jsValues.get()[index].setStartingValue(jsNull());
+    visitDerived([&](auto& table) {
+        table.clear(index);
+    });
 }
 
 void Table::set(uint32_t index, JSValue value)
@@ -152,15 +175,18 @@ void Table::set(uint32_t index, JSValue value)
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(isExternrefTable());
     RELEASE_ASSERT(m_owner);
-    clear(index);
-    m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
+    visitDerived([&](auto& table) {
+        table.set(index, value);
+    });
 }
 
 JSValue Table::get(uint32_t index) const
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
-    return m_jsValues.get()[index].get();
+    return visitDerived([&](auto& table) {
+        return table.get(index);
+    });
 }
 
 template<typename Visitor>
@@ -168,8 +194,20 @@ void Table::visitAggregateImpl(Visitor& visitor)
 {
     RELEASE_ASSERT(m_owner);
     Locker locker { m_owner->cellLock() };
-    for (unsigned i = 0; i < m_length; ++i)
-        visitor.append(m_jsValues.get()[i]);
+    switch (type()) {
+    case TableElementType::Externref: {
+        auto* table = static_cast<ExternRefTable*>(this);
+        for (unsigned i = 0; i < m_length; ++i)
+            visitor.append(table->m_jsValues.get()[i]);
+        break;
+    }
+    case TableElementType::Funcref: {
+        auto* table = static_cast<FuncRefTable*>(this);
+        for (unsigned i = 0; i < m_length; ++i)
+            visitor.append(table->m_importableFunctions.get()[i].m_value);
+        break;
+    }
+    }
 }
 
 DEFINE_VISIT_AGGREGATE(Table);
@@ -187,18 +225,39 @@ FuncRefTable* Table::asFuncrefTable()
     return m_type == TableElementType::Funcref ? static_cast<FuncRefTable*>(this) : nullptr;
 }
 
+ExternRefTable::ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum)
+    : Table(initial, maximum, TableElementType::Externref)
+{
+    // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
+    // But for now, we're not doing that.
+    // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
+    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc(sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length)));
+    for (uint32_t i = 0; i < allocatedLength(m_length); ++i)
+        new (&m_jsValues.get()[i]) WriteBarrier<Unknown>(NullWriteBarrierTag);
+}
+
+void ExternRefTable::clear(uint32_t index)
+{
+    m_jsValues.get()[index].setStartingValue(jsNull());
+}
+
+void ExternRefTable::set(uint32_t index, JSValue value)
+{
+    m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
+}
+
 FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum)
     : Table(initial, maximum, TableElementType::Funcref)
 {
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction, VMMalloc>::malloc(sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length)));
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_instances = MallocPtr<Instance*, VMMalloc>::malloc(sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length)));
+    m_importableFunctions = MallocPtr<Function, VMMalloc>::malloc(sizeof(Function) * Checked<size_t>(allocatedLength(m_length)));
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
-        new (&m_importableFunctions.get()[i]) WasmToWasmImportableFunction();
-        ASSERT(m_importableFunctions.get()[i].typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
-        m_instances.get()[i] = nullptr;
+        new (&m_importableFunctions.get()[i]) Function();
+        ASSERT(m_importableFunctions.get()[i].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
+        ASSERT(!m_importableFunctions.get()[i].m_instance);
+        ASSERT(m_importableFunctions.get()[i].m_value.isNull());
     }
 }
 
@@ -206,21 +265,18 @@ void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmTo
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
-    clear(index);
+    auto& slot = m_importableFunctions.get()[index];
+    slot.m_function = function;
+    slot.m_instance = instance;
     if (optionalWrapper)
-        m_jsValues.get()[index].set(m_owner->vm(), m_owner, optionalWrapper);
-    m_importableFunctions.get()[index] = function;
-    m_instances.get()[index] = instance;
+        slot.m_value.set(m_owner->vm(), m_owner, optionalWrapper);
+    else
+        slot.m_value.setWithoutWriteBarrier(jsNull());
 }
 
-const WasmToWasmImportableFunction& FuncRefTable::function(uint32_t index) const
+const FuncRefTable::Function& FuncRefTable::function(uint32_t index) const
 {
     return m_importableFunctions.get()[index];
-}
-
-Instance* FuncRefTable::instance(uint32_t index) const
-{
-    return m_instances.get()[index];
 }
 
 void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex)
@@ -230,7 +286,22 @@ void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex,
         return;
     }
 
-    setFunction(dstIndex, jsCast<JSObject*>(srcTable->get(srcIndex)), srcTable->function(srcIndex), srcTable->instance(srcIndex));
+    auto& function = srcTable->function(srcIndex);
+    setFunction(dstIndex, jsCast<JSObject*>(srcTable->get(srcIndex)), function.m_function, function.m_instance);
+}
+
+void FuncRefTable::clear(uint32_t index)
+{
+    m_importableFunctions.get()[index] = FuncRefTable::Function { };
+    ASSERT(m_importableFunctions.get()[index].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
+    ASSERT(!m_importableFunctions.get()[index].m_instance);
+    ASSERT(m_importableFunctions.get()[index].m_value.isNull());
+}
+
+void FuncRefTable::set(uint32_t index, JSValue value)
+{
+    clear(index);
+    m_importableFunctions.get()[index].m_value.set(m_owner->vm(), m_owner, value);
 }
 
 } } // namespace JSC::Table

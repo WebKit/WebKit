@@ -719,6 +719,22 @@ static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& are
     return clamped;
 }
 
+bool RenderGrid::isMasonry() const
+{
+    return areMasonryRows() || areMasonryColumns();
+}
+
+bool RenderGrid::isMasonry(GridTrackSizingDirection direction) const
+{
+    if (areMasonryRows() && direction == ForRows)
+        return true;
+    
+    if (areMasonryColumns() && direction == ForColumns)
+        return true;
+    
+    return false;
+}
+
 bool RenderGrid::areMasonryRows() const
 {
     // isSubgridRows will return false if the masonry axis is rows. Need to check style if we are a subgrid

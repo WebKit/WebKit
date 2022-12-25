@@ -66,15 +66,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
     jit.storeWasmContextInstance(baseMemory);
 
-    jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfCachedStackLimit()), sizeRegAsScratch);
-    jit.storePtr(sizeRegAsScratch, JIT::Address(baseMemory, Instance::offsetOfCachedStackLimit()));
-
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.
     {
-        jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister); // Bound checking size.
-        jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemory()), baseMemory); // Wasm::Memory::TaggedArrayStoragePtr<void> (void*).
+        jit.loadPairPtr(baseMemory, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
         jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1]);
     }
 #endif

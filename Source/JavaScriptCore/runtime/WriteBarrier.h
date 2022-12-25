@@ -220,6 +220,7 @@ public:
 };
 
 enum UndefinedWriteBarrierTagType { UndefinedWriteBarrierTag };
+enum NullWriteBarrierTagType { NullWriteBarrierTag };
 template <>
 class WriteBarrier<Unknown, RawValueTraits<Unknown>> : public WriteBarrierBase<Unknown, RawValueTraits<Unknown>> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -231,6 +232,10 @@ public:
     WriteBarrier(UndefinedWriteBarrierTagType)
     {
         this->setWithoutWriteBarrier(jsUndefined());
+    }
+    WriteBarrier(NullWriteBarrierTagType)
+    {
+        this->setWithoutWriteBarrier(jsNull());
     }
 
     WriteBarrier(VM& vm, const JSCell* owner, JSValue value)

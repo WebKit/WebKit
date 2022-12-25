@@ -303,6 +303,9 @@
 
     readonly attribute boolean hasContainedByFieldsetTrait;
     AccessibilityUIElement fieldsetAncestorElement();
+    AccessibilityUIElement focusableAncestor();
+    AccessibilityUIElement editableAncestor();
+    AccessibilityUIElement highestEditableAncestor();
 
     // Notification support.
     boolean addNotificationListener(object callbackFunction);

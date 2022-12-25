@@ -1,0 +1,11 @@
+Setting .currentScale to a non-finite should throw.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS svgElement.currentScale = NaN threw exception TypeError: The provided value is non-finite.
+PASS svgElement.currentScale = Infinity threw exception TypeError: The provided value is non-finite.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

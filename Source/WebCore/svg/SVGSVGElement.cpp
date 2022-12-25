@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2019 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -125,6 +126,7 @@ float SVGSVGElement::currentScale() const
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
+    ASSERT(std::isfinite(scale));
     if (auto frame = frameForCurrentScale())
         frame->setPageZoomFactor(scale);
 }
@@ -546,8 +548,7 @@ float SVGSVGElement::getCurrentTime() const
 
 void SVGSVGElement::setCurrentTime(float seconds)
 {
-    if (!std::isfinite(seconds))
-        return;
+    ASSERT(std::isfinite(seconds));
     m_timeContainer->setElapsed(std::max(seconds, 0.0f));
 }
 

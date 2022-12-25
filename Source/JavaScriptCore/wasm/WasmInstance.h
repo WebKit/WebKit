@@ -63,10 +63,11 @@ public:
 
     template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
     static ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Instance, m_owner); }
+    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Instance, m_vm); }
 
     size_t extraMemoryAllocated() const;
 
-    VM& vm() const { return m_vm; }
+    VM& vm() const { return *m_vm; }
     Module& module() const { return m_module.get(); }
     CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memory()->mode()); }
     Memory* memory() const { return m_memory.get(); }
@@ -195,20 +196,6 @@ public:
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
     static ptrdiff_t offsetOfCachedMemory() { return OBJECT_OFFSETOF(Instance, m_cachedMemory); }
     static ptrdiff_t offsetOfCachedBoundsCheckingSize() { return OBJECT_OFFSETOF(Instance, m_cachedBoundsCheckingSize); }
-    static ptrdiff_t offsetOfPointerToTopEntryFrame() { return OBJECT_OFFSETOF(Instance, m_pointerToTopEntryFrame); }
-
-    static ptrdiff_t offsetOfPointerToActualStackLimit() { return OBJECT_OFFSETOF(Instance, m_pointerToActualStackLimit); }
-    static ptrdiff_t offsetOfCachedStackLimit() { return OBJECT_OFFSETOF(Instance, m_cachedStackLimit); }
-    void* cachedStackLimit() const
-    {
-        ASSERT(*m_pointerToActualStackLimit == m_cachedStackLimit);
-        return m_cachedStackLimit;
-    }
-    void setCachedStackLimit(void* limit)
-    {
-        ASSERT(*m_pointerToActualStackLimit == limit || bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) == limit);
-        m_cachedStackLimit = limit;
-    }
 
     // Tail accessors.
     static constexpr size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }
@@ -236,7 +223,7 @@ public:
 
     void storeTopCallFrame(void* callFrame)
     {
-        m_vm.topCallFrame = bitwise_cast<CallFrame*>(callFrame);
+        vm().topCallFrame = bitwise_cast<CallFrame*>(callFrame);
     }
 
     const Tag& tag(unsigned i) const { return *m_tags[i]; }
@@ -250,7 +237,7 @@ private:
         return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables;
     }
     void* m_owner { nullptr }; // In a JS embedding, this is a JSWebAssemblyInstance*.
-    VM& m_vm;
+    VM* m_vm;
     CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
@@ -260,9 +247,6 @@ private:
     FunctionWrapperMap m_functionWrappers;
     BitVector m_globalsToMark;
     BitVector m_globalsToBinding;
-    EntryFrame** m_pointerToTopEntryFrame { nullptr };
-    void** m_pointerToActualStackLimit { nullptr };
-    void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
     unsigned m_numImportFunctions { 0 };
     HashMap<uint32_t, Ref<Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
     BitVector m_passiveElements;

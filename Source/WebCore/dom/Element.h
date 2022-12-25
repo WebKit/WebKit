@@ -696,8 +696,8 @@ public:
     String description() const override;
     String debugDescription() const override;
 
-    bool hasDuplicateAttribute() const;
-    void setHasDuplicateAttribute(bool);
+    bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
+    void setHasDuplicateAttribute(bool hasDuplicateAttribute) { m_hasDuplicateAttribute = hasDuplicateAttribute; };
 
     virtual void updateUserAgentShadowTree() { }
 
@@ -706,8 +706,8 @@ public:
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
 
-    bool displayContentsChanged() const;
-    void setDisplayContentsChanged(bool = true);
+    bool displayContentsChanged() const { return m_displayContentsChanged; }
+    void setDisplayContentsChanged(bool changed = true) { m_displayContentsChanged = changed; }
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
@@ -831,6 +831,11 @@ private:
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
+
+    // FIXME: these flags should move somewhere else and then we should have a static assert on
+    // Element size and ideally stick to that size.
+    bool m_hasDuplicateAttribute { false };
+    bool m_displayContentsChanged { false };
 };
 
 inline void Element::setSavedLayerScrollPosition(const IntPoint& position)

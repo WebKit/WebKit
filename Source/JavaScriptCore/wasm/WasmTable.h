@@ -80,40 +80,67 @@ public:
 
     DECLARE_VISIT_AGGREGATE;
 
+    void operator delete(Table*, std::destroying_delete_t);
+
 protected:
     Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType = TableElementType::Externref);
+
+    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
+    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
 
     void setLength(uint32_t);
 
     uint32_t m_length;
     const TableElementType m_type;
     const std::optional<uint32_t> m_maximum;
-
-    MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
     JSObject* m_owner;
 };
 
-class FuncRefTable : public Table {
+class ExternRefTable final : public Table {
 public:
+    friend class Table;
+
+    void clear(uint32_t);
+    void set(uint32_t, JSValue);
+    JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
+
+private:
+    ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum);
+
+    MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
+};
+
+class FuncRefTable final : public Table {
+public:
+    friend class Table;
+
     JS_EXPORT_PRIVATE ~FuncRefTable() = default;
 
-    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
-    const WasmToWasmImportableFunction& function(uint32_t) const;
-    Instance* instance(uint32_t) const;
+    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
+    struct Function {
+        WasmToWasmImportableFunction m_function;
+        Instance* m_instance { nullptr };
+        WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
 
+        static ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
+        static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(Function, m_instance); }
+        static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
+    };
+
+    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
+    const Function& function(uint32_t) const;
     void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
-    static ptrdiff_t offsetOfInstances() { return OBJECT_OFFSETOF(FuncRefTable, m_instances); }
+
+    void clear(uint32_t);
+    void set(uint32_t, JSValue);
+    JSValue get(uint32_t index) const { return m_importableFunctions.get()[index].m_value.get(); }
 
 private:
     FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum);
 
-    MallocPtr<WasmToWasmImportableFunction, VMMalloc> m_importableFunctions;
-    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
-    MallocPtr<Instance*, VMMalloc> m_instances;
-
-    friend class Table;
+    MallocPtr<Function, VMMalloc> m_importableFunctions;
 };
 
 } } // namespace JSC::Wasm

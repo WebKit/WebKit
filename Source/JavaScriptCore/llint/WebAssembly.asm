@@ -414,7 +414,8 @@ if not JSVALUE64
 end
 
     bpa ws1, cfr, .stackOverflow
-    bpbeq Wasm::Instance::m_cachedStackLimit[wasmInstance], ws1, .stackHeightOK
+    loadp Wasm::Instance::m_vm[wasmInstance], ws0
+    bpbeq VM::m_softStackLimit[ws0], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -445,6 +446,7 @@ else
     end)
 end
 
+    loadp CodeBlock[cfr], ws0
     checkSwitchToJITForPrologue(ws0)
 
     # Set up the PC.
@@ -509,7 +511,8 @@ if not JSVALUE64
 end
 
     bpa ws1, cfr, .stackOverflow
-    bpbeq Wasm::Instance::m_cachedStackLimit[wasmInstance], ws1, .stackHeightOK
+    loadp Wasm::Instance::m_vm[wasmInstance], ws0
+    bpbeq VM::m_softStackLimit[ws0], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -823,8 +826,8 @@ macro jumpToException()
 end
 
 op(wasm_throw_from_slow_path_trampoline, macro ()
-    loadp Wasm::Instance::m_pointerToTopEntryFrame[wasmInstance], t5
-    loadp [t5], t5
+    loadp Wasm::Instance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 
     move cfr, a0
@@ -839,8 +842,8 @@ end)
 
 macro wasm_throw_from_fault_handler(instance)
     # instance should be in a2 when we get here
-    loadp Wasm::Instance::m_pointerToTopEntryFrame[instance], a0
-    loadp [a0], a0
+    loadp Wasm::Instance::m_vm[instance], a0
+    loadp VM::topEntryFrame[a0], a0
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(a0)
 
     move constexpr Wasm::ExceptionType::OutOfBoundsMemoryAccess, a3
@@ -1167,11 +1170,6 @@ end
 
             storeWasmInstance(wasmInstance)
             reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
-
-            # Restore stack limit
-            loadp Wasm::Instance::m_pointerToActualStackLimit[wasmInstance], t5
-            loadp [t5], t5
-            storep t5, Wasm::Instance::m_cachedStackLimit[wasmInstance]
 
             dispatch(ctx)
 
@@ -2141,8 +2139,8 @@ wasmOp(atomic_fence, WasmDropKeep, macro(ctx)
 end)
 
 wasmOp(throw, WasmThrow, macro(ctx)
-    loadp Wasm::Instance::m_pointerToTopEntryFrame[wasmInstance], t5
-    loadp [t5], t5
+    loadp Wasm::Instance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 
     callWasmSlowPath(_slow_path_wasm_throw)
@@ -2150,8 +2148,8 @@ wasmOp(throw, WasmThrow, macro(ctx)
 end)
 
 wasmOp(rethrow, WasmRethrow, macro(ctx)
-    loadp Wasm::Instance::m_pointerToTopEntryFrame[wasmInstance], t5
-    loadp [t5], t5
+    loadp Wasm::Instance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
 
     callWasmSlowPath(_slow_path_wasm_rethrow)

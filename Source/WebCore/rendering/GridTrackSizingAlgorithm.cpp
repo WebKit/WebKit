@@ -1345,9 +1345,12 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
         // - Items placed at the first implicit line in the masonry axis.
         // - Items that have a specified definite placement in the grid axis.
         // - Items that span all grid axis tracks.
-        if (m_renderGrid->areMasonryRows() || m_renderGrid->areMasonryColumns()) {
+        if (m_renderGrid->isMasonry()) {
             bool skipTrackSizing = true;
-            auto gridAxisDirection = m_renderGrid->areMasonryRows() ? ForColumns : ForRows;
+
+            // m_direction shall always be the gridAxisDirection.
+            ASSERT(!isDirectionInMasonryDirection());
+            auto gridAxisDirection = m_direction;
             auto masonryAxisDirection = m_renderGrid->areMasonryRows() ? ForRows : ForColumns;
             auto span = GridPositionsResolver::resolveGridPositionsFromStyle(*m_renderGrid, *gridItem, gridAxisDirection);
 
@@ -1360,7 +1363,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
                 skipTrackSizing = false;
 
             // Items that span all grid axis tracks.
-            if (!m_renderGrid->gridSpanForChild(*gridItem, gridAxisDirection).startLine() && m_renderGrid->gridSpanForChild(*gridItem, gridAxisDirection).integerSpan() == tracks(m_direction).size())
+            if (m_renderGrid->gridSpanForChild(*gridItem, gridAxisDirection).integerSpan() == tracks(gridAxisDirection).size())
                 skipTrackSizing = false;
 
             if (skipTrackSizing)
@@ -1634,10 +1637,10 @@ void GridTrackSizingAlgorithm::run()
     ASSERT(wasSetup());
     StateMachine stateMachine(*this);
 
-    if (m_renderGrid->areMasonryRows() && m_direction == ForRows)
+    if (m_renderGrid->isMasonry(m_direction))
         return;
-
-    if (m_renderGrid->areMasonryColumns() && m_direction == ForColumns)
+    
+    if (m_renderGrid->isMasonry(m_direction))
         return;
 
     if (m_renderGrid->isSubgrid(m_direction) && copyUsedTrackSizesForSubgrid())
@@ -1722,7 +1725,7 @@ GridTrackSizingAlgorithm::StateMachine::~StateMachine()
 
 bool GridTrackSizingAlgorithm::isDirectionInMasonryDirection() const
 {
-    return (m_renderGrid->areMasonryRows() && m_direction == ForRows) || (m_renderGrid->areMasonryColumns() && m_direction == ForColumns);
+    return m_renderGrid->isMasonry(m_direction);
 }
 
 } // namespace WebCore

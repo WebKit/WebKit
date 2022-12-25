@@ -87,7 +87,11 @@ public:
         InlineLayoutUnit lineLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalRight { 0.f };
-        InlineLayoutUnit hangingContentWidth { 0.f };
+        struct HangingContent {
+            bool shouldContributeToScrollableOverflow { false };
+            InlineLayoutUnit width { 0.f };
+        };
+        HangingContent hangingContent;
         enum class FirstFormattedLine : uint8_t {
             No,
             WithinIFC,
@@ -114,7 +118,7 @@ public:
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
     InlineLayoutUnit leadingPunctuationWidthForLineCandiate(size_t firstInlineTextItemIndex, size_t candidateContentStartIndex) const;
-    InlineLayoutUnit trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t candidateContentEnd, size_t layoutRangeEnd) const;
+    InlineLayoutUnit trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const;
     size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
 
     struct UsedConstraints {

@@ -38,7 +38,7 @@ InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext
 {
 }
 
-InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineBox& lineBox, const InlineRect& lineBoxRect) const
+InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineRect& lineBoxRect) const
 {
     auto initialEnclosingTopAndBottom = [&]() -> std::tuple<std::optional<InlineLayoutUnit>, std::optional<InlineLayoutUnit>>  {
         auto& rootInlineBox = lineBox.rootInlineBox();
@@ -51,6 +51,8 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     };
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
     auto scrollableOverflowRect = lineBoxRect;
+    if (lineContent.hangingContent.shouldContributeToScrollableOverflow)
+        scrollableOverflowRect.expandHorizontally(lineContent.hangingContent.width);
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox() && !inlineLevelBox.isLineBreakBox())
             continue;
@@ -103,7 +105,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         ? lineBox.rootInlineBoxAlignmentOffset()
         : lineBoxLogicalWidth - lineBox.rootInlineBoxAlignmentOffset() - lineContent.contentLogicalRight;
     auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineBox.hasContent() ? lineContent.lineLogicalWidth : 0.f, lineBox.logicalRect().height() };
-    auto enclosingLineGeometry = collectEnclosingLineGeometry(lineBox, lineBoxRect);
+    auto enclosingLineGeometry = collectEnclosingLineGeometry(lineContent, lineBox, lineBoxRect);
 
     // FIXME: Figure out if properties like enclosingLineGeometry top and bottom needs to be flipped as well.
     auto writingMode = root().style().writingMode();

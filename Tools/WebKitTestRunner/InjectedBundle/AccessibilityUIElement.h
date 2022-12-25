@@ -118,10 +118,16 @@ public:
     void syncPress();
     void asyncIncrement();
     void asyncDecrement();
+    RefPtr<AccessibilityUIElement> focusableAncestor();
+    RefPtr<AccessibilityUIElement> editableAncestor();
+    RefPtr<AccessibilityUIElement> highestEditableAncestor();
 #else
     void syncPress() { press(); }
     void asyncIncrement() { }
     void asyncDecrement() { };
+    RefPtr<AccessibilityUIElement> focusableAncestor() { return nullptr; }
+    RefPtr<AccessibilityUIElement> editableAncestor() { return nullptr; }
+    RefPtr<AccessibilityUIElement> highestEditableAncestor() { return nullptr; }
 #endif
 
     // Attributes - platform-independent implementations

@@ -578,20 +578,16 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
     if (functionIndex >= table->length())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
 
-    Wasm::Instance* targetInstance = table->instance(functionIndex);
-    const Wasm::WasmToWasmImportableFunction& function = table->function(functionIndex);
+    const Wasm::FuncRefTable::Function& function = table->function(functionIndex);
 
-    if (function.typeIndex == Wasm::TypeDefinition::invalidIndex)
+    if (function.m_function.typeIndex == Wasm::TypeDefinition::invalidIndex)
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
     const auto& callSignature = CALLEE()->signature(typeIndex);
-    if (callSignature.index() != function.typeIndex)
+    if (callSignature.index() != function.m_function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
-    if (targetInstance != instance)
-        targetInstance->setCachedStackLimit(instance->cachedStackLimit());
-
-    WASM_CALL_RETURN(targetInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(function.m_instance, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect)
@@ -611,6 +607,7 @@ WASM_SLOW_PATH_DECL(call_indirect_no_tls)
 inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned typeIndex)
 {
     UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(callerInstance);
 
     if (targetReference.isNull())
         WASM_THROW(Wasm::ExceptionType::NullReference);
@@ -622,9 +619,6 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
     auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
     Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
     Wasm::Instance* calleeInstance = &wasmFunction->instance()->instance();
-
-    if (calleeInstance != callerInstance)
-        calleeInstance->setCachedStackLimit(callerInstance->cachedStackLimit());
 
     ASSERT(function.typeIndex == CALLEE()->signature(typeIndex).index());
     UNUSED_PARAM(typeIndex);

@@ -3764,38 +3764,6 @@ void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 }
 #endif
 
-AccessibilityObject* AccessibilityObject::focusableAncestor()
-{
-    return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return object.canSetFocusAttribute();
-    });
-}
-
-AccessibilityObject* AccessibilityObject::editableAncestor()
-{
-    return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return object.isTextControl();
-    });
-}
-
-AccessibilityObject* AccessibilityObject::highestEditableAncestor()
-{
-    AccessibilityObject* editableAncestor = this->editableAncestor();
-    AccessibilityObject* previousEditableAncestor = nullptr;
-    while (editableAncestor) {
-        if (editableAncestor == previousEditableAncestor) {
-            if (AccessibilityObject* parent = editableAncestor->parentObject()) {
-                editableAncestor = parent->editableAncestor();
-                continue;
-            }
-            break;
-        }
-        previousEditableAncestor = editableAncestor;
-        editableAncestor = editableAncestor->editableAncestor();
-    }
-    return previousEditableAncestor;
-}
-
 AccessibilityObject* AccessibilityObject::radioGroupAncestor() const
 {
     return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {

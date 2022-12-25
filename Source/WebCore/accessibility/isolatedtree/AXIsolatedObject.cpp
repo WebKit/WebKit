@@ -39,22 +39,24 @@
 namespace WebCore {
 
 AXIsolatedObject::AXIsolatedObject(const Ref<AXCoreObject>& axObject, AXIsolatedTree* tree)
-    : m_cachedTree(tree)
-    , m_id(axObject->objectID())
+    : AXCoreObject(axObject->objectID())
+    , m_cachedTree(tree)
 {
     ASSERT(isMainThread());
     ASSERT(is<AccessibilityObject>(axObject));
+    ASSERT(objectID().isValid());
 
     auto* axParent = axObject->parentObjectUnignored();
     m_parentID = axParent ? axParent->objectID() : AXID();
 
-    if (m_id.isValid()) {
-        auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
-        initializeProperties(axObject, isRoot);
-    } else {
-        // Should never happen under normal circumstances.
-        ASSERT_NOT_REACHED();
-    }
+    auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
+
+    // Every object will have at least this many properties. We can shrink this number
+    // to some estimated average once we implement sparse property storage (i.e. only storing
+    // a property if it's not the default value for its type).
+    m_propertyMap.reserveInitialCapacity(126);
+
+    initializeProperties(axObject, isRoot);
 }
 
 Ref<AXIsolatedObject> AXIsolatedObject::create(const Ref<AXCoreObject>& object, AXIsolatedTree* tree)
@@ -179,13 +181,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::ReadOnlyValue, object.readOnlyValue().isolatedCopy());
     setProperty(AXPropertyName::AutoCompleteValue, object.autoCompleteValue().isolatedCopy());
     setProperty(AXPropertyName::StringValue, object.stringValue().isolatedCopy());
-    setObjectProperty(AXPropertyName::FocusableAncestor, object.focusableAncestor());
-    setObjectProperty(AXPropertyName::EditableAncestor, object.editableAncestor());
-    setObjectProperty(AXPropertyName::HighestEditableAncestor, object.highestEditableAncestor());
     setProperty(AXPropertyName::Orientation, static_cast<int>(object.orientation()));
     setProperty(AXPropertyName::HierarchicalLevel, object.hierarchicalLevel());
     setProperty(AXPropertyName::Language, object.language().isolatedCopy());
-    setProperty(AXPropertyName::TagName, object.tagName().string().isolatedCopy());
     setProperty(AXPropertyName::SupportsLiveRegion, object.supportsLiveRegion());
     setProperty(AXPropertyName::IsInsideLiveRegion, object.isInsideLiveRegion());
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus().isolatedCopy());
@@ -367,12 +365,10 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
 AccessibilityObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
-
-    if (!m_id.isValid())
-        return nullptr;
+    ASSERT(objectID().isValid());
 
     auto* axObjectCache = this->axObjectCache();
-    return axObjectCache ? axObjectCache->objectForID(m_id) : nullptr;
+    return axObjectCache ? axObjectCache->objectForID(objectID()) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
@@ -504,7 +500,7 @@ bool AXIsolatedObject::isDetachedFromParent()
 
     // Check whether this is the root node, in which case we should return false.
     if (auto root = tree()->rootNode())
-        return root->objectID() != m_id;
+        return root->objectID() != objectID();
     return false;
 }
 
@@ -586,7 +582,7 @@ AXCoreObject* AXIsolatedObject::focusedUIElement() const
     return tree()->focusedNode().get();
 }
     
-AXCoreObject* AXIsolatedObject::parentObjectUnignored() const
+AXIsolatedObject* AXIsolatedObject::parentObjectUnignored() const
 {
     return tree()->nodeForID(parent()).get();
 }
@@ -1178,6 +1174,12 @@ bool AXIsolatedObject::performDefaultAction()
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+AtomString AXIsolatedObject::tagName() const
+{
+    ASSERT_NOT_REACHED();
+    return AtomString();
 }
 
 bool AXIsolatedObject::isAccessibilityNodeObject() const

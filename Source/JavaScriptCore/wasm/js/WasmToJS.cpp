@@ -521,8 +521,8 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
 {
     ASSERT(wasmInstance != GPRInfo::argumentGPR0);
     ASSERT(wasmInstance != InvalidGPRReg);
-    jit.loadPtr(CCallHelpers::Address(wasmInstance, Wasm::Instance::offsetOfPointerToTopEntryFrame()), GPRInfo::argumentGPR0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(wasmInstance, Wasm::Instance::offsetOfVM()), GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, VM::topEntryFrameOffset()), GPRInfo::argumentGPR0);
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
