@@ -50,8 +50,7 @@ public:
 
     explicit LoadURL(const String& url)
         : m_arguments(url)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -71,10 +70,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
 
-    LoadURL(const String& url, int64_t value)
+    explicit LoadURL(const String& url, int64_t value)
         : m_arguments(url, value)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {

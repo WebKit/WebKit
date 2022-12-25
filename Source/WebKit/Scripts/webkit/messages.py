@@ -176,8 +176,8 @@ def message_to_struct_declaration(receiver, message):
                 sys.stderr.write("Error: %s::%s has a reply but is marked as batched. Messages with replies are intended to be sent without latency.\n" % (receiver.name, message.name))
                 sys.exit(1)
         result.append('    static constexpr bool isStreamBatched = %s;\n' % ('false', 'true')[message.has_attribute(STREAM_BATCHED_ATTRIBUTE)])
-
     result.append('\n')
+
     if message.reply_parameters != None:
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
@@ -186,12 +186,12 @@ def message_to_struct_declaration(receiver, message):
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
+        result.append('\n')
 
-    if len(function_parameters):
-        result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
-        result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
-        result.append('    {\n')
-        result.append('    }\n\n')
+    result.append('    explicit %s(%s)\n' % (message.name, ', '.join([' '.join(x) for x in function_parameters])))
+    result.append('        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
+    result.append('    { }\n')
+    result.append('\n')
     result.append('    const auto& arguments() const\n')
     result.append('    {\n')
     result.append('        return m_arguments;\n')

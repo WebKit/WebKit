@@ -42,9 +42,9 @@ public:
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        static_assert(!T::isSync, "Message is sync!");
+        static_assert(!MessageTraits<T>::isSync, "Message is sync!");
 
-        auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+        auto encoder = makeUniqueRef<Encoder>(MessageTraits<T>::name(), destinationID);
         encoder.get() << message.arguments();
         return sendMessage(WTFMove(encoder), sendOptions);
     }
@@ -60,7 +60,7 @@ public:
     template<typename T>
     SendSyncResult<T> sendSync(T&& message, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
-        static_assert(T::isSync, "Message is not sync!");
+        static_assert(MessageTraits<T>::isSync, "Message is not sync!");
 
         return sendSync(std::forward<T>(message), messageSenderDestinationID(), timeout, sendSyncOptions);
     }
@@ -91,9 +91,9 @@ public:
     template<typename T, typename C>
     AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        static_assert(!T::isSync, "Async message expected");
+        static_assert(!MessageTraits<T>::isSync, "Async message expected");
 
-        auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+        auto encoder = makeUniqueRef<IPC::Encoder>(MessageTraits<T>::name(), destinationID);
         encoder.get() << WTFMove(message).arguments();
         auto asyncHandler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
         auto replyID = asyncHandler.replyID;

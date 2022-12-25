@@ -121,6 +121,36 @@ enum class WaitForOption {
     } \
 } while (0)
 
+template<typename MessageType, typename... ArgumentTypes>
+class Message {
+public:
+    static_assert((std::is_reference_v<ArgumentTypes> && ...));
+
+    template<typename... Args>
+    Message(Args&&... args)
+        : m_arguments(std::forward<Args>(args)...)
+    {
+        static_assert(std::is_same_v<typename MessageType::Arguments, std::tuple<std::remove_cvref_t<ArgumentTypes>...>>);
+    }
+
+    const auto& arguments() const { return m_arguments; }
+
+private:
+    std::tuple<ArgumentTypes...> m_arguments;
+};
+
+template<typename MessageType, typename... ArgumentTypes>
+static auto createMessage(ArgumentTypes&&... arguments)
+{
+    return Message<MessageType, ArgumentTypes&&...>(std::forward<ArgumentTypes>(arguments)...);
+}
+
+template<typename MessageType>
+struct MessageTraits : MessageType { };
+
+template<typename MessageType, typename... ArgumentTypes>
+struct MessageTraits<Message<MessageType, ArgumentTypes...>> : MessageType { };
+
 template<typename AsyncReplyResult> struct AsyncReplyError {
     static AsyncReplyResult create() { return AsyncReplyResult { }; };
 };
@@ -268,26 +298,26 @@ public:
     template<typename T>
     struct SendSyncResult {
         std::unique_ptr<Decoder> decoder;
-        std::optional<typename T::ReplyArguments> replyArguments;
+        std::optional<typename MessageTraits<T>::ReplyArguments> replyArguments;
 
         explicit operator bool() const { return !!decoder; }
 
-        typename T::ReplyArguments& reply()
+        typename MessageTraits<T>::ReplyArguments& reply()
         {
             ASSERT(!!replyArguments);
             return *replyArguments;
         }
 
-        typename T::ReplyArguments takeReply()
+        typename MessageTraits<T>::ReplyArguments takeReply()
         {
             ASSERT(!!replyArguments);
             return WTFMove(replyArguments).value();
         }
 
         template<typename... U>
-        typename T::ReplyArguments takeReplyOr(U&&... defaultValues)
+        typename MessageTraits<T>::ReplyArguments takeReplyOr(U&&... defaultValues)
         {
-            return WTFMove(replyArguments).value_or(typename T::ReplyArguments { std::forward<U>(defaultValues)... });
+            return WTFMove(replyArguments).value_or(typename MessageTraits<T>::ReplyArguments { std::forward<U>(defaultValues)... });
         }
     };
 
@@ -578,9 +608,9 @@ private:
 template<typename T>
 bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
-    static_assert(!T::isSync, "Async message expected");
+    static_assert(!MessageTraits<T>::isSync, "Async message expected");
 
-    auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    auto encoder = makeUniqueRef<Encoder>(MessageTraits<T>::name(), destinationID);
     encoder.get() << message.arguments();
 
     return sendMessage(WTFMove(encoder), sendOptions, qos);
@@ -599,10 +629,10 @@ bool Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID
 template<typename T, typename C>
 Connection::AsyncReplyID Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
-    static_assert(!T::isSync, "Async message expected");
+    static_assert(!MessageTraits<T>::isSync, "Async message expected");
     auto handler = makeAsyncReplyHandler<T>(WTFMove(completionHandler));
     auto replyID = handler.replyID;
-    auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    auto encoder = makeUniqueRef<Encoder>(MessageTraits<T>::name(), destinationID);
     encoder.get() << message.arguments();
     if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions))
         return replyID;
@@ -611,9 +641,9 @@ Connection::AsyncReplyID Connection::sendWithAsyncReply(T&& message, C&& complet
 
 template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& message, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
-    static_assert(T::isSync, "Sync message expected");
+    static_assert(MessageTraits<T>::isSync, "Sync message expected");
     SyncRequestID syncRequestID;
-    auto encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
+    auto encoder = createSyncMessageEncoder(MessageTraits<T>::name(), destinationID, syncRequestID);
 
     if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {
         encoder->setFullySynchronousModeForTesting();
@@ -638,7 +668,7 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
 
 template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
-    std::unique_ptr<Decoder> decoder = waitForMessage(T::name(), destinationID, timeout, waitForOptions);
+    std::unique_ptr<Decoder> decoder = waitForMessage(MessageTraits<T>::name(), destinationID, timeout, waitForOptions);
     if (!decoder)
         return false;
     if (!isValid())
@@ -650,7 +680,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
 
 template<typename T> bool Connection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
 {
-    std::unique_ptr<Decoder> decoder = waitForMessage(T::asyncMessageReplyName(), replyID.toUInt64(), timeout, { });
+    std::unique_ptr<Decoder> decoder = waitForMessage(MessageTraits<T>::asyncMessageReplyName(), replyID.toUInt64(), timeout, { });
     if (!decoder)
         return false;
 
@@ -693,11 +723,11 @@ Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(C&& completionHa
 template<typename T, typename C>
 void Connection::callReply(Decoder& decoder, C&& completionHandler)
 {
-    if constexpr (!std::tuple_size_v<typename T::ReplyArguments>) {
+    if constexpr (!std::tuple_size_v<typename MessageTraits<T>::ReplyArguments>) {
         // Nothing to decode in case of no reply arguments, so just invoke the completion handler in that case.
         completionHandler();
     } else {
-        if (auto arguments = decoder.decode<typename T::ReplyArguments>()) {
+        if (auto arguments = decoder.decode<typename MessageTraits<T>::ReplyArguments>()) {
             std::apply(WTFMove(completionHandler), WTFMove(*arguments));
             return;
         }
@@ -712,8 +742,8 @@ void Connection::cancelReply(C&& completionHandler)
 {
     [&]<size_t... Indices>(std::index_sequence<Indices...>)
     {
-        completionHandler(AsyncReplyError<std::tuple_element_t<Indices, typename T::ReplyArguments>>::create()...);
-    }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
+        completionHandler(AsyncReplyError<std::tuple_element_t<Indices, typename MessageTraits<T>::ReplyArguments>>::create()...);
+    }(std::make_index_sequence<std::tuple_size_v<typename MessageTraits<T>::ReplyArguments>> { });
 }
 
 class UnboundedSynchronousIPCScope {

@@ -53,8 +53,7 @@ public:
 
     explicit SendCVPixelBuffer(const RetainPtr<CVPixelBufferRef>& s0)
         : m_arguments(s0)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -77,6 +76,11 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
+
+    explicit ReceiveCVPixelBuffer()
+        : m_arguments()
+    { }
+
     const auto& arguments() const
     {
         return m_arguments;

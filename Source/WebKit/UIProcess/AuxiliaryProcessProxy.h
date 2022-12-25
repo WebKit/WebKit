@@ -219,9 +219,9 @@ private:
 template<typename T>
 bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
 {
-    static_assert(!T::isSync, "Async message expected");
+    static_assert(!IPC::MessageTraits<T>::isSync, "Async message expected");
 
-    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+    auto encoder = makeUniqueRef<IPC::Encoder>(IPC::MessageTraits<T>::name(), destinationID);
     encoder.get() << message.arguments();
 
     return sendMessage(WTFMove(encoder), sendOptions);
@@ -230,7 +230,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 template<typename T>
 AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
 {
-    static_assert(T::isSync, "Sync message expected");
+    static_assert(IPC::MessageTraits<T>::isSync, "Sync message expected");
 
     if (!m_connection)
         return { };
@@ -243,9 +243,9 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 template<typename T, typename C>
 AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
-    static_assert(!T::isSync, "Async message expected");
+    static_assert(!IPC::MessageTraits<T>::isSync, "Async message expected");
 
-    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+    auto encoder = makeUniqueRef<IPC::Encoder>(IPC::MessageTraits<T>::name(), destinationID);
     encoder.get() << message.arguments();
     auto handler = IPC::Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
     auto replyID = handler.replyID;
