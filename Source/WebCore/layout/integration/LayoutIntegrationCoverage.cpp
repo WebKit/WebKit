@@ -300,7 +300,7 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     OptionSet<AvoidanceReason> reasons;
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
-    if (style.hangingPunctuation().containsAny({ HangingPunctuation::AllowEnd, HangingPunctuation::ForceEnd }))
+    if (style.hangingPunctuation().contains(HangingPunctuation::ForceEnd))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedHangingPunctuation, reasons, includeReasons)
     if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
