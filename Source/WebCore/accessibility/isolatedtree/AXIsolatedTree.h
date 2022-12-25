@@ -253,7 +253,6 @@ enum class AXPropertyName : uint16_t {
     SupportsSetSize,
     TabChildren,
     TableLevel,
-    TagName,
     TextLength,
     Title,
     TitleAttributeValue,

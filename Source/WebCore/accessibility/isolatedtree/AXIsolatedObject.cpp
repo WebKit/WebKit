@@ -50,6 +50,12 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AXCoreObject>& axObject, AXIsolated
     m_parentID = axParent ? axParent->objectID() : AXID();
 
     auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
+
+    // Every object will have at least this many properties. We can shrink this number
+    // to some estimated average once we implement sparse property storage (i.e. only storing
+    // a property if it's not the default value for its type).
+    m_propertyMap.reserveInitialCapacity(126);
+
     initializeProperties(axObject, isRoot);
 }
 
@@ -178,7 +184,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::Orientation, static_cast<int>(object.orientation()));
     setProperty(AXPropertyName::HierarchicalLevel, object.hierarchicalLevel());
     setProperty(AXPropertyName::Language, object.language().isolatedCopy());
-    setProperty(AXPropertyName::TagName, object.tagName().string().isolatedCopy());
     setProperty(AXPropertyName::SupportsLiveRegion, object.supportsLiveRegion());
     setProperty(AXPropertyName::IsInsideLiveRegion, object.isInsideLiveRegion());
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus().isolatedCopy());
@@ -1169,6 +1174,12 @@ bool AXIsolatedObject::performDefaultAction()
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+AtomString AXIsolatedObject::tagName() const
+{
+    ASSERT_NOT_REACHED();
+    return AtomString();
 }
 
 bool AXIsolatedObject::isAccessibilityNodeObject() const
