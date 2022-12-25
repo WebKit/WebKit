@@ -743,9 +743,9 @@ public:
     void setCaretBrowsingEnabled(bool) override;
 #endif
 
-    AccessibilityObject* focusableAncestor() override;
-    AccessibilityObject* editableAncestor() override;
-    AccessibilityObject* highestEditableAncestor() override;
+    AccessibilityObject* focusableAncestor() override { return Accessibility::focusableAncestor(*this); }
+    AccessibilityObject* editableAncestor() override { return Accessibility::editableAncestor(*this); };
+    AccessibilityObject* highestEditableAncestor() override { return Accessibility::highestEditableAncestor(*this); }
 
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const;
     virtual AccessibilityObject* webAreaObject() const { return nullptr; }

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="outer-ancestor" role="group">
+    <div id="inner-ancestor" tabindex="0" role="group">
+        <button id="button">Click me</button>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures we compute the correct focusable ancestor.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('button').focusableAncestor().domIdentifier", "'inner-ancestor'");
+
+    // Use JS to change the focusable ancestor for #button.
+    output += evalAndReturn("document.getElementById('inner-ancestor').removeAttribute('tabindex')");
+    output += evalAndReturn("document.getElementById('outer-ancestor').setAttribute('tabindex', '0')");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('button').focusableAncestor().domIdentifier", "'outer-ancestor'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

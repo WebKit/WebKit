@@ -1386,6 +1386,12 @@ accessibility/visible-character-range-width-changes.html [ Skip ]
 accessibility/model-element-attributes.html [ Skip ]
 accessibility/aria-description.html [ Skip ]
 
+# Missing AccessibilityUIElement::focusableAncestor implementation.
+accessibility/focusable-ancestor.html [ Skip ]
+
+# Missing AccessibilityUIElement::{editableAncestor, highestEditableAncestor} implementations.
+accessibility/editable-ancestor.html [ Skip ]
+
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way
 # to have platform specific results that are different between WK1 and WK2.
 accessibility/mac/document-attributes.html [ Failure ]
