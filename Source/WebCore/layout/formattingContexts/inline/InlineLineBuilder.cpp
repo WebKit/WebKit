@@ -878,18 +878,32 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][inline box start][inline box end][ample]
-            // where [ex-] is startContent and [ample] is the nextContent.
-            for (auto candidateIndex = *previousInlineItemIndex + 1; candidateIndex < index; ++candidateIndex) {
-                if (m_inlineItems[candidateIndex].isInlineBoxStart()) {
-                    // inline content and [inline box start] and [inline box end] form unbreakable content.
-                    // ex-<span></span>ample  : wrap opportunity is after "ex-".
-                    // ex-</span></span>ample : wrap opportunity is after "ex-</span></span>".
-                    // ex-</span><span>ample</span> : wrap opportunity is after "ex-</span>".
-                    // ex-<span><span>ample</span></span> : wrap opportunity is after "ex-".
-                    return candidateIndex;
-                }
+            // where [ex-] is previousInlineItemIndex and [ample] is index.
+
+            // inline content and their inline boxes form unbreakable content.
+            // ex-<span></span>ample               : wrap opportunity is after "ex-<span></span>".
+            // ex-<span>ample                      : wrap opportunity is after "ex-".
+            // ex-<span><span></span></span>ample  : wrap opportunity is after "ex-<span><span></span></span>".
+            // ex-</span></span>ample              : wrap opportunity is after "ex-</span></span>".
+            // ex-</span><span>ample               : wrap opportunity is after "ex-</span>".
+            // ex-<span><span>ample                : wrap opportunity is after "ex-".
+            struct InlineBoxPosition {
+                const Box* inlineBox { nullptr };
+                size_t index { 0 };
+            };
+            Vector<InlineBoxPosition> inlineBoxStack;
+            auto start = *previousInlineItemIndex;
+            auto end = index;
+            // Soft wrap opportunity is at the first inline box that encloses the trailing content.
+            for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
+                auto& inlineItem = m_inlineItems[candidateIndex];
+                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+                if (inlineItem.isInlineBoxStart())
+                    inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
+                else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())
+                    inlineBoxStack.removeLast();
             }
-            return index;
+            return inlineBoxStack.isEmpty() ? index : inlineBoxStack.first().index;
         }
         previousInlineItemIndex = index;
     }
