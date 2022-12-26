@@ -734,7 +734,14 @@ bool AccessibilityNodeObject::isEnabled() const
 
 bool AccessibilityNodeObject::isIndeterminate() const
 {
-    return supportsCheckedState() && checkboxOrRadioValue() == AccessibilityButtonState::Mixed;
+    if (supportsCheckedState())
+        return checkboxOrRadioValue() == AccessibilityButtonState::Mixed;
+
+    // We handle this for native <progress> elements in AccessibilityProgressIndicator::isIndeterminate.
+    if (ariaRoleAttribute() == AccessibilityRole::ProgressIndicator)
+        return !hasARIAValueNow();
+
+    return false;
 }
 
 bool AccessibilityNodeObject::isPressed() const

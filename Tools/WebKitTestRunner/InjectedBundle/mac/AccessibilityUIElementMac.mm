@@ -1064,13 +1064,7 @@ bool AccessibilityUIElement::isSelectedOptionActive() const
 
 bool AccessibilityUIElement::isIndeterminate() const
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    auto value = attributeValue(NSAccessibilityValueAttribute);
-    if ([value isKindOfClass:[NSNumber class]])
-        return [value intValue] == 2;
-    END_AX_OBJC_EXCEPTIONS
-
-    return false;
+    return boolAttributeValue(@"AXIsIndeterminate");
 }
 
 bool AccessibilityUIElement::isExpanded() const

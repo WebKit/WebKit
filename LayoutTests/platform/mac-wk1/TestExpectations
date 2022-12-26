@@ -756,6 +756,9 @@ accessibility/custom-elements/ [ Skip ]
 # Missing necessary testing logic (AccessibilityController::{get,set}RetainedElement)
 accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 
+# Missing AccessibilityUIElement::isIndeterminate() implementation.
+accessibility/progress-indeterminate-value.html [ Skip ]
+
 accessibility/display-contents-dynamically-added-children.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.

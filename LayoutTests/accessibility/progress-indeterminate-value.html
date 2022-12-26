@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<progress id="native-progress" value="70" max="100"></progress>
+
+<div id="aria-progress" role="progressbar"
+     aria-valuenow="70" aria-valuemax="100"
+     style="width: 200px; height: 20px; background-color: blue; margin-top: 30px">
+</div>
+
+<script>
+var output = "This test ensures that an indeterminate value is properly reported for native and ARIA progress elements.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // A progress element with a value should not be considered indeterminate.
+    output += expect("accessibilityController.accessibleElementById('native-progress').isIndeterminate", "false");
+    output += expect("accessibilityController.accessibleElementById('aria-progress').isIndeterminate", "false");
+
+    output += evalAndReturn("document.getElementById('native-progress').removeAttribute('value')");
+    output += evalAndReturn("document.getElementById('aria-progress').removeAttribute('aria-valuenow')");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('native-progress').isIndeterminate", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('aria-progress').isIndeterminate", "true");
+
+        // ARIA progress elements should stop being indeterminate if they lose the "progressbar" role.
+        output += evalAndReturn("document.getElementById('aria-progress').setAttribute('role', 'group')");
+        output += await expectAsync("accessibilityController.accessibleElementById('aria-progress').isIndeterminate", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

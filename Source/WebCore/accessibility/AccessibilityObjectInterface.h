@@ -1290,7 +1290,6 @@ public:
 
     virtual bool isValueAutofillAvailable() const = 0;
     virtual AutoFillButtonType valueAutofillButtonType() const = 0;
-    virtual bool hasARIAValueNow() const = 0;
 
     // Used by an ARIA tree to get all its rows.
     virtual void ariaTreeRows(AccessibilityChildrenVector&) = 0;
