@@ -3128,13 +3128,7 @@ webkit.org/b/172609 fetch/closing-while-fetching-blob.html [ Skip ]
 
 webkit.org/b/175291 imported/w3c/web-platform-tests/css/css-ui/outline-018.html [ Skip ]
 
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-014.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-015.html [ ImageOnlyFailure ]
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-016.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-018.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-019.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-024.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-025.html [ ImageOnlyFailure ]
 
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-013.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-014.html [ ImageOnlyFailure ]
@@ -5936,12 +5930,6 @@ imported/w3c/web-platform-tests/performance-timeline/idlharness-shadowrealm.wind
 imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [ Pass Failure ]
-
-# Failing since their import.
-imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-typed-om/width-by-clamp-px-em.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em.html [ ImageOnlyFailure ]
 
 # modulepreload is not supported
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]

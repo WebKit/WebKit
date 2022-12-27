@@ -2945,7 +2945,6 @@ transforms/3d [ Skip ]
 [ Debug ] css2.1/t1605-c545-txttrans-00-b-ag.html [ Skip ] # Debug assertion
 [ Debug ] css2.1/t1606-c562-white-sp-00-b-ag.html [ Skip ] # Debug assertion
 [ Debug ] css2.1/t040303-c62-percent-00-b-ag.html [ Skip ] # Debug assertion
-[ Debug ] css2.1/20110323/replaced-intrinsic-003.htm [ Skip ] # Debug assertion
 [ Debug ] css2.1/20110323/replaced-min-max-001.htm [ Skip ] # Debug assertion
 [ Debug ] editing/pasteboard/drag-drop-dead-frame.html [ Skip ] # Timeout
 [ Debug ] editing/pasteboard/subframe-dragndrop-1.html [ Skip ] # Causes later tests to fail
@@ -3671,7 +3670,6 @@ svg/custom/svg-fonts-in-html.html [ Failure ]
 svg/custom/svg-fonts-in-text-controls.html [ Failure ]
 svg/custom/svg-fonts-segmented.xhtml [ Failure ]
 svg/custom/use-font-face-crash.svg [ Failure ]
-svg/hixie/intrinsic/003.html [ Failure ]
 svg/text/text-align-06-b.svg [ Failure ]
 svg/text/text-hkern-on-vertical-text.svg [ Failure ]
 svg/text/text-overflow-ellipsis-svgfont.html [ Failure ]
