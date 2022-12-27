@@ -191,8 +191,12 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
         options.serviceWorkersMode = is<HTMLPlugInElement>(element()) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
         bool isImageElement = is<HTMLImageElement>(element());
-        if (isImageElement)
-            options.referrerPolicy = downcast<HTMLImageElement>(element()).referrerPolicy();
+        if (isImageElement) {
+            auto& imageElement = downcast<HTMLImageElement>(element());
+            options.referrerPolicy = imageElement.referrerPolicy();
+            if (imageElement.usesSrcsetOrPicture())
+                options.initiator = Initiator::Imageset;
+        }
 
         auto crossOriginAttribute = element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
 
