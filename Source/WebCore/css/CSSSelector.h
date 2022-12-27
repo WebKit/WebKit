@@ -512,7 +512,7 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     } else if (o.m_hasNameWithCase) {
         m_data.nameWithCase = o.m_data.nameWithCase;
         m_data.nameWithCase->ref();
-    } if (o.match() == Tag) {
+    } else if (o.match() == Tag) {
         m_data.tagQName = o.m_data.tagQName;
         m_data.tagQName->ref();
     } else if (o.m_data.value) {
