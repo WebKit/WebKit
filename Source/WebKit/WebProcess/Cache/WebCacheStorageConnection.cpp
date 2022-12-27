@@ -37,7 +37,6 @@
 
 namespace WebKit {
 using namespace WebCore::DOMCacheEngine;
-using namespace CacheStorage;
 
 WebCacheStorageConnection::WebCacheStorageConnection(WebCacheStorageProvider& provider)
     : m_provider(provider)

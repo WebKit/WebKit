@@ -37,6 +37,10 @@ class Encoder;
 
 namespace WebKit {
 
+class WebFrameProxy;
+class WebPageProxy;
+class WebProcessProxy;
+
 class SubframePageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
