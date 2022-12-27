@@ -3,10 +3,10 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -2356,16 +2356,9 @@ bool FrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
         scrollPositionAnchor = m_frame->document();
     maintainScrollPositionAtAnchor(scrollPositionAnchor.get());
     
-    // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
-    if (anchorElement) {
-        if (anchorElement->isFocusable())
-            document.setFocusedElement(anchorElement.get(), { { }, { }, { }, { }, FocusVisibility::Visible });
-        else {
-            document.setFocusedElement(nullptr);
-            document.setFocusNavigationStartingNode(anchorElement.get());
-        }
-    }
-    
+    // If anchor is not focusable, setFocusedElement() will still clear focus, which matches the behavior of other browsers.
+    if (anchorElement)
+        document.setFocusNavigationStartingNode(anchorElement.get());    
     return true;
 }
 
