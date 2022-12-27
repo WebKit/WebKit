@@ -33,10 +33,14 @@
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/ScrollView.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+static NSString * const transientAnimationKey = @"wkTransientZoomScale";
 
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client {
 public:
@@ -123,6 +127,91 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
         displayLink->removeObserver(*m_displayLinkClient, *observerID);
 
     observerID = { };
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
+{
+    m_pageScalingLayerID = transaction.pageScalingLayerID();
+    if (m_transientZoomScale)
+        applyTransientZoomToLayer();
+    else if (m_transactionIDAfterEndingTransientZoom && transaction.transactionID() >= m_transactionIDAfterEndingTransientZoom) {
+        removeTransientZoomFromLayer();
+        m_transactionIDAfterEndingTransientZoom = { };
+    }
+}
+
+static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix& transform)
+{
+    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:@"transform"];
+    [animation setDuration:std::numeric_limits<double>::max()];
+    [animation setFillMode:kCAFillModeForwards];
+    [animation setAdditive:NO];
+    [animation setRemovedOnCompletion:false];
+    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
+
+    NSValue *transformValue = [NSValue valueWithCATransform3D:transform];
+    [animation setFromValue:transformValue];
+    [animation setToValue:transformValue];
+
+    return animation;
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
+{
+    ASSERT(m_transientZoomScale);
+    ASSERT(m_transientZoomOrigin);
+
+    CALayer *layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    if (!layerForPageScale)
+        return;
+
+    TransformationMatrix transform;
+    transform.translate(m_transientZoomOrigin->x(), m_transientZoomOrigin->y());
+    transform.scale(*m_transientZoomScale);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    auto animationWithScale = transientZoomTransformOverrideAnimation(transform);
+    [layerForPageScale removeAnimationForKey:transientAnimationKey];
+    [layerForPageScale addAnimation:animationWithScale.get() forKey:transientAnimationKey];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::removeTransientZoomFromLayer()
+{
+    CALayer *layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    if (!layerForPageScale)
+        return;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [layerForPageScale removeAnimationForKey:transientAnimationKey];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, FloatPoint origin)
+{
+    LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom - scale " << scale << " origin " << origin);
+
+    m_transientZoomScale = scale;
+    m_transientZoomOrigin = origin;
+
+    applyTransientZoomToLayer();
+
+    // FIXME: Update the scrolling tree via WebPageProxy::adjustLayersForLayoutViewport() here.
+
+    // FIXME: Only send these messages as fast as the web process is responding to them.
+    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
+{
+    LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - scale " << scale << " origin " << origin);
+
+    m_transientZoomScale = { };
+    m_transientZoomOrigin = { };
+    
+    // FIXME: Need to constrain the last scale and origin and do a "bounce back" animation if necessary (see TiledCoreAnimationDrawingArea).
+    m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
+    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()

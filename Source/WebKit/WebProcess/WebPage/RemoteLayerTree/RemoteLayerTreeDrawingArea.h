@@ -57,6 +57,9 @@ public:
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
     TransactionID lastCommittedTransactionID() const { return m_currentTransactionID; }
 
+protected:
+    void updateRendering();
+
 private:
     // DrawingArea
     void setNeedsDisplay() override;
@@ -71,6 +74,7 @@ private:
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
     void addTransactionCallbackID(CallbackID) override;
+    virtual void willCommitLayerTree(RemoteLayerTreeTransaction&) { };
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
@@ -111,7 +115,7 @@ private:
 
     void updateRootLayers();
 
-    void updateRendering();
+    void addCommitHandlers();
     void startRenderingUpdateTimer();
     void didCompleteRenderingUpdateDisplay() override;
 

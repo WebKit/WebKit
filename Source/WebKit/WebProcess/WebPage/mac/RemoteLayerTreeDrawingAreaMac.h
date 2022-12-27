@@ -29,6 +29,10 @@
 
 #if PLATFORM(MAC)
 
+namespace WebCore {
+class TiledBacking;
+}
+
 namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaMac final : public RemoteLayerTreeDrawingArea {
@@ -43,6 +47,16 @@ private:
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
 
     std::optional<WebCore::DestinationColorSpace> m_displayColorSpace;
+
+    bool usesDelegatedPageScaling() const override { return false; }
+
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void applyTransientZoomToPage(double scale, WebCore::FloatPoint);
+
+    void willCommitLayerTree(RemoteLayerTreeTransaction&) override;
+
+    WebCore::TiledBacking* mainFrameTiledBacking() const;
 };
 
 } // namespace WebKit

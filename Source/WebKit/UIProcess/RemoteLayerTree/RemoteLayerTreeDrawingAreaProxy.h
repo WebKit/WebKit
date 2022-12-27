@@ -106,8 +106,10 @@ private:
     virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
     void willCommitLayerTree(TransactionID);
     void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
+    virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
+
     void asyncSetLayerContents(WebCore::GraphicsLayer::PlatformLayerID, ImageBufferBackendHandle&&);
-    
+
     void sendUpdateGeometry();
 
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
