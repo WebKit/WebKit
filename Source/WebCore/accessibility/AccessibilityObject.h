@@ -624,7 +624,7 @@ public:
     bool supportsAutoComplete() const;
     String autoCompleteValue() const override;
 
-    bool hasARIAValueNow() const override { return hasAttribute(HTMLNames::aria_valuenowAttr); }
+    bool hasARIAValueNow() const { return hasAttribute(HTMLNames::aria_valuenowAttr); }
     bool supportsARIAAttributes() const;
 
     // CSS3 Speech properties.

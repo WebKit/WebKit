@@ -468,7 +468,7 @@ float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem
 
 bool TextUtil::hasHangableStopOrCommaEnd(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
-    if (!inlineTextItem.length() || (!style.hangingPunctuation().contains(HangingPunctuation::AllowEnd) && !style.hangingPunctuation().contains(HangingPunctuation::ForceEnd)))
+    if (!inlineTextItem.length() || !style.hangingPunctuation().containsAny({ HangingPunctuation::AllowEnd, HangingPunctuation::ForceEnd }))
         return false;
     auto trailingPosition = inlineTextItem.end() - 1;
     auto trailingCharacter = inlineTextItem.inlineTextBox().content()[trailingPosition];

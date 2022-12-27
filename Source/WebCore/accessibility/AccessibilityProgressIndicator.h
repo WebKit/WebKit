@@ -34,6 +34,8 @@ class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
     static Ref<AccessibilityProgressIndicator> create(RenderObject*);
 
+    bool isIndeterminate() const final;
+
 private:
     AccessibilityRole roleValue() const override;
     bool isProgressIndicator() const override { return true; }

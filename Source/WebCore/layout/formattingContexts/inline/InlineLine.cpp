@@ -123,8 +123,10 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
         auto expansionBehavior = ExpansionBehavior::defaultBehavior();
         size_t expansionOpportunitiesInRun = 0;
 
-        // FIXME: Check why we don't apply expansion when whitespace is preserved.
-        if (run.isText() && (!TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingWhitespaceLength)) {
+        // According to the CSS3 spec, a UA can determine whether or not
+        // it wishes to apply text-align: justify to text with collapsible spaces (and this behavior matches Blink).
+        auto mayAlterSpacingWithinText = !TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingWhitespaceLength;
+        if (run.isText() && mayAlterSpacingWithinText) {
             if (run.hasTextCombine())
                 expansionBehavior = ExpansionBehavior::forbidAll();
             else {

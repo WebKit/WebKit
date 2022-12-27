@@ -77,6 +77,13 @@ String AccessibilityProgressIndicator::valueDescription() const
     return description;
 }
 
+bool AccessibilityProgressIndicator::isIndeterminate() const
+{
+    if (auto* progress = progressElement())
+        return !progress->hasAttribute(valueAttr);
+    return false;
+}
+
 float AccessibilityProgressIndicator::valueForRange() const
 {
     if (auto* progress = progressElement(); progress && progress->position() >= 0)

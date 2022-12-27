@@ -324,7 +324,6 @@ private:
     void visibleChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::VisibleChildren, children); }
     void tabChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::TabChildren, children); }
     AccessibilityChildrenVector contents() override;
-    bool hasARIAValueNow() const override { return boolAttributeValue(AXPropertyName::HasARIAValueNow); }
     AtomString tagName() const override;
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void updateChildrenIfNecessary() override;
@@ -457,7 +456,7 @@ private:
     bool isImageMapLink() const override;
     bool isMockObject() const override;
     bool isNonNativeTextControl() const override;
-    bool isIndeterminate() const override;
+    bool isIndeterminate() const override { return boolAttributeValue(AXPropertyName::IsIndeterminate); }
     bool isLoaded() const override { return loadingProgress() >= 1; }
     bool isOnScreen() const override;
     bool isOffScreen() const override;

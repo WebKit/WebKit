@@ -82,7 +82,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     else
         setProperty(AXPropertyName::AncestorFlags, object.computeAncestorFlagsWithTraversal());
 
-    setProperty(AXPropertyName::HasARIAValueNow, object.hasARIAValueNow());
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsBusy, object.isBusy());
     setProperty(AXPropertyName::IsButton, object.isButton());
@@ -92,6 +91,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::IsFocused, object.isFocused());
     setProperty(AXPropertyName::IsGroup, object.isGroup());
     setProperty(AXPropertyName::IsHeading, object.isHeading());
+    setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
     setProperty(AXPropertyName::IsInlineText, object.isInlineText());
     setProperty(AXPropertyName::IsInputImage, object.isInputImage());
     setProperty(AXPropertyName::IsLandmark, object.isLandmark());
@@ -1494,12 +1494,6 @@ bool AXIsolatedObject::isMockObject() const
 }
 
 bool AXIsolatedObject::isNonNativeTextControl() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isIndeterminate() const
 {
     ASSERT_NOT_REACHED();
     return false;

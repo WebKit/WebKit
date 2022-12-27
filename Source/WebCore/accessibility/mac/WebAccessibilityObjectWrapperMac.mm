@@ -2130,14 +2130,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString: NSAccessibilityMinValueAttribute]) {
         // Indeterminate progress indicator should return 0.
-        if (backingObject->ariaRoleAttribute() == AccessibilityRole::ProgressIndicator && !backingObject->hasARIAValueNow())
+        if (backingObject->isIndeterminate())
             return @0;
         return [NSNumber numberWithFloat:backingObject->minValueForRange()];
     }
 
     if ([attributeName isEqualToString: NSAccessibilityMaxValueAttribute]) {
         // Indeterminate progress indicator should return 0.
-        if (backingObject->ariaRoleAttribute() == AccessibilityRole::ProgressIndicator && !backingObject->hasARIAValueNow())
+        if (backingObject->isIndeterminate())
             return @0;
         return [NSNumber numberWithFloat:backingObject->maxValueForRange()];
     }
@@ -2668,6 +2668,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:@"AXIsOnScreen"])
         return [NSNumber numberWithBool:backingObject->isOnScreen()];
+
+    if ([attributeName isEqualToString:@"AXIsIndeterminate"])
+        return [NSNumber numberWithBool: backingObject->isIndeterminate()];
 
     return nil;
 }
