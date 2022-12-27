@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class AbstractDOMWindow;
+class AbstractFrameView;
 class HTMLFrameOwnerElement;
 class Page;
 class WeakPtrImplWithEventTargetData;
@@ -63,6 +64,7 @@ protected:
 
 private:
     virtual AbstractDOMWindow* virtualWindow() const = 0;
+    virtual AbstractFrameView* virtualView() const = 0;
 
     WeakPtr<Page> m_page;
     const FrameIdentifier m_frameID;
