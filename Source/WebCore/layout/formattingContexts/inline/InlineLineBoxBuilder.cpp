@@ -462,14 +462,21 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
         if (run.isBox() || run.isListMarker()) {
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
+            if (run.isListMarker()) {
+                auto& listMarkerBox = downcast<ElementBox>(layoutBox);
+                auto lineBoxOffset = lineContent().lineLogicalTopLeft.x() - lineContent().lineInitialLogicalLeft;
+                auto rootInlineBoxOffsetFromContentBox = LayoutUnit { lineBoxOffset + lineBox.rootInlineBoxAlignmentOffset() };
+                formattingContext().formattingGeometry().adjustMarginStartForListMarker(listMarkerBox, rootInlineBoxOffsetFromContentBox);
+                logicalLeft -= rootInlineBoxOffsetFromContentBox;
+                if (!listMarkerBox.isListMarkerImage()) {
+                    // Non-image type of list markers make their parent inline boxes (e.g. root inline box) contentful (and stretch them vertically).
+                    lineBox.inlineLevelBoxForLayoutBox(listMarkerBox.parent()).setHasContent();
+                }
+            } else
+                logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
-            if (run.isListMarker() && !downcast<ElementBox>(layoutBox).isListMarkerImage()) {
-                // Non-image type of list markers make their parent inline boxes (e.g. root inline box) contentful (and stretch them vertically).
-                lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
-            }
             continue;
         }
         if (run.isLineSpanningInlineBoxStart()) {
