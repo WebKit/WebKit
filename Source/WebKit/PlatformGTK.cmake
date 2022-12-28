@@ -174,6 +174,7 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsiteDataManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWindowProperties.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsitePolicies.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/webkit.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitColorChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPointerLockPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h.in
@@ -183,7 +184,6 @@ set(WebKitGTK_HEADER_TEMPLATES
 )
 
 set(WebKitGTK_INSTALLED_HEADERS
-    ${WEBKIT_DIR}/UIProcess/API/gtk/webkit${WEBKITGTK_API_INFIX}.h
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitEnumTypes.h
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h
 )
@@ -464,19 +464,26 @@ endif ()
 if (NOT USE_GTK4)
     file(MAKE_DIRECTORY ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2)
     add_custom_command(
-        OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
+        OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
+        DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h
+        COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
         DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h
-        COMMAND ${CMAKE_COMMAND} -E copy ${WEBKIT_DIR}/UIProcess/API/gtk/webkit2.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
+        COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
         VERBATIM
     )
 
     list(APPEND WebKit_SOURCES ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h)
 
-    list(REMOVE_ITEM WebKitGTK_INSTALLED_HEADERS ${WEBKIT_DIR}/UIProcess/API/gtk/webkit2.h)
+    list(REMOVE_ITEM WebKitGTK_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h)
     list(REMOVE_ITEM WebKitWebExtension_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h)
 
-    install(FILES ${WEBKIT_DIR}/UIProcess/API/gtk/webkit2.h
-                  ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h
+    install(FILES ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
+                  ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
             DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit2"
     )
 endif ()

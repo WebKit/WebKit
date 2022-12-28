@@ -1,0 +1,131 @@
+/*
+ * Copyright (C) 2022 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#if PLATFORM(GTK) && USE(GTK4)
+#ifdef __WEBKIT_WEB_EXTENSION_H__
+#error "Headers <webkit/webkit.h> and <webkit/webkit-web-extension.h> cannot be included together."
+#endif
+#elif PLATFORM(GTK)
+#ifdef __WEBKIT_WEB_EXTENSION_H__
+#error "Headers <webkit2/webkit2.h> and <webkit/webkit-web-extension.h> cannot be included together."
+#endif
+#elif PLATFORM(WPE)
+#ifdef __WEBKIT_WEB_EXTENSION_H__
+#error "Headers <wpe/webkit.h> and <wpe/webkit-web-extension.h> cannot be included together."
+#endif
+#endif
+
+#ifndef __WEBKIT_H__
+#define __WEBKIT_H__
+
+#define __WEBKIT_H_INSIDE__
+
+#include <@API_INCLUDE_PREFIX@/WebKitApplicationInfo.h>
+#include <@API_INCLUDE_PREFIX@/WebKitAuthenticationRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitAutomationSession.h>
+#include <@API_INCLUDE_PREFIX@/WebKitBackForwardList.h>
+#include <@API_INCLUDE_PREFIX@/WebKitBackForwardListItem.h>
+#if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitColorChooserRequest.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenuActions.h>
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenuItem.h>
+#include <@API_INCLUDE_PREFIX@/WebKitCookieManager.h>
+#include <@API_INCLUDE_PREFIX@/WebKitCredential.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDeviceInfoPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDownload.h>
+#include <@API_INCLUDE_PREFIX@/WebKitEditingCommands.h>
+#include <@API_INCLUDE_PREFIX@/WebKitEditorState.h>
+#include <@API_INCLUDE_PREFIX@/WebKitEnumTypes.h>
+#include <@API_INCLUDE_PREFIX@/WebKitError.h>
+#include <@API_INCLUDE_PREFIX@/WebKitFaviconDatabase.h>
+#if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitFileChooserRequest.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitFindController.h>
+#include <@API_INCLUDE_PREFIX@/WebKitFormSubmissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitGeolocationManager.h>
+#include <@API_INCLUDE_PREFIX@/WebKitGeolocationPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitHitTestResult.h>
+#include <@API_INCLUDE_PREFIX@/WebKitInputMethodContext.h>
+#include <@API_INCLUDE_PREFIX@/WebKitInstallMissingMediaPluginsPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitJavascriptResult.h>
+#include <@API_INCLUDE_PREFIX@/WebKitMediaKeySystemPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitMemoryPressureSettings.h>
+#if !ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitMimeInfo.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitNavigationAction.h>
+#include <@API_INCLUDE_PREFIX@/WebKitNavigationPolicyDecision.h>
+#include <@API_INCLUDE_PREFIX@/WebKitNetworkProxySettings.h>
+#include <@API_INCLUDE_PREFIX@/WebKitNotification.h>
+#include <@API_INCLUDE_PREFIX@/WebKitNotificationPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitOptionMenu.h>
+#include <@API_INCLUDE_PREFIX@/WebKitOptionMenuItem.h>
+#include <@API_INCLUDE_PREFIX@/WebKitPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitPermissionStateQuery.h>
+#if !ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitPlugin.h>
+#endif
+#if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitPointerLockPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitPrintCustomWidget.h>
+#include <@API_INCLUDE_PREFIX@/WebKitPrintOperation.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitResponsePolicyDecision.h>
+#include <@API_INCLUDE_PREFIX@/WebKitScriptDialog.h>
+#include <@API_INCLUDE_PREFIX@/WebKitSecurityManager.h>
+#include <@API_INCLUDE_PREFIX@/WebKitSecurityOrigin.h>
+#include <@API_INCLUDE_PREFIX@/WebKitSettings.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURIRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURIResponse.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURISchemeRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURISchemeResponse.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURIUtilities.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserContent.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserContentFilterStore.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserContentManager.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserMediaPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserMessage.h>
+#include <@API_INCLUDE_PREFIX@/WebKitVersion.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebContext.h>
+#if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitWebInspector.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitWebResource.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebView.h>
+#if PLATFORM(WPE)
+#include <wpe/WebKitWebViewBackend.h>
+#endif
+#if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitWebViewBase.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitWebViewSessionState.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebsiteData.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebsiteDataAccessPermissionRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebsiteDataManager.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWindowProperties.h>
+
+#include <@API_INCLUDE_PREFIX@/WebKitAutocleanups.h>
+
+#undef __WEBKIT_H_INSIDE__
+
+#endif /* __WEBKIT_H__ */
