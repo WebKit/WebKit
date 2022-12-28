@@ -3382,6 +3382,7 @@ webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-typ
 webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005b.html [ ImageOnlyFailure ]
 webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
+webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ ImageOnlyFailure ]
 
 webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]
 

@@ -76,7 +76,6 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
 InlineItemsBuilder::InlineItemsBuilder(const ElementBox& formattingContextRoot, InlineFormattingState& formattingState)
     : m_root(formattingContextRoot)
     , m_formattingState(formattingState)
-    , m_needsVisualReordering(!formattingContextRoot.style().isLeftToRightDirection())
 {
 }
 
@@ -84,7 +83,7 @@ InlineItems InlineItemsBuilder::build()
 {
     InlineItems inlineItems;
     collectInlineItems(inlineItems);
-    if (needsVisualReordering())
+    if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering())
         breakAndComputeBidiLevels(inlineItems);
     computeInlineTextItemWidths(inlineItems);
     return inlineItems;
@@ -342,7 +341,6 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
 
 void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
 {
-    ASSERT(needsVisualReordering());
     ASSERT(!inlineItems.isEmpty());
 
     StringBuilder paragraphContentBuilder;
@@ -353,6 +351,11 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItems& inlineItems)
         // Style may trigger visual reordering even on a completely empty content.
         // e.g. <div><span style="direction:rtl"></span></div>
         // Let's not try to do bidi handling when there's no content to reorder.
+        return;
+    }
+    auto mayNotUseBlockDirection = root().style().unicodeBidi() == UnicodeBidi::Plaintext;
+    if (!contentRequiresVisualReordering() && mayNotUseBlockDirection && TextUtil::directionForTextContent(paragraphContentBuilder) == TextDirection::LTR) {
+        // UnicodeBidi::Plaintext makes directionality calculated without taking parent direction property into account.
         return;
     }
     ASSERT(inlineItemOffsets.size() == inlineItems.size());
@@ -507,7 +510,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (inlineTextBox.isCombined())
         return inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
 
-    m_needsVisualReordering = m_needsVisualReordering || TextUtil::containsStrongDirectionalityText(text);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || TextUtil::containsStrongDirectionalityText(text);
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
@@ -599,14 +602,14 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems&
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
     auto& style = inlineBox.style();
-    m_needsVisualReordering = m_needsVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
     // Inline box end item itself can not trigger bidi content.
-    ASSERT(needsVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == UnicodeBidi::Normal);
+    ASSERT(contentRequiresVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == UnicodeBidi::Normal);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
