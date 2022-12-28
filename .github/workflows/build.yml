@@ -45,16 +45,16 @@ jobs:
       - uses: actions/checkout@v3
       - name: PATH
         run: |
-          echo "${{matrix.brew_prefix}}/llvm@13/bin" >> $GITHUB_PATH
-          brew install llvm@13 python icu4c ninja
-          brew link llvm@13 --overwrite
+          echo "${{matrix.brew_prefix}}/llvm@15/bin" >> $GITHUB_PATH
+          brew install llvm@15 python icu4c ninja
+          brew link llvm@15 --overwrite
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
-          CC: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
-          CXX: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
-          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang"
-          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@13/bin/clang++"
+          CC: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
+          CXX: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
+          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
+          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
         run: |
           export THIS_DIR="$(pwd)"
           rm -rf $RUNNER_TEMP/webkit-release $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit.tar.gz
