@@ -791,10 +791,6 @@ fast/css/stylesheet-candidate-nodes-crash.xhtml [ Pass Failure ]
 platform/mac/fast/loader/file-url-mimetypes-3.html [ Failure ]
 platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 
-# rdar://92299030 ([ Ventura ] 2 imported/w3c/web-platform-tests/svg/* tests are constant text failures)
-imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-35-t-manual.svg [ Failure ]
-
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
 
@@ -806,8 +802,6 @@ editing/secure-input/removed-password-input.html [ Pass Failure ]
 editing/secure-input/reset-state-on-navigation.html [ Pass Failure ]
 
 #rdar://96912160 (REGRESSION): [ Ventura ] 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
-imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]
-imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
 #rdar://92629515 (REGRESSION(Ventura): [ Ventura ] media/media-can-play-av1.html is a constant text failure)
@@ -1872,21 +1866,12 @@ webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJ
 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Failure ]
 
 # rdar://66660924 ([ASi Layout Tests] 6 WPT css-backgrounds tests consistently failing)
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
 [ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
 [ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
 [ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 [ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
 
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ ImageOnlyFailure ]
-
-imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
-
-# Small pixel diffs on ASi
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-round-1.html [ ImageOnlyFailure ]
 
 # rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
 [ arm64 ] compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
@@ -2316,9 +2301,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 [ BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
 
-# Was in LayoutTests/Expectations, now only happening on Mac
-imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
-
 webkit.org/b/237166 [ BigSur+ ] webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Pass Timeout ]
 
 # macOS has a WebGPU implementation.
@@ -2404,7 +2386,6 @@ svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 [ BigSur+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Pass Failure ]
 [ BigSur+ Debug ] inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Crash ]
 [ BigSur+ ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Pass Failure ]
-[ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Pass Failure Timeout ]
 [ Ventura+ x86_64 ] http/tests/media/now-playing-info.html [ Pass Failure ]
 [ BigSur+ x86_64 ] animations/stop-animation-on-suspend.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
@@ -2415,7 +2396,6 @@ svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 [ BigSur+ ] css3/scroll-snap/scroll-padding-overflow-paging.html [ Pass Failure ]
 [ Ventura+ ] fast/events/before-unload-navigate-different-window.html [ Pass Failure ]
 [ Bigsur+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
-[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Pass Failure Timeout ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined.html [ Pass Failure ]
 [ BigSur+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-failure.sub.html [ Pass Failure ]
 [ Monterey+ x86_64 ] media/media-fragments/TC0086.html [ Pass Failure ]

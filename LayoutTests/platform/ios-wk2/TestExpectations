@@ -2006,9 +2006,6 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
 
-webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
-webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
-
 webkit.org/b/226789 imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Pass Failure ]
 
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Pass Failure ]
@@ -2247,10 +2244,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 # Double-clicking does not select text on iOS.
 imported/w3c/web-platform-tests/css/css-ui/user-select-001.html [ Skip ]
 
-# menulist-button and auto do not have a different appearance on <select> on iOS.
-imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
-
 # compute-kind-widget-generated iOS-specific failures (webkit.org/b/243945)
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-input-button-background-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-input-reset-background-size-001.html [ ImageOnlyFailure ]
@@ -2272,8 +2265,6 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-top-left-radius-001.html [ ImageOnlyFailure ]
 
 # rdar://96912160 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
-imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]
-imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
 #rdar://95420649 ([BLOCKED] 2X fast/canvas/canvas-createPattern-video (layout-tests) are constant text failures)

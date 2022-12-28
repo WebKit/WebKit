@@ -221,8 +221,6 @@ imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-between-Rs.html [ Pass ]
-imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs.html [ Pass ]
-imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/rendering/the-details-element/details-after.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before.html [ Pass ]
@@ -292,7 +290,6 @@ crypto/subtle/ecdsa-import-compressed-spki-key-p384.html [ Timeout Pass ]
 # CSS backgrounds. Passing after WPT re-import in r277073.
 imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-overlapping-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ Pass ]
 
 # Conic gradient. Marked as failure in root expectations
 webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
@@ -1319,8 +1316,6 @@ webkit.org/b/234709 svg/filters/feImage-element-primitive-subregion.svg [ ImageO
 webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-on-span.html [ ImageOnlyFailure ]
 webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
-
 # The following tests need LBSE enabled builds, which is off by default for this port.
 svg/compositing [ Skip ]
 svg/z-index [ Skip ]
@@ -1457,7 +1452,6 @@ http/tests/canvas/webgl/origin-clean-conformance.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
 http/wpt/offscreen-canvas/getContext-webgl.html [ Failure ]
 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure ]
@@ -1726,7 +1720,6 @@ webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
 webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Failure ]
 
-webkit.org/b/211692 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.worker.html [ Failure ]
 webkit.org/b/212806 imported/w3c/web-platform-tests/fetch/h1-parsing/resources-with-0x00-in-header.window.html [ Failure ]
@@ -1791,8 +1784,6 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 webkit.org/b/171094 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1.html [ Pass Failure ]
 
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ Pass ]
-webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ Pass ]
-webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Pass ]
 
 webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Pass ]
 webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Pass ]
@@ -2627,7 +2618,6 @@ webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-025.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-029.html [ ImageOnlyFailure ]
-webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-005.html [ ImageOnlyFailure ]
 webkit.org/b/206874 imported/w3c/web-platform-tests/cors/origin.htm [ Failure ]
@@ -2794,8 +2784,6 @@ webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-i
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-1.html [ ImageOnlyFailure ]
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-3.html [ ImageOnlyFailure ]
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-7.html [ ImageOnlyFailure ]
-webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html [ ImageOnlyFailure ]
-
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
 
@@ -2838,8 +2826,6 @@ webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-rep
 
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 webkit.org/b/229738 fast/text/word-break.html [ Failure ]
-
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass ]
 
