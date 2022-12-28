@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 575x19
           text run at (0,0) width 575: "The TH tag uses the ALIGN attribute. The contents in the TH tag should be right aligned."
         RenderBR {BR} at (574,0) size 1x19
-      RenderTable {TABLE} at (0,20) size 297x56 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,20) size 297x56 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 295x54
           RenderTableRow {TR} at (0,2) size 295x24
-            RenderTableCell {TH} at (2,2) size 285x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (2,2) size 285x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (112,2) size 171x19
                 text run at (112,2) width 171: "Netscape Communicator"
-            RenderTableCell {TH} at (288,12) size 5x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (288,12) size 5x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
           RenderTableRow {TR} at (0,28) size 295x24
-            RenderTableCell {TD} at (2,28) size 285x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,28) size 285x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 281x19
                 text run at (2,2) width 281: "Available on the Mac/PC/UNIX platforms !"

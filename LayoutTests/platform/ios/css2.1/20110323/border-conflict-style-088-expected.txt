@@ -6,11 +6,11 @@ layer at (0,0) size 800x310
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 477x19
           text run at (0,0) width 477: "Test passes if the center box in the table below has a border similar to this:"
-      RenderTable {TABLE} at (0,36) size 60x60 [border: (2.50px none #808080)]
+      RenderTable {TABLE} at (0,36) size 60x60 [border: (2.50px none #000000)]
         RenderTableSection {TBODY} at (2,2) size 56x56
           RenderTableRow {TR} at (0,0) size 55x55
             RenderTableCell {TD} at (0,24) size 55x7 [border: (2.50px ridge #00FF00)] [r=0 c=0 rs=1 cs=1]
-      RenderTable {TABLE} at (0,116) size 170x170 [border: (2.50px none #808080)]
+      RenderTable {TABLE} at (0,116) size 170x170 [border: (2.50px none #000000)]
         RenderTableSection {TBODY} at (2,2) size 166x166
           RenderTableRow {TR} at (0,0) size 165x55
             RenderTableCell {TD} at (0,14) size 55x27 [border: (2.50px ridge #00FF00)] [r=0 c=0 rs=1 cs=1]

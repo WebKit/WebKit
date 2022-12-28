@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x230 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 784x230 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 780x226
           RenderTableRow {TR} at (0,2) size 780x222
-            RenderTableCell {TD} at (2,2) size 776x222 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 776x222 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock (anonymous) at (2,2) size 772x20
                 RenderText {#text} at (0,0) size 12x19
                   text run at (0,0) width 12: "Y"

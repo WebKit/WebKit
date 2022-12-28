@@ -6,7 +6,7 @@ layer at (0,0) size 800x356
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 316x19
           text run at (0,0) width 316: "All rows should be identical to the reference row."
-      RenderTable {TABLE} at (0,36) size 524x117 [border: (0.50px none #808080)]
+      RenderTable {TABLE} at (0,36) size 524x117 [border: (0.50px none #000000)]
         RenderTableSection {TBODY} at (0,0) size 524x117
           RenderTableRow {TR} at (0,0) size 523x29
             RenderTableCell {TD} at (0,0) size 98x29 [border: (0.50px solid #008000)] [r=0 c=0 rs=1 cs=1]
@@ -127,7 +127,7 @@ layer at (0,0) size 800x356
       RenderBlock {P} at (0,169) size 784x20
         RenderText {#text} at (0,0) size 394x19
           text run at (0,0) width 394: "The CSS column should be identical to the reference column."
-      RenderTable {TABLE} at (0,205) size 220x127 [border: (0.50px none #808080)]
+      RenderTable {TABLE} at (0,205) size 220x127 [border: (0.50px none #000000)]
         RenderTableSection {TBODY} at (0,0) size 220x127
           RenderTableRow {TR} at (0,0) size 219x29
             RenderTableCell {TD} at (0,0) size 110x29 [border: (0.50px solid #008000)] [r=0 c=0 rs=1 cs=1]

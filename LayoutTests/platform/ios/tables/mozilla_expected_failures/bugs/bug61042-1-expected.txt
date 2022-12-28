@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x146
-        RenderTable {TABLE} at (78,0) size 628x146 [bgcolor=#0000FF] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (78,0) size 628x146 [bgcolor=#0000FF] [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 626x144
             RenderTableRow {TR} at (0,2) size 626x140
-              RenderTableCell {TD} at (2,2) size 622x140 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 622x140 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderBlock (anonymous) at (2,2) size 618x20
                   RenderText {#text} at (0,0) size 41x19
                     text run at (0,0) width 41: "before"
-                RenderTable {TABLE} at (2,22) size 618x96 [bgcolor=#FF0000] [border: (1px outset #808080)]
+                RenderTable {TABLE} at (2,22) size 618x96 [bgcolor=#FF0000] [border: (1px outset #000000)]
                   RenderTableSection {TBODY} at (1,1) size 616x94
                     RenderTableRow {TR} at (0,2) size 616x24
-                      RenderTableCell {TD} at (2,2) size 387x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (2,2) size 387x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 273x19
                           text run at (2,2) width 273: "This is some text. This is some text. Cell 1"
-                      RenderTableCell {TD} at (390,2) size 224x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (390,2) size 224x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 156x19
                           text run at (2,2) width 156: "This is some text. Cell 2"
                     RenderTableRow {TR} at (0,28) size 616x64
-                      RenderTableCell {TD} at (2,28) size 612x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+                      RenderTableCell {TD} at (2,28) size 612x64 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]
                         RenderText {#text} at (2,2) size 581x59
                           text run at (2,2) width 581: "This is some text. This is some text. This is some text. This is some text. This is some text."
                           text run at (2,22) width 581: "This is some text. This is some text. This is some text. This is some text. This is some text."

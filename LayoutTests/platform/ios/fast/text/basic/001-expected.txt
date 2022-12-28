@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
           RenderText {#text} at (403,15) size 49x13
             text run at (403,15) width 49: "This is not."
       RenderBlock (anonymous) at (0,33) size 784x32
-        RenderTable {TABLE} at (0,0) size 124x32 [border: (2px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 124x32 [border: (2px outset #008000)]
           RenderTableSection {TBODY} at (2,2) size 120x28
             RenderTableRow {TR} at (0,2) size 120x24
-              RenderTableCell {TD} at (2,2) size 116x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 116x24 [border: (1px inset #008000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 112x19
                   text run at (2,2) width 112: "This is also not."
       RenderBlock (anonymous) at (0,65) size 784x33

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x204
   RenderBlock {HTML} at (0,0) size 800x204
     RenderBody {BODY} at (8,8) size 784x188
-      RenderTable {TABLE} at (0,0) size 146x188 [border: (10px none #808080)]
+      RenderTable {TABLE} at (0,0) size 146x188 [border: (10px none #000000)]
         RenderTableSection {TBODY} at (10,10) size 126x126
           RenderTableRow {TR} at (0,0) size 126x42
             RenderTableCell {TD} at (0,10) size 42x22 [border: (10px solid #0000FF80)] [r=0 c=0 rs=1 cs=1]

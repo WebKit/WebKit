@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-      RenderTable {TABLE} at (16,0) size 752x76 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (16,0) size 752x76 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 750x74
           RenderTableRow {TR} at (0,2) size 750x24
-            RenderTableCell {TH} at (2,2) size 174x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (2,2) size 174x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (45,2) size 83x19
                 text run at (45,2) width 83: "Header One"
-            RenderTableCell {TH} at (177,2) size 271x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (177,2) size 271x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (93,2) size 84x19
                 text run at (93,2) width 84: "Header Two"
-            RenderTableCell {TH} at (449,2) size 300x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TH} at (449,2) size 300x24 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (101,2) size 96x19
                 text run at (101,2) width 96: "Header Three"
           RenderTableRow {TR} at (0,28) size 750x44
-            RenderTableCell {TD} at (2,28) size 174x44 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,28) size 174x44 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 161x39
                 text run at (2,2) width 119: "This table uses the"
                 text run at (2,22) width 161: "separated borders model."
-            RenderTableCell {TD} at (177,28) size 271x44 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (177,28) size 271x44 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 258x39
                 text run at (2,2) width 258: "This means that elements within the cell"
                 text run at (2,22) width 183: "have border-spacing of 1em."
-            RenderTableCell {TD} at (449,28) size 300x44 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (449,28) size 300x44 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 285x39
                 text run at (2,2) width 209: "The borders on the header cells, "
                 text run at (210,2) width 77: "on all sides,"

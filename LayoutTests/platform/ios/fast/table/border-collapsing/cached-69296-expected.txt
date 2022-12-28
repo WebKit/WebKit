@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (20,20) size 760x560
-      RenderTable {TABLE} at (0,0) size 160x101 [border: (0.50px none #808080)]
+      RenderTable {TABLE} at (0,0) size 160x101 [border: (0.50px none #000000)]
         RenderTableSection {TBODY} at (0,0) size 160x101
           RenderTableRow {TR} at (0,0) size 159x50
             RenderTableCell {TD} at (0,0) size 53x3 [border: (0.50px solid #333333)] [r=0 c=0 rs=1 cs=1]

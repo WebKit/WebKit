@@ -147,7 +147,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 50x17
                         text run at (2,2) width 50: "Header"
             RenderTableCell {TD} at (158,2) size 76x303 [r=0 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 54x87 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,11) size 54x87 [border: (1px none #000000)]
                 RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -168,7 +168,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x17
                         text run at (2,2) width 41: "Footer"
-              RenderTable {TABLE} at (11,108) size 54x87 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,108) size 54x87 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 53x21
                   RenderTableRow {TR} at (0,0) size 53x21
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -189,7 +189,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x17
                         text run at (2,2) width 41: "Footer"
-              RenderTable {TABLE} at (11,205) size 54x87 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,205) size 54x87 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 53x21
                   RenderTableRow {TR} at (0,0) size 53x21
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -211,7 +211,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 47x17
                         text run at (2,2) width 47: "Body 2"
             RenderTableCell {TD} at (236,2) size 76x303 [r=0 c=3 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 54x87 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,11) size 54x87 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 53x21
                   RenderTableRow {TR} at (0,0) size 53x21
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -232,7 +232,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x17
                         text run at (2,2) width 47: "Body 2"
-              RenderTable {TABLE} at (11,108) size 54x87 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,108) size 54x87 [border: (1px none #000000)]
                 RenderTableSection {TFOOT} at (0,65) size 53x21
                   RenderTableRow {TR} at (0,0) size 53x21
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -253,7 +253,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x17
                         text run at (2,2) width 47: "Body 2"
-              RenderTable {TABLE} at (11,205) size 54x87 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,205) size 54x87 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 53x21
                   RenderTableRow {TR} at (0,0) size 53x21
                     RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]

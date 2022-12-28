@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,92) size 784x20
         RenderText {#text} at (0,0) size 358x19
           text run at (0,0) width 358: "The left column should be identical to the right column."
-      RenderTable {TABLE} at (0,128) size 200x104 [border: (0.50px none #808080)]
+      RenderTable {TABLE} at (0,128) size 200x104 [border: (0.50px none #000000)]
         RenderTableSection {TBODY} at (0,0) size 199x104
           RenderTableRow {TR} at (0,0) size 199x29
             RenderTableCell {TD} at (0,0) size 100x29 [border: (0.50px solid #000000)] [r=0 c=0 rs=1 cs=1]

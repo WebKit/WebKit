@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 317x331
           RenderTableRow {TR} at (0,2) size 317x327
             RenderTableCell {TD} at (2,2) size 77x327 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 55x95 [border: (0.50px none #808080)]
+              RenderTable {TABLE} at (11,11) size 55x95 [border: (0.50px none #000000)]
                 RenderTableSection {THEAD} at (0,0) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x23
                     RenderTableCell {TH} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,2) size 43x19
                         text run at (1,2) width 43: "Footer"
-              RenderTable {TABLE} at (11,116) size 55x95 [border: (0.50px none #808080)]
+              RenderTable {TABLE} at (11,116) size 55x95 [border: (0.50px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x23
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,2) size 43x19
                         text run at (1,2) width 43: "Footer"
-              RenderTable {TABLE} at (11,221) size 55x95 [border: (0.50px none #808080)]
+              RenderTable {TABLE} at (11,221) size 55x95 [border: (0.50px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x23
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -83,7 +83,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (1,1) size 48x20
                         text run at (1,1) width 48: "Body 2"
             RenderTableCell {TD} at (80,2) size 78x327 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 55x95 [border: (0.50px none #808080)]
+              RenderTable {TABLE} at (11,11) size 55x95 [border: (0.50px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x23
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 48x20
                         text run at (1,1) width 48: "Body 2"
-              RenderTable {TABLE} at (11,116) size 55x95 [border: (0.50px none #808080)]
+              RenderTable {TABLE} at (11,116) size 55x95 [border: (0.50px none #000000)]
                 RenderTableSection {TFOOT} at (0,70) size 55x24 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 54x24
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -125,7 +125,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 48x20
                         text run at (1,1) width 48: "Body 2"
-              RenderTable {TABLE} at (11,221) size 55x95 [border: (0.50px none #808080)]
+              RenderTable {TABLE} at (11,221) size 55x95 [border: (0.50px none #000000)]
                 RenderTableSection {TBODY} at (0,23) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x23
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -147,7 +147,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (1,1) size 52x20
                         text run at (1,1) width 52: "Header"
             RenderTableCell {TD} at (159,2) size 77x327 [r=0 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 55x95 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,11) size 55x95 [border: (1px none #000000)]
                 RenderTableSection {THEAD} at (0,1) size 55x24 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 54x24
                     RenderTableCell {TH} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -168,7 +168,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 43x20
                         text run at (1,1) width 43: "Footer"
-              RenderTable {TABLE} at (11,116) size 55x95 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,116) size 55x95 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,25) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x24
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -189,7 +189,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 43x20
                         text run at (1,1) width 43: "Footer"
-              RenderTable {TABLE} at (11,221) size 55x95 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,221) size 55x95 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,25) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x24
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -211,7 +211,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (1,1) size 48x20
                         text run at (1,1) width 48: "Body 2"
             RenderTableCell {TD} at (237,2) size 78x327 [r=0 c=3 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 55x95 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,11) size 55x95 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,25) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x24
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -232,7 +232,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 48x20
                         text run at (1,1) width 48: "Body 2"
-              RenderTable {TABLE} at (11,116) size 55x95 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,116) size 55x95 [border: (1px none #000000)]
                 RenderTableSection {TFOOT} at (0,71) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x23
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
@@ -253,7 +253,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 54x23 [border: (0.50px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 48x20
                         text run at (1,1) width 48: "Body 2"
-              RenderTable {TABLE} at (11,221) size 55x95 [border: (1px none #808080)]
+              RenderTable {TABLE} at (11,221) size 55x95 [border: (1px none #000000)]
                 RenderTableSection {TBODY} at (0,25) size 55x24
                   RenderTableRow {TR} at (0,0) size 54x24
                     RenderTableCell {TD} at (0,0) size 54x24 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
