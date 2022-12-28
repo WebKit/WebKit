@@ -9,17 +9,17 @@ layer at (0,0) size 800x600
           text run at (425,0) width 321: "No merging should happen, only editable selected"
           text run at (0,18) width 177: "content should be removed."
       RenderBlock {DIV} at (0,52) size 784x56
-        RenderTable {TABLE} at (0,0) size 16x28 [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 16x28 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 14x26
             RenderTableRow {TR} at (0,2) size 14x22
-              RenderTableCell {TD} at (2,2) size 4x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (8,2) size 4x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 4x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (8,2) size 4x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderBR {BR} at (2,2) size 0x18
-        RenderTable {TABLE} at (0,28) size 359x28 [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,28) size 359x28 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 357x26
             RenderTableRow {TR} at (0,2) size 357x22
-              RenderTableCell {TD} at (2,2) size 4x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (8,2) size 347x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 4x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (8,2) size 347x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 343x18
                   text run at (2,2) width 343: "There should be one empty cell to the left of this one."
 caret: position 0 of child 0 {BR} of child 3 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

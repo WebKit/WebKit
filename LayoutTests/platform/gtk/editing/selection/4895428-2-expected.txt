@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
           text run at (0,18) width 765: "down, but to make it easier to drag selections containing editable pieces we delay focus until mouse up. The editable table"
           text run at (0,36) width 439: "cell should be focused and you should see a 'Success' message below."
       RenderBlock {DIV} at (0,70) size 784x28
-        RenderTable {TABLE} at (0,0) size 143x28 [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 143x28 [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 141x26
             RenderTableRow {TR} at (0,2) size 141x22
-              RenderTableCell {TD} at (2,2) size 82x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 82x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 78x17
                   text run at (2,2) width 78: "non-editable"
-              RenderTableCell {TD} at (86,2) size 53x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (86,2) size 53x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 49x17
                   text run at (2,2) width 49: "editable"
       RenderBlock {DIV} at (0,98) size 784x18

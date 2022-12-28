@@ -6,18 +6,17 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 226x17
           text run at (0,0) width 226: "cell split with color (standard mode)"
-      RenderTable {TABLE} at (0,18) size 31x28 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,18) size 31x28 [border: (1px outset #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FF0000]
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (1,1) size 29x26
           RenderTableRow {TR} at (0,2) size 29x22
-            RenderTableCell {TD} at (2,2) size 25x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,2) size 25x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,46) size 784x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,72) size 602x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,82) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,100) size 600x110
@@ -37,3 +36,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,88) size 597x20 [bgcolor=#99CCCC] [r=2 c=0 rs=1 cs=4]
               RenderText {#text} at (1,1) size 8x17
                 text run at (1,1) width 8: "x"
+layer at (8,80) size 602x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,72) size 602x2 [border: (1px inset #000000)]

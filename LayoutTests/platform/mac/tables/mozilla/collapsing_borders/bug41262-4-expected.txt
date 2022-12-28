@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {BLOCKQUOTE} at (40,0) size 704x115
         RenderBlock {CENTER} at (0,0) size 704x115
-          RenderTable {TABLE} at (297,0) size 110x80 [border: (2px none #808080)]
+          RenderTable {TABLE} at (297,0) size 110x80 [border: (2px none #000000)]
             RenderTableSection {TBODY} at (2,2) size 104x75
               RenderTableRow {TR} at (0,0) size 104x25
                 RenderTableCell {TD} at (0,0) size 37x25 [border: (3px groove #0000FF)] [r=0 c=0 rs=1 cs=1]

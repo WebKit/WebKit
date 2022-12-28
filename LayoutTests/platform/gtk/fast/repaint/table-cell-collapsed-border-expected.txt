@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
             text run at (0,18) width 139: "changing only the cell"
         RenderText {#text} at (139,18) size 4x17
           text run at (139,18) width 4: "."
-      RenderTable {TABLE} at (0,52) size 436x405 [border: (5px none #808080)]
+      RenderTable {TABLE} at (0,52) size 436x405 [border: (5px none #000000)]
         RenderTableSection {TBODY} at (0,5) size 436x400
           RenderTableRow {TR} at (0,0) size 436x100
             RenderTableCell {TD} at (0,49) size 110x2 [bgcolor=#C0C0C0] [r=0 c=0 rs=1 cs=1]

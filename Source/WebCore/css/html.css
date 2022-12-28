@@ -2,7 +2,7 @@
  * The default style sheet used to render HTML.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -242,7 +242,6 @@ table {
     display: table;
     border-collapse: separate;
     border-spacing: 2px;
-    border-color: gray;
     text-indent: initial;
     box-sizing: border-box;
 }

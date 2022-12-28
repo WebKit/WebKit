@@ -8,10 +8,10 @@ layer at (8,8) size 769x350
     RenderMultiColumnSet at (0,0) size 769x350
 layer at (8,8) size 377x1179 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
   RenderMultiColumnFlowThread at (0,0) size 377x1179
-    RenderTable {TABLE} at (0,0) size 377x1179 [border: (1px outset #808080)]
+    RenderTable {TABLE} at (0,0) size 377x1179 [border: (1px outset #000000)]
       RenderTableSection {TBODY} at (1,1) size 375x1177
         RenderTableRow {TR} at (0,0) size 375x1177
-          RenderTableCell {TD} at (0,44) size 143x1133 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (0,44) size 143x1133 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 108x36
               text run at (11,11) width 108: "This cell has lots"
               text run at (11,29) width 46: "of text."
@@ -132,7 +132,7 @@ layer at (8,8) size 377x1179 backgroundClip at (0,0) size 1562x1010 clip at (0,0
               text run at (11,1077) width 108: "This cell has lots"
               text run at (11,1095) width 46: "of text."
             RenderBR {BR} at (56,1095) size 1x18
-          RenderTableCell {TD} at (142,0) size 233x170 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (142,0) size 233x170 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 146x148
               RenderText {#text} at (11,11) size 146x148
                 text run at (11,11) width 146: "Other"
@@ -144,10 +144,10 @@ layer at (8,376) size 769x300
     RenderMultiColumnSet at (0,0) size 769x300
 layer at (8,376) size 377x1166 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
   RenderMultiColumnFlowThread at (0,0) size 377x1166
-    RenderTable {TABLE} at (0,0) size 377x1166 [border: (1px outset #808080)]
+    RenderTable {TABLE} at (0,0) size 377x1166 [border: (1px outset #000000)]
       RenderTableSection {TBODY} at (1,1) size 375x1164
         RenderTableRow {TR} at (0,0) size 375x1164
-          RenderTableCell {TD} at (0,0) size 143x1164 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (0,0) size 143x1164 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 108x36
               text run at (11,11) width 108: "This cell has lots"
               text run at (11,29) width 46: "of text."
@@ -268,7 +268,7 @@ layer at (8,376) size 377x1166 backgroundClip at (0,0) size 1562x1010 clip at (0
               text run at (11,1079) width 108: "This cell has lots"
               text run at (11,1097) width 46: "of text."
             RenderBR {BR} at (56,1097) size 1x18
-          RenderTableCell {TD} at (142,478) size 233x207 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (142,478) size 233x207 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 146x184
               RenderText {#text} at (11,10) size 146x185
                 text run at (11,11) width 146: "Other"
@@ -280,10 +280,10 @@ layer at (8,702) size 769x300
     RenderMultiColumnSet at (0,0) size 769x300
 layer at (8,702) size 377x1129 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
   RenderMultiColumnFlowThread at (0,0) size 377x1129
-    RenderTable {TABLE} at (0,0) size 377x1129 [border: (1px outset #808080)]
+    RenderTable {TABLE} at (0,0) size 377x1129 [border: (1px outset #000000)]
       RenderTableSection {TBODY} at (1,1) size 375x1127
         RenderTableRow {TR} at (0,0) size 375x1127
-          RenderTableCell {TD} at (0,0) size 143x1127 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (0,0) size 143x1127 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 108x36
               text run at (11,11) width 108: "This cell has lots"
               text run at (11,29) width 46: "of text."
@@ -404,7 +404,7 @@ layer at (8,702) size 377x1129 backgroundClip at (0,0) size 1562x1010 clip at (0
               text run at (11,1079) width 108: "This cell has lots"
               text run at (11,1097) width 46: "of text."
             RenderBR {BR} at (56,1097) size 1x18
-          RenderTableCell {TD} at (142,957) size 233x170 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (142,957) size 233x170 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 146x148
               RenderText {#text} at (11,11) size 146x148
                 text run at (11,11) width 146: "Other"
