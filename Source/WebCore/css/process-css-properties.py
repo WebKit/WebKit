@@ -612,7 +612,7 @@ class StylePropertyCodeGenProperties:
         return self.related_property or self.logical_property_group
 
 
-class Property:
+class StyleProperty:
     schema = Schema(
         Schema.Entry("animatable", allowed_types=[bool], default_value=False),
         Schema.Entry("codegen-properties", allowed_types=[dict, list]),
@@ -623,7 +623,7 @@ class Property:
     )
 
     def __init__(self, **dictionary):
-        Property.schema.set_attributes_from_dictionary(dictionary, instance=self)
+        StyleProperty.schema.set_attributes_from_dictionary(dictionary, instance=self)
         self.property_name = self.codegen_properties.property_name
         self.synonymous_properties = []
 
@@ -636,7 +636,7 @@ class Property:
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value):
         assert(type(json_value) is dict)
-        Property.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Property")
+        StyleProperty.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Property")
 
         codegen_properties = StylePropertyCodeGenProperties.from_json(parsing_context, f"{key_path}.{name}", name, json_value.get("codegen-properties", {}))
         json_value["codegen-properties"] = codegen_properties
@@ -659,7 +659,7 @@ class Property:
                 codegen_properties.parser_grammar = Grammar.from_values(parsing_context, key_path, name, values)
             json_value["values"] = values
 
-        return Property(**json_value)
+        return StyleProperty(**json_value)
 
     def perform_fixups_for_synonyms(self, all_properties):
         # If 'synonym' was specified, replace the name with references to the Property object, and vice-versa a back-reference on that Property object back to this.
@@ -743,7 +743,7 @@ class Property:
     #       @font-face descriptor 'font-display' would generate a consume method called `consumeFontFaceFontDisplay`
     @property
     def name_for_parsing_methods(self):
-        return self.property_name.id_without_prefix
+        return self.id_without_prefix
 
     @property
     def name_for_methods(self):
@@ -819,7 +819,7 @@ class Property:
 
 
 class StyleProperties:
-    def __init__(self, *properties):
+    def __init__(self, properties):
         self.properties = properties
         self.properties_by_name = {property.name: property for property in properties}
         self.logical_property_groups = {}
@@ -835,19 +835,25 @@ class StyleProperties:
     def __repr__(self):
         return self.__str__()
 
+    @property
+    def id(self):
+        return 'StyleProperty'
+
+    @property
+    def name(self):
+        return 'style'
+
+    @property
+    def noun(self):
+        return 'property'
+
+    @property
+    def supports_current_shorthand(self):
+        return True
+
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
-        return StyleProperties(
-            *list(
-                filter(
-                    lambda value: value is not None,
-                    map(
-                        lambda item: Property.from_json(parsing_context, key_path, item[0], item[1]),
-                        json_value.items()
-                    )
-                )
-            )
-        )
+        return StyleProperties(list(compact_map(lambda item: StyleProperty.from_json(parsing_context, key_path, item[0], item[1]), json_value.items())))
 
     # Updates any references to other properties that were by name (e.g. string) with a direct
     # reference to the property object.
@@ -1039,20 +1045,19 @@ class Descriptor:
         Schema.Entry("values", allowed_types=[list]),
     )
 
-    def __init__(self, kind, descriptor_method_name_modifier, **dictionary):
+    def __init__(self, descriptor_set_name, **dictionary):
         Descriptor.schema.set_attributes_from_dictionary(dictionary, instance=self)
-        self.kind = kind
-        self.descriptor_method_name_modifier = descriptor_method_name_modifier
+        self.descriptor_set_name = descriptor_set_name
         self.descriptor_name = self.codegen_properties.descriptor_name
 
     def __str__(self):
-        return f"{self.name} ({self.kind})"
+        return f"{self.name} ({self.descriptor_set_name})"
 
     def __repr__(self):
         return self.__str__()
 
     @staticmethod
-    def from_json(parsing_context, key_path, name, json_value, kind, descriptor_method_name_modifier):
+    def from_json(parsing_context, key_path, name, json_value, descriptor_set_name):
         assert(type(json_value) is dict)
         Descriptor.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"Descriptor")
 
@@ -1077,7 +1082,7 @@ class Descriptor:
                 codegen_properties.parser_grammar = Grammar.from_values(parsing_context, key_path, name, values)
             json_value["values"] = values
 
-        return Descriptor(kind, descriptor_method_name_modifier, **json_value)
+        return Descriptor(descriptor_set_name, **json_value)
 
     def perform_fixups_for_longhands(self, all_descriptors):
         # If 'longhands' was specified, replace the names with references to the Descriptor objects.
@@ -1091,13 +1096,13 @@ class Descriptor:
     def id_without_prefix(self):
         return self.descriptor_name.id_without_prefix
 
-    # Used for parsing and consume methods. It is prefixed with a 'kind' for descriptors, and left unprefixed for style properties.
+    # Used for parsing and consume methods. It is prefixed with the rule type for descriptors, and left unprefixed for style properties.
     # Examples:
     #       style property 'column-width' would generate a consume method called `consumeColumnWidth`
     #       @font-face descriptor 'font-display' would generate a consume method called `consumeFontFaceFontDisplay`
     @property
     def name_for_parsing_methods(self):
-        return self.descriptor_method_name_modifier + self.descriptor_name.id_without_prefix
+        return Name.convert_name_to_id(self.descriptor_set_name[1:]) + self.descriptor_name.id_without_prefix
 
     @property
     def id_without_prefix_with_lowercase_first_letter(self):
@@ -1120,40 +1125,35 @@ class Descriptor:
         return self.codegen_properties.aliases
 
 
-class Descriptors:
-    def __init__(self, kind, descriptor_method_name_modifier, descriptors):
-        self.kind = kind
-        self.descriptor_method_name_modifierdescriptor_method_name_modifier = descriptor_method_name_modifier
+# Provides access to each descriptor in a grouped set of descriptor (e.g. @font-face, @counter-styles, etc.) There is
+# one of these per rule type, e.g. @font-face, @counter-styles, etc.
+class DescriptorSet:
+    def __init__(self, name, descriptors):
+        self.name = name
         self.descriptors = descriptors
         self.descriptors_by_name = {descriptor.name: descriptor for descriptor in descriptors}
         self._all = None
         self._perform_fixups()
 
-    def __str__(self):
-        return f"{self.kind} descriptors"
-
-    def __repr__(self):
-        return self.__str__()
-
     @staticmethod
-    def from_json(parsing_context, key_path, json_value, Subclass, kind, descriptor_method_name_modifier):
-        return Subclass(kind, descriptor_method_name_modifier,
-            *list(
-                filter(
-                    lambda value: value is not None,
-                    map(
-                        lambda item: Descriptor.from_json(parsing_context, key_path, item[0], item[1], kind, descriptor_method_name_modifier),
-                        json_value.items()
-                    )
-                )
-            )
-        )
+    def from_json(parsing_context, key_path, name, json_value):
+        return DescriptorSet(name, list(compact_map(lambda item: Descriptor.from_json(parsing_context, key_path, item[0], item[1], name), json_value.items())))
 
-    # Updates any references to other properties that were by name (e.g. string) with a direct
-    # reference to the descriptor object.
     def _perform_fixups(self):
-        for descriptor in self.all:
+        for descriptor in self.descriptors:
             descriptor.perform_fixups(self)
+
+    @property
+    def id(self):
+        return f'{Name.convert_name_to_id(self.name[1:])}Descriptor'
+
+    @property
+    def noun(self):
+        return 'descriptor'
+
+    @property
+    def supports_current_shorthand(self):
+        return False
 
     @property
     def all(self):
@@ -1166,49 +1166,37 @@ class Descriptors:
         return self.descriptors_by_name
 
 
-class CounterStyleDescriptors(Descriptors):
-    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
-        super().__init__(kind, descriptor_method_name_modifier, descriptors)
+# Provides access to each of the grouped sets of descriptor (e.g. @font-face, @counter-styles, etc. which are
+# stored as DescriptorSet instances) via either the `descriptor_sets` list or by name as dynamic attributes.
+#
+# e.g. font_face_descriptor_set = descriptors.font_face
+#
+class Descriptors:
+    def __init__(self, descriptor_sets):
+        self.descriptor_sets = descriptor_sets
+        for descriptor_set in descriptor_sets:
+            setattr(self, descriptor_set.name.replace('@', 'at-').replace('-', '_'), descriptor_set)
+
+    def __str__(self):
+        return f"Descriptors"
+
+    def __repr__(self):
+        return self.__str__()
 
     @staticmethod
     def from_json(parsing_context, key_path, json_value):
-        return Descriptors.from_json(parsing_context, key_path, json_value, CounterStyleDescriptors, "@counter-style", "CounterStyle")
+        return Descriptors([DescriptorSet.from_json(parsing_context, key_path, name, descriptors) for (name, descriptors) in json_value.items()])
 
-
-class FontFaceDescriptors(Descriptors):
-    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
-        super().__init__(kind, descriptor_method_name_modifier, descriptors)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        return Descriptors.from_json(parsing_context, key_path, json_value, FontFaceDescriptors, "@font-face", "FontFace")
-
-
-class FontPaletteValuesDescriptors(Descriptors):
-    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
-        super().__init__(kind, descriptor_method_name_modifier, descriptors)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        return Descriptors.from_json(parsing_context, key_path, json_value, FontPaletteValuesDescriptors, "@font-palette-values", "FontPaletteValues")
-
-
-class PropertyDescriptors(Descriptors):
-    def __init__(self, kind, descriptor_method_name_modifier, *descriptors):
-        super().__init__(kind, descriptor_method_name_modifier, descriptors)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        return Descriptors.from_json(parsing_context, key_path, json_value, PropertyDescriptors, "@property", "Property")
+    # Returns a generator for the set of descriptors.
+    @property
+    def all(self):
+        return itertools.chain.from_iterable(descriptor_set.all for descriptor_set in self.descriptor_sets)
 
 
 class PropertiesAndDescriptors:
-    def __init__(self, style, counter_style, font_face, font_palette_values, property):
-        self.style = style
-        self.counter_style = counter_style
-        self.font_face = font_face
-        self.font_palette_values = font_palette_values
-        self.property = property
+    def __init__(self, style_properties, descriptors):
+        self.style_properties = style_properties
+        self.descriptors = descriptors
         self._all_grouped_by_name = None
         self._all_by_name = None
         self._all_unique = None
@@ -1224,10 +1212,7 @@ class PropertiesAndDescriptors:
     def from_json(parsing_context, *, properties_json_value, descriptors_json_value):
         return PropertiesAndDescriptors(
             StyleProperties.from_json(parsing_context, "properties", properties_json_value),
-            CounterStyleDescriptors.from_json(parsing_context, "descriptors.@counter-style", descriptors_json_value["@counter-style"]),
-            FontFaceDescriptors.from_json(parsing_context, "descriptors.@font-face", descriptors_json_value["@font-face"]),
-            FontPaletteValuesDescriptors.from_json(parsing_context, "descriptors.@font-palette-values", descriptors_json_value["@font-palette-values"]),
-            PropertyDescriptors.from_json(parsing_context, "descriptors.@property", descriptors_json_value["@property"])
+            Descriptors.from_json(parsing_context, "descriptors", descriptors_json_value),
         )
 
     def _compute_all_grouped_by_name(self):
@@ -1243,10 +1228,10 @@ class PropertiesAndDescriptors:
         # NOTE: This is computes the ordered set of properties and descriptors that correspond to the CSSPropertyID
         # enumeration and related lookup tables and functions.
 
-        result = list(self.style.all)
-        name_set = set(self.style.all_by_name.keys())
+        result = list(self.style_properties.all)
+        name_set = set(self.style_properties.all_by_name.keys())
 
-        for descriptor in self.all_descriptors:
+        for descriptor in self.descriptors.all:
             if descriptor.name in name_set:
                 continue
             result.append(descriptor)
@@ -1260,12 +1245,12 @@ class PropertiesAndDescriptors:
     # Returns a generator for the set of all properties and descriptors.
     @property
     def all_properties_and_descriptors(self):
-        return itertools.chain(self.style.all, self.counter_style.all, self.font_face.all, self.font_palette_values.all, self.property.all)
+        return itertools.chain(self.style_properties.all, self.descriptors.all)
 
-    # Returns a generator for the set of all properties and descriptors.
+    # Returns a list of all the property or descriptor sets (e.g. 'style', '@counter-style', '@font-face', etc.).
     @property
-    def all_descriptors(self):
-        return itertools.chain(self.counter_style.all, self.font_face.all, self.font_palette_values.all, self.property.all)
+    def all_sets(self):
+        return [self.style_properties] + self.descriptors.descriptor_sets
 
     # Returns the set of properties and descriptors that have unique names, preferring style properties when
     # there is a conflict. This set corresponds one-to-one in membership and order with CSSPropertyID.
@@ -1291,7 +1276,7 @@ class PropertiesAndDescriptors:
         return self._all_by_name
 
     # Returns a generator for the set of properties and descriptors that are conditionally included depending on settings. If two properties
-    # or descriptors have the same, we only return the canonical one and only if all the variants have settings flags.
+    # or descriptors have the same name, we only return the canonical one and only if all the variants have settings flags.
     #
     # For example, there are two "speak-as" entries. One is a style property and the other is @counter-style descriptor. Only the one of the
     # two, the @counter-style descriptor, has settings_flags set, so we don't return anything for that name.
@@ -1311,7 +1296,7 @@ class PropertiesAndDescriptors:
 
     @property
     def all_descriptor_only(self):
-        return (descriptor for descriptor in self.all_descriptors if descriptor.name not in self.style.all_by_name)
+        return (descriptor for descriptor in self.descriptors.all if descriptor.name not in self.style_properties.all_by_name)
 
     # Returns the set of settings-flags used by any property or descriptor. Uniqued and sorted lexically.
     @property
@@ -1811,7 +1796,7 @@ class SharedGrammarRule:
 
 # Shared grammar rules used to aid in defining property specific grammars.
 class SharedGrammarRules:
-    def __init__(self, *rules):
+    def __init__(self, rules):
         self.rules = rules
         self.rules_by_name = {rule.name: rule for rule in rules}
         self._all = None
@@ -1823,6 +1808,10 @@ class SharedGrammarRules:
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def from_json(parsing_context, key_path, json_value):
+        return SharedGrammarRules(list(compact_map(lambda item: SharedGrammarRule.from_json(parsing_context, key_path, item[0], item[1]), json_value.items())))
 
     # Updates any references to other rules with a direct reference to the rule object.
     def _perform_fixups(self):
@@ -1858,17 +1847,7 @@ class ParsingContext:
         self.parsed_properties_and_descriptors = None
 
     def parse_shared_grammar_rules(self):
-        self.parsed_shared_grammar_rules = SharedGrammarRules(
-            *list(
-                filter(
-                    lambda value: value is not None,
-                    map(
-                        lambda item: SharedGrammarRule.from_json(self, "$shared-grammar-rules", item[0], item[1]),
-                        self.json_value["shared-grammar-rules"].items()
-                    )
-                )
-            )
-        )
+        self.parsed_shared_grammar_rules = SharedGrammarRules.from_json(self, "$shared-grammar-rules", self.json_value["shared-grammar-rules"])
 
     def parse_properties_and_descriptors(self):
         self.parsed_properties_and_descriptors = PropertiesAndDescriptors.from_json(self, properties_json_value=self.json_value["properties"], descriptors_json_value=self.json_value["descriptors"])
@@ -2033,7 +2012,7 @@ class GenerateCSSPropertyNames:
 
     @property
     def properties(self):
-        return self.generation_context.properties_and_descriptors.style
+        return self.generation_context.properties_and_descriptors.style_properties
 
     def generate(self):
         self.generate_css_property_names_h()
@@ -2094,8 +2073,8 @@ class GenerateCSSPropertyNames:
             static_assert(numCSSProperties + 1 <= 65535, "CSSPropertyID should fit into uint16_t.");
             """)
 
-        all_computed_property_ids = (f"{property.id}," for property in self.properties_and_descriptors.style.all_computed)
-        to.write(f"const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style.all_computed)}> computedPropertyIDs {{")
+        all_computed_property_ids = (f"{property.id}," for property in self.properties_and_descriptors.style_properties.all_computed)
+        to.write(f"const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style_properties.all_computed)}> computedPropertyIDs {{")
         with to.indent():
             to.write_lines(all_computed_property_ids)
         to.write("};")
@@ -2212,7 +2191,7 @@ class GenerateCSSPropertyNames:
             to.write(f"auto textflow = makeTextFlow(writingMode, direction);")
             to.write(f"switch (id) {{")
 
-            for group_name, property_group in sorted(self.properties_and_descriptors.style.logical_property_groups.items(), key=lambda x: x[0]):
+            for group_name, property_group in sorted(self.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
                 kind = property_group["kind"]
                 kind_as_id = PropertyName.convert_name_to_id(kind)
 
@@ -2313,7 +2292,7 @@ class GenerateCSSPropertyNames:
         with to.indent():
             to.write(f"switch (id1) {{")
 
-            for group_name, property_group in sorted(self.properties_and_descriptors.style.logical_property_groups.items(), key=lambda x: x[0]):
+            for group_name, property_group in sorted(self.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
                 logical = property_group["logical"]
                 physical = property_group["physical"]
                 for first in [logical, physical]:
@@ -2436,7 +2415,7 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
                 signature="CSSPropertyID relatedProperty(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.related_property),
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.related_property),
                 mapping=lambda p: f"return {p.codegen_properties.related_property.id};",
                 default="return CSSPropertyID::CSSPropertyInvalid;"
             )
@@ -2444,7 +2423,7 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
                 signature="Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.aliases),
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.aliases),
                 mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, '_s'))} }};",
                 default="return { };"
             )
@@ -2452,13 +2431,13 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isColorProperty(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.color_property)
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.color_property)
             )
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
                 signature="UChar CSSProperty::listValuedPropertySeparator(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style.all if p.codegen_properties.separator),
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.separator),
                 mapping=lambda p: f"return '{ p.codegen_properties.separator[0] }';",
                 default="break;",
                 epilogue="return '\\0';"
@@ -2467,19 +2446,19 @@ class GenerateCSSPropertyNames:
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style.all if self._property_matches_number_or_integer(p))
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if self._property_matches_number_or_integer(p))
             )
 
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)",
-                iterable=self.properties_and_descriptors.style.all_direction_aware_properties
+                iterable=self.properties_and_descriptors.style_properties.all_direction_aware_properties
             )
 
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
                 signature="bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)",
-                iterable=self.properties_and_descriptors.style.all_in_logical_property_group
+                iterable=self.properties_and_descriptors.style_properties.all_in_logical_property_group
             )
 
             self._generate_are_in_same_logical_property_group_with_different_mappings_logic(
@@ -2593,7 +2572,7 @@ class GenerateCSSPropertyNames:
         to.write(f"constexpr auto lastShorthandProperty = {last_shorthand_property.id};")
         to.write(f"constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;")
 
-        to.write(f"extern const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style.all_computed)}> computedPropertyIDs;")
+        to.write(f"extern const std::array<CSSPropertyID, {count_iterable(self.properties_and_descriptors.style_properties.all_computed)}> computedPropertyIDs;")
         to.newline()
 
     def _generate_css_property_names_h_property_settings(self, *, to):
@@ -2884,7 +2863,7 @@ class GenerateStyleBuilderGenerated:
 
     @property
     def style_properties(self):
-        return self.generation_context.properties_and_descriptors.style
+        return self.generation_context.properties_and_descriptors.style_properties
 
     def generate(self):
         self.generate_style_builder_generated_cpp()
@@ -3219,7 +3198,7 @@ class GenerateStyleBuilderGenerated:
                 return "BuilderFunctions"
 
             for property in self.properties_and_descriptors.all_unique:
-                if not isinstance(property, Property):
+                if not isinstance(property, StyleProperty):
                     to.write(f"case {property.id}:")
                     with to.indent():
                         to.write(f"break;")
@@ -3303,7 +3282,7 @@ class GenerateStylePropertyShorthandFunctions:
 
     @property
     def style_properties(self):
-        return self.generation_context.properties_and_descriptors.style
+        return self.generation_context.properties_and_descriptors.style_properties
 
     def generate(self):
         self.generate_style_property_shorthand_functions_h()
@@ -3472,56 +3451,23 @@ class GenerateCSSPropertyParsing:
         return (self.property_consumers[property] for property in self.properties_and_descriptors.all_properties_and_descriptors)
 
     @property
-    def all_style_property_consumers(self):
-        return (self.property_consumers[property] for property in self.properties_and_descriptors.style.all)
-
-    @property
-    def all_counter_style_descriptor_property_consumers(self):
-        return (self.property_consumers[property] for property in self.properties_and_descriptors.counter_style.all)
-
-    @property
-    def all_font_face_descriptor_property_consumers(self):
-        return (self.property_consumers[property] for property in self.properties_and_descriptors.font_face.all)
-
-    @property
-    def all_font_palette_values_descriptor_property_consumers(self):
-        return (self.property_consumers[property] for property in self.properties_and_descriptors.font_palette_values.all)
-
-    @property
-    def all_property_descriptor_property_consumers(self):
-        return (self.property_consumers[property] for property in self.properties_and_descriptors.property.all)
-
-    @property
     def all_shared_grammar_rule_consumers(self):
         return (self.shared_grammar_rule_consumers[shared_grammar_rule] for shared_grammar_rule in self.shared_grammar_rules.all)
 
     @property
     def all_property_parsing_collections(self):
-        ParsingCollection = collections.namedtuple('ParsingCollection', ['parsing_suffix', 'rule', 'noun', 'supports_current_shorthand', 'property_consumers'])
+        ParsingCollection = collections.namedtuple('ParsingCollection', ['id', 'name', 'noun', 'supports_current_shorthand', 'consumers'])
 
-        return [
-            ParsingCollection('StyleProperty', 'style', 'style', True, list(self.all_style_property_consumers)),
-            ParsingCollection('CounterStyleDescriptor', '@counter-style', 'descriptor', False, list(self.all_counter_style_descriptor_property_consumers)),
-            ParsingCollection('FontFaceDescriptor', '@font-face', 'descriptor', False, list(self.all_font_face_descriptor_property_consumers)),
-            ParsingCollection('FontPaletteValuesDescriptor', '@font-palette-values', 'descriptor', False, list(self.all_font_palette_values_descriptor_property_consumers)),
-            ParsingCollection('PropertyDescriptor', '@property', 'descriptor', False, list(self.all_property_descriptor_property_consumers)),
-        ]
-
-    @property
-    def all_property_consumers_grouped_by_kind(self):
-        return [
-            ("style property", list(self.all_style_property_consumers)),
-            ("@counter-style", list(self.all_counter_style_descriptor_property_consumers)),
-            ("@font-face", list(self.all_font_face_descriptor_property_consumers)),
-            ("@font-palette-values", list(self.all_font_palette_values_descriptor_property_consumers)),
-            ("@property", list(self.all_property_descriptor_property_consumers)),
-        ]
+        result = []
+        for set in self.properties_and_descriptors.all_sets:
+            result += [ParsingCollection(set.id, set.name, set.noun, set.supports_current_shorthand, list(self.property_consumers[property] for property in set.all))]
+        return result
 
     @property
     def all_consumers_grouped_by_kind(self):
-        return self.all_property_consumers_grouped_by_kind + [
-            ("shared", list(self.all_shared_grammar_rule_consumers))
-        ]
+        ConsumerCollection = collections.namedtuple('ConsumerCollection', ['description', 'consumers'])
+
+        return [ConsumerCollection(f'{parsing_collection.name} {parsing_collection.noun}', parsing_collection.consumers) for parsing_collection in self.all_property_parsing_collections] + [ConsumerCollection(f'shared', list(self.all_shared_grammar_rule_consumers))]
 
     def generate_css_property_parsing_h(self):
         with open('CSSPropertyParsing.h', 'w') as output_file:
@@ -3600,7 +3546,7 @@ class GenerateCSSPropertyParsing:
                         parsing_collection=parsing_collection
                     )
 
-                    keyword_fast_path_eligible_property_consumers = [property_consumer for property_consumer in parsing_collection.property_consumers if property_consumer.keyword_fast_path_generator]
+                    keyword_fast_path_eligible_property_consumers = [consumer for consumer in parsing_collection.consumers if consumer.keyword_fast_path_generator]
 
                     self._generate_css_property_parsing_cpp_is_keyword_valid_for_property(
                         to=writer,
@@ -3621,14 +3567,14 @@ class GenerateCSSPropertyParsing:
 
         with to.indent():
             for parsing_collection in self.all_property_parsing_collections:
-                to.write(f"// Parse and return a single longhand {parsing_collection.rule} {parsing_collection.noun}.")
+                to.write(f"// Parse and return a single longhand {parsing_collection.name} {parsing_collection.noun}.")
                 if parsing_collection.supports_current_shorthand:
-                    to.write(f"static RefPtr<CSSValue> parse{parsing_collection.parsing_suffix}(CSSParserTokenRange&, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext&);")
+                    to.write(f"static RefPtr<CSSValue> parse{parsing_collection.id}(CSSParserTokenRange&, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext&);")
                 else:
-                    to.write(f"static RefPtr<CSSValue> parse{parsing_collection.parsing_suffix}(CSSParserTokenRange&, CSSPropertyID id, const CSSParserContext&);")
+                    to.write(f"static RefPtr<CSSValue> parse{parsing_collection.id}(CSSParserTokenRange&, CSSPropertyID id, const CSSParserContext&);")
                 to.write(f"// Fast path bare-keyword support.")
-                to.write(f"static bool isKeywordValidFor{parsing_collection.parsing_suffix}(CSSPropertyID, CSSValueID, const CSSParserContext&);")
-                to.write(f"static bool isKeywordFastPathEligible{parsing_collection.parsing_suffix}(CSSPropertyID);")
+                to.write(f"static bool isKeywordValidFor{parsing_collection.id}(CSSPropertyID, CSSValueID, const CSSParserContext&);")
+                to.write(f"static bool isKeywordFastPathEligible{parsing_collection.id}(CSSPropertyID);")
                 to.newline()
 
             to.write(f"// Direct consumers.")
@@ -3647,7 +3593,7 @@ class GenerateCSSPropertyParsing:
 
     def _generate_css_property_parsing_cpp_is_keyword_valid_for_property(self, *, to, parsing_collection, keyword_fast_path_eligible_property_consumers):
         if not keyword_fast_path_eligible_property_consumers:
-            to.write(f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.parsing_suffix}(CSSPropertyID, CSSValueID, const CSSParserContext&)")
+            to.write(f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.id}(CSSPropertyID, CSSValueID, const CSSParserContext&)")
             to.write(f"{{")
             with to.indent():
                 to.write(f"return false;")
@@ -3659,7 +3605,7 @@ class GenerateCSSPropertyParsing:
 
         self.generation_context.generate_property_id_switch_function(
             to=to,
-            signature=f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.parsing_suffix}(CSSPropertyID id, CSSValueID keyword, const CSSParserContext&{' context' if requires_context else ''})",
+            signature=f"bool CSSPropertyParsing::isKeywordValidFor{parsing_collection.id}(CSSPropertyID id, CSSValueID keyword, const CSSParserContext&{' context' if requires_context else ''})",
             iterable=keyword_fast_path_eligible_property_consumers,
             mapping=lambda property_consumer: f"return {property_consumer.keyword_fast_path_generator.generate_call_string(keyword_string='keyword', context_string='context')};",
             default="return false;",
@@ -3668,7 +3614,7 @@ class GenerateCSSPropertyParsing:
 
     def _generate_css_property_parsing_cpp_is_keyword_fast_path_eligible_for_property(self, *, to, parsing_collection, keyword_fast_path_eligible_property_consumers):
         if not keyword_fast_path_eligible_property_consumers:
-            to.write(f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.parsing_suffix}(CSSPropertyID)")
+            to.write(f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.id}(CSSPropertyID)")
             to.write(f"{{")
             with to.indent():
                 to.write(f"return false;")
@@ -3678,7 +3624,7 @@ class GenerateCSSPropertyParsing:
 
         self.generation_context.generate_property_id_switch_function_bool(
             to=to,
-            signature=f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.parsing_suffix}(CSSPropertyID id)",
+            signature=f"bool CSSPropertyParsing::isKeywordFastPathEligible{parsing_collection.id}(CSSPropertyID id)",
             iterable=keyword_fast_path_eligible_property_consumers,
             mapping_to_property=lambda property_consumer: property_consumer.property
         )
@@ -3707,10 +3653,10 @@ class GenerateCSSPropertyParsing:
 
     def _generate_css_property_parsing_cpp_parse_property(self, *, to, parsing_collection):
         if parsing_collection.supports_current_shorthand:
-            to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.parsing_suffix}(CSSParserTokenRange& range, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext& context)")
+            to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.id}(CSSParserTokenRange& range, CSSPropertyID id, CSSPropertyID currentShorthand, const CSSParserContext& context)")
             current_shorthand_string = "currentShorthand"
         else:
-            to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.parsing_suffix}(CSSParserTokenRange& range, CSSPropertyID id, const CSSParserContext& context)")
+            to.write(f"RefPtr<CSSValue> CSSPropertyParsing::parse{parsing_collection.id}(CSSParserTokenRange& range, CSSPropertyID id, const CSSParserContext& context)")
             current_shorthand_string = None
 
         to.write(f"{{")
@@ -3728,8 +3674,8 @@ class GenerateCSSPropertyParsing:
             PropertyReturnExpression = collections.namedtuple('PropertyReturnExpression', ['property', 'return_expression'])
             property_and_return_expressions = []
 
-            for property_consumer in parsing_collection.property_consumers:
-                return_expression = property_consumer.generate_call_string(
+            for consumer in parsing_collection.consumers:
+                return_expression = consumer.generate_call_string(
                     range_string="range",
                     id_string="id",
                     current_shorthand_string=current_shorthand_string,
@@ -3739,7 +3685,7 @@ class GenerateCSSPropertyParsing:
                     continue
 
                 property_and_return_expressions.append(
-                    PropertyReturnExpression(property_consumer.property, return_expression))
+                    PropertyReturnExpression(consumer.property, return_expression))
 
             # Take the list of pairs of (value, return-expression-to-use-for-value), and
             # group them by their 'return-expression' to avoid unnecessary duplication of
@@ -5330,11 +5276,8 @@ def main():
 
     if args.verbose:
         print(f"{len(parsing_context.parsed_shared_grammar_rules.rules)} shared grammar rules active for code generation")
-        print(f"{len(parsing_context.parsed_properties_and_descriptors.style.all)} style properties active for code generation")
-        print(f"{len(parsing_context.parsed_properties_and_descriptors.counter_style.all)} @counter-style descriptors active for code generation")
-        print(f"{len(parsing_context.parsed_properties_and_descriptors.font_face.all)} @font-face descriptors active for code generation")
-        print(f"{len(parsing_context.parsed_properties_and_descriptors.font_palette_values.all)} @font-palette-values descriptors active for code generation")
-        print(f"{len(parsing_context.parsed_properties_and_descriptors.property.all)} @property descriptors active for code generation")
+        for set in parsing_context.parsed_properties_and_descriptors.all_sets:
+            print(f"{len(set.all)} {set.name} {set.noun} active for code generation")
         print(f"{len(parsing_context.parsed_properties_and_descriptors.all_unique)} uniquely named properties and descriptors active for code generation")
 
     generation_context = GenerationContext(parsing_context.parsed_properties_and_descriptors, parsing_context.parsed_shared_grammar_rules, verbose=args.verbose, gperf_executable=args.gperf_executable)
