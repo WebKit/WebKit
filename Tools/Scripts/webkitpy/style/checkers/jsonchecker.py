@@ -171,9 +171,10 @@ class JSONCSSPropertiesChecker(JSONChecker):
 
     def check_shared_grammar_rule(self, rule_name, rule_value):
         keys_and_validators = {
+            'aliased-to': self.validate_string,
             'comment': self.validate_comment,
             'exported': self.validate_boolean,
-            'grammar': self.validate_grammar,
+            'grammar': self.validate_string,
             'specification': self.validate_specification,
             'status': self.validate_status,
         }
@@ -280,34 +281,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
         else:
             self.check_codegen_properties(property_name, value)
 
-    def validate_grammar(self, property_name, property_key, key, value):
-        self.validate_grammar_term(property_name, property_key, key, value)
-
-    def validate_grammar_term(self, property_name, property_key, key, value):
-        if isinstance(value, dict):
-            keys_and_validators = {
-                'aliased-to': self.validate_string,
-                'comment': self.validate_comment,
-                'enable-if': self.validate_string,
-                'kind': self.validate_string,
-                'settings-flag': self.validate_string,
-                'single-value-optimization': self.validate_boolean,
-                'status': self.validate_status,
-                'value': self.validate_grammar_term,
-            }
-
-            for key, value in value.items():
-                if key not in keys_and_validators:
-                    self._handle_style_error(0, 'json/syntax', 5, 'dictionary for "parser-grammar" of property "%s" has unexpected key "%s".' % (property_name, key))
-                    return
-
-                keys_and_validators[key](property_name, "", key, value)
-        elif isinstance(value, list):
-            for entry in value:
-                self.validate_grammar_term(property_name, "", "", entry)
-        else:
-            self.validate_string(property_name, property_key, key, value)
-
     def validate_logical_property_group(self, property_name, property_key, key, value):
         self.validate_type(property_name, property_key, key, value, dict)
 
@@ -413,7 +386,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'longhands': self.validate_array,
             'name-for-methods': self.validate_string,
             'parser-exported': self.validate_boolean,
-            'parser-grammar': self.validate_grammar,
+            'parser-grammar': self.validate_string,
             'parser-grammar-comment': self.validate_comment,
             'parser-function': self.validate_string,
             'parser-requires-additional-parameters': self.validate_array,

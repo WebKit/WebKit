@@ -300,14 +300,7 @@ class Value:
         self.keyword_term = self._build_keyword_term()
 
     def _build_keyword_term(self):
-        dictionary = {"kind": "keyword", "value": self.value_keyword_name}
-        if self.comment:
-            dictionary["comment"] = self.comment
-        if self.settings_flag:
-            dictionary["settings-flag"] = self.settings_flag
-        if self.status:
-            dictionary["status"] = self.status
-        return KeywordTerm(**dictionary)
+        return KeywordTerm(self.value_keyword_name, comment=self.comment, settings_flag=self.settings_flag, status=self.status)
 
     def __str__(self):
         return f"Value {vars(self)}"
@@ -474,7 +467,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("name-for-methods", allowed_types=[str]),
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-exported", allowed_types=[bool]),
-        Schema.Entry("parser-grammar", allowed_types=[list, dict, str]),
+        Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
         Schema.Entry("parser-requires-additional-parameters", allowed_types=[list], default_value=[]),
         Schema.Entry("parser-requires-context", allowed_types=[bool], default_value=False),
@@ -582,7 +575,7 @@ class StylePropertyCodeGenProperties:
                 raise Exception(f"{key_path} can't have both a related property and be high priority.")
 
         if json_value.get("parser-grammar"):
-            grammar = Grammar.from_json(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
+            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar"] = grammar
 
@@ -977,7 +970,7 @@ class DescriptorCodeGenProperties:
         Schema.Entry("longhands", allowed_types=[list]),
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-exported", allowed_types=[bool]),
-        Schema.Entry("parser-grammar", allowed_types=[list, dict, str]),
+        Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
         Schema.Entry("parser-requires-additional-parameters", allowed_types=[list], default_value=[]),
         Schema.Entry("parser-requires-context", allowed_types=[bool], default_value=False),
@@ -1026,7 +1019,7 @@ class DescriptorCodeGenProperties:
             for entry_name in ["parser-function", "parser-requires-additional-parameters", "parser-requires-context", "parser-requires-context-mode", "parser-requires-current-shorthand", "parser-requires-current-property", "parser-requires-quirks-mode", "parser-requires-value-pool", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}.")
-            grammar = Grammar.from_json(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
+            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar"] = grammar
 
@@ -1331,13 +1324,6 @@ class PropertiesAndDescriptors:
 # MARK: - Property Parsing
 
 class Term:
-    schema = Schema(
-        Schema.Entry("comment", allowed_types=[str]),
-        Schema.Entry("enable-if", allowed_types=[str]),
-        Schema.Entry("kind", allowed_types=[str], required=True),
-        Schema.Entry("status", allowed_types=[str]),
-    )
-
     @staticmethod
     def wrap_with_multiplier(multiplier, term):
         if multiplier.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
@@ -1353,7 +1339,7 @@ class Term:
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN:
             raise Exception("Unsupported multiplier '{A,B}'")
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE:
-            return RepetitionTerm.wrapping_term(term)
+            return CommaSeparatedRepetitionTerm.wrapping_term(term)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
             raise Exception("Unsupported multiplier '#{A}'")
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST:
@@ -1368,7 +1354,7 @@ class Term:
                 if len(node.members) == 1:
                     term = Term.from_node(node.members[0])
                 else:
-                    raise Exception("Unsupported grouping. 'orderer' (e.g. [<length> <length>])")
+                    raise Exception("Unsupported grouping. 'ordered' (e.g. [<length> <length>])")
             elif node.kind == BNFGroupingNode.Kind.MATCH_ONE:
                 term = MatchOneTerm.from_node(node)
             elif node.kind == BNFGroupingNode.Kind.MATCH_ALL_ANY_ORDER:
@@ -1390,47 +1376,6 @@ class Term:
             term = Term.wrap_with_multiplier(node.multiplier, term)
 
         return term
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        if type(json_value) is str:
-            if RepetitionTerm.is_repetition_term(json_value):
-                return RepetitionTerm.from_json(parsing_context, key_path, {"kind": "repetition", "value": json_value})
-            elif ReferenceTerm.is_reference_term(json_value):
-                return ReferenceTerm.from_json(parsing_context, key_path, {"kind": "reference", "value": json_value})
-            else:
-                return KeywordTerm.from_json(parsing_context, key_path, {"kind": "keyword", "value": json_value})
-
-        if type(json_value) is list:
-            return MatchOneTerm.from_json(parsing_context, key_path, {"kind": "match-one", "value": json_value})
-
-        assert(type(json_value) is dict)
-        if "value" not in json_value:
-            raise Exception(f"Invalid Term found at {key_path}. All terms must have a 'value' specified.")
-
-        if "kind" not in json_value:
-            # If "kind" is not explicitly defined, check to see if one of the shorthands is being used.
-            if type(json_value["value"]) is str:
-                if RepetitionTerm.is_repetition_term(json_value["value"]):
-                    return RepetitionTerm.from_json(parsing_context, key_path, {"kind": "repetition", **json_value})
-                elif ReferenceTerm.is_reference_term(json_value["value"]):
-                    return ReferenceTerm.from_json(parsing_context, key_path, {"kind": "reference", **json_value})
-                else:
-                    return KeywordTerm.from_json(parsing_context, key_path, {"kind": "keyword", **json_value})
-
-            raise Exception(f"Unknown Term found at {key_path}. The kind of term could not be determined from the value. Please add an explicit 'kind' property.")
-
-        kind = json_value["kind"]
-        if kind == "match-one":
-            return MatchOneTerm.from_json(parsing_context, key_path, json_value)
-        elif kind == "reference":
-            return ReferenceTerm.from_json(parsing_context, key_path, json_value)
-        elif kind == "keyword":
-            return KeywordTerm.from_json(parsing_context, key_path, json_value)
-        elif kind == "repetition":
-            return RepetitionTerm.from_json(parsing_context, key_path, json_value)
-        else:
-            raise Exception(f"Invalid Term found at {key_path}. Unknown 'kind' specified: '{kind}'.")
 
 
 class BuiltinSchema:
@@ -1528,19 +1473,11 @@ class BuiltinSchema:
 # Reference terms look like keyword terms, but are surrounded by '<' and '>' characters (i.e. "<number>").
 # They can either reference a rule from the grammer-rules set, in which case they will be replaced by
 # the real term during fixup, or a builtin rule, in which case they will inform the generator to call
-# out to a handwritten consumer.
-#
-#   { "kind": "reference", "value": "<length unitless-allowed>" }
-#
-# or using shorthand
+# out to a handwritten consumer. Example:
 #
 #   "<length unitless-allowed>"
 #
 class ReferenceTerm:
-    schema = Term.schema + Schema(
-        Schema.Entry("value", allowed_types=[str], required=True),
-    )
-
     builtins = BuiltinSchema(
         BuiltinSchema.Entry("angle", "consumeAngle",
             BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
@@ -1576,64 +1513,43 @@ class ReferenceTerm:
         BuiltinSchema.Entry("declaration-value", "consumeDeclarationValue")
     )
 
-    def __init__(self, **dictionary):
-        ReferenceTerm.schema.set_attributes_from_dictionary(dictionary, instance=self)
-
-        # Removes the '<' and '>' characters and splits on whitespace to get the parts.
-        parts = self.value[1:-1].split()
-
+    def __init__(self, name, is_internal, parameters):
         # Store the first (and perhaps only) part as the reference's name (e.g. for <length-percentage [0,inf] unitless-allowed> store 'length-percentage').
-        self.name = Name(parts[0])
+        self.name = Name(name)
 
-        # Store any remaining pars as the parameters (e.g. for <length-percentage [0,inf] unitless-allowed> store ['[0,inf]', 'unitless-allowed']).
-        self.parameters = parts[1:]
+        # Store whether this is an 'internal' reference (e.g. as indicated by the double angle brackets <<values>>).
+        self.is_internal = is_internal
+
+        # Store any remaining parts as the parameters (e.g. for <length-percentage [0,inf] unitless-allowed> store ['[0,inf]', 'unitless-allowed']).
+        self.parameters = parameters
 
         # Check name and parameters against the builtins schemas to verify if they are well formed.
         self.builtin = ReferenceTerm.builtins.validate_and_construct_if_builtin(self.name, self.parameters)
 
     def __str__(self):
-        return f"'{self.value}'"
+        base = ' '.join([self.name.name] + self.parameters)
+        if self.is_internal:
+            return f"<<{base}>>"
+        return f"<{base}>"
 
     def __repr__(self):
         return self.__str__()
 
     @staticmethod
-    def is_reference_term(string):
-        string = string.strip()
-        return string.startswith('<') and string.endswith('>')
-
-    @staticmethod
     def from_node(node):
         assert(type(node) is BNFReferenceNode)
-
-        # FIXME: Don't stringify and reparse. Refactor __init__ to allow passing in the structued attributes.
-        dictionary = {
-            "value": node.stringified_without_multipliers
-        }
-
-        return ReferenceTerm(**dictionary)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        assert(type(json_value) is dict)
-        ReferenceTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"ReferenceTerm")
-
-        if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
-            if parsing_context.verbose:
-                print(f"SKIPPED grammar term {json_value['value']} in {key_path} due to failing to satisfy 'enable-if' condition, '{json_value['enable-if']}', with active macro set")
-            return None
-
-        return ReferenceTerm(**json_value)
+        return ReferenceTerm(node.name, node.is_internal, [str(attribute) for attribute in node.attributes])
 
     def perform_fixups(self, all_rules):
         # Replace a reference with the term it references if it can be found.
-        if self.value in all_rules.rules_by_name:
-            return all_rules.rules_by_name[self.value].grammar.root_term
+        value = str(self)
+        if value in all_rules.rules_by_name:
+            return all_rules.rules_by_name[value].grammar.root_term
         return self
 
     def perform_fixups_for_values_references(self, values):
-        # NOTE: The actual name in the JSON is "<<values>>", but the out layer is stripped on construction.
-        if self.name.name == "<values>":
+        # NOTE: The actual name in the grammar is "<<values>>", which we store as is_internal + 'values'.
+        if self.is_internal and self.name.name == "values":
             # FIXME: This should really return a "MatchOneTerm" if len(values) > 1 and not a list.
             return [value.keyword_term for value in values]
         return self
@@ -1644,22 +1560,17 @@ class ReferenceTerm:
 
 
 # KeywordTerm represents a direct keyword match. The syntax in the CSS specifications
-# is a bare string.
-#
-#   { "kind": "keyword", "value": "auto" }
-#
-# or using shorthand
+# is a bare string. Example:
 #
 #   "auto"
+#
 class KeywordTerm:
-    schema = Term.schema + Schema(
-        Schema.Entry("aliased-to", allowed_types=[str], convert_to=ValueKeywordName),
-        Schema.Entry("settings-flag", allowed_types=[str]),
-        Schema.Entry("value", allowed_types=[str], required=True, convert_to=ValueKeywordName),
-    )
-
-    def __init__(self, **dictionary):
-        KeywordTerm.schema.set_attributes_from_dictionary(dictionary, instance=self)
+    def __init__(self, value, *, aliased_to=None, comment=None, settings_flag=None, status=None):
+        self.value = value
+        self.aliased_to = aliased_to
+        self.comment = comment
+        self.settings_flag = settings_flag
+        self.status = status
 
     def __str__(self):
         return f"'{self.value}'"
@@ -1670,24 +1581,7 @@ class KeywordTerm:
     @staticmethod
     def from_node(node):
         assert(type(node) is BNFKeywordNode)
-
-        dictionary = {
-            "value": ValueKeywordName(node.keyword)
-        }
-
-        return KeywordTerm(**dictionary)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        assert(type(json_value) is dict)
-        KeywordTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"KeywordTerm")
-
-        if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
-            if parsing_context.verbose:
-                print(f"SKIPPED grammar term {json_value['value']} in {key_path} due to failing to satisfy 'enable-if' condition, '{json_value['enable-if']}', with active macro set")
-            return None
-
-        return KeywordTerm(**json_value)
+        return KeywordTerm(ValueKeywordName(node.keyword))
 
     def perform_fixups(self, all_rules):
         return self
@@ -1711,28 +1605,13 @@ class KeywordTerm:
 
 
 # MatchOneTerm represents a set of terms, only one of which can match. The
-# syntax in the CSS specifications is a '|' between terms.
+# syntax in the CSS specifications is a '|' between terms. Example:
 #
-#   {
-#       "kind": "match-one",
-#       "value": [
-#           "auto"
-#           "reverse",
-#           "<angle unitless-allowed unitless-zero-allowed>"
-#       ]
-#   }
-#
-# or using shorthand
-#
-#   ["auto", "reverse", "<angle unitless-allowed unitless-zero-allowed>"]
+#   "auto" | "reverse" | "<angle unitless-allowed unitless-zero-allowed>"
 #
 class MatchOneTerm:
-    schema = Term.schema + Schema(
-        Schema.Entry("value", allowed_types=[list], required=True),
-    )
-
-    def __init__(self, **dictionary):
-        MatchOneTerm.schema.set_attributes_from_dictionary(dictionary, instance=self)
+    def __init__(self, terms):
+        self.terms = terms
 
     def __str__(self):
         return f"[{' | '.join(map(lambda t: str(t), self.terms))}]"
@@ -1740,46 +1619,16 @@ class MatchOneTerm:
     def __repr__(self):
         return self.__str__()
 
-    @property
-    def terms(self):
-        return self.value
-
-    @terms.setter
-    def terms(self, value):
-        self.value = value
-
     @staticmethod
     def from_node(node):
         assert(type(node) is BNFGroupingNode)
         assert(node.kind is BNFGroupingNode.Kind.MATCH_ONE)
 
-        dictionary = {
-            "value": list(compact_map(lambda member: Term.from_node(member), node.members))
-        }
-
-        return MatchOneTerm(**dictionary)
+        return MatchOneTerm(list(compact_map(lambda member: Term.from_node(member), node.members)))
 
     @staticmethod
     def from_values(parsing_context, key_path, values):
-        dictionary = {
-            "value": list(compact_map(lambda value: value.keyword_term, values))
-        }
-
-        return MatchOneTerm(**dictionary)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        assert(type(json_value) is dict)
-        MatchOneTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"MatchOneTerm")
-
-        if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
-            if parsing_context.verbose:
-                print(f"SKIPPED grammar term {json_value['value']} in {key_path} due to failing to satisfy 'enable-if' condition, '{json_value['enable-if']}', with active macro set")
-            return None
-
-        json_value["value"] = list(compact_map(lambda value: Term.from_json(parsing_context, f"{key_path}", value), json_value["value"]))
-
-        return MatchOneTerm(**json_value)
+        return MatchOneTerm(list(compact_map(lambda value: value.keyword_term, values)))
 
     def perform_fixups(self, all_rules):
         updated_terms = []
@@ -1829,15 +1678,16 @@ class MatchOneTerm:
         return all(isinstance(term, KeywordTerm) and term.is_eligible_for_fast_path for term in self.terms)
 
 
-class RepetitionTerm:
-    schema = Term.schema + Schema(
-        Schema.Entry("single-value-optimization", allowed_types=[bool], default_value=True),
-        Schema.Entry("value", allowed_types=[list, dict, str], required=True),
-    )
-
-    def __init__(self, repeated_term, **dictionary):
-        RepetitionTerm.schema.set_attributes_from_dictionary(dictionary, instance=self)
+# CommaSeparatedRepetitionTerm represents matching a list of terms
+# separated by commas. The syntax in the CSS specifications is a
+# trailing '#'. Example:
+#
+#   "<length>#"
+#
+class CommaSeparatedRepetitionTerm:
+    def __init__(self, repeated_term, single_value_optimization=True):
         self.repeated_term = repeated_term
+        self.single_value_optimization = single_value_optimization
 
     def __str__(self):
         return f"[{str(self.repeated_term)}#]"
@@ -1846,37 +1696,8 @@ class RepetitionTerm:
         return self.__str__()
 
     @staticmethod
-    def is_repetition_term(string):
-        return string.strip().endswith('#')
-
-    @staticmethod
-    def extract_subterm(string):
-        assert(RepetitionTerm.is_repetition_term(string))
-        return string.strip()[:-1]
-
-    @staticmethod
     def wrapping_term(term):
-        return RepetitionTerm(term)
-
-    @staticmethod
-    def from_json(parsing_context, key_path, json_value):
-        assert(type(json_value) is dict)
-        RepetitionTerm.schema.validate_dictionary(parsing_context, key_path, json_value, label=f"RepetitionTerm")
-
-        if "enable-if" in json_value and not parsing_context.is_enabled(conditional=json_value["enable-if"]):
-            if parsing_context.verbose:
-                print(f"SKIPPED grammar term {json_value['value']} in {key_path} due to failing to satisfy 'enable-if' condition, '{json_value['enable-if']}', with active macro set")
-            return None
-
-        if type(json_value["value"]) is str:
-            if not RepetitionTerm.is_repetition_term(json_value["value"]):
-                raise Exception(f"Invalid string value '{json_value['value']}' for repetition term at '{key_path}.")
-            repeated_term = Term.from_json(parsing_context, key_path, RepetitionTerm.extract_subterm(json_value["value"]))
-        else:
-            repeated_term = json_value["value"]
-        del json_value["value"]
-
-        return RepetitionTerm(repeated_term, **json_value)
+        return CommaSeparatedRepetitionTerm(term)
 
     def perform_fixups(self, all_rules):
         self.repeated_term = self.repeated_term.perform_fixups(all_rules)
@@ -1905,10 +1726,9 @@ class Grammar:
         return Grammar(name, MatchOneTerm.from_values(parsing_context, key_path, values))
 
     @staticmethod
-    def from_json(parsing_context, key_path, name, json_value):
-        if type(json_value) is str:
-            return Grammar(name, Term.from_node(BNFParser(json_value).parse()))
-        return Grammar(name, Term.from_json(parsing_context, key_path, json_value))
+    def from_string(parsing_context, key_path, name, string):
+        assert(type(string) is str)
+        return Grammar(name, Term.from_node(BNFParser(parsing_context, key_path, string).parse()))
 
     def perform_fixups(self, all_rules):
         self.root_term = self.root_term.perform_fixups(all_rules)
@@ -1950,9 +1770,10 @@ class Grammar:
 # A shared grammar rule and metadata describing it. Part of the set of rules tracked by SharedGrammarRules.
 class SharedGrammarRule:
     schema = Schema(
+        Schema.Entry("aliased-to", allowed_types=[str], convert_to=ValueKeywordName),
         Schema.Entry("comment", allowed_types=[str]),
         Schema.Entry("exported", allowed_types=[bool], default_value=False),
-        Schema.Entry("grammar", allowed_types=[list, dict, str], required=True),
+        Schema.Entry("grammar", allowed_types=[str], required=True),
         Schema.Entry("specification", allowed_types=[dict], convert_to=Specification),
         Schema.Entry("status", allowed_types=[dict, str], convert_to=Status),
     )
@@ -1973,7 +1794,14 @@ class SharedGrammarRule:
         assert(type(json_value) is dict)
         SharedGrammarRule.schema.validate_dictionary(parsing_context, f"{key_path}.{name}", json_value, label=f"SharedGrammarRule")
 
-        json_value["grammar"] = Grammar.from_json(parsing_context, f"{key_path}.{name}", name, json_value["grammar"])
+        grammar = Grammar.from_string(parsing_context, f"{key_path}.{name}", name, json_value["grammar"])
+
+        if "aliased-to" in json_value:
+            if not isinstance(grammar.root_term, KeywordTerm):
+                raise Exception(f"Invalid use of 'aliased-to' found at '{key_path}'. 'aliased-to' can only be used with grammars that consist of a single keyword term.")
+            grammar.root_term.aliased_to = json_value["aliased-to"]
+
+        json_value["grammar"] = grammar
 
         return SharedGrammarRule(name, **json_value)
 
@@ -2560,7 +2388,7 @@ class GenerateCSSPropertyNames:
             for inner_term in term.terms:
                 if self._term_matches_number_or_integer(inner_term):
                     return True
-        elif isinstance(term, RepetitionTerm):
+        elif isinstance(term, CommaSeparatedRepetitionTerm):
             return self._term_matches_number_or_integer(term.repeated_term)
         return False
 
@@ -4001,15 +3829,15 @@ class TermGenerator(object):
     def make(term, keyword_fast_path_generator=None):
         if isinstance(term, MatchOneTerm):
             return TermGeneratorMatchOneTerm(term, keyword_fast_path_generator)
-        elif isinstance(term, RepetitionTerm):
-            return TermGeneratorRepetitionTerm(term)
+        elif isinstance(term, CommaSeparatedRepetitionTerm):
+            return TermGeneratorCommaSeparatedRepetitionTerm(term)
         elif isinstance(term, ReferenceTerm):
             return TermGeneratorReferenceTerm(term)
         else:
             raise Exception(f"Unknown term type - {type(term)} - {term}")
 
 
-class TermGeneratorRepetitionTerm(TermGenerator):
+class TermGeneratorCommaSeparatedRepetitionTerm(TermGenerator):
     def __init__(self, term):
         self.term = term
         self.repeated_term_generator = TermGenerator.make(term.repeated_term, None)
@@ -4067,10 +3895,10 @@ class TermGeneratorMatchOneTerm(TermGenerator):
                     non_fast_path_keyword_terms.append(sub_term)
             elif isinstance(sub_term, ReferenceTerm):
                 reference_terms.append(sub_term)
-            elif isinstance(sub_term, RepetitionTerm):
+            elif isinstance(sub_term, CommaSeparatedRepetitionTerm):
                 repetition_terms.append(sub_term)
             else:
-                raise Exception(f"Only KeywordTerm, ReferenceTerm and RepetitionTerm terms are supported inside MatchOneTerm at this time: '{term}' - {sub_term}")
+                raise Exception(f"Only KeywordTerm, ReferenceTerm and CommaSeparatedRepetitionTerm terms are supported inside MatchOneTerm at this time: '{term}' - {sub_term}")
 
         # Build a list of generators for the terms, starting with all (if any) the keywords at once.
         term_generators = []
@@ -4082,7 +3910,7 @@ class TermGeneratorMatchOneTerm(TermGenerator):
         if reference_terms:
             term_generators += [TermGeneratorReferenceTerm(sub_term) for sub_term in reference_terms]
         if repetition_terms:
-            term_generators += [TermGeneratorRepetitionTerm(sub_term) for sub_term in repetition_terms]
+            term_generators += [TermGeneratorCommaSeparatedRepetitionTerm(sub_term) for sub_term in repetition_terms]
         return term_generators
 
     def generate_conditional(self, *, to, range_string, context_string):
@@ -5097,7 +4925,9 @@ class BNFParser:
     DEBUG_PRINT_STATE = 0
     DEBUG_PRINT_TOKENS = 0
 
-    def __init__(self, data):
+    def __init__(self, parsing_context, key_path, data):
+        self.parsing_context = parsing_context
+        self.key_path = key_path
         self.data = data
         self.root = BNFGroupingNode(is_initial=True)
         self.state_stack = []
