@@ -287,31 +287,26 @@ AppleMailPaginationQuirkEnabled:
     WebCore:
       default: false
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ApplePayCapabilityDisclosureAllowed:
   type: bool
   condition: ENABLE(APPLE_PAY)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
       default: true
     WebCore:
-      default: true
+      default: false
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ApplePayEnabled:
   type: bool
   condition: ENABLE(APPLE_PAY)
   defaultValue:
     WebKitLegacy:
-      "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
     WebKit:
-      "ENABLE(APPLE_PAY_REMOTE_UI)": true
-      default: false
+      default: true
     WebCore:
-      "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
 
 AsynchronousSpellCheckingEnabled:
