@@ -347,6 +347,11 @@ GENERATE_API_HEADERS(WebKitWebExtension_HEADER_TEMPLATES
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
+if (NOT USE_GTK4)
+    list(REMOVE_ITEM WebKitGTK_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h)
+    list(REMOVE_ITEM WebKitWebExtension_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h)
+endif ()
+
 if (USE_GTK4)
     set(WebKitGTK_ENUM_HEADER_TEMPLATE ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitEnumTypesGtk4.h.in)
 else ()
@@ -457,35 +462,6 @@ target_include_directories(webkit${WEBKITGTK_API_INFIX}gtkinjectedbundle SYSTEM 
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(webkit${WEBKITGTK_API_INFIX}gtkinjectedbundle -Wno-unused-parameter)
-endif ()
-
-# For GTK 3 builds, we have to maintain webkit2/webkit2.h and webkit2/webkit-web-extension.h for API
-# compatibility. These are the only headers still installed under webkit2/. Install them manually.
-if (NOT USE_GTK4)
-    file(MAKE_DIRECTORY ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2)
-    add_custom_command(
-        OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
-        DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h
-        COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
-        VERBATIM
-    )
-
-    add_custom_command(
-        OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
-        DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h
-        COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
-        VERBATIM
-    )
-
-    list(APPEND WebKit_SOURCES ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h)
-
-    list(REMOVE_ITEM WebKitGTK_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h)
-    list(REMOVE_ITEM WebKitWebExtension_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h)
-
-    install(FILES ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
-                  ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
-            DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit2"
-    )
 endif ()
 
 install(TARGETS webkit${WEBKITGTK_API_INFIX}gtkinjectedbundle

@@ -4,6 +4,8 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
 add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
 
+file(MAKE_DIRECTORY ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2)
+
 list(APPEND WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
@@ -135,6 +137,8 @@ set(WebKitDOM_SOURCES_FOR_INTROSPECTION
 )
 
 list(APPEND WebKitGTK_FAKE_API_HEADERS
+    ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
+    ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkitdom
 )
 
@@ -145,6 +149,27 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 
 install(FILES ${WebKitDOM_INSTALLED_HEADERS}
     DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
+)
+
+# For GTK 3 builds, we have to maintain webkit2/webkit2.h and webkit2/webkit-web-extension.h for API
+# compatibility. These are the only headers still installed under webkit2/. Install them manually.
+install(FILES ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
+              ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
+    DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit2"
+)
+
+add_custom_command(
+    OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
+    DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h
+    COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
+    VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
+    DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h
+    COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
+    VERBATIM
 )
 
 add_custom_command(
