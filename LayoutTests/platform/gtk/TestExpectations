@@ -150,8 +150,6 @@ webkit.org/b/238208 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-a
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-repeat-2.html [ ImageOnlyFailure ]
-
 # Download
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
@@ -338,8 +336,6 @@ webkit.org/b/98942 fast/workers/worker-storagequota-query-usage.html [ Failure ]
 webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
 # CSS filters related failures
-webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
-webkit.org/b/99026 css3/filters/effect-brightness-hw.html [ Failure ]
 webkit.org/b/99026 css3/filters/effect-brightness-clamping-hw.html [ Failure Missing ]
 webkit.org/b/99026 css3/filters/effect-brightness-clamping.html [ Failure Missing ]
 webkit.org/b/99026 css3/filters/effect-drop-shadow-hw.html [ Failure ]
@@ -361,7 +357,6 @@ webkit.org/b/169918 compositing/fixed-image-loading.html [ Failure ]
 webkit.org/b/169918 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/ancestor-overflow-change.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/fixed-position-flipped-writing-mode.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/preserve-3d-switching.html [ Failure ]
 webkit.org/b/169918 compositing/iframes/become-overlapped-iframe.html [ Failure ]
@@ -417,10 +412,6 @@ webkit.org/b/169918 compositing/hidpi-compositing-vs-non-compositing-check-on-te
 webkit.org/b/169918 compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/tiling/rotated-tiled-clamped.html [ Missing Failure ]
@@ -866,7 +857,6 @@ webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
 
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round.xht [ ImageOnlyFailure ]
-webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
@@ -877,7 +867,6 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.h
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
-webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 
 webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-003.html [ Failure ]
 webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-004.html [ Failure ]
@@ -900,14 +889,7 @@ webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageO
 webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/simple-lines-text-transform.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-content/quotes-009.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-content/quotes-024.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001a.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001b.html [ ImageOnlyFailure ]
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-005.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ ImageOnlyFailure ]
-webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
 
 # Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
 webkit.org/b/241601 svg/wicd/rightsizing-grid.xhtml [ Failure ]
@@ -1064,7 +1046,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 
-
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
 
 webkit.org/b/206409 imported/w3c/web-platform-tests/css/css-overflow/overflow-padding.html [ Failure ]
@@ -1120,7 +1101,6 @@ webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFail
 
 webkit.org/b/224106 fast/forms/textfield-onchange-without-focus.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/242370 gamepad/gamepad-event-handlers.html [ Failure ]
 webkit.org/b/224108 gamepad/gamepad-visibility-1.html [ Failure Pass ]
 
 webkit.org/b/224117 intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html [ Failure Pass ]
@@ -1250,7 +1230,6 @@ webkit.org/b/144690 editing/spelling/spelling-exactly-selected-word.html [ Timeo
 webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout ]
 
-
 webkit.org/b/163779 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
 
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
@@ -1291,7 +1270,6 @@ webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
 
 # Test is flaky timing out. Also skipped in Mac and iOS.
 editing/selection/select-bidi-run.html [ Skip ]
-
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1436,7 +1414,6 @@ webkit.org/b/100238 fast/history/window-open.html [ Failure ]
 
 # These failures appear to be bugs in the EventSender
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
-webkit.org/b/53964 fast/forms/option-mouseevents.html [ Failure ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
 
@@ -1606,8 +1583,6 @@ imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Slow 
 webkit.org/b/151267 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
 webkit.org/b/153602 fast/text/emoji.html [ Failure ]
 
-webkit.org/b/153698 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-dashed-000.xht [ ImageOnlyFailure ]
-
 webkit.org/b/94952 platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html [ Failure ]
 
 webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
@@ -1662,20 +1637,14 @@ webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.htm
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
-webkit.org/b/200037 fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html [ Missing Failure ]
-webkit.org/b/200037 fast/forms/auto-fill-button/input-strong-password-viewable.html [ Missing Failure ]
 
 webkit.org/b/182103 fast/forms/textarea-scrolled-type.html [ Failure ]
 webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
 webkit.org/b/182103 editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
 
-webkit.org/b/182223 fast/forms/listbox-selection.html [ Failure ]
-
 webkit.org/b/182763 accessibility/gtk/aria-activedescendant-changed-notification.html [ Failure ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
-
-webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
 
 webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
 webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ Failure ]
@@ -1723,9 +1692,6 @@ webkit.org/b/190000 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
 
 webkit.org/b/190704 compositing/debug-borders-dynamic.html [ ImageOnlyFailure ]
 
-webkit.org/b/190705 editing/selection/selection-across-shadow-boundaries-mixed-editability-5.html [ ImageOnlyFailure ]
-webkit.org/b/190705 editing/selection/selection-across-shadow-boundaries-user-select-all-1.html [ ImageOnlyFailure ]
-
 webkit.org/b/190706 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 
 webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
@@ -1759,9 +1725,6 @@ webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant.html [
 webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant2.html [ Failure ]
 webkit.org/b/191885 fast/inline/simple-intruding-floats3.html [ Failure ]
 
-webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.html [ Failure ]
-webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker.html [ Failure ]
-
 webkit.org/b/192432 compositing/backing/backing-store-attachment-scroll.html [ Failure ]
 webkit.org/b/192432 compositing/tiling/tile-coverage-on-scroll.html [ Failure Crash ]
 webkit.org/b/192433 compositing/iframes/remove-reinsert-webview-with-iframe.html [ Failure ]
@@ -1791,8 +1754,6 @@ webkit.org/b/197248 fast/events/autoscroll-with-software-keyboard.html [ Failure
 
 webkit.org/b/197708 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 
-webkit.org/b/197709 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Failure ]
-
 webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
 
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
@@ -1800,7 +1761,6 @@ webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
 
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
-webkit.org/b/201264 mathml/presentation/foreign-element-in-token.html [ Failure ]
 
 webkit.org/b/202227 compositing/backing/layer-outside-tiled-parent.html [ Failure ]
 webkit.org/b/202228 compositing/layer-creation/fixed-position-descendants-out-of-view.html [ Failure ]
@@ -1852,7 +1812,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-ord
 # WebGL on GTK renders pixels with opacity slightly differently
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1886,9 +1845,7 @@ webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-002
 # These failures occur on GTK only (moved from LayoutTests/TestExpectations)
 webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-join-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/svg-empty-container-with-filter-content-added.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
-[ Release ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
 
 # Push subscription tests fail without platform-specific PushCrypto implementations.
