@@ -56,6 +56,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool is
     m_nonSpanningInlineLevelBoxCount = 0;
     m_hasNonDefaultBidiLevelRun = false;
     m_contentLogicalWidth = { };
+    m_inlineBoxLogicalLeftStack.clear();
     m_runs.clear();
     resetTrailingContent();
     auto appendLineSpanningInlineBoxes = [&] {
@@ -381,12 +382,18 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, logicalLeft + logicalWidth);
 
     auto marginStart = inlineBoxGeometry.marginStart();
-    if (marginStart >= 0) {
-        m_runs.append({ inlineItem, style, logicalLeft, logicalWidth - borderAndPaddingEndForDecorationClone });
-        return;
+    if (marginStart < 0) {
+        // Negative margin-start pulls the content to the logical left direction.
+        logicalLeft += marginStart;
+        logicalWidth -= marginStart;
     }
-    // Negative margin-start pulls the content to the logical left direction.
-    m_runs.append({ inlineItem, style, logicalLeft + marginStart, logicalWidth - marginStart - borderAndPaddingEndForDecorationClone });
+    logicalWidth -= borderAndPaddingEndForDecorationClone;
+
+    auto mayPullNonInlineBoxContentToLogicalLeft = style.letterSpacing() < 0;
+    if (mayPullNonInlineBoxContentToLogicalLeft)
+        m_inlineBoxLogicalLeftStack.append(logicalLeft);
+
+    m_runs.append({ inlineItem, style, logicalLeft, logicalWidth });
 }
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -404,6 +411,12 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& s
     removeTrailingLetterSpacing();
     m_contentLogicalWidth -= removeBorderAndPaddingEndForInlineBoxDecorationClone(inlineItem);
     auto logicalLeft = lastRunLogicalRight();
+    auto mayPullNonInlineBoxContentToLogicalLeft = style.letterSpacing() < 0;
+    if (mayPullNonInlineBoxContentToLogicalLeft) {
+        // Do not let negative spacing pull content to the left of the inline box logical left.
+        // e.g. <span style="border-left: solid red; letter-spacing: -200px;">content</span>This should not be to the left of the red border)
+        logicalLeft = std::max(logicalLeft, m_inlineBoxLogicalLeftStack.isEmpty() ? 0.f : m_inlineBoxLogicalLeftStack.takeLast());
+    }
     m_runs.append({ inlineItem, style, logicalLeft, logicalWidth });
     // Do not let negative margin make the content shorter than it already is.
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, logicalLeft + logicalWidth);
