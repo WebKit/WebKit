@@ -136,6 +136,14 @@ void CSSParserSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selecto
     m_selector->setSelectorList(WTFMove(selectorList));
 }
 
+CSSParserSelector* CSSParserSelector::leftmostSimpleSelector()
+{
+    auto selector = this;
+    while (auto next = selector->tagHistory())
+        selector = next;
+    return selector;
+}
+
 static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
