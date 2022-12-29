@@ -1,20 +1,26 @@
 
-FAIL Non-font-dependent variables can be used in font-size assert_equals: expected "42px" but got "16px"
-FAIL Lengths with em units may not be referenced from font-size assert_equals: expected "" but got "32px"
-FAIL Lengths with ex units may not be referenced from font-size assert_equals: expected "" but got "14.359375px"
-FAIL Lengths with ch units may not be referenced from font-size assert_equals: expected "" but got "16px"
-FAIL Lengths with rem units may be referenced from font-size on non-root element assert_equals: expected "32px" but got "16px"
-FAIL Lengths with rem units may not be referenced from font-size on root element assert_equals: expected "" but got "32px"
+PASS Non-font-dependent variables can be used in font-size
+PASS Lengths with em units may not be referenced from font-size
+PASS Lengths with ex units may not be referenced from font-size
+PASS Lengths with ch units may not be referenced from font-size
+PASS Lengths with lh units may not be referenced from font-size
+PASS Lengths with rem units may be referenced from font-size on non-root element
+FAIL Lengths with rem units may not be referenced from font-size on root element assert_equals: expected "16px" but got "32px"
+PASS Lengths with lh units may not be referenced from line-height
 PASS Fallback may not use font-relative units
+PASS Fallback may not use line-height-relative units
 PASS Fallback not triggered while inside em unit cycle
 PASS Fallback not triggered while inside ex unit cycle
 PASS Fallback not triggered while inside ch unit cycle
-PASS Fallback not triggered while inside rem unit cycle on root element
-FAIL Lengths with em units are detected via var references assert_equals: expected "" but got "160px"
-FAIL Lengths with ex units are detected via var references assert_equals: expected "" but got "71.796875px"
-FAIL Lengths with ch units are detected via var references assert_equals: expected "" but got "80px"
-FAIL Lengths with rem units are detected via var references assert_equals: expected "" but got "160px"
-FAIL Inherited lengths with em units may be used assert_equals: expected "64px" but got "16px"
-FAIL Inherited lengths with ex units may be used assert_equals: expected "28.71875px" but got "16px"
-FAIL Inherited lengths with ch units may be used assert_equals: expected "32px" but got "16px"
+FAIL Fallback not triggered while inside rem unit cycle on root element assert_equals: expected "16px" but got "32px"
+PASS Fallback not triggered while inside lh unit cycle
+PASS Lengths with em units are detected via var references
+PASS Lengths with ex units are detected via var references
+PASS Lengths with ch units are detected via var references
+FAIL Lengths with rem units are detected via var references assert_equals: expected "16px" but got "160px"
+PASS Lengths with lh units are detected via var references
+PASS Inherited lengths with em units may be used
+PASS Inherited lengths with ex units may be used
+PASS Inherited lengths with ch units may be used
+PASS Inherited lengths with lh units may be used
 

@@ -60,8 +60,8 @@ private:
     void applyRollbackCascadeProperty(const PropertyCascade::Property&, SelectorChecker::LinkMatchMask);
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask);
 
-    Ref<CSSValue> resolveValue(CSSPropertyID, CSSValue&);
-    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&);
+    Ref<CSSValue> resolveVariableReferences(CSSPropertyID, CSSValue&);
+    RefPtr<CSSCustomPropertyValue> resolveCustomPropertyValueWithVariableReferences(CSSCustomPropertyValue&);
 
     const PropertyCascade* ensureRollbackCascadeForRevert();
     const PropertyCascade* ensureRollbackCascadeForRevertLayer();

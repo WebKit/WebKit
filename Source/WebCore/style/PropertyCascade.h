@@ -62,7 +62,7 @@ public:
     const Property* lastDeferredPropertyResolvingRelated(CSSPropertyID, TextDirection, WritingMode) const;
 
     bool hasCustomProperty(const AtomString&) const;
-    Property customProperty(const AtomString&) const;
+    const Property& customProperty(const AtomString&) const;
 
     Span<const CSSPropertyID> deferredPropertyIDs() const;
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
@@ -158,9 +158,10 @@ inline bool PropertyCascade::hasCustomProperty(const AtomString& name) const
     return m_customProperties.contains(name);
 }
 
-inline PropertyCascade::Property PropertyCascade::customProperty(const AtomString& name) const
+inline const PropertyCascade::Property& PropertyCascade::customProperty(const AtomString& name) const
 {
-    return m_customProperties.get(name);
+    ASSERT(hasCustomProperty(name));
+    return m_customProperties.find(name)->value;
 }
 
 }

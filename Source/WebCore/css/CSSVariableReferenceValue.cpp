@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-static bool resolveTokenRange(CSSParserTokenRange, Vector<CSSParserToken>&, Style::BuilderState&);
-
 CSSVariableReferenceValue::CSSVariableReferenceValue(Ref<CSSVariableData>&& data, const CSSParserContext& context)
     : CSSValue(VariableReferenceClass)
     , m_data(WTFMove(data))
@@ -71,16 +69,16 @@ String CSSVariableReferenceValue::customCSSText() const
     return m_stringValue;
 }
 
-static bool resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserToken>& result, Style::BuilderState& builderState)
+bool CSSVariableReferenceValue::resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, Style::BuilderState& builderState)
 {
     if (range.atEnd())
         return false;
     ASSERT(range.peek().type() == CommaToken);
     range.consumeIncludingWhitespace();
-    return resolveTokenRange(range, result, builderState);
+    return resolveTokenRange(range, tokens, builderState);
 }
 
-static bool resolveVariableReference(CSSParserTokenRange range, CSSValueID functionId, Vector<CSSParserToken>& result, Style::BuilderState& builderState)
+bool CSSVariableReferenceValue::resolveVariableReference(CSSParserTokenRange range, CSSValueID functionId, Vector<CSSParserToken>& tokens, Style::BuilderState& builderState)
 {
     ASSERT(functionId == CSSValueVar || functionId == CSSValueEnv);
 
@@ -95,50 +93,56 @@ static bool resolveVariableReference(CSSParserTokenRange range, CSSValueID funct
     builderState.builder().applyCustomProperty(variableName);
 
     // Apply fallback to detect cycles
-    Vector<CSSParserToken> fallbackResult;
-    bool fallbackReturn = resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, builderState);
+    Vector<CSSParserToken> fallbackTokens;
+    bool fallbackSuccess = resolveVariableFallback(CSSParserTokenRange(range), fallbackTokens, builderState);
 
-    auto* property = functionId == CSSValueVar
-        ? style.getCustomProperty(variableName)
-        : builderState.document().constantProperties().values().get(variableName);
+    auto* property = [&]() -> const CSSCustomPropertyValue* {
+        if (functionId == CSSValueEnv)
+            return builderState.document().constantProperties().values().get(variableName);
 
-    if (!property || property->isUnset()) {
+        auto* customProperty = style.getCustomProperty(variableName);
+        if (customProperty)
+            return customProperty;
+
         auto* registered = builderState.document().customPropertyRegistry().get(variableName);
-        if (registered && registered->initialValue())
-            property = registered->initialValue();
-    }
+        return registered && registered->initialValue() ? registered->initialValue() : nullptr;
+    }();
 
     if (!property || property->isInvalid()) {
-        if (fallbackResult.size() > CSSVariableReferenceValue::maxSubstitutionTokens)
+        if (fallbackTokens.size() > maxSubstitutionTokens)
             return false;
 
-        if (fallbackReturn)
-            result.appendVector(fallbackResult);
-        return fallbackReturn;
+        if (fallbackSuccess) {
+            tokens.appendVector(fallbackTokens);
+            return true;
+        }
+        return false;
     }
 
     ASSERT(property->isResolved());
-    if (property->tokens().size() > CSSVariableReferenceValue::maxSubstitutionTokens)
+    if (property->tokens().size() > maxSubstitutionTokens)
         return false;
 
-    result.appendVector(property->tokens());
+    tokens.appendVector(property->tokens());
     return true;
 }
 
-static bool resolveTokenRange(CSSParserTokenRange range, Vector<CSSParserToken>& result, Style::BuilderState& builderState)
+bool CSSVariableReferenceValue::resolveTokenRange(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, Style::BuilderState& builderState)
 {
     bool success = true;
     while (!range.atEnd()) {
         auto functionId = range.peek().functionId();
-        if (functionId == CSSValueVar || functionId == CSSValueEnv)
-            success &= resolveVariableReference(range.consumeBlock(), functionId, result, builderState);
-        else
-            result.append(range.consume());
+        if (functionId == CSSValueVar || functionId == CSSValueEnv) {
+            if (!resolveVariableReference(range.consumeBlock(), functionId, tokens, builderState))
+                success = false;
+            continue;
+        }
+        tokens.append(range.consume());
     }
     return success;
 }
 
-RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(Style::BuilderState& builderState) const
+RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(Style::BuilderState& builderState) const 
 {
     Vector<CSSParserToken> resolvedTokens;
     if (!resolveTokenRange(m_data->tokenRange(), resolvedTokens, builderState))

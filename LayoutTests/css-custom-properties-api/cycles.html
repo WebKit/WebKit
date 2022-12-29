@@ -92,11 +92,11 @@ test(function() {
   test_prop('parent1', '--b', '');
 }, "JS Attributes are valid for element 1");
 test(function() {
-  test_prop('child2', 'width', '160px');
-  test_prop('child2', '--a', '160px');
+  test_prop('child2', 'width', '200px');
+  test_prop('child2', '--a', '200px');
   test_prop('child2', '--b', '');
   test_prop('child2', 'font-size', '16px');
-  test_prop('parent2', '--a', '160px');
+  test_prop('parent2', '--a', '200px');
   test_prop('parent2', '--b', '');
   test_prop('parent2', 'font-size', '16px');
 }, "JS Attributes are valid for element 2");
@@ -110,8 +110,8 @@ test(function() {
   test_prop('parent3', 'font-size', '10px');
 }, "JS Attributes are valid for element 3");
 test(function() {
-  test_prop('child4', 'width', '100px');
-  test_prop('child4', '--a', '100px');
+  test_prop('child4', 'width', '200px');
+  test_prop('child4', '--a', '200px');
   test_prop('child4', '--b', '10em');
   test_prop('child4', 'font-size', '10px');
   test_prop('parent4', '--a', '200px');

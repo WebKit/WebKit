@@ -61,6 +61,10 @@ public:
 private:
     explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&, const CSSParserContext&);
 
+    static bool resolveTokenRange(CSSParserTokenRange, Vector<CSSParserToken>&, Style::BuilderState&);
+    static bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::BuilderState&);
+    static bool resolveVariableFallback(CSSParserTokenRange, Vector<CSSParserToken>&, Style::BuilderState&);
+
     Ref<CSSVariableData> m_data;
     mutable String m_stringValue;
     const CSSParserContext m_context;
