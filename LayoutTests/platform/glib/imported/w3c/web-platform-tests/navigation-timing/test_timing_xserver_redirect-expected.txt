@@ -8,7 +8,7 @@ PASS window.performance.navigation is defined
 PASS timing.navigation.type is TYPE_NAVIGATE
 FAIL navigation.redirectCount == 0 on a cross-origin server redirected navigation assert_equals: navigation.redirectCount == 0 on a cross-origin server redirected navigation expected 0 but got 1
 PASS window.performance.timing.navigationStart > 0
-FAIL timing.redirectStart == 0 on a server redirected navigation from another domain assert_equals: timing.redirectStart == 0 on a server redirected navigation from another domain expected 0 but got 1663677240978
-FAIL timing.redirectEnd == 0 on a server redirected navigation from another domain assert_equals: timing.redirectEnd == 0 on a server redirected navigation from another domain expected 0 but got 1663677240983
+FAIL timing.redirectStart == 0 on a server redirected navigation from another domain assert_equals: timing.redirectStart == 0 on a server redirected navigation from another domain expected 0 but got 1672285657213
+FAIL timing.redirectEnd == 0 on a server redirected navigation from another domain assert_equals: timing.redirectEnd == 0 on a server redirected navigation from another domain expected 0 but got 1672285657253
 
 

@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 89x577
-        text run at (0,0) width 558: "In this test, you should see three blocks that are aligned to the bottom within a black box."
-        text run at (18,0) width 535: "They should be stacked horizontally with the green box in between two olive boxes. "
-        text run at (18,535) width 25: "The"
-        text run at (36,0) width 322: "olive boxes and the green box should be 100x100. "
-        text run at (36,322) width 218: "The black box's left side should be"
-        text run at (54,0) width 577: "aligned with the last line in this paragraph and its top side should begin right after the end of"
-        text run at (72,0) width 84: "this sentence."
+      RenderText {#text} at (1,0) size 89x577
+        text run at (1,0) width 558: "In this test, you should see three blocks that are aligned to the bottom within a black box."
+        text run at (19,0) width 535: "They should be stacked horizontally with the green box in between two olive boxes. "
+        text run at (19,535) width 25: "The"
+        text run at (37,0) width 322: "olive boxes and the green box should be 100x100. "
+        text run at (37,322) width 218: "The black box's left side should be"
+        text run at (55,0) width 577: "aligned with the last line in this paragraph and its top side should begin right after the end of"
+        text run at (73,0) width 84: "this sentence."
       RenderText {#text} at (0,0) size 0x0
 layer at (80,92) size 340x240
   RenderBlock (positioned) {SPAN} at (80,92) size 340x240 [border: (20px solid #000000)]

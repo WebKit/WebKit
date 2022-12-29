@@ -88,30 +88,21 @@ layer at (326,62) size 102x55 clip at (327,63) size 100x53 scrollHeight 161
         RenderText {#text} at (52,144) size 35x17
           text run at (52,144) width 35: "More"
       RenderText {#text} at (0,0) size 0x0
-layer at (432,80) size 102x37 clip at (433,81) size 100x35 scrollHeight 125
-  RenderDeprecatedFlexibleBox {DIV} at (424,72) size 102x37 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x35
-      RenderText {#text} at (0,0) size 100x125
+layer at (432,84) size 102x38 clip at (433,85) size 100x36
+  RenderDeprecatedFlexibleBox {DIV} at (424,76) size 102x38 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x36
+      RenderText {#text} at (0,0) size 100x35
         text run at (0,0) width 100: "30% truncation."
         text run at (0,18) width 86: "No link at the"
-        text run at (0,36) width 31: "end. "
-        text run at (31,36) width 61: "This is an"
-        text run at (0,54) width 70: "example of"
-        text run at (0,72) width 48: "ellipsis-"
-        text run at (0,90) width 80: "truncation of"
-        text run at (0,108) width 91: "multi-line text."
-layer at (538,62) size 102x55 clip at (539,63) size 100x53 scrollHeight 107
-  RenderDeprecatedFlexibleBox {DIV} at (530,54) size 102x55 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x53
-      RenderText {#text} at (0,0) size 97x107
+layer at (538,66) size 102x56 clip at (539,67) size 100x54
+  RenderDeprecatedFlexibleBox {DIV} at (530,58) size 102x56 [border: (1px solid #808080)]
+    RenderBlock (anonymous) at (1,1) size 100x54
+      RenderText {#text} at (0,0) size 97x53
         text run at (0,0) width 49: "3 lines. "
         text run at (49,0) width 48: "No link"
         text run at (0,18) width 69: "at the end. "
         text run at (69,18) width 28: "This"
         text run at (0,36) width 86: "is an example"
-        text run at (0,54) width 65: "of ellipsis-"
-        text run at (0,72) width 80: "truncation of"
-        text run at (0,90) width 91: "multi-line text."
 layer at (644,48) size 102x74 clip at (645,49) size 100x72
   RenderDeprecatedFlexibleBox {DIV} at (636,40) size 102x74 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x72

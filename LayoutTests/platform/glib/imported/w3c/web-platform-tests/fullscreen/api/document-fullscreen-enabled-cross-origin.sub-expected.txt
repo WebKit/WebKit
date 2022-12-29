@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for iframe with origin 'http://www1.web-platform.test:8800' and allow attribute ''.
-
-PASS Fullscreen enabled test: same-origin-default
-PASS Fullscreen enabled test: same-origin-allow
-PASS Fullscreen enabled test: cross-origin-default
-PASS Fullscreen enabled test: cross-origin-allow
-
