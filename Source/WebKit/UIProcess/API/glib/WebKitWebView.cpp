@@ -156,7 +156,7 @@ enum {
 
     INSECURE_CONTENT_DETECTED,
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     WEB_PROCESS_CRASHED,
 #endif
     WEB_PROCESS_TERMINATED,
@@ -4576,7 +4576,7 @@ cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAs
 
 void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason)
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     if (reason == WEBKIT_WEB_PROCESS_CRASHED) {
         gboolean returnValue;
         g_signal_emit(webView, signals[WEB_PROCESS_CRASHED], 0, &returnValue);
