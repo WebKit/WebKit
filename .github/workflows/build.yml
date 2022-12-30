@@ -56,8 +56,8 @@ jobs:
           CXX: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
           CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
-          CMAKE_C_FLAGS: "-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
-          CMAKE_CXX_FLAGS: "-I${{matrix.brew_prefix}}/llvm/include -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
+          CMAKE_C_FLAGS: "-fuse-ld=lld -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
+          CMAKE_CXX_FLAGS: "-fuse-ld=lld -I${{matrix.brew_prefix}}/llvm/include -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_OSX_DEPLOYMENT_TARGET: "11.0"
           PACKAGE_JSON_ARCH: ${{matrix.package_json_arch}}
           PACKAGE_JSON_LABEL: ${{matrix.label}}
