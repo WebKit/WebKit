@@ -47,14 +47,13 @@ jobs:
         run: |
           echo "${{matrix.brew_prefix}}/llvm@15/bin" >> $GITHUB_PATH
           brew install llvm@15 python icu4c ninja
-          brew link llvm@15 --overwrite
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
-          # CC: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
-          # CXX: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
-          # CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
-          # CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
+          CC: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
+          CXX: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
+          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang"
+          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@15/bin/clang++"
           CMAKE_C_FLAGS: "-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_CXX_FLAGS: "-fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_OSX_DEPLOYMENT_TARGET: "11.0"
