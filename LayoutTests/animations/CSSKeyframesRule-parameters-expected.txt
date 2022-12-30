@@ -4,7 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS keyframes.__proto__ is CSSKeyframesRule.prototype
-PASS keyframes.insertRule() threw exception TypeError: Not enough arguments.
 PASS keyframes.appendRule() threw exception TypeError: Not enough arguments.
 PASS keyframes.deleteRule() threw exception TypeError: Not enough arguments.
 PASS keyframes.findRule() threw exception TypeError: Not enough arguments.

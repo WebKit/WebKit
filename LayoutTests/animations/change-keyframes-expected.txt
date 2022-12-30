@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead.
-CONSOLE MESSAGE: CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead.
 This test performs an animation of the left property and makes sure it is animating. Then it stops the animation, changes the keyframes to an animation of the top property, restarts the animation and makes sure top is animating.
 PASS - "left" property for "box" element at 0.5s saw something close to: 200
 PASS - "top" property for "box" element at 1s saw something close to: 100

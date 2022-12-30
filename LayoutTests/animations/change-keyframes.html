@@ -53,9 +53,9 @@
         keyframes.deleteRule("40%");
         keyframes.deleteRule("60%");
         keyframes.deleteRule("100%");
-        keyframes.insertRule("0% { top: 50px; }");
+        keyframes.appendRule("0% { top: 50px; }");
         keyframes.appendRule("10% { top: 100px; }");
-        keyframes.insertRule("90% { top: 100px; }");
+        keyframes.appendRule("90% { top: 100px; }");
         keyframes.appendRule("100% { top: 150px; }");
         document.getElementById('box').style.webkitAnimationName = "anim";
     }

@@ -134,15 +134,6 @@ void CSSKeyframesRule::appendRule(const String& ruleText)
     m_childRuleCSSOMWrappers.grow(length());
 }
 
-void CSSKeyframesRule::insertRule(const String& ruleText)
-{
-    if (CSSStyleSheet* parent = parentStyleSheet()) {
-        if (Document* ownerDocument = parent->ownerDocument())
-            ownerDocument->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead."_s);
-    }
-    appendRule(ruleText);
-}
-
 void CSSKeyframesRule::deleteRule(const String& s)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
