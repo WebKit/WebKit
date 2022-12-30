@@ -9,7 +9,7 @@ set -euxo pipefail
 THIS_DIR=$(pwd)
 
 # Set default values for environment variables that are not set.
-CMAKE_C_COMPILER=${CMAKE_C_COMPILER:-clang}
+CMAKE_C_COMPILER=${CMAKE_C_COMPILER:-clang-15}
 CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER:-clang++}
 CMAKE_C_FLAGS=${CMAKE_C_FLAGS:-}
 CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS:-}
