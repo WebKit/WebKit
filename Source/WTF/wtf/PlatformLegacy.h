@@ -52,7 +52,7 @@
 #define WTF_PLATFORM_WPE 1
 #elif defined(BUILDING_JSCONLY__)
 /* JSCOnly does not provide PLATFORM() macro */
-#elif OS(MAC_OS_X)
+#elif OS(MACOS)
 #define WTF_PLATFORM_MAC 1
 #elif OS(IOS_FAMILY)
 #if OS(IOS)

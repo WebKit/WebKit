@@ -12,7 +12,7 @@ set(jsc_PRIVATE_INCLUDE_DIRECTORIES
     $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
 )
 
-if (WTF_OS_MAC_OS_X)
+if (WTF_OS_MACOS)
     list(APPEND jsc_LIBRARIES edit)
 endif ()
 

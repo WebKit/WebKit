@@ -238,7 +238,7 @@ void SpinButtonElement::step(int amount)
     // On Mac OS, NSStepper updates the value for the button under the mouse
     // cursor regardless of the button pressed at the beginning. So the
     // following check is not needed for Mac OS.
-#if !OS(MAC_OS_X)
+#if !OS(MACOS)
     if (m_upDownState != m_pressStartingState)
         return;
 #endif
