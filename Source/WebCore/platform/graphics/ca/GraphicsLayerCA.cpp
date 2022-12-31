@@ -449,8 +449,12 @@ void GraphicsLayerCA::initialize(Type layerType)
         platformLayerType = PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
         break;
     }
+
     m_layer = createPlatformCALayer(platformLayerType, this);
-    noteLayerPropertyChanged(ContentsScaleChanged);
+
+    if (platformLayerType != PlatformCALayer::LayerType::LayerTypeTransformLayer)
+        noteLayerPropertyChanged(ContentsScaleChanged);
+
     noteLayerPropertyChanged(CoverageRectChanged);
 }
 
