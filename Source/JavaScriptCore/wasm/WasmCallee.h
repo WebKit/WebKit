@@ -86,7 +86,13 @@ public:
     friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
 
+    void setEntrypoint(Wasm::Entrypoint&& entrypoint)
+    {
+        m_entrypoint = WTFMove(entrypoint);
+    }
+
 protected:
+    JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode);
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, Wasm::Entrypoint&&);
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, Wasm::Entrypoint&&, size_t, std::pair<const Name*, RefPtr<NameSection>>&&, Vector<UnlinkedWasmToWasmCall>&&);
 
@@ -101,7 +107,6 @@ protected:
 
     RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_entrypoint.calleeSaveRegisters; }
 
-private:
     FixedVector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
     Wasm::Entrypoint m_entrypoint;
 };
@@ -116,6 +121,22 @@ public:
 private:
     EmbedderEntrypointCallee(Wasm::Entrypoint&& entrypoint)
         : JITCallee(Wasm::CompilationMode::EmbedderEntrypointMode, WTFMove(entrypoint))
+    {
+    }
+};
+
+class JSToWasmICCallee final : public JITCallee {
+public:
+    static Ref<JSToWasmICCallee> create()
+    {
+        return adoptRef(*new JSToWasmICCallee);
+    }
+
+    Wasm::Instance* previousInstance(CallFrame*);
+    static ptrdiff_t previousInstanceOffset(const RegisterAtOffsetList&);
+private:
+    JSToWasmICCallee()
+        : JITCallee(Wasm::CompilationMode::JSToWasmICMode)
     {
     }
 };

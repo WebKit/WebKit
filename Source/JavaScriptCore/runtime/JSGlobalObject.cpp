@@ -1724,10 +1724,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
             });
-        m_jsToWasmICCalleeStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                init.set(JSToWasmICCallee::createStructure(init.vm, init.owner, jsNull()));
-            });
         m_webAssemblyWrapperFunctionStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
@@ -2525,7 +2521,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 #if ENABLE(WEBASSEMBLY)
     thisObject->m_webAssemblyModuleRecordStructure.visit(visitor);
     thisObject->m_webAssemblyFunctionStructure.visit(visitor);
-    thisObject->m_jsToWasmICCalleeStructure.visit(visitor);
     thisObject->m_webAssemblyWrapperFunctionStructure.visit(visitor);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_LAZY_TYPE)
 #endif // ENABLE(WEBASSEMBLY)

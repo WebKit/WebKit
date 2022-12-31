@@ -46,6 +46,8 @@ const char* makeString(CompilationMode mode)
         return "OMGForOSREntry";
     case CompilationMode::EmbedderEntrypointMode:
         return "EmbedderEntrypoint";
+    case CompilationMode::JSToWasmICMode:
+        return "JSToWasmIC";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "";

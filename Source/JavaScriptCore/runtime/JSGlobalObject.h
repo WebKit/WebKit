@@ -487,7 +487,6 @@ public:
 #if ENABLE(WEBASSEMBLY)
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyModuleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyFunctionStructure;
-    LazyProperty<JSGlobalObject, Structure> m_jsToWasmICCalleeStructure;
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyWrapperFunctionStructure;
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_STORAGE_FOR_LAZY_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
@@ -1027,7 +1026,6 @@ public:
 #if ENABLE(WEBASSEMBLY)
     Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(this); }
     Structure* webAssemblyFunctionStructure() const { return m_webAssemblyFunctionStructure.get(this); }
-    Structure* jsToWasmICCalleeStructure() const { return m_jsToWasmICCalleeStructure.get(this); }
     Structure* webAssemblyWrapperFunctionStructure() const { return m_webAssemblyWrapperFunctionStructure.get(this); }
 #endif // ENABLE(WEBASSEMBLY)
     Structure* collatorStructure() { return m_collatorStructure.get(this); }

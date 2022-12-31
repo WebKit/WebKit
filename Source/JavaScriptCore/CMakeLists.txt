@@ -128,7 +128,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalTimeZonePrototype.cpp
 
     wasm/js/JSWebAssembly.cpp
-    wasm/js/JSToWasmICCallee.cpp
     wasm/js/WebAssemblyArrayConstructor.cpp
     wasm/js/WebAssemblyArrayPrototype.cpp
     wasm/js/WebAssemblyCompileErrorConstructor.cpp

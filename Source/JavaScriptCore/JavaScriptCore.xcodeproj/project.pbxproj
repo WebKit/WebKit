@@ -896,7 +896,6 @@
 		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5267CF82249316B10022BF6D /* FastJITPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5267CF81249316AD0022BF6D /* FastJITPermissions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		526AC4B71E977C5D003500E1 /* WasmCalleeGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 526AC4B51E977C5D003500E1 /* WasmCalleeGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		527CE35422555FE500C6F382 /* JSToWasmICCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 527CE35322555FDD00C6F382 /* JSToWasmICCallee.h */; };
 		527E6CEC2772B9CB005E0782 /* WasmOSREntryPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 527E6CEB2772B9C5005E0782 /* WasmOSREntryPlan.h */; };
 		52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */; };
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3883,8 +3882,6 @@
 		526AC4B51E977C5D003500E1 /* WasmCalleeGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCalleeGroup.h; sourceTree = "<group>"; };
 		5272987B235FC8BA005C982C /* GCMemoryOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCMemoryOperations.h; sourceTree = "<group>"; };
 		527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeType.cpp; sourceTree = "<group>"; };
-		527CE35222555FDD00C6F382 /* JSToWasmICCallee.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSToWasmICCallee.cpp; path = js/JSToWasmICCallee.cpp; sourceTree = "<group>"; };
-		527CE35322555FDD00C6F382 /* JSToWasmICCallee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSToWasmICCallee.h; path = js/JSToWasmICCallee.h; sourceTree = "<group>"; };
 		527E6CEA2772B9C5005E0782 /* WasmOSREntryPlan.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOSREntryPlan.cpp; sourceTree = "<group>"; };
 		527E6CEB2772B9C5005E0782 /* WasmOSREntryPlan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmOSREntryPlan.h; sourceTree = "<group>"; };
 		52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmAirIRGenerator.h; sourceTree = "<group>"; };
@@ -9518,8 +9515,6 @@
 			children = (
 				AD8DD6D01F6708A30004EB52 /* JSToWasm.cpp */,
 				AD8DD6CF1F67089F0004EB52 /* JSToWasm.h */,
-				527CE35222555FDD00C6F382 /* JSToWasmICCallee.cpp */,
-				527CE35322555FDD00C6F382 /* JSToWasmICCallee.h */,
 				ADD09AF21F624829001313C2 /* JSWebAssembly.cpp */,
 				ADD09AF31F62482E001313C2 /* JSWebAssembly.h */,
 				55F5DFAD28DA9A2000595620 /* JSWebAssemblyArray.cpp */,
@@ -10916,7 +10911,6 @@
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */,
 				AD5C36EA1F75AD6A000BCAAF /* JSToWasm.h in Headers */,
-				527CE35422555FE500C6F382 /* JSToWasmICCallee.h in Headers */,
 				BC18C42A0E16F5CD00B34460 /* JSType.h in Headers */,
 				53486BB71C1795C300F6F3AF /* JSTypedArray.h in Headers */,
 				0F2B66FB17B6B5AB00A7AE3F /* JSTypedArrayConstructors.h in Headers */,

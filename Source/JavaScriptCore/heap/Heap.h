@@ -169,7 +169,6 @@ class Heap;
 
 #if ENABLE(WEBASSEMBLY)
 #define FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v) \
-    v(jsToWasmICCalleeSpace, cellHeapCellType, JSToWasmICCallee) \
     v(webAssemblyArraySpace, webAssemblyArrayHeapCellType, JSWebAssemblyArray) \
     v(webAssemblyExceptionSpace, webAssemblyExceptionHeapCellType, JSWebAssemblyException) \
     v(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType, WebAssemblyFunction) \

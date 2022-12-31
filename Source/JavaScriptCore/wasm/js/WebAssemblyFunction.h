@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "ArityCheckMode.h"
-#include "JSToWasmICCallee.h"
 #include "MacroAssemblerCodeRef.h"
 #include "WasmCallee.h"
 #include "WebAssemblyFunctionBase.h"
@@ -70,21 +69,18 @@ public:
 
     CodePtr<JSEntryPtrTag> jsCallEntrypoint()
     {
-        if (m_jsCallEntrypoint)
-            return m_jsCallEntrypoint.code();
+        if (m_jsToWasmICCallee)
+            return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
         return jsCallEntrypointSlow();
     }
-
-    RegisterAtOffsetList usedCalleeSaveRegisters() const;
-    Wasm::Instance* previousInstance(CallFrame*);
 
 private:
     DECLARE_VISIT_CHILDREN;
     WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex);
 
     CodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
-    ptrdiff_t previousInstanceOffset() const;
     bool usesTagRegisters() const;
+    RegisterAtOffsetList usedCalleeSaveRegisters() const;
 
     RegisterSet calleeSaves() const;
 
@@ -92,9 +88,7 @@ private:
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
     CodePtr<WasmEntryPtrTag> m_jsEntrypoint;
-    WriteBarrier<JSToWasmICCallee> m_jsToWasmICCallee;
-    // Used for JS calling into Wasm.
-    MacroAssemblerCodeRef<JSEntryPtrTag> m_jsCallEntrypoint;
+    RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
 };
 
 } // namespace JSC
