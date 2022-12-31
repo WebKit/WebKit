@@ -93,6 +93,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.cachingPolicy = this->cachingPolicy;
     copy.sameOriginDataURLFlag = this->sameOriginDataURLFlag;
     copy.initiatorContext = this->initiatorContext;
+    copy.initiator = this->initiator;
     copy.clientCredentialPolicy = this->clientCredentialPolicy;
     copy.maxRedirectCount = this->maxRedirectCount;
     copy.preflightPolicy = this->preflightPolicy;

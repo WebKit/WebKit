@@ -1179,6 +1179,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     page/AbstractDOMWindow.h
     page/AbstractFrame.h
+    page/AbstractFrameView.h
     page/ActivityState.h
     page/ActivityStateChangeObserver.h
     page/AdjustViewSizeOrNot.h
@@ -1263,6 +1264,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteDOMWindow.h
     page/RemoteFrame.h
     page/RemoteFrameClient.h
+    page/RemoteFrameView.h
     page/RenderingUpdateScheduler.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h

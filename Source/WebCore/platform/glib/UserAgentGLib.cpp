@@ -48,7 +48,7 @@ namespace WebCore {
 
 static const char* platformForUAString()
 {
-#if OS(MAC_OS_X)
+#if OS(MACOS)
     return "Macintosh";
 #else
     if (chassisType() == WTF::ChassisType::Mobile)

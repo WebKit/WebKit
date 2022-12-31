@@ -147,32 +147,6 @@ RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const
     return RegisterAtOffsetList { calleeSaves(), RegisterAtOffsetList::OffsetBaseType::FramePointerBased };
 }
 
-ptrdiff_t WebAssemblyFunction::previousInstanceOffset() const
-{
-    ptrdiff_t result = calleeSaves().numberOfSetRegisters() * sizeof(CPURegister);
-    result = -result - sizeof(CPURegister);
-#if USE(JSVALUE32_64)
-    ASSERT(!calleeSaves().numberOfSetFPRs()); // Because FPRs are wider than sizeof(CPURegister)
-#endif
-#if ASSERT_ENABLED
-    ptrdiff_t minOffset = 1;
-    for (const RegisterAtOffset& regAtOffset : usedCalleeSaveRegisters()) {
-        ptrdiff_t offset = regAtOffset.offset();
-        ASSERT(offset < 0);
-        minOffset = std::min(offset, minOffset);
-    }
-    ASSERT(minOffset - static_cast<ptrdiff_t>(sizeof(CPURegister)) == result);
-#endif
-    return result;
-}
-
-Wasm::Instance* WebAssemblyFunction::previousInstance(CallFrame* callFrame)
-{
-    ASSERT(callFrame->callee().rawPtr() == m_jsToWasmICCallee.get());
-    auto* result = *bitwise_cast<Wasm::Instance**>(bitwise_cast<char*>(callFrame) + previousInstanceOffset());
-    return result;
-}
-
 CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 {
     if (Options::forceICFailure())
@@ -210,7 +184,6 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     jit.emitFunctionPrologue();
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
-    jit.emitZeroToCallFrameHeader(CallFrameSlot::codeBlock);
 
     for (const RegisterAtOffset& regAtOffset : registersToSpill) {
         GPRReg reg = regAtOffset.reg().gpr();
@@ -364,7 +337,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         jit.loadWasmContextInstance(scratchJSR.payloadGPR());
     else
         jit.loadPtr(vm.wasmContext.pointerToInstance(), scratchJSR.payloadGPR());
-    ptrdiff_t previousInstanceOffset = this->previousInstanceOffset();
+    ptrdiff_t previousInstanceOffset = Wasm::JSToWasmICCallee::previousInstanceOffset(registersToSpill);
     jit.storePtr(scratchJSR.payloadGPR(), CCallHelpers::Address(GPRInfo::callFrameRegister, previousInstanceOffset));
 
     jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), scratchJSR.payloadGPR());
@@ -396,13 +369,15 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR());
     }
 #endif
-
     // We use this callee to indicate how to unwind past these types of frames:
     // 1. We need to know where to get callee saves.
     // 2. We need to know to restore the previous wasm context.
-    if (!m_jsToWasmICCallee)
-        m_jsToWasmICCallee.set(vm, this, JSToWasmICCallee::create(vm, globalObject(), this));
-    jit.storePtr(CCallHelpers::TrustedImmPtr(m_jsToWasmICCallee.get()), CCallHelpers::addressFor(CallFrameSlot::callee));
+    ASSERT(!m_jsToWasmICCallee);
+    m_jsToWasmICCallee = Wasm::JSToWasmICCallee::create();
+    jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(m_jsToWasmICCallee.get())), CCallHelpers::addressFor(CallFrameSlot::callee));
+#if USE(JSVALUE32_64)
+    jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), CCallHelpers::addressFor(CallFrameSlot::callee).withOffset(TagOffset));
+#endif
 
     // FIXME: Currently we just do an indirect jump. But we should teach the Module
     // how to repatch us:
@@ -450,8 +425,9 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         return nullptr;
 
     linkBuffer.link(jumpToHostCallThunk, CodeLocationLabel<JSEntryPtrTag>(executable()->entrypointFor(CodeForCall, MustCheckArity)));
-    m_jsCallEntrypoint = FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "JS->Wasm IC");
-    return m_jsCallEntrypoint.code();
+    auto compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, "JS->Wasm IC"), nullptr);
+    m_jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
+    return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
 }
 
 WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::TypeIndex typeIndex)
@@ -480,7 +456,6 @@ void WebAssemblyFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_jsToWasmICCallee);
 }
 
 DEFINE_VISIT_CHILDREN(WebAssemblyFunction);

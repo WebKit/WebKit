@@ -37,7 +37,6 @@
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSRemoteFunction.h"
-#include "JSToWasmICCallee.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
@@ -484,11 +483,6 @@ CallData JSFunction::getConstructData(JSCell* cell)
 
 String getCalculatedDisplayName(VM& vm, JSObject* object)
 {
-#if ENABLE(WEBASSEMBLY)
-    if (jsDynamicCast<JSToWasmICCallee*>(object))
-        return "wasm-stub"_s;
-#endif
-
     if (!jsDynamicCast<JSFunction*>(object) && !jsDynamicCast<InternalFunction*>(object))
         return emptyString();
 

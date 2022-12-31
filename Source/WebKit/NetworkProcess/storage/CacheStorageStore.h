@@ -24,6 +24,9 @@
  */
 #pragma once
 
+#include <optional>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebKit {
 

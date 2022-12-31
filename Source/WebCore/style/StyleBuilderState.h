@@ -108,6 +108,9 @@ public:
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
+    auto& inProgressProperties() const { return m_inProgressProperties; }
+    auto& inUnitCycleProperties() { return m_inUnitCycleProperties; }
+
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
@@ -132,10 +135,10 @@ private:
 
     const CSSToLengthConversionData m_cssToLengthConversionData;
 
-    Bitmap<numCSSProperties> m_appliedProperties;
     HashSet<String> m_appliedCustomProperties;
+    HashSet<String> m_inProgressCustomProperties;
     Bitmap<numCSSProperties> m_inProgressProperties;
-    HashSet<String> m_inProgressPropertiesCustom;
+    Bitmap<numCSSProperties> m_inUnitCycleProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };

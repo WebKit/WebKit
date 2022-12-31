@@ -54,12 +54,12 @@ PASS <input width> should not be mapped to style width in CSS1Compat mode
 PASS <input width> should not be mapped to style width in BackCompat mode
 PASS <input height> should not be mapped to style height in CSS1Compat mode
 PASS <input height> should not be mapped to style height in BackCompat mode
-FAIL <input hspace> should not be mapped to style marginLeft in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <input hspace> should not be mapped to style marginLeft in BackCompat mode assert_equals: expected "0px" but got "200px"
-FAIL <input hspace> should not be mapped to style marginRight in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <input hspace> should not be mapped to style marginRight in BackCompat mode assert_equals: expected "0px" but got "200px"
-FAIL <input vspace> should not be mapped to style marginTop in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <input vspace> should not be mapped to style marginTop in BackCompat mode assert_equals: expected "0px" but got "200px"
-FAIL <input vspace> should not be mapped to style marginBottom in CSS1Compat mode assert_equals: expected "0px" but got "200px"
-FAIL <input vspace> should not be mapped to style marginBottom in BackCompat mode assert_equals: expected "0px" but got "200px"
+PASS <input hspace> should not be mapped to style marginLeft in CSS1Compat mode
+PASS <input hspace> should not be mapped to style marginLeft in BackCompat mode
+PASS <input hspace> should not be mapped to style marginRight in CSS1Compat mode
+PASS <input hspace> should not be mapped to style marginRight in BackCompat mode
+PASS <input vspace> should not be mapped to style marginTop in CSS1Compat mode
+PASS <input vspace> should not be mapped to style marginTop in BackCompat mode
+PASS <input vspace> should not be mapped to style marginBottom in CSS1Compat mode
+PASS <input vspace> should not be mapped to style marginBottom in BackCompat mode
 

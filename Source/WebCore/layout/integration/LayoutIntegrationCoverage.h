@@ -81,7 +81,7 @@ enum class AvoidanceReason : uint64_t {
     FeatureIsDisabled                            = 1LLU  << 41,
     FlowDoesNotEstablishInlineFormattingContext  = 1LLU  << 42,
     // Unused                                    = 1LLU  << 43,
-    FlowHasUnsupportedHangingPunctuation         = 1LLU  << 44,
+    // Unused                                    = 1LLU  << 44,
     // Unused                                    = 1LLU  << 45,
     // Unused                                    = 1LLU  << 46,
     MultiColumnFlowIsNotTopLevel                 = 1LLU  << 47,

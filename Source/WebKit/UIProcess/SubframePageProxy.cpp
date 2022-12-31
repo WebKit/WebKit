@@ -26,7 +26,10 @@
 #include "config.h"
 #include "SubframePageProxy.h"
 
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 

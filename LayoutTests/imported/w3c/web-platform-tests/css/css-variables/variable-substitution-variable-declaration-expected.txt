@@ -29,5 +29,5 @@ PASS target9 --varB
 PASS target9 --varC
 PASS target10 --varA
 PASS target10 --varB
-FAIL target10 --varC assert_equals: expected "" but got "another good one"
+PASS target10 --varC
 

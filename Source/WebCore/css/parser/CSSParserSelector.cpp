@@ -105,6 +105,14 @@ CSSParserSelector::CSSParserSelector(const QualifiedName& tagQName)
 {
 }
 
+CSSParserSelector::CSSParserSelector(const CSSSelector& selector) 
+{
+    m_selector = makeUnique<CSSSelector>(selector);
+    if (auto next = selector.tagHistory())
+        m_tagHistory = makeUnique<CSSParserSelector>(*next);
+}
+
+
 CSSParserSelector::~CSSParserSelector()
 {
     if (!m_tagHistory)
@@ -134,6 +142,14 @@ void CSSParserSelector::setArgumentList(FixedVector<PossiblyQuotedIdentifier> li
 void CSSParserSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     m_selector->setSelectorList(WTFMove(selectorList));
+}
+
+CSSParserSelector* CSSParserSelector::leftmostSimpleSelector()
+{
+    auto selector = this;
+    while (auto next = selector->tagHistory())
+        selector = next;
+    return selector;
 }
 
 static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)

@@ -266,11 +266,6 @@ std::optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForU
         Wasm::Callee* wasmCallee = callee().asWasmCallee();
         return *wasmCallee->calleeSaveRegisters();
     }
-
-    if (callee().isCell()) {
-        if (auto* jsToWasmICCallee = jsDynamicCast<JSToWasmICCallee*>(callee().asCell()))
-            return jsToWasmICCallee->function()->usedCalleeSaveRegisters();
-    }
 #endif // ENABLE(WEBASSEMBLY)
 
     if (CodeBlock* codeBlock = this->codeBlock())

@@ -110,9 +110,10 @@ void Builder::applyNonHighPriorityProperties()
 {
     ASSERT(!m_state.fontDirty());
 
-    applyCustomProperties();
     applyProperties(firstLowPriorityProperty, lastLowPriorityProperty);
     applyDeferredProperties();
+    // Any referenced custom properties are already resolved. This will resolve the remaining ones.
+    applyCustomProperties();
 
     ASSERT(!m_state.fontDirty());
 }
@@ -142,18 +143,9 @@ inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
         auto& property = m_cascade.normalProperty(propertyID);
 
         if (trackCycles == CustomPropertyCycleTracking::Enabled) {
-            if (UNLIKELY(m_state.m_inProgressProperties.get(propertyID))) {
-                // We are in a cycle (eg. setting font size using registered custom property value containing em).
-                // So this value should be unset.
-                m_state.m_appliedProperties.set(propertyID);
-                // This property is in a cycle, and only the root of the call stack will have firstProperty != lastProperty.
-                ASSERT(firstProperty == lastProperty);
-                continue;
-            }
             m_state.m_inProgressProperties.set(propertyID);
             applyCascadeProperty(property);
-            m_state.m_appliedProperties.set(propertyID);
-            m_state.m_inProgressProperties.set(propertyID, false);
+            m_state.m_inProgressProperties.clear(propertyID);
             continue;
         }
 
@@ -173,59 +165,57 @@ void Builder::applyCustomProperty(const AtomString& name)
     if (m_state.m_appliedCustomProperties.contains(name) || !m_cascade.customProperties().contains(name))
         return;
 
-    auto property = m_cascade.customProperty(name);
-    bool inCycle = m_state.m_inProgressPropertiesCustom.contains(name);
+    auto& property = m_cascade.customProperty(name);
+    if (!property.cssValue[SelectorChecker::MatchDefault])
+        return;
 
     SetForScope levelScope(m_state.m_currentProperty, &property);
 
-    for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
-        if (!property.cssValue[index])
-            continue;
-        if (index != SelectorChecker::MatchDefault && m_state.style().insideLink() == InsideLink::NotInside)
-            continue;
+    Ref customPropertyValue = downcast<CSSCustomPropertyValue>(*property.cssValue[SelectorChecker::MatchDefault]);
 
-        Ref valueToApply = downcast<CSSCustomPropertyValue>(*property.cssValue[index]);
+    bool inCycle = !m_state.m_inProgressCustomProperties.add(name).isNewEntry;
 
-        if (inCycle) {
-            m_state.m_appliedCustomProperties.add(name); // Make sure we do not try to apply this property again while resolving it.
-            valueToApply = CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
-        }
+    auto createInvalidOrUnset = [&] {
+        // https://drafts.csswg.org/css-variables-2/#invalid-variables
+        auto* registered = m_state.document().customPropertyRegistry().get(name);
+        // The property is a non-registered custom property:
+        // The property is a registered custom property with universal syntax:
+        // The computed value is the guaranteed-invalid value.
+        if (!registered || registered->syntax.isUniversal())
+            return CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
+        // Otherwise:
+        // ...as if the property’s value had been specified as the unset keyword.
+        return CSSCustomPropertyValue::createWithID(name, CSSValueUnset);
+    };
 
-        m_state.m_inProgressPropertiesCustom.add(name);
+    auto valueToApply = [&]() -> RefPtr<CSSCustomPropertyValue> {
+        if (inCycle)
+            return createInvalidOrUnset();
 
-        if (std::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
-            RefPtr<CSSValue> parsedValue = resolvedVariableValue(CSSPropertyCustom, valueToApply.get());
+        auto resolvedValue = resolveCustomPropertyValueWithVariableReferences(customPropertyValue.get());
+        if (m_state.m_appliedCustomProperties.contains(name))
+            return nullptr; // There was a cycle and the value was already resolved, so bail.
 
-            if (m_state.m_appliedCustomProperties.contains(name))
-                return; // There was a cycle and the value was reset, so bail.
+        if (!resolvedValue)
+            return createInvalidOrUnset();
 
-            if (!parsedValue)
-                parsedValue = CSSCustomPropertyValue::createWithID(name, CSSValueUnset);
+        return resolvedValue;
+    }();
 
-            valueToApply = downcast<CSSCustomPropertyValue>(*parsedValue);
-        }
-
-        if (m_state.m_inProgressPropertiesCustom.contains(name)) {
-            SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, index);
-            applyProperty(CSSPropertyCustom, valueToApply.get(), index);
-        }
+    if (!valueToApply) {
+        ASSERT(!m_state.m_inProgressCustomProperties.contains(name));
+        return;
     }
 
-    m_state.m_inProgressPropertiesCustom.remove(name);
+    SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, SelectorChecker::MatchDefault);
+    applyProperty(CSSPropertyCustom, *valueToApply, SelectorChecker::MatchDefault);
+
+    m_state.m_inProgressCustomProperties.remove(name);
     m_state.m_appliedCustomProperties.add(name);
 
-    for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
-        if (!property.cssValue[index])
-            continue;
-        if (index != SelectorChecker::MatchDefault && m_state.style().insideLink() == InsideLink::NotInside)
-            continue;
-
-        Ref valueToApply = downcast<CSSCustomPropertyValue>(*property.cssValue[index]);
-
-        if (inCycle && std::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
-            // Resolve this value so that we reset its dependencies.
-            resolvedVariableValue(CSSPropertyCustom, valueToApply.get());
-        }
+    if (inCycle) {
+        // Resolve this value so that we reset its dependencies.
+        resolveCustomPropertyValueWithVariableReferences(customPropertyValue.get());
     }
 }
 
@@ -266,7 +256,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 {
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
-    auto valueToApply = resolveValue(id, value);
+    auto valueToApply = resolveVariableReferences(id, value);
     auto& style = m_state.style();
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
@@ -327,8 +317,14 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         isUnset = true;
     }
 
+    auto isInheritedProperty = [&] {
+        return registeredCustomProperty ? registeredCustomProperty->inherits : CSSProperty::isInheritedProperty(id);
+    };
+
     if (isUnset) {
-        if (CSSProperty::isInheritedProperty(id))
+        // https://drafts.csswg.org/css-cascade-4/#inherit-initial
+        // The unset CSS-wide keyword acts as either inherit or initial, depending on whether the property is inherited or not.
+        if (isInheritedProperty())
             isInherit = true;
         else
             isInitial = true;
@@ -341,7 +337,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return;
     }
 
-    if (isInherit && !CSSProperty::isInheritedProperty(id))
+    if (isInherit && !isInheritedProperty())
         style.setHasExplicitlyInheritedProperties();
 
 #if ENABLE(CSS_PAINTING_API)
@@ -360,25 +356,26 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), isInitial, isInherit, registeredCustomProperty);
 }
 
-Ref<CSSValue> Builder::resolveValue(CSSPropertyID propertyID, CSSValue& value)
+Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSValue& value)
 {
     if (!value.hasVariableReferences())
         return value;
 
-    auto variableValue = resolvedVariableValue(propertyID, value);
-    // If the cascade has already applied this id, then we detected a cycle, and this value should be unset.
-    if (!variableValue || m_state.m_appliedProperties.get(propertyID)) {
-        if (CSSProperty::isInheritedProperty(propertyID))
-            return CSSValuePool::singleton().createValue(CSSValueInherit);
-        return CSSValuePool::singleton().createValue(CSSValueInitial);
-    }
+    auto variableValue = CSSParser { m_state.document() }.parseValueWithVariableReferences(propertyID, value, m_state);
+
+    // https://drafts.csswg.org/css-variables-2/#invalid-variables
+    // ...as if the property’s value had been specified as the unset keyword.
+    if (!variableValue || m_state.m_inUnitCycleProperties.get(propertyID))
+        return CSSValuePool::singleton().createValue(CSSValueUnset);
 
     return *variableValue;
 }
 
-RefPtr<CSSValue> Builder::resolvedVariableValue(CSSPropertyID propertyID, const CSSValue& value)
+RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValueWithVariableReferences(CSSCustomPropertyValue& value)
 {
-    return CSSParser(m_state.document()).parseValueWithVariableReferences(propertyID, value, m_state);
+    if (!std::holds_alternative<Ref<CSSVariableReferenceValue>>(value.value()))
+        return &value;
+    return CSSParser { m_state.document() }.parseCustomPropertyValueWithVariableReferences(value, m_state);
 }
 
 const PropertyCascade* Builder::ensureRollbackCascadeForRevert()

@@ -77,6 +77,9 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::EmbedderEntrypointMode:
         func(static_cast<EmbedderEntrypointCallee*>(this));
         break;
+    case CompilationMode::JSToWasmICMode:
+        func(static_cast<JSToWasmICCallee*>(this));
+        break;
     }
 }
 
@@ -133,6 +136,11 @@ const HandlerInfo* Callee::handlerForIndex(Instance& instance, unsigned index, c
     return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag);
 }
 
+JITCallee::JITCallee(Wasm::CompilationMode compilationMode)
+    : Callee(compilationMode)
+{
+}
+
 JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
     : Callee(compilationMode)
     , m_entrypoint(WTFMove(entrypoint))
@@ -144,6 +152,32 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypo
     , m_wasmToWasmCallsites(WTFMove(unlinkedCalls))
     , m_entrypoint(WTFMove(entrypoint))
 {
+}
+
+ptrdiff_t JSToWasmICCallee::previousInstanceOffset(const RegisterAtOffsetList& calleeSaveRegisters)
+{
+    ptrdiff_t result = calleeSaveRegisters.registerCount() * sizeof(CPURegister);
+    result = -result - sizeof(CPURegister);
+#if ASSERT_ENABLED
+    ptrdiff_t minOffset = 1;
+    for (const RegisterAtOffset& regAtOffset : calleeSaveRegisters) {
+        ptrdiff_t offset = regAtOffset.offset();
+        ASSERT(offset < 0);
+        minOffset = std::min(offset, minOffset);
+#if USE(JSVALUE32_64)
+        ASSERT(!regAtOffset.reg().isFPR()); // Because FPRs are wider than sizeof(CPURegister)
+#endif
+    }
+    ASSERT(minOffset - static_cast<ptrdiff_t>(sizeof(CPURegister)) == result);
+#endif
+    return result;
+}
+
+Wasm::Instance* JSToWasmICCallee::previousInstance(CallFrame* callFrame)
+{
+    ASSERT(callFrame->callee().asWasmCallee() == this);
+    auto* result = *bitwise_cast<Wasm::Instance**>(bitwise_cast<char*>(callFrame) + previousInstanceOffset(m_entrypoint.calleeSaveRegisters));
+    return result;
 }
 
 LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)

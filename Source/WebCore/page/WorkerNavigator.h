@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSDOMPromiseDeferred.h"
 #include "NavigatorBase.h"
 #include "Supplementable.h"
 #include <wtf/text/WTFString.h>

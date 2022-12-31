@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CSSCustomPropertyValue;
 class CSSParserObserver;
 class CSSSelectorList;
 class CSSValueList;
@@ -85,6 +86,7 @@ public:
     std::optional<CSSSelectorList> parseSelector(const String&, StyleSheetContents* = nullptr);
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
+    RefPtr<CSSCustomPropertyValue> parseCustomPropertyValueWithVariableReferences(const CSSCustomPropertyValue&, Style::BuilderState&);
 
     WEBCORE_EXPORT static Color parseColor(const String&, const CSSParserContext&);
     // FIXME: All callers are not getting the right Settings for parsing due to lack of CSSParserContext and should switch to the parseColor function above.

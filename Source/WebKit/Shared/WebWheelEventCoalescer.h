@@ -34,14 +34,14 @@ namespace WebKit {
 
 struct NativeWebWheelEventAndSteps {
     NativeWebWheelEvent event;
-    OptionSet<WheelEventProcessingSteps> processingSteps;
+    OptionSet<WebCore::WheelEventProcessingSteps> processingSteps;
 };
 
 struct WebWheelEventAndSteps {
     WebWheelEvent event;
-    OptionSet<WheelEventProcessingSteps> processingSteps;
+    OptionSet<WebCore::WheelEventProcessingSteps> processingSteps;
     
-    WebWheelEventAndSteps(const WebWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps)
+    WebWheelEventAndSteps(const WebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
         : event(event)
         , processingSteps(processingSteps)
     { }
@@ -56,7 +56,7 @@ class WebWheelEventCoalescer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // If this returns true, use nextEventToDispatch() to get the event to dispatch.
-    bool shouldDispatchEvent(const NativeWebWheelEvent&, OptionSet<WheelEventProcessingSteps>);
+    bool shouldDispatchEvent(const NativeWebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
     std::optional<WebWheelEventAndSteps> nextEventToDispatch();
 
     NativeWebWheelEvent takeOldestEventBeingProcessed();

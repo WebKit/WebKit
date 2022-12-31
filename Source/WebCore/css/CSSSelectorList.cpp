@@ -36,7 +36,8 @@ namespace WebCore {
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 {
     unsigned otherComponentCount = other.componentCount();
-    ASSERT_WITH_SECURITY_IMPLICATION(otherComponentCount);
+    if (!otherComponentCount)
+        return;
 
     m_selectorArray = makeUniqueArray<CSSSelector>(otherComponentCount);
     for (unsigned i = 0; i < otherComponentCount; ++i)
@@ -70,7 +71,7 @@ CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& se
             if (current != first)
                 m_selectorArray[arrayIndex].setNotFirstInTagHistory();
             current = current->tagHistory();
-            ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList());
+            ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList() || (flattenedSize == arrayIndex + 1));
             if (current)
                 m_selectorArray[arrayIndex].setNotLastInTagHistory();
             ++arrayIndex;

@@ -45,6 +45,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFilterImageValue.h"
+#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariantLigaturesParser.h"
 #include "CSSFontVariantNumericParser.h"

@@ -98,7 +98,7 @@ String NavigatorBase::platform() const
     return platformName->isolatedCopy();
 #elif PLATFORM(IOS_FAMILY)
     return deviceName();
-#elif OS(MAC_OS_X)
+#elif OS(MACOS)
     return "MacIntel"_s;
 #elif OS(WINDOWS)
     return "Win32"_s;

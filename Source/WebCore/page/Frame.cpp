@@ -895,6 +895,11 @@ AbstractDOMWindow* Frame::virtualWindow() const
     return window();
 }
 
+AbstractFrameView* Frame::virtualView() const
+{
+    return m_view.get();
+}
+
 String Frame::trackedRepaintRectsAsText() const
 {
     if (!m_view)

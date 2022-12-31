@@ -130,7 +130,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     if (UNIX)
         if (APPLE)
-            set(WTF_OS_MAC_OS_X 1)
+            set(WTF_OS_MACOS 1)
         elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
             set(WTF_OS_LINUX 1)
         else ()

@@ -77,10 +77,9 @@
 #define WTF_OS_WATCHOS 1
 #endif
 
-/* FIXME: Rename this to drop the X, as that is no longer the name of the operating system. */
-/* OS(MAC_OS_X) - macOS (not including iOS family) */
+/* OS(MACOS) - macOS (not including iOS family) */
 #if OS(DARWIN) && TARGET_OS_OSX
-#define WTF_OS_MAC_OS_X 1
+#define WTF_OS_MACOS 1
 #endif
 
 /* OS(FREEBSD) - FreeBSD */

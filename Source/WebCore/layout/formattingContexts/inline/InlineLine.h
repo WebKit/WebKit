@@ -283,6 +283,7 @@ private:
     bool m_hasNonDefaultBidiLevelRun { false };
     bool m_contentIsTruncated { false };
     bool m_isFirstFormattedLine { false };
+    Vector<InlineLayoutUnit> m_inlineBoxLogicalLeftStack;
 };
 
 inline bool Line::hasContent() const

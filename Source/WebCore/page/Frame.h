@@ -304,6 +304,7 @@ private:
 
     FrameType frameType() const final { return FrameType::Local; }
 
+    AbstractFrameView* virtualView() const final;
     AbstractDOMWindow* virtualWindow() const final;
 
     HashSet<FrameDestructionObserver*> m_destructionObservers;

@@ -191,6 +191,7 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsiteDataManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWindowProperties.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsitePolicies.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/webkit.h.in
 )
 
 set(WPE_API_INSTALLED_HEADERS
@@ -199,7 +200,6 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitColor.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitRectangle.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebViewBackend.h
-    ${WEBKIT_DIR}/UIProcess/API/wpe/webkit.h
 )
 
 set(WPE_WEB_EXTENSION_API_INSTALLED_HEADERS

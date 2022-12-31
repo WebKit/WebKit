@@ -150,7 +150,7 @@ std::optional<WebWheelEventAndSteps> WebWheelEventCoalescer::nextEventToDispatch
     return coalescedWebEventAndSteps;
 }
 
-bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps)
+bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
 {
     LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::shouldDispatchEvent " << platform(event) << " (" << m_wheelEventQueue.size() << " events in the queue, " << m_eventsBeingProcessed.size() << " event sequences being processed)");
 

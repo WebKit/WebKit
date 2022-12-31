@@ -2746,7 +2746,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shapin
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-010.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001.xht [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-010.html [ ImageOnlyFailure ]
@@ -3120,13 +3119,7 @@ webkit.org/b/172609 fetch/closing-while-fetching-blob.html [ Skip ]
 
 webkit.org/b/175291 imported/w3c/web-platform-tests/css/css-ui/outline-018.html [ Skip ]
 
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-014.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-015.html [ ImageOnlyFailure ]
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-016.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-018.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-019.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-024.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-025.html [ ImageOnlyFailure ]
 
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-013.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-014.html [ ImageOnlyFailure ]
@@ -3380,6 +3373,7 @@ webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-typ
 webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005b.html [ ImageOnlyFailure ]
 webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
+webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ ImageOnlyFailure ]
 
 webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]
 
@@ -5929,18 +5923,9 @@ imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html [ Pas
 imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [ Pass Failure ]
 
-# Failing since their import.
-imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-typed-om/width-by-clamp-px-em.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em.html [ ImageOnlyFailure ]
-
 # modulepreload is not supported
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]
-
-# Crashes since StylePropertyMap::set() was implemented and this test started running.
-webkit.org/b/247212 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Skip ]
 
 # WPT meta name="variant" is not supported. And iframe 'load' event has a bug.
 imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]
@@ -6190,5 +6175,3 @@ webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/l
 # CSS Nesting
 imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]

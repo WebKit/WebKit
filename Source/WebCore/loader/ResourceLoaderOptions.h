@@ -113,6 +113,18 @@ enum class InitiatorContext : uint8_t {
 };
 static constexpr unsigned bitWidthOfInitiatorContext = 1;
 
+// https://fetch.spec.whatwg.org/#concept-request-initiator
+enum class Initiator : uint8_t {
+    EmptyString,
+    Download,
+    Imageset,
+    Manifest,
+    Prefetch,
+    Prerender,
+    Xslt
+};
+static constexpr unsigned bitWidthOfInitiator = 3;
+
 enum class ServiceWorkersMode : uint8_t {
     All,
     None,
@@ -171,6 +183,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , cachingPolicy(CachingPolicy::AllowCaching)
         , sameOriginDataURLFlag(SameOriginDataURLFlag::Unset)
         , initiatorContext(InitiatorContext::Document)
+        , initiator(Initiator::EmptyString)
         , serviceWorkersMode(ServiceWorkersMode::All)
         , applicationCacheMode(ApplicationCacheMode::Use)
         , clientCredentialPolicy(ClientCredentialPolicy::CannotAskClientForCredentials)
@@ -192,6 +205,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , cachingPolicy(cachingPolicy)
         , sameOriginDataURLFlag(SameOriginDataURLFlag::Unset)
         , initiatorContext(InitiatorContext::Document)
+        , initiator(Initiator::EmptyString)
         , serviceWorkersMode(ServiceWorkersMode::All)
         , applicationCacheMode(ApplicationCacheMode::Use)
         , clientCredentialPolicy(credentialPolicy)
@@ -226,6 +240,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     CachingPolicy cachingPolicy : bitWidthOfCachingPolicy;
     SameOriginDataURLFlag sameOriginDataURLFlag : bitWidthOfSameOriginDataURLFlag;
     InitiatorContext initiatorContext : bitWidthOfInitiatorContext;
+    Initiator initiator : bitWidthOfInitiator;
     ServiceWorkersMode serviceWorkersMode : bitWidthOfServiceWorkersMode;
     ApplicationCacheMode applicationCacheMode : bitWidthOfApplicationCacheMode;
     ClientCredentialPolicy clientCredentialPolicy : bitWidthOfClientCredentialPolicy;

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead.
 The test loads the same stylesheet to different frames and then mutates them. The mutations should not affect other frames.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -34,6 +34,7 @@ namespace WebCore {
 
 class RemoteDOMWindow;
 class RemoteFrameClient;
+class RemoteFrameView;
 class WeakPtrImplWithEventTargetData;
 
 class RemoteFrame final : public AbstractFrame {
@@ -54,15 +55,19 @@ public:
     const RemoteFrameClient& client() const { return m_client.get(); }
     RemoteFrameClient& client() { return m_client.get(); }
 
+    RemoteFrameView* view() const { return m_view.get(); }
+
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, UniqueRef<RemoteFrameClient>&&);
 
     FrameType frameType() const final { return FrameType::Remote; }
 
+    AbstractFrameView* virtualView() const final;
     AbstractDOMWindow* virtualWindow() const final;
 
     Ref<RemoteDOMWindow> m_window;
     RefPtr<AbstractFrame> m_opener;
+    RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
 };
 

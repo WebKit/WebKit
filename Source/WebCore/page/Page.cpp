@@ -1240,7 +1240,7 @@ void Page::setZoomedOutPageScaleFactor(float scale)
 
 void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState)
 {
-    LOG(Viewports, "Page::setPageScaleFactor %.2f - inStableState %d", scale, inStableState);
+    LOG_WITH_STREAM(Viewports, stream << "Page " << this << " setPageScaleFactor " << scale << " at " << origin << " - stable " << inStableState);
 
     Document* document = mainFrame().document();
     RefPtr<FrameView> view = document->view();
@@ -1272,7 +1272,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     }
 
     if (view && view->scrollPosition() != origin) {
-        if (!view->delegatesScrolling())
+        if (view->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
             view->setScrollPosition(origin);
 #if USE(COORDINATED_GRAPHICS)
         else

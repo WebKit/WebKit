@@ -9272,11 +9272,8 @@
             }
         },
         "<-webkit-absolute-size>": {
-            "grammar": {
-                "kind": "keyword",
-                "value": "-webkit-xxx-large",
-                "aliased-to": "xxx-large"
-            },
+            "grammar": "-webkit-xxx-large",
+            "aliased-to": "xxx-large",
             "status": "non-standard"
         },
         "<relative-size>": {

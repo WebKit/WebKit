@@ -107,7 +107,7 @@ function executeTests(createCSSOMObjectBeforeTest)
     mutationTest(12, "sheet.insertRule('"+importRule+"', 0)", 'green');
 
     mutationTest(13, 'sheet.cssRules[2].selectorText = "foo"', 'red');
-    mutationTest(14, 'sheet.cssRules[3].insertRule("40% { left: 40px; }")', 'red');
+    mutationTest(14, 'sheet.cssRules[3].appendRule("40% { left: 40px; }")', 'red');
     mutationTest(15, 'sheet.cssRules[3].deleteRule("100%")', 'red');
     mutationTest(16, 'sheet.cssRules[4].style.setProperty("font-family", "Bar", "")', 'red');
 

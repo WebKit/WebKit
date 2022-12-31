@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,16 @@
 
 #pragma once
 
-#include "JSCallee.h"
+#include "AbstractFrameView.h"
 
-namespace JSC {
+namespace WebCore {
 
-#if ENABLE(WEBASSEMBLY)
-
-class WebAssemblyFunction;
-
-// FIXME: Remove this type. Unwinding should just work by using WebAssemblyFunction instead of JSToWasmICCallee.
-// https://bugs.webkit.org/show_bug.cgi?id=204960
-class JSToWasmICCallee final : public JSCallee {
-public:
-    using Base = JSCallee;
-
-    template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.jsToWasmICCalleeSpace<mode>();
-    }
-
-    DECLARE_INFO;
-
-    static JSToWasmICCallee* create(VM&, JSGlobalObject*, WebAssemblyFunction*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    WebAssemblyFunction* function() { return m_function.get(); }
-
-private:
-    JSToWasmICCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-        : Base(vm, globalObject, structure)
-    { }
-    DECLARE_VISIT_CHILDREN;
-
-    WriteBarrier<WebAssemblyFunction> m_function;
+class RemoteFrameView : public AbstractFrameView {
+    FrameViewType viewType() const final { return FrameViewType::Remote; }
 };
 
-#endif // ENABLE(WEBASSEMBLY)
+}
 
-} // namespace JSC
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteFrameView)
+static bool isType(const WebCore::AbstractFrameView& view) { return view.viewType() == WebCore::AbstractFrameView::FrameViewType::Remote; }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -599,6 +599,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << m_themeColor;
     encoder << m_pageExtendedBackgroundColor;
     encoder << m_sampledPageTopColor;
+    
+    encoder << m_pageScalingLayerID;
 
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
@@ -703,6 +705,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     if (!decoder.decode(result.m_sampledPageTopColor))
+        return false;
+
+    if (!decoder.decode(result.m_pageScalingLayerID))
         return false;
 
     if (!decoder.decode(result.m_pageScaleFactor))
@@ -1002,6 +1007,9 @@ String RemoteLayerTreeTransaction::description() const
 
     if (m_pageScaleFactor != 1)
         ts.dumpProperty("pageScaleFactor", m_pageScaleFactor);
+
+    if (m_pageScalingLayerID != 1)
+        ts.dumpProperty("pageScalingLayer", m_pageScalingLayerID);
 
     ts.dumpProperty("minimumScaleFactor", m_minimumScaleFactor);
     ts.dumpProperty("maximumScaleFactor", m_maximumScaleFactor);

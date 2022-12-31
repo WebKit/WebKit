@@ -1149,7 +1149,6 @@ wasm/WasmWorklist.cpp
 
 wasm/js/JSToWasm.cpp
 wasm/js/JSToWasm.h
-wasm/js/JSToWasmICCallee.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyArray.cpp
 wasm/js/JSWebAssemblyCompileError.cpp

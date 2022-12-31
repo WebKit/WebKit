@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSBackgroundRepeatValue.h"
 
+#include "CSSValuePool.h"
 #include "Rect.h"
 #include <wtf/text/WTFString.h>
 

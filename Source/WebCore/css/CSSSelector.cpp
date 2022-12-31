@@ -165,7 +165,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
         case CSSSelector::PseudoClassRelativeScope:
             return 0;
-        case CSSSelector::PseudoClassParent:
+        case CSSSelector::PseudoClassNestingParent:
             ASSERT_NOT_REACHED();
             return { };
         default:
@@ -653,7 +653,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClassOptional:
                 builder.append(":optional");
                 break;
-            case CSSSelector::PseudoClassParent:
+            case CSSSelector::PseudoClassNestingParent:
                 builder.append('&');
                 break;
             case CSSSelector::PseudoClassIs: {
@@ -929,6 +929,25 @@ CSSSelector::RareData::RareData(AtomString&& value)
 {
 }
 
+CSSSelector::RareData::RareData(const RareData& other)
+    : matchingValue(other.matchingValue)
+    , serializingValue(other.serializingValue)
+    , a(other.a)
+    , b(other.b)
+    , attribute(other.attribute)
+    , attributeCanonicalLocalName(other.attributeCanonicalLocalName)
+    , argument(other.argument)
+    , argumentList(other.argumentList)
+{
+    if (other.selectorList)
+        this->selectorList = makeUnique<CSSSelectorList>(*other.selectorList);
+};
+
+auto CSSSelector::RareData::deepCopy() const -> Ref<RareData> 
+{
+    return adoptRef(*new RareData (*this));
+}
+
 CSSSelector::RareData::~RareData() = default;
 
 auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
@@ -943,6 +962,82 @@ bool CSSSelector::RareData::matchNth(int count)
     if (a < 0)
         return count <= b && !((b - count) % -a);
     return count == b;
+}
+
+CSSSelector::CSSSelector(const CSSSelector& other)
+    : m_relation(other.m_relation)
+    , m_match(other.m_match)
+    , m_pseudoType(other.m_pseudoType)
+    , m_isLastInSelectorList(other.m_isLastInSelectorList)
+    , m_isFirstInTagHistory(other.m_isFirstInTagHistory)
+    , m_isLastInTagHistory(other.m_isLastInTagHistory)
+    , m_hasRareData(other.m_hasRareData)
+    , m_hasNameWithCase(other.m_hasNameWithCase)
+    , m_isForPage(other.m_isForPage)
+    , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
+    , m_caseInsensitiveAttributeValueMatching(other.m_caseInsensitiveAttributeValueMatching)
+{
+    if (other.m_hasRareData) {
+        auto copied = other.m_data.rareData->deepCopy(); 
+        m_data.rareData = &copied.leakRef();
+        m_data.rareData->ref();
+    } else if (other.m_hasNameWithCase) {
+        m_data.nameWithCase = other.m_data.nameWithCase;
+        m_data.nameWithCase->ref();
+    } else if (other.match() == Tag) {
+        m_data.tagQName = other.m_data.tagQName;
+        m_data.tagQName->ref();
+    } else if (other.m_data.value) {
+        m_data.value = other.m_data.value;
+        m_data.value->ref();
+    }
+}
+
+void CSSSelector::visitAllSimpleSelectors(auto& apply) const
+{
+    // Effective C++ advices for this cast to deal with generic const/non-const member function.
+    apply(*const_cast<CSSSelector*>(this));
+
+    // Visit the selector list member (if any) recursively (such as: :has(<list>), :is(<list>),...)
+    if (auto selectorList = this->selectorList()) {
+        auto next = selectorList->first();
+        while (next) {
+            next->visitAllSimpleSelectors(apply);
+            next = CSSSelectorList::next(next);
+        }
+    }
+
+    // Visit the next simple selector recursively
+    if (auto next = tagHistory())
+        next->visitAllSimpleSelectors(apply); 
+}
+
+void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
+{
+    auto replaceParentSelector = [&parent] (CSSSelector& selector) {
+        if (selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent) {
+            selector.setMatch(Match::PseudoClass);
+            // FIXME: Optimize cases where we can include the parent selector directly instead of wrapping it in a ":is" pseudo class.
+            selector.setPseudoClassType(PseudoClassType::PseudoClassIs);
+            selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
+        }
+    };
+
+    visitAllSimpleSelectors(replaceParentSelector);
+}
+
+bool CSSSelector::hasExplicitNestingParent() const
+{
+    bool result = false;
+
+    auto checkForExplicitParent = [&result] (const CSSSelector& selector) {
+        if (selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent)
+            result = true;
+    };
+
+    visitAllSimpleSelectors(checkForExplicitParent);
+
+    return result;
 }
 
 } // namespace WebCore

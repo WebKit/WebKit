@@ -32,7 +32,6 @@
     attribute [AtomString] DOMString name;
     readonly attribute CSSRuleList cssRules;
     
-    undefined insertRule(DOMString rule);
     undefined appendRule(DOMString rule);
     undefined deleteRule(DOMString key);
     CSSKeyframeRule? findRule(DOMString key);

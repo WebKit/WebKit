@@ -345,6 +345,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
 #endif
 
+    willCommitLayerTree(layerTransaction);
+
     m_nextRenderingUpdateRequiresSynchronousImageDecoding = false;
     m_waitingForBackingStoreSwap = true;
 

@@ -172,6 +172,7 @@ PASS justify-content
 PASS justify-items
 PASS justify-self
 PASS kerning
+PASS leading-trim
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -280,7 +281,6 @@ PASS shape-image-threshold
 PASS shape-margin
 PASS shape-outside
 PASS shape-rendering
-PASS size
 PASS speak-as
 PASS stop-color
 PASS stop-opacity
@@ -304,6 +304,7 @@ PASS text-decoration-line
 PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness
+PASS text-edge
 PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style

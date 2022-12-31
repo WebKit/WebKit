@@ -163,6 +163,9 @@ protected:
     enum class EventTargetFlag : uint16_t {
         HasEventTargetData = 1 << 0,
         IsNode = 1 << 1,
+        // Element bits
+        HasDuplicateAttribute = 1 << 2,
+        DisplayContentsChanged = 1 << 3,
     };
 
     EventTargetData& ensureEventTargetData()

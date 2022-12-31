@@ -159,11 +159,11 @@ Ref<DOMMatrix> DOMMatrix::scaleSelf(double scaleX, std::optional<double> scaleY,
 {
     if (!scaleY)
         scaleY = scaleX;
-    translateSelf(originX, originY, originZ);
+    m_matrix.translate3d(originX, originY, originZ);
     // Post-multiply a non-uniform scale transformation on the current matrix.
     // The 3D scale matrix is described in CSS Transforms with sx = scaleX, sy = scaleY and sz = scaleZ.
     m_matrix.scale3d(scaleX, scaleY.value(), scaleZ);
-    translateSelf(-originX, -originY, -originZ);
+    m_matrix.translate3d(-originX, -originY, -originZ);
     if (scaleZ != 1 || originZ)
         m_is2D = false;
     return *this;
@@ -172,12 +172,12 @@ Ref<DOMMatrix> DOMMatrix::scaleSelf(double scaleX, std::optional<double> scaleY,
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-scale3dself
 Ref<DOMMatrix> DOMMatrix::scale3dSelf(double scale, double originX, double originY, double originZ)
 {
-    translateSelf(originX, originY, originZ);
+    m_matrix.translate3d(originX, originY, originZ);
     // Post-multiply a uniform 3D scale transformation (m11 = m22 = m33 = scale) on the current matrix.
     // The 3D scale matrix is described in CSS Transforms with sx = sy = sz = scale. [CSS3-TRANSFORMS]
     m_matrix.scale3d(scale, scale, scale);
-    translateSelf(-originX, -originY, -originZ);
-    if (scale != 1)
+    m_matrix.translate3d(-originX, -originY, -originZ);
+    if (scale != 1 || originZ)
         m_is2D = false;
     return *this;
 }

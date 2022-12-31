@@ -48,14 +48,14 @@ private:
     void handleInlineBoxEnd(const Box&, InlineItems&);
     void handleInlineLevelBox(const Box&, InlineItems&);
     
-    bool needsVisualReordering() const { return m_needsVisualReordering; }
+    bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
 
     const ElementBox& root() const { return m_root; }
 
     const ElementBox& m_root;
     // FIXME: We should not need this here. This is only required by the out of flow boxes.
     InlineFormattingState& m_formattingState;
-    bool m_needsVisualReordering { false };
+    bool m_contentRequiresVisualReordering { false };
 };
 
 }

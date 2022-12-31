@@ -583,7 +583,7 @@ PASS MessagePort interface: operation postMessage(any, optional StructuredSerial
 PASS MessagePort interface: operation start()
 PASS MessagePort interface: operation close()
 PASS MessagePort interface: attribute onmessage
-FAIL MessagePort interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+PASS MessagePort interface: attribute onmessageerror
 PASS BroadcastChannel interface: existence and properties of interface object
 PASS BroadcastChannel interface object length
 PASS BroadcastChannel interface object name
@@ -642,7 +642,7 @@ PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, sequence<o
 PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS DedicatedWorkerGlobalScope interface: operation close()
 PASS DedicatedWorkerGlobalScope interface: attribute onmessage
-FAIL DedicatedWorkerGlobalScope interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
+PASS DedicatedWorkerGlobalScope interface: attribute onmessageerror
 PASS DedicatedWorkerGlobalScope interface: operation requestAnimationFrame(FrameRequestCallback)
 PASS DedicatedWorkerGlobalScope interface: operation cancelAnimationFrame(unsigned long)
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError
@@ -660,7 +660,7 @@ PASS DedicatedWorkerGlobalScope interface: self must inherit property "postMessa
 PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, optional StructuredSerializeOptions) on self with too few arguments must throw TypeError
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "close()" with the proper type
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "onmessage" with the proper type
-FAIL DedicatedWorkerGlobalScope interface: self must inherit property "onmessageerror" with the proper type assert_own_property: expected property "onmessageerror" missing
+PASS DedicatedWorkerGlobalScope interface: self must inherit property "onmessageerror" with the proper type
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "requestAnimationFrame(FrameRequestCallback)" with the proper type
 PASS DedicatedWorkerGlobalScope interface: calling requestAnimationFrame(FrameRequestCallback) on self with too few arguments must throw TypeError
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "cancelAnimationFrame(unsigned long)" with the proper type
@@ -712,7 +712,7 @@ PASS Worker interface: operation terminate()
 PASS Worker interface: operation postMessage(any, sequence<object>)
 PASS Worker interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS Worker interface: attribute onmessage
-FAIL Worker interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+PASS Worker interface: attribute onmessageerror
 PASS Worker interface: attribute onerror
 PASS SharedWorker interface: existence and properties of interface object
 PASS WorkerNavigator interface: existence and properties of interface object

@@ -27,6 +27,7 @@
 
 #include "CacheStorageStore.h"
 #include "NetworkCacheKey.h"
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

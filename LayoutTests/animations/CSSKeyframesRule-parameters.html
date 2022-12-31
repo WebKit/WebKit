@@ -16,7 +16,6 @@ description("Tests that the parameters are mandatory in CSSKeyframesRule API.");
 var keyframes = document.styleSheets.item(0).cssRules.item(0);
 shouldBe("keyframes.__proto__", "CSSKeyframesRule.prototype");
 
-shouldThrow("keyframes.insertRule()");
 shouldThrow("keyframes.appendRule()");
 shouldThrow("keyframes.deleteRule()");
 shouldThrow("keyframes.findRule()");

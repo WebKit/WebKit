@@ -919,6 +919,11 @@ size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
     return m_imageLoader->pendingDecodePromisesCountForTesting();
 }
 
+bool HTMLImageElement::usesSrcsetOrPicture() const
+{
+    return !attributeWithoutSynchronization(srcsetAttr).isNull() || !!pictureElement();
+}
+
 AtomString HTMLImageElement::srcsetForBindings() const
 {
     return getAttributeForBindings(srcsetAttr);
