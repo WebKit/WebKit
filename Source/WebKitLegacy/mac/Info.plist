@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>${BUNDLE_VERSION}, Copyright 2003-2022 Apple Inc.</string>
+	<string>${BUNDLE_VERSION}, Copyright 2003-2023 Apple Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

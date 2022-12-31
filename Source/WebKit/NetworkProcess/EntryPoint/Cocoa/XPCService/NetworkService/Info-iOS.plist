@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>${BUNDLE_VERSION}, Copyright 2003-2022 Apple Inc.</string>
+	<string>${BUNDLE_VERSION}, Copyright 2003-2023 Apple Inc.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
