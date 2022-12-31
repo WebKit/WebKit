@@ -110,6 +110,12 @@ public:
     ~StyleRule();
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
+    const CSSSelectorList& resolvedSelectorList() const
+    { 
+        if (!m_resolvedSelectorList.isEmpty())
+            return m_resolvedSelectorList;
+        return m_selectorList;
+    }
 
     const StyleProperties& properties() const { return m_properties.get(); }
     MutableStyleProperties& mutableProperties();
@@ -133,6 +139,7 @@ public:
     static unsigned averageSizeInBytes();
     void setProperties(Ref<StyleProperties> properties) { m_properties = properties; }
     void setNestedRules(Vector<Ref<StyleRule>> nestedRules) { m_nestedRules = nestedRules; }
+    void setResolvedSelectorList(CSSSelectorList&& resolvedSelectorList) const { m_resolvedSelectorList = WTFMove(resolvedSelectorList); }
     const Vector<Ref<StyleRule>>& nestedRules() const { return m_nestedRules; }
     void appendNestedRule(Ref<StyleRule> rule) { m_nestedRules.append(rule); }
 
@@ -145,8 +152,7 @@ private:
 
     mutable Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
-
-    // CSS Nesting
+    mutable CSSSelectorList m_resolvedSelectorList { };
     Vector<Ref<StyleRule>> m_nestedRules;
 
 #if ENABLE(CSS_SELECTOR_JIT)

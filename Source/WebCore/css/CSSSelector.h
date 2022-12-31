@@ -63,6 +63,11 @@ struct PossiblyQuotedIdentifier {
         std::array<uint8_t, 3> computeSpecificityTuple() const;
         unsigned specificityForPage() const;
 
+        void visitAllSimpleSelectors(auto& apply) const;
+
+        bool hasExplicitNestingParent() const;
+        void resolveNestingParentSelectors(const CSSSelectorList& parent);
+
         // How the attribute value has to match. Default is Exact.
         enum Match {
             Unknown = 0,
@@ -187,7 +192,7 @@ struct PossiblyQuotedIdentifier {
             PseudoClassModal,
             PseudoClassUserInvalid,
             PseudoClassUserValid,
-            PseudoClassParent,
+            PseudoClassNestingParent,
         };
 
         enum PseudoElementType {
@@ -263,6 +268,7 @@ struct PossiblyQuotedIdentifier {
         bool attributeValueMatchingIsCaseInsensitive() const;
         const FixedVector<PossiblyQuotedIdentifier>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
+        CSSSelectorList* selectorList() { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
         void setValue(const AtomString&, bool matchLowerCase = false);
 
@@ -305,10 +311,14 @@ struct PossiblyQuotedIdentifier {
 
         bool isLastInSelectorList() const { return m_isLastInSelectorList; }
         void setLastInSelectorList() { m_isLastInSelectorList = true; }
+        void setNotLastInSelectorList() { m_isLastInSelectorList = false; }
+
         bool isFirstInTagHistory() const { return m_isFirstInTagHistory; }
-        bool isLastInTagHistory() const { return m_isLastInTagHistory; }
         void setNotFirstInTagHistory() { m_isFirstInTagHistory = false; }
+
+        bool isLastInTagHistory() const { return m_isLastInTagHistory; }
         void setNotLastInTagHistory() { m_isLastInTagHistory = false; }
+        void setLastInTagHistory() { m_isLastInTagHistory = true; }
 
         bool isForPage() const { return m_isForPage; }
         void setForPage() { m_isForPage = true; }
@@ -330,6 +340,7 @@ struct PossiblyQuotedIdentifier {
 #endif
 
         unsigned simpleSelectorSpecificityForPage() const;
+        CSSSelector* tagHistory() { return m_isLastInTagHistory ? nullptr : this + 1; }
 
         CSSSelector& operator=(const CSSSelector&) = delete;
 
@@ -354,8 +365,11 @@ struct PossiblyQuotedIdentifier {
             FixedVector<PossiblyQuotedIdentifier> argumentList; // Used for :lang and ::part arguments.
             std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
 
+            Ref<RareData> deepCopy() const;
+
         private:
             RareData(AtomString&& value);
+            RareData(const RareData& other);
         };
         void createRareData();
 
@@ -491,34 +505,6 @@ inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
 
     m_data.rareData->matchingValue = WTFMove(matchingValue);
     m_data.rareData->serializingValue = value;
-}
-
-inline CSSSelector::CSSSelector(const CSSSelector& o)
-    : m_relation(o.m_relation)
-    , m_match(o.m_match)
-    , m_pseudoType(o.m_pseudoType)
-    , m_isLastInSelectorList(o.m_isLastInSelectorList)
-    , m_isFirstInTagHistory(o.m_isFirstInTagHistory)
-    , m_isLastInTagHistory(o.m_isLastInTagHistory)
-    , m_hasRareData(o.m_hasRareData)
-    , m_hasNameWithCase(o.m_hasNameWithCase)
-    , m_isForPage(o.m_isForPage)
-    , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
-    , m_caseInsensitiveAttributeValueMatching(o.m_caseInsensitiveAttributeValueMatching)
-{
-    if (o.m_hasRareData) {
-        m_data.rareData = o.m_data.rareData;
-        m_data.rareData->ref();
-    } else if (o.m_hasNameWithCase) {
-        m_data.nameWithCase = o.m_data.nameWithCase;
-        m_data.nameWithCase->ref();
-    } else if (o.match() == Tag) {
-        m_data.tagQName = o.m_data.tagQName;
-        m_data.tagQName->ref();
-    } else if (o.m_data.value) {
-        m_data.value = o.m_data.value;
-        m_data.value->ref();
-    }
 }
 
 inline CSSSelector::~CSSSelector()

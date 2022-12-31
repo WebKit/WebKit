@@ -6183,5 +6183,3 @@ webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/l
 # CSS Nesting
 imported/w3c/web-platform-tests/css/css-nesting/conditional-properties.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/implicit-nesting.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]

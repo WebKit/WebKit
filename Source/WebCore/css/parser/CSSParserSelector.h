@@ -40,10 +40,16 @@ public:
     static std::unique_ptr<CSSParserSelector> parsePagePseudoSelector(StringView);
 
     CSSParserSelector();
+
+    // Recursively copy the selector chain.
+    CSSParserSelector(const CSSSelector&);
+
     explicit CSSParserSelector(const QualifiedName&);
+
     ~CSSParserSelector();
 
     std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
+    CSSSelector* selector() { return m_selector.get(); }
 
     void setValue(const AtomString& value, bool matchLowerCase = false) { m_selector->setValue(value, matchLowerCase); }
 
@@ -90,6 +96,7 @@ public:
     void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
     std::unique_ptr<CSSParserSelector> releaseTagHistory();
+
 
 private:
     std::unique_ptr<CSSSelector> m_selector;

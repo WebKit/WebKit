@@ -336,7 +336,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeNestedSelec
     auto last = selector->leftmostSimpleSelector();
     auto parentSelector = makeUnique<CSSParserSelector>();
     parentSelector->setMatch(CSSSelector::Match::PseudoClass);
-    parentSelector->setPseudoClassType(CSSSelector::PseudoClassType::PseudoClassParent);
+    parentSelector->setPseudoClassType(CSSSelector::PseudoClassType::PseudoClassNestingParent);
     last->setRelation(scopeCombinator);
     last->setTagHistory(WTFMove(parentSelector));
 
@@ -612,7 +612,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNesting(CSSParserTo
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->setMatch(CSSSelector::PseudoClass);
-    selector->setPseudoClassType(CSSSelector::PseudoClassParent);
+    selector->setPseudoClassType(CSSSelector::PseudoClassNestingParent);
     
     return selector;
 }
@@ -1159,6 +1159,45 @@ bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& c
     }
 
     return false;
+}
+
+CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList& parentResolvedSelectorList)
+{
+    Vector<std::unique_ptr<CSSParserSelector>> result;
+    CSSSelectorList copiedSelectorList { nestedSelectorList };
+    auto selector = copiedSelectorList.first();
+    while (selector) {
+        if (selector->hasExplicitNestingParent()) {
+            // FIXME: We should build a new CSSParserSelector from this selector and resolve it
+            const_cast<CSSSelector*>(selector)->resolveNestingParentSelectors(parentResolvedSelectorList);
+            auto uniqueSelector = makeUnique<CSSParserSelector>(*selector);
+            result.append(WTFMove(uniqueSelector));
+        } else {
+            // We add the implicit parent selector at the beginning of the selector
+            auto parserSelector = makeUnique<CSSParserSelector>(*selector);
+            auto lastSelector = parserSelector->leftmostSimpleSelector()->selector();
+            ASSERT(lastSelector);
+            bool isLastInSelectorList = lastSelector->isLastInSelectorList();
+            lastSelector->setNotLastInTagHistory();
+            lastSelector->setNotLastInSelectorList();
+            CSSSelector parentIsSelector;
+            parentIsSelector.setMatch(CSSSelector::Match::PseudoClass);
+            parentIsSelector.setPseudoClassType(CSSSelector::PseudoClassType::PseudoClassIs);
+            parentIsSelector.setSelectorList(makeUnique<CSSSelectorList>(parentResolvedSelectorList));
+            parentIsSelector.setLastInTagHistory();
+            if (isLastInSelectorList)
+                parentIsSelector.setLastInSelectorList();
+            else
+                parentIsSelector.setNotLastInSelectorList();
+
+            auto uniqueParentIsSelector = makeUnique<CSSParserSelector>(parentIsSelector);
+            parserSelector->appendTagHistory(CSSSelector::RelationType::DescendantSpace, WTFMove(uniqueParentIsSelector));
+            result.append(WTFMove(parserSelector));
+        }
+        selector = copiedSelectorList.next(selector);
+    }
+
+    return CSSSelectorList { WTFMove(result) };
 }
 
 } // namespace WebCore

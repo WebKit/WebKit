@@ -36,6 +36,7 @@
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
+#include "CSSParserSelector.h"
 #include "CSSPropertyRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
@@ -227,6 +228,7 @@ StyleRule::StyleRule(const StyleRule& o)
     : StyleRuleBase(o)
     , m_properties(o.properties().mutableCopy())
     , m_selectorList(o.m_selectorList)
+    , m_resolvedSelectorList(o.m_resolvedSelectorList)
     , m_nestedRules(o.m_nestedRules)
     , m_isSplitRule(o.m_isSplitRule)
     , m_isLastRuleInSplitRule(o.m_isLastRuleInSplitRule)

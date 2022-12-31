@@ -57,6 +57,7 @@ public:
     CSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
 
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
+    static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList& parentResolvedSelectorList);
 
 private:
     template<typename ConsumeSelector> CSSSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);

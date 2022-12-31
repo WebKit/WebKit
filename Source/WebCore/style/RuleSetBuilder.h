@@ -34,7 +34,7 @@ public:
     ~RuleSetBuilder();
 
     void addRulesFromSheet(const StyleSheetContents&, const MQ::MediaQueryList& sheetQuery = { });
-    void addStyleRule(const StyleRule&);
+    void addStyleRule(const StyleRule&, const CSSSelectorList* parentResolvedSelectorList = nullptr);
 
 private:
     RuleSetBuilder(const MQ::MediaQueryEvaluator&);

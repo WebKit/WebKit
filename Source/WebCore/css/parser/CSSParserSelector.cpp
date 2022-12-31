@@ -105,6 +105,14 @@ CSSParserSelector::CSSParserSelector(const QualifiedName& tagQName)
 {
 }
 
+CSSParserSelector::CSSParserSelector(const CSSSelector& selector) 
+{
+    m_selector = makeUnique<CSSSelector>(selector);
+    if (auto next = selector.tagHistory())
+        m_tagHistory = makeUnique<CSSParserSelector>(*next);
+}
+
+
 CSSParserSelector::~CSSParserSelector()
 {
     if (!m_tagHistory)

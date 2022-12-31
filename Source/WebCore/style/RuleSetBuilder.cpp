@@ -31,6 +31,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
+#include "CSSSelectorParser.h"
 #include "CustomPropertyRegistry.h"
 #include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
@@ -203,20 +204,28 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
     addChildRules(sheet.childRules());
 }
 
-void RuleSetBuilder::addStyleRule(const StyleRule& rule)
+void RuleSetBuilder::addStyleRule(const StyleRule& rule, const CSSSelectorList* parentResolvedSelectorList)
 {
-    auto& selectorList = rule.selectorList();
-    if (selectorList.isEmpty())
-        return;
-    unsigned selectorListIndex = 0;
-    for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex)) {
-        RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount());
-        m_mediaQueryCollector.addRuleIfNeeded(ruleData);
-
-        m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier);
-
-        ++selectorListIndex;
+    // Populate the rule's flat selector list
+    if (parentResolvedSelectorList) {
+        auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.selectorList(), *parentResolvedSelectorList);
+        rule.setResolvedSelectorList(WTFMove(resolvedSelectorList));
     }
+
+    auto& selectorList = rule.resolvedSelectorList();
+
+    if (!selectorList.isEmpty()) {
+        unsigned selectorListIndex = 0;
+        for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex)) {
+            RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount());
+            m_mediaQueryCollector.addRuleIfNeeded(ruleData);
+            m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier);
+            ++selectorListIndex;
+        }
+    }
+
+    for (auto& nestedRule : rule.nestedRules())
+        addStyleRule(nestedRule, &selectorList);
 }
 
 void RuleSetBuilder::disallowDynamicMediaQueryEvaluationIfNeeded()

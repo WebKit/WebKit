@@ -46,7 +46,12 @@ public:
 
     const StyleRule& styleRule() const { return *m_styleRule; }
 
-    const CSSSelector* selector() const { return m_styleRule->selectorList().selectorAt(m_selectorIndex); }
+    const CSSSelector* selector() const
+    { 
+        auto& selectorList = m_styleRule->resolvedSelectorList();
+        return selectorList.selectorAt(m_selectorIndex);
+    }
+
 #if ENABLE(CSS_SELECTOR_JIT)
     CompiledSelector& compiledSelector() const { return m_styleRule->compiledSelectorForListIndex(m_selectorListIndex); }
 #endif
