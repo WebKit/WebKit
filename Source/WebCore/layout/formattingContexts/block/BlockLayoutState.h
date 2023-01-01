@@ -48,6 +48,8 @@ public:
     BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, LeadingTrim = { });
 
     FloatingState& floatingState() { return m_floatingState; }
+    const FloatingState& floatingState() const { return m_floatingState; }
+
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     LeadingTrim leadingTrim() const { return m_leadingTrim; }
 

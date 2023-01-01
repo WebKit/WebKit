@@ -473,7 +473,7 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilde
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
 
-    auto lineBox = LineBoxBuilder { *this, lineContent, blockLayoutState.leadingTrim() }.build(currentLineIndex);
+    auto lineBox = LineBoxBuilder { *this, lineContent, blockLayoutState }.build(currentLineIndex);
     auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox, constraints);
     formattingState.addBoxes(InlineDisplayContentBuilder { *this, formattingState }.build(lineContent, lineBox, displayLine, currentLineIndex));
     formattingState.addLineBox(WTFMove(lineBox));

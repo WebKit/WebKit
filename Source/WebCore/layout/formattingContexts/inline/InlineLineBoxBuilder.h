@@ -40,7 +40,7 @@ struct AscentAndDescent;
 
 class LineBoxBuilder {
 public:
-    LineBoxBuilder(const InlineFormattingContext&, const LineBuilder::LineContent&, BlockLayoutState::LeadingTrim);
+    LineBoxBuilder(const InlineFormattingContext&, const LineBuilder::LineContent&, const BlockLayoutState&);
 
     LineBox build(size_t lineIndex);
 
@@ -55,6 +55,7 @@ private:
 
     void constructInlineLevelBoxes(LineBox&);
     void adjustIdeographicBaselineIfApplicable(LineBox&);
+    void adjustOutsideListMarkersPosition(LineBox&);
 
     bool isFirstLine() const { return m_lineContent.isFirstFormattedLine != LineBuilder::LineContent::FirstFormattedLine::No; }
     bool isLastLine() const { return m_lineContent.isLastLineWithInlineContent; }
@@ -62,14 +63,17 @@ private:
     const LineBuilder::LineContent lineContent() const { return m_lineContent; }
     const Box& rootBox() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return isFirstLine() ? rootBox().firstLineStyle() : rootBox().style(); }
+
+    const BlockLayoutState& blockLayoutState() const { return m_blockLayoutState; }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const LineBuilder::LineContent& m_lineContent;
-    BlockLayoutState::LeadingTrim m_leadingTrim;
+    const BlockLayoutState& m_blockLayoutState;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
+    Vector<const ElementBox*> m_outsideListMarkers;
 };
 
 }

@@ -58,7 +58,7 @@ public:
     LayoutPoint staticPositionForOutOfFlowInlineLevelBox(const Box&, LayoutPoint contentBoxTopLeft) const;
     LayoutPoint staticPositionForOutOfFlowBlockLevelBox(const Box&, LayoutPoint contentBoxTopLeft) const;
 
-    void adjustMarginStartForListMarker(const ElementBox&, LayoutUnit rootInlineBoxOffset) const;
+    void adjustMarginStartForListMarker(const ElementBox&, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const;
 
 private:
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
