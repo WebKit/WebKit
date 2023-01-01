@@ -292,11 +292,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     // The reason is that we use one of these as a scratch. That said,
     // almost all real wasm programs use memory, so it's not really
     // worth optimizing for the case that they don't.
-    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
-        GPRReg reg = regAtOffset.reg().gpr();
-        ptrdiff_t offset = regAtOffset.offset();
-        jit.storePtr(reg, CCallHelpers::Address(GPRInfo::callFrameRegister, offset));
-    }
+    jit.emitSave(registersToSpill);
 
     GPRReg wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
 
@@ -410,13 +406,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     marshallJSResult(jit, typeDefinition, wasmFrameConvention, savedResultRegisters);
 
     JIT_COMMENT(jit, "restore registersToSpill");
-    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
-        GPRReg reg = regAtOffset.reg().gpr();
-        ASSERT(!JSRInfo::returnValueJSR.uses(reg));
-        ptrdiff_t offset = regAtOffset.offset();
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, offset), reg);
-    }
-
+    jit.emitRestore(registersToSpill);
     jit.emitFunctionEpilogue();
     jit.ret();
 
