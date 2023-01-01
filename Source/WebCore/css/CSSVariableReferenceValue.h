@@ -61,9 +61,10 @@ public:
 private:
     explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&, const CSSParserContext&);
 
-    static bool resolveTokenRange(CSSParserTokenRange, Vector<CSSParserToken>&, Style::BuilderState&);
-    static bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::BuilderState&);
-    static bool resolveVariableFallback(CSSParserTokenRange, Vector<CSSParserToken>&, Style::BuilderState&);
+    std::optional<Vector<CSSParserToken>> resolveTokenRange(CSSParserTokenRange, Style::BuilderState&) const;
+    bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::BuilderState&) const;
+    enum class FallbackResult : uint8_t { None, Valid, Invalid };
+    std::pair<FallbackResult, Vector<CSSParserToken>> resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange, Style::BuilderState&) const;
 
     Ref<CSSVariableData> m_data;
     mutable String m_stringValue;
