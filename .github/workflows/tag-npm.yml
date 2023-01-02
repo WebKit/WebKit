@@ -15,11 +15,13 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: "16.x"
+          registry-url: "https://registry.npmjs.org"
       - name: publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm dist-tag add bun-webkit-linux-amd64-lto@next latest
           npm dist-tag add bun-webkit-linux-arm64-lto@next latest
