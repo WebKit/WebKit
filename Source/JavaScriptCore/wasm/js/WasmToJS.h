@@ -42,7 +42,7 @@ namespace Wasm {
 
 class Instance;
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM&, Bag<OptimizingCallLinkInfo>& callLinkInfos, TypeIndex, unsigned importIndex);
+Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM&, OptimizingCallLinkInfo&, TypeIndex, unsigned importIndex);
 
 void emitThrowWasmToJSException(CCallHelpers&, GPRReg wasmInstance, Wasm::ExceptionType);
 

@@ -126,6 +126,7 @@ enum JSType : uint8_t {
     JSWeakMapType,
     JSWeakSetType,
     WebAssemblyModuleType,
+    WebAssemblyInstanceType,
     // Start StringObjectType types.
     StringObjectType,
     DerivedStringObjectType,

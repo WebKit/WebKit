@@ -137,25 +137,25 @@ DEFINE_VISIT_CHILDREN(JSWebAssemblyModule);
 
 void JSWebAssemblyModule::clearJSCallICs(VM& vm)
 {
-    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter)
-        (*iter)->unlink(vm);
+    for (auto& callLinkInfo : m_callLinkInfos)
+        callLinkInfo.unlink(vm);
 }
 
 void JSWebAssemblyModule::finalizeUnconditionally(VM& vm)
 {
-    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter)
-        (*iter)->visitWeak(vm);
+    for (auto& callLinkInfo : m_callLinkInfos)
+        callLinkInfo.visitWeak(vm);
 }
 
 Expected<void, Wasm::BindingFailure> JSWebAssemblyModule::generateWasmToJSStubs(VM& vm)
 {
     const Wasm::ModuleInformation& moduleInformation = m_module->moduleInformation();
     if (moduleInformation.importFunctionCount()) {
-        Bag<OptimizingCallLinkInfo> callLinkInfos;
+        FixedVector<OptimizingCallLinkInfo> callLinkInfos(moduleInformation.importFunctionCount());
         FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> stubs(moduleInformation.importFunctionCount());
         for (unsigned importIndex = 0; importIndex < moduleInformation.importFunctionCount(); ++importIndex) {
             Wasm::TypeIndex typeIndex = moduleInformation.importFunctionTypeIndices.at(importIndex);
-            auto binding = Wasm::wasmToJS(vm, callLinkInfos, typeIndex, importIndex);
+            auto binding = Wasm::wasmToJS(vm, callLinkInfos[importIndex], typeIndex, importIndex);
             if (UNLIKELY(!binding))
                 return makeUnexpected(binding.error());
             stubs[importIndex] = binding.value();

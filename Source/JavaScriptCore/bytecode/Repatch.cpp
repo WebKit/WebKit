@@ -50,6 +50,7 @@
 #include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssembly.h"
+#include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
@@ -92,7 +93,7 @@ static JSCell* webAssemblyOwner(JSCell* callee)
 {
 #if ENABLE(WEBASSEMBLY)
     // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return jsCast<JSWebAssemblyModule*>(callee);
+    return jsCast<JSWebAssemblyInstance*>(callee)->module();
 #else
     UNUSED_PARAM(callee);
     RELEASE_ASSERT_NOT_REACHED();

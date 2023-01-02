@@ -45,7 +45,7 @@ const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance"_s, &Bas
 
 Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyInstanceType, StructureFlags), info());
 }
 
 JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<Wasm::Instance>&& instance)
