@@ -71,7 +71,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // Set up the callee's baseMemory register as well as the memory size registers.
     {
         jit.loadPairPtr(baseMemory, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1]);
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1], /* validateAuth */ true, /* mayBeNull */ false);
     }
 #endif
 

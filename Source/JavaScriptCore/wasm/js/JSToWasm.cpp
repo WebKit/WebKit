@@ -388,7 +388,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
             else
                 jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
         }
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, size, scratch);
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, size, scratch, /* validateAuth */ true, /* mayBeNull */ false);
     }
 #endif
 

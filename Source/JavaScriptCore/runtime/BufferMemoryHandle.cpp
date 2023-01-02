@@ -238,6 +238,23 @@ BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedC
     }
 }
 
+void* BufferMemoryHandle::nullBasePointer()
+{
+    static void* result = nullptr;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&]() {
+#if GIGACAGE_ENABLED
+        if (Gigacage::isEnabled(Gigacage::Primitive)) {
+            result = Gigacage::basePtr(Gigacage::Primitive);
+            return;
+        }
+#endif
+        result = fastAlignedMalloc(PageCount::pageSize, PageCount::pageSize);
+        WTF::fastDecommitAlignedMemory(result, PageCount::pageSize);
+    });
+    return result;
+}
+
 BufferMemoryHandle::~BufferMemoryHandle()
 {
     if (m_memory) {
@@ -246,6 +263,7 @@ BufferMemoryHandle::~BufferMemoryHandle()
         switch (m_mode) {
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         case MemoryMode::Signaling: {
+            // nullBasePointer's zero-sized memory is not used for MemoryMode::Signaling.
             constexpr bool readable = true;
             constexpr bool writable = true;
             if (!OSAllocator::protect(memory, BufferMemoryHandle::fastMappedBytes(), readable, writable)) {
@@ -262,10 +280,17 @@ BufferMemoryHandle::~BufferMemoryHandle()
 #endif
         case MemoryMode::BoundsChecking: {
             switch (m_sharingMode) {
-            case MemorySharingMode::Default:
+            case MemorySharingMode::Default: {
+                if (memory == nullBasePointer() && !m_size)
+                    return;
                 Gigacage::freeVirtualPages(Gigacage::Primitive, memory, m_size);
                 break;
+            }
             case MemorySharingMode::Shared: {
+                if (memory == nullBasePointer() && !m_mappedCapacity) {
+                    ASSERT(!m_size);
+                    return;
+                }
                 constexpr bool readable = true;
                 constexpr bool writable = true;
                 if (!OSAllocator::protect(memory, m_mappedCapacity, readable, writable)) {

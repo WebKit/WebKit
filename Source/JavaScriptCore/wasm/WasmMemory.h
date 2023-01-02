@@ -58,8 +58,6 @@ class Memory final : public RefCounted<Memory> {
 public:
     void dump(WTF::PrintStream&) const;
 
-    explicit operator bool() const { return !!m_handle->memory(); }
-    
     enum NotifyPressure { NotifyPressureTag };
     enum SyncTryToReclaim { SyncTryToReclaimTag };
     enum GrowSuccess { GrowSuccessTag };
@@ -79,7 +77,7 @@ public:
 #endif
     static bool addressIsInGrowableOrFastMemory(void*);
 
-    void* memory() const { return m_handle->memory(); }
+    void* basePointer() const { return m_handle->memory(); }
     size_t size() const { return m_handle->size(); }
     size_t mappedCapacity() const { return m_handle->mappedCapacity(); }
     PageCount initial() const { return m_handle->initial(); }

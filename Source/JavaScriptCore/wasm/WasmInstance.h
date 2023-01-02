@@ -119,8 +119,8 @@ public:
 #else
             m_cachedBoundsCheckingSize = memory()->mappedCapacity();
 #endif
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), m_cachedBoundsCheckingSize);
-            ASSERT(memory()->memory() == cachedMemory());
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->basePointer(), m_cachedBoundsCheckingSize);
+            ASSERT(memory()->basePointer() == cachedMemory());
         }
     }
 

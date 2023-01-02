@@ -369,7 +369,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             // Capacity and basePointer will not be changed.
             if (mode == MemoryMode::BoundsChecking)
                 jit.move(CCallHelpers::TrustedImm64(instance()->instance().memory()->mappedCapacity()), pinnedRegs.boundsCheckingSizeRegister);
-            jit.move(CCallHelpers::TrustedImmPtr(instance()->instance().memory()->memory()), baseMemory);
+            jit.move(CCallHelpers::TrustedImmPtr(instance()->instance().memory()->basePointer()), baseMemory);
         } else {
             GPRReg scratchOrBoundsCheckingSize = InvalidGPRReg;
             if (isARM64E()) {
@@ -384,7 +384,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 else
                     jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedMemory()), baseMemory);
             }
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR());
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR(), /* validateAuth */ true, /* mayBeNull */ false);
         }
     }
 #endif
