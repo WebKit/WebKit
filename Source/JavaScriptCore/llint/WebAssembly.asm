@@ -273,6 +273,20 @@ macro restoreCalleeSavesUsedByWasm()
     end
 end
 
+macro restoreWasmInstanceCalleeSavesForTailCallWhenUsingTLS()
+    # NOTE: We intentionally don't restore memoryBase and boundsCheckingSize here. These are saved
+    # and restored when entering Wasm by the JSToWasm wrapper and changes to them are meant
+    # to be observable within the same Wasm module.
+    # We also don't need to restore PB because usePreviousFrame() will take care of it.
+    if ARM64 or ARM64E or X86_64 or RISCV64
+        loadp -0x10[cfr], wasmInstance
+    elsif ARMv7
+        loadp -8[cfr], wasmInstance
+    else
+        error
+    end
+end
+
 macro preserveGPRsUsedByTailCall(gpr0, gpr1)
     if ARM64 or ARM64E
         storepairq gpr0, gpr1, CodeBlock[sp]
@@ -333,7 +347,7 @@ end
 end
 
 macro storeWasmInstanceToTLS(instance)
-if  HAVE_FAST_TLS
+if HAVE_FAST_TLS
     tls_storep instance, WTF_WASM_CONTEXT_KEY
 else
     crash()
@@ -1028,8 +1042,8 @@ macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
     callWasmCallSlowPath(
         slowPath,
         # callee is r0 and targetWasmInstance is r1
-        macro (callee, targetWasmInstance)
-            move callee, ws0
+        macro (calleeEntryPoint, targetWasmInstance)
+            move calleeEntryPoint, ws0
 
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
 
@@ -1179,12 +1193,12 @@ end
         end)
 end
 
-macro slowPathForWasmTailCall(ctx, slowPath, storeWasmInstance)
+macro slowPathForWasmTailCall(ctx, slowPath, storeWasmInstance, restoreCalleeSavesPreservedByCaller)
     callWasmCallSlowPath(
         slowPath,
         # callee is r0 and targetWasmInstance is r1
-        macro (callee, targetWasmInstance)
-            move callee, ws0
+        macro (calleeEntryPoint, targetWasmInstance)
+            move calleeEntryPoint, ws0
 
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
 
@@ -1256,13 +1270,14 @@ end
 
             # Compute new stack pointer
             addp cfr, wa0
-            subp wa1 , wa0
+            subp wa1, wa0
 
             # Restore PC
             move ws1, PC
 
+            restoreCalleeSavesPreservedByCaller()
 if ARM64E
-            addp 16, cfr, ws2
+            addp CallerFrameAndPCSize, cfr, ws2
 end
             preserveReturnAddress(ws1)
             usePreviousFrame()
@@ -1360,20 +1375,49 @@ wasmOp(call_ref_no_tls, WasmCallRefNoTls, macro(ctx)
     slowPathForWasmCall(ctx, _slow_path_wasm_call_ref_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
+# In the prologue of every Wasm function, we call preserveCalleeSavesUsedByWasm() which saves
+# the wasmInstance and PB callee save registers. In epilogues, we call restoreCalleeSavesUsedByWasm()
+# to restore them (e.g. see doReturn()). Hence, it follows that when we do a tail_call, that we
+# do the equivalent of restoreCalleeSavesUsedByWasm() and restore the wasmInstance and PB.
+#
+# However, for no_tls mode, the wasmInstance register is pinned and used to point to the Wasm
+# instance currently executing. The callee expects the caller to have set up wasmInstance accordingly
+# before calling it. As such, we should not restore the caller's caller's wasmInstance before tail
+# calling to the callee. Hence, we'll only restore the wasmInstance register for useFastTLS mode.
+#
+# As for PB, slowPathForWasmTailCall already restores it in usePreviousFrame(). Hence, there's
+# nothing more to do for that.
+
 wasmOp(tail_call, WasmTailCall, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call, storeWasmInstanceToTLS)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call,
+    storeWasmInstanceToTLS,
+    restoreWasmInstanceCalleeSavesForTailCallWhenUsingTLS)
 end)
 
 wasmOp(tail_call_no_tls, WasmTailCallNoTls, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_no_tls,
+    macro(targetInstance)
+        move targetInstance, wasmInstance
+    end,
+    macro()
+        # Nothing to do. See comment on restoring callee saves for tail calls above.
+    end)
 end)
 
 wasmOp(tail_call_indirect, WasmTailCallIndirect, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect, storeWasmInstanceToTLS)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect,
+    storeWasmInstanceToTLS,
+    restoreWasmInstanceCalleeSavesForTailCallWhenUsingTLS)
 end)
 
 wasmOp(tail_call_indirect_no_tls, WasmTailCallIndirectNoTls, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect_no_tls,
+    macro(targetInstance)
+        move targetInstance, wasmInstance
+    end,
+    macro()
+        # Nothing to do. See comment on restoring callee saves for tail calls above.
+    end)
 end)
 
 slowWasmOp(call_builtin)
