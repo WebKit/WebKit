@@ -34,7 +34,6 @@
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _GFileIOStream GFileIOStream;
 typedef struct _GInputStream GInputStream;
 typedef struct _GOutputStream GOutputStream;
 #endif
@@ -59,17 +58,13 @@ public:
 #if !USE(GLIB)
     bool isOpened() const { return FileSystem::isHandleValid(m_fileDescriptor); }
 #else
-    bool isOpened() const { return true; }
+    bool isOpened() const { return m_inputStream || m_outputStream; }
 #endif
 
     ~IOChannel();
 
 private:
     IOChannel(String&& filePath, IOChannel::Type, std::optional<WorkQueue::QOS>);
-
-#if USE(GLIB)
-    void readSyncInThread(size_t offset, size_t, WTF::WorkQueueBase&, Function<void(Data&, int error)>&&);
-#endif
 
     String m_path;
     Type m_type;
@@ -84,7 +79,7 @@ private:
 #if USE(GLIB)
     GRefPtr<GInputStream> m_inputStream;
     GRefPtr<GOutputStream> m_outputStream;
-    GRefPtr<GFileIOStream> m_ioStream;
+    WorkQueue::QOS m_qos;
 #endif
 };
 

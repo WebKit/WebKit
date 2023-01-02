@@ -71,12 +71,6 @@ enum RunLoopSourcePriority {
 
     // Async IO network callbacks.
     AsyncIONetwork = 100,
-
-    // Disk cache read callbacks.
-    DiskCacheRead = 100,
-
-    // Disk cache write callbacks.
-    DiskCacheWrite = 200,
 };
 
 #else
@@ -98,8 +92,6 @@ enum RunLoopSourcePriority {
     ReleaseUnusedResourcesTimer = 0,
 
     AsyncIONetwork = 10,
-    DiskCacheRead = 10,
-    DiskCacheWrite = 20
 };
 
 #endif
