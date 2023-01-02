@@ -23,13 +23,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm dist-tag add bun-webkit-linux-amd64-lto@next latest
-          npm dist-tag add bun-webkit-linux-arm64-lto@next latest
-          npm dist-tag add bun-webkit-macos-arm64-lto@next latest
-          npm dist-tag add bun-webkit-macos-amd64-lto@next latest
-          npm dist-tag add bun-webkit-linux-amd64@next latest
-          npm dist-tag add bun-webkit-linux-arm64@next latest
-          npm dist-tag add bun-webkit-macos-arm64@next latest
-          npm dist-tag add bun-webkit-macos-amd64@next latest
-          npm dist-tag add bun-webkit@next latest
-          npm dist-tag add bun-webkit-lto@next latest
+          npm dist-tag add bun-webkit-linux-amd64-lto@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-linux-arm64-lto@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-macos-arm64-lto@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-macos-amd64-lto@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-linux-amd64@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-linux-arm64@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-macos-arm64@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-macos-amd64@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-lto@0.0.1-${{github.sha}} latest
