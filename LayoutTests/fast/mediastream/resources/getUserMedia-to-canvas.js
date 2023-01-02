@@ -140,8 +140,16 @@ async function testUserMediaToCanvas(t, subcase) {
         }
         setMockCameraImageOrientation(0);
         await waitForVideoSize(video, realVideoSize[0], realVideoSize[1]);
-        debuge.removeChild(video);
+
+        // FIXME: Workaround for GStreamer ports, in some cases media tracks of the mock source are
+        // not correctly propagated to the media element, so we need explicit clean-up of the
+        // MediaStream here. This is temporary, hopefully.
+        video.srcObject.getVideoTracks().forEach(track => {
+            track.stop();
+            video.srcObject.removeTrack(track);
+        });
         video.srcObject = null;
+        debuge.removeChild(video);
     });
 
     if (subcase.angle == 180) {

@@ -1090,11 +1090,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
         return;
     }
 
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this, caps = WTFMove(caps)] {
-        if (!weakThis)
-            return;
-        updateVideoSizeAndOrientationFromCaps(caps.get());
-    });
+    updateVideoSizeAndOrientationFromCapsAndTagList(caps);
 }
 
 void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -3336,16 +3332,18 @@ void MediaPlayerPrivateGStreamer::repaint()
     m_drawCondition.notifyOne();
 }
 
-static ImageOrientation getVideoOrientation(const GstTagList* tagList)
+static std::optional<ImageOrientation> getVideoOrientation(const GstTagList* tagList)
 {
     ASSERT(tagList);
-    GUniqueOutPtr<gchar> tag;
+    GUniqueOutPtr<char> tag;
     if (!gst_tag_list_get_string(tagList, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
-        GST_DEBUG("No image_orientation tag, applying no rotation.");
-        return ImageOrientation::None;
+        GST_DEBUG("No image_orientation in tag.");
+        return std::nullopt;
     }
 
     GST_DEBUG("Found image_orientation tag: %s", tag.get());
+    if (!g_strcmp0(tag.get(), "rotate-0"))
+        return ImageOrientation::None;
     if (!g_strcmp0(tag.get(), "flip-rotate-0"))
         return ImageOrientation::OriginTopRight;
     if (!g_strcmp0(tag.get(), "rotate-180"))
@@ -3361,58 +3359,59 @@ static ImageOrientation getVideoOrientation(const GstTagList* tagList)
     if (!g_strcmp0(tag.get(), "rotate-270"))
         return ImageOrientation::OriginLeftBottom;
 
-    // Default rotation.
-    return ImageOrientation::None;
+    return std::nullopt;
 }
 
 void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagList)
 {
-    GST_DEBUG_OBJECT(pipeline(), "Updating orientation from %" GST_PTR_FORMAT, tagList);
-    auto sizeActuallyChanged = setVideoSourceOrientation(getVideoOrientation(tagList));
+    // We're in videoSinkPad streaming thread.
+    ASSERT(!isMainThread());
 
-    if (!sizeActuallyChanged)
+    if (!hasFirstVideoSampleReachedSink()) {
+        // We want to wait for the sink to receive the first buffer before emitting dimensions, since only by then we
+        // are guaranteed that any potential tag event with a rotation has been handled.
+        GST_DEBUG_OBJECT(pipeline(), "Ignoring tag event until the first buffer reaches the sink.");
+        return;
+    }
+
+    GST_DEBUG_OBJECT(pipeline(), "Updating orientation from %" GST_PTR_FORMAT, tagList);
+    auto orientation = getVideoOrientation(tagList);
+    if (!orientation)
         return;
 
-    // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
-    if (m_videoSourceOrientation.usesWidthAsHeight())
-        m_videoSize = m_videoSize.transposedSize();
+    GRefPtr<GstCaps> caps(gst_sample_get_caps(m_sample.get()));
+    auto newVideoSize = applyVideoOrientationToCaps(*orientation, caps);
+
+    // Prevent false positive sizeChanged events.
+    if (newVideoSize == m_videoSize || newVideoSize.isEmpty() || newVideoSize.isZero())
+        return;
 
     GST_DEBUG_OBJECT(pipeline(), "Enqueuing and waiting for main-thread task to call sizeChanged()...");
-    bool sizeChangedProcessed = m_sinkTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this] {
+    bool sizeChangedProcessed = m_sinkTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this, newVideoSize] {
+        m_videoSize = newVideoSize;
         m_player->sizeChanged();
         return AbortableTaskQueue::Void();
     }).has_value();
     GST_DEBUG_OBJECT(pipeline(), "Finished waiting for main-thread task to call sizeChanged()... %s", sizeChangedProcessed ? "sizeChanged() was called." : "task queue aborted by flush");
 }
 
-void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const GstCaps* caps)
+FloatSize MediaPlayerPrivateGStreamer::applyVideoOrientationToCaps(const ImageOrientation& orientation, const GRefPtr<GstCaps>& caps)
 {
-    ASSERT(isMainThread());
-
     // TODO: handle possible clean aperture data. See https://bugzilla.gnome.org/show_bug.cgi?id=596571
     // TODO: handle possible transformation matrix. See https://bugzilla.gnome.org/show_bug.cgi?id=596326
 
-    // Get the video PAR and original size, if this fails the
-    // video-sink has likely not yet negotiated its caps.
+    // Get the video PAR and original size, this can't fail because at this point the video sink has pre-rolled.
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
     IntSize originalSize;
     GstVideoFormat format;
-    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
-        GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps);
-        return;
-    }
+    RELEASE_ASSERT(hasFirstVideoSampleReachedSink());
+    RELEASE_ASSERT(getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride));
 
-    auto pad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
-    ASSERT(pad);
-    auto tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
-    auto orientation = ImageOrientation::None;
-    if (tagsEvent) {
-        GstTagList* tagList;
-        gst_event_parse_tag(tagsEvent.get(), &tagList);
-        orientation = getVideoOrientation(tagList);
-    }
+    m_videoSourceOrientation = orientation;
+#if USE(TEXTURE_MAPPER_GL)
+    updateTextureMapperFlags();
+#endif
 
-    setVideoSourceOrientation(orientation);
     // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
     if (m_videoSourceOrientation.usesWidthAsHeight())
         originalSize = originalSize.transposedSize();
@@ -3445,9 +3444,35 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
         height = originalSize.height();
     }
 
-    GST_DEBUG_OBJECT(pipeline(), "Saving natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
-    m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
-    m_player->sizeChanged();
+    GST_DEBUG_OBJECT(pipeline(), "Video natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
+    return FloatSize(static_cast<int>(width), static_cast<int>(height));
+}
+
+void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCapsAndTagList(const GRefPtr<GstCaps>& caps)
+{
+    ASSERT(!isMainThread());
+
+    auto pad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
+    ASSERT(pad);
+    auto orientation = ImageOrientation::None;
+    if (auto tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0))) {
+        GstTagList* tagList;
+        gst_event_parse_tag(tagsEvent.get(), &tagList);
+        if (auto orientationFromTag = getVideoOrientation(tagList))
+            orientation = *orientationFromTag;
+    }
+
+    auto newVideoSize = applyVideoOrientationToCaps(orientation, caps);
+    if (newVideoSize == m_videoSize || newVideoSize.isEmpty() || newVideoSize.isZero())
+        return;
+
+    GST_DEBUG_OBJECT(pipeline(), "Enqueuing and waiting for main-thread task to call sizeChanged()...");
+    bool sizeChangedProcessed = m_sinkTaskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this, newVideoSize] {
+        m_videoSize = newVideoSize;
+        m_player->sizeChanged();
+        return AbortableTaskQueue::Void();
+    }).has_value();
+    GST_DEBUG_OBJECT(pipeline(), "Finished waiting for main-thread task to call sizeChanged()... %s", sizeChangedProcessed ? "sizeChanged() was called." : "task queue aborted by flush");
 }
 
 void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
@@ -3491,10 +3516,10 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
             GST_ERROR_OBJECT(pipeline(), "Received sample without caps: %" GST_PTR_FORMAT, sample);
             return;
         }
-        RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this, caps = WTFMove(caps)] {
+        updateVideoSizeAndOrientationFromCapsAndTagList(caps);
+        RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
             if (!weakThis)
                 return;
-            updateVideoSizeAndOrientationFromCaps(caps.get());
 
             // Live streams start without pre-rolling, that means they can reach PAUSED while sinks
             // still haven't received a sample to render. So we need to notify the media element in
@@ -3689,18 +3714,6 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
     GRefPtr<GstSample> sample = m_sample;
     auto size = getVideoResolutionFromCaps(gst_sample_get_caps(sample.get())).value_or(FloatSize { 0, 0 });
     return VideoFrameGStreamer::create(WTFMove(sample), size);
-}
-
-bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)
-{
-    if (m_videoSourceOrientation == orientation)
-        return false;
-
-    m_videoSourceOrientation = orientation;
-#if USE(TEXTURE_MAPPER_GL)
-    updateTextureMapperFlags();
-#endif
-    return true;
 }
 
 #if USE(TEXTURE_MAPPER_GL)
