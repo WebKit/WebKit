@@ -139,9 +139,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
         break;
-    case AvoidanceReason::ChildIsUnsupportedListItem:
-        stream << "list item with floats";
-        break;
     case AvoidanceReason::FlowHasInitialLetter:
         stream << "intial letter";
         break;
@@ -389,17 +386,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
     }
 
-    if (is<RenderListMarker>(renderer)) {
-        auto& listMarker = downcast<RenderListMarker>(renderer);
-        auto* associatedListItem = listMarker.listItem();
-        for (auto* ancestor = listMarker.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            if (ancestor == associatedListItem)
-                break;
-            if (ancestor->containsFloats())
-                SET_REASON_AND_RETURN_IF_NEEDED(ChildIsUnsupportedListItem, reasons, includeReasons);
-        }
+    if (is<RenderListMarker>(renderer))
         return reasons;
-    }
 
     if (is<RenderInline>(renderer)) {
         if (renderer.isSVGInline())

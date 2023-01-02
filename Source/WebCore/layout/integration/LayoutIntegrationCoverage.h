@@ -98,7 +98,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 58,
     // Unused                                    = 1LLU  << 59,
     // Unused                                    = 1LLU  << 60,
-    ChildIsUnsupportedListItem                   = 1LLU  << 61,
+    // Unused                                    = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62
 };
 
