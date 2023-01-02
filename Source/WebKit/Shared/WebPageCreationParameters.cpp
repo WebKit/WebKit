@@ -34,7 +34,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << viewSize;
     encoder << activityState;
-
+    
     encoder << store;
     encoder << drawingAreaType;
     encoder << drawingAreaIdentifier;
@@ -84,13 +84,13 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << useDarkAppearance;
     encoder << useElevatedUserInterfaceLevel;
     encoder << hasResourceLoadClient;
-
+    
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
     encoder << useFormSemanticContext;
 #endif
-
+    
 #if ENABLE(META_VIEWPORT)
     encoder << ignoresViewportScaleLimits;
     encoder << viewportConfigurationViewLayoutSize;
@@ -99,7 +99,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << viewportConfigurationViewSize;
     encoder << overrideViewportArguments;
 #endif
-
+    
 #if PLATFORM(IOS_FAMILY)
     encoder << screenSize;
     encoder << availableScreenSize;
@@ -117,7 +117,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << gpuMachExtensionHandles;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    encoder << fontMachExtensionHandle;
+    encoder << fontMachExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     encoder << accentColor;
@@ -158,7 +158,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << userScriptsShouldWaitUntilNotification;
     encoder << crossOriginAccessControlCheckEnabled;
     encoder << processDisplayName;
-
+    
     encoder << shouldCaptureAudioInUIProcess;
     encoder << shouldCaptureAudioInGPUProcess;
     encoder << shouldCaptureVideoInUIProcess;
@@ -180,29 +180,33 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << lastNavigationWasAppInitiated;
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
-
+    
     encoder << httpsUpgradeEnabled;
 #if PLATFORM(IOS)
     encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
 #endif
-
+    
 #if ENABLE(APP_HIGHLIGHTS)
     encoder << appHighlightsVisible;
 #endif
-
+    
 #if HAVE(TOUCH_BAR)
     encoder << requiresUserActionForEditingControlsManager;
 #endif
-
+    
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     encoder << hasResizableWindows;
 #endif
-
+    
     encoder << contentSecurityPolicyModeForExtension;
     encoder << mainFrameIdentifier;
-
+    
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     encoder << lookalikeCharacterStrings;
+#endif
+
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    encoder << machBootstrapHandle;
 #endif
 }
 
@@ -418,11 +422,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    std::optional<std::optional<SandboxExtension::Handle>> fontMachExtensionHandle;
-    decoder >> fontMachExtensionHandle;
-    if (!fontMachExtensionHandle)
+    std::optional<Vector<SandboxExtension::Handle>> fontMachExtensionHandles;
+    decoder >> fontMachExtensionHandles;
+    if (!fontMachExtensionHandles)
         return std::nullopt;
-    parameters.fontMachExtensionHandle = WTFMove(*fontMachExtensionHandle);
+    parameters.fontMachExtensionHandles = WTFMove(*fontMachExtensionHandles);
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
@@ -645,6 +649,14 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!lookalikeCharacterStrings)
         return std::nullopt;
     parameters.lookalikeCharacterStrings = WTFMove(*lookalikeCharacterStrings);
+#endif
+
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    std::optional<SandboxExtension::Handle> machBootstrapHandle;
+    decoder >> machBootstrapHandle;
+    if (!machBootstrapHandle)
+        return std::nullopt;
+    parameters.machBootstrapHandle = WTFMove(*machBootstrapHandle);
 #endif
 
     return { WTFMove(parameters) };

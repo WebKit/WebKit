@@ -41,18 +41,21 @@ public:
     }
     MediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&) = default;
     MediaDeviceSandboxExtensions& operator=(MediaDeviceSandboxExtensions&&) = default;
-
-    MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles);
-
+    
+    MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles, SandboxExtension::Handle&& machBootstrapHandle);
+    
     std::pair<String, RefPtr<SandboxExtension>> operator[](size_t i);
     size_t size() const;
+    
+    RefPtr<SandboxExtension> machBootstrapExtension() { return SandboxExtension::create(WTFMove(m_machBootstrapHandle)); }
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, MediaDeviceSandboxExtensions&);
-
+    
 private:
     Vector<String> m_ids;
     Vector<SandboxExtension::Handle> m_handles;
+    SandboxExtension::Handle m_machBootstrapHandle;
 };
 
 } // namespace WebKit

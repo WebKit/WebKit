@@ -86,7 +86,7 @@ struct WebProcessCreationParameters {
     UserData initializationUserData;
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    SandboxExtension::Handle enableRemoteWebInspectorExtensionHandle;
+    Vector<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
 #endif
 #if ENABLE(MEDIA_STREAM)
     SandboxExtension::Handle audioCaptureExtensionHandle;

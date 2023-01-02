@@ -72,9 +72,9 @@ namespace WebKit {
 struct WebPageCreationParameters {
     void encode(IPC::Encoder&) const;
     static std::optional<WebPageCreationParameters> decode(IPC::Decoder&);
-
+    
     WebCore::IntSize viewSize;
-
+    
     OptionSet<WebCore::ActivityState::Flag> activityState;
     
     WebPreferencesStore store;
@@ -82,45 +82,45 @@ struct WebPageCreationParameters {
     DrawingAreaIdentifier drawingAreaIdentifier;
     WebPageProxyIdentifier webPageProxyIdentifier;
     WebPageGroupData pageGroupData;
-
+    
     bool isEditable;
-
+    
     WebCore::Color underlayColor;
-
+    
     bool useFixedLayout;
     WebCore::IntSize fixedLayoutSize;
-
+    
     WebCore::FloatSize defaultUnobscuredSize;
     WebCore::FloatSize minimumUnobscuredSize;
     WebCore::FloatSize maximumUnobscuredSize;
-
+    
     std::optional<WebCore::FloatRect> viewExposedRect;
-
+    
     bool alwaysShowsHorizontalScroller;
     bool alwaysShowsVerticalScroller;
-
+    
     bool suppressScrollbarAnimations;
-
+    
     WebCore::Pagination::Mode paginationMode;
     bool paginationBehavesLikeColumns;
     double pageLength;
     double gapBetweenPages;
     
     String userAgent;
-
+    
     bool itemStatesWereRestoredByAPIRequest { false };
     Vector<BackForwardListItemState> itemStates;
-
+    
     uint64_t visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;
-
+    
     float deviceScaleFactor;
     float viewScaleFactor;
-
+    
     double textZoomFactor { 1 };
     double pageZoomFactor { 1 };
-
+    
     float topContentInset;
     
     float mediaVolume;
@@ -128,32 +128,32 @@ struct WebPageCreationParameters {
     bool openedByDOM { false };
     bool mayStartMediaWhenInWindow;
     bool mediaPlaybackIsSuspended { false };
-
+    
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::IntSize sizeToContentAutoSizeMaximumSize;
     bool autoSizingShouldExpandToViewHeight;
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
-
+    
     // FIXME: This should be std::optional<WebCore::ScrollbarOverlayStyle>, but we would need to
-    // correctly handle enums inside Optionals when encoding and decoding. 
+    // correctly handle enums inside Optionals when encoding and decoding.
     std::optional<uint32_t> scrollbarOverlayStyle;
-
+    
     bool backgroundExtendsBeyondPage;
-
+    
     LayerHostingMode layerHostingMode;
-
+    
     bool hasResourceLoadClient { false };
-
+    
     Vector<String> mimeTypesWithCustomContentProviders;
-
+    
     bool controlledByAutomation;
     bool isProcessSwap { false };
-
+    
     bool useDarkAppearance { false };
     bool useElevatedUserInterfaceLevel { false };
-
+    
 #if PLATFORM(MAC)
     std::optional<WebCore::DestinationColorSpace> colorSpace;
     bool useSystemAppearance { false };
@@ -184,7 +184,7 @@ struct WebPageCreationParameters {
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    std::optional<SandboxExtension::Handle> fontMachExtensionHandle;
+    Vector<SandboxExtension::Handle> fontMachExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
@@ -199,46 +199,46 @@ struct WebPageCreationParameters {
     bool usesOffscreenRendering { false };
 #endif
     bool shouldScaleViewToFitDocument;
-
+    
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
-
+    
     String overrideContentSecurityPolicy;
     std::optional<double> cpuLimit;
-
+    
     HashMap<String, WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
     Vector<String> urlSchemesWithLegacyCustomProtocolHandlers;
-
+    
 #if ENABLE(APPLICATION_MANIFEST)
     std::optional<WebCore::ApplicationManifest> applicationManifest;
 #endif
-
+    
     bool needsFontAttributes { false };
-
+    
     // WebRTC members.
     bool iceCandidateFilteringEnabled { true };
     bool enumeratingAllNetworkInterfacesEnabled { false };
-
+    
     UserContentControllerParameters userContentControllerParameters;
-
+    
 #if ENABLE(WK_WEB_EXTENSIONS)
     std::optional<WebExtensionControllerParameters> webExtensionControllerParameters;
 #endif
-
+    
     std::optional<WebCore::Color> backgroundColor;
-
+    
     std::optional<WebCore::PageIdentifier> oldPageID;
-
+    
     String overriddenMediaType;
     Vector<String> corsDisablingPatterns;
     HashSet<String> maskedURLSchemes;
     bool userScriptsShouldWaitUntilNotification { true };
     bool loadsSubresources { true };
     std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
-
+    
     bool crossOriginAccessControlCheckEnabled { true };
     String processDisplayName;
-
+    
     bool shouldCaptureAudioInUIProcess { false };
     bool shouldCaptureAudioInGPUProcess { false };
     bool shouldCaptureVideoInUIProcess { false };
@@ -259,11 +259,11 @@ struct WebPageCreationParameters {
 #endif
     bool lastNavigationWasAppInitiated { true };
     bool canUseCredentialStorage { true };
-
+    
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     
     bool httpsUpgradeEnabled { true };
-
+    
 #if PLATFORM(IOS)
     bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
 #endif
@@ -271,19 +271,23 @@ struct WebPageCreationParameters {
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
 #endif
-
+    
 #if HAVE(TOUCH_BAR)
     bool requiresUserActionForEditingControlsManager { false };
 #endif
-
+    
     bool hasResizableWindows { false };
-
+    
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
-
+    
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
-
+    
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     Vector<String> lookalikeCharacterStrings;
+#endif
+
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    SandboxExtension::Handle machBootstrapHandle;
 #endif
 };
 
