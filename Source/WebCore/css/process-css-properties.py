@@ -35,8 +35,9 @@ import subprocess
 import sys
 import textwrap
 
-def quote_iterable(iterable, suffix=""):
-    return (f'"{x}"{suffix}' for x in iterable)
+
+def quote_iterable(iterable, *, mark='"', suffix=''):
+    return (f'{mark}{x}{mark}{suffix}' for x in iterable)
 
 
 def count_iterable(iterable):
@@ -453,7 +454,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("converter", allowed_types=[str]),
         Schema.Entry("custom", allowed_types=[str]),
         Schema.Entry("custom-parser", allowed_types=[bool]),
-        Schema.Entry("custom-parser-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
@@ -465,17 +465,20 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("logical-property-group", allowed_types=[dict]),
         Schema.Entry("longhands", allowed_types=[list]),
         Schema.Entry("name-for-methods", allowed_types=[str]),
-        Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-exported", allowed_types=[bool]),
+        Schema.Entry("parser-function", allowed_types=[str]),
+        Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-additional-parameters", allowed_types=[list], default_value=[]),
+        Schema.Entry("parser-function-requires-context", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-context-mode", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-current-shorthand", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-current-property", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-quirks-mode", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-value-pool", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
-        Schema.Entry("parser-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("parser-requires-context", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-context-mode", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-current-shorthand", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-current-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-quirks-mode", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-value-pool", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-grammar-unused", allowed_types=[str]),
+        Schema.Entry("parser-grammar-unused-reason", allowed_types=[str]),
         Schema.Entry("related-property", allowed_types=[str]),
         Schema.Entry("separator", allowed_types=[str]),
         Schema.Entry("setter", allowed_types=[str]),
@@ -575,23 +578,35 @@ class StylePropertyCodeGenProperties:
                 raise Exception(f"{key_path} can't have both a related property and be high priority.")
 
         if json_value.get("parser-grammar"):
+            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
+                if entry_name in json_value:
+                    raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}'.")
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar"] = grammar
 
+        if json_value.get("parser-grammar-unused"):
+            if "parser-grammar-unused-reason" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused-reason' specified when using 'parser-grammar-unused'.")
+            # If we have a "parser-grammar-unused" specified, we still process it to ensure that at least it is syntatically valid, we just
+            # won't actually use it for generation.
+            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
+            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
+            json_value["parser-grammar-unused"] = grammar
+
         if json_value.get("parser-function"):
+            if "parser-grammar-unused" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-function'.")
             for entry_name in ["skip-parser", "longhands", "custom-parser", "parser-grammar"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-function' and '{entry_name}'.")
 
         if json_value.get("custom-parser"):
-            for entry_name in ["skip-parser"]:
+            if "longhands" not in json_value:
+                raise Exception(f"{key_path} can't 'custom-parser' unless 'longhands' is also specified.")
+            for entry_name in ["skip-parser", "parser-grammar"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'custom-parser' and '{entry_name}'.")
-
-            # Canonicalize to 'parser-function' so that the rest of the code only has to deal with one of them.
-            json_value["parser-function"] = f"consume{property_name.id_without_prefix}"
-            del json_value["custom-parser"]
 
         return StylePropertyCodeGenProperties(property_name, **json_value)
 
@@ -652,12 +667,21 @@ class StyleProperty:
             return None
 
         if "values" in json_value:
-            values = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
+            if not (codegen_properties.parser_grammar or codegen_properties.skip_parser or codegen_properties.parser_function or codegen_properties.longhands):
+                raise Exception(f"'{name}' must specify a 'parser-grammar', 'skip-parser', 'parser-function' or 'longhands' when specifying a 'values' array.")
+
+            json_value["values"] = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
+
             if codegen_properties.parser_grammar:
-                codegen_properties.parser_grammar.perform_fixups_for_values_references(values)
-            else:
-                codegen_properties.parser_grammar = Grammar.from_values(parsing_context, key_path, name, values)
-            json_value["values"] = values
+                codegen_properties.parser_grammar.perform_fixups_for_values_references(json_value["values"])
+            elif codegen_properties.parser_grammar_unused:
+                codegen_properties.parser_grammar_unused.perform_fixups_for_values_references(json_value["values"])
+
+            if codegen_properties.parser_grammar:
+                codegen_properties.parser_grammar.check_against_values(json_value.get("values", []))
+            elif codegen_properties.parser_grammar_unused:
+                if parsing_context.check_unused_grammars_values or parsing_context.verbose:
+                    codegen_properties.parser_grammar_unused.check_against_values(json_value.get("values", []))
 
         return StyleProperty(**json_value)
 
@@ -970,21 +994,23 @@ class DescriptorCodeGenProperties:
     schema = Schema(
         Schema.Entry("aliases", allowed_types=[list], default_value=[]),
         Schema.Entry("comment", allowed_types=[str]),
-        Schema.Entry("custom-parser-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("internal-only", allowed_types=[bool], default_value=False),
         Schema.Entry("longhands", allowed_types=[list]),
-        Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-exported", allowed_types=[bool]),
+        Schema.Entry("parser-function", allowed_types=[str]),
+        Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-additional-parameters", allowed_types=[list], default_value=[]),
+        Schema.Entry("parser-function-requires-context", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-context-mode", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-current-shorthand", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-current-property", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-quirks-mode", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-function-requires-value-pool", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
-        Schema.Entry("parser-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("parser-requires-context", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-context-mode", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-current-shorthand", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-current-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-quirks-mode", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-requires-value-pool", allowed_types=[bool], default_value=False),
+        Schema.Entry("parser-grammar-unused", allowed_types=[str]),
+        Schema.Entry("parser-grammar-unused-reason", allowed_types=[str]),
         Schema.Entry("settings-flag", allowed_types=[str]),
         Schema.Entry("skip-codegen", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
@@ -1022,14 +1048,25 @@ class DescriptorCodeGenProperties:
                 del json_value["longhands"]
 
         if json_value.get("parser-grammar"):
-            for entry_name in ["parser-function", "parser-requires-additional-parameters", "parser-requires-context", "parser-requires-context-mode", "parser-requires-current-shorthand", "parser-requires-current-property", "parser-requires-quirks-mode", "parser-requires-value-pool", "skip-parser", "longhands"]:
+            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}.")
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar"] = grammar
 
+        if json_value.get("parser-grammar-unused"):
+            if "parser-grammar-unused-reason" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused-reason' specified when using 'parser-grammar-unused'.")
+            # If we have a "parser-grammar-unused" specified, we still process it to ensure that at least it is syntatically valid, we just
+            # won't actually use it for generation.
+            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
+            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
+            json_value["parser-grammar-unused"] = grammar
+
         if json_value.get("parser-function"):
+            if "parser-grammar-unused" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-function'.")
             for entry_name in ["skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-function' and '{entry_name}'.")
@@ -1074,13 +1111,23 @@ class Descriptor:
                 print(f"SKIPPED {name} due to 'skip-codegen'")
             return None
 
+
         if "values" in json_value:
-            values = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
+            if not (codegen_properties.parser_grammar or codegen_properties.skip_parser or codegen_properties.parser_function or codegen_properties.longhands):
+                raise Exception(f"'{name}' must specify a 'parser-grammar', 'skip-parser', 'parser-function' or 'longhands' when specifying a 'values' array.")
+
+            json_value["values"] = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
+
             if codegen_properties.parser_grammar:
-                codegen_properties.parser_grammar.perform_fixups_for_values_references(values)
-            else:
-                codegen_properties.parser_grammar = Grammar.from_values(parsing_context, key_path, name, values)
-            json_value["values"] = values
+                codegen_properties.parser_grammar.perform_fixups_for_values_references(json_value["values"])
+            elif codegen_properties.parser_grammar_unused:
+                codegen_properties.parser_grammar_unused.perform_fixups_for_values_references(json_value["values"])
+
+            if codegen_properties.parser_grammar:
+                codegen_properties.parser_grammar.check_against_values(json_value.get("values", []))
+            elif codegen_properties.parser_grammar_unused:
+                if parsing_context.check_unused_grammars_values or parsing_context.verbose:
+                    codegen_properties.parser_grammar_unused.check_against_values(json_value.get("values", []))
 
         return Descriptor(descriptor_set_name, **json_value)
 
@@ -1137,7 +1184,7 @@ class DescriptorSet:
 
     @staticmethod
     def from_json(parsing_context, key_path, name, json_value):
-        return DescriptorSet(name, list(compact_map(lambda item: Descriptor.from_json(parsing_context, key_path, item[0], item[1], name), json_value.items())))
+        return DescriptorSet(name, list(compact_map(lambda item: Descriptor.from_json(parsing_context, f"{key_path}.{name}", item[0], item[1], name), json_value.items())))
 
     def _perform_fixups(self):
         for descriptor in self.descriptors:
@@ -1312,46 +1359,51 @@ class Term:
     @staticmethod
     def wrap_with_multiplier(multiplier, term):
         if multiplier.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
-            raise Exception("Unsupported multiplier '?'")
+            return OptionalTerm.wrapping_term(term)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE:
-            raise Exception("Unsupported multiplier '*'")
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=0)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ONE_OR_MORE:
-            raise Exception("Unsupported multiplier '+'")
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=1)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT:
-            raise Exception("Unsupported multiplier '{A}'")
+            return FixedSizeRepetitionTerm.wrapping_term(term, variation=' ', size=multiplier.range.min)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST:
-            raise Exception("Unsupported multiplier '{A,}'")
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN:
-            raise Exception("Unsupported multiplier '{A,B}'")
+            return BoundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min, max=multiplier.range.max)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE:
-            return CommaSeparatedRepetitionTerm.wrapping_term(term)
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=',', min=1)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
-            raise Exception("Unsupported multiplier '#{A}'")
+            return FixedSizeRepetitionTerm.wrapping_term(term, variation=',', size=multiplier.range.min)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST:
-            raise Exception("Unsupported multiplier '#{A,}'")
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=',', min=multiplier.range.min)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN:
-            raise Exception("Unsupported multiplier '#{A,B}'")
+            return BoundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min, max=multiplier.range.max)
 
     @staticmethod
     def from_node(node):
         if isinstance(node, BNFGroupingNode):
             if node.kind == BNFGroupingNode.Kind.MATCH_ALL_ORDERED:
+                # FIXME: This should be part of the GroupTerm's simplification.
                 if len(node.members) == 1:
                     term = Term.from_node(node.members[0])
                 else:
-                    raise Exception("Unsupported grouping. 'ordered' (e.g. [<length> <length>])")
+                    term = GroupTerm.from_node(node)
             elif node.kind == BNFGroupingNode.Kind.MATCH_ONE:
                 term = MatchOneTerm.from_node(node)
             elif node.kind == BNFGroupingNode.Kind.MATCH_ALL_ANY_ORDER:
-                raise Exception("Unsupported grouping. 'all unordered' (e.g. [<length> && <length>])")
+                term = GroupTerm.from_node(node)
             elif node.kind == BNFGroupingNode.Kind.MATCH_ONE_OR_MORE_ANY_ORDER:
-                raise Exception("Unsupported grouping. 'one or more unordered' (e.g. [<length> || <length>])")
+                term = GroupTerm.from_node(node)
             else:
                 raise Exception(f"Unknown grouping kind '{node.kind}' in BNF parse tree node '{node}'")
         elif isinstance(node, BNFReferenceNode):
             term = ReferenceTerm.from_node(node)
+        elif isinstance(node, BNFFunctionNode):
+            term = FunctionTerm.from_node(node)
         elif isinstance(node, BNFKeywordNode):
             term = KeywordTerm.from_node(node)
+        elif isinstance(node, BNFLiteralNode):
+            term = LiteralTerm.from_node(node)
         else:
             raise Exception(f"Unknown node '{node}' in BNF parse tree")
 
@@ -1460,7 +1512,7 @@ class BuiltinSchema:
 # the real term during fixup, or a builtin rule, in which case they will inform the generator to call
 # out to a handwritten consumer. Example:
 #
-#   "<length unitless-allowed>"
+#   e.g. "<length unitless-allowed>"
 #
 class ReferenceTerm:
     builtins = BuiltinSchema(
@@ -1483,7 +1535,8 @@ class ReferenceTerm:
         BuiltinSchema.Entry("integer", "consumeInteger",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "IntegerValueRange::NonNegative", "[1,inf]": "IntegerValueRange::Positive"}, default="IntegerValueRange::All")),
         BuiltinSchema.Entry("number", "consumeNumber",
-            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All")),
+            # FIXME: "FontWeight" is not real. Add support for arbitrary ranges.
+            BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative", "[1,1000]": "ValueRange::FontWeight"}, default="ValueRange::All")),
         BuiltinSchema.Entry("percentage", "consumePercent",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All")),
         BuiltinSchema.Entry("position", "consumePosition",
@@ -1498,12 +1551,15 @@ class ReferenceTerm:
         BuiltinSchema.Entry("declaration-value", "consumeDeclarationValue")
     )
 
-    def __init__(self, name, is_internal, parameters):
+    def __init__(self, name, is_internal, is_function_reference, parameters):
         # Store the first (and perhaps only) part as the reference's name (e.g. for <length-percentage [0,inf] unitless-allowed> store 'length-percentage').
         self.name = Name(name)
 
         # Store whether this is an 'internal' reference (e.g. as indicated by the double angle brackets <<values>>).
         self.is_internal = is_internal
+
+        # Store whether this is a function reference (e.g. as indicated by function notation <rect()>).
+        self.is_function_reference = is_function_reference
 
         # Store any remaining parts as the parameters (e.g. for <length-percentage [0,inf] unitless-allowed> store ['[0,inf]', 'unitless-allowed']).
         self.parameters = parameters
@@ -1512,7 +1568,11 @@ class ReferenceTerm:
         self.builtin = ReferenceTerm.builtins.validate_and_construct_if_builtin(self.name, self.parameters)
 
     def __str__(self):
-        base = ' '.join([self.name.name] + self.parameters)
+        if self.is_function_reference:
+            name = self.name.name + '()'
+        else:
+            name = self.name.name
+        base = ' '.join([name] + self.parameters)
         if self.is_internal:
             return f"<<{base}>>"
         return f"<{base}>"
@@ -1523,31 +1583,67 @@ class ReferenceTerm:
     @staticmethod
     def from_node(node):
         assert(type(node) is BNFReferenceNode)
-        return ReferenceTerm(node.name, node.is_internal, [str(attribute) for attribute in node.attributes])
+        return ReferenceTerm(node.name, node.is_internal, node.is_function_reference, [str(attribute) for attribute in node.attributes])
 
     def perform_fixups(self, all_rules):
         # Replace a reference with the term it references if it can be found.
-        value = str(self)
-        if value in all_rules.rules_by_name:
-            return all_rules.rules_by_name[value].grammar.root_term
+        name_for_lookup = str(self)
+        if name_for_lookup in all_rules.rules_by_name:
+            return all_rules.rules_by_name[name_for_lookup].grammar.root_term.perform_fixups(all_rules)
         return self
+
 
     def perform_fixups_for_values_references(self, values):
         # NOTE: The actual name in the grammar is "<<values>>", which we store as is_internal + 'values'.
         if self.is_internal and self.name.name == "values":
-            # FIXME: This should really return a "MatchOneTerm" if len(values) > 1 and not a list.
-            return [value.keyword_term for value in values]
+            return MatchOneTerm.from_values(values)
         return self
 
     @property
     def is_builtin(self):
         return self.builtin is not None
 
+    @property
+    def supported_keywords(self):
+        return set()
+
+
+# LiteralTerm represents a direct match of a literal character or string. The
+# syntax in the CSS specifications is either a bare delimiter character or a
+# string surrounded by single quotes.
+#
+#   e.g. "'['" or ","
+#
+class LiteralTerm:
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return f"'{self.value}'"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def from_node(node):
+        assert(type(node) is BNFLiteralNode)
+        return LiteralTerm(node.value)
+
+    def perform_fixups(self, all_rules):
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        return self
+
+    @property
+    def supported_keywords(self):
+        return set()
+
 
 # KeywordTerm represents a direct keyword match. The syntax in the CSS specifications
-# is a bare string. Example:
+# is a bare string.
 #
-#   "auto"
+#   e.g. "auto" or "box"
 #
 class KeywordTerm:
     def __init__(self, value, *, aliased_to=None, comment=None, settings_flag=None, status=None):
@@ -1558,7 +1654,7 @@ class KeywordTerm:
         self.status = status
 
     def __str__(self):
-        return f"'{self.value}'"
+        return self.value.name
 
     def __repr__(self):
         return self.__str__()
@@ -1573,6 +1669,10 @@ class KeywordTerm:
 
     def perform_fixups_for_values_references(self, values):
         return self
+
+    @property
+    def supported_keywords(self):
+        return {self.value.name}
 
     @property
     def requires_context(self):
@@ -1590,16 +1690,16 @@ class KeywordTerm:
 
 
 # MatchOneTerm represents a set of terms, only one of which can match. The
-# syntax in the CSS specifications is a '|' between terms. Example:
+# syntax in the CSS specifications is a '|' between terms.
 #
-#   "auto" | "reverse" | "<angle unitless-allowed unitless-zero-allowed>"
+#   e.g. "auto" | "reverse" | "<angle unitless-allowed unitless-zero-allowed>"
 #
 class MatchOneTerm:
     def __init__(self, terms):
         self.terms = terms
 
     def __str__(self):
-        return f"[{' | '.join(map(lambda t: str(t), self.terms))}]"
+        return f"[ {' | '.join(str(term) for term in self.terms)} ]"
 
     def __repr__(self):
         return self.__str__()
@@ -1612,31 +1712,32 @@ class MatchOneTerm:
         return MatchOneTerm(list(compact_map(lambda member: Term.from_node(member), node.members)))
 
     @staticmethod
-    def from_values(parsing_context, key_path, values):
+    def from_values(values):
         return MatchOneTerm(list(compact_map(lambda value: value.keyword_term, values)))
 
     def perform_fixups(self, all_rules):
-        updated_terms = []
-        for term in self.terms:
-            updated_term = term.perform_fixups(all_rules)
-            if isinstance(updated_term, MatchOneTerm):
-                updated_terms += updated_term.terms
-            else:
-                updated_terms += [updated_term]
-
-        self.terms = updated_terms
+        self.terms = MatchOneTerm.simplify(term.perform_fixups(all_rules) for term in self.terms)
 
         if len(self.terms) == 1:
             return self.terms[0]
         return self
 
     def perform_fixups_for_values_references(self, values):
-        self.terms = flatten([term.perform_fixups_for_values_references(values) for term in self.terms])
+        self.terms = MatchOneTerm.simplify(term.perform_fixups_for_values_references(values) for term in self.terms)
+
+        if len(self.terms) == 1:
+            return self.terms[0]
         return self
 
-    @property
-    def is_values_reference(self):
-        return False
+    @staticmethod
+    def simplify(terms):
+        simplified_terms = []
+        for term in terms:
+            if isinstance(term, MatchOneTerm):
+                simplified_terms += term.terms
+            else:
+                simplified_terms += [term]
+        return simplified_terms
 
     @property
     def has_keyword_term(self):
@@ -1662,27 +1763,142 @@ class MatchOneTerm:
     def has_only_fast_path_keyword_terms(self):
         return all(isinstance(term, KeywordTerm) and term.is_eligible_for_fast_path for term in self.terms)
 
+    @property
+    def supported_keywords(self):
+        result = set()
+        for term in self.terms:
+            result.update(term.supported_keywords)
+        return result
 
-# CommaSeparatedRepetitionTerm represents matching a list of terms
-# separated by commas. The syntax in the CSS specifications is a
-# trailing '#'. Example:
+
+# GroupTerm represents matching a list of provided terms with
+# options for whether the matches are ordered and whether all
+# terms must be matched. The syntax in the CSS specifications
+# uses space separtion with square brackets (these can be ellided
+# at the root level) as the base syntax for an match all ordered
+# group, and adds '||' and '&&' combinators to indicate 'match
+# one or more + any order' and 'match all + any order' respectively.
 #
-#   "<length>#"
+#   e.g. "[ <length> <length> ]" or "[ <length> && <string> && <number> ]"
 #
-class CommaSeparatedRepetitionTerm:
-    def __init__(self, repeated_term, single_value_optimization=True):
-        self.repeated_term = repeated_term
-        self.single_value_optimization = single_value_optimization
+class GroupTerm:
+    def __init__(self, subterms, kind):
+        self.subterms = subterms
+        self.kind = kind
 
     def __str__(self):
-        return f"[{str(self.repeated_term)}#]"
+        return '[ ' + self.stringify_without_brackets + ' ]'
+
+    def __repr__(self):
+        return self.__str__()
+
+    @property
+    def stringify_without_brackets(self):
+        if self.kind != BNFGroupingNode.Kind.MATCH_ALL_ORDERED:
+            join_string = ' ' + str(self.kind.value) + ' '
+        else:
+            join_string = ' '
+        return join_string.join(str(subterm) for subterm in self.subterms)
+
+    @staticmethod
+    def from_node(node):
+        assert(type(node) is BNFGroupingNode)
+        return GroupTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), node.kind)
+
+    def perform_fixups(self, all_rules):
+        self.subterms = [subterm.perform_fixups(all_rules) for subterm in self.subterms]
+
+        if len(self.subterms) == 1:
+            return self.subterms[0]
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        self.subterms = [subterm.perform_fixups_for_values_references(values) for subterm in self.subterms]
+
+        if len(self.subterms) == 1:
+            return self.subterms[0]
+        return self
+
+    @property
+    def supported_keywords(self):
+        result = set()
+        for subterm in self.subterms:
+            result.update(subterm.supported_keywords)
+        return result
+
+
+# OptionalTerm represents matching a term that is allowed to
+# be ommited. The syntax in the CSS specifications uses a
+# trailing '?'.
+#
+#   e.g. "<length>?" or "[ <length> <string> ]?"
+#
+class OptionalTerm:
+    def __init__(self, subterm):
+        self.subterm = subterm
+
+    def __str__(self):
+        return f"{str(self.subterm)}?"
 
     def __repr__(self):
         return self.__str__()
 
     @staticmethod
-    def wrapping_term(term):
-        return CommaSeparatedRepetitionTerm(term)
+    def wrapping_term(subterm):
+        return OptionalTerm(subterm)
+
+    def perform_fixups(self, all_rules):
+        self.subterm = self.subterm.perform_fixups(all_rules)
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        self.subterm = self.subterm.perform_fixups_for_values_references(values)
+        return self
+
+    @property
+    def supported_keywords(self):
+        return self.subterm.supported_keywords
+
+
+# UnboundedRepetitionTerm represents matching a list of terms
+# separated by either spaces or commas. The syntax in the CSS
+# specifications uses a trailing 'multiplier' such as '#', '*',
+# '+', and '{A,}'.
+#
+#   e.g. "<length>#" or "<length>+"
+#
+class UnboundedRepetitionTerm:
+    def __init__(self, repeated_term, *, variation, min):
+        self.repeated_term = repeated_term
+        self.single_value_optimization = True
+        self.variation = variation
+        self.min = min
+
+    def __str__(self):
+        return f"{str(self.repeated_term)}{self.suffix}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @property
+    def suffix(self):
+        if self.variation == ' ':
+            if self.min == 0:
+                return '*'
+            elif self.min == 1:
+                return '+'
+            else:
+                return '{' + str(self.min) + ',}'
+        if self.variation == ',':
+            if self.min == 1:
+                return '#'
+            else:
+                return '#{' + str(self.min) + ',}'
+        raise Exception(f"Unknown UnboundedRepetitionTerm variation '{self.variation}'")
+
+    @staticmethod
+    def wrapping_term(term, *, variation, min):
+        return UnboundedRepetitionTerm(term, variation=variation, min=min)
 
     def perform_fixups(self, all_rules):
         self.repeated_term = self.repeated_term.perform_fixups(all_rules)
@@ -1691,6 +1907,137 @@ class CommaSeparatedRepetitionTerm:
     def perform_fixups_for_values_references(self, values):
         self.repeated_term = self.repeated_term.perform_fixups_for_values_references(values)
         return self
+
+    @property
+    def supported_keywords(self):
+        return self.repeated_term.supported_keywords
+
+
+# BoundedRepetitionTerm represents matching a list of terms
+# separated by either spaces or commas where the list of terms
+# has a length between provided upper and lower bounds . The
+# syntax in the CSS specifications uses a trailing 'multiplier'
+# range '{A,B}' with a '#' prefix for comma speparation.
+#
+#   e.g. "<length>{1,2}" or "<length>#{3,5}"
+#
+class BoundedRepetitionTerm:
+    def __init__(self, repeated_term, *, variation, min, max):
+        self.repeated_term = repeated_term
+        self.variation = variation
+        self.min = min
+        self.max = max
+
+    def __str__(self):
+        return f"{str(self.repeated_term)}{self.suffix}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @property
+    def suffix(self):
+        if self.variation == ' ':
+            return '{' + str(self.min) + ',' + str(self.max) + '}'
+        if self.variation == ',':
+            return '#{' + str(self.min) + ',' + str(self.max) + '}'
+        raise Exception(f"Unknown BoundedRepetitionTerm variation '{self.variation}'")
+
+    @staticmethod
+    def wrapping_term(term, *, variation, min, max):
+        return BoundedRepetitionTerm(term, variation=variation, min=min, max=max)
+
+    def perform_fixups(self, all_rules):
+        self.repeated_term = self.repeated_term.perform_fixups(all_rules)
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        self.repeated_term = self.repeated_term.perform_fixups_for_values_references(values)
+        return self
+
+    @property
+    def supported_keywords(self):
+        return self.repeated_term.supported_keywords
+
+
+# FixedSizeRepetitionTerm represents matching a list of terms
+# separated by either spaces or commas where the list of terms
+# has a length that is exactly provided length. The syntax in
+# the CSS specifications uses a trailing 'multiplier' length
+# '{A}' with a '#' prefix for comma speparation.
+#
+#   e.g. "<length>{2}" or "<length>#{4}"
+#
+class FixedSizeRepetitionTerm:
+    def __init__(self, repeated_term, *, variation, size):
+        self.repeated_term = repeated_term
+        self.variation = variation
+        self.size = size
+
+    def __str__(self):
+        return f"{str(self.repeated_term)}{self.suffix}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @property
+    def suffix(self):
+        if self.variation == ' ':
+            return '{' + str(self.size) + '}'
+        if self.variation == ',':
+            return '#{' + str(self.size) + '}'
+        raise Exception(f"Unknown BoundedRepetitionTerm variation '{self.variation}'")
+
+    @staticmethod
+    def wrapping_term(term, *, variation, size):
+        return FixedSizeRepetitionTerm(term, variation=variation, size=size)
+
+    def perform_fixups(self, all_rules):
+        self.repeated_term = self.repeated_term.perform_fixups(all_rules)
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        self.repeated_term = self.repeated_term.perform_fixups_for_values_references(values)
+        return self
+
+    @property
+    def supported_keywords(self):
+        return self.repeated_term.supported_keywords
+
+
+# FunctionTerm represents matching a use of the CSS function call syntax
+# which provides a way for specifications to differentiate groups by
+# name. The syntax in the CSS specifications is an identifier followed
+# by parenthesis with an optional group term inside the parenthesis.
+#
+#   e.g. "rect(<length>#{4})" or "ray()"
+#
+class FunctionTerm:
+    def __init__(self, name, parameter_group_term):
+        self.name = name
+        self.parameter_group_term = parameter_group_term
+
+    def __str__(self):
+        return self.name + '(' + str(self.parameter_group_term) + ')'
+
+    def __repr__(self):
+        return self.__str__()
+
+    @staticmethod
+    def from_node(node):
+        assert(type(node) is BNFFunctionNode)
+        return FunctionTerm(node.name, Term.from_node(node.parameter_group))
+
+    def perform_fixups(self, all_rules):
+        self.parameter_group_term = self.parameter_group_term.perform_fixups(all_rules)
+        return self
+
+    def perform_fixups_for_values_references(self, values):
+        self.parameter_group_term = self.parameter_group_term.perform_fixups_for_values_references(values)
+        return self
+
+    @property
+    def supported_keywords(self):
+        return self.parameter_group_term.supported_keywords
 
 
 # Container for the name and root term for a grammar. Used for both shared rules and property specific grammars.
@@ -1707,10 +2054,6 @@ class Grammar:
         return self.__str__()
 
     @staticmethod
-    def from_values(parsing_context, key_path, name, values):
-        return Grammar(name, MatchOneTerm.from_values(parsing_context, key_path, values))
-
-    @staticmethod
     def from_string(parsing_context, key_path, name, string):
         assert(type(string) is str)
         return Grammar(name, Term.from_node(BNFParser(parsing_context, key_path, string).parse()))
@@ -1720,6 +2063,18 @@ class Grammar:
 
     def perform_fixups_for_values_references(self, values):
         self.root_term = self.root_term.perform_fixups_for_values_references(values)
+
+    def check_against_values(self, values):
+        keywords_supported_by_grammar = self.supported_keywords
+        keywords_listed_as_values = frozenset(value.name for value in values)
+
+        mark = "'"
+        keywords_only_in_grammar = keywords_supported_by_grammar - keywords_listed_as_values
+        if keywords_only_in_grammar:
+            print(f"WARNING: '{self.name}' Found some keywords in parser grammar not list in 'values' array: ({ ', '.join(quote_iterable((keyword for keyword in keywords_only_in_grammar), mark=mark)) })")
+        keywords_only_in_values = keywords_listed_as_values - keywords_supported_by_grammar
+        if keywords_only_in_values:
+            print(f"WARNING: '{self.name}' Found some keywords in 'values' array not supported by the parser grammar: ({ ', '.join(quote_iterable((keyword for keyword in keywords_only_in_values), mark=mark)) })")
 
     @property
     def has_fast_path_keyword_terms(self):
@@ -1750,6 +2105,10 @@ class Grammar:
         if not self._fast_path_keyword_terms_sorted_by_name:
             self._fast_path_keyword_terms_sorted_by_name = sorted(self.fast_path_keyword_terms, key=functools.cmp_to_key(StyleProperties._sort_with_prefixed_properties_last))
         return self._fast_path_keyword_terms_sorted_by_name
+
+    @property
+    def supported_keywords(self):
+        return self.root_term.supported_keywords
 
 
 # A shared grammar rule and metadata describing it. Part of the set of rules tracked by SharedGrammarRules.
@@ -1836,12 +2195,13 @@ class ParsingContext:
             Schema.Entry("shared-grammar-rules", allowed_types=[dict], required=True),
         )
 
-    def __init__(self, json_value, *, defines_string, parsing_for_codegen, verbose):
+    def __init__(self, json_value, *, defines_string, parsing_for_codegen, check_unused_grammars_values, verbose):
         ParsingContext.TopLevelObject.schema.validate_dictionary(self, "$", json_value, label="top level object")
 
         self.json_value = json_value
         self.conditionals = frozenset((defines_string or '').split(' '))
         self.parsing_for_codegen = parsing_for_codegen
+        self.check_unused_grammars_values = check_unused_grammars_values
         self.verbose = verbose
         self.parsed_shared_grammar_rules = None
         self.parsed_properties_and_descriptors = None
@@ -2080,7 +2440,7 @@ class GenerateCSSPropertyNames:
         to.write("};")
         to.newline()
 
-        all_property_name_strings = quote_iterable((f"{property.name}" for property in self.properties_and_descriptors.all_unique), "_s,")
+        all_property_name_strings = quote_iterable((f"{property.name}" for property in self.properties_and_descriptors.all_unique), suffix="_s,")
         to.write(f"constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {{")
         with to.indent():
             to.write_lines(all_property_name_strings)
@@ -2367,12 +2727,12 @@ class GenerateCSSPropertyNames:
             for inner_term in term.terms:
                 if self._term_matches_number_or_integer(inner_term):
                     return True
-        elif isinstance(term, CommaSeparatedRepetitionTerm):
+        elif isinstance(term, UnboundedRepetitionTerm):
             return self._term_matches_number_or_integer(term.repeated_term)
         return False
 
     def _property_matches_number_or_integer(self, p):
-        if p.codegen_properties.custom_parser_allows_number_or_integer_input:
+        if p.codegen_properties.parser_function_allows_number_or_integer_input:
             return True
         if not p.codegen_properties.parser_grammar:
             return False
@@ -2424,7 +2784,7 @@ class GenerateCSSPropertyNames:
                 to=writer,
                 signature="Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.aliases),
-                mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, '_s'))} }};",
+                mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, suffix='_s'))} }};",
                 default="return { };"
             )
 
@@ -3775,15 +4135,84 @@ class TermGenerator(object):
     def make(term, keyword_fast_path_generator=None):
         if isinstance(term, MatchOneTerm):
             return TermGeneratorMatchOneTerm(term, keyword_fast_path_generator)
-        elif isinstance(term, CommaSeparatedRepetitionTerm):
-            return TermGeneratorCommaSeparatedRepetitionTerm(term)
+        elif isinstance(term, OptionalTerm):
+            return TermGeneratorOptionalTerm(term)
+        elif isinstance(term, GroupTerm):
+            return TermGeneratorGroupTerm(term)
+        elif isinstance(term, UnboundedRepetitionTerm):
+            return TermGeneratorUnboundedRepetitionTerm(term)
         elif isinstance(term, ReferenceTerm):
             return TermGeneratorReferenceTerm(term)
+        elif isinstance(term, FunctionTerm):
+            return TermGeneratorFunctionTerm(term)
+        elif isinstance(term, LiteralTerm):
+            return TermGeneratorLiteralTerm(term)
+        elif isinstance(term, KeywordTerm):
+            return TermGeneratorNonFastPathKeywordTerm([term])
         else:
             raise Exception(f"Unknown term type - {type(term)} - {term}")
 
 
-class TermGeneratorCommaSeparatedRepetitionTerm(TermGenerator):
+class TermGeneratorGroupTerm(TermGenerator):
+    def __init__(self, term):
+        self.term = term
+        self.subterm_generators = [TermGenerator.make(subterm) for subterm in term.subterms]
+        self.requires_context = any(subterm_generator.requires_context for subterm_generator in self.subterm_generators)
+
+    def generate_conditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+    def generate_unconditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+
+class TermGeneratorOptionalTerm(TermGenerator):
+    def __init__(self, optional_term):
+        self.term = optional_term
+        self.subterm_generator = TermGenerator.make(optional_term.subterm, None)
+        self.requires_context = self.subterm_generator.requires_context
+
+    def generate_conditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+    def generate_unconditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+
+class TermGeneratorFunctionTerm(TermGenerator):
+    def __init__(self, term):
+        self.term = term
+        self.parameter_group_generator = TermGenerator.make(term.parameter_group_term)
+        self.requires_context = self.parameter_group_generator.requires_context
+
+    def generate_conditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+    def generate_unconditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+
+class TermGeneratorLiteralTerm(TermGenerator):
+    def __init__(self, term):
+        self.term = term
+        self.requires_context = self.term.requires_context
+
+    def generate_conditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+    def generate_unconditional(self, *, to, range_string, context_string):
+        # FIXME: Implement generation.
+        pass
+
+
+class TermGeneratorUnboundedRepetitionTerm(TermGenerator):
     def __init__(self, term):
         self.term = term
         self.repeated_term_generator = TermGenerator.make(term.repeated_term, None)
@@ -3832,6 +4261,8 @@ class TermGeneratorMatchOneTerm(TermGenerator):
         non_fast_path_keyword_terms = []
         reference_terms = []
         repetition_terms = []
+        group_terms = []
+        optional_terms = []
 
         for sub_term in term.terms:
             if isinstance(sub_term, KeywordTerm):
@@ -3841,10 +4272,18 @@ class TermGeneratorMatchOneTerm(TermGenerator):
                     non_fast_path_keyword_terms.append(sub_term)
             elif isinstance(sub_term, ReferenceTerm):
                 reference_terms.append(sub_term)
-            elif isinstance(sub_term, CommaSeparatedRepetitionTerm):
+            elif isinstance(sub_term, UnboundedRepetitionTerm):
                 repetition_terms.append(sub_term)
+            elif isinstance(sub_term, BoundedRepetitionTerm):
+                repetition_terms.append(sub_term)
+            elif isinstance(sub_term, FixedSizeRepetitionTerm):
+                repetition_terms.append(sub_term)
+            elif isinstance(sub_term, GroupTerm):
+                group_terms.append(sub_term)
+            elif isinstance(sub_term, OptionalTerm):
+                optional_terms.append(sub_term)
             else:
-                raise Exception(f"Only KeywordTerm, ReferenceTerm and CommaSeparatedRepetitionTerm terms are supported inside MatchOneTerm at this time: '{term}' - {sub_term}")
+                raise Exception(f"Only KeywordTerm, ReferenceTerm and UnboundedRepetitionTerm terms are supported inside MatchOneTerm at this time: '{term}' - {sub_term}")
 
         # Build a list of generators for the terms, starting with all (if any) the keywords at once.
         term_generators = []
@@ -3856,7 +4295,11 @@ class TermGeneratorMatchOneTerm(TermGenerator):
         if reference_terms:
             term_generators += [TermGeneratorReferenceTerm(sub_term) for sub_term in reference_terms]
         if repetition_terms:
-            term_generators += [TermGeneratorCommaSeparatedRepetitionTerm(sub_term) for sub_term in repetition_terms]
+            term_generators += [TermGeneratorUnboundedRepetitionTerm(sub_term) for sub_term in repetition_terms]
+        if group_terms:
+            term_generators += [TermGeneratorGroupTerm(sub_term) for sub_term in group_terms]
+        if repetition_terms:
+            term_generators += [TermGeneratorOptionalTerm(sub_term) for sub_term in optional_terms]
         return term_generators
 
     def generate_conditional(self, *, to, range_string, context_string):
@@ -4332,20 +4775,20 @@ class CustomPropertyConsumer(PropertyConsumer):
 
     def generate_call_string(self, *, range_string, id_string, current_shorthand_string, context_string):
         parameters = []
-        if self.property.codegen_properties.parser_requires_current_property:
+        if self.property.codegen_properties.parser_function_requires_current_property:
             parameters.append(id_string)
         parameters.append(range_string)
-        if self.property.codegen_properties.parser_requires_current_shorthand:
+        if self.property.codegen_properties.parser_function_requires_current_shorthand:
             parameters.append(current_shorthand_string)
-        if self.property.codegen_properties.parser_requires_context:
+        if self.property.codegen_properties.parser_function_requires_context:
             parameters.append(context_string)
-        if self.property.codegen_properties.parser_requires_context_mode:
+        if self.property.codegen_properties.parser_function_requires_context_mode:
             parameters.append(f"{context_string}.mode")
-        if self.property.codegen_properties.parser_requires_quirks_mode:
+        if self.property.codegen_properties.parser_function_requires_quirks_mode:
             parameters.append(f"{context_string}.mode == HTMLQuirksMode")
-        if self.property.codegen_properties.parser_requires_value_pool:
+        if self.property.codegen_properties.parser_function_requires_value_pool:
             parameters.append("CSSValuePool::singleton()")
-        parameters += self.property.codegen_properties.parser_requires_additional_parameters
+        parameters += self.property.codegen_properties.parser_function_requires_additional_parameters
 
         function = self.property.codegen_properties.parser_function
 
@@ -4589,6 +5032,7 @@ class BNFToken(StringEqualingEnum):
     GTGT    = re.compile(r'>>')
     LT      = re.compile(r'<')
     GT      = re.compile(r'>')
+    SQUOTE  = re.compile(r'\'')
 
     # Multipliers.
     HASH    = re.compile(r'#')
@@ -4603,7 +5047,11 @@ class BNFToken(StringEqualingEnum):
     ANDAND  = re.compile(r'&&')
     COMMA   = re.compile(r',')
 
+    # Literals
+    SLASH   = re.compile(r'/')
+
     # Identifiers.
+    FUNC    = re.compile(r'[_a-zA-Z\-][_a-zA-Z0-9\-]*\(')
     ID      = re.compile(r'[_a-zA-Z\-][_a-zA-Z0-9\-]*')
 
     # Whitespace.
@@ -4647,12 +5095,15 @@ class BNFRepetitionModifier:
         self.max = None
 
     def __str__(self):
-        if self.kind == BNFRepetitionModifier.Kind.EXACT:
+        if self.kind is None:
+            return "[UNSET RepetitionModifier]"
+        elif self.kind == BNFRepetitionModifier.Kind.EXACT:
             return '{' + self.min + '}'
         elif self.kind == BNFRepetitionModifier.Kind.AT_LEAST:
             return '{' + self.min + ',}'
         elif self.kind == BNFRepetitionModifier.Kind.BETWEEN:
             return '{' + self.min + ',' + self.max + '}'
+        raise Exception("Unknown repetition kind: {self.kind}")
 
 
 # Node multipliers are introduced by trailing symbols like '#', '+', '*', and '{1,4}'.
@@ -4702,13 +5153,13 @@ class BNFNodeMultiplier:
             if isinstance(multiplier, BNFRepetitionModifier):
                 if multiplier.kind == BNFRepetitionModifier.Kind.EXACT:
                     self.kind = BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT
-                    self.range = mulitplier
+                    self.range = multiplier
                 elif multiplier.kind == BNFRepetitionModifier.Kind.AT_LEAST:
                     self.kind = BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST
-                    self.range = mulitplier
+                    self.range = multiplier
                 elif multiplier.kind == BNFRepetitionModifier.Kind.BETWEEN:
                     self.kind = BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN
-                    self.range = mulitplier
+                    self.range = multiplier
             else:
                 self.kind = BNFNodeMultiplier.Kind(multiplier)
         elif self.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
@@ -4727,13 +5178,13 @@ class BNFNodeMultiplier:
             if isinstance(multiplier, BNFRepetitionModifier):
                 if multiplier.kind == BNFRepetitionModifier.Kind.EXACT:
                     self.kind = BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT
-                    self.range = mulitplier
+                    self.range = multiplier
                 elif multiplier.kind == BNFRepetitionModifier.Kind.AT_LEAST:
                     self.kind = BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST
-                    self.range = mulitplier
+                    self.range = multiplier
                 elif multiplier.kind == BNFRepetitionModifier.Kind.BETWEEN:
                     self.kind = BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN
-                    self.range = mulitplier
+                    self.range = multiplier
             else:
                 raise Exception("Invalid to stack a non-range multiplier on top of '#'.")
         elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
@@ -4763,15 +5214,18 @@ class BNFGroupingNode:
 
     @property
     def stringified_without_multipliers(self):
+        if self.is_initial:
+            return self.stringified_without_brackets_or_multipliers
+        return '[ ' + self.stringified_without_brackets_or_multipliers + ' ]'
+
+    @property
+    def stringified_without_brackets_or_multipliers(self):
         if self.kind != BNFGroupingNode.Kind.MATCH_ALL_ORDERED:
-            join_string = ' ' + self.kind.name + ' '
+            join_string = ' ' + self.kind.value + ' '
         else:
             join_string = ' '
 
-        members_string = join_string.join(str(member) for member in self.members)
-        if self.is_initial:
-            return members_string
-        return '[ ' + members_string + ' ]'
+        return join_string.join(str(member) for member in self.members)
 
     def add(self, member):
         self.members.append(member)
@@ -4779,6 +5233,36 @@ class BNFGroupingNode:
     @property
     def last(self):
         return self.members[-1]
+
+
+# https://drafts.csswg.org/css-values-4/#functional-notation
+class BNFFunctionNode:
+    def __init__(self, name):
+        self.name = name
+        self.parameter_group = BNFGroupingNode()
+        self.multiplier = BNFNodeMultiplier()
+
+    def __str__(self):
+        return self.stringified_without_multipliers + str(self.multiplier)
+
+    @property
+    def stringified_without_multipliers(self):
+        return self.name + '(' + self.parameter_group.stringified_without_brackets_or_multipliers + ')'
+
+    @property
+    def kind(self):
+        return self.parameter_group.kind
+
+    @kind.setter
+    def kind(self, kind):
+        self.parameter_group.kind = kind
+
+    def add(self, member):
+        self.parameter_group.add(member)
+
+    @property
+    def last(self):
+        return self.parameter_group.last
 
 
 class BNFReferenceNode:
@@ -4793,6 +5277,7 @@ class BNFReferenceNode:
     def __init__(self, *, is_internal=False):
         self.name = None
         self.is_internal = is_internal
+        self.is_function_reference = False
         self.attributes = []
         self.multiplier = BNFNodeMultiplier()
 
@@ -4808,9 +5293,14 @@ class BNFReferenceNode:
             prefix = '<'
             suffix = '>'
 
+        if self.is_function_reference:
+            name = self.name + '()'
+        else:
+            name = self.name
+
         if self.attributes:
-            return prefix + str(self.name) + ' ' + ' '.join(str(attribute) for attribute in self.attributes) + suffix
-        return prefix + str(self.name) + suffix
+            return prefix + str(name) + ' ' + ' '.join(str(attribute) for attribute in self.attributes) + suffix
+        return prefix + str(name) + suffix
 
     def add_attribute(self, attribute):
         self.attributes.append(attribute)
@@ -4829,6 +5319,19 @@ class BNFKeywordNode:
         return self.keyword
 
 
+class BNFLiteralNode:
+    def __init__(self, value=None):
+        self.value = value
+        self.multiplier = BNFNodeMultiplier()
+
+    def __str__(self):
+        return self.stringified_without_multipliers + str(self.multiplier)
+
+    @property
+    def stringified_without_multipliers(self):
+        return str(self.value)
+
+
 class BNFParserState(enum.Enum):
     UNKNOWN_GROUPING_INITIAL = enum.auto()
     UNKNOWN_GROUPING_SEEN_TERM = enum.auto()
@@ -4838,7 +5341,8 @@ class BNFParserState(enum.Enum):
     INTERNAL_REFERENCE_INITIAL = enum.auto()
     INTERNAL_REFERENCE_SEEN_ID = enum.auto()
     REFERENCE_INITIAL = enum.auto()
-    REFERENCE_SEEN_ID = enum.auto()
+    REFERENCE_SEEN_FUNCTION_OPEN = enum.auto()
+    REFERENCE_SEEN_ID_OR_FUNCTION = enum.auto()
     REFERENCE_RANGE_INITIAL = enum.auto()
     REFERENCE_RANGE_SEEN_MIN = enum.auto()
     REFERENCE_RANGE_SEEN_MIN_AND_COMMA = enum.auto()
@@ -4847,6 +5351,8 @@ class BNFParserState(enum.Enum):
     REPETITION_MODIFIER_SEEN_MIN = enum.auto()
     REPETITION_MODIFIER_SEEN_MIN_AND_COMMA = enum.auto()
     REPETITION_MODIFIER_SEEN_MAX = enum.auto()
+    QUOTED_LITERAL_INITIAL = enum.auto()
+    QUOTED_LITERAL_SEEN_ID = enum.auto()
     DONE = enum.auto()
 
 
@@ -4866,6 +5372,11 @@ class BNFParser:
         BNFToken.STAR.name,
         BNFToken.NOT.name,
         BNFToken.QMARK.name,
+    }
+
+    SUPPORTED_UNQUOTED_LITERALS = {
+        BNFToken.COMMA.name,
+        BNFToken.SLASH.name
     }
 
     DEBUG_PRINT_STATE = 0
@@ -4889,7 +5400,8 @@ class BNFParser:
             BNFParserState.INTERNAL_REFERENCE_INITIAL: BNFParser.parse_INTERNAL_REFERENCE_INITIAL,
             BNFParserState.INTERNAL_REFERENCE_SEEN_ID: BNFParser.parse_INTERNAL_REFERENCE_SEEN_ID,
             BNFParserState.REFERENCE_INITIAL: BNFParser.parse_REFERENCE_INITIAL,
-            BNFParserState.REFERENCE_SEEN_ID: BNFParser.parse_REFERENCE_SEEN_ID,
+            BNFParserState.REFERENCE_SEEN_FUNCTION_OPEN: BNFParser.parse_REFERENCE_SEEN_FUNCTION_OPEN,
+            BNFParserState.REFERENCE_SEEN_ID_OR_FUNCTION: BNFParser.parse_REFERENCE_SEEN_ID_OR_FUNCTION,
             BNFParserState.REFERENCE_RANGE_INITIAL: BNFParser.parse_REFERENCE_RANGE_INITIAL,
             BNFParserState.REFERENCE_RANGE_SEEN_MIN: BNFParser.parse_REFERENCE_RANGE_SEEN_MIN,
             BNFParserState.REFERENCE_RANGE_SEEN_MIN_AND_COMMA: BNFParser.parse_REFERENCE_RANGE_SEEN_MIN_AND_COMMA,
@@ -4898,6 +5410,8 @@ class BNFParser:
             BNFParserState.REPETITION_MODIFIER_SEEN_MIN: BNFParser.parse_REPETITION_MODIFIER_SEEN_MIN,
             BNFParserState.REPETITION_MODIFIER_SEEN_MIN_AND_COMMA: BNFParser.parse_REPETITION_MODIFIER_SEEN_MIN_AND_COMMA,
             BNFParserState.REPETITION_MODIFIER_SEEN_MAX: BNFParser.parse_REPETITION_MODIFIER_SEEN_MAX,
+            BNFParserState.QUOTED_LITERAL_INITIAL: BNFParser.parse_QUOTED_LITERAL_INITIAL,
+            BNFParserState.QUOTED_LITERAL_SEEN_ID: BNFParser.parse_QUOTED_LITERAL_SEEN_ID,
         }
 
         for token in BNFLexer(self.data):
@@ -4907,7 +5421,7 @@ class BNFParser:
             state = self.state_stack[-1]
 
             if BNFParser.DEBUG_PRINT_STATE:
-                print("STATE: " + state.state.name)
+                print("STATE: " + state.state.name + " " + str(state.node))
             if BNFParser.DEBUG_PRINT_TOKENS:
                 print("TOKEN: " + str(token))
             PARSER_THUNKS[state.state](self, token, state)
@@ -4924,7 +5438,11 @@ class BNFParser:
         self.state_stack.append(BNFParserStateInfo(new_state, new_node))
 
     def pop(self):
-        self.state_stack.pop()
+        return self.state_stack.pop()
+
+    @property
+    def top(self):
+        return self.state_stack[-1]
 
     def unexpected(self, token, state):
         return Exception(f"Unexpected token '{token}' found while in state '{state.state.name}'")
@@ -4936,31 +5454,40 @@ class BNFParser:
         self.push(BNFParserState.UNKNOWN_GROUPING_INITIAL, self.root)
 
     def exit_initial_grouping(self, token, state):
-        if state.node.is_initial:
+        if isinstance(state.node, BNFGroupingNode) and state.node.is_initial:
             self.transition_top(to=BNFParserState.DONE)
             return
         raise self.unexpected(token, state)
 
     # Non-initial BNFGroupingNode. e.g. "[foo bar]", "[foo | bar]", etc.
     def enter_new_grouping(self, token, state):
-        new_grouping = BNFGroupingNode()
-        state.node.add(new_grouping)
-        self.push(BNFParserState.UNKNOWN_GROUPING_INITIAL, new_grouping)
+        self.push(BNFParserState.UNKNOWN_GROUPING_INITIAL, BNFGroupingNode())
 
     def exit_grouping(self, token, state):
-        if not state.node.is_initial:
+        if isinstance(state.node, BNFGroupingNode) and not state.node.is_initial:
             self.pop()
+            self.top.node.add(state.node)
+            return
+        raise self.unexpected(token, state)
+
+    # BNFFunctionNode. e.g. "foo(<bar>)"
+    def enter_new_function(self, token, state):
+        self.push(BNFParserState.UNKNOWN_GROUPING_INITIAL, BNFFunctionNode(token.value[:-1]))
+
+    def exit_function(self, token, state):
+        if isinstance(state.node, BNFFunctionNode):
+            self.pop()
+            self.top.node.add(state.node)
             return
         raise self.unexpected(token, state)
 
     # Internal BNFReferenceNodes. e.g. "<<values>>"
     def enter_new_internal_reference(self, token, state):
-        new_reference = BNFReferenceNode(is_internal=True)
-        state.node.add(new_reference)
-        self.push(BNFParserState.INTERNAL_REFERENCE_INITIAL, new_reference)
+        self.push(BNFParserState.INTERNAL_REFERENCE_INITIAL, BNFReferenceNode(is_internal=True))
 
     def exit_internal_reference(self, token, state):
         self.pop()
+        self.top.node.add(state.node)
 
     # Non-internal BNFReferenceNodes. e.g. "<length>"
     def enter_new_reference(self, token, state):
@@ -4973,21 +5500,26 @@ class BNFParser:
 
     # BNFRepetitionModifier. e.g. {A,B}
     def enter_new_repetition_modifier(self, token, state):
-        new_repetition_modifier = BNFRepetitionModifier()
-        state.node.last.multiplier.add(new_repetition_modifier)
-        self.push(BNFParserState.REPETITION_MODIFIER_INITIAL, new_repetition_modifier)
+        self.push(BNFParserState.REPETITION_MODIFIER_INITIAL, BNFRepetitionModifier())
 
     def exit_repetition_modifier(self, token, state):
         self.pop()
+        self.top.node.last.multiplier.add(state.node)
 
     # BNFReferenceNode.RangeAttribute. e.g. [0,inf]
     def enter_range_attribute(self, token, state):
-        new_range_attribute = BNFReferenceNode.RangeAttribute()
-        state.node.add_attribute(new_range_attribute)
-        self.push(BNFParserState.REFERENCE_RANGE_INITIAL, new_range_attribute)
+        self.push(BNFParserState.REFERENCE_RANGE_INITIAL, BNFReferenceNode.RangeAttribute())
 
     def exit_range_attribute(self, token, state):
         self.pop()
+        self.top.node.add_attribute(state.node)
+
+    def enter_new_quoted_literal(self, token, state):
+        self.push(BNFParserState.QUOTED_LITERAL_INITIAL, BNFLiteralNode())
+
+    def exit_quoted_literal(self, token, state):
+        self.pop()
+        self.top.node.add(state.node)
 
     # MARK: Parsing Thunks.
 
@@ -5007,9 +5539,29 @@ class BNFParser:
             self.enter_new_reference(token, state)
             return
 
+        if token.name == BNFToken.FUNC:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            self.enter_new_function(token, state)
+            return
+
         if token.name == BNFToken.ID:
             self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
             state.node.add(BNFKeywordNode(token.value))
+            return
+
+        if token.name == BNFToken.SQUOTE:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            self.enter_new_quoted_literal(token, state)
+            return
+
+        if token.name in BNFParser.SUPPORTED_UNQUOTED_LITERALS:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            state.node.add(BNFLiteralNode(token.value))
+            return
+
+        if token.name == BNFToken.RPAREN:
+            self.transition_top(to=BNFParserState.UNKNOWN_GROUPING_SEEN_TERM)
+            self.exit_function(token, state)
             return
 
         raise self.unexpected(token, state)
@@ -5021,6 +5573,10 @@ class BNFParser:
 
         if token.name == BNF_EOF_TOKEN:
             self.exit_initial_grouping(token, state)
+            return
+
+        if token.name == BNFToken.RPAREN:
+            self.exit_function(token, state)
             return
 
         if token.name == BNFToken.LSQUARE:
@@ -5038,9 +5594,24 @@ class BNFParser:
             self.enter_new_reference(token, state)
             return
 
+        if token.name == BNFToken.FUNC:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            self.enter_new_function(token, state)
+            return
+
         if token.name == BNFToken.ID:
             self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
             state.node.add(BNFKeywordNode(token.value))
+            return
+
+        if token.name == BNFToken.SQUOTE:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            self.enter_new_quoted_literal(token, state)
+            return
+
+        if token.name in BNFParser.SUPPORTED_UNQUOTED_LITERALS:
+            self.transition_top(to=BNFParserState.KNOWN_ORDERED_GROUPING)
+            state.node.add(BNFLiteralNode(token.value))
             return
 
         if token.name in BNFParser.COMBINATOR_FOR_TOKEN:
@@ -5067,6 +5638,10 @@ class BNFParser:
             self.exit_initial_grouping(token, state)
             return
 
+        if token.name == BNFToken.RPAREN:
+            self.exit_function(token, state)
+            return
+
         if token.name == BNFToken.LSQUARE:
             self.enter_new_grouping(token, state)
             return
@@ -5081,6 +5656,22 @@ class BNFParser:
 
         if token.name == BNFToken.ID:
             state.node.add(BNFKeywordNode(token.value))
+            return
+
+        if token.name == BNFToken.SQUOTE:
+            self.enter_new_quoted_literal(token, state)
+            return
+
+        if token.name in BNFParser.SUPPORTED_UNQUOTED_LITERALS:
+            state.node.add(BNFLiteralNode(token.value))
+            return
+
+        if token.name == BNFToken.FUNC:
+            self.enter_new_function(token, state)
+            return
+
+        if token.name in BNFParser.SIMPLE_MULTIPLIERS:
+            state.node.last.multiplier.add(token.value)
             return
 
         raise self.unexpected(token, state)
@@ -5101,12 +5692,19 @@ class BNFParser:
             self.enter_new_reference(token, state)
             return
 
+        if token.name == BNFToken.FUNC:
+            self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED)
+            self.enter_new_function(token, state)
+            return
+
         if token.name == BNFToken.ID:
             self.transition_top(to=BNFParserState.KNOWN_COMBINATOR_GROUPING_COMBINATOR_OR_CLOSE_REQUIRED)
             state.node.add(BNFKeywordNode(token.value))
             return
 
-        if token.name == BNFToken.RSQUARE or token.name == EOF:
+        # FIXME: Does it make any sense to support literals here? e.g. [ <foo> && , ]
+
+        if token.name == BNFToken.RSQUARE or token.name == BNFToken.FUNC or token.name == EOF:
             raise Exception(f"Unexpected token '{token}'. Groupings can't end in a combinator.")
         raise self.unexpected(token, state)
 
@@ -5117,6 +5715,10 @@ class BNFParser:
 
         if token.name == BNF_EOF_TOKEN:
             self.exit_initial_grouping(token, state)
+            return
+
+        if token.name == BNFToken.RPAREN:
+            self.exit_function(token, state)
             return
 
         if token.name in BNFParser.COMBINATOR_FOR_TOKEN:
@@ -5136,21 +5738,30 @@ class BNFParser:
         raise self.unexpected(token, state)
 
     def parse_REFERENCE_INITIAL(self, token, state):
-        if token.name == BNFToken.LT:
-            state.node.is_special = True
+        if token.name == BNFToken.FUNC:
+            self.transition_top(to=BNFParserState.REFERENCE_SEEN_FUNCTION_OPEN)
+            state.node.is_function_reference = True
+            state.node.name = token.value[:-1]
             return
 
         if token.name == BNFToken.ID:
-            self.transition_top(to=BNFParserState.REFERENCE_SEEN_ID)
+            self.transition_top(to=BNFParserState.REFERENCE_SEEN_ID_OR_FUNCTION)
             state.node.name = token.value
             return
 
         raise self.unexpected(token, state)
 
-    def parse_REFERENCE_SEEN_ID(self, token, state):
+    def parse_REFERENCE_SEEN_FUNCTION_OPEN(self, token, state):
+        if token.name == BNFToken.RPAREN:
+            self.transition_top(to=BNFParserState.REFERENCE_SEEN_ID_OR_FUNCTION)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_REFERENCE_SEEN_ID_OR_FUNCTION(self, token, state):
         if token.name == BNFToken.ID:
             state.node.add_attribute(token.value)
-            # Remain in BNFParserState.REFERENCE_SEEN_ID.
+            # Remain in BNFParserState.REFERENCE_SEEN_ID_OR_FUNCTION.
             return
 
         if token.name == BNFToken.LSQUARE:
@@ -5258,6 +5869,19 @@ class BNFParser:
 
         raise self.unexpected(token, state)
 
+    def parse_QUOTED_LITERAL_INITIAL(self, token, state):
+        # Take the value regardless of token name.
+        self.transition_top(to=BNFParserState.QUOTED_LITERAL_SEEN_ID)
+        state.node.value = token.value
+
+    def parse_QUOTED_LITERAL_SEEN_ID(self, token, state):
+        if token.name == BNFToken.SQUOTE:
+            self.exit_quoted_literal(token, state)
+            return
+
+        # Append the value regardles of the token value.
+        state.node.value = state.node.value + token.value
+
 
 def main():
     parser = argparse.ArgumentParser(description='Process CSS property definitions.')
@@ -5265,12 +5889,14 @@ def main():
     parser.add_argument('--defines')
     parser.add_argument('--gperf-executable')
     parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('--dump-unused-grammars', action='store_true')
+    parser.add_argument('--check-unused-grammars-values', action='store_true')
     args = parser.parse_args()
 
     with open(args.properties, "r") as properties_file:
         properties_json = json.load(properties_file)
 
-    parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, verbose=args.verbose)
+    parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)
     parsing_context.parse_shared_grammar_rules()
     parsing_context.parse_properties_and_descriptors()
 
@@ -5279,6 +5905,12 @@ def main():
         for set in parsing_context.parsed_properties_and_descriptors.all_sets:
             print(f"{len(set.all)} {set.name} {set.noun} active for code generation")
         print(f"{len(parsing_context.parsed_properties_and_descriptors.all_unique)} uniquely named properties and descriptors active for code generation")
+
+    if args.dump_unused_grammars:
+        for property in parsing_context.parsed_properties_and_descriptors.all_properties_and_descriptors:
+            if property.codegen_properties.parser_grammar_unused:
+                print(str(property).rjust(40, " ") + "  " + str(property.codegen_properties.parser_grammar_unused.root_term))
+                print("           ".rjust(40, " ") + "  " + str(property.codegen_properties.parser_grammar_unused_reason))
 
     generation_context = GenerationContext(parsing_context.parsed_properties_and_descriptors, parsing_context.parsed_shared_grammar_rules, verbose=args.verbose, gperf_executable=args.gperf_executable)
 
