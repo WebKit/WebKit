@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/AccessibleAddress.h>
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 
@@ -96,22 +97,14 @@ private:
 
 ALWAYS_INLINE static bool isSanePointer(const void* pointer)
 {
-#if CPU(ADDRESS64)
     uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
-#if OS(DARWIN)
-#if CPU(X86_64)
-    constexpr uintptr_t boundary = (static_cast<uintptr_t>(4) << 10); // 4KB
-#else
-    constexpr uintptr_t boundary = (static_cast<uintptr_t>(4) << 30); // 4GB
-#endif
-    if (pointerAsInt < boundary)
+    if (pointerAsInt < lowestAccessibleAddress())
         return false;
-#endif
+#if CPU(ADDRESS64)
     uintptr_t canonicalPointerBits = pointerAsInt << (64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH));
     uintptr_t nonCanonicalPointerBits = pointerAsInt >> OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
     return !nonCanonicalPointerBits && canonicalPointerBits;
 #else
-    UNUSED_PARAM(pointer);
     return true;
 #endif // CPU(ADDRESS64)
 }

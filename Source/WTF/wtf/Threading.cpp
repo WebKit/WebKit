@@ -469,6 +469,7 @@ void initialize()
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         setPermissionsOfConfigPage();
+        Config::initialize();
         Gigacage::ensureGigacage();
         Config::AssertNotFrozenScope assertScope;
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)

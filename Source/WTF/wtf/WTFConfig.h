@@ -58,6 +58,7 @@ constexpr size_t ConfigSizeToProtect = std::max(CeilingOnPageSize, 16 * KB);
 
 struct Config {
     WTF_EXPORT_PRIVATE static void permanentlyFreeze();
+    WTF_EXPORT_PRIVATE static void initialize();
 
     struct AssertNotFrozenScope {
         AssertNotFrozenScope();
@@ -67,6 +68,9 @@ struct Config {
     // All the fields in this struct should be chosen such that their
     // initial value is 0 / null / falsy because Config is instantiated
     // as a global singleton.
+
+    uintptr_t lowestAccessibleAddress;
+    uintptr_t highestAccessibleAddress;
 
     bool isPermanentlyFrozen;
 #if PLATFORM(COCOA)
