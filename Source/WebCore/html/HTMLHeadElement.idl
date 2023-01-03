@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,5 @@
 [
     Exposed=Window
 ] interface HTMLHeadElement : HTMLElement {
-    [Reflect] attribute DOMString profile;
 };
 

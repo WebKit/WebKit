@@ -72,8 +72,6 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.scroll
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameSetElement.cols]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameSetElement.rows]
 
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHeadElement.profile]
-
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHeadingElement.align]
 
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHRElement.align]
