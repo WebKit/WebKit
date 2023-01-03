@@ -1595,8 +1595,6 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ ImageOnlyFailure ]
-
 webkit.org/b/184456 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html [ Pass Failure ]
 
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-autofocus.html [ Pass Failure ]

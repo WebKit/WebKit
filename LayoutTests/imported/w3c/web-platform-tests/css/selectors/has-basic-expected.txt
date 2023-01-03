@@ -9,8 +9,6 @@ PASS .parent:has(.sibling ~ .target) matches expected elements
 PASS :has(:is(.target ~ .sibling .descendant)) matches expected elements
 PASS .parent:has(:is(.target ~ .sibling .descendant)) matches expected elements
 PASS .sibling:has(.descendant) ~ .target matches expected elements
-FAIL :has(.sibling:has(.descendant) ~ .target) matches expected elements The string did not match the expected pattern.
-FAIL :has(.sibling:has(.descendant) ~ .target) ~ .parent > .descendant matches expected elements The string did not match the expected pattern.
 PASS :has(> .parent) matches expected elements
 PASS :has(> .target) matches expected elements
 PASS :has(> .parent, > .target) matches expected elements

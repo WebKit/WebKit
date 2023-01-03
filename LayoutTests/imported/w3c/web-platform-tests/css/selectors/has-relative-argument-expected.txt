@@ -32,12 +32,6 @@ PASS .y:has(> .g .h) matches expected elements
 PASS .y:has(.g .h) matches expected elements
 PASS .y:has(> .g .h) .i matches expected elements
 PASS .y:has(.g .h) .i matches expected elements
-FAIL .x:has(+ .y:has(> .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(+ .y:has(.g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(+ .y:has(> .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL .x:has(+ .y:has(.g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL .x:has(~ .y:has(> .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(~ .y:has(.g .h) .i) matches expected elements The string did not match the expected pattern.
 PASS .d .x:has(.e) matches expected elements
 PASS .d ~ .x:has(~ .e) matches expected elements
 

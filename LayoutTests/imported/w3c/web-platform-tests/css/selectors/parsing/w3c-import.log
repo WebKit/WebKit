@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-class.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-descendant.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-focus-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has-disallow-nesting-has-inside-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-id.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-is.html
