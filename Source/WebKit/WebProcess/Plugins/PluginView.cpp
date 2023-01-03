@@ -428,8 +428,15 @@ void PluginView::paint(GraphicsContext& context, const IntRect& /*dirtyRect*/, W
     if (paintRect.isEmpty())
         return;
 
-    if (m_transientPaintingSnapshot)
-        m_transientPaintingSnapshot->paint(context, m_plugin->deviceScaleFactor(), frameRect().location(), m_transientPaintingSnapshot->bounds());
+    if (m_transientPaintingSnapshot) {
+        if (!context.platformContext()) {
+            auto image = m_transientPaintingSnapshot->createImage();
+            if (!image)
+                return;
+            context.drawImage(*image, frameRect());
+        } else
+            m_transientPaintingSnapshot->paint(context, m_plugin->deviceScaleFactor(), frameRect().location(), m_transientPaintingSnapshot->bounds());
+    }
 }
 
 void PluginView::frameRectsChanged()
