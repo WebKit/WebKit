@@ -211,7 +211,6 @@ static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint
     case 0x00BC: /* VULGAR FRACTION ONE QUARTER */
     case 0x00BD: /* VULGAR FRACTION ONE HALF */
     case 0x00BE: /* VULGAR FRACTION THREE QUARTERS */
-    case 0x00ED: /* LATIN SMALL LETTER I WITH ACUTE */
     /* 0x0131 LATIN SMALL LETTER DOTLESS I is intentionally not considered a lookalike character because it is visually distinguishable from i and it has legitimate use in the Turkish language. */
     case 0x01C0: /* LATIN LETTER DENTAL CLICK */
     case 0x01C3: /* LATIN LETTER RETROFLEX CLICK */

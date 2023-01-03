@@ -212,6 +212,9 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 
     // Arabic
     EXPECT_STREQ("https://\u0620\u065Babc/", userVisibleString(literalURL("https://\u0620\u065Babc/")));
+
+    // Latin
+    EXPECT_STREQ("https://\u00ED\u00CDabc/", userVisibleString(literalURL("https://\u00ED\u00CDabc/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)
