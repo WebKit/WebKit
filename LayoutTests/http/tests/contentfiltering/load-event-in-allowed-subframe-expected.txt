@@ -1,0 +1,14 @@
+This test verifies that the load event is dispatched for a subframe that is allowed by content filters, in the case where the data for the subframe resource request comes from the disk cache. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Finished loading subframe #1
+PASS Finished loading subframe #2
+PASS Finished loading subframe #3
+PASS Finished loading subframe #4
+PASS Finished loading subframe #5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
