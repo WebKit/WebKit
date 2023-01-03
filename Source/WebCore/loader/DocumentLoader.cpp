@@ -83,6 +83,7 @@
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "SWClientConnection.h"
+#include "ScopedURL.h"
 #include "ScriptableDocumentParser.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorker.h"
@@ -776,7 +777,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> DocumentLoader::doCrossO
 
     URL openerURL;
     if (auto openerFrame = m_frame->loader().opener())
-        openerURL = openerFrame->document() ? openerFrame->document()->url() : URL();
+        openerURL = openerFrame->document() ? openerFrame->document()->url().asURL() : URL();
 
     auto currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_frame->document()->url(), m_frame->document()->securityOrigin(), m_frame->document()->crossOriginOpenerPolicy(), m_triggeringAction.requester(), openerURL);
 

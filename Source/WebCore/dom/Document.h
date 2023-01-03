@@ -723,8 +723,8 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    const URL& url() const final { return m_url; }
-    void setURL(const URL&);
+    const ScopedURL& url() const final { return m_url; }
+    void setURL(const ScopedURL&);
     WEBCORE_EXPORT const URL& urlForBindings() const;
 
     URL adjustedURL() const;

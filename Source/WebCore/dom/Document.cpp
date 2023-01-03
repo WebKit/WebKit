@@ -210,6 +210,7 @@
 #include "SVGUseElement.h"
 #include "SWClientConnection.h"
 #include "ScopedEventQueue.h"
+#include "ScopedURL.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptModuleLoader.h"
@@ -3521,9 +3522,9 @@ void Document::logExceptionToConsole(const String& errorMessage, const String& s
     addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(callStack));
 }
 
-void Document::setURL(const URL& url)
+void Document::setURL(const ScopedURL& url)
 {
-    URL newURL = url.isEmpty() ? aboutBlankURL() : url;
+    auto newURL = url.isEmpty() ? ScopedURL { aboutBlankURL() } : url;
     if (newURL == m_url)
         return;
     
@@ -6608,7 +6609,7 @@ bool Document::isContextThread() const
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
-static bool isURLPotentiallyTrustworthy(const URL& url)
+static bool isURLPotentiallyTrustworthy(const ScopedURL& url)
 {
     if (url.protocolIsAbout())
         return url.isAboutBlank() || url.isAboutSrcDoc();

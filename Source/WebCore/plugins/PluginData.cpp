@@ -65,7 +65,7 @@ void PluginData::initPlugins()
 
 const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
 {
-    auto documentURL = m_page.mainFrame().document() ? m_page.mainFrame().document()->url() : URL { };
+    auto documentURL = m_page.mainFrame().document() ? m_page.mainFrame().document()->url().asURL() : URL();
     if (!documentURL.isNull() && !protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, documentURL)) {
         m_cachedVisiblePlugins.pageURL = WTFMove(documentURL);
         m_cachedVisiblePlugins.pluginList = std::nullopt;

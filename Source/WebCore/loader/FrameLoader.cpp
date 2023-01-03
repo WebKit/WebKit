@@ -112,6 +112,7 @@
 #include "SVGNames.h"
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
+#include "ScopedURL.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScrollAnimator.h"
@@ -3071,7 +3072,7 @@ void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& cont
     double delay = 0;
     String urlString;
     if (parseMetaHTTPEquivRefresh(content, delay, urlString)) {
-        auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
+        auto completedURL = urlString.isEmpty() ? document.url().asURL() : document.completeURL(urlString);
         if (!completedURL.protocolIsJavaScript())
             m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL, isMetaRefresh);
         else {
