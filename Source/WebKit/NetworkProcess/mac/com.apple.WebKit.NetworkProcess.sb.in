@@ -680,6 +680,7 @@
         SYS_sysctl
         SYS_thread_selfid
         SYS_ulock_wait
+        SYS_ulock_wait2
         SYS_ulock_wake
         SYS_unlink
         SYS_workq_kernreturn

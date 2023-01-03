@@ -1925,6 +1925,7 @@
         SYS_thread_selfusage
 #endif
         SYS_ulock_wait
+        SYS_ulock_wait2
         SYS_ulock_wake
         SYS_workq_kernreturn
         SYS_write_nocancel
@@ -1977,7 +1978,6 @@
         SYS_open_dprotected_np
         SYS_setrlimit
         SYS_shared_region_map_and_slide_2_np
-        SYS_ulock_wait2
 #endif
 ))
 
