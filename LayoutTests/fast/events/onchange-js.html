@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="input" type="text" onchange="changeHandler()">
+<script>
+description('This test verifies that the change event is fired, when value is changed in change event handler.');
+var input = document.getElementById('input');
+var changeEventCounter = 0;
+function changeHandler()
+{
+    changeEventCounter++;
+    input.value = '';
+}
+input.focus();
+document.execCommand('InsertText', false, 'foo bar baz');
+shouldBeEqualToString('input.value', 'foo bar baz');
+input.blur();
+shouldBe('changeEventCounter', '1');
+shouldBeEqualToString('input.value', '');
+input.focus();
+document.execCommand('InsertText', false, 'foo bar baz');
+shouldBeEqualToString('input.value', 'foo bar baz');
+input.blur();
+shouldBe('changeEventCounter', '2');
+</script>
+</body>
+</html>

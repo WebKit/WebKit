@@ -1,0 +1,14 @@
+This test verifies that the change event is fired, when value is changed in change event handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "foo bar baz"
+PASS changeEventCounter is 1
+PASS input.value is ""
+PASS input.value is "foo bar baz"
+PASS changeEventCounter is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2,8 +2,9 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -228,8 +229,8 @@ String HTMLTextFormControlElement::selectedText() const
 void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 {
     if (m_textAsOfLastFormControlChangeEvent != value()) {
-        dispatchChangeEvent();
         setTextAsOfLastFormControlChangeEvent(value());
+        dispatchChangeEvent();
     }
     setChangedSinceLastFormControlChangeEvent(false);
     setInteractedWithSinceLastFormSubmitEvent(true);
