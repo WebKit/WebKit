@@ -54,11 +54,6 @@ Ref<Node> CDATASection::cloneNodeInternal(Document& targetDocument, CloningOpera
     return create(targetDocument, String { data() });
 }
 
-bool CDATASection::childTypeAllowed(NodeType) const
-{
-    return false;
-}
-
 Ref<Text> CDATASection::virtualCreate(String&& data)
 {
     return create(document(), WTFMove(data));

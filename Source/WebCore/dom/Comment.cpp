@@ -54,9 +54,4 @@ Ref<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
     return create(targetDocument, String { data() });
 }
 
-bool Comment::childTypeAllowed(NodeType) const
-{
-    return false;
-}
-
 } // namespace WebCore
