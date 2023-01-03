@@ -37,7 +37,7 @@ Scrolled contents
                       (offsetFromRenderer width=1 height=1)
                       (bounds 320.00 1020.00)
                       (drawsContent 1)
-                      (paintingPhases [foreground, overflow-contents])
+                      (paintingPhases [foreground, overflow-contents, composited-scroll])
                     )
                   )
                 )

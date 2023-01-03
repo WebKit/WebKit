@@ -40,14 +40,16 @@ class GraphicsLayer;
 class IntPoint;
 class IntRect;
 
-enum class GraphicsLayerPaintingPhase {
+enum class GraphicsLayerPaintingPhase : uint16_t {
     Background            = 1 << 0,
     Foreground            = 1 << 1,
-    Mask                  = 1 << 2,
-    ClipPath              = 1 << 3,
-    OverflowContents      = 1 << 4,
-    CompositedScroll      = 1 << 5,
-    ChildClippingMask     = 1 << 6,
+    Outline               = 1 << 2,
+    NegativeZDescendants  = 1 << 3,
+    Mask                  = 1 << 4,
+    ClipPath              = 1 << 5,
+    OverflowContents      = 1 << 6,
+    CompositedScroll      = 1 << 7,
+    ChildClippingMask     = 1 << 8,
 };
 
 enum AnimatedPropertyID {

@@ -613,22 +613,24 @@ public:
 
     int zIndex() const { return renderer().style().usedZIndex(); }
 
-    enum class PaintLayerFlag : uint16_t {
-        HaveTransparency                      = 1 << 0,
-        AppliedTransform                      = 1 << 1,
-        TemporaryClipRects                    = 1 << 2,
-        PaintingReflection                    = 1 << 3,
-        PaintingOverlayScrollbars             = 1 << 4,
-        PaintingCompositingBackgroundPhase    = 1 << 5,
-        PaintingCompositingForegroundPhase    = 1 << 6,
-        PaintingCompositingMaskPhase          = 1 << 7,
-        PaintingCompositingClipPathPhase      = 1 << 8,
-        PaintingCompositingScrollingPhase     = 1 << 9,
-        PaintingOverflowContents              = 1 << 10,
-        PaintingRootBackgroundOnly            = 1 << 11,
-        PaintingSkipRootBackground            = 1 << 12,
-        PaintingChildClippingMaskPhase        = 1 << 13,
-        CollectingEventRegion                 = 1 << 14,
+    enum class PaintLayerFlag {
+        HaveTransparency                                = 1 << 0,
+        AppliedTransform                                = 1 << 1,
+        TemporaryClipRects                              = 1 << 2,
+        PaintingReflection                              = 1 << 3,
+        PaintingOverlayScrollbars                       = 1 << 4,
+        PaintingCompositingBackgroundPhase              = 1 << 5,
+        PaintingCompositingForegroundPhase              = 1 << 6,
+        PaintingCompositingOutlinePhase                 = 1 << 7,
+        PaintingCompositingNegativeZDescendantsPhase    = 1 << 8,
+        PaintingCompositingMaskPhase                    = 1 << 9,
+        PaintingCompositingClipPathPhase                = 1 << 10,
+        PaintingCompositingScrollingPhase               = 1 << 11,
+        PaintingOverflowContents                        = 1 << 12,
+        PaintingRootBackgroundOnly                      = 1 << 13,
+        PaintingSkipRootBackground                      = 1 << 14,
+        PaintingChildClippingMaskPhase                  = 1 << 15,
+        CollectingEventRegion                           = 1 << 16,
     };
     static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerFlag::PaintingCompositingBackgroundPhase, PaintLayerFlag::PaintingCompositingForegroundPhase }; }
 
@@ -1373,6 +1375,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer&);
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer::ClipRectsContext&);
 WTF::TextStream& operator<<(WTF::TextStream&, IndirectCompositingReason);
 WTF::TextStream& operator<<(WTF::TextStream&, PaintBehavior);
+WTF::TextStream& operator<<(WTF::TextStream&, RenderLayer::PaintLayerFlag);
 
 } // namespace WebCore
 
