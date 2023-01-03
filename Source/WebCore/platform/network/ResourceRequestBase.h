@@ -32,8 +32,8 @@
 #include "HTTPHeaderMap.h"
 #include "IntRect.h"
 #include "ResourceLoadPriority.h"
+#include "ScopedURL.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -66,7 +66,7 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, double timeoutInterval, const URL& firstPartyForCookies, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true)
+        RequestData(const ScopedURL& url, double timeoutInterval, const URL& firstPartyForCookies, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true)
             : m_url(url)
             , m_timeoutInterval(timeoutInterval)
             , m_firstPartyForCookies(firstPartyForCookies)
@@ -83,13 +83,13 @@ public:
         {
         }
         
-        RequestData(const URL& url, ResourceRequestCachePolicy cachePolicy)
+        RequestData(const ScopedURL& url, ResourceRequestCachePolicy cachePolicy)
             : m_url(url)
             , m_cachePolicy(cachePolicy)
         {
         }
         
-        URL m_url;
+        ScopedURL m_url;
         double m_timeoutInterval { s_defaultTimeoutInterval }; // 0 is a magic value for platform default on platforms that have one.
         URL m_firstPartyForCookies;
         String m_httpMethod { "GET"_s };
@@ -120,8 +120,8 @@ public:
     WEBCORE_EXPORT bool isNull() const;
     WEBCORE_EXPORT bool isEmpty() const;
     
-    WEBCORE_EXPORT const URL& url() const;
-    WEBCORE_EXPORT void setURL(const URL& url);
+    WEBCORE_EXPORT const ScopedURL& url() const;
+    WEBCORE_EXPORT void setURL(const ScopedURL&);
 
     void redirectAsGETIfNeeded(const ResourceRequestBase &, const ResourceResponse&);
     WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const;
@@ -271,7 +271,7 @@ protected:
     {
     }
 
-    ResourceRequestBase(const URL& url, ResourceRequestCachePolicy policy)
+    ResourceRequestBase(const ScopedURL& url, ResourceRequestCachePolicy policy)
         : m_requestData({ url, policy })
         , m_resourceRequestUpdated(true)
         , m_platformRequestUpdated(false)

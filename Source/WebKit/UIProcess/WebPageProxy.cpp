@@ -4021,7 +4021,7 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
             m_hitRenderTreeSizeThreshold = true; // If we didn't get data on renderTreeSize, just don't fire the milestone.
 
         if (!sessionState.provisionalURL.isNull())
-            return loadRequest(sessionState.provisionalURL);
+            return loadRequest({ sessionState.provisionalURL });
 
         if (hasBackForwardList) {
             if (WebBackForwardListItem* item = m_backForwardList->currentItem())
@@ -7477,7 +7477,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 
     if (downloadInfo) {
-        auto& download = m_process->processPool().download(m_websiteDataStore, this, URL { downloadInfo->url }, downloadInfo->suggestedFilename);
+        auto& download = m_process->processPool().download(m_websiteDataStore, this, ScopedURL { downloadInfo->url }, downloadInfo->suggestedFilename);
         download.setDidStartCallback([this, weakThis = WeakPtr { *this }] (auto* download) {
             if (!weakThis || !download)
                 return;

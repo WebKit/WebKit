@@ -2493,7 +2493,7 @@ ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler 
 
 void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const ScopedURL& blockedPageURL, SubstituteData& substituteData)
 {
-    frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
+    frameLoader()->load(FrameLoadRequest(*frame(), { blockedPageURL }, substituteData));
 }
 #endif // ENABLE(CONTENT_FILTERING)
 

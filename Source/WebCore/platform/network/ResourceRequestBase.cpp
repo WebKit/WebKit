@@ -113,14 +113,14 @@ bool ResourceRequestBase::isNull() const
     return url().isNull();
 }
 
-const URL& ResourceRequestBase::url() const 
+const ScopedURL& ResourceRequestBase::url() const
 {
     updateResourceRequest(); 
     
     return m_requestData.m_url;
 }
 
-void ResourceRequestBase::setURL(const URL& url)
+void ResourceRequestBase::setURL(const ScopedURL& url)
 { 
     updateResourceRequest(); 
 
@@ -161,7 +161,7 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     auto request = asResourceRequest();
     auto location = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
 
-    request.setURL(location.isEmpty() ? URL { } : URL { redirectResponse.url(), location });
+    request.setURL(location.isEmpty() ? ScopedURL { } : ScopedURL { { redirectResponse.url(), location } });
 
     request.redirectAsGETIfNeeded(*this, redirectResponse);
 
@@ -395,7 +395,7 @@ void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
     constexpr size_t maxLength = 4096;
     if (httpReferrer.length() > maxLength) {
         RELEASE_LOG(Loading, "Truncating HTTP referer");
-        String origin = URL(SecurityOrigin::create(URL { httpReferrer })->toString()).string();
+        String origin = URL(SecurityOrigin::create(ScopedURL { URL { httpReferrer } })->toString()).string();
         if (origin.length() <= maxLength)
             setHTTPHeaderField(HTTPHeaderName::Referer, origin);
     } else

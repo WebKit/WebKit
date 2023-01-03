@@ -1017,7 +1017,7 @@ void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String
 
 void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType) const
 {
-    URL url = request.url();
+    auto url = request.url();
     upgradeInsecureRequestIfNeeded(url, requestType);
     request.setURL(url);
 }

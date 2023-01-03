@@ -35,6 +35,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ScopedURL.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #include "WebInspectorUIExtensionControllerProxy.h"
@@ -75,7 +76,7 @@ void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggable
     createFrontendPageAndWindow();
 
     m_inspectorPage->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL));
-    m_inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
+    m_inspectorPage->loadRequest(ScopedURL { WebInspectorUIProxy::inspectorPageURL() });
 }
 
 void RemoteWebInspectorUIProxy::closeFromBackend()
