@@ -120,6 +120,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!element)
         return std::nullopt;
 
+    if (!isNodeAriaVisible(element))
+        return std::nullopt;
+
     if (auto* linkElement = element->enclosingLinkEventParentOrSelf())
         element = linkElement;
     if (auto* buttonElement = ancestorsOfType<HTMLButtonElement>(*element).first())

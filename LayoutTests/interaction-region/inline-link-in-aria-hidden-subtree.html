@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    #page {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<body>
+<a href="#">This</a> is a link, outside the frame.<br/>
+<div id="frame" aria-hidden="true"><a href="#">This</a> is a link, inside an aria-hidden div</div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

@@ -156,9 +156,7 @@ gchar* webkit_dom_html_head_element_get_profile(WebKitDOMHTMLHeadElement* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_HEAD_ELEMENT(self), 0);
-    WebCore::HTMLHeadElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::profileAttr));
-    return result;
+    return nullptr;
 }
 
 void webkit_dom_html_head_element_set_profile(WebKitDOMHTMLHeadElement* self, const gchar* value)
@@ -166,8 +164,7 @@ void webkit_dom_html_head_element_set_profile(WebKitDOMHTMLHeadElement* self, co
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HEAD_ELEMENT(self));
     g_return_if_fail(value);
-    WebCore::HTMLHeadElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::profileAttr, WTF::AtomString::fromUTF8(value));
+    return;
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;
