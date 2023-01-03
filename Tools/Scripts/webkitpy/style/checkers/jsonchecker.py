@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -371,7 +371,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'conditional-converter': self.validate_string,
             'converter': self.validate_string,
             'custom': self.validate_string,
-            'custom-parser': self.validate_boolean,
             'enable-if': self.validate_string,
             'fast-path-inherited': self.validate_boolean,
             'fill-layer-property': self.validate_boolean,

@@ -453,7 +453,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("conditional-converter", allowed_types=[str]),
         Schema.Entry("converter", allowed_types=[str]),
         Schema.Entry("custom", allowed_types=[str]),
-        Schema.Entry("custom-parser", allowed_types=[bool]),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
@@ -597,16 +596,9 @@ class StylePropertyCodeGenProperties:
         if json_value.get("parser-function"):
             if "parser-grammar-unused" not in json_value:
                 raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-function'.")
-            for entry_name in ["skip-parser", "longhands", "custom-parser", "parser-grammar"]:
+            for entry_name in ["skip-parser", "longhands", "parser-grammar"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-function' and '{entry_name}'.")
-
-        if json_value.get("custom-parser"):
-            if "longhands" not in json_value:
-                raise Exception(f"{key_path} can't 'custom-parser' unless 'longhands' is also specified.")
-            for entry_name in ["skip-parser", "parser-grammar"]:
-                if entry_name in json_value:
-                    raise Exception(f"{key_path} can't have both 'custom-parser' and '{entry_name}'.")
 
         return StylePropertyCodeGenProperties(property_name, **json_value)
 
@@ -4678,10 +4670,9 @@ class GeneratedSharedGrammarRuleConsumer(SharedGrammarRuleConsumer):
 #        descriptor-only properties, shorthand properties, and properties marked 'skip-parser`.
 #
 #   - `CustomPropertyConsumer`:
-#        Used when the property has been marked with `custom-parser` or `parser-function`. These
-#        property consumers never generate a `consume` function of their own, and call the defined
-#        `consume` function (either based on the property name if `custom-parser` or the one declared
-#        in `parser-function`) directly from the main `parse` function.
+#        Used when the property has been marked with `parser-function`. These property consumers never
+#        generate a `consume` function of their own, and call the defined `consume` function declared
+#        in `parser-function` directly from the main `parse` function.
 #
 #   - `FastPathKeywordOnlyPropertyConsumer`:
 #        The only allowed values for this property are fast path eligible keyword values. These property
@@ -4762,7 +4753,7 @@ class SkipPropertyConsumer(PropertyConsumer):
         return None
 
 
-# Property consumer used for properties with `custom-parser` or `parser-function` defined.
+# Property consumer used for properties with `parser-function` defined.
 class CustomPropertyConsumer(PropertyConsumer):
     def __init__(self, property):
         self.property = property

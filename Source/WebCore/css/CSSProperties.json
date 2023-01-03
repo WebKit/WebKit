@@ -183,12 +183,6 @@
         "Internal properties (\"internal-only\") are never computable,",
         "and setting this flag to true is an error.",
         "",
-        "* custom-parser:",
-        "Indicates that the property requires a custom parser. Unless 'parser-function'",
-        "is also specified, the name of the parser function will be 'consume' followed by",
-        "the property name. For instance, if 'font-size' requires a custom parser, it",
-        "would be named 'consumeFontSize'.",
-        "",
         "* parser-function-allows-number-or-integer-input:",
         "Indicates that the properties allows <number> or <integer> as input. We'd",
         "normally rely on the grammar to detect this but it is not available when using",
@@ -199,36 +193,32 @@
         "will be named whatever string is provided as the value.",
         "",
         "* parser-function-requires-additional-parameters:",
-        "An array of strings to pass as arguments to a custom parser. Either 'custom-parser'",
-        "or 'parser-function' must also be specified for this to be valid.",
+        "An array of strings to pass as arguments to a custom parser. 'parser-function' must",
+        "also be specified for this to be valid.",
         "",
         "* parser-function-requires-context:",
-        "Indicates that the CSSPropertyContext is required by the custom parser. Either",
-        "'custom-parser' or 'parser-function' must also be specified for this to be valid.",
+        "Indicates that the CSSPropertyContext is required by the custom parser. 'parser-function'",
+        "must also be specified for this to be valid.",
         "",
         "* parser-function-requires-context-mode:",
         "Indicates that the CSSPropertyContext's mode property is required by the custom",
-        "parser. Either 'custom-parser' or 'parser-function' must also be specified for this",
-        "to be valid.",
+        "parser. 'parser-function' must also be specified for this to be valid.",
         "",
         "* parser-function-requires-current-shorthand:",
         "Indicates that the current shorthand being parsed is required by the custom",
-        "parser. Either 'custom-parser' or 'parser-function' must also be specified for this",
-        "to be valid.",
+        "parser. 'parser-function' must also be specified for this to be valid.",
         "",
         "* parser-function-requires-current-property:",
         "Indicates that the current property being parsed is required by the custom",
-        "parser. Either 'custom-parser' or 'parser-function' must also be specified for this",
-        "to be valid.",
+        "parser. 'parser-function' must also be specified for this to be valid.",
         "",
         "* parser-function-requires-quirks-mode:",
         "Indicates that the current state of quirks mode is required by the custom parser.",
-        "Either 'custom-parser' or 'parser-function' must also be specified for this to be",
-        "valid.",
+        "'parser-function' must also be specified for this to be valid.",
         "",
         "* parser-function-requires-value-pool:",
-        "Indicates that a CSSValuePool is required by the custom parser. Either 'custom-parser'",
-        "or 'parser-function' must also be specified for this to be valid.",
+        "Indicates that a CSSValuePool is required by the custom parser. 'parser-function'",
+        "must also be specified for this to be valid.",
         "",
         "* parser-grammar:",
         "An array of terms that define the grammar for the property.",
@@ -909,8 +899,7 @@
                     "font-synthesis-weight",
                     "font-synthesis-style",
                     "font-synthesis-small-caps"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-fonts-4",
@@ -1010,8 +999,7 @@
                         "value": "font-variation-settings",
                         "enable-if": "ENABLE_VARIATION_FONTS"
                     }
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-fonts",
@@ -1028,8 +1016,7 @@
                     "font-variant-numeric",
                     "font-variant-east-asian",
                     "font-variant-position"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-fonts",
@@ -1081,8 +1068,7 @@
                 ],
                 "longhands": [
                     "text-orientation"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-writing-modes",
@@ -1256,8 +1242,7 @@
                 "computable": false,
                 "longhands": [
                     "all"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-cascade",
@@ -1278,8 +1263,7 @@
                     "animation-fill-mode",
                     "animation-play-state",
                     "animation-name"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-animations",
@@ -1457,8 +1441,7 @@
                     "background-origin",
                     "background-clip",
                     "background-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1592,8 +1575,7 @@
                 "longhands": [
                     "background-position-x",
                     "background-position-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1693,8 +1675,7 @@
                     "border-left-color",
                     "border-left-style",
                     "border-left-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1710,8 +1691,7 @@
                     "border-block-end-color",
                     "border-block-end-style",
                     "border-block-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1723,8 +1703,7 @@
                 "longhands": [
                     "border-block-start-color",
                     "border-block-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1740,8 +1719,7 @@
                     "border-block-end-width",
                     "border-block-end-style",
                     "border-block-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1826,8 +1804,7 @@
                     "border-block-start-width",
                     "border-block-start-style",
                     "border-block-start-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1908,8 +1885,7 @@
                 "longhands": [
                     "border-block-start-style",
                     "border-block-end-style"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1921,8 +1897,7 @@
                 "longhands": [
                     "border-block-start-width",
                     "border-block-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1935,8 +1910,7 @@
                     "border-bottom-width",
                     "border-bottom-style",
                     "border-bottom-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2074,8 +2048,7 @@
                     "border-right-color",
                     "border-bottom-color",
                     "border-left-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2124,8 +2097,7 @@
                     "border-image-width",
                     "border-image-outset",
                     "border-image-repeat"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2219,8 +2191,7 @@
                     "border-inline-end-color",
                     "border-inline-end-style",
                     "border-inline-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2232,8 +2203,7 @@
                 "longhands": [
                     "border-inline-start-color",
                     "border-inline-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2249,8 +2219,7 @@
                     "border-inline-end-width",
                     "border-inline-end-style",
                     "border-inline-end-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2335,8 +2304,7 @@
                     "border-inline-start-width",
                     "border-inline-start-style",
                     "border-inline-start-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2417,8 +2385,7 @@
                 "longhands": [
                     "border-inline-start-style",
                     "border-inline-end-style"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2430,8 +2397,7 @@
                 "longhands": [
                     "border-inline-start-width",
                     "border-inline-end-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2444,8 +2410,7 @@
                     "border-left-width",
                     "border-left-style",
                     "border-left-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2529,8 +2494,7 @@
                     "border-top-right-radius",
                     "border-bottom-right-radius",
                     "border-bottom-left-radius"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2543,8 +2507,7 @@
                     "border-right-width",
                     "border-right-style",
                     "border-right-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2627,8 +2590,7 @@
                 "longhands": [
                     "-webkit-border-horizontal-spacing",
                     "-webkit-border-vertical-spacing"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -2676,8 +2638,7 @@
                     "border-right-style",
                     "border-bottom-style",
                     "border-left-style"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2690,8 +2651,7 @@
                     "border-top-width",
                     "border-top-style",
                     "border-top-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2815,8 +2775,7 @@
                     "border-right-width",
                     "border-bottom-width",
                     "border-left-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -3598,8 +3557,7 @@
                     "right",
                     "bottom",
                     "left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3611,8 +3569,7 @@
                 "longhands": [
                     "inset-block-start",
                     "inset-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3652,8 +3609,7 @@
                 "longhands": [
                     "inset-inline-start",
                     "inset-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3789,8 +3745,7 @@
                     "list-style-position",
                     "list-style-image",
                     "list-style-type"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-lists",
@@ -3937,8 +3892,7 @@
                     "margin-right",
                     "margin-bottom",
                     "margin-left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -3950,8 +3904,7 @@
                 "longhands": [
                     "margin-block-start",
                     "margin-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4019,8 +3972,7 @@
                 "longhands": [
                     "margin-inline-start",
                     "margin-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4156,8 +4108,7 @@
                     "marker-start",
                     "marker-mid",
                     "marker-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "svg",
@@ -4224,8 +4175,7 @@
                     "mask-clip",
                     "mask-composite",
                     "mask-mode"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-masking",
@@ -4301,8 +4251,7 @@
                 "longhands": [
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-masking",
@@ -4314,8 +4263,7 @@
                 "longhands": [
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -4667,8 +4615,7 @@
                     "offset-anchor",
                     "offset-rotate"
                 ],
-                "settings-flag": "cssMotionPathEnabled",
-                "custom-parser": true
+                "settings-flag": "cssMotionPathEnabled"
             },
             "specification": {
                 "category": "css-motion-path",
@@ -4708,8 +4655,7 @@
                     "outline-color",
                     "outline-style",
                     "outline-width"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-ui",
@@ -4780,8 +4726,7 @@
                 "longhands": [
                     "overflow-x",
                     "overflow-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-overflow",
@@ -4880,8 +4825,7 @@
                     "overscroll-behavior-x",
                     "overscroll-behavior-y"
                 ],
-                "settings-flag": "overscrollBehaviorEnabled",
-                "custom-parser": true
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -4985,8 +4929,7 @@
                     "padding-right",
                     "padding-bottom",
                     "padding-left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -4998,8 +4941,7 @@
                 "longhands": [
                     "padding-block-start",
                     "padding-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -5060,8 +5002,7 @@
                 "longhands": [
                     "padding-inline-start",
                     "padding-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -5164,8 +5105,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-after"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -5176,8 +5116,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-before"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -5188,8 +5127,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-inside"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -5710,8 +5648,7 @@
             "codegen-properties": {
                 "longhands": [
                     "text-decoration-line"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -6061,8 +5998,7 @@
                     "transition-duration",
                     "transition-timing-function",
                     "transition-delay"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transitions",
@@ -6428,8 +6364,7 @@
                     "contain-intrinsic-width",
                     "contain-intrinsic-height"
                 ],
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
-                "custom-parser": true
+                "settings-flag": "cssContainIntrinsicSizeEnabled"
             },
             "status": {
                 "status": "in development"
@@ -6545,8 +6480,7 @@
                 "longhands": [
                     "container-name",
                     "container-type"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6645,8 +6579,7 @@
             "codegen-properties": {
                 "longhands": [
                     "background-size"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "comment": "Differs from background-size only in the interpretation of a single value: '-webkit-background-size: l;' is equivalent to 'background-size: l l;' whereas 'background-size: l;' is equivalent to 'background-size: l auto;'"
@@ -6669,8 +6602,7 @@
                     "border-image-width",
                     "border-image-outset",
                     "border-image-repeat"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "comment": "Differs from border-image in that it always includes the 'fill' keyword in 'border-image-slice', and makes length values in 'border-image-width' override the corresponding 'border-*-width'."
@@ -6683,8 +6615,7 @@
                     "border-top-right-radius",
                     "border-bottom-right-radius",
                     "border-bottom-left-radius"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "comment": "Differs from border-radius only in the interpretation of a value consisting of two lengths: '-webkit-border-radius: l1 l2;' is equivalent to 'border-radius: l1 / l2;'."
@@ -6852,8 +6783,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-after"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6867,8 +6797,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-before"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6882,8 +6811,7 @@
             "codegen-properties": {
                 "longhands": [
                     "break-inside"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -6960,8 +6888,7 @@
                 "longhands": [
                     "row-gap",
                     "column-gap"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -6990,8 +6917,7 @@
                     "column-rule-width",
                     "column-rule-style",
                     "column-rule-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification":  {
                 "category": "css-multicol",
@@ -7095,8 +7021,7 @@
                 "longhands": [
                     "column-width",
                     "column-count"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification":  {
                 "category": "css-multicol",
@@ -7310,8 +7235,7 @@
                     "flex-grow",
                     "flex-shrink",
                     "flex-basis"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -7357,8 +7281,7 @@
                 "longhands": [
                     "flex-direction",
                     "flex-wrap"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-flexbox",
@@ -7499,8 +7422,7 @@
                 "longhands": [
                     "align-content",
                     "justify-content"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -7512,8 +7434,7 @@
                 "longhands": [
                     "align-items",
                     "justify-items"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -7525,8 +7446,7 @@
                 "longhands": [
                     "align-self",
                     "justify-self"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-align",
@@ -7542,8 +7462,7 @@
                     "grid-auto-flow",
                     "grid-auto-rows",
                     "grid-auto-columns"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7557,8 +7476,7 @@
                     "grid-column-start",
                     "grid-row-end",
                     "grid-column-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7627,8 +7545,7 @@
                     "grid-template-rows",
                     "grid-template-columns",
                     "grid-template-areas"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7692,8 +7609,7 @@
                 "longhands": [
                     "grid-column-start",
                     "grid-column-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -7705,8 +7621,7 @@
                 "longhands": [
                     "grid-row-start",
                     "grid-row-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-grid",
@@ -8015,8 +7930,7 @@
                     "mask-origin",
                     "-webkit-mask-clip"
                 ],
-                "comment": "Differs from the unprefixed property in accepting -webkit-mask-source-type in place of mask-mode",
-                "custom-parser": true
+                "comment": "Differs from the unprefixed property in accepting -webkit-mask-source-type in place of mask-mode"
             },
             "specification": {
                 "category": "css-masking",
@@ -8031,8 +7945,7 @@
                     "-webkit-mask-box-image-width",
                     "-webkit-mask-box-image-outset",
                     "-webkit-mask-box-image-repeat"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": "non-standard",
             "specification": {
@@ -8212,8 +8125,7 @@
             "codegen-properties": {
                 "longhands": [
                     "perspective"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transforms",
@@ -8231,8 +8143,7 @@
                 "longhands": [
                     "perspective-origin-x",
                     "perspective-origin-y"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transforms",
@@ -8338,8 +8249,7 @@
                     "text-decoration-line",
                     "text-decoration-style",
                     "text-decoration-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -8416,8 +8326,7 @@
                 ],
                 "longhands": [
                     "text-decoration-skip-ink"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-text-decor",
@@ -8514,8 +8423,7 @@
                 "longhands": [
                     "text-emphasis-style",
                     "text-emphasis-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": {
                 "status": "experimental"
@@ -8616,8 +8524,7 @@
                 "longhands": [
                     "-webkit-text-stroke-width",
                     "-webkit-text-stroke-color"
-                ],
-                "custom-parser": true
+                ]
             },
             "status": "non-standard"
         },
@@ -8692,8 +8599,7 @@
                     "transform-origin-x",
                     "transform-origin-y",
                     "transform-origin-z"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-transforms",
@@ -8882,8 +8788,7 @@
                 ],
                 "aliases": [
                     "scroll-snap-margin"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -9023,8 +8928,7 @@
                 "longhands": [
                     "scroll-margin-block-start",
                     "scroll-margin-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -9036,8 +8940,7 @@
                 "longhands": [
                     "scroll-margin-inline-start",
                     "scroll-margin-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -9051,8 +8954,7 @@
                     "scroll-padding-right",
                     "scroll-padding-bottom",
                     "scroll-padding-left"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -9180,8 +9082,7 @@
                 "longhands": [
                     "scroll-padding-block-start",
                     "scroll-padding-block-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -9193,8 +9094,7 @@
                 "longhands": [
                     "scroll-padding-inline-start",
                     "scroll-padding-inline-end"
-                ],
-                "custom-parser": true
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
