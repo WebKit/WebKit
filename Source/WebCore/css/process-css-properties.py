@@ -593,6 +593,10 @@ class StylePropertyCodeGenProperties:
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar-unused"] = grammar
 
+        if json_value.get("parser-grammar-unused-reason"):
+            if "parser-grammar-unused" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-grammar-unused-reason'.")
+
         if json_value.get("parser-function"):
             if "parser-grammar-unused" not in json_value:
                 raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-function'.")
@@ -1055,6 +1059,10 @@ class DescriptorCodeGenProperties:
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar-unused"] = grammar
+
+        if json_value.get("parser-grammar-unused-reason"):
+            if "parser-grammar-unused" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-grammar-unused-reason'.")
 
         if json_value.get("parser-function"):
             if "parser-grammar-unused" not in json_value:
