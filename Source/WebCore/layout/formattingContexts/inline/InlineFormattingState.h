@@ -69,12 +69,18 @@ public:
     void clearLineAndBoxes();
     void shrinkToFit();
 
+    void addNestedListMarkerOffset(const ElementBox& listMarkerBox, LayoutUnit offset) { m_nestedListMarkerOffset.add(&listMarkerBox, offset); }
+    LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffset.get(&listMarkerBox); }
+    void resetNestedListMarkerOffsets() { return m_nestedListMarkerOffset.clear(); }
+
 private:
     // Cacheable input to line layout.
     InlineItems m_inlineItems;
     InlineLineBoxes m_lineBoxes;
     DisplayLines m_displayLines;
     DisplayBoxes m_displayBoxes;
+    // FIXME: This should be part of a non-persistent formatting state.
+    HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffset;
     InlineLayoutUnit m_clearGapAfterLastLine { 0 };
 };
 

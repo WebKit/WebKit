@@ -59,9 +59,8 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
 
     // Store Callee.
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfModule()), GPRInfo::argumentGPR1);
     jit.prepareCallOperation(vm);
-    jit.emitPutCellToCallFrameHeader(GPRInfo::argumentGPR1, CallFrameSlot::callee);
+    jit.emitPutCellToCallFrameHeader(GPRInfo::argumentGPR0, CallFrameSlot::callee);
 
     emitThrowWasmToJSException(jit, GPRInfo::argumentGPR2, exceptionType);
 
@@ -72,7 +71,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
     return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript throw exception due to invalid use of restricted type in import[%i]", importIndex);
 }
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, Bag<OptimizingCallLinkInfo>& callLinkInfos, TypeIndex typeIndex, unsigned importIndex)
+Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, OptimizingCallLinkInfo& callLinkInfo, TypeIndex typeIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
     // It'd be super easy to do so: https://bugs.webkit.org/show_bug.cgi?id=169401
@@ -81,6 +80,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     const auto& signature = *typeDefinition.as<FunctionSignature>();
     unsigned argCount = signature.argumentCount();
+    constexpr GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
     JIT jit;
 
     CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition, CallRole::Callee);
@@ -95,6 +95,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     jit.emitFunctionPrologue();
     jit.emitZeroToCallFrameHeader(CallFrameSlot::codeBlock); // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
+
+    callLinkInfo = OptimizingCallLinkInfo(CodeOrigin(), CallLinkInfo::UseDataIC::No);
+    callLinkInfo.setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
 
     // GC support is experimental and currently will throw a runtime error when struct
     // and array type indices are exported via a function signature to JS.
@@ -313,12 +316,10 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfModule()), GPRInfo::argumentGPR0);
     jit.emitPutCellToCallFrameHeader(GPRInfo::argumentGPR0, CallFrameSlot::callee);
 
     // jsArg10 might overlap with regT0, so store 'this' argument first
     jit.storeValue(jsUndefined(), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))), jsArg10);
-    constexpr GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
     ASSERT(!wasmCC.calleeSaveRegisters.contains(importJSCellGPRReg, IgnoreVectors));
     materializeImportJSCell(jit, importIndex, importJSCellGPRReg);
     jit.storePtr(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
@@ -329,9 +330,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
-    auto* callLinkInfo = callLinkInfos.add(CodeOrigin(), CallLinkInfo::UseDataIC::No);
-    callLinkInfo->setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
-    auto slowPath = CallLinkInfo::emitFastPath(jit, callLinkInfo, importJSCellGPRReg, InvalidGPRReg);
+    auto slowPath = CallLinkInfo::emitFastPath(jit, &callLinkInfo, importJSCellGPRReg, InvalidGPRReg);
 
     JIT::Jump done = jit.jump();
     slowPath.link(&jit);
@@ -340,7 +339,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     jit.loadWasmContextInstance(GPRInfo::regT3);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, Instance::offsetOfOwner()), GPRInfo::regT3);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, JSWebAssemblyInstance::offsetOfGlobalObject()), GPRInfo::regT3);
-    callLinkInfo->emitSlowPath(vm, jit);
+    callLinkInfo.emitSlowPath(vm, jit);
     done.link(&jit);
     auto doneLocation = jit.label();
 
@@ -510,7 +509,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    callLinkInfo->setCodeLocations(
+    callLinkInfo.setCodeLocations(
         patchBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
         patchBuffer.locationOf<JSInternalPtrTag>(doneLocation));
 

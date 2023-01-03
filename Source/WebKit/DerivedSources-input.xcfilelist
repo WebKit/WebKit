@@ -33,6 +33,7 @@ $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/GPUProcess/GPUConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
+$(PROJECT_DIR)/GPUProcess/graphics/InlinePathData.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteDisplayListRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGL.messages.in
@@ -176,6 +177,7 @@ $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
+$(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
 $(PROJECT_DIR)/Shared/WTFArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in

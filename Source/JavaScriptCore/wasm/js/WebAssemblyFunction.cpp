@@ -147,6 +147,17 @@ RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const
     return RegisterAtOffsetList { calleeSaves(), RegisterAtOffsetList::OffsetBaseType::FramePointerBased };
 }
 
+static size_t trampolineReservedStackSize()
+{
+    // If we are jumping to the function which can have stack-overflow check,
+    // then, trampoline does not need to do the check again if it is smaller than a threshold.
+    // 1. Caller of this trampoline ensures that at least our stack is lower than softStackLimit.
+    // 2. Callee may omit stack check if the frame size is less than reservedZoneSize and it does not have a call.
+    // Based on that, trampoline between 1 and 2 can use (softReservedZoneSize - reservedZoneSize) / 2 size safely at least.
+    // Note that minimumReservedZoneSize is 16KB, and we ensure that softReservedZoneSize - reservedZoneSize is at least 16KB.
+    return (Options::softReservedZoneSize() - Options::reservedZoneSize()) / 2;
+}
+
 CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 {
     if (Options::forceICFailure())
@@ -184,12 +195,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     jit.emitFunctionPrologue();
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
-
-    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
-        GPRReg reg = regAtOffset.reg().gpr();
-        ptrdiff_t offset = regAtOffset.offset();
-        jit.storePtr(reg, CCallHelpers::Address(GPRInfo::callFrameRegister, offset));
-    }
+    jit.emitSave(registersToSpill);
 
     JSValueRegs scratchJSR {
 #if USE(JSVALUE32_64)
@@ -198,19 +204,25 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         Wasm::wasmCallingConvention().prologueScratchGPRs[1]
     };
     GPRReg stackLimitGPR = Wasm::wasmCallingConvention().prologueScratchGPRs[0];
-    jit.loadPtr(vm.addressOfSoftStackLimit(), stackLimitGPR);
 
     CCallHelpers::JumpList slowPath;
-    slowPath.append(jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
-    slowPath.append(jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, stackLimitGPR));
+
+    if (totalFrameSize >= trampolineReservedStackSize()) {
+        jit.loadPtr(vm.addressOfSoftStackLimit(), stackLimitGPR);
+
+        slowPath.append(jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
+        slowPath.append(jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, stackLimitGPR));
+    }
 
     // Ensure:
     // argCountPlusThis - 1 >= signature.argumentCount()
     // argCountPlusThis >= signature.argumentCount() + 1
     // FIXME: We should handle mismatched arity
     // https://bugs.webkit.org/show_bug.cgi?id=196564
-    slowPath.append(jit.branch32(CCallHelpers::Below,
-        CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(signature.argumentCount() + 1)));
+    if (signature.argumentCount() > 0) {
+        slowPath.append(jit.branch32(CCallHelpers::Below,
+            CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(signature.argumentCount() + 1)));
+    }
 
     if (usesTagRegisters())
         jit.emitMaterializeTagCheckRegisters();
@@ -351,22 +363,29 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     if (!!instance()->instance().module().moduleInformation().memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-        GPRReg scratchOrBoundsCheckingSize = InvalidGPRReg;
         auto mode = instance()->memoryMode();
 
-        if (isARM64E()) {
+        if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance()->instance().memory()->sharingMode() == MemorySharingMode::Shared)) {
+            // Capacity and basePointer will not be changed.
             if (mode == MemoryMode::BoundsChecking)
-                scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
-            else
-                scratchOrBoundsCheckingSize = stackLimitGPR;
-            jit.loadPairPtr(scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, scratchOrBoundsCheckingSize);
+                jit.move(CCallHelpers::TrustedImm64(instance()->instance().memory()->mappedCapacity()), pinnedRegs.boundsCheckingSizeRegister);
+            jit.move(CCallHelpers::TrustedImmPtr(instance()->instance().memory()->basePointer()), baseMemory);
         } else {
-            if (mode == MemoryMode::BoundsChecking)
-                jit.loadPairPtr(scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
-            else
-                jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+            GPRReg scratchOrBoundsCheckingSize = InvalidGPRReg;
+            if (isARM64E()) {
+                if (mode == MemoryMode::BoundsChecking)
+                    scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
+                else
+                    scratchOrBoundsCheckingSize = stackLimitGPR;
+                jit.loadPairPtr(scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, scratchOrBoundsCheckingSize);
+            } else {
+                if (mode == MemoryMode::BoundsChecking)
+                    jit.loadPairPtr(scratchJSR.payloadGPR(), CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
+                else
+                    jit.loadPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+            }
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR(), /* validateAuth */ true, /* mayBeNull */ false);
         }
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR());
     }
 #endif
     // We use this callee to indicate how to unwind past these types of frames:
@@ -397,22 +416,12 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     else
         jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, vm.wasmContext.pointerToInstance());
 
-    auto emitRestoreCalleeSaves = [&] {
-        for (const RegisterAtOffset& regAtOffset : registersToSpill) {
-            GPRReg reg = regAtOffset.reg().gpr();
-            ASSERT(reg != GPRInfo::returnValueGPR);
-            ptrdiff_t offset = regAtOffset.offset();
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, offset), reg);
-        }
-    };
-
-    emitRestoreCalleeSaves();
-
+    jit.emitRestore(registersToSpill, GPRInfo::callFrameRegister);
     jit.emitFunctionEpilogue();
     jit.ret();
 
     slowPath.link(&jit);
-    emitRestoreCalleeSaves();
+    jit.emitRestore(registersToSpill, GPRInfo::callFrameRegister);
     jit.move(CCallHelpers::TrustedImmPtr(this), GPRInfo::regT0);
     jit.emitFunctionEpilogue();
 #if CPU(ARM64E)

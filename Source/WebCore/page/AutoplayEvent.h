@@ -41,16 +41,3 @@ enum class AutoplayEventFlags : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AutoplayEventFlags> {
-    using values = EnumValues<
-        WebCore::AutoplayEventFlags,
-        WebCore::AutoplayEventFlags::HasAudio,
-        WebCore::AutoplayEventFlags::PlaybackWasPrevented,
-        WebCore::AutoplayEventFlags::MediaIsMainContent
-    >;
-};
-
-} // namespace WTF

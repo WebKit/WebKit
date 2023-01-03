@@ -25,14 +25,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/empty-pseudo-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/enabled-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/first-child-last-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/fullscreen-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-adjacent-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-ancestor-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-parent-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-sibling-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-invalidation-after-removing-non-first-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-invalidation-for-wiping-an-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-sibling.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-not.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-pseudo-class.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/host-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/insert-sibling-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/insert-sibling-002.html
@@ -42,6 +46,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/is.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/link-pseudo-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/location-pseudo-classes-in-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/not-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/not-002.html
@@ -53,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/sheet-going-away-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/sheet-going-away-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/subject-has-invalidation-with-display-none-anchor-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/target-pseudo-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/typed-child-indexed-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/user-action-pseudo-classes-in-has.html

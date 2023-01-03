@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -371,8 +371,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'conditional-converter': self.validate_string,
             'converter': self.validate_string,
             'custom': self.validate_string,
-            'custom-parser': self.validate_boolean,
-            'custom-parser-allows-number-or-integer-input': self.validate_boolean,
             'enable-if': self.validate_string,
             'fast-path-inherited': self.validate_boolean,
             'fill-layer-property': self.validate_boolean,
@@ -387,15 +385,18 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'name-for-methods': self.validate_string,
             'parser-exported': self.validate_boolean,
             'parser-grammar': self.validate_string,
+            'parser-grammar-unused': self.validate_string,
+            'parser-grammar-unused-reason': self.validate_string,
             'parser-grammar-comment': self.validate_comment,
             'parser-function': self.validate_string,
-            'parser-requires-additional-parameters': self.validate_array,
-            'parser-requires-context': self.validate_boolean,
-            'parser-requires-context-mode': self.validate_boolean,
-            'parser-requires-current-shorthand': self.validate_boolean,
-            'parser-requires-current-property': self.validate_boolean,
-            'parser-requires-quirks-mode': self.validate_boolean,
-            'parser-requires-value-pool': self.validate_boolean,
+            'parser-function-allows-number-or-integer-input': self.validate_boolean,
+            'parser-function-requires-additional-parameters': self.validate_array,
+            'parser-function-requires-context': self.validate_boolean,
+            'parser-function-requires-context-mode': self.validate_boolean,
+            'parser-function-requires-current-shorthand': self.validate_boolean,
+            'parser-function-requires-current-property': self.validate_boolean,
+            'parser-function-requires-quirks-mode': self.validate_boolean,
+            'parser-function-requires-value-pool': self.validate_boolean,
             'no-default-color': self.validate_boolean,
             'related-property': self.validate_string,
             'runtime-flag': self.validate_string,

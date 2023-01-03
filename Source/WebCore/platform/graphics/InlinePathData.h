@@ -35,9 +35,6 @@ namespace WebCore {
 struct LineData {
     FloatPoint start;
     FloatPoint end;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<LineData> decode(Decoder&);
 };
 
 struct ArcData {
@@ -54,25 +51,16 @@ struct ArcData {
     float endAngle { 0 };
     bool clockwise { false };
     Type type { Type::ArcOnly };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ArcData> decode(Decoder&);
 };
 
 struct MoveData {
     FloatPoint location;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<MoveData> decode(Decoder&);
 };
 
 struct QuadCurveData {
     FloatPoint startPoint;
     FloatPoint controlPoint;
     FloatPoint endPoint;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<QuadCurveData> decode(Decoder&);
 };
 
 struct BezierCurveData {
@@ -80,143 +68,10 @@ struct BezierCurveData {
     FloatPoint controlPoint1;
     FloatPoint controlPoint2;
     FloatPoint endPoint;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<BezierCurveData> decode(Decoder&);
 };
-
-template<class Encoder> void MoveData::encode(Encoder& encoder) const
-{
-    encoder << location;
-}
-
-template<class Decoder> std::optional<MoveData> MoveData::decode(Decoder& decoder)
-{
-    MoveData data;
-    if (!decoder.decode(data.location))
-        return std::nullopt;
-    return data;
-}
-
-template<class Encoder> void LineData::encode(Encoder& encoder) const
-{
-    encoder << start;
-    encoder << end;
-}
-
-template<class Decoder> std::optional<LineData> LineData::decode(Decoder& decoder)
-{
-    LineData data;
-    if (!decoder.decode(data.start))
-        return std::nullopt;
-
-    if (!decoder.decode(data.end))
-        return std::nullopt;
-
-    return data;
-}
-
-template<class Encoder> void ArcData::encode(Encoder& encoder) const
-{
-    encoder << start;
-    encoder << center;
-    encoder << radius;
-    encoder << startAngle;
-    encoder << endAngle;
-    encoder << clockwise;
-    encoder << type;
-}
-
-template<class Decoder> std::optional<ArcData> ArcData::decode(Decoder& decoder)
-{
-    ArcData data;
-    if (!decoder.decode(data.start))
-        return std::nullopt;
-
-    if (!decoder.decode(data.center))
-        return std::nullopt;
-
-    if (!decoder.decode(data.radius))
-        return std::nullopt;
-
-    if (!decoder.decode(data.startAngle))
-        return std::nullopt;
-
-    if (!decoder.decode(data.endAngle))
-        return std::nullopt;
-
-    if (!decoder.decode(data.clockwise))
-        return std::nullopt;
-
-    if (!decoder.decode(data.type))
-        return std::nullopt;
-
-    return data;
-}
-
-template<class Encoder> void QuadCurveData::encode(Encoder& encoder) const
-{
-    encoder << startPoint;
-    encoder << controlPoint;
-    encoder << endPoint;
-}
-
-template<class Decoder> std::optional<QuadCurveData> QuadCurveData::decode(Decoder& decoder)
-{
-    QuadCurveData data;
-    if (!decoder.decode(data.startPoint))
-        return std::nullopt;
-
-    if (!decoder.decode(data.controlPoint))
-        return std::nullopt;
-
-    if (!decoder.decode(data.endPoint))
-        return std::nullopt;
-
-    return data;
-}
-
-template<class Encoder> void BezierCurveData::encode(Encoder& encoder) const
-{
-    encoder << startPoint;
-    encoder << controlPoint1;
-    encoder << controlPoint2;
-    encoder << endPoint;
-}
-
-template<class Decoder> std::optional<BezierCurveData> BezierCurveData::decode(Decoder& decoder)
-{
-    BezierCurveData data;
-    if (!decoder.decode(data.startPoint))
-        return std::nullopt;
-
-    if (!decoder.decode(data.controlPoint1))
-        return std::nullopt;
-
-    if (!decoder.decode(data.controlPoint2))
-        return std::nullopt;
-
-    if (!decoder.decode(data.endPoint))
-        return std::nullopt;
-
-    return data;
-}
 
 using InlinePathData = std::variant<std::monostate, MoveData, LineData, ArcData, QuadCurveData, BezierCurveData>;
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ArcData::Type> {
-    using values = EnumValues<
-        WebCore::ArcData::Type,
-        WebCore::ArcData::Type::ArcOnly,
-        WebCore::ArcData::Type::LineAndArc,
-        WebCore::ArcData::Type::ClosedLineAndArc
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(INLINE_PATH_DATA)

@@ -32,6 +32,7 @@
 #pragma once
 
 #include "CharacterRange.h"
+#include "TextCheckingRequestIdentifier.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
@@ -81,8 +82,6 @@ struct TextCheckingGuesses {
     bool ungrammatical { false };
 };
 
-enum TextCheckingRequestIdentifierType { };
-using TextCheckingRequestIdentifier = ObjectIdentifier<TextCheckingRequestIdentifierType>;
 
 class TextCheckingRequestData {
     friend class SpellCheckRequest; // For access to m_identifier.

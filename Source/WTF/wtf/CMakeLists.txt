@@ -1,5 +1,6 @@
 set(WTF_PUBLIC_HEADERS
     ASCIICType.h
+    AccessibleAddress.h
     AggregateLogger.h
     Algorithms.h
     AnsiColors.h

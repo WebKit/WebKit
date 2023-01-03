@@ -1,11 +1,5 @@
 
-PASS scope selector works in shadowRoot.firstChild
-FAIL Selecting direct child of shadow root with :scope should work assert_equals: should get the direct child of shadowRoot expected Element node <div id="external"><div id="nested"></div></div> but got null
-FAIL Selecting descendants of shadow root with :scope should work assert_equals: should get the first div descendant of shadowRoot expected Element node <div id="external"><div id="nested"></div></div> but got null
-FAIL Selecting direct child of nested shadow root with :scope should work assert_equals: should get the direct child of nestedShadowRoot expected Element node <div id="shadow_external"><div id="shadow_nested"></div><... but got null
-FAIL Selecting descendants of nested shadow root with :scope should work assert_equals: should get the first div descendant of nestedShadowRoot expected Element node <div id="shadow_external"><div id="shadow_nested"></div><... but got null
-PASS scope selector works in documentFragment.firstChild
-FAIL Selecting direct child of document fragment with :scope should work assert_equals: should get the direct child of DocumentFragment expected Element node <div id="external_div"><div id="nested_div"></div></div> but got null
-FAIL Selecting descendants of document fragment with :scope should work assert_equals: should get the first div descendant of DocumentFragment expected Element node <div id="external_div"><div id="nested_div"></div></div> but got null
-PASS querySelector() with ":scope" should return null, whether the context object is an element, a shadow root or a document fragment
+PASS scope-selector
+PASS scope-selector 1
+PASS querySelector() with ":scope" should return the document element, if present in the subtree
 

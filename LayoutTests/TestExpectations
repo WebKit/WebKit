@@ -1621,15 +1621,12 @@ webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/234139 imported/w3c/web-platform-tests/css/selectors/focus-visible-024.html [ Skip ]
 webkit.org/b/234139 imported/w3c/web-platform-tests/css/selectors/focus-visible-025.html [ Skip ]
 webkit.org/b/217904 imported/w3c/web-platform-tests/css/selectors/is-where-visited.html [ ImageOnlyFailure ]
-webkit.org/b/223497 imported/w3c/web-platform-tests/css/selectors/nesting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/xml-class-selector.xml [ ImageOnlyFailure ]
 webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/child-indexed-no-parent.html [ ImageOnlyFailure ]
+webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 
 # This test is bit heavy for debug
 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html [ Skip ]
-
-# ref for this is under a directory that is not yet imported
-webkit.org/b/209735 imported/w3c/web-platform-tests/css/selectors/root-siblings.htm [ Skip ]
 
 # https://github.com/w3c/web-platform-tests/issues/8547
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html [ Skip ]
@@ -3294,7 +3291,6 @@ imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFai
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-029.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 
 # https://github.com/web-platform-tests/wpt/issues/31174
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html [ Skip ]

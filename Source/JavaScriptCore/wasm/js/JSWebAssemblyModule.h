@@ -48,7 +48,6 @@ enum class BindingFailure;
 }
 
 class JSWebAssemblyMemory;
-class OptimizingCallLinkInfo;
 class SymbolTable;
 
 class JSWebAssemblyModule final : public JSNonFinalObject {
@@ -88,7 +87,7 @@ private:
     Ref<Wasm::Module> m_module;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
-    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
+    FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
 };
 
 } // namespace JSC

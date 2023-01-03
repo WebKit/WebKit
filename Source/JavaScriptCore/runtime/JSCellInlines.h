@@ -443,9 +443,9 @@ ALWAYS_INLINE bool JSCell::putInline(JSGlobalObject* globalObject, PropertyName 
     return putMethod(this, globalObject, propertyName, value, slot);
 }
 
-inline bool isWebAssemblyModule(const JSCell* cell)
+inline bool isWebAssemblyInstance(const JSCell* cell)
 {
-    return cell->type() == WebAssemblyModuleType;
+    return cell->type() == WebAssemblyInstanceType;
 }
 
 } // namespace JSC

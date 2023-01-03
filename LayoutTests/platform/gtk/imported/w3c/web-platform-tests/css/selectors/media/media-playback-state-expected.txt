@@ -1,0 +1,9 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test :pseudo-class syntax is supported without throwing a SyntaxError
+PASS Test :playing pseudo-classes
+PASS Test :paused pseudo-classes
+TIMEOUT Test :seeking pseudo-class Test timed out
+

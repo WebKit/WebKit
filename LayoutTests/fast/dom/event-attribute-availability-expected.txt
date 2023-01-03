@@ -153,11 +153,11 @@ PASS 'onscroll' in window is true
 PASS 'onselect' in window is true
 PASS 'onsubmit' in window is true
 FAIL 'onbeforecut' in window should be true. Was false.
-FAIL 'oncut' in window should be true. Was false.
+PASS 'oncut' in window is true
 FAIL 'onbeforecopy' in window should be true. Was false.
-FAIL 'oncopy' in window should be true. Was false.
+PASS 'oncopy' in window is true
 FAIL 'onbeforepaste' in window should be true. Was false.
-FAIL 'onpaste' in window should be true. Was false.
+PASS 'onpaste' in window is true
 PASS 'onreset' in window is true
 PASS 'onsearch' in window is true
 PASS 'onselectstart' in window is true

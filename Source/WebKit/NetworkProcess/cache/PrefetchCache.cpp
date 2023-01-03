@@ -102,7 +102,7 @@ void PrefetchCache::clearExpiredEntries()
 {
     auto timeout = WallTime::now();
     while (!m_sessionExpirationList.isEmpty()) {
-        auto [requestUrl, timestamp] = m_sessionExpirationList.first();
+        auto& [requestUrl, timestamp] = m_sessionExpirationList.first();
         auto* resources = m_sessionPrefetches.get();
         ASSERT(resources);
         ASSERT(resources->contains(requestUrl));

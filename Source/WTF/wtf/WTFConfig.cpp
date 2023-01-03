@@ -28,7 +28,16 @@
 
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
+#include <wtf/MathExtras.h>
+#include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
+
+#if OS(DARWIN)
+#include <dlfcn.h>
+#include <mach-o/getsect.h>
+#include <mach-o/ldsyms.h>
+#include <mach/vm_param.h>
+#endif
 
 #if PLATFORM(COCOA)
 #include <wtf/spi/cocoa/MachVMSPI.h>
@@ -89,6 +98,32 @@ void setPermissionsOfConfigPage()
 #endif // PLATFORM(COCOA)
 }
 #endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
+void Config::initialize()
+{
+    []() -> void {
+        uintptr_t onePage = pageSize(); // At least, first one page must be unmapped.
+#if OS(DARWIN)
+#ifdef __LP64__
+        using Header = struct mach_header_64;
+#else
+        using Header = struct mach_header;
+#endif
+        const auto* header = static_cast<const Header*>(dlsym(RTLD_MAIN_ONLY, MH_EXECUTE_SYM));
+        if (header) {
+            unsigned long size = 0;
+            const auto* data = getsegmentdata(header, "__PAGEZERO", &size);
+            if (size) {
+                uintptr_t afterZeroPages = bitwise_cast<uintptr_t>(data) + size;
+                g_wtfConfig.lowestAccessibleAddress = std::max<uintptr_t>(onePage, afterZeroPages);
+                return;
+            }
+        }
+#endif
+        g_wtfConfig.lowestAccessibleAddress = onePage;
+    }();
+    g_wtfConfig.highestAccessibleAddress = static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1);
+}
 
 void Config::permanentlyFreeze()
 {

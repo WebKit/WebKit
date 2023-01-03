@@ -67,7 +67,6 @@ private:
     String nodeName() const override;
     NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
-    bool childTypeAllowed(NodeType) const override;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) final;
 
     virtual Ref<Text> virtualCreate(String&&);

@@ -1,0 +1,6 @@
+
+
+PASS Test :pseudo-class syntax is supported without throwing a SyntaxError
+PASS Test :stalled pseudo-class
+PASS Test :buffering pseudo-class
+

@@ -84,20 +84,19 @@ static bool tryAllocate(VM& vm, const Func& allocate)
 
 } // anonymous namespace
 
-
 Memory::Memory()
-    : m_handle(adoptRef(*new BufferMemoryHandle(nullptr, 0, 0, PageCount(0), PageCount(0), MemorySharingMode::Default, MemoryMode::BoundsChecking)))
+    : m_handle(adoptRef(*new BufferMemoryHandle(BufferMemoryHandle::nullBasePointer(), 0, 0, PageCount(0), PageCount(0), MemorySharingMode::Default, MemoryMode::BoundsChecking)))
 {
 }
 
 Memory::Memory(PageCount initial, PageCount maximum, MemorySharingMode sharingMode, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
-    : m_handle(adoptRef(*new BufferMemoryHandle(nullptr, 0, 0, initial, maximum, sharingMode, MemoryMode::BoundsChecking)))
+    : m_handle(adoptRef(*new BufferMemoryHandle(BufferMemoryHandle::nullBasePointer(), 0, 0, initial, maximum, sharingMode, MemoryMode::BoundsChecking)))
     , m_growSuccessCallback(WTFMove(growSuccessCallback))
 {
     ASSERT(!initial.bytes());
     ASSERT(mode() == MemoryMode::BoundsChecking);
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
-    ASSERT(!memory());
+    ASSERT(basePointer());
 }
 
 Memory::Memory(Ref<BufferMemoryHandle>&& handle, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
@@ -365,11 +364,11 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         if (!newMemory)
             return makeUnexpected(GrowFailReason::OutOfMemory);
 
-        memcpy(newMemory, memory(), size());
+        memcpy(newMemory, basePointer(), size());
         auto newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
         m_handle = WTFMove(newHandle);
 
-        ASSERT(memory() == newMemory);
+        ASSERT(basePointer() == newMemory);
         return success();
     }
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
@@ -383,7 +382,7 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         if (!allocationSuccess)
             return makeUnexpected(GrowFailReason::OutOfMemory);
 
-        void* memory = this->memory();
+        void* memory = this->basePointer();
         RELEASE_ASSERT(memory);
 
         // Signaling memory must have been pre-allocated virtually.
@@ -419,7 +418,7 @@ bool Memory::fill(uint32_t offset, uint8_t targetValue, uint32_t count)
     if (offset + count > m_handle->size())
         return false;
 
-    memset(reinterpret_cast<uint8_t*>(memory()) + offset, targetValue, count);
+    memset(reinterpret_cast<uint8_t*>(basePointer()) + offset, targetValue, count);
     return true;
 }
 
@@ -437,7 +436,7 @@ bool Memory::copy(uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
     if (!count)
         return true;
 
-    uint8_t* base = reinterpret_cast<uint8_t*>(memory());
+    uint8_t* base = reinterpret_cast<uint8_t*>(basePointer());
     // Source and destination areas might overlap, so using memmove.
     memmove(base + dstAddress, base + srcAddress, count);
     return true;
@@ -454,7 +453,7 @@ bool Memory::init(uint32_t offset, const uint8_t* data, uint32_t length)
     if (!length)
         return true;
 
-    memcpy(reinterpret_cast<uint8_t*>(memory()) + offset, data, length);
+    memcpy(reinterpret_cast<uint8_t*>(basePointer()) + offset, data, length);
     return true;
 }
 

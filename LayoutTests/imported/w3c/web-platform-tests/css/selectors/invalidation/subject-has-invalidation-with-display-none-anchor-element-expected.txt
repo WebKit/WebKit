@@ -1,0 +1,7 @@
+Click checkbox
+
+PASS
+ Check me!
+
+PASS CSS Selectors Invalidation: subject :has() invalidation with display: none anchor element
+

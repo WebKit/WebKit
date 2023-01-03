@@ -90,21 +90,10 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
         m_buffer->makeWasmMemory();
     } else {
         Ref<BufferMemoryHandle> protectedHandle = m_memory->handle();
-        void* memory = m_memory->memory();
+        void* memory = m_memory->basePointer();
         size_t size = m_memory->size();
-        CagedUniquePtr<Gigacage::Primitive, uint8_t> pointerForEmpty;
-        if (!memory) {
-            ASSERT(!size);
-            constexpr unsigned allocationSize = 1;
-            pointerForEmpty = CagedUniquePtr<Gigacage::Primitive, uint8_t>::tryCreate(allocationSize);
-            if (!pointerForEmpty) {
-                throwOutOfMemoryError(globalObject, throwScope);
-                return nullptr;
-            }
-            memory = pointerForEmpty.get(allocationSize);
-        }
         ASSERT(memory);
-        auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle), pointerForEmpty = WTFMove(pointerForEmpty)] (void*) { });
+        auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle)] (void*) { });
         m_buffer = ArrayBuffer::createFromBytes(memory, size, WTFMove(destructor));
         m_buffer->makeWasmMemory();
         if (m_memory->sharingMode() == MemorySharingMode::Shared)

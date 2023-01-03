@@ -143,6 +143,7 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(ProxyObject, JSType::ProxyObjectType, JSType::ProxyObjectType) \
     macro(RegExpObject, JSType::RegExpObjectType, JSType::RegExpObjectType) \
     macro(JSWebAssemblyModule, JSType::WebAssemblyModuleType, JSType::WebAssemblyModuleType) \
+    macro(JSWebAssemblyInstance, JSType::WebAssemblyInstanceType, JSType::WebAssemblyInstanceType) \
     macro(DirectArguments, JSType::DirectArgumentsType, JSType::DirectArgumentsType) \
     macro(FunctionExecutable, JSType::FunctionExecutableType, JSType::FunctionExecutableType) \
     macro(ScopedArguments, JSType::ScopedArgumentsType, JSType::ScopedArgumentsType) \

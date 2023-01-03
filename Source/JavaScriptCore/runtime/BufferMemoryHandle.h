@@ -161,6 +161,8 @@ public:
     static size_t fastMappedBytes();
 #endif
 
+    static void* nullBasePointer();
+
 private:
     using CagedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
 

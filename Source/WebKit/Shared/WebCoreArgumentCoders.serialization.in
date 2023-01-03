@@ -961,6 +961,14 @@ struct WebCore::PublicKeyCredentialDescriptor {
 };
 #endif // ENABLE(WEB_AUTHN)
 
+#if ENABLE(WEB_AUTHN)
+enum class WebCore::AttestationConveyancePreference : uint8_t {
+    None,
+    Indirect,
+    Direct
+};
+#endif
+
 struct WebCore::PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)
     WebCore::PublicKeyCredentialCreationOptions::RpEntity rp;
@@ -2415,3 +2423,20 @@ enum class WebCore::ControlPartType : uint8_t {
     double minimum();
     double maximum();
 };
+
+enum class WebCore::HasInsecureContent : bool
+
+header: <WebCore/ModalContainerTypes.h>
+[CustomHeader] enum class WebCore::ModalContainerDecision : uint8_t {
+    Show,
+    HideAndIgnore,
+    HideAndAllow,
+    HideAndDisallow,
+};
+
+[OptionSet] enum class WebCore::AutoplayEventFlags : uint8_t {
+    HasAudio,
+    PlaybackWasPrevented,
+    MediaIsMainContent,
+};
+

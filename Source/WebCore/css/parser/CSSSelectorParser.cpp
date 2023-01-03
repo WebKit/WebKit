@@ -326,9 +326,11 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeNestedSelec
 {
     auto scopeCombinator = consumeCombinator(range);
 
-    ASSERT(scopeCombinator != CSSSelector::Subselector);
-    ASSERT(scopeCombinator != CSSSelector::DescendantSpace);
-
+    // Nesting should only work with ~ > + combinators in this function. 
+    // The descendant combinator is handled in another code path.
+    if (scopeCombinator != CSSSelector::DirectAdjacent && scopeCombinator != CSSSelector::IndirectAdjacent && scopeCombinator != CSSSelector::Child)
+        return nullptr;
+    
     auto selector = consumeComplexSelector(range);
     if (!selector)
         return nullptr;
@@ -777,6 +779,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             // FIXME: We should be able to do this lazily. See: https://bugs.webkit.org/show_bug.cgi?id=217149
             selector->setArgument(serializeANPlusB(ab));
             if (!block.atEnd()) {
+                auto type = selector->pseudoClassType();
+                if (type == CSSSelector::PseudoClassNthOfType || type == CSSSelector::PseudoClassNthLastOfType)
+                    return nullptr;
                 if (block.peek().type() != IdentToken)
                     return nullptr;
                 const CSSParserToken& ident = block.consume();

@@ -10,7 +10,7 @@ FAIL Values are absolutized when substituting into properties with universal syn
 PASS Valid fallback does not invalidate var()-reference [<length>, 10px]
 PASS Valid fallback does not invalidate var()-reference [<length> | <color>, red]
 PASS Valid fallback does not invalidate var()-reference [<length> | none, none]
-FAIL Invalid fallback invalidates var()-reference [<length>, red] assert_equals: expected "" but got "40px"
-FAIL Invalid fallback invalidates var()-reference [<length> | none, nolength] assert_equals: expected "" but got "40px"
-FAIL Invalid fallback invalidates var()-reference [<length>, var(--novar)] assert_equals: expected "" but got "40px"
+PASS Invalid fallback invalidates var()-reference [<length>, red]
+PASS Invalid fallback invalidates var()-reference [<length> | none, nolength]
+PASS Invalid fallback invalidates var()-reference [<length>, var(--novar)]
 

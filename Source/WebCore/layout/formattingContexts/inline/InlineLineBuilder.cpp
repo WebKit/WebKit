@@ -939,14 +939,29 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
 
 static std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList& candidateRuns, const InlineContentBreaker::Result& lineBreakingResult, bool isFirstFormattedLine)
 {
-    // FIXME: Add support for other types of continuous content.
-    ASSERT(lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break);
-    if (candidateRuns.size() != 1 || !candidateRuns.first().inlineItem.isText())
+    auto eligibleTrailingRunIndex = [&]() -> std::optional<size_t> {
+        ASSERT(lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break);
+        if (candidateRuns.size() == 1 && candidateRuns.first().inlineItem.isText()) {
+            // A single text run is always a candidate.
+            return { 0 };
+        }
+        if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Break && lineBreakingResult.partialTrailingContent) {
+            auto& trailingRun = candidateRuns[lineBreakingResult.partialTrailingContent->trailingRunIndex];
+            if (trailingRun.inlineItem.isText())
+                return lineBreakingResult.partialTrailingContent->trailingRunIndex;
+        }
         return { };
-    auto& inlineTextItem = downcast<InlineTextItem>(candidateRuns.first().inlineItem);
+    }();
+
+    if (!eligibleTrailingRunIndex)
+        return { };
+
+    auto& overflowingRun = candidateRuns[*eligibleTrailingRunIndex];
+    // FIXME: Add support for other types of continuous content.
+    ASSERT(is<InlineTextItem>(overflowingRun.inlineItem));
+    auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
     if (inlineTextItem.isWhitespace())
         return { };
-    auto& overflowingRun = candidateRuns.first();
     if (isFirstFormattedLine) {
         auto& usedStyle = overflowingRun.style;
         auto& style = overflowingRun.inlineItem.style();

@@ -9,11 +9,11 @@ layer at (0,0) size 800x600
         RenderListItem {DIV} at (11,11) size 86x562 [border: (3px solid #FFA500)]
           RenderListItem {DIV} at (11,11) size 64x540 [border: (3px solid #FFA500)]
             RenderListItem {DIV} at (11,11) size 42x518 [border: (3px solid #FFA500)]
-              RenderListMarker at (11,103) size 19x7: bullet
-              RenderListMarker at (11,103) size 19x7: bullet
-              RenderListMarker at (11,103) size 19x7: bullet
-              RenderText {#text} at (11,132) size 19x90
-                text run at (11,132) width 90: "List item text."
+              RenderListMarker at (12,103) size 19x7: bullet
+              RenderListMarker at (12,103) size 19x7: bullet
+              RenderListMarker at (12,103) size 19x7: bullet
+              RenderText {#text} at (12,132) size 19x90
+                text run at (12,132) width 90: "List item text."
       RenderBlock {UL} at (124,0) size 144x584
         RenderListItem {LI} at (0,40) size 144x544 [border: (2px solid #FF0000)]
           RenderListMarker at (53,555) size 19x7: bullet

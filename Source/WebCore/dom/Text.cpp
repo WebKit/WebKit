@@ -186,11 +186,6 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
     return createRenderer<RenderText>(*this, data());
 }
 
-bool Text::childTypeAllowed(NodeType) const
-{
-    return false;
-}
-
 Ref<Text> Text::virtualCreate(String&& data)
 {
     return create(document(), WTFMove(data));

@@ -285,6 +285,15 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const CSSCu
     parser.collectParsedCustomPropertyValueDependencies(syntax, isRoot, dependencies);
 }
 
+bool CSSPropertyParser::isValidCustomPropertyValueForSyntax(const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokens, const CSSParserContext& context)
+{
+    if (syntax.isUniversal())
+        return true;
+
+    CSSPropertyParser parser { tokens, context, nullptr };
+    return !!parser.consumeCustomPropertyValueWithSyntax(syntax).first;
+}
+
 bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important)
 {
     if (consumeCSSWideKeyword(propertyID, important))

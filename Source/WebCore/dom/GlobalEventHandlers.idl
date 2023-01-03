@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015, 2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +41,9 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onclick;
     attribute EventHandler onclose;
     attribute EventHandler oncontextmenu;
+    attribute EventHandler oncopy;
     attribute EventHandler oncuechange;
+    attribute EventHandler oncut;
     attribute EventHandler ondblclick;
     attribute EventHandler ondrag;
     attribute EventHandler ondragend;
@@ -72,6 +75,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onmouseout;
     attribute EventHandler onmouseover;
     attribute EventHandler onmouseup;
+    attribute EventHandler onpaste;
     attribute EventHandler onpause;
     attribute EventHandler onplay;
     attribute EventHandler onplaying;

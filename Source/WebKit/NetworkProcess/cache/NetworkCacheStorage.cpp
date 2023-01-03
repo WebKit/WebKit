@@ -43,10 +43,6 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-#if USE(GLIB)
-#include <wtf/glib/Sandbox.h>
-#endif
-
 namespace WebKit {
 namespace NetworkCache {
 
@@ -266,17 +262,6 @@ static void deleteEmptyRecordsDirectories(const String& recordsPath)
     });
 }
 
-static WorkQueue::QOS qosForBackgroundIOQueue()
-{
-#if USE(GLIB)
-    // FIXME: for some reason there's a runtime critical warning coming from GLib under flatpak when trying to
-    // inherit the current thread scheduler settings in newly created ones. See https://bugs.webkit.org/show_bug.cgi?id=232629.
-    if (isInsideFlatpak())
-        return WorkQueue::QOS::Default;
-#endif
-    return WorkQueue::QOS::Background;
-}
-
 Storage::Storage(const String& baseDirectoryPath, Mode mode, Salt salt, size_t capacity)
     : m_basePath(baseDirectoryPath)
     , m_recordsPath(makeRecordsDirectoryPath(baseDirectoryPath))
@@ -286,7 +271,7 @@ Storage::Storage(const String& baseDirectoryPath, Mode mode, Salt salt, size_t c
     , m_readOperationTimeoutTimer(*this, &Storage::cancelAllReadOperations)
     , m_writeOperationDispatchTimer(*this, &Storage::dispatchPendingWriteOperations)
     , m_ioQueue(ConcurrentWorkQueue::create("com.apple.WebKit.Cache.Storage"))
-    , m_backgroundIOQueue(ConcurrentWorkQueue::create("com.apple.WebKit.Cache.Storage.background", qosForBackgroundIOQueue()))
+    , m_backgroundIOQueue(ConcurrentWorkQueue::create("com.apple.WebKit.Cache.Storage.background", WorkQueue::QOS::Background))
     , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::QOS::Background))
     , m_blobStorage(makeBlobDirectoryPath(baseDirectoryPath), m_salt)
 {

@@ -29,7 +29,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionError.h"
-#include "Logging.h"
 #include "ResourceRequest.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -817,7 +816,6 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
         // Removal takes precedence over replacement.
         if (keysToRemove.contains(key)) {
             modifiedQuery = true;
-            RELEASE_LOG(ContentExtensions, "QueryTransform::applyToURL - removing %s", key.utf8().data());
             continue;
         }
 
