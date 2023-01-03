@@ -24,6 +24,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/file-system-access/resources/messaging-helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/file-system-access/resources/messaging-serialize-helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/file-system-access/resources/opaque-origin-sandbox.html
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/resources/sandboxed-fs-test-helpers.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/resources/sync-access-handle-test.js
 /LayoutTests/imported/w3c/web-platform-tests/file-system-access/resources/test-helpers.js

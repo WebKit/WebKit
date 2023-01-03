@@ -1,12 +1,13 @@
 
 PASS idl_test setup
 PASS idl_test validation
+PASS Partial interface FileSystemHandle: original interface defined
+PASS Partial interface FileSystemHandle: valid exposure set
+PASS Partial interface FileSystemHandle: member names are unique
 PASS Partial interface Window: original interface defined
 PASS Partial interface Window: member names are unique
 PASS Partial interface DataTransferItem: original interface defined
 PASS Partial interface DataTransferItem: member names are unique
-PASS Partial interface StorageManager: original interface defined
-PASS Partial interface StorageManager: member names are unique
 PASS Partial interface Window[2]: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
 PASS Window includes WindowEventHandlers: member names are unique
@@ -14,48 +15,16 @@ PASS Window includes WindowOrWorkerGlobalScope: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-PASS FileSystemHandle interface: existence and properties of interface object
-PASS FileSystemHandle interface object length
-PASS FileSystemHandle interface object name
-PASS FileSystemHandle interface: existence and properties of interface prototype object
-PASS FileSystemHandle interface: existence and properties of interface prototype object's "constructor" property
-PASS FileSystemHandle interface: existence and properties of interface prototype object's @@unscopables property
-PASS FileSystemHandle interface: attribute kind
-PASS FileSystemHandle interface: attribute name
-PASS FileSystemHandle interface: operation isSameEntry(FileSystemHandle)
 FAIL FileSystemHandle interface: operation queryPermission(optional FileSystemHandlePermissionDescriptor) assert_own_property: interface prototype object missing non-static operation expected property "queryPermission" missing
 FAIL FileSystemHandle interface: operation requestPermission(optional FileSystemHandlePermissionDescriptor) assert_own_property: interface prototype object missing non-static operation expected property "requestPermission" missing
-PASS FileSystemFileHandle interface: existence and properties of interface object
-PASS FileSystemFileHandle interface object length
-PASS FileSystemFileHandle interface object name
-PASS FileSystemFileHandle interface: existence and properties of interface prototype object
-PASS FileSystemFileHandle interface: existence and properties of interface prototype object's "constructor" property
-PASS FileSystemFileHandle interface: existence and properties of interface prototype object's @@unscopables property
-PASS FileSystemFileHandle interface: operation getFile()
-FAIL FileSystemFileHandle interface: operation createWritable(optional FileSystemCreateWritableOptions) assert_own_property: interface prototype object missing non-static operation expected property "createWritable" missing
-PASS FileSystemDirectoryHandle interface: existence and properties of interface object
-PASS FileSystemDirectoryHandle interface object length
-PASS FileSystemDirectoryHandle interface object name
-PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object
-PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object's "constructor" property
-PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object's @@unscopables property
-PASS FileSystemDirectoryHandle interface: async iterable<USVString, FileSystemHandle>
-PASS FileSystemDirectoryHandle interface: operation getFileHandle(USVString, optional FileSystemGetFileOptions)
-PASS FileSystemDirectoryHandle interface: operation getDirectoryHandle(USVString, optional FileSystemGetDirectoryOptions)
-PASS FileSystemDirectoryHandle interface: operation removeEntry(USVString, optional FileSystemRemoveOptions)
-PASS FileSystemDirectoryHandle interface: operation resolve(FileSystemHandle)
-FAIL FileSystemWritableFileStream interface: existence and properties of interface object assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface object length assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface object name assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface: operation write(FileSystemWriteChunkType) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface: operation seek(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-FAIL FileSystemWritableFileStream interface: operation truncate(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
-PASS StorageManager interface: operation getDirectory()
 FAIL DataTransferItem interface: operation getAsFileSystemHandle() assert_own_property: interface prototype object missing non-static operation expected property "getAsFileSystemHandle" missing
 FAIL Window interface: operation showOpenFilePicker(optional OpenFilePickerOptions) assert_own_property: global object missing non-static operation expected property "showOpenFilePicker" missing
 FAIL Window interface: operation showSaveFilePicker(optional SaveFilePickerOptions) assert_own_property: global object missing non-static operation expected property "showSaveFilePicker" missing
 FAIL Window interface: operation showDirectoryPicker(optional DirectoryPickerOptions) assert_own_property: global object missing non-static operation expected property "showDirectoryPicker" missing
+FAIL Window interface: window must inherit property "showOpenFilePicker(optional OpenFilePickerOptions)" with the proper type assert_own_property: expected property "showOpenFilePicker" missing
+FAIL Window interface: calling showOpenFilePicker(optional OpenFilePickerOptions) on window with too few arguments must throw TypeError assert_own_property: expected property "showOpenFilePicker" missing
+FAIL Window interface: window must inherit property "showSaveFilePicker(optional SaveFilePickerOptions)" with the proper type assert_own_property: expected property "showSaveFilePicker" missing
+FAIL Window interface: calling showSaveFilePicker(optional SaveFilePickerOptions) on window with too few arguments must throw TypeError assert_own_property: expected property "showSaveFilePicker" missing
+FAIL Window interface: window must inherit property "showDirectoryPicker(optional DirectoryPickerOptions)" with the proper type assert_own_property: expected property "showDirectoryPicker" missing
+FAIL Window interface: calling showDirectoryPicker(optional DirectoryPickerOptions) on window with too few arguments must throw TypeError assert_own_property: expected property "showDirectoryPicker" missing
 

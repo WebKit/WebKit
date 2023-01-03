@@ -1,0 +1,5 @@
+
+FAIL FileSystemDirectoryHandle must be defined for data URI iframes. assert_true: Data URI iframes must define 'FileSystemDirectoryHandle'. expected true got false
+FAIL navigator.storage.getDirectory() must reject in a sandboxed iframe. assert_equals: expected "navigator.storage.getDirectory(): REJECTED: SecurityError" but got "navigator.storage.getDirectory(): REJECTED: TypeError"
+FAIL navigator.storage.getDirectory() must reject in a sandboxed opened window. assert_equals: expected "navigator.storage.getDirectory(): REJECTED: SecurityError" but got "navigator.storage.getDirectory(): REJECTED: TypeError"
+

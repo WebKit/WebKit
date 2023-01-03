@@ -207,6 +207,7 @@ http/tests/notifications/permission/ [ Skip ]
 http/tests/permissions/ [ Skip ]
 imported/w3c/web-platform-tests/storage/ [ Skip ]
 imported/w3c/web-platform-tests/file-system-access/ [ Skip ]
+imported/w3c/web-platform-tests/fs/ [ Skip ]
 storage/filesystemaccess/ [ Skip ]
 
 # app-privacy-report tests are iOS only.

@@ -1,0 +1,11 @@
+
+FAIL remove() to remove a file promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL remove() on an already removed file should fail promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL remove() to remove an empty directory promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL remove() on an already removed directory should fail promise_test: Unhandled rejection with value: object "TypeError: dir.remove is not a function. (In 'dir.remove()', 'dir.remove' is undefined)"
+FAIL remove() on a non-empty directory should fail promise_test: Unhandled rejection with value: object "TypeError: dir.remove is not a function. (In 'dir.remove()', 'dir.remove' is undefined)"
+FAIL remove() on a directory recursively should delete all sub-items promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL remove() on a file should ignore the recursive option promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL remove() while the file has an open writable fails promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL can remove the root of a sandbox file system promise_test: Unhandled rejection with value: object "TypeError: root.remove is not a function. (In 'root.remove()', 'root.remove' is undefined)"
+

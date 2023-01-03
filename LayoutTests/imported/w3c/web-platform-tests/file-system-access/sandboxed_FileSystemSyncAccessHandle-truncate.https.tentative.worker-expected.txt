@@ -1,5 +1,0 @@
-
-FAIL test createSyncAccessHandle.truncate with pending operation assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS test SyncAccessHandle.truncate with different sizes
-PASS test SyncAccessHandle.truncate after SyncAccessHandle.write
-

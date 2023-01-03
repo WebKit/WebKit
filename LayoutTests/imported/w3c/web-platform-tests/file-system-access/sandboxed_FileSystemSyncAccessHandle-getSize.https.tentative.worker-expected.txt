@@ -1,4 +1,0 @@
-
-PASS test SyncAccessHandle.getSize after SyncAccessHandle.write
-FAIL test createSyncAccessHandle.getSize with pending operation assert_unreached: Should have rejected: undefined Reached unreachable code
-

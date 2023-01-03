@@ -850,10 +850,6 @@ webkit.org/b/186406 compositing/iframes/display-none-subframe.html [ Pass Failur
 # Newly imported test that is flaky on WK2 because the order of cookies is not consistent.
 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
-webkit.org/b/231348 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.html [ Pass Failure ]
-webkit.org/b/231349 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.html [ Pass Failure ]
-webkit.org/b/231350 [ Release ] imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.html [ Pass Failure ]
-
 # Closed port web socket delays are only supported on wk2.
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]
 
@@ -869,7 +865,5 @@ imported/w3c/web-platform-tests/permissions/ [ Pass ]
 http/tests/notifications/permission/ [ Pass ]
 http/tests/permissions/ [ Pass ]
 imported/w3c/web-platform-tests/storage/ [ Pass ]
-imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
-storage/filesystemaccess/ [ Pass ]
 
 fast/canvas/large-getImageData.html [ Pass ]

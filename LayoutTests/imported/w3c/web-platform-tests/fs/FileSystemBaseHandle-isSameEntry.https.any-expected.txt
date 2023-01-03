@@ -1,0 +1,13 @@
+
+PASS isSameEntry for identical directory handles returns true
+PASS isSameEntry for different directories returns false
+PASS isSameEntry for different handles for the same directory
+PASS isSameEntry for identical file handles returns true
+PASS isSameEntry for different files returns false
+PASS isSameEntry for different handles for the same file
+PASS isSameEntry comparing a file to a file in a different directory returns false
+PASS isSameEntry comparing a file to a directory returns false
+PASS isSameEntry comparing two files pointing to the same path returns true
+PASS isSameEntry comparing two directories pointing to the same path returns true
+PASS isSameEntry comparing a file to a directory of the same path returns false
+

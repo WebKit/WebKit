@@ -1,0 +1,4 @@
+
+PASS Test flush on an empty file.
+FAIL SyncAccessHandle.read returns bytes written by SyncAccessHandle.write after SyncAccessHandle.flush promise_test: Unhandled rejection with value: object "InvalidStateError: Access handle has unfinished operation"
+

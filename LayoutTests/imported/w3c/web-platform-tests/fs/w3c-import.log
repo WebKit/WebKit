@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-IndexedDB.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-buckets.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-getUniqueId.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-isSameEntry.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-BroadcastChannel.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-Error.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-MessagePort-frames.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-MessagePort-workers.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-frames.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-windows.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-workers.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-remove.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemDirectoryHandle-getDirectoryHandle.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemDirectoryHandle-getFileHandle.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemDirectoryHandle-iteration.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemDirectoryHandle-removeEntry.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemDirectoryHandle-resolve.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemFileHandle-create-sync-access-handle.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemFileHandle-getFile.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemFileHandle-move.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemFileHandle-sync-access-handle-writable-lock.https.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemSyncAccessHandle-close.https.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemSyncAccessHandle-flush.https.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemSyncAccessHandle-getSize.https.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemSyncAccessHandle-read-write.https.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemSyncAccessHandle-truncate.https.tentative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemWritableFileStream-piped.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemWritableFileStream-write.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemWritableFileStream.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/fs/README.md
+/LayoutTests/imported/w3c/web-platform-tests/fs/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/opaque-origin.https.window.js

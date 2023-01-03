@@ -1,4 +1,0 @@
-
-PASS There can only be one open access handle at any given time
-PASS An access handle from one file does not interfere with the creation of an access handle on another file
-
