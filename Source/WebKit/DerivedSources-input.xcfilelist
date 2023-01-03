@@ -146,7 +146,13 @@ $(PROJECT_DIR)/Scripts/webkit/__init__.py
 $(PROJECT_DIR)/Scripts/webkit/messages.py
 $(PROJECT_DIR)/Scripts/webkit/model.py
 $(PROJECT_DIR)/Scripts/webkit/parser.py
+$(PROJECT_DIR)/Shared/API/APIError.serialization.in
+$(PROJECT_DIR)/Shared/API/APIFrameHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIGeometry.serialization.in
+$(PROJECT_DIR)/Shared/API/APIPageHandle.serialization.in
+$(PROJECT_DIR)/Shared/API/APIURL.serialization.in
+$(PROJECT_DIR)/Shared/API/APIURLRequest.serialization.in
+$(PROJECT_DIR)/Shared/API/APIURLResponse.serialization.in
 $(PROJECT_DIR)/Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 $(PROJECT_DIR)/Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in
 $(PROJECT_DIR)/Shared/ApplePay/PaymentSetupConfiguration.serialization.in

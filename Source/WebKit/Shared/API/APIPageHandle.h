@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIPageHandle_h
-#define APIPageHandle_h
+#pragma once
 
 #include "APIObject.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Ref.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace API {
 
 class PageHandle : public ObjectImpl<Object::Type::PageHandle> {
 public:
-    static Ref<PageHandle> create(WebKit::WebPageProxyIdentifier, WebCore::PageIdentifier);
-    static Ref<PageHandle> createAutoconverting(WebKit::WebPageProxyIdentifier, WebCore::PageIdentifier);
-    virtual ~PageHandle();
+    static Ref<PageHandle> create(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID)
+    {
+        return adoptRef(*new PageHandle(pageProxyID, webPageID, false));
+    }
+    static Ref<PageHandle> createAutoconverting(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID)
+    {
+        return adoptRef(*new PageHandle(pageProxyID, webPageID, true));
+    }
+    static Ref<PageHandle> create(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID, bool autoconverting)
+    {
+        return adoptRef(*new PageHandle(pageProxyID, webPageID, autoconverting));
+    }
+
+    virtual ~PageHandle() = default;
 
     WebKit::WebPageProxyIdentifier pageProxyID() const { return m_pageProxyID; }
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
-
 private:
-    PageHandle(WebKit::WebPageProxyIdentifier, WebCore::PageIdentifier, bool isAutoconverting);
+    PageHandle(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier webPageID, bool isAutoconverting)
+        : m_pageProxyID(pageProxyID)
+        , m_webPageID(webPageID)
+        , m_isAutoconverting(isAutoconverting)
+    {
+    }
 
     const WebKit::WebPageProxyIdentifier m_pageProxyID;
     const WebCore::PageIdentifier m_webPageID;
@@ -60,5 +67,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIPageHandle_h
