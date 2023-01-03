@@ -80,6 +80,7 @@
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PerspectiveTransformOperation.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/ProgressBarPart.h>
 #include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/RectEdges.h>
@@ -1547,6 +1548,9 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
         break;
 
     case WebCore::ControlPartType::ProgressBar:
+        encoder << downcast<WebCore::ProgressBarPart>(part);
+        break;
+
     case WebCore::ControlPartType::SliderHorizontal:
     case WebCore::ControlPartType::SliderVertical:
     case WebCore::ControlPartType::SearchField:
@@ -1617,7 +1621,14 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
         break;
     }
 
-    case WebCore::ControlPartType::ProgressBar:
+    case WebCore::ControlPartType::ProgressBar: {
+        std::optional<Ref<WebCore::ProgressBarPart>> progressBarPart;
+        decoder >> progressBarPart;
+        if (progressBarPart)
+            return WTFMove(*progressBarPart);
+        break;
+    }
+
     case WebCore::ControlPartType::SliderHorizontal:
     case WebCore::ControlPartType::SliderVertical:
     case WebCore::ControlPartType::SearchField:

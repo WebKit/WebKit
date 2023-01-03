@@ -2346,7 +2346,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     Enabled,
     Checked,
     Default,
-    WindowInactive,
+    WindowActive,
     Indeterminate,
     SpinUp,
     Presenting,
@@ -2424,6 +2424,11 @@ enum class WebCore::ControlPartType : uint8_t {
     double maximum();
 };
 
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ProgressBarPart {
+    double position();
+    Seconds animationStartTime();
+};
+
 enum class WebCore::HasInsecureContent : bool
 
 header: <WebCore/ModalContainerTypes.h>
@@ -2439,4 +2444,3 @@ header: <WebCore/ModalContainerTypes.h>
     PlaybackWasPrevented,
     MediaIsMainContent,
 };
-

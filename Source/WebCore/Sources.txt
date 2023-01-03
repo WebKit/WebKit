@@ -2203,6 +2203,7 @@ platform/graphics/controls/ControlPart.cpp
 platform/graphics/controls/ControlPartType.cpp
 platform/graphics/controls/ControlStyle.cpp
 platform/graphics/controls/MeterPart.cpp
+platform/graphics/controls/ProgressBarPart.cpp
 platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp

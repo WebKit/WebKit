@@ -30,7 +30,7 @@ class WTF::URL {
     uint8_t timeFlags()
 }
 
-class WTF::Seconds {
+[AdditionalEncoder=StreamConnectionEncoder] class WTF::Seconds {
     double value()
 }
 

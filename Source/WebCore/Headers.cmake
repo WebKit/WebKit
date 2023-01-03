@@ -1744,6 +1744,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/controls/ControlStyle.h
     platform/graphics/controls/MeterPart.h
     platform/graphics/controls/PlatformControl.h
+    platform/graphics/controls/ProgressBarPart.h
     platform/graphics/controls/TextAreaPart.h
     platform/graphics/controls/TextFieldPart.h
     platform/graphics/controls/ToggleButtonPart.h

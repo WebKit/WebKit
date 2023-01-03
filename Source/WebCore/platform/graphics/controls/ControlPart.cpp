@@ -58,6 +58,16 @@ FloatSize ControlPart::sizeForBounds(const FloatRect& bounds, const ControlStyle
     return platformControl->sizeForBounds(bounds);
 }
 
+FloatRect ControlPart::rectForBounds(const FloatRect& bounds, const ControlStyle& style)
+{
+    auto platformControl = this->platformControl();
+    if (!platformControl)
+        return bounds;
+
+    platformControl->updateCellStates(bounds, style);
+    return platformControl->rectForBounds(bounds, style);
+}
+
 void ControlPart::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style) const
 {
     auto platformControl = this->platformControl();

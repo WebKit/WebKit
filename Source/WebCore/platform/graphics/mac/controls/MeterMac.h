@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class MeterPart;
+
 class MeterMac : public ControlMac {
 public:
     MeterMac(MeterPart& owningMeterPart, ControlFactoryMac&, NSLevelIndicatorCell*);

@@ -88,7 +88,7 @@ public:
 
     // Returns the repeat interval of the animation for the progress bar.
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
-    IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const final;
+    IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
 
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     bool usesTestModeFocusRingColor() const;
@@ -118,7 +118,6 @@ private:
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
 
     void adjustProgressBarStyle(RenderStyle&, const Element*) const final;
-    bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSliderTrackStyle(RenderStyle&, const Element*) const final;
@@ -200,10 +199,6 @@ private:
     NSCell *listButton() const;
 #endif
 
-    int minimumProgressBarHeight(const RenderStyle&) const;
-    const IntSize* progressBarSizes() const;
-    const int* progressBarMargins(NSControlSize) const;
-    
 #if ENABLE(SERVICE_CONTROLS)
     bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
     IntSize imageControlsButtonSize() const final;

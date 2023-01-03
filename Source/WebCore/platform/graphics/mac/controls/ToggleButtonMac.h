@@ -28,9 +28,10 @@
 #if PLATFORM(MAC)
 
 #import "ButtonControlMac.h"
-#import "ToggleButtonPart.h"
 
 namespace WebCore {
+
+class ToggleButtonPart;
 
 class ToggleButtonMac final : public ButtonControlMac {
 public:

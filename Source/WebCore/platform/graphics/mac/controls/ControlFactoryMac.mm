@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "MeterMac.h"
+#import "ProgressBarMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
 #import "ToggleButtonMac.h"
@@ -124,6 +125,11 @@ NSTextFieldCell* ControlFactoryMac::textFieldCell() const
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPart& part)
 {
     return makeUnique<MeterMac>(part, *this, levelIndicatorCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformProgressBar(ProgressBarPart& part)
+{
+    return makeUnique<ProgressBarMac>(part, *this);
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)
