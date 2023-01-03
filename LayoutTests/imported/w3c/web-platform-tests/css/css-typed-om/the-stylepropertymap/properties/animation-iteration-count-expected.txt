@@ -6,7 +6,7 @@ PASS Can set 'animation-iteration-count' to CSS-wide keywords: revert
 PASS Can set 'animation-iteration-count' to var() references:  var(--A)
 PASS Can set 'animation-iteration-count' to the 'infinite' keyword: infinite
 PASS Can set 'animation-iteration-count' to a number: 0
-FAIL Can set 'animation-iteration-count' to a number: -3.14 assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'animation-iteration-count' to a number: -3.14
 PASS Can set 'animation-iteration-count' to a number: 3.14
 PASS Can set 'animation-iteration-count' to a number: calc(2 + 3)
 PASS Setting 'animation-iteration-count' to a length: 0px throws TypeError

@@ -10,7 +10,7 @@ PASS Can set 'column-gap' to a length: -3.14em
 PASS Can set 'column-gap' to a length: 3.14cm
 PASS Can set 'column-gap' to a length: calc(0px + 0em)
 PASS Can set 'column-gap' to a percent: 0%
-FAIL Can set 'column-gap' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'column-gap' to a percent: -3.14%
 PASS Can set 'column-gap' to a percent: 3.14%
 PASS Can set 'column-gap' to a percent: calc(0% + 0%)
 PASS Setting 'column-gap' to a time: 0s throws TypeError
@@ -42,7 +42,7 @@ PASS Can set 'row-gap' to a length: -3.14em
 PASS Can set 'row-gap' to a length: 3.14cm
 PASS Can set 'row-gap' to a length: calc(0px + 0em)
 PASS Can set 'row-gap' to a percent: 0%
-FAIL Can set 'row-gap' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'row-gap' to a percent: -3.14%
 PASS Can set 'row-gap' to a percent: 3.14%
 PASS Can set 'row-gap' to a percent: calc(0% + 0%)
 PASS Setting 'row-gap' to a time: 0s throws TypeError

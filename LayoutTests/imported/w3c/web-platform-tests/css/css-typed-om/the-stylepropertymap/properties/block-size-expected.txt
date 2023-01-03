@@ -6,7 +6,7 @@ PASS Can set 'block-size' to CSS-wide keywords: revert
 PASS Can set 'block-size' to var() references:  var(--A)
 PASS Can set 'block-size' to the 'auto' keyword: auto
 PASS Can set 'block-size' to a percent: 0%
-FAIL Can set 'block-size' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'block-size' to a percent: -3.14%
 PASS Can set 'block-size' to a percent: 3.14%
 PASS Can set 'block-size' to a percent: calc(0% + 0%)
 PASS Can set 'block-size' to a length: 0px
@@ -37,7 +37,7 @@ PASS Can set 'min-block-size' to CSS-wide keywords: unset
 PASS Can set 'min-block-size' to CSS-wide keywords: revert
 PASS Can set 'min-block-size' to var() references:  var(--A)
 PASS Can set 'min-block-size' to a percent: 0%
-FAIL Can set 'min-block-size' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'min-block-size' to a percent: -3.14%
 PASS Can set 'min-block-size' to a percent: 3.14%
 PASS Can set 'min-block-size' to a percent: calc(0% + 0%)
 PASS Can set 'min-block-size' to a length: 0px
@@ -69,7 +69,7 @@ PASS Can set 'max-block-size' to CSS-wide keywords: revert
 PASS Can set 'max-block-size' to var() references:  var(--A)
 PASS Can set 'max-block-size' to the 'none' keyword: none
 PASS Can set 'max-block-size' to a percent: 0%
-FAIL Can set 'max-block-size' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'max-block-size' to a percent: -3.14%
 PASS Can set 'max-block-size' to a percent: 3.14%
 PASS Can set 'max-block-size' to a percent: calc(0% + 0%)
 PASS Can set 'max-block-size' to a length: 0px
