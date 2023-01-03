@@ -31,25 +31,12 @@
 
 namespace WebCore {
 
-enum class AttestationConveyancePreference {
+enum class AttestationConveyancePreference : uint8_t {
     None,
     Indirect,
     Direct
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AttestationConveyancePreference> {
-    using values = EnumValues<
-        WebCore::AttestationConveyancePreference,
-        WebCore::AttestationConveyancePreference::None,
-        WebCore::AttestationConveyancePreference::Indirect,
-        WebCore::AttestationConveyancePreference::Direct
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WEB_AUTHN)

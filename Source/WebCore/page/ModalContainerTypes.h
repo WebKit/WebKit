@@ -57,14 +57,4 @@ template<> struct EnumTraits<WebCore::ModalContainerControlType> {
     >;
 };
 
-template<> struct EnumTraits<WebCore::ModalContainerDecision> {
-    using values = EnumValues<
-        WebCore::ModalContainerDecision,
-        WebCore::ModalContainerDecision::Show,
-        WebCore::ModalContainerDecision::HideAndIgnore,
-        WebCore::ModalContainerDecision::HideAndAllow,
-        WebCore::ModalContainerDecision::HideAndDisallow
-    >;
-};
-
 } // namespace WTF
