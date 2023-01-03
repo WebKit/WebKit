@@ -827,37 +827,37 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
 
     auto defaultAttributes = accessibilityTextAttributes(m_coreObject, { });
     if (!utf16Offset)
-        return { defaultAttributes, -1, -1 };
+        return { WTFMove(defaultAttributes), -1, -1 };
 
     if (is<RenderListMarker>(*m_coreObject->renderer()))
-        return { defaultAttributes, 0, static_cast<int>(m_coreObject->stringValue().length()) };
+        return { WTFMove(defaultAttributes), 0, static_cast<int>(m_coreObject->stringValue().length()) };
 
     if (!m_coreObject->node())
-        return { defaultAttributes, -1, -1 };
+        return { WTFMove(defaultAttributes), -1, -1 };
 
     if (!*utf16Offset && m_hasListMarkerAtStart) {
         // Always consider list marker an independent run.
         auto attributes = accessibilityTextAttributes(m_coreObject->children()[0].get(), defaultAttributes);
         if (!includeDefault)
-            return { attributes, 0, 1 };
+            return { WTFMove(attributes), 0, 1 };
 
         for (const auto& it : attributes)
             defaultAttributes.set(it.key, it.value);
-        return { defaultAttributes, 0, 1 };
+        return { WTFMove(defaultAttributes), 0, 1 };
     }
 
     VisiblePosition offsetPosition = m_coreObject->visiblePositionForIndex(adjustInputOffset(*utf16Offset, m_hasListMarkerAtStart));
     auto* childNode = offsetPosition.deepEquivalent().deprecatedNode();
     if (!childNode)
-        return { defaultAttributes, -1, -1 };
+        return { WTFMove(defaultAttributes), -1, -1 };
 
     auto* childRenderer = childNode->renderer();
     if (!childRenderer)
-        return { defaultAttributes, -1, -1 };
+        return { WTFMove(defaultAttributes), -1, -1 };
 
     auto* childAxObject = childRenderer->document().axObjectCache()->get(childRenderer);
     if (!childAxObject || childAxObject == m_coreObject)
-        return { defaultAttributes, -1, -1 };
+        return { WTFMove(defaultAttributes), -1, -1 };
 
     auto attributes = accessibilityTextAttributes(childAxObject, defaultAttributes);
     auto firstValidPosition = firstPositionInOrBeforeNode(m_coreObject->node()->firstDescendant());
@@ -894,12 +894,12 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     auto startOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(startPosition), m_hasListMarkerAtStart);
     auto endOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(endPosition), m_hasListMarkerAtStart);
     if (!includeDefault)
-        return { attributes, startOffset, endOffset };
+        return { WTFMove(attributes), startOffset, endOffset };
 
     for (const auto& it : attributes)
         defaultAttributes.set(it.key, it.value);
 
-    return { defaultAttributes, startOffset, endOffset };
+    return { WTFMove(defaultAttributes), startOffset, endOffset };
 }
 
 AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttributesWithUTF8Offset(std::optional<int> offset, bool includeDefault) const
