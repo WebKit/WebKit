@@ -348,7 +348,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     addToMap(classRules, selectorFeatures.classes, &classesAffectingHost);
 
     for (auto& entry : selectorFeatures.attributes) {
-        auto [selector, matchElement, isNegation] = entry;
+        auto& [selector, matchElement, isNegation] = entry;
         attributeRules.ensure(selector->attribute().localName().convertToASCIILowercase(), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
@@ -358,7 +358,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     }
 
     for (auto& entry : selectorFeatures.pseudoClasses) {
-        auto [selector, matchElement, isNegation] = entry;
+        auto& [selector, matchElement, isNegation] = entry;
         pseudoClassRules.ensure(makePseudoClassInvalidationKey(selector->pseudoClassType(), *selector), [] {
             return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation });
@@ -371,7 +371,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     }
 
     for (auto& entry : selectorFeatures.hasPseudoClasses) {
-        auto [selector, matchElement, isNegation] = entry;
+        auto& [selector, matchElement, isNegation] = entry;
         // The selector argument points to a selector inside :has() selector list instead of :has() itself.
         hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClassHas, *selector), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();

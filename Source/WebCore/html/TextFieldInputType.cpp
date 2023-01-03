@@ -849,7 +849,7 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
             if (selection.start().deprecatedNode() != element->userAgentShadowRoot())
                 return;
 
-            auto [selectionStart, selectionEnd, selectionDirection] = selectionState;
+            auto& [selectionStart, selectionEnd, selectionDirection] = selectionState;
             element->setSelectionRange(selectionStart, selectionEnd, selectionDirection);
         });
     }
