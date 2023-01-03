@@ -326,9 +326,11 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeNestedSelec
 {
     auto scopeCombinator = consumeCombinator(range);
 
-    ASSERT(scopeCombinator != CSSSelector::Subselector);
-    ASSERT(scopeCombinator != CSSSelector::DescendantSpace);
-
+    // Nesting should only work with ~ > + combinators in this function. 
+    // The descendant combinator is handled in another code path.
+    if (scopeCombinator != CSSSelector::DirectAdjacent && scopeCombinator != CSSSelector::IndirectAdjacent && scopeCombinator != CSSSelector::Child)
+        return nullptr;
+    
     auto selector = consumeComplexSelector(range);
     if (!selector)
         return nullptr;
