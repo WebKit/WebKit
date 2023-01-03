@@ -1480,6 +1480,21 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
 void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
+    auto dispatchDidFinishResourceLoad = [&] {
+        NetworkLoadMetrics metrics;
+        metrics.markComplete();
+        if (shouldCaptureExtraNetworkLoadMetrics()) {
+            auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
+            additionalMetrics->requestHeaderBytesSent = 0;
+            additionalMetrics->requestBodyBytesSent = 0;
+            additionalMetrics->responseHeaderBytesReceived = 0;
+            metrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
+        }
+        metrics.responseBodyBytesReceived = 0;
+        metrics.responseBodyDecodedSize = 0;
+        send(Messages::WebResourceLoader::DidFinishResourceLoad(WTFMove(metrics)));
+    };
+
     LOADER_RELEASE_LOG("sendResultForCacheEntry:");
 #if ENABLE(SHAREABLE_RESOURCE)
     if (!entry->shareableResourceHandle().isNull()) {
@@ -1487,6 +1502,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
         if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(entry->buffer()->makeContiguous(), entry->buffer()->size())) {
             m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
             m_contentFilter->stopFilteringMainResource();
+            dispatchDidFinishResourceLoad();
             return;
         }
 #endif
@@ -1500,18 +1516,6 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
         logCookieInformation();
 #endif
 
-    WebCore::NetworkLoadMetrics networkLoadMetrics;
-    networkLoadMetrics.markComplete();
-    if (shouldCaptureExtraNetworkLoadMetrics()) {
-        auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
-        additionalMetrics->requestHeaderBytesSent = 0;
-        additionalMetrics->requestBodyBytesSent = 0;
-        additionalMetrics->responseHeaderBytesReceived = 0;
-        networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
-    }
-    networkLoadMetrics.responseBodyBytesReceived = 0;
-    networkLoadMetrics.responseBodyDecodedSize = 0;
-
     sendBuffer(*entry->buffer(), entry->buffer()->size());
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter) {
@@ -1519,7 +1523,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
         m_contentFilter->stopFilteringMainResource();
     }
 #endif
-    send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
+    dispatchDidFinishResourceLoad();
 }
 
 void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
