@@ -83,9 +83,9 @@ PASS not shadowed webkitanimationiteration (document.body)
 PASS not shadowed webkitanimationstart (document.body)
 PASS not shadowed webkittransitionend (document.body)
 PASS not shadowed wheel (document.body)
-FAIL not shadowed copy (document.body) assert_equals: window should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed cut (document.body) assert_equals: window should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed paste (document.body) assert_equals: window should reflect expected (object) null but got (undefined) undefined
+PASS not shadowed copy (document.body)
+PASS not shadowed cut (document.body)
+PASS not shadowed paste (document.body)
 PASS shadowed blur removal (document.body)
 PASS shadowed error removal (document.body)
 PASS shadowed focus removal (document.body)
@@ -192,9 +192,9 @@ PASS not shadowed webkitanimationiteration (document.createElement("body"))
 PASS not shadowed webkitanimationstart (document.createElement("body"))
 PASS not shadowed webkittransitionend (document.createElement("body"))
 PASS not shadowed wheel (document.createElement("body"))
-FAIL not shadowed copy (document.createElement("body")) assert_equals: window should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed cut (document.createElement("body")) assert_equals: window should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed paste (document.createElement("body")) assert_equals: window should reflect expected (object) null but got (undefined) undefined
+PASS not shadowed copy (document.createElement("body"))
+PASS not shadowed cut (document.createElement("body"))
+PASS not shadowed paste (document.createElement("body"))
 PASS shadowed blur removal (document.createElement("body"))
 PASS shadowed error removal (document.createElement("body"))
 PASS shadowed focus removal (document.createElement("body"))
