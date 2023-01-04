@@ -633,12 +633,12 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
     auto lineLogicalTop = isHorizontalWritingMode ? displayLine.top() : displayLine.left();
     auto lineLogicalLeft = isHorizontalWritingMode ? displayLine.left() : displayLine.top();
-    auto contentStartInInlineDirectionVisualOrder = lineLogicalLeft + displayLine.contentLogicalOffset();
+    auto contentStartInInlineDirectionVisualOrder = lineLogicalLeft + displayLine.contentVisualOffsetInInlineDirection();
     auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
 
         auto rootInlineBoxVidsualRectInInlineDirection = lineBox.logicalRectForRootInlineBox();
-        rootInlineBoxVidsualRectInInlineDirection.setLeft(displayLine.contentLogicalOffset());
+        rootInlineBoxVidsualRectInInlineDirection.setLeft(displayLine.contentVisualOffsetInInlineDirection());
         appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(rootInlineBoxVidsualRectInInlineDirection, displayLine, root().style().writingMode()), lineBox.rootInlineBox().hasContent(), boxes);
 
         auto contentRightInInlineDirectionVisualOrder = contentStartInInlineDirectionVisualOrder;

@@ -138,7 +138,7 @@ static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& i
             moveVertically(line.inkOverflow(), offset),
             line.baseline(),
             line.baselineType(),
-            line.contentLogicalOffset(),
+            line.contentVisualOffsetInInlineDirection(),
             line.contentLogicalWidth(),
             line.isHorizontal(),
             { },

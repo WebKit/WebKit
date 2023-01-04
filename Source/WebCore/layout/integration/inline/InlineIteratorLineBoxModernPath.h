@@ -62,7 +62,7 @@ public:
     // FIXME: Implement.
     float contentLogicalBottomAdjustedForFollowingLineBox() const { return contentLogicalBottom(); }
 
-    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLogicalOffset(); }
+    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentVisualOffsetInInlineDirection(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }
     bool isHorizontal() const { return line().isHorizontal(); }
     FontBaseline baselineType() const { return line().baselineType(); }
