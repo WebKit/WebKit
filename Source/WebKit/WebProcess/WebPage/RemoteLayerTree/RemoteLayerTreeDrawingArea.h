@@ -119,8 +119,6 @@ private:
     void startRenderingUpdateTimer();
     void didCompleteRenderingUpdateDisplay() override;
 
-    WebCore::TiledBacking* mainFrameTiledBacking() const;
-
     TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
 
     void tryMarkLayersVolatile(CompletionHandler<void(bool succeeded)>&&) final;

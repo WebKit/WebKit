@@ -33,7 +33,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/RenderLayerBacking.h>
-#import <WebCore/TiledBacking.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -61,12 +60,6 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeDrawingAreaMac::dis
     return m_displayColorSpace;
 }
 
-TiledBacking* RemoteLayerTreeDrawingAreaMac::mainFrameTiledBacking() const
-{
-    auto* frameView = m_webPage.mainFrameView();
-    return frameView ? frameView->tiledBacking() : nullptr;
-}
-
 void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
     auto& frameView = *m_webPage.mainFrameView();
@@ -83,18 +76,10 @@ void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::F
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::adjustTransientZoom - scale " << scale << " origin " << origin);
 
     auto totalScale = scale * m_webPage.viewScaleFactor();
-    double currentTotalScale = m_webPage.totalScaleFactor();
 
     // FIXME: Need to trigger some re-rendering here to render at the new scale, so tiles update while zooming.
 
-    // FIXME: Share this code with TiledCoreAnimationDrawingArea.
-    auto* frameView = m_webPage.mainFrameView();
-    FloatRect tileCoverageRect = frameView->visibleContentRectIncludingScrollbars();
-    tileCoverageRect.moveBy(-origin);
-    tileCoverageRect.scale(currentTotalScale / totalScale);
-
-    if (auto* tiledBacking = mainFrameTiledBacking())
-        tiledBacking->prepopulateRect(tileCoverageRect);
+    prepopulateRectForZoom(totalScale, origin);
 }
 
 void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::FloatPoint origin)

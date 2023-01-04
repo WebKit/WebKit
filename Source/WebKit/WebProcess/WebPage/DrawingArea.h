@@ -163,6 +163,9 @@ public:
     virtual void adoptDisplayRefreshMonitorsFromDrawingArea(DrawingArea&) { }
 
     void removeMessageReceiverIfNeeded();
+    
+    WebCore::TiledBacking* mainFrameTiledBacking() const;
+    void prepopulateRectForZoom(double scale, WebCore::FloatPoint origin);
 
 protected:
     DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);

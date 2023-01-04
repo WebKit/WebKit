@@ -258,12 +258,6 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
     triggerRenderingUpdate();
 }
 
-TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
-{
-    FrameView* frameView = m_webPage.mainFrameView();
-    return frameView ? frameView->tiledBacking() : nullptr;
-}
-
 void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
     if (m_updateRenderingTimer.isActive())
