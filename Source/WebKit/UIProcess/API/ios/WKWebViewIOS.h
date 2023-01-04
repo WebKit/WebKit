@@ -49,6 +49,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)_accessibilitySettingsDidChange:(NSNotification *)notification;
 
 - (void)_frameOrBoundsMayHaveChanged;
+- (BOOL)_shouldDeferGeometryUpdates;
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
 - (void)_invalidateResizeAssertions;
 #endif
