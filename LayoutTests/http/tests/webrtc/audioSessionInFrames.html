@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function with_iframe(url, allow) {
+    let frame = document.createElement('iframe');
+    frame.src = url;
+    frame.setAttribute('allow', allow);
+    return new Promise(resolve => {
+        frame.onload = () => { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async () => {
+    navigator.audioSession.type = "play-and-record";
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    const frame1 = await with_iframe("http://localhost:8080/webrtc/resources/audioSessionFrame.html", "microphone:'none'");
+    const result1 = await new Promise(resolve => window.onmessage = (event) => resolve(event.data));
+    frame1.remove();
+
+    const frame2 = await with_iframe("http://localhost:8080/webrtc/resources/audioSessionFrame.html", "microphone");
+    const result2 = await new Promise(resolve => window.onmessage = (event) => resolve(event.data));
+    frame2.remove();
+
+    assert_equals(result1.type, "auto");
+    assert_equals(result1.state, "inactive");
+
+    assert_equals(result2.type, "play-and-record");
+    assert_equals(result2.state, "active");
+}, "Allow audioSession in iframes where microphone is allowed");
+</script>
+</body>
