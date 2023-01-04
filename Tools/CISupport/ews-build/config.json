@@ -187,14 +187,14 @@
       "factory": "macOSWK1Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews100", "ews101", "ews103", "ews112", "ews117", "ews129"]
+      "workernames": ["ews101", "ews103", "ews105", "ews116", "ews112", "ews117"]
     },
     {
       "name": "macOS-BigSur-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
       "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews153"]
+      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews169"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
@@ -317,7 +317,7 @@
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews105", "ews116", "ews150", "ews155", "ews169"]
+      "workernames": ["ews100", "ews129", "ews150", "ews153", "ews155"]
     },
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
