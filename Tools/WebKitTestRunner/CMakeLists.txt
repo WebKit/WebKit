@@ -46,10 +46,7 @@ set(WebKitTestRunner_WEB_PREFERENCES_TEMPLATES
 )
 
 set(WebKitTestRunner_WEB_PREFERENCES
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
+    ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml
 )
 
 set_source_files_properties(${WebKitTestRunner_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
@@ -57,7 +54,8 @@ set_source_files_properties(${WebKitTestRunner_WEB_PREFERENCES} PROPERTIES GENER
 add_custom_command(
     OUTPUT ${WebKitTestRunner_DERIVED_SOURCES_DIR}/TestOptionsGeneratedKeys.h
     DEPENDS ${WebKitTestRunner_WEB_PREFERENCES_TEMPLATES} ${WebKitTestRunner_WEB_PREFERENCES} WTF_CopyPreferences
-    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir "${WebKitTestRunner_DERIVED_SOURCES_DIR}" --template ${WebKitTestRunner_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb
+    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --outputDir "${WebKitTestRunner_DERIVED_SOURCES_DIR}" --template ${WebKitTestRunner_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb ${WebKitTestRunner_WEB_PREFERENCES}
+    COMMAND_EXPAND_LISTS
     VERBATIM)
 
 list(APPEND WebKitTestRunner_SOURCES

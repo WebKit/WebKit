@@ -3426,10 +3426,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(WTF_BUILD_SCRIPTS_DIR)/Preferences/WebPreferences.yaml",
-				"$(WTF_BUILD_SCRIPTS_DIR)/Preferences/WebPreferencesDebug.yaml",
-				"$(WTF_BUILD_SCRIPTS_DIR)/Preferences/WebPreferencesExperimental.yaml",
-				"$(WTF_BUILD_SCRIPTS_DIR)/Preferences/WebPreferencesInternal.yaml",
+				"$(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml",
 				"$(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb",
 				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb",
 				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb",

@@ -56,33 +56,22 @@
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue, HumanReadableName, HumanReadableDescription)
 
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \
-<%- for @pref in @exposedPreferencesNotDebug do -%>
+<%- for @pref in @exposedPreferences do -%>
     macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \
 
 
-// Debug Preferences
-
-#define FOR_EACH_WEBKIT_DEBUG_PREFERENCE(macro) \
-<%- for @pref in @exposedPreferencesDebug do -%>
+#define FOR_EACH_PERSISTENT_WEBKIT_PREFERENCE(macro) \
+<%- for @pref in @exposedPreferences.reject(&:ephemeral?) do -%>
     macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \
 
-// Internal Debug Features
 
-#define FOR_EACH_WEBKIT_INTERNAL_DEBUG_FEATURE_PREFERENCE(macro) \
-<%- for @pref in @exposedInternalFeatures do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
-<%- end -%>
-   \
-
-// Experimental Features
-
-#define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-<%- for @pref in @exposedExperimentalFeatures do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+#define FOR_EACH_DEFAULT_OVERRIDABLE_WEBKIT_PREFERENCE(macro) \
+<%- for @pref in @exposedPreferences.select(&:defaultOverridable?) do -%>
+    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \
 

@@ -39,7 +39,7 @@ using namespace WebKit;
 + (NSArray<WebFeature *> *)_internalFeatures
 {
     static NeverDestroyed<RetainPtr<NSArray<WebFeature *>>> features = @[
-<%- for @pref in @exposedInternalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:internal?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>

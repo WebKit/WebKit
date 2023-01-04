@@ -40,7 +40,7 @@ using namespace WebKit;
 + (NSArray<WebFeature *> *)_experimentalFeatures
 {
     static NeverDestroyed<RetainPtr<NSArray<WebFeature *>>> features = @[
-<%- for @pref in @exposedExperimentalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:experimental?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>

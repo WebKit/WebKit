@@ -102,22 +102,22 @@ void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef preferencesRef,
 
 void WKPreferencesSetBoolValueForKeyForTesting(WKPreferencesRef preferencesRef, bool value, WKStringRef key)
 {
-    toImpl(preferencesRef)->setBoolValueForKey(toWTFString(key), value);
+    toImpl(preferencesRef)->setBoolValueForKey(toWTFString(key), value, true);
 }
 
 void WKPreferencesSetDoubleValueForKeyForTesting(WKPreferencesRef preferencesRef, double value, WKStringRef key)
 {
-    toImpl(preferencesRef)->setBoolValueForKey(toWTFString(key), value);
+    toImpl(preferencesRef)->setBoolValueForKey(toWTFString(key), value, true);
 }
 
 void WKPreferencesSetUInt32ValueForKeyForTesting(WKPreferencesRef preferencesRef, uint32_t value, WKStringRef key)
 {
-    toImpl(preferencesRef)->setUInt32ValueForKey(toWTFString(key), value);
+    toImpl(preferencesRef)->setUInt32ValueForKey(toWTFString(key), value, true);
 }
 
 void WKPreferencesSetStringValueForKeyForTesting(WKPreferencesRef preferencesRef, WKStringRef value, WKStringRef key)
 {
-    toImpl(preferencesRef)->setStringValueForKey(toWTFString(key), toWTFString(value));
+    toImpl(preferencesRef)->setStringValueForKey(toWTFString(key), toWTFString(value), true);
 }
 
 void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)

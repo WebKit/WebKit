@@ -185,42 +185,6 @@ macro(GENERATE_EVENT_FACTORY _infile _namespace)
 endmacro()
 
 
-macro(GENERATE_SETTINGS_MACROS _infile _outfile)
-    set(NAMES_GENERATOR ${WEBCORE_DIR}/Scripts/GenerateSettings.rb)
-
-    set(_extra_output
-        ${WebCore_DERIVED_SOURCES_DIR}/Settings.cpp
-        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.h
-        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.cpp
-        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.idl
-    )
-
-    set(GENERATE_SETTINGS_SCRIPTS
-        ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb
-        ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
-        ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
-        ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.cpp.erb
-        ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb
-    )
-
-    set(WTF_WEB_PREFERENCES
-        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml
-        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml
-        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml
-        ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
-    )
-
-    set_source_files_properties(${WTF_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
-
-    add_custom_command(
-        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/${_outfile} ${_extra_output}
-        MAIN_DEPENDENCY ${_infile}
-        DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS} ${WTF_WEB_PREFERENCES} WTF_CopyPreferences
-        COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --additionalSettings ${_infile} --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.cpp.erb --template ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb
-        VERBATIM ${_args})
-endmacro()
-
-
 function(GENERATE_DOM_NAMES _namespace _attrs)
     if (ARGN)
         list(GET ARGN 0 _elements)

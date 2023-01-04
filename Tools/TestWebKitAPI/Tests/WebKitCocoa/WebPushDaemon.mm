@@ -41,7 +41,7 @@
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebPushDaemonConstants.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <mach/mach_init.h>
 #import <mach/task.h>
@@ -1176,9 +1176,9 @@ TEST_F(WebPushDTest, NotificationClickExtendsITPCleanupTimerBy30Days)
 static void showNotificationsViaWebPushDInsteadOfUIProcess(WKWebViewConfiguration *configuration)
 {
     [configuration.preferences _setNotificationsEnabled:YES];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
         if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"]) {
-            [configuration.preferences _setEnabled:YES forFeature:feature];
+            [configuration.preferences _setEnabled:YES forInternalDebugFeature:feature];
             break;
         }
     }

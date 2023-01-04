@@ -2436,7 +2436,25 @@ ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/dom/Document.cpp PlugInsR
 
 set(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 
-GENERATE_SETTINGS_MACROS(${WEBCORE_DIR}/page/Settings.yaml Settings.h)
+set(SETTINGS_TEMPLATES
+    ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb
+    ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
+    ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
+    ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.cpp.erb
+    ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb)
+set(WTF_WEB_PREFERENCES ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml)
+set_source_files_properties(${WTF_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/Settings.h
+       ${WebCore_DERIVED_SOURCES_DIR}/Settings.cpp
+       ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.h
+       ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.cpp
+       ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.idl
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/page/Settings.yaml
+    DEPENDS ${WEBCORE_DIR}/Scripts/GenerateSettings.rb ${SETTINGS_TEMPLATES} WTF_CopyPreferences ${WTF_WEB_PREFERENCES}
+    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
+    COMMAND_EXPAND_LISTS
+    VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Settings.h)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Settings.cpp)
 list(APPEND WebCoreTestSupport_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.cpp)

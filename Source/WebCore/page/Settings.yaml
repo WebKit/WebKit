@@ -173,13 +173,6 @@ ForceCompositingMode:
     WebCore:
       default: false
 
-ForcedPrefersContrastAccessibilityValue:
-  type: uint32_t
-  refinedType: ForcedAccessibilityValue
-  defaultValue:
-    WebCore:
-      default: ForcedAccessibilityValue::System
-
 ForcedColorsAreInvertedAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue
@@ -188,6 +181,13 @@ ForcedColorsAreInvertedAccessibilityValue:
       default: ForcedAccessibilityValue::System
 
 ForcedDisplayIsMonochromeAccessibilityValue:
+  type: uint32_t
+  refinedType: ForcedAccessibilityValue
+  defaultValue:
+    WebCore:
+      default: ForcedAccessibilityValue::System
+
+ForcedPrefersContrastAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue
   defaultValue:
@@ -383,6 +383,14 @@ NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
     WebCore:
       default: false
 
+PDFImageCachingPolicy:
+  type: uint32_t
+  refinedType: PDFImageCachingPolicy
+  defaultValue:
+    WebCore:
+      PLATFORM(IOS_FAMILY): PDFImageCachingPolicy::BelowMemoryLimit
+      default: PDFImageCachingPolicy::Enabled
+
 PaymentRequestEnabled:
   type: bool
   condition: ENABLE(PAYMENT_REQUEST)
@@ -396,14 +404,6 @@ PitchCorrectionAlgorithm:
   defaultValue:
     WebCore:
       default: MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround
-
-PDFImageCachingPolicy:
-  type: uint32_t
-  refinedType: PDFImageCachingPolicy
-  defaultValue:
-    WebCore:
-      PLATFORM(IOS_FAMILY): PDFImageCachingPolicy::BelowMemoryLimit
-      default: PDFImageCachingPolicy::Enabled
 
 PreferMIMETypeForImages:
   type: bool

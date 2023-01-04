@@ -38,4 +38,4 @@ TEMPLATES=(
     WebViewPreferencesChangedGenerated.mm.erb
 )
 
-/usr/bin/env ruby ${WTF_BUILD_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy ${TEMPLATES[@]/#/--template ${TEMPLATES_DIR}/} --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${PREFERENCES_DIR}/WebPreferences.yaml --debug ${PREFERENCES_DIR}/WebPreferencesDebug.yaml --experimental ${PREFERENCES_DIR}/WebPreferencesExperimental.yaml --internal ${PREFERENCES_DIR}/WebPreferencesInternal.yaml
+/usr/bin/env ruby ${WTF_BUILD_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy ${TEMPLATES[@]/#/--template ${TEMPLATES_DIR}/} --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ ${PREFERENCES_DIR}/UnifiedWebPreferences.yaml
