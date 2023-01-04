@@ -230,7 +230,10 @@ set(WebKitLegacy_WEB_PREFERENCES_TEMPLATES
 )
 
 set(WebKitLegacy_WEB_PREFERENCES
-    ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml
+    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml
+    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml
+    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml
+    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
 )
 
 set_source_files_properties(${WebKitLegacy_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
@@ -238,10 +241,8 @@ set_source_files_properties(${WebKitLegacy_WEB_PREFERENCES} PROPERTIES GENERATED
 add_custom_command(
     OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebViewPreferencesChangedGenerated.cpp
     DEPENDS ${WebKitLegacy_WEB_PREFERENCES_TEMPLATES} ${WebKitLegacy_WEB_PREFERENCES} WTF_CopyPreferences
-    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --outputDir "${WebKitLegacy_DERIVED_SOURCES_DIR}" --template "$<JOIN:${WebKitLegacy_WEB_PREFERENCES_TEMPLATES},;--template;>" ${WebKitLegacy_WEB_PREFERENCES}
-    COMMAND_EXPAND_LISTS
-    VERBATIM
-)
+    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir "${WebKitLegacy_DERIVED_SOURCES_DIR}" --template ${WEBKITLEGACY_DIR}/win/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb --template ${WEBKITLEGACY_DIR}/win/Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.cpp.erb
+    VERBATIM)
 
 list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h

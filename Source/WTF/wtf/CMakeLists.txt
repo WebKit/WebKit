@@ -647,7 +647,11 @@ file(COPY
 
 set(WTF_PREFERENCES
     ../Scripts/GeneratePreferences.rb
-    ../Scripts/Preferences/UnifiedWebPreferences.yaml
+
+    ../Scripts/Preferences/WebPreferences.yaml
+    ../Scripts/Preferences/WebPreferencesDebug.yaml
+    ../Scripts/Preferences/WebPreferencesExperimental.yaml
+    ../Scripts/Preferences/WebPreferencesInternal.yaml
 )
 
 WEBKIT_COPY_FILES(WTF_CopyPreferences

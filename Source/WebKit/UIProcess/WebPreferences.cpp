@@ -121,68 +121,75 @@ void WebPreferences::endBatchingUpdates()
         update();
 }
 
-void WebPreferences::setBoolValueForKey(const String& key, bool value, bool ephemeral)
+void WebPreferences::setBoolValueForKey(const String& key, bool value)
 {
     if (!m_store.setBoolValueForKey(key, value))
         return;
-    updateBoolValueForKey(key, value, ephemeral);
+    updateBoolValueForKey(key, value);
 }
 
-void WebPreferences::setDoubleValueForKey(const String& key, double value, bool ephemeral)
+void WebPreferences::setDoubleValueForKey(const String& key, double value)
 {
     if (!m_store.setDoubleValueForKey(key, value))
         return;
-    updateDoubleValueForKey(key, value, ephemeral);
+    updateDoubleValueForKey(key, value);
 }
 
-void WebPreferences::setUInt32ValueForKey(const String& key, uint32_t value, bool ephemeral)
+void WebPreferences::setUInt32ValueForKey(const String& key, uint32_t value)
 {
     if (!m_store.setUInt32ValueForKey(key, value))
         return;
-    updateUInt32ValueForKey(key, value, ephemeral);
+    updateUInt32ValueForKey(key, value);
 }
 
-void WebPreferences::setStringValueForKey(const String& key, const String& value, bool ephemeral)
+void WebPreferences::setStringValueForKey(const String& key, const String& value)
 {
     if (!m_store.setStringValueForKey(key, value))
         return;
-    updateStringValueForKey(key, value, ephemeral);
+    updateStringValueForKey(key, value);
 }
 
-void WebPreferences::updateStringValueForKey(const String& key, const String& value, bool ephemeral)
+void WebPreferences::updateStringValueForKey(const String& key, const String& value)
 {
     platformUpdateStringValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool ephemeral)
+void WebPreferences::updateBoolValueForKey(const String& key, bool value)
 {
-    if (!ephemeral)
-        platformUpdateBoolValueForKey(key, value);
-    
+    platformUpdateBoolValueForKey(key, value);
+    update(); // FIXME: Only send over the changed key and value.
+}
+
+void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key, bool value)
+{
     if (key == WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey()) {
         for (auto& page : m_pages)
             page.process().processPool().configuration().setProcessSwapsOnNavigation(value);
 
         return;
     }
-
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateUInt32ValueForKey(const String& key, uint32_t value, bool ephemeral)
+void WebPreferences::updateBoolValueForExperimentalFeatureKey(const String& key, bool value)
+{
+    update(); // FIXME: Only send over the changed key and value.
+}
+
+void WebPreferences::updateUInt32ValueForKey(const String& key, uint32_t value)
 {
     platformUpdateUInt32ValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateDoubleValueForKey(const String& key, double value, bool ephemeral)
+void WebPreferences::updateDoubleValueForKey(const String& key, double value)
 {
     platformUpdateDoubleValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateFloatValueForKey(const String& key, float value, bool ephemeral)
+void WebPreferences::updateFloatValueForKey(const String& key, float value)
 {
     platformUpdateFloatValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
