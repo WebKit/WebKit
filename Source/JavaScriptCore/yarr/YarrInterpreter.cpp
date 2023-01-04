@@ -134,7 +134,7 @@ public:
     {
         ParenthesesDisjunctionContext(unsigned* output, ByteTerm& term)
         {
-            unsigned firstSubpatternId = term.atom.subpatternId;
+            unsigned firstSubpatternId = term.subpatternId();
             unsigned numNestedSubpatterns = term.atom.parenthesesDisjunction->m_numSubpatterns;
 
             for (unsigned i = 0; i < (numNestedSubpatterns << 1); ++i) {
@@ -893,8 +893,8 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
-        unsigned matchBegin = output[(term.atom.subpatternId << 1)];
-        unsigned matchEnd = output[(term.atom.subpatternId << 1) + 1];
+        unsigned matchBegin = output[(term.subpatternId() << 1)];
+        unsigned matchEnd = output[(term.subpatternId() << 1) + 1];
 
         // If the end position of the referenced match hasn't set yet then the backreference in the same parentheses where it references to that.
         // In this case the result of match is empty string like when it references to a parentheses with zero-width match.
@@ -945,8 +945,8 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
-        unsigned matchBegin = output[(term.atom.subpatternId << 1)];
-        unsigned matchEnd = output[(term.atom.subpatternId << 1) + 1];
+        unsigned matchBegin = output[(term.subpatternId() << 1)];
+        unsigned matchEnd = output[(term.subpatternId() << 1) + 1];
 
         if (matchBegin == offsetNoMatch)
             return false;
@@ -985,7 +985,7 @@ public:
     void recordParenthesesMatch(ByteTerm& term, ParenthesesDisjunctionContext* context)
     {
         if (term.capture()) {
-            unsigned subpatternId = term.atom.subpatternId;
+            unsigned subpatternId = term.subpatternId();
             // For Backward matches, the captured indexes where recorded end then start.
             output[(subpatternId << 1) + term.matchDirection()] = context->getDisjunctionContext(term)->matchBegin - term.inputPosition;
             output[(subpatternId << 1) + 1 - term.matchDirection()] = context->getDisjunctionContext(term)->matchEnd - term.inputPosition;
@@ -993,7 +993,7 @@ public:
     }
     void resetMatches(ByteTerm& term, ParenthesesDisjunctionContext* context)
     {
-        unsigned firstSubpatternId = term.atom.subpatternId;
+        unsigned firstSubpatternId = term.subpatternId();
         unsigned count = term.atom.parenthesesDisjunction->m_numSubpatterns;
         context->restoreOutput(output, firstSubpatternId, count);
     }
@@ -1040,7 +1040,7 @@ public:
         }
 
         if (term.capture()) {
-            unsigned subpatternId = term.atom.subpatternId;
+            unsigned subpatternId = term.subpatternId();
             // For Backward matches, the captured indexes where recorded end then start.
             output[(subpatternId << 1) + term.matchDirection()] = input.getPos() - term.inputPosition;
         }
@@ -1054,7 +1054,7 @@ public:
         ASSERT(term.atom.quantityMaxCount == 1);
 
         if (term.capture()) {
-            unsigned subpatternId = term.atom.subpatternId;
+            unsigned subpatternId = term.subpatternId();
             // For Backward matches, the captured indexes where recorded end then start.
             output[(subpatternId << 1) + 1 - term.matchDirection()] = input.getPos() - term.inputPosition;
         }
@@ -1074,7 +1074,7 @@ public:
         BackTrackInfoParenthesesOnce* backTrack = reinterpret_cast<BackTrackInfoParenthesesOnce*>(context->frame + term.frameLocation);
 
         if (term.capture()) {
-            unsigned subpatternId = term.atom.subpatternId;
+            unsigned subpatternId = term.subpatternId();
             output[(subpatternId << 1)] = offsetNoMatch;
             output[(subpatternId << 1) + 1] = offsetNoMatch;
         }
@@ -1119,7 +1119,7 @@ public:
                     // the same anyway! (We don't pre-check for greedy or non-greedy matches.)
                     ASSERT((&term - term.atom.parenthesesWidth)->type == ByteTerm::Type::ParenthesesSubpatternOnceBegin);
                     ASSERT((&term - term.atom.parenthesesWidth)->inputPosition == term.inputPosition);
-                    unsigned subpatternId = term.atom.subpatternId;
+                    unsigned subpatternId = term.subpatternId();
                     // For Backward matches, the captured indexes where recorded end then start.
                     output[(subpatternId << 1) + term.matchDirection()] = input.getPos() - term.inputPosition;
                 }
@@ -1204,6 +1204,10 @@ public:
 
         // We've reached the end of the parens; if they are inverted, this is failure.
         if (term.invert()) {
+            if (term.containsAnyCaptures()) {
+                for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++)
+                    output[subpattern << 1] = offsetNoMatch;
+            }
             context->term -= term.atom.parenthesesWidth;
             return false;
         }
@@ -1238,6 +1242,11 @@ public:
         BackTrackInfoParentheticalAssertion* backTrack = reinterpret_cast<BackTrackInfoParentheticalAssertion*>(context->frame + term.frameLocation);
 
         input.setPos(backTrack->begin);
+
+        if (term.containsAnyCaptures()) {
+            for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++)
+                output[subpattern << 1] = offsetNoMatch;
+        }
 
         context->term -= term.atom.parenthesesWidth;
         return false;
@@ -1581,10 +1590,10 @@ public:
 
         switch (currentTerm().type) {
         case ByteTerm::Type::SubpatternBegin:
-            DUMP_EXTRA_IF(currentTerm().capture(), "id:", currentTerm().atom.subpatternId);
+            DUMP_EXTRA_IF(currentTerm().capture(), "id:", currentTerm().subpatternId());
             MATCH_NEXT();
         case ByteTerm::Type::SubpatternEnd:
-            DUMP_EXTRA_IF(currentTerm().capture(), "id:", currentTerm().atom.subpatternId, " - Return Match\n");
+            DUMP_EXTRA_IF(currentTerm().capture(), "id:", currentTerm().subpatternId(), " - Return Match\n");
             context->matchEnd = input.getPos();
             return JSRegExpResult::Match;
 
@@ -1884,7 +1893,7 @@ public:
 
         switch (currentTerm().type) {
         case ByteTerm::Type::SubpatternBegin:
-            DUMP_EXTRA("id:", currentTerm().atom.subpatternId, " - Return NoMatch\n");
+            DUMP_EXTRA("id:", currentTerm().subpatternId(), " - Return NoMatch\n");
             return JSRegExpResult::NoMatch;
         case ByteTerm::Type::SubpatternEnd:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2256,7 +2265,7 @@ public:
         m_currentAlternativeIndex = beginTerm + 1;
     }
 
-    void atomParentheticalAssertionEnd(unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType)
+    void atomParentheticalAssertionEnd(unsigned inputPosition, unsigned lastSubpatternId, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType)
     {
         unsigned beginTerm = popParenthesesStack();
         closeAlternative(beginTerm + 1);
@@ -2266,11 +2275,13 @@ public:
 
         bool invert = m_bodyDisjunction->terms[beginTerm].invert();
         MatchDirection matchDirection = m_bodyDisjunction->terms[beginTerm].matchDirection();
-        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].atom.subpatternId;
+        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].subpatternId();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::Type::ParentheticalAssertionEnd, subpatternId, false, invert, matchDirection, inputPosition));
         m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
+        m_bodyDisjunction->terms[beginTerm].atom.ids.lastSubpatternId = lastSubpatternId;
+        m_bodyDisjunction->terms[endTerm].atom.ids.lastSubpatternId = lastSubpatternId;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
@@ -2356,7 +2367,7 @@ public:
 
         auto parenthesesMatchDirection = parenthesesBegin.matchDirection();
         bool capture = parenthesesBegin.capture();
-        unsigned subpatternId = parenthesesBegin.atom.subpatternId;
+        unsigned subpatternId = parenthesesBegin.subpatternId();
 
         unsigned numSubpatterns = lastSubpatternId - subpatternId + 1;
         auto parenthesesDisjunction = makeUnique<ByteDisjunction>(numSubpatterns, callFrameSize);
@@ -2390,7 +2401,7 @@ public:
         ASSERT(m_bodyDisjunction->terms[beginTerm].type == ByteTerm::Type::ParenthesesSubpatternOnceBegin);
 
         bool capture = m_bodyDisjunction->terms[beginTerm].capture();
-        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].atom.subpatternId;
+        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].subpatternId();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::Type::ParenthesesSubpatternOnceEnd, subpatternId, capture, false, inputPosition));
         if (m_bodyDisjunction->terms[beginTerm].matchDirection() == Backward) {
@@ -2422,7 +2433,7 @@ public:
         if (m_bodyDisjunction->terms[beginTerm].matchDirection() == Backward)
             inputPosition = 0;
         bool capture = m_bodyDisjunction->terms[beginTerm].capture();
-        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].atom.subpatternId;
+        unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].subpatternId();
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::Type::ParenthesesSubpatternTerminalEnd, subpatternId, capture, false, inputPosition));
         m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
@@ -2592,7 +2603,7 @@ public:
                         atomParentheticalAssertionBegin(term.parentheses.subpatternId, 0, term.invert(), term.matchDirection(), term.frameLocation, alternativeFrameLocation);
                         if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset - uncheckAmount, term.matchDirection()))
                             return error;
-                        atomParentheticalAssertionEnd(0, term.frameLocation, term.quantityMaxCount, term.quantityType);
+                        atomParentheticalAssertionEnd(0, term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
                         if (uncheckAmount) {
                             checkInput(uncheckAmount);
                             currentCountAlreadyChecked += uncheckAmount;
@@ -2620,7 +2631,7 @@ public:
 
                         if (auto error = emitDisjunction(term.parentheses.disjunction, checkedCountForLookbehind, positiveInputOffset + minimumSize, term.matchDirection()))
                             return error;
-                        atomParentheticalAssertionEnd(0, term.frameLocation, term.quantityMaxCount, term.quantityType);
+                        atomParentheticalAssertionEnd(0, term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
 
                         if (uncheckAmount) {
                             checkInput(uncheckAmount);
@@ -2692,7 +2703,7 @@ void ByteTermDumper::dumpTerm(size_t idx, ByteTerm term)
 
     auto dumpCaptured = [&](ByteTerm& term) {
         if (term.capture())
-            out.print(" captured (#", term.atom.subpatternId, ")");
+            out.print(" captured (#", term.subpatternId(), ")");
     };
 
     auto dumpInverted = [&](ByteTerm& term) {
@@ -2854,7 +2865,7 @@ void ByteTermDumper::dumpTerm(size_t idx, ByteTerm term)
         break;
     case ByteTerm::Type::BackReference:
         outputTermIndexAndNest(idx, m_nesting);
-        out.print("BackReference #", term.atom.subpatternId);
+        out.print("BackReference #", term.subpatternId());
         dumpInputPosition(term);
         dumpQuantity(term);
         break;
