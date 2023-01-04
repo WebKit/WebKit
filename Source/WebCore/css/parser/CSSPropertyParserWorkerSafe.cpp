@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2023 Apple Inc. All rights reserved.
 // Copyright (C) 2021 Metrological Group B.V.
 // Copyright (C) 2021 Igalia S.L.
 //
@@ -49,6 +49,7 @@
 
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontStyleRangeValue.h"
+#include "CSSFontVariationValue.h"
 #endif
 
 namespace WebCore {
@@ -522,26 +523,48 @@ RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& range)
     return values;
 }
 
-static RefPtr<CSSFontFeatureValue> consumeFontFeatureTag(CSSParserTokenRange& range)
-{
-    // Feature tag name consists of 4-letter characters.
-    static const unsigned tagNameLength = 4;
+enum class FontTagCaseManipulation {
+    None,
+    ToASCIILower
+};
 
-    const CSSParserToken& token = range.consumeIncludingWhitespace();
-    // Feature tag name comes first
-    if (token.type() != StringToken)
-        return nullptr;
-    if (token.value().length() != tagNameLength)
-        return nullptr;
-    
+template<FontTagCaseManipulation caseManipulation = FontTagCaseManipulation::None>
+static std::optional<FontTag> consumeFontTag(CSSParserTokenRange& range)
+{
     FontTag tag;
+
+    auto token = range.peek();
+    if (token.type() != StringToken)
+        return std::nullopt;
+    if (token.value().length() != tag.size())
+        return std::nullopt;
+
     for (unsigned i = 0; i < tag.size(); ++i) {
         // Limits the range of characters to 0x20-0x7E, following the tag name rules defiend in the OpenType specification.
-        UChar character = token.value()[i];
+        auto character = token.value()[i];
         if (character < 0x20 || character > 0x7E)
-            return nullptr;
-        tag[i] = toASCIILower(character);
+            return std::nullopt;
+
+        if constexpr (caseManipulation == FontTagCaseManipulation::ToASCIILower)
+            tag[i] = toASCIILower(character);
+        else
+            tag[i] = character;
     }
+
+    range.consumeIncludingWhitespace();
+
+    return { tag };
+}
+
+RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange& range)
+{
+    // <feature-tag-value> = <string> [ <integer> | on | off ]?
+
+    // FIXME: The specification states "The <string> is a case-sensitive OpenType feature tag."
+    // so we probably should not be lowercasing it at parse time.
+    auto tag = consumeFontTag<FontTagCaseManipulation::ToASCIILower>(range);
+    if (!tag)
+        return nullptr;
 
     int tagValue = 1;
     if (!range.atEnd() && range.peek().type() != CommaToken) {
@@ -553,27 +576,39 @@ static RefPtr<CSSFontFeatureValue> consumeFontFeatureTag(CSSParserTokenRange& ra
         else
             return nullptr;
     }
-    return CSSFontFeatureValue::create(WTFMove(tag), tagValue);
+    return CSSFontFeatureValue::create(WTFMove(*tag), tagValue);
 }
 
 RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange& range, CSSValuePool& pool)
 {
     if (range.peek().id() == CSSValueNormal)
         return CSSPropertyParserHelpers::consumeIdentWorkerSafe(range, pool);
-    RefPtr<CSSValueList> settings = CSSValueList::createCommaSeparated();
-    do {
-        RefPtr<CSSFontFeatureValue> fontFeatureValue = consumeFontFeatureTag(range);
-        if (!fontFeatureValue)
-            return nullptr;
-        settings->append(fontFeatureValue.releaseNonNull());
-    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
-    return settings;
+    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeFeatureTagValue);
 }
 
 RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange& range, CSSValuePool& pool)
 {
     return CSSPropertyParserHelpers::consumeIdentWorkerSafe<CSSValueAuto, CSSValueBlock, CSSValueSwap, CSSValueFallback, CSSValueOptional>(range, pool);
 }
+
+#if ENABLE(VARIATION_FONTS)
+
+RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange& range)
+{
+    // https://w3c.github.io/csswg-drafts/css-fonts/#font-variation-settings-def
+
+    auto tag = consumeFontTag(range);
+    if (!tag)
+        return nullptr;
+    
+    auto tagValue = consumeNumberRaw(range);
+    if (!tagValue)
+        return nullptr;
+    
+    return CSSFontVariationValue::create(WTFMove(*tag), tagValue->value);
+}
+
+#endif // ENABLE(VARIATION_FONTS)
 
 } // namespace CSSPropertyParserHelpersWorkerSafe
 

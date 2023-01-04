@@ -1,5 +1,5 @@
 // Copyright 2016 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -223,9 +223,6 @@ bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
 
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
-#if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange&);
-#endif
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange&);

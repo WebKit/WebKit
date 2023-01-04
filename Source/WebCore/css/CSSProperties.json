@@ -667,10 +667,7 @@
                 "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
-                "parser-function": "consumeFontFeatureSettings",
-                "parser-function-requires-value-pool": true,
-                "parser-grammar-unused": "normal | <font-feature-tag>#",
-                "parser-grammar-unused-reason": "Needs support for applying restrictions to <string>."
+                "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)"
             },
             "specification": {
                 "category": "css-fonts-4",
@@ -689,9 +686,7 @@
                 "font-property": true,
                 "high-priority": true,
                 "enable-if": "ENABLE_VARIATION_FONTS",
-                "parser-function": "consumeFontVariationSettings",
-                "parser-grammar-unused": "normal | <font-variation-tag>#",
-                "parser-grammar-unused-reason": "Needs support for applying restrictions to <string>."
+                "parser-grammar": "normal | <variation-tag-value>#@(no-single-item-opt)"
             },
             "specification": {
                 "category": "css-fonts-4",
@@ -9535,10 +9530,7 @@
                     "normal"
                 ],
                 "codegen-properties": {
-                    "parser-function": "consumeFontFeatureSettings",
-                    "parser-function-requires-value-pool": true,
-                    "parser-grammar-unused": "normal | <font-feature-tag>#",
-                    "parser-grammar-unused-reason": "Needs support for applying restrictions to <string>."
+                    "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)"
                 },
                 "specification": {
                     "category": "css-fonts-4",
