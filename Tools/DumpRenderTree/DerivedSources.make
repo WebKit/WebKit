@@ -72,13 +72,6 @@ all : \
 #
 
 
-WEB_PREFERENCES = \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml \
-#
-
 WEB_PREFERENCES_GENERATED_FILES = \
     TestOptionsGeneratedWebKitLegacyKeyMapping.cpp \
     TestOptionsGeneratedKeys.h \
@@ -86,5 +79,5 @@ WEB_PREFERENCES_GENERATED_FILES = \
 
 all : $(WEB_PREFERENCES_GENERATED_FILES)
 
-$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WEB_PREFERENCES) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb
-	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --template $<
+$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
+	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --template $< $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml

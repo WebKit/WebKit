@@ -39,17 +39,11 @@ using namespace WebKit;
 + (NSArray<WebFeature *> *)_internalFeatures
 {
     static NeverDestroyed<RetainPtr<NSArray<WebFeature *>>> features = @[
-<%- for @pref in @exposedInternalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:internal?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        adoptNS([[WebFeature alloc] initWithKey:@"<%= @pref.name %>"
-                                  preferenceKey:@"<%= @pref.preferenceKey %>"
-                                           name:@<%= @pref.humanReadableName %>
-                                         status:<%= @pref.webFeatureStatus %>
-                                        details:@<%= @pref.humanReadableDescription %>
-                                   defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %>
-                                         hidden:<%= @pref.hidden %>]).get(),
+        adoptNS([[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> status:<%= @pref.webFeatureStatus %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>]).get(),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

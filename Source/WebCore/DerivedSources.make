@@ -2194,10 +2194,7 @@ $(NAMESPACE_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
 # Internal Settings
 
 WEB_PREFERENCES_INPUT_FILES = \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml \
-    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml \
+    ${WTF_BUILD_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml \
     ${WebCore}/page/Settings.yaml \
 #
 
@@ -2212,7 +2209,7 @@ GENERATE_SETTINGS = \
 all : $(GENERATE_SETTINGS)
 
 $(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/Scripts/GenerateSettings.rb
-	$(RUBY) $(WebCore)/Scripts/GenerateSettings.rb --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --additionalSettings $(WebCore)/page/Settings.yaml --template $<
+	$(RUBY) $(WebCore)/Scripts/GenerateSettings.rb $(WEB_PREFERENCES_INPUT_FILES) --template $<
 
 # --------
 

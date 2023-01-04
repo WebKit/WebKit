@@ -52,6 +52,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInspector.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -7892,7 +7893,6 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
     EXPECT_EQ(runJSCheck("!!window.RTCRtpScriptTransform"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Script Transform
     EXPECT_EQ(runJSCheck("!!window.indexedDB"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // IndexedDB API
-    EXPECT_EQ(runJSCheck("!!navigator.mediaDevices"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // GetUserMedia (Media Capture).
     EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_s), false); // Legacy GetUserMedia (currently always disabled).
     EXPECT_EQ(runJSCheck("!!window.MathMLElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
     EXPECT_EQ(runJSCheck("!!window.MathMLMathElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
@@ -7906,17 +7906,18 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     String embedElementCheck = makeString("document.createElement('embed').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "HTMLEmbedElement" : "HTMLUnknownElement", ".prototype");
     EXPECT_EQ(runJSCheck(embedElementCheck), true); // Embed Element.
 
-    // Confirm unstable Experimental settings are always off in Lockdown Mode.
     EXPECT_EQ(runJSCheck("CSS.supports('contain-intrinsic-size: 10rem')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("CSS.supports('content-visibility: visible')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("CSS.supports('overflow-anchor:none')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!navigator.contacts"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes);
-    EXPECT_EQ(runJSCheck("!!navigator.requestCookieConsent"_s), false);
     EXPECT_EQ(runJSCheck("!!window.CSSCounterStyleRule"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!window.Highlight"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
-    EXPECT_EQ(runJSCheck("!!window.requestIdleCallback"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
+
+    // Confirm unstable settings are always off in Lockdown Mode.
+    EXPECT_EQ(runJSCheck("!!navigator.requestCookieConsent"_s), false);
+    EXPECT_EQ(runJSCheck("!!window.requestIdleCallback"_s), false);
 }
 
 @interface LockdownMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
@@ -7941,6 +7942,10 @@ static void configureLockdownWKWebViewConfiguration(WKWebViewConfiguration *conf
     // Turn on all experimental features to confirm they are properly turned off in Lockdown Mode.
     for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures])
         [config.preferences _setEnabled:YES forFeature:feature];
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"WebRTCEncodedTransformEnabled"])
+            [config.preferences _setEnabled:YES forInternalDebugFeature:feature];
+    }
 }
 
 TEST(ProcessSwap, NavigatingToLockdownMode)

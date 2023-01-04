@@ -41,10 +41,7 @@ set(DumpRenderTree_WEB_PREFERENCES_TEMPLATES
 )
 
 set(DumpRenderTree_WEB_PREFERENCES
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml
-    ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml
+    ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml
 )
 
 set_source_files_properties(${DumpRenderTree_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
@@ -52,7 +49,7 @@ set_source_files_properties(${DumpRenderTree_WEB_PREFERENCES} PROPERTIES GENERAT
 add_custom_command(
     OUTPUT ${DumpRenderTree_DERIVED_SOURCES_DIR}/TestOptionsGeneratedWebKitLegacyKeyMapping.cpp ${DumpRenderTree_DERIVED_SOURCES_DIR}/TestOptionsGeneratedKeys.h
     DEPENDS ${DumpRenderTree_WEB_PREFERENCES_TEMPLATES} ${DumpRenderTree_WEB_PREFERENCES} WTF_CopyPreferences
-    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir "${DumpRenderTree_DERIVED_SOURCES_DIR}" --template ${DumpRenderTree_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb --template ${DumpRenderTree_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb
+    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --outputDir "${DumpRenderTree_DERIVED_SOURCES_DIR}" --template ${DumpRenderTree_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb --template ${DumpRenderTree_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb ${DumpRenderTree_WEB_PREFERENCES}
     VERBATIM)
 
 list(APPEND DumpRenderTree_SOURCES

@@ -30,36 +30,27 @@ require 'yaml'
 
 options = {
   :frontend => nil,
-  :basePreferences => nil,
-  :debugPreferences => nil,
-  :experimentalPreferences => nil,
-  :internalPreferences => nil,
-  :outputDirectory => nil,
-  :templates => []
+  :outputDirectory => Dir.getwd,
+  :templates => [],
+  :preferenceFiles => []
 }
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename($0)} --frontend <frontend> --base <base> --debug <debug> --experimental <experimental> --internal <internal> --template file"
+  opts.banner = "Usage: #{File.basename($0)} --frontend <frontend> [--outputDir <output>] --template <file> [--template <file>...] <preferences> [<preferences>...]"
 
   opts.separator ""
 
   opts.on("--frontend input", "frontend to generate preferences for (WebKit, WebKitLegacy)") { |frontend| options[:frontend] = frontend }
-  opts.on("--base input", "file to generate preferences from") { |basePreferences| options[:basePreferences] = basePreferences }
-  opts.on("--debug input", "file to generate debug preferences from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
-  opts.on("--experimental input", "file to generate experimental preferences from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
-  opts.on("--internal input", "file to generate internal preferences from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
   opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
-  opts.on("--outputDir output", "directory to generate file in") { |outputDir| options[:outputDirectory] = outputDir }
+  opts.on("--outputDir output", "directory to generate file in (default: cwd)") { |outputDir| options[:outputDirectory] = outputDir }
+  opts.on("-h", "--help", "show this help message") { puts opts; exit 1 }
 end
 
 optparse.parse!
 
-if !options[:frontend] || !options[:basePreferences] || !options[:debugPreferences] || !options[:experimentalPreferences] || !options[:internalPreferences]
+options[:preferenceFiles] = ARGV.slice!(0...)
+if options[:preferenceFiles].empty?
   puts optparse
-  exit -1
-end
-
-if !options[:outputDirectory]
-  options[:outputDirectory] = Dir.getwd
+  exit 1
 end
 
 FileUtils.mkdir_p(options[:outputDirectory])
@@ -68,15 +59,15 @@ def load(path)
   parsed = begin
     YAML.load_file(path)
   rescue ArgumentError => e
-    puts "ERROR: Could not parse input file: #{e.message}"
-    exit(-1)
+    STDERR.puts "error: Could not parse input file: #{e.message}"
+    exit(1)
   end
   if parsed
     previousName = nil
     parsed.keys.each do |name|
       if previousName != nil and previousName > name
-        puts "ERROR: Input file #{path} is not sorted. First out of order name found is '#{name}'."
-        exit(-1)
+        STDERR.puts "error: Input file #{path} is not sorted. First out of order name found is '#{name}'."
+        exit(1)
       end
       previousName = name
     end
@@ -84,16 +75,11 @@ def load(path)
   parsed
 end
 
-parsedBasePreferences = load(options[:basePreferences])
-parsedDebugPreferences = load(options[:debugPreferences])
-parsedExperimentalPreferences = load(options[:experimentalPreferences])
-parsedInternalPreferences = load(options[:internalPreferences])
-
-
 class Preference
   attr_accessor :name
   attr_accessor :opts
   attr_accessor :type
+  attr_accessor :refinedType
   attr_accessor :status
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
@@ -107,6 +93,7 @@ class Preference
     @name = name
     @opts = opts
     @type = opts["type"]
+    @refinedType = opts["refinedType"]
     @status = opts["status"]
     @humanReadableName = (opts["humanReadableName"] || "")
     if not humanReadableName.start_with? "WebKitAdditions"
@@ -172,7 +159,7 @@ class Preference
       "WebKit#{@name}"
     end
   end
-  
+
   def preferenceAccessor
     case @type
     when "bool"
@@ -187,31 +174,55 @@ class Preference
       raise "Unknown type: #{@type}"
     end
   end
+
+  def downcast
+    if @refinedType
+      "static_cast<#{@type}>("
+    end
+  end
+
+  def upcast
+    if @refinedType
+      "static_cast<#{@refinedType}>("
+    end
+  end
+
+  def ephemeral?
+    %w{ embedder unstable internal testable }.include? @status
+  end
+
+  def defaultOverridable?
+    %w{ internal }.include? @status
+  end
+
+  # FIXME: These names correspond to the "experimental features" and "internal
+  # debug features" designations used before the feature status taxonomy was
+  # introduced. They should be renamed to better reflect their semantic meanings.
+
+  # Features which should appear in UI presented to end users.
+  def experimental?
+    %w{ developer testable preview stable }.include? @status
+  end
+
+  # Features which should only be presented in WebKit development contexts.
+  def internal?
+    %w{ unstable internal }.include? @status
+  end
 end
 
 class Preferences
   attr_accessor :preferences
 
-  def initialize(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, frontend)
+  def initialize(preferenceFiles, frontend)
     @frontend = frontend
 
     @preferences = []
-    @preferencesNotDebug = initializeParsedPreferences(parsedBasePreferences, false, "embedder")
-    @preferencesDebug = initializeParsedPreferences(parsedDebugPreferences, false, "unstable")
-    @experimentalFeatures = initializeParsedPreferences(parsedExperimentalPreferences, true, "developer")
-    @internalFeatures = initializeParsedPreferences(parsedInternalPreferences, true, "internal")
+    preferenceFiles.each do |file|
+      initializeParsedPreferences(load(file))
+    end
 
-    @preferences.sort! { |x, y| x.name <=> y.name }
-    @preferencesNotDebug.sort! { |x, y| x.name <=> y.name }
-    @preferencesDebug.sort! { |x, y| x.name <=> y.name }
-    @experimentalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
-    @internalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
-
+    @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
     @exposedPreferences = @preferences.select { |p| p.exposed }
-    @exposedPreferencesNotDebug = @preferencesNotDebug.select { |p| p.exposed }
-    @exposedPreferencesDebug = @preferencesDebug.select { |p| p.exposed }
-    @exposedExperimentalFeatures = @experimentalFeatures.select { |p| p.exposed }
-    @exposedInternalFeatures = @internalFeatures.select { |p| p.exposed }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
@@ -219,21 +230,34 @@ class Preferences
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
-  def initializeParsedPreferences(parsedPreferences, requireHumanReadableName, defaultStatus)
+  # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
+  STATUSES = %w{ embedder unstable internal developer testable preview stable }
+
+  def initializeParsedPreferences(parsedPreferences)
     result = []
+    failed = false
+    reject = Proc.new do |msg|
+      STDERR.puts("error: " + msg)
+      failed = true
+    end
+
     if parsedPreferences
       parsedPreferences.each do |name, options|
-        if !options["webcoreBinding"] && options["defaultValue"].size != 3
-          raise "ERROR: Preferences bound to WebCore::Settings must have default values for all frontends: #{name}"
+        webcoreSettingOnly = !options["webcoreBinding"] && options["defaultValue"].keys == ["WebCore"]
+        status = options["status"]
+        if !STATUSES.include?(status)
+          reject.call "Preference #{name}'s status \"#{status}\" is not one of the known statuses: #{STATUSES}"
+          next
         end
-        if requireHumanReadableName && !options["humanReadableName"]
-          raise "ERROR: Preference #{name} has no humanReadableName, which is required."
+
+        if %w{ unstable internal developer testable preview stable }.include?(status)
+          reject.call "Preference #{name} has no humanReadableName, which is required." if !options["humanReadableName"]
+          reject.call "Preference #{name} is visible in client UI and has a default value bound to WebCore::Settings, so it must have default values for all frontends" if webcoreSettingOnly
+          next if failed
+        elsif webcoreSettingOnly and @frontend != "WebCore"
+          next
         end
-        statuses = ["embedder", "unstable", "internal", "developer", "testable", "preview", "stable"]
-        options["status"] ||= defaultStatus
-        if !statuses.include? options["status"]
-          raise "ERROR: #{options["status"]} not one of the known statuses: #{statuses}"
-        end
+
         if options["defaultValue"].include?(@frontend)
           preference = Preference.new(name, options, @frontend)
           @preferences << preference
@@ -241,6 +265,7 @@ class Preferences
         end
       end
     end
+    exit 1 if failed
     result
   end
 
@@ -259,7 +284,9 @@ class Preferences
     resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
     tempResultFile = resultFile + ".tmp"
 
-    output = createTemplate(File.read(templateFile)).result(binding)
+    erb = createTemplate(File.read(templateFile))
+    erb.filename = templateFile
+    output = erb.result(binding)
     File.open(tempResultFile, "w+") do |f|
       f.write(output)
     end
@@ -272,7 +299,7 @@ class Preferences
   end
 end
 
-preferences = Preferences.new(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, options[:frontend])
+preferences = Preferences.new(options[:preferenceFiles], options[:frontend])
 
 options[:templates].each do |template|
   preferences.renderTemplate(template, options[:outputDirectory])

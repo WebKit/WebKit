@@ -866,10 +866,19 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
         [preferences _resetForTesting];
 
         if (enableAllExperimentalFeatures) {
-            for (WebFeature *feature in [WebPreferences _experimentalFeatures])
-                [preferences _setEnabled:YES forFeature:feature];
+            for (WebFeature *feature in [WebPreferences _experimentalFeatures]) {
+                // FIXME: ShowModalDialogEnabled and NeedsSiteSpecificQuirks are `developer` settings which should not be enabled by default, but are currently lumped in with the other user-visible features. rdar://103648153
+                // FIXME: BeaconAPIEnabled and LocalFileContentSniffingEnabled These are `stable` settings but should be turned off in WebKitLegacy.
+                if (![feature.key isEqualToString:@"ShowModalDialogEnabled"]
+                    && ![feature.key isEqualToString:@"NeedsSiteSpecificQuirks"]
+                    && ![feature.key isEqualToString:@"BeaconAPIEnabled"]
+                    && ![feature.key isEqualToString:@"LocalFileContentSniffingEnabled"]) {
+                    [preferences _setEnabled:YES forFeature:feature];
+                }
+            }
         }
 
+        
         if (persistentUserStyleSheetLocation()) {
             preferences.userStyleSheetLocation = [NSURL URLWithString:(__bridge NSString *)persistentUserStyleSheetLocation().get()];
             preferences.userStyleSheetEnabled = YES;

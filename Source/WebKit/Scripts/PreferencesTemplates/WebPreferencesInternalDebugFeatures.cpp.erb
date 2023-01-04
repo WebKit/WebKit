@@ -36,7 +36,7 @@ namespace WebKit {
 const Vector<RefPtr<API::Object>>& WebPreferences::internalDebugFeatures()
 {
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {
-<%- for @pref in @exposedInternalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:internal?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -58,7 +58,7 @@ bool WebPreferences::isFeatureEnabled(const API::InternalDebugFeature& feature) 
     };
 
     static FeatureGetterMapping getters[] = {
-<%- for @pref in @exposedInternalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:internal?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -92,7 +92,7 @@ void WebPreferences::setInternalDebugFeatureEnabledForKey(const String& key, boo
     };
 
     static FeatureSetterMapping setters[] = {
-<%- for @pref in @exposedInternalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:internal?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -114,7 +114,7 @@ void WebPreferences::setInternalDebugFeatureEnabledForKey(const String& key, boo
 void WebPreferences::resetAllInternalDebugFeatures()
 {
     UpdateBatch batch(*this);
-<%- for @pref in @exposedInternalFeatures do -%>
+<%- for @pref in @exposedPreferences.select(&:internal?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>

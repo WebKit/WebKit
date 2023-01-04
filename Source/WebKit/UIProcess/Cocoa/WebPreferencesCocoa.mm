@@ -130,17 +130,6 @@ static void setDebugBoolValueIfInUserDefaults(const String& identifier, const St
     store.setBoolValueForKey(key, [object boolValue]);
 }
 
-static void setDebugUInt32ValueIfInUserDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix, const String& key, WebPreferencesStore& store)
-{
-    id object = debugUserDefaultsValue(identifier, keyPrefix, globalDebugKeyPrefix, key);
-    if (!object)
-        return;
-    if (![object respondsToSelector:@selector(unsignedIntegerValue)])
-        return;
-
-    store.setUInt32ValueForKey(key, [object unsignedIntegerValue]);
-}
-
 void WebPreferences::platformInitializeStore()
 {
     @autoreleasepool {
@@ -154,12 +143,12 @@ void WebPreferences::platformInitializeStore()
         m_store.setBoolValueForKey(WebPreferencesKey::interruptAudioOnPageVisibilityChangeEnabledKey(),  WebCore::RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange());
 #endif
 
-#define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+#define INITIALIZE_DEFAULT_OVERRIDABLE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
         setDebug##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, m_globalDebugKeyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
 
-        FOR_EACH_WEBKIT_DEBUG_PREFERENCE(INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS)
+        FOR_EACH_DEFAULT_OVERRIDABLE_WEBKIT_PREFERENCE(INITIALIZE_DEFAULT_OVERRIDABLE_PREFERENCE_FROM_NSUSERDEFAULTS)
 
-#undef INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS
+#undef INITIALIZE_DEFAULT_OVERRIDABLE_PREFERENCE_FROM_NSUSERDEFAULTS
 
         if (!m_identifier)
             return;
@@ -169,7 +158,7 @@ void WebPreferences::platformInitializeStore()
         if (platformGet##TypeName##UserValueForKey(WebPreferencesKey::KeyLower##Key(), user##KeyUpper##Value)) \
             m_store.set##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key(), user##KeyUpper##Value);
 
-        FOR_EACH_WEBKIT_PREFERENCE(INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS)
+        FOR_EACH_PERSISTENT_WEBKIT_PREFERENCE(INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS)
 
 #undef INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS
     }
