@@ -201,6 +201,16 @@ void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<vo
     return CoreAudioSharedUnit::unit().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
 }
 
+bool CoreAudioCaptureSourceFactory::shouldAudioCaptureUnitRenderAudio()
+{
+    auto& unit = CoreAudioSharedUnit::unit();
+#if PLATFORM(IOS_FAMILY)
+    return unit.isRunning();
+#else
+    return unit.isRunning() && unit.isUsingVPIO();
+#endif // PLATFORM(IOS_FAMILY)
+}
+
 CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& device, uint32_t captureDeviceID, MediaDeviceHashSalts&& hashSalts, BaseAudioSharedUnit* overrideUnit, PageIdentifier pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_captureDeviceID(captureDeviceID)

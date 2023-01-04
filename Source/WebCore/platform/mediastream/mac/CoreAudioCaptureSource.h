@@ -137,6 +137,7 @@ public:
     WEBCORE_EXPORT void unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     WEBCORE_EXPORT bool isAudioCaptureUnitRunning();
     WEBCORE_EXPORT void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
+    WEBCORE_EXPORT bool shouldAudioCaptureUnitRenderAudio();
 
     void setOverrideUnit(BaseAudioSharedUnit* unit) { m_overrideUnit = unit; }
     BaseAudioSharedUnit& unit();

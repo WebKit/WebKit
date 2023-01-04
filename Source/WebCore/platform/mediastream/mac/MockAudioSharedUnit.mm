@@ -111,7 +111,7 @@ private:
 class MockAudioSharedInternalUnit :  public CoreAudioSharedUnit::InternalUnit {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MockAudioSharedInternalUnit();
+    explicit MockAudioSharedInternalUnit(bool enableEchoCancellation);
     ~MockAudioSharedInternalUnit();
 
 private:
@@ -169,8 +169,8 @@ CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
     std::call_once(onceFlag, [&] () {
         s_shouldIncreaseBufferSize = false;
         unit->setSampleRateRange(CapabilityValueOrRange(44100, 48000));
-        unit->setInternalUnitCreationCallback([] {
-            UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>();
+        unit->setInternalUnitCreationCallback([](bool enableEchoCancellation) {
+            UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>(enableEchoCancellation);
             return result;
         });
         unit->setInternalUnitGetSampleRateCallback([] { return 44100; });
@@ -195,8 +195,9 @@ static AudioStreamBasicDescription createAudioFormat(Float64 sampleRate, UInt32 
     return format;
 }
 
-MockAudioSharedInternalUnit::MockAudioSharedInternalUnit()
+MockAudioSharedInternalUnit::MockAudioSharedInternalUnit(bool enableEchoCancellation)
     : m_internalState(MockAudioSharedInternalUnitState::create())
+    , m_enableEchoCancellation(enableEchoCancellation)
     , m_timer(RunLoop::current(), [this] { this->start(); })
     , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue", WorkQueue::QOS::UserInteractive))
 {
@@ -384,10 +385,6 @@ OSStatus MockAudioSharedInternalUnit::set(AudioUnitPropertyID property, AudioUni
             m_streamFormat = typedValue;
         else
             m_outputStreamFormat = typedValue;
-        return 0;
-    }
-    if (property == kAUVoiceIOProperty_VoiceProcessingEnableAGC) {
-        m_enableEchoCancellation = !!*static_cast<const uint32_t*>(value);
         return 0;
     }
     if (property == kAudioOutputUnitProperty_SetInputCallback) {
