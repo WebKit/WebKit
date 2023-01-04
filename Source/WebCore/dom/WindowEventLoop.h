@@ -52,6 +52,8 @@ public:
     HashSet<RefPtr<MutationObserver>>& suspendedMutationObservers() { return m_suspendedObservers; }
 
     CustomElementQueue& backupElementQueue();
+    
+    void runTasks();
 
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
 

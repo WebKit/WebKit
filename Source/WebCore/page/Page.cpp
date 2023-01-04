@@ -167,6 +167,7 @@
 #include "WheelEventDeltaFilter.h"
 #include "WheelEventTestMonitor.h"
 #include "Widget.h"
+#include "WindowEventLoop.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -1945,8 +1946,11 @@ void Page::didCompleteRenderingFrame()
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " didCompleteRenderingFrame()");
 
     // FIXME: This is where we'd call requestPostAnimationFrame callbacks: webkit.org/b/249798.
-    // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
     // FIXME: Drive InspectorFrameEnd from here; webkit.org/b/249796.
+
+    forEachDocument([&] (Document& document) {
+        document.windowEventLoop().runTasks();
+    });
 }
 
 void Page::prioritizeVisibleResources()

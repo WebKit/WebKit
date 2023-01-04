@@ -117,6 +117,11 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
 
 void WindowEventLoop::didReachTimeToRun()
 {
+    runTasks();
+}
+
+void WindowEventLoop::runTasks()
+{
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     run();
 }
