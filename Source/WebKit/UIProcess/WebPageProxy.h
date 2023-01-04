@@ -358,6 +358,7 @@ class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
 class MediaSessionCoordinatorProxyPrivate;
+class NetworkIssueReporter;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollingPerformanceData;
@@ -2182,6 +2183,10 @@ public:
     void setCaretDecorationVisibility(bool);
 #endif
 
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    void reportNetworkIssue(const URL&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2743,6 +2748,8 @@ private:
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     static Vector<SandboxExtension::Handle> createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
 #endif
+
+    void prepareToLoadWebPage(WebProcessProxy&, LoadParameters&);
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 
@@ -3371,6 +3378,10 @@ private:
     RunLoop::Timer m_fullscreenVideoTextRecognitionTimer;
 #endif
     bool m_isPerformingTextRecognitionInElementFullScreen { false };
+
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    std::unique_ptr<NetworkIssueReporter> m_networkIssueReporter;
+#endif
 };
 
 #ifdef __OBJC__

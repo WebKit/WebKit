@@ -1869,6 +1869,16 @@ void NetworkProcessProxy::cookiesDidChange(PAL::SessionID sessionID)
         websiteDataStore->cookieStore().cookiesDidChange();
 }
 
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+
+void NetworkProcessProxy::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, const URL& requestURL)
+{
+    if (auto page = WebProcessProxy::webPage(pageIdentifier))
+        page->reportNetworkIssue(requestURL);
+}
+
+#endif // ENABLE(NETWORK_ISSUE_REPORTING)
+
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t>&& bytesPerSecondLimit)

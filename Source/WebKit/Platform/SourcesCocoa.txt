@@ -3,6 +3,7 @@ Platform/cf/ModuleCF.cpp
 Platform/cocoa/CocoaImage.mm
 Platform/cocoa/ImageAnalysisUtilities.mm
 Platform/cocoa/LayerHostingContext.mm
+Platform/cocoa/NetworkIssueReporter.mm
 Platform/cocoa/SharedMemoryCocoa.cpp
 Platform/cocoa/WKCrashReporter.mm
 Platform/cocoa/XPCUtilities.mm

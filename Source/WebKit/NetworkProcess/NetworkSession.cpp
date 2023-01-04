@@ -595,6 +595,15 @@ String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxy
     return m_attributedBundleIdentifierFromPageIdentifiers.get(identifier);
 }
 
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+
+void NetworkSession::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, const URL& requestURL)
+{
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::ReportNetworkIssue(pageIdentifier, requestURL), 0);
+}
+
+#endif // ENABLE(NETWORK_ISSUE_REPORTING)
+
 void NetworkSession::lowMemoryHandler(Critical)
 {
     clearPrefetchCache();

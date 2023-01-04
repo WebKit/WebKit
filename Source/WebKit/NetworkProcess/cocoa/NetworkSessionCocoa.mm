@@ -1160,6 +1160,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #endif
 
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    if ([configuration respondsToSelector:@selector(set_skipsStackTraceCapture:)])
+        configuration._skipsStackTraceCapture = YES;
+#endif
+
     return configuration;
 }
 

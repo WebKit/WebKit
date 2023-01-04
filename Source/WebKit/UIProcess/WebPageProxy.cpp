@@ -219,6 +219,7 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
+#include "NetworkIssueReporter.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
@@ -1422,6 +1423,15 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         process.assumeReadAccessToBaseURL(*this, baseURL.string());
 }
 
+void WebPageProxy::prepareToLoadWebPage(WebProcessProxy& process, LoadParameters& parameters)
+{
+    addPlatformLoadParameters(process, parameters);
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    if (NetworkIssueReporter::isEnabled())
+        m_networkIssueReporter = makeUnique<NetworkIssueReporter>();
+#endif
+}
+
 #if !PLATFORM(COCOA)
 
 void WebPageProxy::addPlatformLoadParameters(WebProcessProxy&, LoadParameters&)
@@ -1491,7 +1501,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 #endif
     maybeInitializeSandboxExtensionHandle(process, url, m_pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
-    addPlatformLoadParameters(process, loadParameters);
+    prepareToLoadWebPage(process, loadParameters);
 
     if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
         preconnectTo(url, predictedUserAgentForRequest(loadParameters.request));
@@ -1566,7 +1576,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 #endif
     const bool checkAssumedReadAccessToResourceURL = false;
     maybeInitializeSandboxExtensionHandle(m_process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
-    addPlatformLoadParameters(m_process, loadParameters);
+    prepareToLoadWebPage(m_process, loadParameters);
 
     m_process->markProcessAsRecentlyUsed();
     if (m_process->isLaunching())
@@ -1627,7 +1637,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     loadParameters.isServiceWorkerLoad = isServiceWorkerPage();
-    addPlatformLoadParameters(process, loadParameters);
+    prepareToLoadWebPage(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
     process->assumeReadAccessToBaseURL(*this, baseURL);
@@ -1686,12 +1696,13 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     simulatedResponse.setExpectedContentLength(data.size());
     simulatedResponse.includeCertificateInfo();
 
-    addPlatformLoadParameters(m_process, loadParameters);
+    prepareToLoadWebPage(m_process, loadParameters);
 
     m_process->markProcessAsRecentlyUsed();
     m_process->assumeReadAccessToBaseURL(*this, baseURL);
     m_process->send(Messages::WebPage::LoadSimulatedRequestAndResponse(loadParameters, simulatedResponse), m_webPageID);
     m_process->startResponsivenessTimer();
+
     return navigation;
 }
 
@@ -1729,7 +1740,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     loadParameters.unreachableURLString = unreachableURL.string();
     loadParameters.provisionalLoadErrorURLString = m_failingProvisionalLoadURL;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-    addPlatformLoadParameters(process(), loadParameters);
+    prepareToLoadWebPage(process(), loadParameters);
 
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), [this, protectedThis = Ref { *this }, process = m_process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL, htmlData = WTFMove(htmlData)] () mutable {
         loadParameters.data = { htmlData->data(), htmlData->size() };
@@ -1766,7 +1777,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     loadParameters.MIMEType = "application/x-webarchive"_s;
     loadParameters.encodingName = "utf-16"_s;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-    addPlatformLoadParameters(process(), loadParameters);
+    prepareToLoadWebPage(process(), loadParameters);
 
     m_process->markProcessAsRecentlyUsed();
     send(Messages::WebPage::LoadData(loadParameters));
@@ -11793,6 +11804,16 @@ void WebPageProxy::setIsWindowResizingEnabled(bool hasResizableWindows)
 }
 
 #endif
+
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+
+void WebPageProxy::reportNetworkIssue(const URL& requestURL)
+{
+    if (m_networkIssueReporter)
+        m_networkIssueReporter->report(requestURL);
+}
+
+#endif // ENABLE(NETWORK_ISSUE_REPORTING)
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 

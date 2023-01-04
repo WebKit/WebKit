@@ -96,6 +96,10 @@ messages -> NetworkProcessProxy LegacyReceiver {
     NavigateServiceWorkerClient(WebCore::FrameIdentifier frameIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (std::optional<WebCore::PageIdentifier> page, std::optional<WebCore::FrameIdentifier> frame)
 
     CookiesDidChange(PAL::SessionID sessionID)
+
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    ReportNetworkIssue(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL requestURL)
+#endif
 }
 
 }

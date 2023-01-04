@@ -239,6 +239,10 @@ public:
 
     String attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier) const;
 
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    void reportNetworkIssue(WebPageProxyIdentifier, const URL&);
+#endif
+
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     NetworkNotificationManager& notificationManager() { return m_notificationManager; }
 #endif

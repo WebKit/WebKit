@@ -515,4 +515,8 @@ WTF_EXTERN_C_END
 @property (setter=_setPrivacyProxyFailClosedForUnreachableNonMainHosts:) BOOL _privacyProxyFailClosedForUnreachableNonMainHosts;
 @end
 
+@interface NSURLSessionConfiguration (Staging_102778152)
+@property (nonatomic) BOOL _skipsStackTraceCapture;
+@end
+
 #endif // defined(__OBJC__)
