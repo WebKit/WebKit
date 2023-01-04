@@ -67,7 +67,7 @@ function shouldThrow(func, errorType, assertionFn) {
       TypeError,
       (err) => {
           shouldBe($.globalObjectFor(err), globalThis);
-          shouldBe(String(err), "TypeError: Error encountered during evaluation");
+          shouldBe(String(err), "TypeError: secret");
       });
 }
 
