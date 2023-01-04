@@ -1583,6 +1583,7 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-r
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-rows-subgrid-named-lines-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-rows-subgrid-named-lines-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-template-columns-computed-withcontent.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-columns-item-placement-auto-flow-next-001.html [ Skip ]
 
 webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
 
