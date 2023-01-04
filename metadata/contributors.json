@@ -3304,6 +3304,14 @@
    },
    {
       "emails" : [
+         "joncarlo@apple.com",
+         "joncarloalvarado@gmail.com"
+      ],
+      "github" : "jace0x21",
+      "name" : "JC Alvarado"
+   },
+   {
+      "emails" : [
          "jfbastien@apple.com",
          "jfb@chromium.org"
       ],
