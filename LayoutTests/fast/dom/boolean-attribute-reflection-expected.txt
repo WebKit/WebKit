@@ -79,10 +79,6 @@ PASS e = make('option'); e.removeAttribute('selected'); e.defaultSelected is fal
 PASS e = make('option'); e.setAttribute('selected', ''); e.defaultSelected is true
 PASS e = make('option'); e.setAttribute('selected', 'x'); e.defaultSelected = false; e.getAttribute('selected') is null
 PASS e = make('option'); e.setAttribute('selected', 'x'); e.defaultSelected = true; e.getAttribute('selected') is ''
-PASS e = make('pre'); e.removeAttribute('wrap'); e.wrap is false
-PASS e = make('pre'); e.setAttribute('wrap', ''); e.wrap is true
-PASS e = make('pre'); e.setAttribute('wrap', 'x'); e.wrap = false; e.getAttribute('wrap') is null
-PASS e = make('pre'); e.setAttribute('wrap', 'x'); e.wrap = true; e.getAttribute('wrap') is ''
 PASS e = make('script'); e.removeAttribute('defer'); e.defer is false
 PASS e = make('script'); e.setAttribute('defer', ''); e.defer is true
 PASS e = make('script'); e.setAttribute('defer', 'x'); e.defer = false; e.getAttribute('defer') is null
