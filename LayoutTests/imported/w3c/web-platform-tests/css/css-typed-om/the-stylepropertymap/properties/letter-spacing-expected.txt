@@ -5,10 +5,10 @@ PASS Can set 'letter-spacing' to CSS-wide keywords: unset
 PASS Can set 'letter-spacing' to CSS-wide keywords: revert
 PASS Can set 'letter-spacing' to var() references:  var(--A)
 PASS Can set 'letter-spacing' to the 'normal' keyword: normal
-FAIL Can set 'letter-spacing' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSKeywordValue"
+PASS Can set 'letter-spacing' to a length: 0px
 PASS Can set 'letter-spacing' to a length: -3.14em
 PASS Can set 'letter-spacing' to a length: 3.14cm
-FAIL Can set 'letter-spacing' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSKeywordValue]"
+PASS Can set 'letter-spacing' to a length: calc(0px + 0em)
 PASS Setting 'letter-spacing' to a percent: 0% throws TypeError
 PASS Setting 'letter-spacing' to a percent: -3.14% throws TypeError
 PASS Setting 'letter-spacing' to a percent: 3.14% throws TypeError
