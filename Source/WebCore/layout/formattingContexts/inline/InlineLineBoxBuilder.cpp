@@ -470,14 +470,14 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isLineSpanningInlineBoxStart()) {
-            auto marginStart = InlineLayoutUnit { };
+            auto marginStart = LayoutUnit { };
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
                 marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
 #endif
-            auto adjustedLogicalStart = logicalLeft + std::max(0.0f, marginStart);
-            auto logicalWidth = rootInlineBox.logicalWidth() - adjustedLogicalStart;
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, adjustedLogicalStart, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
+            logicalLeft += std::max(0_lu, marginStart);
+            auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
@@ -488,7 +488,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             // Inline box run is based on margin box. Let's convert it to border box.
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
             logicalLeft += std::max(0_lu, marginStart);
-            auto initialLogicalWidth = rootInlineBox.logicalWidth() - (logicalLeft - rootInlineBox.logicalLeft());
+            auto initialLogicalWidth = rootInlineBox.logicalRight() - logicalLeft;
             ASSERT(initialLogicalWidth >= 0 || lineContent().hangingContent.width || std::isnan(initialLogicalWidth));
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
@@ -784,12 +784,13 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
     auto floatConstraints = floatingContext.constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
 
     auto lineBoxOffset = lineBoxRect.left() - lineContent().lineInitialLogicalLeft;
-    auto rootInlineBoxOffsetFromContentBox =  lineBoxOffset + lineBox.rootInlineBoxAlignmentOffset();
+    auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
+    auto rootInlineBoxOffsetFromContentBox =  lineBoxOffset + rootInlineBoxLogicalLeft;
     for (auto* listMarkerBox : m_outsideListMarkers) {
         auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxForLayoutBox(*listMarkerBox);
-        auto logicalLeft = listMarkerInlineLevelBox.logicalLeft();
-        logicalLeft -= rootInlineBoxOffsetFromContentBox;
-
+        // Move it to the logical left of the line box (from the logical left of the root inline box).
+        auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBox;
+        auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
         auto nestedListMarkerMarginStart = [&] {
             auto nestedOffset = formattingState.nestedListMarkerOffset(*listMarkerBox);
             if (nestedOffset == LayoutUnit::min())

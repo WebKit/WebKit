@@ -32,10 +32,9 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit rootInlineBoxAlignmentOffset, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount)
+LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount)
     : m_lineIndex(lineIndex)
-    , m_rootInlineBoxAlignmentOffset(rootInlineBoxAlignmentOffset)
-    , m_rootInlineBox({ rootLayoutBox, !lineIndex ? rootLayoutBox.firstLineStyle() : rootLayoutBox.style(), { }, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox })
+    , m_rootInlineBox(InlineLevelBox::createRootInlineBox(rootLayoutBox, !lineIndex ? rootLayoutBox.firstLineStyle() : rootLayoutBox.style(), contentLogicalLeft, contentLogicalWidth))
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
     m_nonRootInlineLevelBoxMap.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
@@ -61,7 +60,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
         ASSERT(parentInlineBox->isInlineBox());
         runlogicalTop += (parentInlineBox->logicalTop() - parentInlineBox->inlineBoxContentOffsetForLeadingTrim());
     }
-    return { runlogicalTop, run.logicalLeft(), run.logicalWidth(), logicalHeight };
+    return { runlogicalTop, m_rootInlineBox.logicalLeft() + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
 InlineRect LineBox::logicalRectForLineBreakBox(const Box& layoutBox) const

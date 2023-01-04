@@ -42,6 +42,7 @@ class InlineLevelBox {
 public:
     enum class LineSpanningInlineBox { Yes, No };
     static InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
+    static InlineLevelBox createRootInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     static InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
     static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
@@ -125,6 +126,7 @@ private:
     InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
     InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
     InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
+    InlineLayoutUnit logicalRight() const { return m_logicalRect.right(); }
     InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
     InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
 
@@ -241,6 +243,11 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
 inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
     return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineLevelBox };
+}
+
+inline InlineLevelBox InlineLevelBox::createRootInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+{
+    return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::RootInlineBox, { } };
 }
 
 inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
