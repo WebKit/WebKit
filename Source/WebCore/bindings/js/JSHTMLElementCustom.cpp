@@ -127,8 +127,10 @@ JSScope* JSHTMLElement::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObjec
     scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), element.document())));
 
     // The form is next, searched before the document, but after the element itself.
-    if (HTMLFormElement* form = element.form())
-        scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), *form)));
+    if (auto* formAssociated = element.asFormAssociatedElement()) {
+        if (RefPtr form = formAssociated->form())
+            scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), *form)));
+    }
 
     // The element is on top, searched first.
     return JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, globalObject(), element)));

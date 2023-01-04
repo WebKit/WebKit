@@ -64,10 +64,6 @@ public:
     WEBCORE_EXPORT void setAutocomplete(const AtomString&);
     WEBCORE_EXPORT const AtomString& autocomplete() const;
 
-#if ENABLE(AUTOCORRECT)
-    WEBCORE_EXPORT bool shouldAutocorrect() const final;
-#endif
-
     void registerFormListedElement(FormListedElement&);
     void unregisterFormListedElement(FormListedElement&);
 

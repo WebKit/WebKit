@@ -757,11 +757,6 @@ bool HTMLElement::rendererIsEverNeeded()
     return StyledElement::rendererIsEverNeeded();
 }
 
-HTMLFormElement* HTMLElement::form() const
-{
-    return HTMLFormElement::findClosestFormAncestor(*this);
-}
-
 FormAssociatedElement* HTMLElement::asFormAssociatedElement()
 {
     return nullptr;

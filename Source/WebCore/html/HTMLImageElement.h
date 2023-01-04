@@ -173,7 +173,6 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
-    HTMLFormElement* form() const final { return FormAssociatedElement::form(); }
     void resetFormOwner() final;
     void refFormAssociatedElement() final { HTMLElement::ref(); }
     void derefFormAssociatedElement() final { HTMLElement::deref(); }

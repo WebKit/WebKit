@@ -42,7 +42,7 @@ public:
     WEBCORE_EXPORT String text() const;
     void setText(String&&);
 
-    WEBCORE_EXPORT HTMLFormElement* form() const final;
+    WEBCORE_EXPORT HTMLFormElement* form() const;
 
     WEBCORE_EXPORT int index() const;
 
