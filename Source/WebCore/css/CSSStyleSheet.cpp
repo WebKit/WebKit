@@ -198,6 +198,7 @@ void CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration()
     didMutate();
 }
 
+// FIXME: counter-style: we might need something similar for counter-style (rdar://103018993).
 void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContentsWereClonedForMutation contentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName)
 {
     ASSERT(m_contents->isMutable());

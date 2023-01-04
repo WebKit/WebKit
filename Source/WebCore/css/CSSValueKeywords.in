@@ -484,6 +484,8 @@ simp-chinese-formal
 trad-chinese-informal
 trad-chinese-formal
 ethiopic-numeric
+// FIXME: enable representation for custom-counter-style rdar://102988393.
+custom-counter-style
 //none
 //
 // CSS_PROP_DISPLAY:

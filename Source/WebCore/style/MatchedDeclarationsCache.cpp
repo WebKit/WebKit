@@ -72,6 +72,8 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     if (!parentStyle.fontCascade().isCurrent(fontSelector))
         return false;
 
+    // FIXME: counter-style: we might need to resolve cache like for fontSelector here (rdar://103018993).
+
     return true;
 }
 
