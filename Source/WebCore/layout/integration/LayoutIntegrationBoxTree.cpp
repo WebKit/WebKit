@@ -330,71 +330,73 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
     auto& lines = inlineContent.lines;
     auto& boxes = inlineContent.boxes;
 
-    if (boxes.isEmpty()) {
-        // Has to have at least one box, the root inline box.
-        return;
-    }
-
-    for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
-        auto addSpacing = [&] {
+    for (size_t lineIndex = 0, boxIndex = 0; lineIndex < lines.size() && boxIndex < boxes.size(); ++lineIndex) {
+        auto addSpacing = [&](auto& streamToUse) {
             size_t printedCharacters = 0;
-            stream << "-------- --";
+            streamToUse << "-------- --";
             while (++printedCharacters <= depth * 2)
-                stream << " ";
+                streamToUse << " ";
 
         };
-        addSpacing();
+        addSpacing(stream);
         auto& line = lines[lineIndex];
         stream << "line at (" << line.lineBoxLeft() << "," << line.lineBoxTop() << ") size (" << line.lineBoxRight() - line.lineBoxLeft() << "x" << line.lineBoxBottom() - line.lineBoxTop() << ") baseline (" << line.baseline() << ") enclosing top (" << line.enclosingContentTop() << ") bottom (" << line.enclosingContentBottom() << ")";
         stream.nextLine();
 
-        addSpacing();
+        addSpacing(stream);
 
-        auto& rootInlineBox = boxes[0];
+        auto& rootInlineBox = boxes[boxIndex++];
         auto rootInlineBoxRect = rootInlineBox.visualRectIgnoringBlockDirection();
         stream << "  ";
         stream << "Root inline box at (" << rootInlineBoxRect.x() << "," << rootInlineBoxRect.y() << ")" << " size (" << rootInlineBoxRect.width() << "x" << rootInlineBoxRect.height() << ")";
         stream.nextLine();
 
-        for (auto& box : boxes) {
-            if (box.lineIndex() != lineIndex || !box.isNonRootInlineBox())
-                continue;
+        auto inlineBoxStream = TextStream { TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect };
+        auto runStream = TextStream { TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect };
+        for (; boxIndex < boxes.size(); ++boxIndex) {
+            auto& box = boxes[boxIndex];
+            if (box.lineIndex() != lineIndex)
+                break;
 
-            addSpacing();
-            stream << "  ";
-            for (auto* ancestor = &box.layoutBox(); ancestor != &rootInlineBox.layoutBox(); ancestor = &ancestor->parent())
-                stream << "  ";
-            auto rect = box.visualRectIgnoringBlockDirection();
-            stream << "Inline box at (" << rect.x() << "," << rect.y() << ") size (" << rect.width() << "x" << rect.height() << ") renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
-            stream.nextLine();
+            if (box.isNonRootInlineBox()) {
+                addSpacing(inlineBoxStream);
+                inlineBoxStream << "  ";
+
+                for (auto* ancestor = &box.layoutBox(); ancestor != &rootInlineBox.layoutBox(); ancestor = &ancestor->parent())
+                    inlineBoxStream << "  ";
+                auto rect = box.visualRectIgnoringBlockDirection();
+                inlineBoxStream << "Inline box at (" << rect.x() << "," << rect.y() << ") size (" << rect.width() << "x" << rect.height() << ") renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                inlineBoxStream.nextLine();
+            } else {
+                addSpacing(runStream);
+                runStream << "    ";
+
+                if (box.isText())
+                    runStream << "Text";
+                else if (box.isWordSeparator())
+                    runStream << "Word separator";
+                else if (box.isLineBreak())
+                    runStream << "Line break";
+                else if (box.isAtomicInlineLevelBox())
+                    runStream << "Atomic box";
+                else if (box.isGenericInlineLevelBox())
+                    runStream << "Generic inline level box";
+                runStream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
+                if (box.isText())
+                    runStream << " run(" << box.text()->start() << ", " << box.text()->end() << ")";
+                runStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                runStream.nextLine();
+            }
         }
 
-        addSpacing();
+        stream << inlineBoxStream.release();
+
+        addSpacing(stream);
         stream << "  ";
         stream << "Run(s):";
         stream.nextLine();
-        for (auto& box : boxes) {
-            if (box.lineIndex() != lineIndex || box.isInlineBox())
-                continue;
-            addSpacing();
-            stream << "    ";
 
-            if (box.isText())
-                stream << "Text";
-            else if (box.isWordSeparator())
-                stream << "Word separator";
-            else if (box.isLineBreak())
-                stream << "Line break";
-            else if (box.isAtomicInlineLevelBox())
-                stream << "Atomic box";
-            else if (box.isGenericInlineLevelBox())
-                stream << "Generic inline level box";
-            stream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
-            if (box.isText())
-                stream << " run(" << box.text()->start() << ", " << box.text()->end() << ")";
-            stream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
-            stream.nextLine();
-        }
+        stream << runStream.release();
     }
 }
 #endif
