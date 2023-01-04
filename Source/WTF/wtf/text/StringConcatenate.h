@@ -252,7 +252,7 @@ public:
 
 template<typename... StringTypes> class StringTypeAdapter<std::tuple<StringTypes...>, void> {
 public:
-    StringTypeAdapter(std::tuple<StringTypes...> tuple)
+    StringTypeAdapter(const std::tuple<StringTypes...>& tuple)
         : m_tuple { tuple }
         , m_length { std::apply(computeLength, tuple) }
         , m_is8Bit { std::apply(computeIs8Bit, tuple) }
@@ -263,27 +263,26 @@ public:
     bool is8Bit() const { return m_is8Bit; }
     template<typename CharacterType> void writeTo(CharacterType* destination) const
     {
-        std::apply([&](StringTypes... strings) {
+        std::apply([&](const StringTypes&... strings) {
             unsigned offset = 0;
             (..., (
-                StringTypeAdapter<StringTypes>(strings).writeTo(destination + (offset * sizeof(CharacterType))),
+                StringTypeAdapter<StringTypes>(strings).writeTo(destination + offset),
                 offset += StringTypeAdapter<StringTypes>(strings).length()
             ));
         }, m_tuple);
     }
 
 private:
-    static unsigned computeLength(StringTypes... strings)
+    static unsigned computeLength(const StringTypes&... strings)
     {
         return (... + StringTypeAdapter<StringTypes>(strings).length());
     }
 
-    static bool computeIs8Bit(StringTypes... strings)
+    static bool computeIs8Bit(const StringTypes&... strings)
     {
         return (... && StringTypeAdapter<StringTypes>(strings).is8Bit());
     }
-
-    std::tuple<StringTypes...> m_tuple;
+    const std::tuple<StringTypes...>& m_tuple;
     unsigned m_length;
     bool m_is8Bit;
 };
