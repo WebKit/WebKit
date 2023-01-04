@@ -685,6 +685,10 @@
 #define HAVE_PASSKIT_PAYMENT_ORDER_DETAILS 1
 #endif
 
+#if __has_include(<PassKitMacHelperTemp/PKPaymentAuthorizationViewController_Private.h>)
+#define HAVE_PASSKIT_MAC_HELPER_TEMP 1
+#endif
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 120300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 150400)
 #define HAVE_PASSKIT_DEFAULT_SHIPPING_METHOD 1
 #endif
