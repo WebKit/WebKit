@@ -44,6 +44,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "LocalizedStrings.h"
+#include "MenuListPart.h"
 #include "MeterPart.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -509,7 +510,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case ControlPartType::SquareButton:
     case ControlPartType::Button:
     case ControlPartType::DefaultButton:
+        break;
+
     case ControlPartType::Menulist:
+        return MenuListPart::create();
+
     case ControlPartType::MenulistButton:
         break;
 

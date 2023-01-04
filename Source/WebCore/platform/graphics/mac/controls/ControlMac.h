@@ -45,6 +45,11 @@ protected:
     static bool userPrefersContrast();
     static FloatRect inflatedRect(const FloatRect& bounds, const FloatSize&, const IntOutsets&, const ControlStyle&);
 
+    static void updateCheckedState(NSCell *, const ControlStyle&);
+    static void updateEnabledState(NSCell *, const ControlStyle&);
+    static void updateFocusedState(NSCell *, const ControlStyle&);
+    static void updatePressedState(NSCell *, const ControlStyle&);
+
     virtual IntSize cellSize(NSControlSize, const ControlStyle&) const { return { }; };
     virtual IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const { return { }; };
 

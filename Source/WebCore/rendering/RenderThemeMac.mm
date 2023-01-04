@@ -228,6 +228,7 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
 #endif
     case ControlPartType::Checkbox:
     case ControlPartType::Listbox:
+    case ControlPartType::Menulist:
     case ControlPartType::Meter:
     case ControlPartType::ProgressBar:
     case ControlPartType::Radio:
@@ -249,6 +250,7 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
 {
     ControlPartType type = renderer.style().effectiveAppearance();
     return type == ControlPartType::Checkbox
+        || type == ControlPartType::Menulist
         || type == ControlPartType::Meter
         || type == ControlPartType::ProgressBar
         || type == ControlPartType::Radio;
@@ -1141,39 +1143,6 @@ const int* RenderThemeMac::popupButtonPadding(NSControlSize size, bool isRTL) co
         { 2, 8, 3, 26 },
     };
     return isRTL ? paddingRTL[size] : paddingLTR[size];
-}
-
-bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    setPopupButtonCellState(renderer, IntSize(rect.size()));
-
-    NSPopUpButtonCell* popupButton = this->popupButton();
-
-    float zoomLevel = renderer.style().effectiveZoom();
-    IntSize size = popupButtonSizes()[[popupButton controlSize]];
-    size.setHeight(size.height() * zoomLevel);
-    size.setWidth(rect.width());
-
-    // Now inflate it to account for the shadow.
-    FloatRect inflatedRect = rect;
-    if (rect.width() >= minimumMenuListSize(renderer.style()))
-        inflatedRect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    if (zoomLevel != 1.0f) {
-        inflatedRect.setWidth(inflatedRect.width() / zoomLevel);
-        inflatedRect.setHeight(inflatedRect.height() / zoomLevel);
-        paintInfo.context().translate(inflatedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-inflatedRect.location());
-    }
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(popupButton, renderer, paintInfo, inflatedRect);
-    [popupButton setControlView:nil];
-
-    return false;
 }
 
 FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const FloatRect& bounds) const

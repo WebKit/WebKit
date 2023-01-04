@@ -66,6 +66,56 @@ FloatRect ControlMac::inflatedRect(const FloatRect& bounds, const FloatSize& siz
     return unionRect(bounds, inflatedRect);
 }
 
+void ControlMac::updateCheckedState(NSCell *cell, const ControlStyle& style)
+{
+    bool oldIndeterminate = [cell state] == NSControlStateValueMixed;
+    bool indeterminate = style.states.contains(ControlStyle::State::Indeterminate);
+
+    bool oldChecked = [cell state] == NSControlStateValueOn;
+    bool checked = style.states.contains(ControlStyle::State::Checked);
+
+    if (oldIndeterminate == indeterminate && oldChecked == checked)
+        return;
+
+    auto newState = indeterminate ? NSControlStateValueMixed : (checked ? NSControlStateValueOn : NSControlStateValueOff);
+
+    if ([cell isKindOfClass:[NSButtonCell class]])
+        [(NSButtonCell *)cell _setState:newState animated:false];
+    else
+        [cell setState:newState];
+}
+
+void ControlMac::updateEnabledState(NSCell *cell, const ControlStyle& style)
+{
+    bool oldEnabled = [cell isEnabled];
+    bool enabled = style.states.contains(ControlStyle::State::Enabled);
+    if (enabled == oldEnabled)
+        return;
+    [cell setEnabled:enabled];
+}
+
+void ControlMac::updateFocusedState(NSCell *cell, const ControlStyle& style)
+{
+    bool oldFocused = [cell showsFirstResponder];
+    bool focused = style.states.contains(ControlStyle::State::Focused);
+    if (focused == oldFocused)
+        return;
+    [cell setShowsFirstResponder:focused];
+}
+
+void ControlMac::updatePressedState(NSCell *cell, const ControlStyle& style)
+{
+    bool oldPressed = [cell isHighlighted];
+    bool pressed = style.states.contains(ControlStyle::State::Pressed);
+    if (pressed == oldPressed)
+        return;
+
+    if ([cell isKindOfClass:[NSButtonCell class]])
+        [(NSButtonCell *)cell _setHighlighted:pressed animated:false];
+    else
+        [cell setHighlighted:pressed];
+}
+
 NSControlSize ControlMac::controlSizeForFont(const ControlStyle& style) const
 {
     bool supportsLargeFormControls = style.states.contains(ControlStyle::State::LargeControls);

@@ -75,6 +75,7 @@
 #include <WebCore/Matrix3DTransformOperation.h>
 #include <WebCore/MatrixTransformOperation.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/MenuListPart.h>
 #include <WebCore/MeterPart.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/Pasteboard.h>
@@ -1609,7 +1610,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::SquareButton:
     case WebCore::ControlPartType::Button:
     case WebCore::ControlPartType::DefaultButton:
+        break;
+            
     case WebCore::ControlPartType::Menulist:
+        return WebCore::MenuListPart::create();
+
     case WebCore::ControlPartType::MenulistButton:
         break;
 

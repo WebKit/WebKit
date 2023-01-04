@@ -111,7 +111,6 @@ private:
 
     void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
 
-    bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustMenuListStyle(RenderStyle&, const Element*) const final;
 
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;

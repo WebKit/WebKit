@@ -38,6 +38,7 @@ public:
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
+    std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) override;
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
     std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) override;
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) override;
@@ -47,14 +48,16 @@ public:
 private:
     NSButtonCell *checkboxCell() const;
     NSButtonCell *radioCell() const;
-    NSLevelIndicatorCell* levelIndicatorCell() const;
-    NSTextFieldCell* textFieldCell() const;
+    NSLevelIndicatorCell *levelIndicatorCell() const;
+    NSPopUpButtonCell *popUpButtonCell() const;
+    NSTextFieldCell *textFieldCell() const;
 
     mutable RetainPtr<WebControlView> m_drawingView;
 
     mutable RetainPtr<NSButtonCell> m_checkboxCell;
     mutable RetainPtr<NSButtonCell> m_radioCell;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
+    mutable RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };
 

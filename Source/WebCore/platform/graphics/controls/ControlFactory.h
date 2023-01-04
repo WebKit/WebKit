@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class MeterPart;
+class MenuListPart;
 class PlatformControl;
 class ProgressBarPart;
 class TextAreaPart;
@@ -43,6 +44,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<ControlFactory> createControlFactory();
     static ControlFactory& sharedControlFactory();
 
+    virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;

@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "MenuListMac.h"
 #import "MeterMac.h"
 #import "ProgressBarMac.h"
 #import "TextAreaMac.h"
@@ -71,7 +72,7 @@ static RetainPtr<NSButtonCell> createToggleButtonCell()
     return buttonCell;
 }
 
-NSButtonCell* ControlFactoryMac::checkboxCell() const
+NSButtonCell *ControlFactoryMac::checkboxCell() const
 {
     if (!m_checkboxCell) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -83,7 +84,7 @@ NSButtonCell* ControlFactoryMac::checkboxCell() const
     return m_checkboxCell.get();
 }
 
-NSButtonCell* ControlFactoryMac::radioCell() const
+NSButtonCell *ControlFactoryMac::radioCell() const
 {
     if (!m_radioCell) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -94,7 +95,7 @@ NSButtonCell* ControlFactoryMac::radioCell() const
     return m_radioCell.get();
 }
 
-NSLevelIndicatorCell* ControlFactoryMac::levelIndicatorCell() const
+NSLevelIndicatorCell *ControlFactoryMac::levelIndicatorCell() const
 {
     if (!m_levelIndicatorCell) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -103,6 +104,17 @@ NSLevelIndicatorCell* ControlFactoryMac::levelIndicatorCell() const
         END_BLOCK_OBJC_EXCEPTIONS
     }
     return m_levelIndicatorCell.get();
+}
+
+NSPopUpButtonCell *ControlFactoryMac::popUpButtonCell() const
+{
+    if (!m_popUpButtonCell) {
+        m_popUpButtonCell = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
+        [m_popUpButtonCell setUsesItemFromMenu:NO];
+        [m_popUpButtonCell setFocusRingType:NSFocusRingTypeExterior];
+        [m_popUpButtonCell setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
+    }
+    return m_popUpButtonCell.get();
 }
 
 NSTextFieldCell* ControlFactoryMac::textFieldCell() const
@@ -120,6 +132,11 @@ NSTextFieldCell* ControlFactoryMac::textFieldCell() const
         END_BLOCK_OBJC_EXCEPTIONS
     }
     return m_textFieldCell.get();
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuListPart& part)
+{
+    return makeUnique<MenuListMac>(part, *this, popUpButtonCell());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPart& part)
