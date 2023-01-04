@@ -52,6 +52,7 @@
 (allow process-info-codesignature (with telemetry) (with report))
 (allow system-memorystatus-control)
 (allow file-test-existence)
+(allow syscall-mach)
 #endif // USE(SANDBOX_VERSION_3)
 
 ;; Sandbox extensions
