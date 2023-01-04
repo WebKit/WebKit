@@ -32,9 +32,10 @@
 
 namespace WebKit {
 
-MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles)
+MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles, SandboxExtension::Handle&& machBootstrapHandle)
     : m_ids(ids)
     , m_handles(WTFMove(handles))
+    , m_machBootstrapHandle(WTFMove(machBootstrapHandle))
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
 }
@@ -43,6 +44,7 @@ void MediaDeviceSandboxExtensions::encode(IPC::Encoder& encoder) const
 {
     encoder << m_ids;
     encoder << m_handles;
+    encoder << m_machBootstrapHandle;
 }
 
 bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSandboxExtensions& result)
@@ -55,6 +57,12 @@ bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSand
     if (!handles)
         return false;
     result.m_handles = WTFMove(*handles);
+
+    std::optional<SandboxExtension::Handle> machBootstrapHandle;
+    decoder >> machBootstrapHandle;
+    if (!machBootstrapHandle)
+        return false;
+    result.m_machBootstrapHandle = WTFMove(*machBootstrapHandle);
 
     return true;
 }

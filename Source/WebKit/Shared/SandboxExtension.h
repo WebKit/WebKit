@@ -95,8 +95,9 @@ public:
     static std::optional<Handle> createHandleForReadWriteDirectory(StringView path); // Will attempt to create the directory.
     static std::optional<std::pair<Handle, String>> createHandleForTemporaryFile(StringView prefix, Type);
     static std::optional<Handle> createHandleForGenericExtension(ASCIILiteral extensionClass);
+    static Handle createHandleForMachBootstrapExtension();
 #if HAVE(AUDIT_TOKEN)
-    static std::optional<Handle> createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t>, MachBootstrapOptions = MachBootstrapOptions::DoNotEnableMachBootstrap, OptionSet<Flags> = Flags::Default);
+    static std::optional<Handle> createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
     static Vector<Handle> createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t>, MachBootstrapOptions = MachBootstrapOptions::DoNotEnableMachBootstrap, OptionSet<Flags> = Flags::Default);
     static Vector<Handle> createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t>, MachBootstrapOptions = MachBootstrapOptions::DoNotEnableMachBootstrap, OptionSet<Flags> = Flags::Default);
     static std::optional<Handle> createHandleForReadByAuditToken(StringView path, audit_token_t);

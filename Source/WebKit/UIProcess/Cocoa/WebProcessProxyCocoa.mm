@@ -250,7 +250,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     Vector<SandboxExtension::Handle> handleArray;
 #if PLATFORM(IOS_FAMILY)
     handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
-    ASSERT(handleArray.size() == 2);
+    ASSERT(handleArray.size() == 3);
 #endif
 
     send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(handleArray), 0);
@@ -331,9 +331,9 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     return connection()->getAuditToken();
 }
 
-SandboxExtension::Handle WebProcessProxy::fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions machBootstrapOptions) const
+Vector<SandboxExtension::Handle> WebProcessProxy::fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions machBootstrapOptions) const
 {
-    return SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, auditToken(), machBootstrapOptions).value_or(SandboxExtension::Handle { });
+    return SandboxExtension::createHandlesForMachLookup({ "com.apple.fonts"_s }, auditToken(), machBootstrapOptions);
 }
 
 
