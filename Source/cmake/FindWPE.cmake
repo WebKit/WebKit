@@ -69,16 +69,16 @@ find_library(WPE_LIBRARY
 )
 
 if (WPE_INCLUDE_DIR AND NOT WPE_VERSION)
-    if (EXISTS "${WPE_INCLUDE_DIR}/wpe/version.h")
-        file(READ "${WPE_INCLUDE_DIR}/wpe/version.h" WPE_VERSION_CONTENT)
+    if (EXISTS "${WPE_INCLUDE_DIR}/wpe/libwpe-version.h")
+        file(READ "${WPE_INCLUDE_DIR}/wpe/libwpe-version.h" WPE_VERSION_CONTENT)
 
-        string(REGEX MATCH "#define +WPE_MAJOR_VERSION +\\(([0-9]+)\\)" _dummy "${WPE_VERSION_CONTENT}")
+        string(REGEX MATCH "#define +WPE_MAJOR_VERSION +([0-9]+)" _dummy "${WPE_VERSION_CONTENT}")
         set(WPE_VERSION_MAJOR "${CMAKE_MATCH_1}")
 
-        string(REGEX MATCH "#define +WPE_MINOR_VERSION +\\(([0-9]+)\\)" _dummy "${WPE_VERSION_CONTENT}")
+        string(REGEX MATCH "#define +WPE_MINOR_VERSION +([0-9]+)" _dummy "${WPE_VERSION_CONTENT}")
         set(WPE_VERSION_MINOR "${CMAKE_MATCH_1}")
 
-        string(REGEX MATCH "#define +WPE_MICRO_VERSION +\\(([0-9]+)\\)" _dummy "${WPE_VERSION_CONTENT}")
+        string(REGEX MATCH "#define +WPE_MICRO_VERSION +([0-9]+)" _dummy "${WPE_VERSION_CONTENT}")
         set(WPE_VERSION_PATCH "${CMAKE_MATCH_1}")
 
         set(WPE_VERSION "${WPE_VERSION_MAJOR}.${WPE_VERSION_MINOR}.${WPE_VERSION_PATCH}")

@@ -58,7 +58,7 @@ if (ENABLE_WEBCORE)
     if (WPEBackendPlayStation_FOUND)
         # WPE::libwpe is compiled into the PlayStation backend
         set(WPE_NAMES SceWPE)
-        find_package(WPE REQUIRED)
+        find_package(WPE 1.14.0 REQUIRED)
 
         SET_AND_EXPOSE_TO_BUILD(USE_WPE_BACKEND_PLAYSTATION ON)
 
