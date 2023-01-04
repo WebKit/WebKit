@@ -184,6 +184,17 @@ LibWebRTCCodecs::LibWebRTCCodecs()
 {
 }
 
+void LibWebRTCCodecs::initializeIfNeeded()
+{
+    // Let's create the GPUProcess connection once to know whether we should do VP9 in GPUProcess.
+    static std::once_flag doInitializationOnce;
+    std::call_once(doInitializationOnce, [] {
+        callOnMainRunLoopAndWait([] {
+            WebProcess::singleton().ensureGPUProcessConnection();
+        });
+    });
+}
+
 void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
 {
     ASSERT(isMainRunLoop());
@@ -243,19 +254,16 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess, bool useRemoteFrames)
 {
     ASSERT(isMainRunLoop());
 
-    if (!useGPUProcess) {
-        webrtc::setVideoDecoderCallbacks(nullptr, nullptr, nullptr, nullptr);
-        webrtc::setVideoEncoderCallbacks(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+    // We can enable GPUProcess but disable it is difficult once enabled since callbacks may be used in background threads.
+    if (!useGPUProcess)
         return;
-    }
 
-    // Let's create WebProcess libWebRTCCodecs since it may be called from various threads.
-    WebProcess::singleton().libWebRTCCodecs().m_useRemoteFrames = useRemoteFrames;
+    auto& libWebRTCCodecs = WebProcess::singleton().libWebRTCCodecs();
+    libWebRTCCodecs.m_useRemoteFrames = useRemoteFrames;
+    if (libWebRTCCodecs.m_useGPUProcess)
+        return;
 
-#if ENABLE(VP9)
-    WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(WebProcess::singleton().ensureGPUProcessConnection().hasVP9HardwareDecoder());
-    WebProcess::singleton().libWebRTCCodecs().setHasVP9ExtensionSupport(WebProcess::singleton().ensureGPUProcessConnection().hasVP9ExtensionSupport());
-#endif
+    libWebRTCCodecs.m_useGPUProcess = useGPUProcess;
 
     webrtc::setVideoDecoderCallbacks(createVideoDecoder, releaseVideoDecoder, decodeVideoFrame, registerDecodeCompleteCallback);
     webrtc::setVideoEncoderCallbacks(createVideoEncoder, releaseVideoEncoder, initializeVideoEncoder, encodeVideoFrame, registerEncodeCompleteCallback, setEncodeRatesCallback);

@@ -10,6 +10,20 @@
     <body>
         <audio id="audio"></audio>
         <script>
+async function ensureCategory(expected, counter)
+{
+    if (internals.audioSessionCategory() == expected)
+        return "";
+
+    if (!counter)
+        counter = 0;
+    else if (counter > 100)
+        return `ensureCategory failed, expected was ${expected} and current value is ${internals.audioSessionCategory()}`;
+
+    await new Promise(resolve => setTimeout(resolve, 20));
+    return ensureCategory(expected, ++counter);
+}
+
 promise_test(async (test) => {
     assert_equals(navigator.audioSession.type, "auto");
     
@@ -21,7 +35,7 @@ promise_test(async (test) => {
 
 
     assert_equals(navigator.audioSession.type, "auto");
-    assert_equals(internals.audioSessionCategory(), "MediaPlayback");
+    assert_equals(await ensureCategory("MediaPlayback"), "", "initial MediaPlayback");
 
     navigator.audioSession.type = "ambient";
     assert_equals(internals.audioSessionCategory(), "AmbientSound");
@@ -39,8 +53,7 @@ promise_test(async (test) => {
     assert_equals(internals.audioSessionCategory(), "SoloAmbientSound");
 
     navigator.audioSession.type = "auto";
-    await new Promise(resolve => setTimeout(resolve, 50));
-    assert_equals(internals.audioSessionCategory(), "MediaPlayback");
+    assert_equals(await ensureCategory("MediaPlayback"), "", "final MediaPlayback");
 }, "AudioSession type");
         </script>
     </body>

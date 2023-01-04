@@ -303,9 +303,10 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
         return;
     }
     m_hasInitialized = true;
-#if ENABLE(VP9)
-    m_hasVP9HardwareDecoder = info->hasVP9HardwareDecoder;
-    m_hasVP9ExtensionSupport = info->hasVP9ExtensionSupport;
+
+#if ENABLE(VP9) && USE(LIBWEBRTC) && PLATFORM(COCOA)
+    WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(info->hasVP9HardwareDecoder);
+    WebProcess::singleton().libWebRTCCodecs().setHasVP9ExtensionSupport(info->hasVP9ExtensionSupport);
 #endif
 }
 
@@ -376,20 +377,6 @@ void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableV
     m_enableVP9Decoder = enableVP9Decoder;
     m_enableVP9SWDecoder = enableVP9SWDecoder;
     connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(enableVP8Decoder, enableVP9Decoder, enableVP9SWDecoder), { });
-}
-
-bool GPUProcessConnection::hasVP9HardwareDecoder()
-{
-    if (!waitForDidInitialize())
-        return false;
-    return m_hasVP9HardwareDecoder;
-}
-
-bool GPUProcessConnection::hasVP9ExtensionSupport()
-{
-    if (!waitForDidInitialize())
-        return false;
-    return m_hasVP9ExtensionSupport;
 }
 #endif
 

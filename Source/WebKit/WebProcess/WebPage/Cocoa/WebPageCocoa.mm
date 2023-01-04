@@ -63,6 +63,10 @@
 #import <WebCore/TextIterator.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#include "LibWebRTCCodecs.h"
+#endif
+
 #if PLATFORM(IOS)
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
@@ -80,6 +84,9 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 #if ENABLE(MEDIA_STREAM)
     if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
         captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess, parameters.shouldCaptureDisplayInGPUProcess, m_page->settings().webRTCRemoteVideoFrameEnabled());
+#endif
+#if USE(LIBWEBRTC)
+    LibWebRTCCodecs::setCallbacks(m_page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), m_page->settings().webRTCRemoteVideoFrameEnabled());
 #endif
 }
 

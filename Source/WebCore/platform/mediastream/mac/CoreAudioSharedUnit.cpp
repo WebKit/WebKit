@@ -61,7 +61,7 @@ const UInt32 inputBus = 1;
 class CoreAudioSharedInternalUnit :  public CoreAudioSharedUnit::InternalUnit {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Expected<UniqueRef<InternalUnit>, OSStatus> create();
+    static Expected<UniqueRef<InternalUnit>, OSStatus> create(bool shouldUseVPIO);
     explicit CoreAudioSharedInternalUnit(AudioUnit);
     ~CoreAudioSharedInternalUnit() final;
 
@@ -79,13 +79,22 @@ private:
     AudioUnit m_ioUnit { nullptr };
 };
 
-Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioSharedInternalUnit::create()
+Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioSharedInternalUnit::create(bool shouldUseVPIO)
 {
-    AudioComponentDescription ioUnitDescription = { kAudioUnitType_Output, kAudioUnitSubType_VoiceProcessingIO, kAudioUnitManufacturer_Apple, 0, 0 };
+    OSType unitSubType = kAudioUnitSubType_VoiceProcessingIO;
+    if (!shouldUseVPIO) {
+#if PLATFORM(MAC)
+        unitSubType = kAudioUnitSubType_HALOutput;
+#else
+        unitSubType = kAudioUnitSubType_RemoteIO;
+#endif
+    }
+
+    AudioComponentDescription ioUnitDescription = { kAudioUnitType_Output, unitSubType, kAudioUnitManufacturer_Apple, 0, 0 };
     AudioComponent ioComponent = PAL::AudioComponentFindNext(nullptr, &ioUnitDescription);
     ASSERT(ioComponent);
     if (!ioComponent) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedInternalUnit unable to find vpio unit component");
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedInternalUnit unable to find capture unit component");
         return makeUnexpected(-1);
     }
 
@@ -102,7 +111,7 @@ Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioShared
     AudioUnit ioUnit;
     auto err = PAL::AudioComponentInstanceNew(ioComponent, &ioUnit);
     if (err) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedInternalUnit unable to open vpio unit, error %d (%.4s)", (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedInternalUnit unable to open capture unit, error %d (%.4s)", (int)err, (char*)&err);
         return makeUnexpected(err);
     }
 
@@ -241,30 +250,21 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     mach_timebase_info(&timebaseInfo);
     m_DTSConversionRatio = 1e-9 * static_cast<double>(timebaseInfo.numer) / static_cast<double>(timebaseInfo.denom);
 
-    auto result = m_creationCallback ? m_creationCallback() : CoreAudioSharedInternalUnit::create();
+    m_shouldUseVPIO = enableEchoCancellation();
+    auto result = m_creationCallback ? m_creationCallback(m_shouldUseVPIO) : CoreAudioSharedInternalUnit::create(m_shouldUseVPIO);
     if (!result.has_value())
         return result.error();
 
     m_ioUnit = WTFMove(result.value()).moveToUniquePtr();
-    if (!enableEchoCancellation()) {
-        uint32_t param = 0;
-        if (auto err = m_ioUnit->set(kAUVoiceIOProperty_VoiceProcessingEnableAGC, kAudioUnitScope_Global, inputBus, &param, sizeof(param))) {
-            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio automatic gain control, error %d (%.4s)", this, (int)err, (char*)&err);
-            return err;
-        }
-        param = 1;
-        if (auto err = m_ioUnit->set(kAUVoiceIOProperty_BypassVoiceProcessing, kAudioUnitScope_Global, inputBus, &param, sizeof(param))) {
-            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit echo cancellation, error %d (%.4s)", this, (int)err, (char*)&err);
-            return err;
-        }
-    }
 
 #if HAVE(VPIO_DUCKING_LEVEL_API)
-    AUVoiceIOOtherAudioDuckingConfiguration configuration { true, kAUVoiceIOOtherAudioDuckingLevelMin };
-    if (auto err = m_ioUnit->set(kAUVoiceIOProperty_OtherAudioDuckingConfiguration, kAudioUnitScope_Global, inputBus, &configuration, sizeof(configuration))) {
-        if (err != kAudioUnitErr_InvalidProperty) {
-            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set ducking level, error %d (%.4s)", this, (int)err, (char*)&err);
-            return err;
+    if (m_shouldUseVPIO) {
+        AUVoiceIOOtherAudioDuckingConfiguration configuration { true, kAUVoiceIOOtherAudioDuckingLevelMin };
+        if (auto err = m_ioUnit->set(kAUVoiceIOProperty_OtherAudioDuckingConfiguration, kAudioUnitScope_Global, inputBus, &configuration, sizeof(configuration))) {
+            if (err != kAudioUnitErr_InvalidProperty) {
+                RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set ducking level, error %d (%.4s)", this, (int)err, (char*)&err);
+                return err;
+            }
         }
     }
 #endif // HAVE(VPIO_DUCKING_LEVEL_API)
@@ -272,10 +272,23 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
 #if PLATFORM(IOS_FAMILY)
     uint32_t param = 1;
     if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param))) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to enable vpio unit input, error %d (%.4s)", this, (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to enable capture unit input, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 #else
+    if (!m_shouldUseVPIO) {
+        uint32_t param = 1;
+        if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &param, sizeof(param))) {
+            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to enable capture unit input, error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
+        param = 0;
+        if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, outputBus, &param, sizeof(param))) {
+            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to enable capture unit output, error %d (%.4s)", this, (int)err, (char*)&err);
+            return err;
+        }
+    }
+
     auto deviceID = captureDeviceID();
     // FIXME: We probably want to make default input/output devices.
     if (!deviceID) {
@@ -284,17 +297,19 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     }
 
     if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, inputBus, &deviceID, sizeof(deviceID))) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit capture device ID %d, error %d (%.4s)", this, (int)deviceID, (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set capture unit capture device ID %d, error %d (%.4s)", this, (int)deviceID, (int)err, (char*)&err);
         return err;
     }
 
-    uint32_t defaultOutputDeviceID;
-    auto err = m_ioUnit->defaultOutputDevice(&defaultOutputDeviceID);
-    if (!err) {
-        err = m_ioUnit->set(kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, outputBus, &defaultOutputDeviceID, sizeof(defaultOutputDeviceID));
-        RELEASE_LOG_ERROR_IF(err, WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set vpio unit output device ID %d, error %d (%.4s)", this, (int)defaultOutputDeviceID, (int)err, (char*)&err);
+    if (m_shouldUseVPIO) {
+        uint32_t defaultOutputDeviceID;
+        auto err = m_ioUnit->defaultOutputDevice(&defaultOutputDeviceID);
+        if (!err) {
+            err = m_ioUnit->set(kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, outputBus, &defaultOutputDeviceID, sizeof(defaultOutputDeviceID));
+            RELEASE_LOG_ERROR_IF(err, WebRTC, "CoreAudioSharedUnit::setupAudioUnit(%p) unable to set capture unit output device ID %d, error %d (%.4s)", this, (int)defaultOutputDeviceID, (int)err, (char*)&err);
+        }
+        setOutputDeviceID(!err ? defaultOutputDeviceID : 0);
     }
-    setOutputDeviceID(!err ? defaultOutputDeviceID : 0);
 #endif
 
     // FIXME: Add support for different speaker/microphone sample rates.
@@ -335,7 +350,7 @@ OSStatus CoreAudioSharedUnit::configureMicrophoneProc(int sampleRate)
 
     AURenderCallbackStruct callback = { microphoneCallback, this };
     if (auto err = m_ioUnit->set(kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, inputBus, &callback, sizeof(callback))) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to set vpio unit mic proc, error %d (%.4s)", this, (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureMicrophoneProc(%p) unable to set capture unit mic proc, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 
@@ -372,7 +387,7 @@ OSStatus CoreAudioSharedUnit::configureSpeakerProc(int sampleRate)
 
     AURenderCallbackStruct callback = { speakerCallback, this };
     if (auto err = m_ioUnit->set(kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, outputBus, &callback, sizeof(callback))) {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to set vpio unit speaker proc, error %d (%.4s)", this, (int)err, (char*)&err);
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::configureSpeakerProc(%p) unable to set capture unit speaker proc, error %d (%.4s)", this, (int)err, (char*)&err);
         return err;
     }
 
@@ -452,7 +467,7 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
     if (m_isReconfiguring)
         return false;
 
-    // Pull through the vpio unit to our mic buffer.
+    // Pull through the capture unit to our mic buffer.
     m_microphoneSampleBuffer->reset();
     AudioBufferList& bufferList = m_microphoneSampleBuffer->bufferList();
     if (auto err = m_ioUnit->render(&ioActionFlags, &timeStamp, inBusNumber, inNumberFrames, &bufferList)) {
@@ -597,7 +612,7 @@ void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
 void CoreAudioSharedUnit::validateOutputDevice(uint32_t currentOutputDeviceID)
 {
 #if PLATFORM(MAC)
-    if (!m_ioUnit)
+    if (!m_shouldUseVPIO || !m_ioUnit)
         return;
 
     uint32_t currentDefaultOutputDeviceID = 0;

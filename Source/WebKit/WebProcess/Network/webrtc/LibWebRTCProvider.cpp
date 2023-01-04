@@ -63,12 +63,7 @@ private:
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(ScriptExecutionContextIdentifier identifier, webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
-    if (!m_didInitializeCallback) {
-        // We initialize only once since callbacks are used in background threads.
-        auto* page = m_webPage.corePage();
-        LibWebRTCCodecs::setCallbacks(page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), page && page->settings().webRTCRemoteVideoFrameEnabled());
-        m_didInitializeCallback = true;
-    }
+    LibWebRTCCodecs::initializeIfNeeded();
 #endif
 
     auto& networkMonitor = WebProcess::singleton().libWebRTCNetwork().monitor();

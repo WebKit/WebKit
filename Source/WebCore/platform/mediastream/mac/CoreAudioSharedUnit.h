@@ -71,7 +71,7 @@ public:
     CoreAudioSharedUnit();
     ~CoreAudioSharedUnit();
 
-    using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>()>;
+    using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
     void setInternalUnitCreationCallback(CreationCallback&& callback) { m_creationCallback = WTFMove(callback); }
     using GetSampleRateCallback = Function<int()>;
     void setInternalUnitGetSampleRateCallback(GetSampleRateCallback&& callback) { m_getSampleRateCallback = WTFMove(callback); }
@@ -85,6 +85,8 @@ public:
     void setIsInBackground(bool);
     void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback) { m_statusBarWasTappedCallback = WTFMove(callback); }
 #endif
+
+    bool isUsingVPIO() const { return m_shouldUseVPIO; }
 
 private:
     static size_t preferredIOBufferSize();
@@ -164,6 +166,8 @@ private:
     std::unique_ptr<MediaCaptureStatusBarManager> m_statusBarManager;
     Function<void(CompletionHandler<void()>&&)> m_statusBarWasTappedCallback;
 #endif
+
+    bool m_shouldUseVPIO { true };
 };
 
 } // namespace WebCore

@@ -68,6 +68,7 @@ public:
     ~LibWebRTCCodecs();
 
     static void setCallbacks(bool useGPUProcess, bool useRemoteFrames);
+    static void initializeIfNeeded();
 
     std::optional<VideoCodecType> videoCodecTypeFromWebCodec(const String&);
 
@@ -199,6 +200,7 @@ private:
     size_t m_pixelBufferPoolHeight { 0 };
     bool m_supportVP9VTB { false };
     std::optional<WTFLogLevel> m_loggingLevel;
+    bool m_useGPUProcess { false };
     bool m_useRemoteFrames { false };
     bool m_hasVP9ExtensionSupport { false };
 };
