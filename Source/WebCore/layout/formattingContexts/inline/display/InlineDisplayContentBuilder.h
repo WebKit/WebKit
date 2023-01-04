@@ -84,7 +84,6 @@ private:
     const InlineFormattingContext& m_formattingContext;
     InlineFormattingState& m_formattingState;
     size_t m_lineIndex { 0 };
-    InlineLayoutUnit m_lineBoxOffset { 0.f };
     bool m_contentHasInkOverflow { false };
 };
 

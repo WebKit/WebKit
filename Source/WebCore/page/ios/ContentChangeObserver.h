@@ -184,6 +184,8 @@ private:
 
     enum class ElementHadRenderer { No, Yes };
     bool isConsideredActionableContent(const Element&, ElementHadRenderer) const;
+    
+    bool isContentChangeObserverEnabled();
 
     enum class Event {
         StartedTouchStartEventDispatching,

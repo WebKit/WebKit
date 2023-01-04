@@ -93,7 +93,7 @@ public:
         auto& style = box().style();
         auto expansion = box().expansion();
         auto rect = this->visualRectIgnoringBlockDirection();
-        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLogicalOffset());
+        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentVisualOffsetInInlineDirection());
         auto characterScanForCodePath = isText() && !renderText().canUseSimpleFontCodePath();
         auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text()->renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());

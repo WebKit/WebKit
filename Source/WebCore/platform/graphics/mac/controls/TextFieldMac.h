@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class TextFieldPart;
+
 class TextFieldMac final : public ControlMac {
 public:
     TextFieldMac(TextFieldPart& owningPart, ControlFactoryMac&, NSTextFieldCell *);

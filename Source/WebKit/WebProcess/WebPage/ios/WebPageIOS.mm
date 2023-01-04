@@ -752,7 +752,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     auto isFirstSyntheticClickOnPage = !m_hasHandledSyntheticClick;
     m_hasHandledSyntheticClick = true;
 
-    if (!respondingDocument.settings().contentChangeObserverEnabled() || respondingDocument.quirks().shouldIgnoreContentObservationForSyntheticClick(isFirstSyntheticClickOnPage)) {
+    if (!respondingDocument.settings().contentChangeObserverEnabled() || respondingDocument.quirks().shouldDisableContentChangeObserver() || respondingDocument.quirks().shouldIgnoreContentObservationForSyntheticClick(isFirstSyntheticClickOnPage)) {
         completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap, pointerId);
         return;
     }
@@ -875,7 +875,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     RefPtr<Frame> newFocusedFrame = CheckedRef(m_page->focusController())->focusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
 
-    if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
+    if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled() && !nodeRespondingToClick.document().quirks().shouldDisableContentChangeObserver()) {
         auto& document = nodeRespondingToClick.document();
         // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
         if (document.quirks().needsYouTubeMouseOutQuirk()) {

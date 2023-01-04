@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIURLResponse_h
-#define APIURLResponse_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/ResourceResponse.h>
 #include <wtf/Forward.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
 
 namespace API {
 
@@ -46,15 +40,13 @@ public:
 
     const WebCore::ResourceResponse& resourceResponse() const { return m_response; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
-
 private:
-    explicit URLResponse(const WebCore::ResourceResponse&);
+    explicit URLResponse(const WebCore::ResourceResponse& response)
+        : m_response(response)
+    {
+    }
 
     WebCore::ResourceResponse m_response;
 };
 
 } // namespace API
-
-#endif // APIURLResponse_h

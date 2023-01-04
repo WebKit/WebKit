@@ -213,7 +213,7 @@ public:
     virtual Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const;
     // Returns the duration of the animation for the progress bar.
     virtual Seconds animationDurationForProgressBar(const RenderProgress&) const;
-    virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const;
+    virtual IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const;
 
     virtual FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const;
     virtual bool supportsMeter(ControlPartType, const HTMLMeterElement&) const;

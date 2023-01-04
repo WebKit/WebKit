@@ -9,7 +9,7 @@ PASS Can set 'shape-margin' to a length: -3.14em
 PASS Can set 'shape-margin' to a length: 3.14cm
 PASS Can set 'shape-margin' to a length: calc(0px + 0em)
 PASS Can set 'shape-margin' to a percent: 0%
-FAIL Can set 'shape-margin' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'shape-margin' to a percent: -3.14%
 PASS Can set 'shape-margin' to a percent: 3.14%
 PASS Can set 'shape-margin' to a percent: calc(0% + 0%)
 PASS Setting 'shape-margin' to a time: 0s throws TypeError

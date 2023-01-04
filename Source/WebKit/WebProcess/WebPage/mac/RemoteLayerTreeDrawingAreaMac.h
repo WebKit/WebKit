@@ -55,8 +55,6 @@ private:
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint);
 
     void willCommitLayerTree(RemoteLayerTreeTransaction&) override;
-
-    WebCore::TiledBacking* mainFrameTiledBacking() const;
 };
 
 } // namespace WebKit

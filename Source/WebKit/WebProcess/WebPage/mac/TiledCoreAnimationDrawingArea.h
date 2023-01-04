@@ -130,7 +130,6 @@ private:
     void setRootCompositingLayer(CALayer *);
     void updateRootLayers();
 
-    WebCore::TiledBacking* mainFrameTiledBacking() const;
     void updateDebugInfoLayer(bool showLayer);
 
     void scaleViewToFitDocumentIfNeeded();

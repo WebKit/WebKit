@@ -92,9 +92,6 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
 
     m_lineIndex = lineIndex;
-    m_lineBoxOffset = lineContent.lineLogicalTopLeft.x() - lineContent.lineInitialLogicalLeft;
-    // Every line starts with a root box, even the empty ones.
-    appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), displayLine, root().style().writingMode()), lineBox.rootInlineBox().hasContent(), boxes);
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
     if (contentNeedsBidiReordering)
@@ -407,7 +404,9 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
     ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto writingMode = root().style().writingMode();
-    auto contentStartInVisualOrder = movePointHorizontallyForWritingMode(displayLine.topLeft(), displayLine.contentLogicalOffset(), writingMode);
+    auto contentStartInVisualOrder = displayLine.topLeft();
+
+    appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), displayLine, writingMode), lineBox.rootInlineBox().hasContent(), boxes);
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
@@ -634,9 +633,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
     auto lineLogicalTop = isHorizontalWritingMode ? displayLine.top() : displayLine.left();
     auto lineLogicalLeft = isHorizontalWritingMode ? displayLine.left() : displayLine.top();
-    auto contentStartInInlineDirectionVisualOrder = lineLogicalLeft + displayLine.contentLogicalOffset();
+    auto contentStartInInlineDirectionVisualOrder = lineLogicalLeft + displayLine.contentVisualOffsetInInlineDirection();
     auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
+
+        auto rootInlineBoxVidsualRectInInlineDirection = lineBox.logicalRectForRootInlineBox();
+        rootInlineBoxVidsualRectInInlineDirection.setLeft(displayLine.contentVisualOffsetInInlineDirection());
+        appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(rootInlineBoxVidsualRectInInlineDirection, displayLine, root().style().writingMode()), lineBox.rootInlineBox().hasContent(), boxes);
 
         auto contentRightInInlineDirectionVisualOrder = contentStartInInlineDirectionVisualOrder;
         auto& runs = lineContent.runs;
@@ -953,14 +956,14 @@ InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingM
     switch (writingMode) {
     case WritingMode::TopToBottom: {
         auto visualRect = rootInlineBoxLogicalRect;
-        visualRect.moveBy({ displayLine.left() + displayLine.contentLogicalOffset(), displayLine.top() });
+        visualRect.moveBy({ displayLine.left(), displayLine.top() });
         return visualRect;
     }
     case WritingMode::LeftToRight:
     case WritingMode::RightToLeft: {
         // See InlineFormattingGeometry for more info.
         auto visualRect = InlineRect { rootInlineBoxLogicalRect.left(), rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.height(), rootInlineBoxLogicalRect.width() };
-        visualRect.moveBy({ displayLine.left(), displayLine.top() + displayLine.contentLogicalOffset() });
+        visualRect.moveBy({ displayLine.left(), displayLine.top() });
         return visualRect;
     }
     default:
@@ -1000,25 +1003,6 @@ void InlineDisplayContentBuilder::setRightForWritingMode(InlineDisplay::Box& dis
         ASSERT_NOT_REACHED();
         break;
     }
-}
-
-InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMode(const InlineLayoutPoint& logicalPoint, InlineLayoutUnit horizontalOffset, WritingMode writingMode) const
-{
-    auto visualPoint = logicalPoint;
-    switch (writingMode) {
-    case WritingMode::TopToBottom:
-        visualPoint.moveBy(FloatPoint { horizontalOffset, { } });
-        break;
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft: {
-        visualPoint.moveBy(FloatPoint { { }, horizontalOffset });
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return visualPoint;
 }
 
 }

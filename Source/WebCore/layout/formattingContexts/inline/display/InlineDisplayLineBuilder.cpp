@@ -101,9 +101,10 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         ? lineContent.lineLogicalTopLeft.x()
         : InlineLayoutUnit { constraints.visualLeft() + constraints.horizontal().logicalWidth + constraints.horizontal().logicalLeft  } - (lineContent.lineLogicalTopLeft.x() + lineBoxLogicalWidth);
 
-    auto contentVisualLeft = isLeftToRightDirection
-        ? lineBox.rootInlineBoxAlignmentOffset()
-        : lineBoxLogicalWidth - lineBox.rootInlineBoxAlignmentOffset() - lineContent.contentLogicalRight;
+    auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
+    auto contentVisualOffsetInInlineDirection = isLeftToRightDirection
+        ? rootInlineBoxRect.left()
+        : lineBoxLogicalWidth - (rootInlineBoxRect.left() + lineContent.contentLogicalRight); // Note that with hanging content lineContent.contentLogicalRight is not the same as rootLineBoxRect.right().
     auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineBox.hasContent() ? lineContent.lineLogicalWidth : 0.f, lineBox.logicalRect().height() };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineContent, lineBox, lineBoxRect);
 
@@ -114,7 +115,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.ascent()
         , lineBox.baselineType()
-        , contentVisualLeft
+        , contentVisualOffsetInInlineDirection
         , rootInlineBox.logicalWidth()
         , lineBox.isHorizontal()
         , trailingEllipsisRect(lineContent, lineBox, lineBoxRect)

@@ -466,7 +466,7 @@ Seconds RenderThemeAdwaita::animationDurationForProgressBar(const RenderProgress
     return progressAnimationFrameRate * progressAnimationFrameCount;
 }
 
-IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderObject&, const IntRect& bounds) const
+IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
 {
     return { bounds.x(), bounds.y(), bounds.width(), progressBarSize };
 }

@@ -1,5 +1,5 @@
 // Copyright 2016 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -49,9 +49,6 @@
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariantLigaturesParser.h"
 #include "CSSFontVariantNumericParser.h"
-#if ENABLE(VARIATION_FONTS)
-#include "CSSFontVariationValue.h"
-#endif
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridAutoRepeatValue.h"
@@ -5101,50 +5098,6 @@ RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, const CSSParserCo
 
     return values;
 }
-
-#if ENABLE(VARIATION_FONTS)
-
-static RefPtr<CSSValue> consumeFontVariationTag(CSSParserTokenRange& range)
-{
-    if (range.peek().type() != StringToken)
-        return nullptr;
-    
-    auto string = range.consumeIncludingWhitespace().value();
-    
-    FontTag tag;
-    if (string.length() != tag.size())
-        return nullptr;
-    for (unsigned i = 0; i < tag.size(); ++i) {
-        // Limits the range of characters to 0x20-0x7E, following the tag name rules defiend in the OpenType specification.
-        UChar character = string[i];
-        if (character < 0x20 || character > 0x7E)
-            return nullptr;
-        tag[i] = character;
-    }
-    
-    if (range.atEnd())
-        return nullptr;
-
-    auto tagValue = consumeNumberRaw(range);
-    if (!tagValue)
-        return nullptr;
-    
-    return CSSFontVariationValue::create(tag, tagValue->value);
-}
-
-RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange& range)
-{
-    if (range.peek().id() == CSSValueNormal)
-        return consumeIdent(range);
-    
-    auto settings = consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeFontVariationTag);
-    if (!settings || !settings->length())
-        return nullptr;
-
-    return settings;
-}
-
-#endif // ENABLE(VARIATION_FONTS)
 
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range)
 {

@@ -544,7 +544,13 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebPushMessage.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
 
+    Shared/API/APIError.serialization.in
+    Shared/API/APIFrameHandle.serialization.in
     Shared/API/APIGeometry.serialization.in
+    Shared/API/APIPageHandle.serialization.in
+    Shared/API/APIURL.serialization.in
+    Shared/API/APIURLRequest.serialization.in
+    Shared/API/APIURLResponse.serialization.in
 
     Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 

@@ -1,0 +1,46 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface StorageManager: original interface defined
+PASS Partial interface StorageManager: member names are unique
+PASS FileSystemHandle interface: existence and properties of interface object
+PASS FileSystemHandle interface object length
+PASS FileSystemHandle interface object name
+PASS FileSystemHandle interface: existence and properties of interface prototype object
+PASS FileSystemHandle interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemHandle interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemHandle interface: attribute kind
+PASS FileSystemHandle interface: attribute name
+PASS FileSystemHandle interface: operation isSameEntry(FileSystemHandle)
+PASS FileSystemFileHandle interface: existence and properties of interface object
+PASS FileSystemFileHandle interface object length
+PASS FileSystemFileHandle interface object name
+PASS FileSystemFileHandle interface: existence and properties of interface prototype object
+PASS FileSystemFileHandle interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemFileHandle interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemFileHandle interface: operation getFile()
+FAIL FileSystemFileHandle interface: operation createWritable(optional FileSystemCreateWritableOptions) assert_own_property: interface prototype object missing non-static operation expected property "createWritable" missing
+PASS FileSystemFileHandle interface: member createSyncAccessHandle
+PASS FileSystemDirectoryHandle interface: existence and properties of interface object
+PASS FileSystemDirectoryHandle interface object length
+PASS FileSystemDirectoryHandle interface object name
+PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object
+PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object's "constructor" property
+PASS FileSystemDirectoryHandle interface: existence and properties of interface prototype object's @@unscopables property
+PASS FileSystemDirectoryHandle interface: async iterable<USVString, FileSystemHandle>
+PASS FileSystemDirectoryHandle interface: operation getFileHandle(USVString, optional FileSystemGetFileOptions)
+PASS FileSystemDirectoryHandle interface: operation getDirectoryHandle(USVString, optional FileSystemGetDirectoryOptions)
+PASS FileSystemDirectoryHandle interface: operation removeEntry(USVString, optional FileSystemRemoveOptions)
+PASS FileSystemDirectoryHandle interface: operation resolve(FileSystemHandle)
+FAIL FileSystemWritableFileStream interface: existence and properties of interface object assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface object length assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface object name assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface: operation write(FileSystemWriteChunkType) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface: operation seek(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+FAIL FileSystemWritableFileStream interface: operation truncate(unsigned long long) assert_own_property: self does not have own property "FileSystemWritableFileStream" expected property "FileSystemWritableFileStream" missing
+PASS FileSystemSyncAccessHandle interface: existence and properties of interface object
+PASS StorageManager interface: operation getDirectory()
+

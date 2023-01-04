@@ -155,6 +155,10 @@ webkit.org/b/235072 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 
 webanimations/frame-rate [ Pass ]
 
+imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
+imported/w3c/web-platform-tests/fs/ [ Pass ]
+storage/filesystemaccess/ [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

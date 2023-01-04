@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -425,13 +425,14 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
         // Update the start of content, so we don't try to move the list into itself.  bug 19066
         // Layout is necessary since start's node's inline renderers may have been destroyed by the insertion
         // The end of the content may have changed after the insertion and layout so update it as well.
-        if (insertionPos == start.deepEquivalent()) {
-            listElement->document().updateLayoutIgnorePendingStylesheets();
-            start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
-            end = endOfParagraph(start, CanSkipOverEditingBoundary);
-        }
+        if (insertionPos == start.deepEquivalent())
+            start = originalStart;
     }
 
+    // Inserting list element and list item list may change start of pargraph to move. We calculate start of paragraph again.
+    document().updateLayoutIgnorePendingStylesheets();
+    start = startOfParagraph(start, CanSkipOverEditingBoundary);
+    end = endOfParagraph(start, CanSkipOverEditingBoundary);
     moveParagraph(start, end, positionBeforeNode(placeholder.ptr()), true);
 
     if (listElement)

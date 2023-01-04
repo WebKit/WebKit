@@ -14,25 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-IndexedDB.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-isSameEntry.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-BroadcastChannel.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-Error.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-frames.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-windows.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-MessagePort-workers.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-frames.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-windows.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-postMessage-workers.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemBaseHandle-remove.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-getDirectoryHandle.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-getFileHandle.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-iteration.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-removeEntry.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-resolve.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemFileHandle-create-sync-access-handle-dedicated-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemFileHandle-getFile.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemSyncAccessHandle-flush.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream-piped.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream-write.js
-/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemWritableFileStream.js
+/LayoutTests/imported/w3c/web-platform-tests/file-system-access/script-tests/FileSystemDirectoryHandle-move.js

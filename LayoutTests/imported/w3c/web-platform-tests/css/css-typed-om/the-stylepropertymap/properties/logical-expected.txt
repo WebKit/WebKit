@@ -191,7 +191,7 @@ PASS Can set 'padding-block-start' to CSS-wide keywords: unset
 PASS Can set 'padding-block-start' to CSS-wide keywords: revert
 PASS Can set 'padding-block-start' to var() references:  var(--A)
 PASS Can set 'padding-block-start' to a percent: 0%
-FAIL Can set 'padding-block-start' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'padding-block-start' to a percent: -3.14%
 PASS Can set 'padding-block-start' to a percent: 3.14%
 PASS Can set 'padding-block-start' to a percent: calc(0% + 0%)
 PASS Can set 'padding-block-start' to a length: 0px
@@ -222,7 +222,7 @@ PASS Can set 'padding-block-end' to CSS-wide keywords: unset
 PASS Can set 'padding-block-end' to CSS-wide keywords: revert
 PASS Can set 'padding-block-end' to var() references:  var(--A)
 PASS Can set 'padding-block-end' to a percent: 0%
-FAIL Can set 'padding-block-end' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'padding-block-end' to a percent: -3.14%
 PASS Can set 'padding-block-end' to a percent: 3.14%
 PASS Can set 'padding-block-end' to a percent: calc(0% + 0%)
 PASS Can set 'padding-block-end' to a length: 0px
@@ -253,7 +253,7 @@ PASS Can set 'padding-inline-start' to CSS-wide keywords: unset
 PASS Can set 'padding-inline-start' to CSS-wide keywords: revert
 PASS Can set 'padding-inline-start' to var() references:  var(--A)
 PASS Can set 'padding-inline-start' to a percent: 0%
-FAIL Can set 'padding-inline-start' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'padding-inline-start' to a percent: -3.14%
 PASS Can set 'padding-inline-start' to a percent: 3.14%
 PASS Can set 'padding-inline-start' to a percent: calc(0% + 0%)
 PASS Can set 'padding-inline-start' to a length: 0px
@@ -284,7 +284,7 @@ PASS Can set 'padding-inline-end' to CSS-wide keywords: unset
 PASS Can set 'padding-inline-end' to CSS-wide keywords: revert
 PASS Can set 'padding-inline-end' to var() references:  var(--A)
 PASS Can set 'padding-inline-end' to a percent: 0%
-FAIL Can set 'padding-inline-end' to a percent: -3.14% assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'padding-inline-end' to a percent: -3.14%
 PASS Can set 'padding-inline-end' to a percent: 3.14%
 PASS Can set 'padding-inline-end' to a percent: calc(0% + 0%)
 PASS Can set 'padding-inline-end' to a length: 0px

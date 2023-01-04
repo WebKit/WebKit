@@ -273,11 +273,8 @@ Shared/API/APIArray.cpp
 Shared/API/APIData.cpp
 Shared/API/APIDictionary.cpp
 Shared/API/APIError.cpp
-Shared/API/APIFrameHandle.cpp
 Shared/API/APIObject.cpp
-Shared/API/APIPageHandle.cpp
 Shared/API/APIURLRequest.cpp
-Shared/API/APIURLResponse.cpp
 
 Shared/API/c/WKArray.cpp
 Shared/API/c/WKCertificateInfo.cpp

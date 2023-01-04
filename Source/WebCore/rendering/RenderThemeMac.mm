@@ -88,12 +88,6 @@
 #endif
 
 // FIXME: This should go into an SPI.h file in the spi directory.
-@interface NSTextFieldCell ()
-- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
-- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus maskOnly:(BOOL)maskOnly;
-@end
-
-// FIXME: This should go into an SPI.h file in the spi directory.
 @interface NSSearchFieldCell ()
 @property (getter=isCenteredLook) BOOL centeredLook;
 @end
@@ -124,40 +118,6 @@ constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
 {
     UNUSED_PARAM(notification);
     WebCore::RenderTheme::singleton().platformColorsDidChange();
-}
-
-@end
-
-@interface WebCoreTextFieldCell : NSTextFieldCell
-@end
-
-@implementation WebCoreTextFieldCell
-
-- (CFDictionaryRef)_adjustedCoreUIDrawOptionsForDrawingBordersOnly:(CFDictionaryRef)defaultOptions
-{
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    // Dark mode controls don't have borders, just a semi-transparent background of shadows.
-    // In the dark mode case we can't disable borders, or we will not paint anything for the control.
-    NSAppearanceName appearance = [self.controlView.effectiveAppearance bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
-    if ([appearance isEqualToString:NSAppearanceNameDarkAqua])
-        return defaultOptions;
-#endif
-
-    // FIXME: This is a workaround for <rdar://problem/11385461>. When that bug is resolved, we should remove this code,
-    // as well as the internal method overrides below.
-    auto coreUIDrawOptions = adoptCF(CFDictionaryCreateMutableCopy(NULL, 0, defaultOptions));
-    CFDictionarySetValue(coreUIDrawOptions.get(), CFSTR("borders only"), kCFBooleanTrue);
-    return coreUIDrawOptions.autorelease();
-}
-
-- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus
-{
-    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus]];
-}
-
-- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus maskOnly:(BOOL)maskOnly
-{
-    return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus maskOnly:maskOnly]];
 }
 
 @end
@@ -269,6 +229,7 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
     case ControlPartType::Checkbox:
     case ControlPartType::Listbox:
     case ControlPartType::Meter:
+    case ControlPartType::ProgressBar:
     case ControlPartType::Radio:
     case ControlPartType::TextArea:
     case ControlPartType::TextField:
@@ -289,6 +250,7 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
     ControlPartType type = renderer.style().effectiveAppearance();
     return type == ControlPartType::Checkbox
         || type == ControlPartType::Meter
+        || type == ControlPartType::ProgressBar
         || type == ControlPartType::Radio;
 }
 
@@ -1229,49 +1191,14 @@ bool RenderThemeMac::supportsMeter(ControlPartType type, const HTMLMeterElement&
     return type == ControlPartType::Meter;
 }
 
-const IntSize* RenderThemeMac::progressBarSizes() const
+IntRect RenderThemeMac::progressBarRectForBounds(const RenderProgress& renderProgress, const IntRect& bounds) const
 {
-    static const IntSize sizes[4] = { IntSize(0, 20), IntSize(0, 12), IntSize(0, 12), IntSize(0, 20) };
-    return sizes;
-}
+    auto* control = const_cast<RenderProgress&>(renderProgress).ensureControlPartForRenderer();
+    if (!control)
+        return bounds;
 
-const int* RenderThemeMac::progressBarMargins(NSControlSize controlSize) const
-{
-    static const int margins[4][4] =
-    {
-        { 0, 0, 1, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 1, 0 },
-    };
-    return margins[controlSize];
-}
-
-IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject& renderObject, const IntRect& bounds) const
-{
-    // Workaround until <rdar://problem/15855086> is fixed.
-    int maxDimension = static_cast<int>(std::numeric_limits<ushort>::max());
-    IntRect progressBarBounds(bounds.x(), bounds.y(), std::min(bounds.width(), maxDimension), std::min(bounds.height(), maxDimension));
-    if (ControlPartType::NoControl == renderObject.style().effectiveAppearance())
-        return progressBarBounds;
-
-    float zoomLevel = renderObject.style().effectiveZoom();
-    NSControlSize controlSize = controlSizeForFont(renderObject.style());
-    IntSize size = progressBarSizes()[controlSize];
-    size.setHeight(size.height() * zoomLevel);
-    size.setWidth(progressBarBounds.width());
-
-    // Now inflate it to account for the shadow.
-    IntRect inflatedRect = progressBarBounds;
-    if (progressBarBounds.height() <= minimumProgressBarHeight(renderObject.style()))
-        inflatedRect = IntRect(inflateRect(inflatedRect, size, progressBarMargins(controlSize), zoomLevel));
-
-    return inflatedRect;
-}
-
-int RenderThemeMac::minimumProgressBarHeight(const RenderStyle& style) const
-{
-    return sizeForSystemFont(style, progressBarSizes()).height();
+    auto controlStyle = extractControlStyleForRenderer(renderProgress);
+    return IntRect(control->rectForBounds(bounds, controlStyle));
 }
 
 Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(const RenderProgress&) const
@@ -1281,64 +1208,6 @@ Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(const RenderProgre
 
 void RenderThemeMac::adjustProgressBarStyle(RenderStyle&, const Element*) const
 {
-}
-
-bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    if (!is<RenderProgress>(renderObject))
-        return true;
-
-    LocalDefaultSystemAppearance localAppearance(renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
-
-    IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
-    NSControlSize controlSize = controlSizeForFont(renderObject.style());
-    const auto& renderProgress = downcast<RenderProgress>(renderObject);
-    float deviceScaleFactor = renderObject.document().deviceScaleFactor();
-    bool isIndeterminate = renderProgress.position() < 0;
-    auto imageBuffer = paintInfo.context().createImageBuffer(inflatedRect.size(), deviceScaleFactor);
-    if (!imageBuffer)
-        return true;
-
-    ContextContainer cgContextContainer(imageBuffer->context());
-    CGContextRef cgContext = cgContextContainer.context();
-
-    auto coreUISizeForProgressBarSize = [](NSControlSize size) -> CFStringRef {
-        switch (size) {
-        case NSControlSizeMini:
-        case NSControlSizeSmall:
-            return kCUISizeSmall;
-        case NSControlSizeRegular:
-#if HAVE(LARGE_CONTROL_SIZE)
-        case NSControlSizeLarge:
-#endif
-            return kCUISizeRegular;
-        }
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    };
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, inflatedRect.width(), inflatedRect.height()) context:cgContext options:@{
-    ALLOW_DEPRECATED_DECLARATIONS_END
-        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)(isIndeterminate ? kCUIWidgetProgressIndeterminateBar : kCUIWidgetProgressBar),
-        (__bridge NSString *)kCUIValueKey: @(isIndeterminate ? 1 : std::min(nextafter(1.0, -1), renderProgress.position())),
-        (__bridge NSString *)kCUISizeKey: (__bridge NSString *)coreUISizeForProgressBarSize(controlSize),
-        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
-        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
-        (__bridge NSString *)kCUIPresentationStateKey: (__bridge NSString *)(isActive(renderObject) ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive),
-        (__bridge NSString *)kCUIOrientationKey: (__bridge NSString *)kCUIOrientHorizontal,
-        (__bridge NSString *)kCUIAnimationStartTimeKey: @(renderProgress.animationStartTime().secondsSinceEpoch().seconds()),
-        (__bridge NSString *)kCUIAnimationTimeKey: @(MonotonicTime::now().secondsSinceEpoch().seconds())
-    }];
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    if (!renderProgress.style().isLeftToRightDirection()) {
-        paintInfo.context().translate(2 * inflatedRect.x() + inflatedRect.width(), 0);
-        paintInfo.context().scale(FloatSize(-1, 1));
-    }
-
-    paintInfo.context().drawConsumingImageBuffer(WTFMove(imageBuffer), inflatedRect.location());
-    return false;
 }
 
 const float baseFontSize = 11.0f;

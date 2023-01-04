@@ -5,7 +5,7 @@ PASS Can set 'animation-duration' to CSS-wide keywords: unset
 PASS Can set 'animation-duration' to CSS-wide keywords: revert
 PASS Can set 'animation-duration' to var() references:  var(--A)
 PASS Can set 'animation-duration' to a time: 0s
-FAIL Can set 'animation-duration' to a time: -3.14ms assert_approx_equals: expected -0.00314 +/- 0.000001 but got 0
+PASS Can set 'animation-duration' to a time: -3.14ms
 PASS Can set 'animation-duration' to a time: 3.14s
 PASS Can set 'animation-duration' to a time: calc(0s + 0ms)
 PASS Setting 'animation-duration' to a length: 0px throws TypeError

@@ -32,6 +32,7 @@
 #import "Download.h"
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
+#import "NetworkIssueReporter.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
 #import "WebCoreArgumentCoders.h"
@@ -540,6 +541,12 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
     WTFEmitSignpost(m_task.get(), "DataTask", "received response headers");
     if (isTopLevelNavigation())
         updateFirstPartyInfoForSession(response.url());
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    else if (NetworkIssueReporter::shouldReport([m_task _incompleteTaskMetrics])) {
+        if (auto session = networkSession())
+            session->reportNetworkIssue(m_webPageProxyID, firstRequest().url());
+    }
+#endif
     NetworkDataTask::didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));
 }
 

@@ -1,0 +1,19 @@
+
+FAIL move(name) to rename an empty directory promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS move("") to rename an empty directory fails
+FAIL move(name) to rename a non-empty directory promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+PASS move(dir, name) to rename an empty directory
+FAIL move(dir, name) to rename a non-empty directory promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir) to move an empty directory to a new directory promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS move(dir, name) to move an empty directory to a new directory
+FAIL move(dir) to move a non-empty directory to a new directory promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir, name) to move a non-empty directory to a new directory promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir) can be called multiple times promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir, name) can be called multiple times promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir, name) with a name with invalid characters should fail promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir, "") should fail promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL move(dir, name) to move a directory within itself fails promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Not enough arguments" that is not a DOMException InvalidModificationError: property "code" is equal to undefined, expected 13
+FAIL move(dir, name) to move a directory within itself and rename fails promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL move(dir) to move a directory within a descendent fails promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Not enough arguments" that is not a DOMException InvalidModificationError: property "code" is equal to undefined, expected 13
+FAIL move(dir, name) to move a directory within a descendent fails promise_rejects_dom: function "function () { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+

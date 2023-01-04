@@ -1,0 +1,4 @@
+
+FAIL isSameEntry works as expected with buckets promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
+FAIL getDirectory promise rejects if bucket has been deleted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
+

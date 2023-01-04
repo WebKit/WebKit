@@ -1232,6 +1232,7 @@ webkit.org/b/233796 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 #////////////////////////////////////////////////////////////////////////////////////////
 
 media/audioSession [ Skip ]
+http/tests/webrtc/audioSessionInFrames.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Media-related bugs
@@ -2804,18 +2805,6 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
-
-webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker.html [ Failure ]
-webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html [ Failure ]
-webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker.html [ Failure ]
-webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker.html [ Failure ]
-webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker.html [ Failure ]
-webkit.org/b/231818 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker.html [ Failure ]
-webkit.org/b/231818 storage/filesystemaccess/file-handle-getfile-worker.html [ Failure ]
-webkit.org/b/231818 storage/filesystemaccess/handle-move-worker.html [ Failure ]
-webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-basics-worker.html [ Failure ]
-webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-close-worker.html [ Failure ]
-webkit.org/b/231818 storage/filesystemaccess/sync-access-handle-read-write-worker.html [ Failure ]
 
 # Tests failing due to HTML being interpreted as XHTML
 webkit.org/b/232386 animations/animation-welcome-safari.html [ Failure ]

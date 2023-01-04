@@ -31,7 +31,9 @@
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/DisplayRefreshMonitor.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/ScrollView.h>
+#include <WebCore/TiledBacking.h>
 #include <WebCore/TransformationMatrix.h>
 
 // Subclasses
@@ -153,6 +155,24 @@ bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
     default:
         return false;
     }
+}
+
+WebCore::TiledBacking* DrawingArea::mainFrameTiledBacking() const
+{
+    auto* frameView = m_webPage.mainFrameView();
+    return frameView ? frameView->tiledBacking() : nullptr;
+}
+
+void DrawingArea::prepopulateRectForZoom(double scale, WebCore::FloatPoint origin)
+{
+    double currentPageScale = m_webPage.totalScaleFactor();
+    auto* frameView = m_webPage.mainFrameView();
+    FloatRect tileCoverageRect = frameView->visibleContentRectIncludingScrollbars();
+    tileCoverageRect.moveBy(-origin);
+    tileCoverageRect.scale(currentPageScale / scale);
+
+    if (auto* tiledBacking = mainFrameTiledBacking())
+        tiledBacking->prepopulateRect(tileCoverageRect);
 }
 
 } // namespace WebKit

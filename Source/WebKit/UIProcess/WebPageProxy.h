@@ -89,6 +89,7 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/ExceptionDetails.h>
+#include <WebCore/FocusDirection.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h> // FIXME: Move LayoutViewportConstraint to its own file and stop including this.
@@ -357,6 +358,7 @@ class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
 class MediaSessionCoordinatorProxyPrivate;
+class NetworkIssueReporter;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollingPerformanceData;
@@ -2184,6 +2186,10 @@ public:
     void setCaretDecorationVisibility(bool);
 #endif
 
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    void reportNetworkIssue(const URL&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2493,7 +2499,7 @@ private:
     void ignoreWord(const String& word);
     void requestCheckingOfString(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, int32_t insertionPoint);
 
-    void takeFocus(uint8_t direction);
+    void takeFocus(WebCore::FocusDirection);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
     void setCursorHiddenUntilMouseMoves(bool);
@@ -2745,6 +2751,8 @@ private:
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     static Vector<SandboxExtension::Handle> createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
 #endif
+
+    void prepareToLoadWebPage(WebProcessProxy&, LoadParameters&);
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 
@@ -3373,6 +3381,10 @@ private:
     RunLoop::Timer m_fullscreenVideoTextRecognitionTimer;
 #endif
     bool m_isPerformingTextRecognitionInElementFullScreen { false };
+
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+    std::unique_ptr<NetworkIssueReporter> m_networkIssueReporter;
+#endif
 };
 
 #ifdef __OBJC__

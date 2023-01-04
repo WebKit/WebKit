@@ -719,12 +719,6 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
     [CATransaction commit];
 }
 
-TiledBacking* TiledCoreAnimationDrawingArea::mainFrameTiledBacking() const
-{
-    FrameView* frameView = m_webPage.mainFrameView();
-    return frameView ? frameView->tiledBacking() : nullptr;
-}
-
 void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
 {
     if (m_debugInfoLayer) {
@@ -823,14 +817,7 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     double currentPageScale = m_webPage.totalScaleFactor();
     if (scale > currentPageScale)
         return;
-
-    auto* frameView = m_webPage.mainFrameView();
-    FloatRect tileCoverageRect = frameView->visibleContentRectIncludingScrollbars();
-    tileCoverageRect.moveBy(-origin);
-    tileCoverageRect.scale(currentPageScale / scale);
-    
-    if (auto* tiledBacking = mainFrameTiledBacking())
-        tiledBacking->prepopulateRect(tileCoverageRect);
+    prepopulateRectForZoom(scale, origin);
 }
 
 static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral keyPath)

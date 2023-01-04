@@ -177,6 +177,22 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 }
 
+bool Quirks::shouldDisableContentChangeObserver() const
+{
+    if (!needsQuirks())
+        return false;
+    
+    auto& topDocument = m_document->topDocument();
+    
+    auto host = topDocument.url().host();
+    auto isYouTube = host.endsWith(".youtube.com"_s) || host == "youtube.com"_s;
+    
+    if (isYouTube && (topDocument.url().path().startsWithIgnoringASCIICase("/results"_s) || topDocument.url().path().startsWithIgnoringASCIICase("/watch"_s)))
+        return true;
+
+    return false;
+}
+
 bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
 {
     if (!needsQuirks())

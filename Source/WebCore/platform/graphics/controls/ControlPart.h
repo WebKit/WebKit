@@ -46,6 +46,7 @@ public:
     void setControlFactory(ControlFactory* controlFactory) { m_controlFactory = controlFactory; }
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
+    FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&);
     void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) const;
 
 protected:

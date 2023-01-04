@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -2346,7 +2346,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     Enabled,
     Checked,
     Default,
-    WindowInactive,
+    WindowActive,
     Indeterminate,
     SpinUp,
     Presenting,
@@ -2424,6 +2424,11 @@ enum class WebCore::ControlPartType : uint8_t {
     double maximum();
 };
 
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ProgressBarPart {
+    double position();
+    Seconds animationStartTime();
+};
+
 enum class WebCore::HasInsecureContent : bool
 
 header: <WebCore/ModalContainerTypes.h>
@@ -2440,3 +2445,13 @@ header: <WebCore/ModalContainerTypes.h>
     MediaIsMainContent,
 };
 
+header: <WebCore/FocusDirection.h>
+enum class WebCore::FocusDirection : uint8_t {
+    None,
+    Forward,
+    Backward,
+    Up,
+    Down,
+    Left,
+    Right
+};

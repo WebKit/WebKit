@@ -1,0 +1,8 @@
+
+FAIL There can only be one open access handle at any given time promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL An access handle from one file does not interfere with the creation of an access handle on another file promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL A writable stream from one file does not interfere with the creation of an access handle on another file promise_test: Unhandled rejection with value: object "TypeError: fooFileHandle.createWritable is not a function. (In 'fooFileHandle.createWritable()', 'fooFileHandle.createWritable' is undefined)"
+FAIL An access handle from one file does not interfere with the creation of a writable stream on another file promise_test: Unhandled rejection with value: object "TypeError: barFileHandle.createWritable is not a function. (In 'barFileHandle.createWritable()', 'barFileHandle.createWritable' is undefined)"
+FAIL Writable streams cannot be created if there is an open access handle promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Access handles cannot be created if there are open Writable streams promise_test: Unhandled rejection with value: object "TypeError: fileHandle.createWritable is not a function. (In 'fileHandle.createWritable()', 'fileHandle.createWritable' is undefined)"
+

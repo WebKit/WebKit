@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -276,8 +277,7 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent, bool* reachedB
     if (!stayInEditableContent)
         return left;
 
-    // FIXME: This may need to do something different from "before".
-    return honorEditingBoundaryAtOrBefore(left, reachedBoundary);
+    return directionOfEnclosingBlock(left.deepEquivalent()) == TextDirection::LTR ? honorEditingBoundaryAtOrBefore(left, reachedBoundary) : honorEditingBoundaryAtOrAfter(left, reachedBoundary);
 }
 
 Position VisiblePosition::rightVisuallyDistinctCandidate() const
@@ -446,8 +446,7 @@ VisiblePosition VisiblePosition::right(bool stayInEditableContent, bool* reached
     if (!stayInEditableContent)
         return right;
 
-    // FIXME: This may need to do something different from "after".
-    return honorEditingBoundaryAtOrAfter(right, reachedBoundary);
+    return directionOfEnclosingBlock(right.deepEquivalent()) == TextDirection::LTR ? honorEditingBoundaryAtOrAfter(right, reachedBoundary) : honorEditingBoundaryAtOrBefore(right, reachedBoundary);
 }
 
 VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePosition& position, bool* reachedBoundary) const

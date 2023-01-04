@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/message-target-dedicated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/message-target-service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/message-target-shared-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/message-target.html
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/message-target.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/messaging-blob-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/messaging-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/messaging-serialize-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/opaque-origin-sandbox.html
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/sandboxed-fs-test-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/sync-access-handle-test.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/resources/test-helpers.js

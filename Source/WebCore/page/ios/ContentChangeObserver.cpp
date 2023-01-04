@@ -62,6 +62,11 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 }
 #endif
 
+bool ContentChangeObserver::isContentChangeObserverEnabled()
+{
+    return m_document.settings().contentChangeObserverEnabled() && !m_document.quirks().shouldDisableContentChangeObserver();
+}
+
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
 {
     if (!node.renderStyle())
@@ -204,7 +209,7 @@ void ContentChangeObserver::didPreventDefaultForEvent(Frame& mainFrame)
 
 void ContentChangeObserver::startContentObservationForDuration(Seconds duration)
 {
-    if (!m_document.settings().contentChangeObserverEnabled())
+    if (!isContentChangeObserverEnabled())
         return;
     ASSERT(!hasVisibleChangeState());
     LOG_WITH_STREAM(ContentObservation, stream << "startContentObservationForDuration: start observing the content for " << duration.milliseconds() << "ms");
@@ -220,7 +225,7 @@ void ContentChangeObserver::completeDurationBasedContentObservation()
 
 void ContentChangeObserver::didAddTransition(const Element& element, const Animation& transition)
 {
-    if (!m_document.settings().contentChangeObserverEnabled())
+    if (!isContentChangeObserverEnabled())
         return;
     if (hasVisibleChangeState())
         return;
@@ -281,7 +286,7 @@ void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPrope
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
 {
-    if (!m_document.settings().contentChangeObserverEnabled())
+    if (!isContentChangeObserverEnabled())
         return;
     if (!isObservingContentChanges())
         return;
@@ -427,7 +432,7 @@ void ContentChangeObserver::willDetachPage()
 
 void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
 { 
-    if (!m_document.settings().contentChangeObserverEnabled())
+    if (!isContentChangeObserverEnabled())
         return;
     if (!isObservingContentChanges())
         return;
@@ -459,7 +464,7 @@ void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
 void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!m_document.settings().contentChangeObserverEnabled() || m_document.quirks().shouldDisableContentChangeObserverTouchEventAdjustment())
+    if (!isContentChangeObserverEnabled() || m_document.quirks().shouldDisableContentChangeObserverTouchEventAdjustment())
         return;
     if (eventType != PlatformEvent::Type::TouchStart)
         return;
@@ -476,7 +481,7 @@ void ContentChangeObserver::touchEventDidFinish()
 #if ENABLE(TOUCH_EVENTS)
     if (!isTouchEventBeingDispatched())
         return;
-    ASSERT(m_document.settings().contentChangeObserverEnabled());
+    ASSERT(isContentChangeObserverEnabled());
     LOG(ContentObservation, "touchEventDidFinish: touch start event finished.");
     setTouchEventIsBeingDispatched(false);
     adjustObservedState(Event::EndedTouchStartEventDispatching);
@@ -485,7 +490,7 @@ void ContentChangeObserver::touchEventDidFinish()
 
 void ContentChangeObserver::mouseMovedDidStart()
 {
-    if (!m_document.settings().contentChangeObserverEnabled())
+    if (!isContentChangeObserverEnabled())
         return;
     LOG(ContentObservation, "mouseMovedDidStart: mouseMoved started.");
     setMouseMovedEventIsBeingDispatched(true);
@@ -496,7 +501,7 @@ void ContentChangeObserver::mouseMovedDidFinish()
 {
     if (!isMouseMovedEventBeingDispatched())
         return;
-    ASSERT(m_document.settings().contentChangeObserverEnabled());
+    ASSERT(isContentChangeObserverEnabled());
     LOG(ContentObservation, "mouseMovedDidFinish: mouseMoved finished.");
     adjustObservedState(Event::EndedMouseMovedEventDispatching);
     setMouseMovedEventIsBeingDispatched(false);

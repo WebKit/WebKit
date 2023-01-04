@@ -194,11 +194,11 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         break;
 
     case API::Object::Type::Error:
-        static_cast<const API::Error&>(object).encode(encoder);
+        encoder << static_cast<const API::Error&>(object);
         break;
 
     case API::Object::Type::FrameHandle:
-        static_cast<const API::FrameHandle&>(object).encode(encoder);
+        encoder << static_cast<const API::FrameHandle&>(object);
         break;
 
     case API::Object::Type::Image: {
@@ -219,7 +219,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     }
 
     case API::Object::Type::PageHandle:
-        static_cast<const API::PageHandle&>(object).encode(encoder);
+        encoder << static_cast<const API::PageHandle&>(object);
         break;
 
     case API::Object::Type::Point:
@@ -247,15 +247,15 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     }
 
     case API::Object::Type::URL:
-        static_cast<const API::URL&>(object).encode(encoder);
+        encoder << static_cast<const API::URL&>(object);
         break;
 
     case API::Object::Type::URLRequest:
-        static_cast<const API::URLRequest&>(object).encode(encoder);
+        encoder << static_cast<const API::URLRequest&>(object);
         break;
 
     case API::Object::Type::URLResponse:
-        static_cast<const API::URLResponse&>(object).encode(encoder);
+        encoder << static_cast<const API::URLResponse&>(object);
         break;
 
     case API::Object::Type::UInt64:
@@ -356,15 +356,23 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
             return false;
         break;
 
-    case API::Object::Type::Error:
-        if (!API::Error::decode(decoder, result))
+    case API::Object::Type::Error: {
+        std::optional<Ref<API::Error>> error;
+        decoder >> error;
+        if (!error)
             return false;
+        result = WTFMove(*error);
         break;
+    }
 
-    case API::Object::Type::FrameHandle:
-        if (!API::FrameHandle::decode(decoder, result))
+    case API::Object::Type::FrameHandle: {
+        std::optional<Ref<API::FrameHandle>> frameHandle;
+        decoder >> frameHandle;
+        if (!frameHandle)
             return false;
+        result = WTFMove(*frameHandle);
         break;
+    }
 
     case API::Object::Type::Image: {
         bool didEncode = false;
@@ -391,10 +399,14 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         result = nullptr;
         break;
 
-    case API::Object::Type::PageHandle:
-        if (!API::PageHandle::decode(decoder, result))
+    case API::Object::Type::PageHandle: {
+        std::optional<Ref<API::PageHandle>> pageHandle;
+        decoder >> pageHandle;
+        if (!pageHandle)
             return false;
+        result = WTFMove(*pageHandle);
         break;
+    }
 
     case API::Object::Type::Point: {
         std::optional<Ref<API::Point>> point;
@@ -441,20 +453,32 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
     }
 
-    case API::Object::Type::URL:
-        if (!API::URL::decode(decoder, result))
+    case API::Object::Type::URL: {
+        std::optional<Ref<API::URL>> url;
+        decoder >> url;
+        if (!url)
             return false;
+        result = WTFMove(*url);
         break;
+    }
 
-    case API::Object::Type::URLRequest:
-        if (!API::URLRequest::decode(decoder, result))
+    case API::Object::Type::URLRequest: {
+        std::optional<Ref<API::URLRequest>> urlRequest;
+        decoder >> urlRequest;
+        if (!urlRequest)
             return false;
+        result = WTFMove(*urlRequest);
         break;
+    }
 
-    case API::Object::Type::URLResponse:
-        if (!API::URLResponse::decode(decoder, result))
+    case API::Object::Type::URLResponse: {
+        std::optional<Ref<API::URLResponse>> urlResponse;
+        decoder >> urlResponse;
+        if (!urlResponse)
             return false;
+        result = WTFMove(*urlResponse);
         break;
+    }
 
     case API::Object::Type::UInt64:
         if (!API::UInt64::decode(decoder, result))

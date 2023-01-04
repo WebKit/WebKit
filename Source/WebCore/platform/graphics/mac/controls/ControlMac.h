@@ -43,11 +43,16 @@ public:
 
 protected:
     static bool userPrefersContrast();
+    static FloatRect inflatedRect(const FloatRect& bounds, const FloatSize&, const IntOutsets&, const ControlStyle&);
 
     virtual IntSize cellSize(NSControlSize, const ControlStyle&) const { return { }; };
     virtual IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const { return { }; };
 
-    NSControlSize calculateControlSize(const FloatSize&, const ControlStyle&) const;
+    NSControlSize controlSizeForFont(const ControlStyle&) const;
+    NSControlSize controlSizeForSystemFont(const ControlStyle&) const;
+    NSControlSize controlSizeForSize(const FloatSize&, const ControlStyle&) const;
+
+    IntSize sizeForSystemFont(const ControlStyle&) const;
 
     void setFocusRingClipRect(const FloatRect& clipBounds) override;
 

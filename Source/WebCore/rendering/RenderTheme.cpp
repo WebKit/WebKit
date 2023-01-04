@@ -47,7 +47,9 @@
 #include "MeterPart.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "ProgressBarPart.h"
 #include "RenderMeter.h"
+#include "RenderProgress.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "ShadowPseudoIds.h"
@@ -483,6 +485,13 @@ static RefPtr<ControlPart> createMeterPartForRenderer(const RenderObject& render
     return MeterPart::create(gaugeRegion, element->value(), element->min(), element->max());
 }
 
+static RefPtr<ControlPart> createProgressBarPartForRenderer(const RenderObject& renderer)
+{
+    ASSERT(is<RenderProgress>(renderer));
+    const auto& renderProgress = downcast<RenderProgress>(renderer);
+    return ProgressBarPart::create(renderProgress.position(), renderProgress.animationStartTime().secondsSinceEpoch());
+}
+
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
@@ -508,6 +517,8 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         return createMeterPartForRenderer(renderer);
 
     case ControlPartType::ProgressBar:
+        return createProgressBarPartForRenderer(renderer);
+
     case ControlPartType::SliderHorizontal:
     case ControlPartType::SliderVertical:
     case ControlPartType::SearchField:
@@ -572,8 +583,8 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         states.add(ControlStyle::State::Checked);
     if (isDefault(renderer))
         states.add(ControlStyle::State::Default);
-    if (!isActive(renderer))
-        states.add(ControlStyle::State::WindowInactive);
+    if (isActive(renderer))
+        states.add(ControlStyle::State::WindowActive);
     if (isIndeterminate(renderer))
         states.add(ControlStyle::State::Indeterminate);
     if (isPresenting(renderer))
@@ -1458,7 +1469,7 @@ void RenderTheme::adjustProgressBarStyle(RenderStyle&, const Element*) const
 {
 }
 
-IntRect RenderTheme::progressBarRectForBounds(const RenderObject&, const IntRect& bounds) const
+IntRect RenderTheme::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
 {
     return bounds;
 }

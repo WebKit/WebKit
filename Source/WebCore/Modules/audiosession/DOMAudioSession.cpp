@@ -31,6 +31,7 @@
 #include "AudioSession.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "FeaturePolicy.h"
 #include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
@@ -83,6 +84,9 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     if (!document)
         return Exception { InvalidStateError };
 
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+        return { };
+
     document->topDocument().setAudioSessionType(type);
 
     auto categoryOverride = fromDOMAudioSessionType(type);
@@ -97,6 +101,9 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
 DOMAudioSession::Type DOMAudioSession::type() const
 {
     auto* document = downcast<Document>(scriptExecutionContext());
+    if (document && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+        return DOMAudioSession::Type::Auto;
+
     return document ? document->topDocument().audioSessionType() : DOMAudioSession::Type::Auto;
 }
 
@@ -113,6 +120,10 @@ static DOMAudioSession::State computeAudioSessionState()
 
 DOMAudioSession::State DOMAudioSession::state() const
 {
+    auto* document = downcast<Document>(scriptExecutionContext());
+    if (!document || !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+        return DOMAudioSession::State::Inactive;
+
     if (!m_state)
         m_state = computeAudioSessionState();
     return *m_state;
@@ -149,6 +160,10 @@ void DOMAudioSession::activeStateChanged()
 
 void DOMAudioSession::scheduleStateChangeEvent()
 {
+    auto* document = downcast<Document>(scriptExecutionContext());
+    if (document && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+        return;
+
     if (m_hasScheduleStateChangeEvent)
         return;
 

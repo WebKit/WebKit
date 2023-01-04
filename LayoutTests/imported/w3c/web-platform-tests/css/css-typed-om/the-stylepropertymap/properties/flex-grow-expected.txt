@@ -5,7 +5,7 @@ PASS Can set 'flex-grow' to CSS-wide keywords: unset
 PASS Can set 'flex-grow' to CSS-wide keywords: revert
 PASS Can set 'flex-grow' to var() references:  var(--A)
 PASS Can set 'flex-grow' to a number: 0
-FAIL Can set 'flex-grow' to a number: -3.14 assert_approx_equals: expected -3.14 +/- 0.000001 but got 0
+PASS Can set 'flex-grow' to a number: -3.14
 PASS Can set 'flex-grow' to a number: 3.14
 PASS Can set 'flex-grow' to a number: calc(2 + 3)
 PASS Setting 'flex-grow' to a length: 0px throws TypeError

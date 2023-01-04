@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -593,6 +593,10 @@ class StylePropertyCodeGenProperties:
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar-unused"] = grammar
 
+        if json_value.get("parser-grammar-unused-reason"):
+            if "parser-grammar-unused" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-grammar-unused-reason'.")
+
         if json_value.get("parser-function"):
             if "parser-grammar-unused" not in json_value:
                 raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-function'.")
@@ -1056,6 +1060,10 @@ class DescriptorCodeGenProperties:
             grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
             json_value["parser-grammar-unused"] = grammar
 
+        if json_value.get("parser-grammar-unused-reason"):
+            if "parser-grammar-unused" not in json_value:
+                raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-grammar-unused-reason'.")
+
         if json_value.get("parser-function"):
             if "parser-grammar-unused" not in json_value:
                 raise Exception(f"{key_path} must have 'parser-grammar-unused' specified when using 'parser-function'.")
@@ -1351,25 +1359,25 @@ class Term:
     @staticmethod
     def wrap_with_multiplier(multiplier, term):
         if multiplier.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
-            return OptionalTerm.wrapping_term(term)
+            return OptionalTerm.wrapping_term(term, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE:
-            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=0)
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=0, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ONE_OR_MORE:
-            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=1)
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=1, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_EXACT:
-            return FixedSizeRepetitionTerm.wrapping_term(term, variation=' ', size=multiplier.range.min)
+            return FixedSizeRepetitionTerm.wrapping_term(term, variation=' ', size=multiplier.range.min, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST:
-            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min)
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_BETWEEN:
-            return BoundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min, max=multiplier.range.max)
+            return BoundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min, max=multiplier.range.max, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE:
-            return UnboundedRepetitionTerm.wrapping_term(term, variation=',', min=1)
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=',', min=1, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_EXACT:
-            return FixedSizeRepetitionTerm.wrapping_term(term, variation=',', size=multiplier.range.min)
+            return FixedSizeRepetitionTerm.wrapping_term(term, variation=',', size=multiplier.range.min, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST:
-            return UnboundedRepetitionTerm.wrapping_term(term, variation=',', min=multiplier.range.min)
+            return UnboundedRepetitionTerm.wrapping_term(term, variation=',', min=multiplier.range.min, annotation=multiplier.annotation)
         elif multiplier.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN:
-            return BoundedRepetitionTerm.wrapping_term(term, variation=' ', min=multiplier.range.min, max=multiplier.range.max)
+            return BoundedRepetitionTerm.wrapping_term(term, variation=',', min=multiplier.range.min, max=multiplier.range.max, annotation=multiplier.annotation)
 
     @staticmethod
     def from_node(node):
@@ -1540,7 +1548,8 @@ class ReferenceTerm:
         BuiltinSchema.Entry("custom-ident", "consumeCustomIdent"),
         BuiltinSchema.Entry("dashed-ident", "consumeDashedIdent"),
         BuiltinSchema.Entry("url", "consumeURL"),
-        BuiltinSchema.Entry("declaration-value", "consumeDeclarationValue")
+        BuiltinSchema.Entry("feature-tag-value", "consumeFeatureTagValue"),
+        BuiltinSchema.Entry("variation-tag-value", "consumeVariationTagValue"),
     )
 
     def __init__(self, name, is_internal, is_function_reference, parameters):
@@ -1774,28 +1783,37 @@ class MatchOneTerm:
 #   e.g. "[ <length> <length> ]" or "[ <length> && <string> && <number> ]"
 #
 class GroupTerm:
-    def __init__(self, subterms, kind):
+    def __init__(self, subterms, kind, annotation):
         self.subterms = subterms
         self.kind = kind
 
+        self._process_annotation(annotation)
+
     def __str__(self):
-        return '[ ' + self.stringify_without_brackets + ' ]'
+        return '[ ' + self.stringified_without_brackets + ' ]'
 
     def __repr__(self):
         return self.__str__()
 
     @property
-    def stringify_without_brackets(self):
+    def stringified_without_brackets(self):
         if self.kind != BNFGroupingNode.Kind.MATCH_ALL_ORDERED:
             join_string = ' ' + str(self.kind.value) + ' '
         else:
             join_string = ' '
         return join_string.join(str(subterm) for subterm in self.subterms)
 
+    def _process_annotation(self, annotation):
+        if not annotation:
+            return
+        # FIXME: Add initialization of annotation state here if/when group specific annotations are needed.
+        for directive in annotation.directives:
+            raise Exception(f"Unknown grouping annotation directive '{directive}'.")
+
     @staticmethod
     def from_node(node):
         assert(type(node) is BNFGroupingNode)
-        return GroupTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), node.kind)
+        return GroupTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), node.kind, node.annotation)
 
     def perform_fixups(self, all_rules):
         self.subterms = [subterm.perform_fixups(all_rules) for subterm in self.subterms]
@@ -1826,8 +1844,10 @@ class GroupTerm:
 #   e.g. "<length>?" or "[ <length> <string> ]?"
 #
 class OptionalTerm:
-    def __init__(self, subterm):
+    def __init__(self, subterm, *, annotation):
         self.subterm = subterm
+
+        self._process_annotation(annotation)
 
     def __str__(self):
         return f"{str(self.subterm)}?"
@@ -1835,9 +1855,15 @@ class OptionalTerm:
     def __repr__(self):
         return self.__str__()
 
+    def _process_annotation(self, annotation):
+        if not annotation:
+            return
+        for directive in annotation.directives:
+            raise Exception(f"Unknown optional term annotation directive '{directive}'.")
+
     @staticmethod
-    def wrapping_term(subterm):
-        return OptionalTerm(subterm)
+    def wrapping_term(subterm, *, annotation):
+        return OptionalTerm(subterm, annotation=annotation)
 
     def perform_fixups(self, all_rules):
         self.subterm = self.subterm.perform_fixups(all_rules)
@@ -1860,20 +1886,22 @@ class OptionalTerm:
 #   e.g. "<length>#" or "<length>+"
 #
 class UnboundedRepetitionTerm:
-    def __init__(self, repeated_term, *, variation, min):
+    def __init__(self, repeated_term, *, variation, min, annotation):
         self.repeated_term = repeated_term
-        self.single_value_optimization = True
         self.variation = variation
         self.min = min
 
+        self.single_value_optimization = True
+        self._process_annotation(annotation)
+
     def __str__(self):
-        return f"{str(self.repeated_term)}{self.suffix}"
+        return str(self.repeated_term) + self.stringified_suffix + self.stringified_annotation
 
     def __repr__(self):
         return self.__str__()
 
     @property
-    def suffix(self):
+    def stringified_suffix(self):
         if self.variation == ' ':
             if self.min == 0:
                 return '*'
@@ -1888,9 +1916,24 @@ class UnboundedRepetitionTerm:
                 return '#{' + str(self.min) + ',}'
         raise Exception(f"Unknown UnboundedRepetitionTerm variation '{self.variation}'")
 
+    @property
+    def stringified_annotation(self):
+        if not self.single_value_optimization:
+            return '@(no-single-item-opt)'
+        return ''
+
+    def _process_annotation(self, annotation):
+        if not annotation:
+            return
+        for directive in annotation.directives:
+            if directive == 'no-single-item-opt':
+                self.single_value_optimization = False
+            else:
+                raise Exception(f"Unknown multiplier annotation directive '{directive}'.")
+
     @staticmethod
-    def wrapping_term(term, *, variation, min):
-        return UnboundedRepetitionTerm(term, variation=variation, min=min)
+    def wrapping_term(term, *, variation, min, annotation):
+        return UnboundedRepetitionTerm(term, variation=variation, min=min, annotation=annotation)
 
     def perform_fixups(self, all_rules):
         self.repeated_term = self.repeated_term.perform_fixups(all_rules)
@@ -1914,29 +1957,37 @@ class UnboundedRepetitionTerm:
 #   e.g. "<length>{1,2}" or "<length>#{3,5}"
 #
 class BoundedRepetitionTerm:
-    def __init__(self, repeated_term, *, variation, min, max):
+    def __init__(self, repeated_term, *, variation, min, max, annotation):
         self.repeated_term = repeated_term
         self.variation = variation
         self.min = min
         self.max = max
 
+        self._process_annotation(annotation)
+
     def __str__(self):
-        return f"{str(self.repeated_term)}{self.suffix}"
+        return str(self.repeated_term) + self.stringified_suffix
 
     def __repr__(self):
         return self.__str__()
 
     @property
-    def suffix(self):
+    def stringified_suffix(self):
         if self.variation == ' ':
             return '{' + str(self.min) + ',' + str(self.max) + '}'
         if self.variation == ',':
             return '#{' + str(self.min) + ',' + str(self.max) + '}'
         raise Exception(f"Unknown BoundedRepetitionTerm variation '{self.variation}'")
 
+    def _process_annotation(self, annotation):
+        if not annotation:
+            return
+        for directive in annotation.directives:
+            raise Exception(f"Unknown bounded repetition term annotation directive '{directive}'.")
+
     @staticmethod
-    def wrapping_term(term, *, variation, min, max):
-        return BoundedRepetitionTerm(term, variation=variation, min=min, max=max)
+    def wrapping_term(term, *, variation, min, max, annotation):
+        return BoundedRepetitionTerm(term, variation=variation, min=min, max=max, annotation=annotation)
 
     def perform_fixups(self, all_rules):
         self.repeated_term = self.repeated_term.perform_fixups(all_rules)
@@ -1960,28 +2011,36 @@ class BoundedRepetitionTerm:
 #   e.g. "<length>{2}" or "<length>#{4}"
 #
 class FixedSizeRepetitionTerm:
-    def __init__(self, repeated_term, *, variation, size):
+    def __init__(self, repeated_term, *, variation, size, annotation):
         self.repeated_term = repeated_term
         self.variation = variation
         self.size = size
 
+        self._process_annotation(annotation)
+
     def __str__(self):
-        return f"{str(self.repeated_term)}{self.suffix}"
+        return str(self.repeated_term) + self.stringified_suffix
 
     def __repr__(self):
         return self.__str__()
 
     @property
-    def suffix(self):
+    def stringified_suffix(self):
         if self.variation == ' ':
             return '{' + str(self.size) + '}'
         if self.variation == ',':
             return '#{' + str(self.size) + '}'
-        raise Exception(f"Unknown BoundedRepetitionTerm variation '{self.variation}'")
+        raise Exception(f"Unknown FixedSizeRepetitionTerm variation '{self.variation}'")
+
+    def _process_annotation(self, annotation):
+        if not annotation:
+            return
+        for directive in annotation.directives:
+            raise Exception(f"Unknown fixed size repetition term annotation directive '{directive}'.")
 
     @staticmethod
-    def wrapping_term(term, *, variation, size):
-        return FixedSizeRepetitionTerm(term, variation=variation, size=size)
+    def wrapping_term(term, *, variation, size, annotation):
+        return FixedSizeRepetitionTerm(term, variation=variation, size=size, annotation=annotation)
 
     def perform_fixups(self, all_rules):
         self.repeated_term = self.repeated_term.perform_fixups(all_rules)
@@ -4347,20 +4406,9 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 if builtin.quirky_colors:
                     return f"{builtin.consume_function_name}({range_string}, {context_string}, {context_string}.mode == HTMLQuirksMode)"
                 return f"{builtin.consume_function_name}({range_string}, {context_string})"
-            elif isinstance(builtin, BuiltinResolutionConsumer):
-                return f"{builtin.consume_function_name}({range_string})"
-            elif isinstance(builtin, BuiltinStringConsumer):
-                return f"{builtin.consume_function_name}({range_string})"
-            elif isinstance(builtin, BuiltinCustomIdentConsumer):
-                return f"{builtin.consume_function_name}({range_string})"
-            elif isinstance(builtin, BuiltinDashedIdentConsumer):
-                return f"{builtin.consume_function_name}({range_string})"
-            elif isinstance(builtin, BuiltinURLConsumer):
-                return f"{builtin.consume_function_name}({range_string})"
-            elif isinstance(builtin, BuiltinDeclarationValueConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string})"
             else:
-                raise Exception(f"Unknown builtin type used: {builtin.name.name}")
+                assert(not self.requires_context)
+                return f"{builtin.consume_function_name}({range_string})"
         else:
             return f"consume{self.term.name.id_without_prefix}({range_string}, {context_string})"
 
@@ -4396,8 +4444,10 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return False
             elif isinstance(builtin, BuiltinURLConsumer):
                 return False
-            elif isinstance(builtin, BuiltinDeclarationValueConsumer):
-                return True
+            elif isinstance(builtin, BuiltinFeatureTagValueConsumer):
+                return False
+            elif isinstance(builtin, BuiltinVariationTagValueConsumer):
+                return False
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:
@@ -5024,6 +5074,7 @@ class BNFToken(StringEqualingEnum):
     LT      = re.compile(r'<')
     GT      = re.compile(r'>')
     SQUOTE  = re.compile(r'\'')
+    ATPAREN = re.compile(r'@\(')
 
     # Multipliers.
     HASH    = re.compile(r'#')
@@ -5097,6 +5148,20 @@ class BNFRepetitionModifier:
         raise Exception("Unknown repetition kind: {self.kind}")
 
 
+# BNFAnnotations are introduced by trailing '@(foo-bar baz)' and are an
+# extension to the syntax used by CSS, added to allow passing additional
+# metadata to the generators for parser creation.
+class BNFAnnotation:
+    def __init__(self):
+        self.directives = []
+
+    def __str__(self):
+        return '@(' + ' '.join(self.directives) + ')'
+
+    def add_directive(self, directive):
+        self.directives.append(directive)
+
+
 # Node multipliers are introduced by trailing symbols like '#', '+', '*', and '{1,4}'.
 # https://drafts.csswg.org/css-values-4/#component-multipliers
 class BNFNodeMultiplier:
@@ -5115,8 +5180,15 @@ class BNFNodeMultiplier:
     def __init__(self):
         self.kind = None
         self.range = None
+        self.annotation = None
 
     def __str__(self):
+        if self.annotation:
+            return self.stringified_without_annotation + str(self.annotation)
+        return self.stringified_without_annotation
+
+    @property
+    def stringified_without_annotation(self):
         if self.kind == BNFNodeMultiplier.Kind.ZERO_OR_ONE:
             return '?'
         elif self.kind == BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE:
@@ -5140,6 +5212,9 @@ class BNFNodeMultiplier:
         return ''
 
     def add(self, multiplier):
+        if self.annotation:
+            raise Exception("Invalid to stack another multiplier on top of a multiplier that has already received an annotation.")
+
         if self.kind is None:
             if isinstance(multiplier, BNFRepetitionModifier):
                 if multiplier.kind == BNFRepetitionModifier.Kind.EXACT:
@@ -5185,6 +5260,28 @@ class BNFNodeMultiplier:
         elif self.kind == BNFNodeMultiplier.Kind.COMMA_SEPARATED_BETWEEN:
             raise Exception("Invalid to stack another multiplier on top of a comma modifier range multiplier.")
 
+    def add_annotation(self, annotation):
+        if self.annotation:
+            raise Exception("Invalid to add an annotation to a multiplier node that already has an annotation.")
+
+        SUPPORTED_DIRECTIVES = {
+            'no-single-item-opt': {
+                BNFNodeMultiplier.Kind.SPACE_SEPARATED_ZERO_OR_MORE,
+                BNFNodeMultiplier.Kind.SPACE_SEPARATED_ONE_OR_MORE,
+                BNFNodeMultiplier.Kind.SPACE_SEPARATED_AT_LEAST,
+                BNFNodeMultiplier.Kind.COMMA_SEPARATED_ONE_OR_MORE,
+                BNFNodeMultiplier.Kind.COMMA_SEPARATED_AT_LEAST
+            },
+        }
+
+        for directive in annotation.directives:
+            if directive not in SUPPORTED_DIRECTIVES:
+                raise Exception(f"Unknown annotation directive '{directive}' for multiplier '{self}'.")
+            if self.kind not in SUPPORTED_DIRECTIVES[directive]:
+                raise Exception(f"Unsupported annotation directive '{directive}' for multiplier '{self}'.")
+
+        self.annotation = annotation
+
 
 # https://drafts.csswg.org/css-values-4/#component-combinators
 class BNFGroupingNode:
@@ -5199,6 +5296,7 @@ class BNFGroupingNode:
         self.members = []
         self.multiplier = BNFNodeMultiplier()
         self.is_initial = is_initial
+        self.annotation = None
 
     def __str__(self):
         return self.stringified_without_multipliers + str(self.multiplier)
@@ -5224,6 +5322,30 @@ class BNFGroupingNode:
     @property
     def last(self):
         return self.members[-1]
+
+    def add_annotation(self, annotation):
+        if self.multiplier.kind:
+            self.multiplier.add_annotation(annotation)
+            return
+
+        if self.annotation:
+            raise Exception("Invalid to add an annotation to a grouping node that already has an annotation.")
+
+        SUPPORTED_DIRECTIVES = {
+            'primitive-pair': {
+                BNFGroupingNode.Kind.MATCH_ALL_ORDERED,
+                BNFGroupingNode.Kind.MATCH_ALL_ANY_ORDER,
+                BNFGroupingNode.Kind.MATCH_ONE_OR_MORE_ANY_ORDER,
+            },
+        }
+
+        for directive in annotation.directives:
+            if directive not in SUPPORTED_DIRECTIVES:
+                raise Exception(f"Unknown annotation directive '{directive}' for grouping '{self}'.")
+            if self.kind not in SUPPORTED_DIRECTIVES[directive]:
+                raise Exception(f"Unsupported annotation directive '{directive}' for grouping '{self}'.")
+
+        self.annotation = annotation
 
 
 # https://drafts.csswg.org/css-values-4/#functional-notation
@@ -5263,7 +5385,7 @@ class BNFReferenceNode:
             self.max = None
 
         def __str__(self):
-            return f"[{self.min},{self.max}]"
+            return '[' + str(self.min) + ',' + str(self.max) + ']'
 
     def __init__(self, *, is_internal=False):
         self.name = None
@@ -5271,6 +5393,7 @@ class BNFReferenceNode:
         self.is_function_reference = False
         self.attributes = []
         self.multiplier = BNFNodeMultiplier()
+        self.annotation = None
 
     def __str__(self):
         return self.stringified_without_multipliers + str(self.multiplier)
@@ -5296,11 +5419,28 @@ class BNFReferenceNode:
     def add_attribute(self, attribute):
         self.attributes.append(attribute)
 
+    def add_annotation(self, annotation):
+        if self.multiplier.kind:
+            self.multiplier.add_annotation(annotation)
+            return
+
+        if self.annotation:
+            raise Exception("Invalid to add an annotation to a reference node that already has an annotation.")
+
+        SUPPORTED_DIRECTIVES = {}
+
+        for directive in annotation.directives:
+            if directive not in SUPPORTED_DIRECTIVES:
+                raise Exception(f"Unknown annotation directive '{directive}' for reference node '{self}'.")
+
+        self.annotation = annotation
+
 
 class BNFKeywordNode:
     def __init__(self, keyword):
         self.keyword = keyword
         self.multiplier = BNFNodeMultiplier()
+        self.annotation = None
 
     def __str__(self):
         return self.stringified_without_multipliers + str(self.multiplier)
@@ -5309,11 +5449,28 @@ class BNFKeywordNode:
     def stringified_without_multipliers(self):
         return self.keyword
 
+    def add_annotation(self, annotation):
+        if self.multiplier.kind:
+            self.multiplier.add_annotation(annotation)
+            return
+
+        if self.annotation:
+            raise Exception("Invalid to add an annotation to a keyword node that already has an annotation.")
+
+        SUPPORTED_DIRECTIVES = {}
+
+        for directive in annotation.directives:
+            if directive not in SUPPORTED_DIRECTIVES:
+                raise Exception(f"Unknown annotation directive '{directive}' for keyword '{self}'.")
+
+        self.annotation = annotation
+
 
 class BNFLiteralNode:
     def __init__(self, value=None):
         self.value = value
         self.multiplier = BNFNodeMultiplier()
+        self.annotation = None
 
     def __str__(self):
         return self.stringified_without_multipliers + str(self.multiplier)
@@ -5321,6 +5478,22 @@ class BNFLiteralNode:
     @property
     def stringified_without_multipliers(self):
         return str(self.value)
+
+    def add_annotation(self, annotation):
+        if self.multiplier.kind:
+            self.multiplier.add_annotation(annotation)
+            return
+
+        if self.annotation:
+            raise Exception("Invalid to add an annotation to a literal node that already has an annotation.")
+
+        SUPPORTED_DIRECTIVES = {}
+
+        for directive in annotation.directives:
+            if directive not in SUPPORTED_DIRECTIVES:
+                raise Exception(f"Unknown annotation directive '{directive}' for literal '{self}'.")
+
+        self.annotation = annotation
 
 
 class BNFParserState(enum.Enum):
@@ -5344,6 +5517,8 @@ class BNFParserState(enum.Enum):
     REPETITION_MODIFIER_SEEN_MAX = enum.auto()
     QUOTED_LITERAL_INITIAL = enum.auto()
     QUOTED_LITERAL_SEEN_ID = enum.auto()
+    ANNOTATION_INITIAL = enum.auto()
+    ANNOTATION_SEEN_ID = enum.auto()
     DONE = enum.auto()
 
 
@@ -5403,6 +5578,8 @@ class BNFParser:
             BNFParserState.REPETITION_MODIFIER_SEEN_MAX: BNFParser.parse_REPETITION_MODIFIER_SEEN_MAX,
             BNFParserState.QUOTED_LITERAL_INITIAL: BNFParser.parse_QUOTED_LITERAL_INITIAL,
             BNFParserState.QUOTED_LITERAL_SEEN_ID: BNFParser.parse_QUOTED_LITERAL_SEEN_ID,
+            BNFParserState.ANNOTATION_INITIAL: BNFParser.parse_ANNOTATION_INITIAL,
+            BNFParserState.ANNOTATION_SEEN_ID: BNFParser.parse_ANNOTATION_SEEN_ID,
         }
 
         for token in BNFLexer(self.data):
@@ -5505,12 +5682,21 @@ class BNFParser:
         self.pop()
         self.top.node.add_attribute(state.node)
 
+    # BNFLiteralNode. e.g. '['
     def enter_new_quoted_literal(self, token, state):
         self.push(BNFParserState.QUOTED_LITERAL_INITIAL, BNFLiteralNode())
 
     def exit_quoted_literal(self, token, state):
         self.pop()
         self.top.node.add(state.node)
+
+    # BNFAnnotation. e.g. @(foo-bar baz)
+    def enter_new_annotation(self, token, state):
+        self.push(BNFParserState.ANNOTATION_INITIAL, BNFAnnotation())
+
+    def exit_annotation(self, token, state):
+        self.pop()
+        self.top.node.last.add_annotation(state.node)
 
     # MARK: Parsing Thunks.
 
@@ -5614,6 +5800,10 @@ class BNFParser:
             state.node.last.multiplier.add(token.value)
             return
 
+        if token.name == BNFToken.ATPAREN:
+            self.enter_new_annotation(token, state)
+            return
+
         if token.name == BNFToken.LBRACE:
             self.enter_new_repetition_modifier(token, state)
             return
@@ -5663,6 +5853,10 @@ class BNFParser:
 
         if token.name in BNFParser.SIMPLE_MULTIPLIERS:
             state.node.last.multiplier.add(token.value)
+            return
+
+        if token.name == BNFToken.ATPAREN:
+            self.enter_new_annotation(token, state)
             return
 
         raise self.unexpected(token, state)
@@ -5720,6 +5914,10 @@ class BNFParser:
 
         if token.name in BNFParser.SIMPLE_MULTIPLIERS:
             state.node.last.multiplier.add(token.value)
+            return
+
+        if token.name == BNFToken.ATPAREN:
+            self.enter_new_annotation(token, state)
             return
 
         if token.name == BNFToken.LBRACE:
@@ -5872,6 +6070,25 @@ class BNFParser:
 
         # Append the value regardles of the token value.
         state.node.value = state.node.value + token.value
+
+    def parse_ANNOTATION_INITIAL(self, token, state):
+        if token.name == BNFToken.ID:
+            self.transition_top(to=BNFParserState.ANNOTATION_SEEN_ID)
+            state.node.add_directive(token.value)
+            return
+
+        raise self.unexpected(token, state)
+
+    def parse_ANNOTATION_SEEN_ID(self, token, state):
+        if token.name == BNFToken.ID:
+            state.node.add_directive(token.value)
+            return
+
+        if token.name == BNFToken.RPAREN:
+            self.exit_annotation(token, state)
+            return
+
+        raise self.unexpected(token, state)
 
 
 def main():

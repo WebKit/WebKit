@@ -497,12 +497,12 @@ layer at (0,0) size 800x6796
             text run at (27,1) width 17: "12"
             text run at (43,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,224) size 784x24
-          RenderText {#text} at (0,1) size 61x19
+          RenderText {#text} at (0,1) size 60x19
             text run at (0,1) width 16: "cd"
             text run at (15,1) width 13 RTL: "(^"
             text run at (27,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,264) size 784x24
-          RenderText {#text} at (0,1) size 61x19
+          RenderText {#text} at (0,1) size 60x19
             text run at (0,1) width 16: "cd"
             text run at (15,1) width 13 RTL: "(^"
             text run at (27,1) width 18: "\x{661}\x{662}"
@@ -546,11 +546,11 @@ layer at (0,0) size 800x6796
             text run at (24,1) width 17: "12"
             text run at (40,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,640) size 784x24
-          RenderText {#text} at (0,1) size 58x19
+          RenderText {#text} at (0,1) size 57x19
             text run at (0,1) width 25 RTL: "(^\x{5D2}\x{5D3}"
             text run at (24,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,680) size 784x24
-          RenderText {#text} at (0,1) size 58x19
+          RenderText {#text} at (0,1) size 57x19
             text run at (0,1) width 25 RTL: "(^\x{5D2}\x{5D3}"
             text run at (24,1) width 18: "\x{661}\x{662}"
             text run at (41,1) width 16 RTL: "\x{5D0}\x{5D1}"
@@ -574,7 +574,7 @@ layer at (0,0) size 800x6796
           RenderText {#text} at (0,1) size 45x19
             text run at (0,1) width 45 RTL: "\x{5D0}\x{5D1}(^\x{62C}\x{62F}"
         RenderBlock {P} at (0,912) size 784x24
-          RenderText {#text} at (0,1) size 46x19
+          RenderText {#text} at (0,1) size 45x19
             text run at (0,1) width 45 RTL: "\x{627}\x{628}(^\x{62C}\x{62F}"
         RenderBlock {P} at (0,952) size 784x24
           RenderText {#text} at (0,1) size 61x19
@@ -586,16 +586,16 @@ layer at (0,0) size 800x6796
             text run at (29,1) width 17: "12"
             text run at (45,1) width 16 RTL: "\x{5D0}\x{5D1}"
         RenderBlock {P} at (0,1032) size 784x24
-          RenderText {#text} at (0,1) size 62x19
+          RenderText {#text} at (0,1) size 61x19
             text run at (0,1) width 30 RTL: "(^\x{62C}\x{62F}"
             text run at (29,1) width 17: "12"
             text run at (45,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,1072) size 784x24
-          RenderText {#text} at (0,1) size 63x19
+          RenderText {#text} at (0,1) size 62x19
             text run at (0,1) width 30 RTL: "(^\x{62C}\x{62F}"
             text run at (29,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,1112) size 784x24
-          RenderText {#text} at (0,1) size 62x19
+          RenderText {#text} at (0,1) size 61x19
             text run at (0,1) width 30 RTL: "(^\x{62C}\x{62F}"
             text run at (29,1) width 18: "\x{661}\x{662}"
             text run at (46,1) width 15 RTL: "\x{5D0}\x{5D1}"
@@ -650,14 +650,14 @@ layer at (0,0) size 800x6796
             text run at (45,1) width 17: "12"
             text run at (61,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,1496) size 784x24
-          RenderText {#text} at (0,1) size 79x19
+          RenderText {#text} at (0,1) size 78x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 17: "34"
             text run at (32,1) width 14 RTL: "(^"
             text run at (45,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,1536) size 784x24
-          RenderText {#text} at (0,1) size 79x19
+          RenderText {#text} at (0,1) size 78x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 17: "34"
@@ -685,14 +685,14 @@ layer at (0,0) size 800x6796
             text run at (32,0) width 14 RTL: "\x{202C}(^"
             text run at (45,0) width 8 RTL: "\x{202B}?"
         RenderBlock {P} at (0,1688) size 784x24
-          RenderText {#text} at (0,1) size 63x19
+          RenderText {#text} at (0,1) size 62x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
             text run at (33,1) width 14 RTL: "(^"
             text run at (46,1) width 16: "ab"
         RenderBlock {P} at (0,1728) size 784x24
-          RenderText {#text} at (0,1) size 63x19
+          RenderText {#text} at (0,1) size 62x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
@@ -704,14 +704,14 @@ layer at (0,0) size 800x6796
             text run at (16,1) width 18: "\x{663}\x{664}"
             text run at (33,1) width 29 RTL: "\x{627}\x{628}(^"
         RenderBlock {P} at (0,1808) size 784x24
-          RenderText {#text} at (0,1) size 79x19
+          RenderText {#text} at (0,1) size 78x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
             text run at (33,1) width 14 RTL: "(^"
             text run at (46,1) width 32: "ab12"
         RenderBlock {P} at (0,1848) size 784x24
-          RenderText {#text} at (0,1) size 79x19
+          RenderText {#text} at (0,1) size 78x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
@@ -727,14 +727,14 @@ layer at (0,0) size 800x6796
             text run at (46,1) width 17: "12"
             text run at (62,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,1928) size 784x24
-          RenderText {#text} at (0,1) size 80x19
+          RenderText {#text} at (0,1) size 79x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
             text run at (33,1) width 14 RTL: "(^"
             text run at (46,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,1968) size 784x24
-          RenderText {#text} at (0,1) size 80x19
+          RenderText {#text} at (0,1) size 79x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
@@ -750,14 +750,14 @@ layer at (0,0) size 800x6796
             text run at (46,1) width 18: "\x{661}\x{662}"
             text run at (63,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,2048) size 784x24
-          RenderText {#text} at (0,1) size 55x19
+          RenderText {#text} at (0,1) size 54x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
             text run at (33,1) width 14 RTL: "\x{202C}(^"
             text run at (46,1) width 8: "\x{202A}?"
         RenderBlock {P} at (0,2088) size 784x24
-          RenderText {#text} at (0,1) size 55x19
+          RenderText {#text} at (0,1) size 54x19
             text run at (0,1) width 8: "z"
             text run at (7,1) width 10 RTL: "\x{5E9}"
             text run at (16,1) width 18: "\x{663}\x{664}"
@@ -774,7 +774,7 @@ layer at (0,0) size 800x6796
             text run at (5,0) width 29 RTL: "\x{5D0}\x{5D1}(^"
         RenderBlock {P} at (0,2200) size 784x24
           RenderText {#text} at (0,1) size 34x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6: "\x{202A}!"
             text run at (5,1) width 29 RTL: "\x{627}\x{628}(^"
         RenderBlock {P} at (0,2240) size 784x20
@@ -790,19 +790,19 @@ layer at (0,0) size 800x6796
             text run at (34,0) width 16 RTL: "\x{5D0}\x{5D1}"
         RenderBlock {P} at (0,2312) size 784x24
           RenderText {#text} at (0,1) size 50x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6: "\x{202A}!"
             text run at (5,1) width 14 RTL: "(^"
             text run at (18,1) width 17: "12"
             text run at (34,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,2352) size 784x24
-          RenderText {#text} at (0,1) size 52x19
+          RenderText {#text} at (0,1) size 51x19
             text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6: "\x{202A}!"
             text run at (5,1) width 14 RTL: "(^"
             text run at (18,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,2392) size 784x24
-          RenderText {#text} at (0,1) size 51x19
+          RenderText {#text} at (0,1) size 50x19
             text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6: "\x{202A}!"
             text run at (5,1) width 14 RTL: "(^"
@@ -810,7 +810,7 @@ layer at (0,0) size 800x6796
             text run at (34,1) width 16 RTL: "\x{5D0}\x{5D1}"
         RenderBlock {P} at (0,2432) size 784x24
           RenderText {#text} at (0,1) size 50x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6: "\x{202A}!"
             text run at (5,1) width 14 RTL: "(^"
             text run at (18,1) width 17: "\x{661}\x{662}"
@@ -852,19 +852,19 @@ layer at (0,0) size 800x6796
             text run at (34,0) width 16 RTL: "\x{5D0}\x{5D1}"
         RenderBlock {P} at (0,2728) size 784x24
           RenderText {#text} at (0,1) size 50x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6 RTL: "\x{202B}!"
             text run at (5,1) width 14 RTL: "(^"
             text run at (18,1) width 17: "12"
             text run at (34,1) width 16 RTL: "\x{627}\x{628}"
         RenderBlock {P} at (0,2768) size 784x24
-          RenderText {#text} at (0,1) size 52x19
+          RenderText {#text} at (0,1) size 51x19
             text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6 RTL: "\x{202B}!"
             text run at (5,1) width 14 RTL: "(^"
             text run at (18,1) width 33: "ab\x{661}\x{662}"
         RenderBlock {P} at (0,2808) size 784x24
-          RenderText {#text} at (0,1) size 51x19
+          RenderText {#text} at (0,1) size 50x19
             text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6 RTL: "\x{202B}!"
             text run at (5,1) width 14 RTL: "(^"
@@ -872,7 +872,7 @@ layer at (0,0) size 800x6796
             text run at (34,1) width 16 RTL: "\x{5D0}\x{5D1}"
         RenderBlock {P} at (0,2848) size 784x24
           RenderText {#text} at (0,1) size 50x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 6 RTL: "\x{202B}!"
             text run at (5,1) width 14 RTL: "(^"
             text run at (18,1) width 17: "\x{661}\x{662}"
@@ -897,7 +897,7 @@ layer at (0,0) size 800x6796
             text run at (14,0) width 14: "(^"
         RenderBlock {P} at (0,3032) size 784x24
           RenderText {#text} at (0,1) size 28x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 15 RTL: "\x{202A}\x{627}\x{628}"
             text run at (14,1) width 14: "(^"
         RenderBlock {P} at (0,3072) size 784x20
@@ -912,25 +912,25 @@ layer at (0,0) size 800x6796
             text run at (30,0) width 14: "(^"
         RenderBlock {P} at (0,3144) size 784x24
           RenderText {#text} at (0,1) size 44x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
-            text run at (0,1) width 17: "12"
+            text run at (0,1) width 0 RTL: "\x{202C}"
+            text run at (0,1) width 16: "12"
             text run at (16,1) width 15 RTL: "\x{202A}\x{627}\x{628}"
             text run at (30,1) width 14: "(^"
         RenderBlock {P} at (0,3184) size 784x24
-          RenderText {#text} at (0,1) size 46x19
+          RenderText {#text} at (0,1) size 45x19
             text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 16: "\x{202A}ab"
             text run at (15,1) width 17: "\x{661}\x{662}"
             text run at (31,1) width 14: "(^"
         RenderBlock {P} at (0,3224) size 784x24
-          RenderText {#text} at (0,1) size 46x19
+          RenderText {#text} at (0,1) size 45x19
             text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 17: "\x{661}\x{662}"
             text run at (16,1) width 16 RTL: "\x{202A}\x{5D0}\x{5D1}"
             text run at (31,1) width 14: "(^"
         RenderBlock {P} at (0,3264) size 784x24
           RenderText {#text} at (0,1) size 45x19
-            text run at (0,1) width 1 RTL: "\x{202C}"
+            text run at (0,1) width 0 RTL: "\x{202C}"
             text run at (0,1) width 17: "\x{661}\x{662}"
             text run at (16,1) width 16 RTL: "\x{202A}\x{627}\x{628}"
             text run at (31,1) width 14: "(^"

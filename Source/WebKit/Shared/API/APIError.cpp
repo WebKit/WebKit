@@ -26,7 +26,6 @@
 #include "config.h"
 #include "APIError.h"
 
-#include "WebCoreArgumentCoders.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
@@ -83,20 +82,5 @@ const WTF::String& Error::webKitPrintErrorDomain()
     return webKitErrorDomainString;
 }
 #endif
-
-void Error::encode(IPC::Encoder& encoder) const
-{
-    encoder << platformError();
-}
-
-bool Error::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
-{
-    WebCore::ResourceError error;
-    if (!decoder.decode(error))
-        return false;
-    
-    result = create(error);
-    return true;
-}
 
 } // namespace WebKit

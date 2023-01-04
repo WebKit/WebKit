@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,12 +62,14 @@ RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&, C
 RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&, CSSValuePool&);
 
 #if ENABLE(VARIATION_FONTS)
 RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
 RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&);
 #endif
 
 #if !ENABLE(VARIATION_FONTS)
