@@ -623,8 +623,6 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
 
 #if ENABLE(AUTOCORRECT)
 
-// FIXME: We should look to share this code with class HTMLFormElement instead of duplicating the logic.
-
 bool HTMLFormControlElement::shouldAutocorrect() const
 {
     const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);

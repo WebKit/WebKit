@@ -48,8 +48,6 @@ class HTMLFormControlElement : public LabelableElement, public FormListedElement
 public:
     virtual ~HTMLFormControlElement();
 
-    HTMLFormElement* form() const final { return FormListedElement::form(); }
-
     WEBCORE_EXPORT String formEnctype() const;
     WEBCORE_EXPORT void setFormEnctype(const AtomString&);
     WEBCORE_EXPORT String formMethod() const;

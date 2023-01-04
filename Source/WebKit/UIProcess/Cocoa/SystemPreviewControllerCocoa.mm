@@ -51,6 +51,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
 
 @interface ASVLaunchPreview (Staging_101981518)
 + (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent completion:(void (^)(NSError *))handler;
++ (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent websiteURL:(NSURL *)websiteURL completion:(void (^)(NSError *))handler;
 + (void)launchPreviewApplicationWithURLs:(NSArray *)urls completion:(void (^)(NSError *))handler;
 @end
 #endif
@@ -256,7 +257,6 @@ namespace WebKit {
 void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo& systemPreviewInfo)
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    UNUSED_PARAM(originatingPageURL);
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(systemPreviewInfo);
 #else
@@ -281,6 +281,8 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
 #endif
+
+    m_originatingPageURL = originatingPageURL;
 }
 
 void SystemPreviewController::setDestinationURL(URL url)
@@ -288,8 +290,12 @@ void SystemPreviewController::setDestinationURL(URL url)
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     url.removeFragmentIdentifier();
     NSURL *nsurl = (NSURL *)url;
-    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:completion:)])
+    NSURL *originatingPageURL = (NSURL *)m_originatingPageURL;
+    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
+        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES websiteURL:originatingPageURL completion:^(NSError *error) { }];
+    else if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:completion:)])
         [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES completion:^(NSError *error) { }];
+
 #endif
     m_destinationURL = WTFMove(url);
 }

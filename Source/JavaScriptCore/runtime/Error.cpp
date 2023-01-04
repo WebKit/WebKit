@@ -255,6 +255,35 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
     return error;
 }
 
+JSObject* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    String errorString = "Error encountered during evaluation"_s;
+
+    if (error.isPrimitive()) {
+        errorString = error.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else if (error.isObject()) {
+        auto structure = error.asCell()->structure();
+        if (!structure->isProxy()) {
+            auto slot = PropertySlot(error, PropertySlot::InternalMethodType::GetOwnProperty);
+            bool found = error.getOwnPropertySlot(globalObject, vm.propertyNames->message, slot);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (found) {
+                if (slot.isValue()) {
+                    JSValue message = slot.getValue(globalObject, vm.propertyNames->message);
+                    RETURN_IF_EXCEPTION(scope, { });
+                    errorString = message.toWTFString(globalObject);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+            }
+        }
+    }
+
+    return createTypeError(globalObject, errorString);
+}
+
 String makeDOMAttributeGetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
 {
     return makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName);

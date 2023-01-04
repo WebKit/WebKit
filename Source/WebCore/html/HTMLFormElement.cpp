@@ -518,22 +518,6 @@ void HTMLFormElement::resetListedFormControlElements()
         listedElement->reset();
 }
 
-#if ENABLE(AUTOCORRECT)
-
-// FIXME: We should look to share this code with class HTMLFormControlElement instead of duplicating the logic.
-
-bool HTMLFormElement::shouldAutocorrect() const
-{
-    const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
-    if (!autocorrectValue.isEmpty())
-        return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
-    if (RefPtr<HTMLFormElement> form = this->form())
-        return form->shouldAutocorrect();
-    return true;
-}
-
-#endif
-
 void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == actionAttr) {
@@ -636,7 +620,7 @@ unsigned HTMLFormElement::formElementIndex(FormListedElement& listedElement)
             return i;
         if (!is<HTMLFormControlElement>(element) && !is<HTMLObjectElement>(element))
             continue;
-        if (element.form() != this)
+        if (element.asFormListedElement()->form() != this)
             continue;
         ++i;
     }
@@ -885,8 +869,8 @@ bool HTMLFormElement::reportValidity()
 #if ASSERT_ENABLED
 void HTMLFormElement::assertItemCanBeInPastNamesMap(FormAssociatedElement& item) const
 {
+    ASSERT(item.form() == this);
     HTMLElement& element = item.asHTMLElement();
-    ASSERT(element.form() == this);
 
     if (item.isFormListedElement()) {
         ASSERT(m_listedElements.find(&element) != notFound);

@@ -83,8 +83,6 @@ public:
 
     bool rendererIsEverNeeded() final;
 
-    WEBCORE_EXPORT virtual HTMLFormElement* form() const;
-
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);
 

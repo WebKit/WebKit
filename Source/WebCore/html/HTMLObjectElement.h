@@ -54,8 +54,6 @@ public:
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
 
-    HTMLFormElement* form() const final { return FormListedElement::form(); }
-
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
     ~HTMLObjectElement();

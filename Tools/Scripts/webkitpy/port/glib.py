@@ -100,7 +100,7 @@ class GLibPort(Port):
         self._copy_value_from_environ_if_set(environment, 'AT_SPI_BUS_ADDRESS')
         for gst_variable in ('DEBUG', 'DEBUG_DUMP_DOT_DIR', 'DEBUG_FILE', 'DEBUG_NO_COLOR',
                              'PLUGIN_SCANNER', 'PLUGIN_PATH', 'PLUGIN_SYSTEM_PATH', 'REGISTRY',
-                             'PLUGIN_PATH_1_0'):
+                             'PLUGIN_PATH_1_0', 'TRACERS'):
             self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
 
         gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
