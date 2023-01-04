@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="tree" class="tree" id="tree">
+  <div role="presentation">
+    <div role="presentation">
+      <div role="presentation">
+        <div role="treeitem" aria-selected="true" id="item1">
+          Leaf 1
+        </div>
+        <div role="treeitem" aria-selected="false">
+          Leaf 2
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+<script>
+var output = "This test ensures that trees with multi-level deep presentation roles still are marked as trees.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('item1').boolAttributeValue('AXSelected')", "true");
+    output += expect("accessibilityController.accessibleElementById('tree').role", "'AXRole: AXOutline'");
+    debug(output);
+}
+</script>
+</body>
+</html>

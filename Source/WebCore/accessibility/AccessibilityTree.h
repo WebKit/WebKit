@@ -43,7 +43,6 @@ private:
     bool computeAccessibilityIsIgnored() const override;
     AccessibilityRole determineAccessibilityRole() override;
     bool isTreeValid() const;
-    bool nodeHasTreeItemChild(Node&) const;
 };
     
 } // namespace WebCore
