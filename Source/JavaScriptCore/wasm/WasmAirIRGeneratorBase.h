@@ -1576,22 +1576,19 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::getGlobal(uint32_t index, Expr
 
     result = tmpForType(type);
 
-    auto temp = self().gPtr();
-    RELEASE_ASSERT(Arg::isValidAddrForm(moveForType(toB3Type(result.type())), Instance::offsetOfGlobals(), pointerWidth()));
-    append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
+    int32_t offset = Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index);
 
-    int32_t offset = safeCast<int32_t>(index * sizeof(Global::Value));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
+        self().emitLoad(instanceValue().tmp(), offset, result);
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
+        auto temp = self().gPtr();
         ASSERT(global.mutability == Wasm::Mutability::Mutable);
-        self().emitLoad(temp, offset, temp);
-        offset = 0;
+        self().emitLoad(instanceValue().tmp(), offset, temp);
+        self().emitLoad(temp, 0, result);
         break;
     }
-
-    self().emitLoad(temp, offset, result);
 
     return { };
 }
@@ -1599,33 +1596,24 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::getGlobal(uint32_t index, Expr
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::setGlobal(uint32_t index, ExpressionType value) -> PartialResult
 {
-    auto temp = self().gPtr();
-
-    RELEASE_ASSERT(Arg::isValidAddrForm(moveForType(toB3Type(value.type())), Instance::offsetOfGlobals(), pointerWidth()));
-    append(Move, Arg::addr(instanceValue(), Instance::offsetOfGlobals()), temp);
-
     const Wasm::GlobalInformation& global = m_info.globals[index];
     Type type = global.type;
 
-    int32_t offset = safeCast<int32_t>(index * sizeof(Global::Value));
+    int32_t offset = Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index);
 
     switch (global.bindingMode) {
-    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        break;
-    case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Wasm::Mutability::Mutable);
-        self().emitLoad(temp, offset, temp);
-        offset = 0;
+    case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {
+        self().emitStore(value, instanceValue().tmp(), offset);
+        if (isRefType(type))
+            emitWriteBarrierForJSWrapper();
         break;
     }
-    self().emitStore(value, temp, offset);
-
-    if (isRefType(type)) {
-        switch (global.bindingMode) {
-        case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-            emitWriteBarrierForJSWrapper();
-            break;
-        case Wasm::GlobalInformation::BindingMode::Portable:
+    case Wasm::GlobalInformation::BindingMode::Portable: {
+        ASSERT(global.mutability == Wasm::Mutability::Mutable);
+        auto temp = self().gPtr();
+        self().emitLoad(instanceValue().tmp(), offset, temp);
+        self().emitStore(value, temp, 0);
+        if (isRefType(type)) {
             auto cell = self().gPtr();
             auto vm = self().gPtr();
             auto cellState = self().g32();
@@ -1667,10 +1655,10 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::setGlobal(uint32_t index, Expr
             append(Jump);
             m_currentBlock->setSuccessors(continuation);
             m_currentBlock = continuation;
-            break;
         }
+        break;
     }
-
+    }
     return { };
 }
 
