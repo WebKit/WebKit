@@ -55,7 +55,7 @@ namespace WebCore {
 SharedVideoFrameInfo SharedVideoFrameInfo::fromCVPixelBuffer(CVPixelBufferRef pixelBuffer)
 {
     auto type = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    if (type == kCVPixelFormatType_32BGRA)
+    if (type == kCVPixelFormatType_32BGRA || type == kCVPixelFormatType_32ARGB)
         return { type, static_cast<uint32_t>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetHeight(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRow(pixelBuffer)) };
     return { type, static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1)) };
 }
@@ -63,6 +63,7 @@ SharedVideoFrameInfo SharedVideoFrameInfo::fromCVPixelBuffer(CVPixelBufferRef pi
 bool SharedVideoFrameInfo::isReadWriteSupported() const
 {
     return m_bufferType == kCVPixelFormatType_32BGRA
+        || m_bufferType == kCVPixelFormatType_32ARGB
         || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange

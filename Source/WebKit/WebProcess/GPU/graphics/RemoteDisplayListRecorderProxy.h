@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "DisplayListRecorderFlushIdentifier.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DrawGlyphsRecorder.h>
 #include <WebCore/GraphicsContext.h>
@@ -111,7 +112,10 @@ private:
 #endif
     void recordFillPath(const WebCore::Path&) final;
     void recordFillEllipse(const WebCore::FloatRect&) final;
+#if ENABLE(VIDEO)
     void recordPaintFrameForMedia(WebCore::MediaPlayer&, const WebCore::FloatRect& destination) final;
+    void recordPaintVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect&, bool shouldDiscardAlpha) final;
+#endif
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const WebCore::LineData&) final;
@@ -144,6 +148,9 @@ private:
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<RemoteImageBufferProxy> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    SharedVideoFrameWriter m_sharedVideoFrameWriter;
+#endif
 };
 
 } // namespace WebKit

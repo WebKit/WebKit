@@ -46,6 +46,9 @@ RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, Q
     , m_imageBufferIdentifier(imageBufferIdentifier)
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_renderingBackend(&renderingBackend)
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    , m_sharedVideoFrameReader(Ref { renderingBackend.gpuConnectionToWebProcess().videoFrameObjectHeap() }, renderingBackend.gpuConnectionToWebProcess().webProcessIdentity())
+#endif
 {
 }
 
@@ -483,6 +486,24 @@ void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identif
         imageBuffer->context().paintFrameForMedia(player, destination);
     });
 }
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)
+{
+    if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
+        drawingContext().paintVideoFrame(*videoFrame, destination, shouldDiscardAlpha);
+}
+
+void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
+{
+    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+}
+
+void RemoteDisplayListRecorder::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
+{
+    m_sharedVideoFrameReader.setSharedMemory(handle);
+}
+#endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 
 void RemoteDisplayListRecorder::strokeRect(const FloatRect& rect, float lineWidth)
 {

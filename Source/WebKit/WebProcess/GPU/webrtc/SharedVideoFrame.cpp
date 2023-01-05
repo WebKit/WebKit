@@ -201,6 +201,8 @@ SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap
 
 SharedVideoFrameReader::SharedVideoFrameReader() = default;
 
+SharedVideoFrameReader::~SharedVideoFrameReader() = default;
+
 RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBufferFromSharedMemory()
 {
     if (!m_storage) {
