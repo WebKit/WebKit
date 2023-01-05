@@ -27,6 +27,8 @@ WI.FontVariationAxis = class FontVariationAxis
 {
     constructor(name, tag, minimumValue, maximumValue, defaultValue)
     {
+        console.assert(typeof tag === "string" && tag.length === 4, "Invalid font variation axis tag", tag);
+
         this._name = name;
         this._tag = tag;
         this._minimumValue = minimumValue;

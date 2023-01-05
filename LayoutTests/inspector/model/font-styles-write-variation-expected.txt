@@ -1,0 +1,39 @@
+Tests for WI.FontStyles.WriteFontVariation
+
+
+== Running test suite: WI.FontStyles.WriteFontVariation
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.WriteFontVariation.RegisteredAxisToFontProperty.Create
+INFO: Writing variation axis "wdth" with value 100
+PASS: Inline style has CSS property font-stretch
+PASS: Found expected CSS declaration font-stretch: 100%
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.WriteFontVariation.RegisteredAxisToFontProperty.Update
+INFO: Writing variation axis "wdth" with value 100
+PASS: Inline style has CSS property font-stretch
+PASS: Found expected CSS declaration font-stretch: 100%
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.WriteFontVariation.RegisteredAxisToVariationSettings.Update
+INFO: Writing variation axis "wdth" with value 100
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "wdth" 100
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.WriteFontVariation.RegisteredAxisToVariationSettings.Create
+INFO: Writing variation axis "desc" with value 777
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "desc" 777
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.WriteFontVariation.RegisteredAxisToVariationSettings.Update
+INFO: Writing variation axis "desc" with value 777
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "desc" 777
+

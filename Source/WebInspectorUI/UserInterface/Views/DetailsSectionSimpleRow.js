@@ -67,9 +67,6 @@ WI.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WI.DetailsSec
 
         this.label = label;
         this.value = value;
-
-        this._warningMessage = null;
-        this._warningElement = null;
     }
 
     // Public
@@ -124,33 +121,9 @@ WI.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WI.DetailsSec
         return this._valueElement.title;
     }
 
-    set tooltip(x)
+    set tooltip(tooltip)
     {
-        this._valueElement.title = x;
-    }
-
-    get warningMessage()
-    {
-        return this._warningMessage;
-    }
-
-    set warningMessage(message)
-    {
-        if (this._warningMessage === message)
-            return;
-
-        this._warningMessage = message;
-        this.element.title = this._warningMessage ?? "";
-
-        if (!this._warningElement) {
-            this._warningElement = document.createElement("div");
-            this._warningElement.className = "warning";
-        }
-
-        if (!this._warningElement.parentNode && this._warningMessage)
-            this.element.appendChild(this._warningElement);
-        else
-            this._warningElement.remove();
+        this._valueElement.title = tooltip;
     }
 };
 

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+async function loadFontFace(fontDeclaration, text, eventName)
+{
+    try {
+        await document.fonts.load(fontDeclaration, text);
+        TestPage.log("PASS: Font should be loaded.");
+    } catch {
+        TestPage.log("FAIL: Font should be loaded.");
+    }
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.FontStyles.WriteFontVariation");
+
+    function loadFontFace(fontDeclaration, text, eventName)
+    {
+        return Promise.all([
+            InspectorTest.awaitEvent(eventName),
+            InspectorTest.evaluateInPage(`loadFontFace("${fontDeclaration}", "${text}", "${eventName}")`),
+        ]);
+    }
+
+    function addTestCase({name, description, selector, variations, expectedInlineStyleProperties})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async setup() {
+                await loadFontFace("normal normal 12px VariableFont", " ", "TestPage-VariableFont1Loaded");
+            },
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
+
+                await cssStyles.refreshIfNeeded();
+                let fontStyles = new WI.FontStyles(cssStyles);
+
+                for (let [tag, value] of Object.entries(variations)) {
+                    InspectorTest.log(`INFO: Writing variation axis "${tag}" with value ${value}`);
+                    fontStyles.writeFontVariation(tag, value);
+                }
+
+                await cssStyles.refreshIfNeeded();
+                fontStyles.refresh();
+
+                let properties = cssStyles.inlineStyle.visibleProperties;
+
+                for (let [name, value] of Object.entries(expectedInlineStyleProperties)) {
+                    let cssProperty = properties.find(cssProperty => cssProperty.name === name) || null;
+
+                    InspectorTest.expectNotNull(cssProperty, `Inline style has CSS property ${name}`);
+                    InspectorTest.expectEqual(cssProperty.value, value, `Found expected CSS declaration ${name}: ${value}`);
+                }
+            },
+        });
+    }
+
+
+    addTestCase({
+        name: "WI.FontStyles.WriteFontVariation.RegisteredAxisToFontProperty.Create",
+        description: "A registered axis value is written to its corresponding font property; create if missing.",
+        selector: "#registered-axis-to-property-create",
+        variations: {
+            "wdth": 100,
+        },
+        expectedInlineStyleProperties: {
+            "font-stretch": "100%",
+        }
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.WriteFontVariation.RegisteredAxisToFontProperty.Update",
+        description: "A registered axis value is written to its corresponding font property; update if found.",
+        selector: "#registered-axis-to-property-update",
+        variations: {
+            "wdth": 100,
+        },
+        expectedInlineStyleProperties: {
+            "font-stretch": "100%",
+        }
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.WriteFontVariation.RegisteredAxisToVariationSettings.Update",
+        description: "A registered axis value is written to font-variation-settings if already defined there.",
+        selector: "#registered-axis-to-variation-settings-update",
+        variations: {
+            "wdth": 100,
+        },
+        expectedInlineStyleProperties: {
+            "font-variation-settings": "\"wdth\" 100",
+        }
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.WriteFontVariation.RegisteredAxisToVariationSettings.Create",
+        description: "A custom axis value is written to font-variation-settings; create if missing.",
+        selector: "#custom-axis-to-variation-settings-create",
+        variations: {
+            "desc": 777,
+        },
+        expectedInlineStyleProperties: {
+            "font-variation-settings": "\"desc\" 777",
+        }
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.WriteFontVariation.RegisteredAxisToVariationSettings.Update",
+        description: "A custom axis value is written to font-variation-settings; update if found.",
+        selector: "#custom-axis-to-variation-settings-update",
+        variations: {
+            "desc": 777,
+        },
+        expectedInlineStyleProperties: {
+            "font-variation-settings": "\"desc\" 777",
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+
+@font-face {
+    font-family: "VariableFont";
+    src: url("../../animations/font-variations/resources/Boxis-VF.ttf");
+}
+
+div {
+    font-family: VariableFont;
+}
+
+#registered-axis-to-property-create {
+
+}
+
+#registered-axis-to-property-update {
+    font-stretch: 50%;
+}
+
+#registered-axis-to-variation-settings-update {
+    font-variation-settings: "wdth" 50;
+}
+
+#custom-axis-to-variation-settings-create {
+
+}
+
+#custom-axis-to-existing-variation-settings-update {
+    font-variation-settings: "desc" 50;
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Tests for WI.FontStyles.WriteFontVariation</p>
+
+<div id="registered-axis-to-property-create"></div>
+<div id="registered-axis-to-property-update"></div>
+<div id="registered-axis-to-variation-settings-update"></div>
+<div id="custom-axis-to-variation-settings-create"></div>
+<div id="custom-axis-to-variation-settings-update"></div>
+
+</body>
+</html>

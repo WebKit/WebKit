@@ -180,6 +180,10 @@ body[dir=rtl] .details-section > .header::before {
     border-bottom: 1px solid var(--border-color);
 }
 
+.details-section > .content > .group:has(.row.font-variation) {
+    display: unset; /* Unsets `display: table-row-group` because it affects sizing of child elements that are grid containers. */
+}
+
 .details-section > .content > .group:last-child {
     border-bottom: none;
 }
@@ -248,13 +252,15 @@ body[dir=rtl] .details-section > .header::before {
     margin-inline-start: 5px;
 }
 
-.details-section > .content > .group > .row.simple:has(.warning) {
+.details-section > .content > .group > .row:has(.warning) {
     background-color: var(--warning-background-color-secondary);
+    position: relative;
 }
 
-.details-section > .content > .group > .row.simple > .warning {
+.details-section > .content > .group > .row > .warning {
     position: absolute;
     right: 0;
+    align-self: center;
     display: inline-block;
     width: calc(var(--warning-badge-arrow-depth) + var(--warning-icon-inline-padding) + var(--warning-icon-size) + var(--warning-icon-inline-padding) + 4px);
     height: 18px;

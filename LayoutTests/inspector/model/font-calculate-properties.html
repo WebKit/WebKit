@@ -19,7 +19,7 @@ function test()
 {
     let documentNode;
 
-    let suite = InspectorTest.createAsyncSuite("WI.Font");
+    let suite = InspectorTest.createAsyncSuite("WI.FontStyles");
 
     function addTestCase({name, description, setup, selector, propertyMapHandlers})
     {
@@ -37,7 +37,7 @@ function test()
 
                 await cssStyles.refreshIfNeeded();
 
-                let {propertiesMap, featuresMap, variationsMap} = cssStyles.computedPrimaryFont.calculateFontProperties(cssStyles);
+                let {propertiesMap, featuresMap, variationsMap} = new WI.FontStyles(cssStyles);
 
                 await propertyMapHandlers(propertiesMap, featuresMap, variationsMap);
             },
@@ -53,7 +53,7 @@ function test()
     }
 
     addTestCase({
-        name: "WI.Font.BasicPropertiesTest",
+        name: "WI.FontStyles.BasicPropertiesTest",
         description: "Get the basic font properties for the node '#basic-properties-test'.",
         selector: "#basic-properties-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -65,7 +65,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.FeaturePropertyLigaturesTest",
+        name: "WI.FontStyles.FeaturePropertyLigaturesTest",
         description: "Get the font ligature property for the node '#feature-property-ligatures-test'.",
         selector: "#feature-property-ligatures-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -78,7 +78,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.FeaturePropertyPositionTest",
+        name: "WI.FontStyles.FeaturePropertyPositionTest",
         description: "Get the font position property for the node '#feature-property-position-test'.",
         selector: "#feature-property-position-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -90,7 +90,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.FeaturePropertyCapitalsTest",
+        name: "WI.FontStyles.FeaturePropertyCapitalsTest",
         description: "Get the font capitals property for the node '#feature-property-capitals-test'.",
         selector: "#feature-property-capitals-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -102,7 +102,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.FeaturePropertyNumericTest",
+        name: "WI.FontStyles.FeaturePropertyNumericTest",
         description: "Get the font numeric property for the node '#feature-property-numeric-test'.",
         selector: "#feature-property-numeric-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -113,7 +113,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.FeaturePropertyAlternatesTest",
+        name: "WI.FontStyles.FeaturePropertyAlternatesTest",
         description: "Get the font alternates property for the node '#feature-property-alternates-test'.",
         selector: "#feature-property-alternates-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -124,7 +124,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.FeaturePropertyEastAsianTest",
+        name: "WI.FontStyles.FeaturePropertyEastAsianTest",
         description: "Get the font east asian property for the node '#feature-property-east-asian-test'.",
         selector: "#feature-property-east-asian-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -135,7 +135,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.UnregisteredFeaturePropertyTest",
+        name: "WI.FontStyles.UnregisteredFeaturePropertyTest",
         description: "Get an unregistered feature property for the node '#unregistered-feature-property-test'.",
         selector: "#unregistered-feature-property-test",
         propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
@@ -144,7 +144,7 @@ function test()
     });
 
     addTestCase({
-        name: "WI.Font.VariableFontTest",
+        name: "WI.FontStyles.VariableFontTest",
         description: "Get the font variations axes for the node '#variable-font-test'.",
         async setup() {
             return loadFontFace("normal normal 12px VariableFont", " ", "TestPage-VariableFont1Loaded");
@@ -245,7 +245,7 @@ function test()
 </style>
 </head>
 <body onload="runTest();">
-<p>Test for WI.Font.</p>
+<p>Test for WI.FontStyles.</p>
 <div>
     <div id="basic-properties-test">Basic Properties Test</div>
     <div id="feature-property-ligatures-test">Feature Property Ligatures Test</div>

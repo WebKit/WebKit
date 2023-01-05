@@ -1,8 +1,6 @@
 var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
-/* A range and default value for a single variation axis of a font. */
-localizedStrings[" (Range: %s-%s, Default: %s) @ Font Details Sidebar"] = " (Range: %s-%s, Default: %s)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["%.0f B"] = "%.0f B";
@@ -79,8 +77,6 @@ localizedStrings["%s interval"] = "%s interval";
 localizedStrings["%s requests do not have a body"] = "%s requests do not have a body";
 localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
-/* A single value expressed as a percentage where the value has already been converted from a number to a string. */
-localizedStrings["%s%% @ Font Details Sidebar"] = "%s%%";
 /* Scope bar button that filter for dynamic resource loads, like from the 'fetch' method. */
 localizedStrings["%s/Fetch @ Network Tab Table Filter"] = "%s/Fetch";
 localizedStrings["%s:"] = "%s:";
@@ -232,6 +228,8 @@ localizedStrings["Available Style Sheets"] = "Available Style Sheets";
 localizedStrings["Average CPU: %s"] = "Average CPU: %s";
 localizedStrings["Average Time"] = "Average Time";
 localizedStrings["Average: %s"] = "Average: %s";
+/* A warning that is shown in the Font Details Sidebar when the value for a variation axis is outside of the supported range of values */
+localizedStrings["Axis value outside of supported range: %s – %s"] = "Axis value outside of supported range: %s – %s";
 localizedStrings["BMP"] = "BMP";
 localizedStrings["Back (%s)"] = "Back (%s)";
 localizedStrings["Backtrace"] = "Backtrace";
@@ -887,7 +885,7 @@ localizedStrings["Inverted"] = "Inverted";
 localizedStrings["Invisible characters"] = "Invisible characters";
 localizedStrings["Invoke getter"] = "Invoke getter";
 localizedStrings["It is evaluated immediately after the global object is created, before any other content has loaded."] = "It is evaluated immediately after the global object is created, before any other content has loaded.";
-/* Property value for oblique text. */
+/* Property title for `font-style` italic and `ital` variation axis. */
 localizedStrings["Italic @ Font Details Sidebar Property Value"] = "Italic";
 /* Tooltip for a timestamp marker that represents when a CSS animation/transition iterates */
 localizedStrings["Iteration"] = "Iteration";
@@ -1104,8 +1102,8 @@ localizedStrings["Numbers @ Computed Style variables section"] = "Numbers";
 localizedStrings["Numeric @ Font Details Sidebar Property"] = "Numeric";
 localizedStrings["Object Graph"] = "Object Graph";
 localizedStrings["Object Store"] = "Object Store";
-/* Property value for oblique text. */
-localizedStrings["Oblique %ddeg @ Font Details Sidebar Property Value"] = "Oblique %ddeg";
+/* Property title for `font-style` oblique and `slnt` variation axis. */
+localizedStrings["Oblique @ Font Details Sidebar Property Value"] = "Oblique";
 localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
@@ -1128,6 +1126,8 @@ localizedStrings["Open"] = "Open";
 localizedStrings["Open closed tabs\u2026"] = "Open closed tabs\u2026";
 /* Context menu item for opening the target item in a new window. */
 localizedStrings["Open in New Window @ Context Menu Item"] = "Open in New Window";
+/* Property title for `font-optical-sizing` and `opzs` variation axis. */
+localizedStrings["Optical Sizing @ Font Details Sidebar Property Value"] = "Optical Sizing";
 localizedStrings["Option-click to pick color from screen."] = "Option-click to pick color from screen.";
 localizedStrings["Option-click to show source"] = "Option-click to show source";
 /* Tooltip with instructions on how to show all hidden CSS variables */
@@ -1835,7 +1835,7 @@ localizedStrings["WebP"] = "WebP";
 localizedStrings["WebRTC"] = "WebRTC";
 localizedStrings["WebRTC Logging:"] = "WebRTC Logging:";
 localizedStrings["WebSocket Connection Established"] = "WebSocket Connection Established";
-/* Property title for `font-weight`. */
+/* Property title for `font-weight` and `wght` variation axis. */
 localizedStrings["Weight @ Font Details Sidebar Property"] = "Weight";
 localizedStrings["Whitespace characters"] = "Whitespace characters";
 /* Label indicating that network activity is being simulated with Wi-Fi connectivity */
@@ -1843,6 +1843,8 @@ localizedStrings["Wi-Fi"] = "Wi-Fi";
 /* Label indicating that network activity is being simulated with Wi-Fi 802.11ac connectivity */
 localizedStrings["Wi-Fi 802.11ac"] = "Wi-Fi 802.11ac";
 localizedStrings["Width"] = "Width";
+/* Property title for `font-stretch` and `wdth` variation axis. */
+localizedStrings["Width @ Font Details Sidebar Property"] = "Width";
 localizedStrings["With Object Properties"] = "With Object Properties";
 localizedStrings["Worker"] = "Worker";
 localizedStrings["Worker Thread"] = "Worker Thread";
