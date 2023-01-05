@@ -153,14 +153,12 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
     });
 }
 
-void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, VoidCallback&& completionHandler)
+void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
 {
     if (!m_connection)
-        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
+        return;
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
-        completionHandler(convertToExceptionOr(error));
-    });
+    m_connection->send(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), 0);
 }
 
 void WebFileSystemStorageConnection::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, FileSystemStorageConnection::GetHandleNamesCallback&& completionHandler)

@@ -29,8 +29,6 @@
 #include "BufferSource.h"
 #include "FileSystemFileHandle.h"
 #include "JSDOMPromiseDeferred.h"
-#include "WorkerGlobalScope.h"
-#include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -55,161 +53,63 @@ FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& c
 
 FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 {
-    ASSERT(isClosingOrClosed());
-
     m_source->unregisterSyncAccessHandle(m_identifier);
+    closeInternal(ShouldNotifyBackend::Yes);
+}
 
-    if (m_closeResult)
+ExceptionOr<void> FileSystemSyncAccessHandle::truncate(unsigned long long size)
+{
+    if (m_isClosed)
+        return Exception { InvalidStateError, "AccessHandle is closed"_s };
+
+    bool succeeded = FileSystem::truncateFile(m_file.handle(), size);
+    return succeeded ? ExceptionOr<void> { } : Exception { InvalidStateError, "Failed to truncate file"_s };
+}
+
+ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::getSize()
+{
+    if (m_isClosed)
+        return Exception { InvalidStateError, "AccessHandle is closed"_s };
+
+    auto result = FileSystem::fileSize(m_file.handle());
+    return result ? ExceptionOr<unsigned long long> { result.value() } : Exception { InvalidStateError, "Failed to get file size"_s };
+}
+
+ExceptionOr<void> FileSystemSyncAccessHandle::flush()
+{
+    if (m_isClosed)
+        return Exception { InvalidStateError, "AccessHandle is closed"_s };
+
+    bool succeeded = FileSystem::flushFile(m_file.handle());
+    return succeeded ? ExceptionOr<void> { } : Exception { InvalidStateError, "Failed to flush file"_s };
+}
+
+ExceptionOr<void> FileSystemSyncAccessHandle::close()
+{
+    if (m_isClosed)
+        return Exception { InvalidStateError, "AccessHandle is closed"_s };
+
+    closeInternal(ShouldNotifyBackend::Yes);
+    return { };
+}
+
+void FileSystemSyncAccessHandle::closeInternal(ShouldNotifyBackend shouldNotifyBackend)
+{
+    if (m_isClosed)
         return;
 
-    // Task replies may be scheduled to WorkerRunLoop but do not run.
-    auto pendingPromises = std::exchange(m_pendingPromises, { });
-    for (auto& promise : pendingPromises) {
-        std::visit([](auto& promise) {
-            promise.reject(Exception { UnknownError, "AccessHandle is about to be destroyed"_s });
-        }, promise);
-    }
-
-    closeBackend(CloseMode::Sync);
-}
-
-bool FileSystemSyncAccessHandle::isClosingOrClosed() const
-{
-    return m_closeResult || !m_closeCallbacks.isEmpty();
-}
-
-void FileSystemSyncAccessHandle::truncate(unsigned long long size, DOMPromiseDeferred<void>&& promise)
-{
-    if (isClosingOrClosed())
-        return promise.reject(Exception { InvalidStateError, "AccessHandle is closing or closed"_s });
-
-    auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
-    if (!scope)
-        return promise.reject(Exception { InvalidStateError, "Context is invalid"_s });
-
-    m_pendingPromises.append(WTFMove(promise));
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file.handle(), size, workerThread = Ref { scope->thread() }]() mutable {
-        workerThread->runLoop().postTask([weakThis = WTFMove(weakThis), success = FileSystem::truncateFile(file, size)](auto&) mutable {
-            if (weakThis)
-                weakThis->completePromise(success ? ExceptionOr<void> { } : Exception { UnknownError });
-        });
-    });
-}
-
-void FileSystemSyncAccessHandle::getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
-{
-    if (isClosingOrClosed())
-        return promise.reject(Exception { InvalidStateError, "AccessHandle is closing or closed"_s });
-
-    auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
-    if (!scope)
-        return promise.reject(Exception { InvalidStateError, "Context is invalid"_s });
-
-    m_pendingPromises.append(WTFMove(promise));
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file.handle(), workerThread = Ref { scope->thread() }]() mutable {
-        workerThread->runLoop().postTask([weakThis = WTFMove(weakThis), success = FileSystem::fileSize(file)](auto&) mutable {
-            if (weakThis)
-                weakThis->completePromise(success ? ExceptionOr<uint64_t> { success.value() } : Exception { UnknownError });
-        });
-    });
-}
-
-void FileSystemSyncAccessHandle::flush(DOMPromiseDeferred<void>&& promise)
-{
-    if (isClosingOrClosed())
-        return promise.reject(Exception { InvalidStateError, "AccessHandle is closing or closed"_s });
-
-    auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
-    if (!scope)
-        return promise.reject(Exception { InvalidStateError, "Context is invalid"_s });
-
-    m_pendingPromises.append(WTFMove(promise));
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = m_file.handle(), workerThread = Ref { scope->thread() }]() mutable {
-        workerThread->runLoop().postTask([weakThis = WTFMove(weakThis), success = FileSystem::flushFile(file)](auto&) mutable {
-            if (weakThis)
-                weakThis->completePromise(success ? ExceptionOr<void> { } : Exception { UnknownError });
-        });
-    });
-}
-
-void FileSystemSyncAccessHandle::close(DOMPromiseDeferred<void>&& promise)
-{
-    closeInternal([weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto result) mutable {
-        promise.settle(WTFMove(result));
-    });
-}
-
-void FileSystemSyncAccessHandle::closeInternal(CloseCallback&& callback)
-{
-    if (m_closeResult)
-        return callback(ExceptionOr<void> { *m_closeResult });
-
-    auto isClosing = !m_closeCallbacks.isEmpty();
-    m_closeCallbacks.append(WTFMove(callback));
-    if (isClosing)
-        return;
-
+    m_isClosed = true;
     ASSERT(m_file);
-    closeFile();
-}
+    m_file = { };
 
-void FileSystemSyncAccessHandle::closeFile()
-{
-    if (!m_file)
-        return;
-
-    auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
-    ASSERT(scope);
-
-    WorkerGlobalScope::postFileSystemStorageTask([weakThis = WeakPtr { *this }, file = std::exchange(m_file, { }), workerThread = Ref { scope->thread() }]() mutable {
-        workerThread->runLoop().postTask([weakThis = WTFMove(weakThis)](auto&) mutable {
-            if (weakThis)
-                weakThis->didCloseFile();
-        });
-    });
-}
-
-void FileSystemSyncAccessHandle::didCloseFile()
-{
-    closeBackend(CloseMode::Async);
-}
-
-void FileSystemSyncAccessHandle::closeBackend(CloseMode mode)
-{
-    if (m_closeResult)
-        return;
-
-    if (mode == CloseMode::Async) {
-        m_source->closeSyncAccessHandle(m_identifier, [this, protectedThis = Ref { *this }](auto result) mutable {
-            didCloseBackend(WTFMove(result));
-        });
-        return;
-    }
-
-    m_source->closeSyncAccessHandle(m_identifier, [](auto) { });
-    didCloseBackend({ });
-}
-
-void FileSystemSyncAccessHandle::didCloseBackend(ExceptionOr<void>&& result)
-{
-    if (m_closeResult)
-        return;
-
-    m_closeResult = WTFMove(result);
-    auto callbacks = std::exchange(m_closeCallbacks, { });
-    for (auto& callback : callbacks)
-        callback(ExceptionOr<void> { *m_closeResult });
+    if (shouldNotifyBackend == ShouldNotifyBackend::Yes)
+        m_source->closeSyncAccessHandle(m_identifier);
 }
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
 {
-    ASSERT(!isMainThread());
-
-    if (isClosingOrClosed())
-        return Exception { InvalidStateError, "AccessHandle is closing or closed"_s };
-
-    if (!m_pendingPromises.isEmpty())
-        return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
+    if (m_isClosed)
+        return Exception { InvalidStateError, "AccessHandle is closed"_s };
 
     if (options.at) {
         int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
@@ -226,13 +126,8 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
 {
-    ASSERT(!isMainThread());
-
-    if (isClosingOrClosed())
-        return Exception { InvalidStateError, "AccessHandle is closing or closed"_s };
-
-    if (!m_pendingPromises.isEmpty())
-        return Exception { InvalidStateError, "Access handle has unfinished operation"_s };
+    if (m_isClosed)
+        return Exception { InvalidStateError, "AccessHandle is closed"_s };
 
     if (options.at) {
         int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
@@ -247,23 +142,6 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
     return result;
 }
 
-void FileSystemSyncAccessHandle::completePromise(Result&& result)
-{
-    if (m_pendingPromises.isEmpty())
-        return;
-
-    auto pendingPromise = m_pendingPromises.takeFirst();
-    WTF::switchOn(WTFMove(result), [&pendingPromise](ExceptionOr<void>&& result) {
-        auto* promise = std::get_if<DOMPromiseDeferred<void>>(&pendingPromise);
-        ASSERT(promise);
-        promise->settle(WTFMove(result));
-    }, [&pendingPromise](ExceptionOr<uint64_t>&& result) {
-        auto* promise = std::get_if<DOMPromiseDeferred<IDLUnsignedLongLong>>(&pendingPromise);
-        ASSERT(promise);
-        promise->settle(WTFMove(result));
-    });
-}
-
 const char* FileSystemSyncAccessHandle::activeDOMObjectName() const
 {
     return "FileSystemSyncAccessHandle";
@@ -271,15 +149,13 @@ const char* FileSystemSyncAccessHandle::activeDOMObjectName() const
 
 void FileSystemSyncAccessHandle::stop()
 {
-    closeInternal([](auto) { });
+    closeInternal(ShouldNotifyBackend::Yes);
 }
 
 void FileSystemSyncAccessHandle::invalidate()
 {
-    closeFile();
-
     // Invalidation is initiated by backend.
-    didCloseBackend({ });
+    closeInternal(ShouldNotifyBackend::No);
 }
 
 } // namespace WebCore

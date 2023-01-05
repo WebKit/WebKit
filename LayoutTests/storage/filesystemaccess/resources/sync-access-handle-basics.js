@@ -46,13 +46,13 @@ function createSyncAccessHandle(fromHandle)
 
 function getSize(accessHandle) 
 {
-    accessHandle.getSize().then((result) => {
-        size = result;
+    try {
+        size = accessHandle.getSize();
         shouldBe("size", "0");
         createSecondSyncAcessHandle(fileHandle);
-    }).catch((error) => {
+    } catch(error) {
         finishTest(error);
-    });
+    }
 }
 
 function createSecondSyncAcessHandle(fromHandle) 
@@ -73,12 +73,13 @@ function createSecondSyncAcessHandle(fromHandle)
 
 function close() 
 {
-    accessHandle1.close().then((result) => {
+    try {
+        accessHandle1.close();
         debug("accessHandle1 is closed");
         createSecondSyncAcessHandle(fileHandle);
-    }).catch((error) => {
+    } catch(error) {
         finishTest(error);
-    });
+    }
 }
 
 getDirectory();

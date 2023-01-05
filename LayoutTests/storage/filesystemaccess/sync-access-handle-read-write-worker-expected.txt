@@ -27,7 +27,7 @@ PASS [Worker] fileSize is totalWriteSize
 PASS [Worker] fileSize is 4
 [Worker] test write() with pending operation:
 [Worker] accessHandle.truncate(0)
-PASS [Worker] accessHandle.read(readBuffer, { "at" : 0 }) threw exception InvalidStateError: Access handle has unfinished operation.
+PASS [Worker] accessHandle.read(readBuffer, { "at" : 0 }) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

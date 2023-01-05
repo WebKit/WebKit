@@ -1,8 +1,8 @@
 
-FAIL SyncAccessHandle.close is idempotent assert_equals: expected (undefined) undefined but got (object) object "[object Promise]"
-FAIL SyncAccessHandle.read fails after SyncAccessHandle.close assert_equals: expected (undefined) undefined but got (object) object "[object Promise]"
-FAIL SyncAccessHandle.write fails after SyncAccessHandle.close assert_equals: expected (undefined) undefined but got (object) object "[object Promise]"
-FAIL SyncAccessHandle.flush fails after SyncAccessHandle.close assert_equals: expected (undefined) undefined but got (object) object "[object Promise]"
-FAIL SyncAccessHandle.getSize fails after SyncAccessHandle.close assert_equals: expected (undefined) undefined but got (object) object "[object Promise]"
-FAIL SyncAccessHandle.truncate fails after SyncAccessHandle.handle.close assert_equals: expected (undefined) undefined but got (object) object "[object Promise]"
+FAIL SyncAccessHandle.close is idempotent promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
+FAIL SyncAccessHandle.read fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
+FAIL SyncAccessHandle.write fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
+FAIL SyncAccessHandle.flush fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
+FAIL SyncAccessHandle.getSize fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
+FAIL SyncAccessHandle.truncate fails after SyncAccessHandle.handle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
 

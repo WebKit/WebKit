@@ -11,42 +11,26 @@ const options = { "at" : 0 };
 var functions = [
     { name : "getSize" },
     { name : "flush" },
-    { name : "read", args : [buffer, options], sync : true },
-    { name : "write", args : [buffer, options], sync : true },
+    { name : "read", args : [buffer, options] },
+    { name : "write", args : [buffer, options] },
 ];
 
-function testSyncFunction(currentFunction)
+function testFunction(targetFunction)
 {
     try {
-        var result = accessHandle[currentFunction.name].apply(accessHandle, currentFunction.args);
+        var result = accessHandle[targetFunction.name].apply(accessHandle, targetFunction.args);
         return null;
-    } catch (err) {
-        return err;
+    } catch (error) {
+        return error;
     }
 }
 
-async function testAsyncFunction(func)
-{
-    var promise = accessHandle[func.name].apply(accessHandle, func.args);
-    return promise.then((value) => {
-        return func.name + " function should throw exception but didn't";
-    }, (err) => {
-        return err;
-    });
-}
-
-async function testFunctions() 
+function testFunctions()
 {
     for (const func of functions) {
         debug("testing " + func.name);
-
-        if (func.sync) {
-            error = testSyncFunction(func);
-        } else {
-            error = await testAsyncFunction(func);
-        }
-
-        shouldBeEqualToString("error.toString()", "InvalidStateError: AccessHandle is closing or closed");
+        error = testFunction(func);
+        shouldBeEqualToString("error.toString()", "InvalidStateError: AccessHandle is closed");
     }
 }
 
@@ -56,7 +40,7 @@ async function testMultipleHandles()
     for (let i = 0; i < 512; i++) {
         try {
             accessHandle = await fileHandle.createSyncAccessHandle();
-            await accessHandle.close();
+            accessHandle.close();
         } catch (err) {
             throw "Failed at No." + i + " handle: " + err.toString();
         }
@@ -73,13 +57,9 @@ async function test()
         fileHandle = await rootHandle.getFileHandle("sync-access-handle-close.txt", { "create" : true  });
         accessHandle = await fileHandle.createSyncAccessHandle();
 
-        var closePromise = accessHandle.close();
-        debug("test after invoking close():");
-        await testFunctions();
-
-        debug("test after close() is done:");
-        await closePromise;
-        await testFunctions();
+        debug("test closing handle:");
+        accessHandle.close();
+        testFunctions();
 
         debug("test closing multiple handles:");
         await testMultipleHandles();

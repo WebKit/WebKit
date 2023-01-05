@@ -49,26 +49,19 @@ public:
     static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&);
     ~FileSystemSyncAccessHandle();
 
-    void truncate(unsigned long long size, DOMPromiseDeferred<void>&&);
-    void getSize(DOMPromiseDeferred<IDLUnsignedLongLong>&&);
-    void flush(DOMPromiseDeferred<void>&&);
-    void close(DOMPromiseDeferred<void>&&);
+    ExceptionOr<void> truncate(unsigned long long size);
+    ExceptionOr<unsigned long long> getSize();
+    ExceptionOr<void> flush();
+    ExceptionOr<void> close();
     ExceptionOr<unsigned long long> read(BufferSource&&, FilesystemReadWriteOptions);
     ExceptionOr<unsigned long long> write(BufferSource&&, FilesystemReadWriteOptions);
-    using Result = std::variant<ExceptionOr<void>, ExceptionOr<uint64_t>>;
-    void completePromise(Result&&);
     void invalidate();
 
 private:
     FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&);
-    bool isClosingOrClosed() const;
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
-    void closeInternal(CloseCallback&&);
-    void closeFile();
-    void didCloseFile();
-    enum class CloseMode : bool { Async, Sync };
-    void closeBackend(CloseMode);
-    void didCloseBackend(ExceptionOr<void>&&);
+    enum class ShouldNotifyBackend : bool { No, Yes };
+    void closeInternal(ShouldNotifyBackend);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -77,10 +70,7 @@ private:
     Ref<FileSystemFileHandle> m_source;
     FileSystemSyncAccessHandleIdentifier m_identifier;
     FileHandle m_file;
-    std::optional<ExceptionOr<void>> m_closeResult;
-    Vector<CloseCallback> m_closeCallbacks;
-    using Promise = std::variant<DOMPromiseDeferred<void>, DOMPromiseDeferred<IDLUnsignedLongLong>>;
-    Deque<Promise> m_pendingPromises;
+    bool m_isClosed { false };
 };
 
 } // namespace WebCore
