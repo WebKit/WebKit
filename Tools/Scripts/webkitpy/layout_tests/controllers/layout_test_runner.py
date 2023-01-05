@@ -499,11 +499,74 @@ class Worker(object):
 
 class TestShard(object):
     """A test shard is a named list of TestInputs."""
+    DEFAULT_AVERAGE_TEST_TIME = 256
+    AVERAGE_TEST_TIME_ESTIMATES = {
+        'animations': 438,
+        'applicationmanifest': 780,
+        'compositing/video': 587,
+        'fast/css-custom-paint': 2991,
+        'fast/dom/Geolocation': 776,
+        'fast/images': 795,
+        'fast/scrolling/mac': 1050,
+        'http': 646,
+        'http/tests/media': 2825,
+        'http/wpt/webrtc': 11723,
+        'imported/blink/http': 1785,
+        'imported/w3c/web-platform-tests/WebCryptoAPI': 659,
+        'imported/w3c/web-platform-tests/content-security-policy': 1095,
+        'imported/w3c/web-platform-tests/css/css-grid/placement': 1035,
+        'imported/w3c/web-platform-tests/css/css-transitions': 821,
+        'imported/w3c/web-platform-tests/css/geometry': 1476,
+        'imported/w3c/web-platform-tests/dom/events': 1568,
+        'imported/w3c/web-platform-tests/feature-policy': 2609,
+        'imported/w3c/web-platform-tests/fetch': 423,
+        'imported/w3c/web-platform-tests/html/anonymous-iframe': 1373,
+        'imported/w3c/web-platform-tests/html/browsers/the-window-object': 732,
+        'imported/w3c/web-platform-tests/html/canvas/element/manual': 675,
+        'imported/w3c/web-platform-tests/html/cross-origin-embedder-policy': 1653,
+        'imported/w3c/web-platform-tests/html/cross-origin-opener-policy': 10639,
+        'imported/w3c/web-platform-tests/html/semantics/document-metadata': 740,
+        'imported/w3c/web-platform-tests/html/semantics/embedded-content': 978,
+        'imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0': 519,
+        'imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection': 1021,
+        'imported/w3c/web-platform-tests/html/semantics/scripting-1': 1303,
+        'imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module': 5601,
+        'imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents': 5946,
+        'imported/w3c/web-platform-tests/html/syntax/speculative-parsing': 2799,
+        'imported/w3c/web-platform-tests/media-source': 6747,
+        'imported/w3c/web-platform-tests/mediacapture-record': 12018,
+        'imported/w3c/web-platform-tests/mediacapture-streams': 856,
+        'imported/w3c/web-platform-tests/pointerevents': 3544,
+        'imported/w3c/web-platform-tests/preload': 1316,
+        'imported/w3c/web-platform-tests/reporting': 738,
+        'imported/w3c/web-platform-tests/requestidlecallback': 789,
+        'imported/w3c/web-platform-tests/uievents': 2401,
+        'imported/w3c/web-platform-tests/webrtc': 24445,
+        'imported/w3c/web-platform-tests/webrtc-encoded-transform': 11348,
+        'imported/w3c/web-platform-tests/xhr': 1002,
+        'jquery': 842,
+        'media': 436,
+        'platform': 804,
+        'model-element': 1390,
+        'swipe': 10968,
+        'webgl': 533,
+        'webrtc': 14712,
+        'workers': 1389,
+    }
 
     def __init__(self, name, test_inputs):
         self.name = name
         self.test_inputs = test_inputs
         self.needs_servers = test_inputs[0].needs_servers
+
+        parts = name.split('/')
+        key = parts[0]
+        average_test_time = self.AVERAGE_TEST_TIME_ESTIMATES.get(key, self.DEFAULT_AVERAGE_TEST_TIME)
+        for part in parts[1:]:
+            key = '{}/{}'.format(key, part)
+            average_test_time = self.AVERAGE_TEST_TIME_ESTIMATES.get(key, average_test_time)
+
+        self.shard_time_estimate = len(self.test_inputs) * average_test_time
 
     def shorten(self, string):
         if not string:
@@ -542,12 +605,14 @@ class TestShard(object):
             self.name,
             [self.pack(i, mutation=self.shorten) for i in self.test_inputs],
             self.needs_servers,
+            self.shard_time_estimate,
         )
 
     def __setstate__(self, state):
         self.name = state[0]
         self.test_inputs = [self.pack(i, mutation=self.expand) for i in state[1]]
         self.needs_servers = state[2]
+        self.shard_time_estimate = state[3]
 
     def __repr__(self):
         return "TestShard(name='%s', test_inputs=%s, needs_servers=%s'" % (self.name, self.test_inputs, self.needs_servers)
@@ -610,6 +675,6 @@ class Sharder(object):
             shards.append(shard)
 
         # Sort the shards by directory name.
-        shards.sort(key=lambda shard: shard.name)
+        shards.sort(key=lambda shard: (-shard.shard_time_estimate, shard.name))
 
         return shards
