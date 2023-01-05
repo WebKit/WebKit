@@ -2182,31 +2182,27 @@ class Trigger(trigger.Trigger):
         return properties_to_pass
 
 
-class TestWithFailureCount(shell.Test):
+class TestWithFailureCount(shell.TestNewStyle):
     failedTestsFormatString = '%d test%s failed'
     failedTestCount = 0
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
-        return shell.Test.start(self)
 
-    def countFailures(self, cmd):
-        raise NotImplementedError
+        rc = yield super(TestWithFailureCount, self).run()
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
-        self.failedTestCount = self.countFailures(cmd)
+        self.failedTestCount = self.countFailures(rc)
         self.failedTestPluralSuffix = '' if self.failedTestCount == 1 else 's'
 
-    def evaluateCommand(self, cmd):
         if self.failedTestCount:
-            return FAILURE
+            defer.returnValue(FAILURE)
+        else:
+            defer.returnValue(rc)
 
-        if cmd.rc != 0:
-            return FAILURE
-
-        return SUCCESS
+    def countFailures(self, returncode):
+        raise NotImplementedError
 
     def getResultSummary(self):
         status = self.name
@@ -2231,7 +2227,7 @@ class CheckStyle(TestWithFailureCount):
     def __init__(self, **kwargs):
         super(CheckStyle, self).__init__(logEnviron=False, **kwargs)
 
-    def countFailures(self, cmd):
+    def countFailures(self, returncode):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
 
         match = re.search(r'Total errors found: (?P<errors>\d+) in (?P<files>\d+) files', log_text)
@@ -2487,15 +2483,15 @@ class InstallWpeDependencies(shell.ShellCommand):
         super(InstallWpeDependencies, self).__init__(logEnviron=False, **kwargs)
 
 
-def appendCustomBuildFlags(step, platform, fullPlatform):
+def customBuildFlag(platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.
     if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
-        return
+        return []
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
     elif platform in ['ios', 'tvos', 'watchos']:
         platform = platform + '-device'
-    step.setCommand(step.command + ['--' + platform])
+    return ['--' + platform]
 
 
 class BuildLogLineObserver(logobserver.LogLineObserver, object):
@@ -2579,7 +2575,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
             self.setCommand(self.command + [f'--prefix={prefix}'])
 
-        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+        self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
 
         return shell.Compile.start(self)
 
@@ -2909,7 +2905,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
         if platform in ('gtk', 'wpe', 'jsc-only'):
             self.command.extend(['--memory-limited', '--verbose'])
 
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.setCommand(self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform')))
         self.command.extend(self.command_extra)
         return shell.Test.start(self)
 
@@ -3204,7 +3200,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
     def setLayoutTestCommand(self):
         platform = self.getProperty('platform')
-        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+        self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
         additionalArguments = self.getProperty('additionalArguments')
 
         if self.getProperty('use-dump-render-tree', False):
@@ -4367,18 +4363,29 @@ class RunAPITests(TestWithFailureCount):
     def __init__(self, **kwargs):
         super(RunAPITests, self).__init__(logEnviron=False, **kwargs)
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         platform = self.getProperty('platform')
         if platform == 'gtk':
-            command = ['python3', 'Tools/Scripts/run-gtk-tests',
-                       '--{0}'.format(self.getProperty('configuration')),
-                       '--json-output={0}'.format(self.jsonFileName)]
-            self.setCommand(command)
+            self.command = ['python3', 'Tools/Scripts/run-gtk-tests',
+                           '--{0}'.format(self.getProperty('configuration')),
+                           '--json-output={0}'.format(self.jsonFileName)]
         else:
-            appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
-        return TestWithFailureCount.start(self)
+            self.command = self.command + customBuildFlag(platform, self.getProperty('fullPlatform'))
 
-    def countFailures(self, cmd):
+        rc = yield super(RunAPITests, self).run()
+
+        if rc == SUCCESS:
+            message = 'Passed API tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.doOnFailure()
+
+        defer.returnValue(rc)
+
+    def countFailures(self, returncode):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
 
         match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', log_text)
@@ -4386,51 +4393,35 @@ class RunAPITests(TestWithFailureCount):
             return 0
         return int(match.group('ran')) - int(match.group('passed'))
 
-    def evaluateCommand(self, cmd):
-        rc = super(RunAPITests, self).evaluateCommand(cmd)
-        if rc == SUCCESS:
-            message = 'Passed API tests'
-            self.descriptionDone = message
-            self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
-        else:
-            self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), ReRunAPITests()])
-        return rc
+    def doOnFailure(self):
+        self.build.addStepsAfterCurrentStep([
+            ValidateChange(verifyBugClosed=False, addURLs=False),
+            KillOldProcesses(),
+            ReRunAPITests(),
+        ])
 
 
 class ReRunAPITests(RunAPITests):
     name = 're-run-api-tests'
 
-    def evaluateCommand(self, cmd):
-        rc = TestWithFailureCount.evaluateCommand(self, cmd)
-        if rc == SUCCESS:
-            message = 'Passed API tests'
-            self.descriptionDone = message
-            self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
-        else:
-            steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
-            platform = self.getProperty('platform')
-            if platform == 'wpe':
-                steps_to_add.append(InstallWpeDependencies())
-            elif platform == 'gtk':
-                steps_to_add.append(InstallGtkDependencies())
-            steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
-            steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
-            steps_to_add.append(KillOldProcesses())
-            steps_to_add.append(RunAPITestsWithoutChange())
-            steps_to_add.append(AnalyzeAPITestsResults())
-            # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
-            self.build.addStepsAfterCurrentStep(steps_to_add)
-
-        return rc
+    def doOnFailure(self):
+        steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        platform = self.getProperty('platform')
+        if platform == 'wpe':
+            steps_to_add.append(InstallWpeDependencies())
+        elif platform == 'gtk':
+            steps_to_add.append(InstallGtkDependencies())
+        steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
+        steps_to_add.append(KillOldProcesses())
+        steps_to_add.append(RunAPITestsWithoutChange())
+        steps_to_add.append(AnalyzeAPITestsResults())
+        # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
+        self.build.addStepsAfterCurrentStep(steps_to_add)
 
 
-class RunAPITestsWithoutChange(RunAPITests):
+class RunAPITestsWithoutChange(ReRunAPITests):
     name = 'run-api-tests-without-change'
-
-    def evaluateCommand(self, cmd):
-        return TestWithFailureCount.evaluateCommand(self, cmd)
 
 
 class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
