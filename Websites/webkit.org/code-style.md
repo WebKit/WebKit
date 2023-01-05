@@ -354,6 +354,21 @@ x++; y++;
 if (condition) doIt();
 ```
 
+[](#linebreaking-chained-assignments) Chained `=` assignments should be broken up into multiple statements.
+
+###### Right:
+
+```cpp
+rightSpacing = totalSpacing / 2;
+leftSpacing = rightSpacing;
+```
+
+###### Wrong:
+
+```cpp
+leftSpacing = rightSpacing = totalSpacing / 2;
+```
+
 [](#linebreaking-else-braces) An `else` statement should go on the same line as a preceding close brace if one is present, else it should line up with the `if` statement.
 
 ###### Right:
