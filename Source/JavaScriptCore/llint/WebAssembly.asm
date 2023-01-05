@@ -388,7 +388,10 @@ if not JSVALUE64
 end
 
     loadp Callee[cfr], ws0
-    andp ~3, ws0
+    andp ~(constexpr JSValue::WasmTag), ws0
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
     storep ws0, CodeBlock[cfr]
 
     # Get new sp in ws1 and check stack height.
@@ -483,7 +486,10 @@ if not JSVALUE64
 end
 
     loadp Callee[cfr], ws0
-    andp ~3, ws0
+    andp ~(constexpr JSValue::WasmTag), ws0
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
     storep ws0, CodeBlock[cfr]
 
     # Get new sp in ws1 and check stack height.
@@ -760,11 +766,6 @@ macro doReturn()
 end
 
 # Entry point
-
-macro wasmCodeBlockGetter(targetRegister)
-    loadp Callee[cfr], targetRegister
-    andp ~3, targetRegister
-end
 
 op(wasm_function_prologue, macro ()
     if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN

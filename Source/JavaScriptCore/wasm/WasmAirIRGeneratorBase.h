@@ -349,7 +349,7 @@ struct AirIRGeneratorBase {
     ////////////////////////////////////////////////////////////////////////////////
     // Constructor
 
-    AirIRGeneratorBase(const ModuleInformation&, B3::Procedure&, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount*, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize);
+    AirIRGeneratorBase(const ModuleInformation&, Callee&, B3::Procedure&, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount*, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize);
 
     void finalizeEntrypoints();
 
@@ -875,6 +875,7 @@ public:
 
     FunctionParser<Derived>* m_parser { nullptr };
     const ModuleInformation& m_info;
+    Callee& m_callee;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
     const unsigned m_functionIndex { UINT_MAX };
     TierUpCount* m_tierUp { nullptr };
@@ -970,8 +971,9 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWasmContextInstance(Bas
 }
 
 template <typename Derived, typename ExpressionType>
-AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize)
+AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInformation& info, Callee& callee, B3::Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize)
     : m_info(info)
+    , m_callee(callee)
     , m_mode(mode)
     , m_functionIndex(functionIndex)
     , m_tierUp(tierUp)
@@ -1011,13 +1013,8 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
         code.emitDefaultPrologue(jit);
 
         {
-            GPRReg calleeGPR = wasmCallingConvention().prologueScratchGPRs[0];
-            auto moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
-            jit.addLinkTask([compilation, moveLocation] (LinkBuffer& linkBuffer) {
-                compilation->calleeMoveLocations.append(linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation));
-            });
             CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
-            jit.storePtr(calleeGPR, calleeSlot.withOffset(PayloadOffset));
+            jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), calleeSlot.withOffset(PayloadOffset));
             if constexpr (is32Bit())
                 jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
         }
@@ -3502,7 +3499,7 @@ B3::Origin AirIRGeneratorBase<Derived, ExpressionType>::origin()
 }
 
 template<typename Generator>
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAirImpl(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAirImpl(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -3528,7 +3525,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAirImpl(Compi
 
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
-    Generator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, hasExceptionHandlers, tierUp, signature, result->osrEntryScratchBufferSize);
+    Generator irGenerator(info, callee, procedure, unlinkedWasmToWasmCalls, mode, functionIndex, hasExceptionHandlers, tierUp, signature, result->osrEntryScratchBufferSize);
     FunctionParser<Generator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
