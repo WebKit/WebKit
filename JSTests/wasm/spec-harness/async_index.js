@@ -52,6 +52,25 @@ const EXPECT_INVALID = false;
 
 /* DATA **********************************************************************/
 
+let externrefs = {};
+let externsym = Symbol("externref");
+function externref(s) {
+  if (! (s in externrefs)) externrefs[s] = {[externsym]: s};
+  return externrefs[s];
+}
+function is_externref(x) {
+  return (x !== null && externsym in x) ? 1 : 0;
+}
+function is_funcref(x) {
+  return typeof x === "function" ? 1 : 0;
+}
+function eq_externref(x, y) {
+  return x === y ? 1 : 0;
+}
+function eq_funcref(x, y) {
+  return x === y ? 1 : 0;
+}
+
 // Default imports.
 var registry = {};
 
@@ -67,13 +86,20 @@ function reinitializeRegistry() {
 
   chain = chain.then(_ => {
     let spectest = {
+      externref: externref,
+      is_externref: is_externref,
+      is_funcref: is_funcref,
+      eq_externref: eq_externref,
+      eq_funcref: eq_funcref,
       print: console.log.bind(console),
       print_i32: console.log.bind(console),
+      print_i64: console.log.bind(console),
       print_i32_f32: console.log.bind(console),
       print_f64_f64: console.log.bind(console),
       print_f32: console.log.bind(console),
       print_f64: console.log.bind(console),
       global_i32: 666,
+      global_i64: 666n,
       global_f32: 666,
       global_f64: 666,
       table: new WebAssembly.Table({
@@ -180,9 +206,9 @@ function instance(bytes, imports, valid = true) {
   return chain;
 }
 
-function exports(name, instance) {
+function exports(instance) {
   return instance.then(inst => {
-    return { [name]: inst.exports };
+    return { module: inst.exports, spectest: registry.spectest };
   });
 }
 
@@ -236,14 +262,41 @@ function assert_trap(action) {
     .catch(_ => {});
 }
 
-function assert_return(action, expected) {
+function assert_return(action, ...expected) {
   const test = "Test that a WebAssembly code returns a specific result";
   const loc = new Error().stack.toString().replace("Error", "");
   chain = Promise.all([action(), chain])
     .then(
       values => {
         uniqueTest(_ => {
-          assert_equals(values[0], expected, loc);
+          let actual = values[0];
+          if (actual === undefined) {
+            actual = [];
+          } else if (!Array.isArray(actual)) {
+            actual = [actual];
+          }
+          if (actual.length !== expected.length) {
+            throw new Error(expected.length + " value(s) expected, got " + actual.length);
+          }
+          for (let i = 0; i < actual.length; ++i) {
+            switch (expected[i]) {
+              case "nan:canonical":
+              case "nan:arithmetic":
+              case "nan:any":
+                // Note that JS can't reliably distinguish different NaN values,
+                // so there's no good way to test that it's a canonical NaN.
+                assert_true(Number.isNaN(actual[i]), `expected NaN, observed ${actual[i]}.`);
+                return;
+              case "ref.func":
+                assert_true(typeof actual[i] === "function", `expected Wasm function, got ${actual[i]}`);
+                return;
+              case "ref.extern":
+                assert_true(actual[i] !== null, `expected Wasm reference, got ${actual[i]}`);
+                return;
+              default:
+                assert_equals(actual[i], expected[i], loc);
+            }
+          }
         }, test);
       },
       error => {
@@ -362,10 +415,8 @@ function get(instance, name) {
   const loc = new Error().stack.toString().replace("Error", "");
   chain = Promise.all([instance, chain]).then(
     values => {
-      let value = values[0].exports[name];
-      if (value instanceof WebAssembly.Global)
-        return value.value;
-      return value;
+      let v = values[0].exports[name];
+      return (v instanceof WebAssembly.Global) ? v.value : v;
     },
     _ => {
       uniqueTest(_ => {

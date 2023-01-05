@@ -1930,16 +1930,16 @@ def runWebAssemblySpecTest(mode)
     runWebAssemblySpecTestBase(mode, "spec-harness", nil)
 end
 
-def runWebAssemblyReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "ref-spec-harness", nil)
-end
-
 def runWebAssemblyFunctionReferenceSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil, "--useWebAssemblyTypedFunctionReferences=true")
 end
 
 def runWebAssemblyGCSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+end
+
+def runWebAssemblyThreadsSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "threads-spec-harness", nil)
 end
 
 def runWebAssemblySIMDSpecTest(mode)

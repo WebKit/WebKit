@@ -9,10 +9,10 @@ assert_return(() => call($1, "funcref", [null]), 1);
 assert_return(() => call($1, "externref", [null]), 1);
 
 // ref_is_null.wast:33
-assert_return(() => call($1, "externref", [hostref(1)]), 0);
+assert_return(() => call($1, "externref", [externref(1)]), 0);
 
 // ref_is_null.wast:35
-run(() => call($1, "init", [hostref(0)]));
+run(() => call($1, "init", [externref(0)]));
 
 // ref_is_null.wast:37
 assert_return(() => call($1, "funcref-elem", [0]), 1);

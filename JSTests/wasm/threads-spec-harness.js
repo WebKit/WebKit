@@ -33,6 +33,6 @@ let console = {
     }
 };
 
-load("./ref-spec-harness/sync_index.js", "caller relative");
-load("./ref-spec-harness/wasm-constants.js", "caller relative");
-load("./ref-spec-harness/wasm-module-builder.js", "caller relative");
+load("./threads-spec-harness/sync_index.js", "caller relative");
+load("./threads-spec-harness/wasm-constants.js", "caller relative");
+load("./threads-spec-harness/wasm-module-builder.js", "caller relative");
