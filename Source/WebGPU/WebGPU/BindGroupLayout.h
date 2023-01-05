@@ -45,9 +45,9 @@ public:
     {
         return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, device));
     }
-    static Ref<BindGroupLayout> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, HashMap<uint32_t, uint32_t>&& stageMapTable, Device& device)
+    static Ref<BindGroupLayout> create(HashMap<uint32_t, uint32_t>&& stageMapTable, Device& device)
     {
-        return adoptRef(*new BindGroupLayout(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(stageMapTable), device));
+        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), device));
     }
     static Ref<BindGroupLayout> createInvalid(Device& device)
     {
@@ -58,7 +58,7 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_vertexArgumentEncoder || m_fragmentArgumentEncoder || m_computeArgumentEncoder; }
+    bool isValid() const { return m_shaderStageForBinding.size() || m_vertexArgumentEncoder || m_fragmentArgumentEncoder || m_computeArgumentEncoder; }
 
     NSUInteger encodedLength() const;
 
@@ -66,33 +66,18 @@ public:
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
-    id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
-    id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
-    id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
-
     Device& device() const { return m_device; }
 
-    uint32_t stageForBinding(uint32_t binding) const;
+    uint32_t stagesForBinding(uint32_t binding) const;
 
 private:
     BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device&);
-    BindGroupLayout(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, HashMap<uint32_t, uint32_t>&&, Device&);
+    BindGroupLayout(HashMap<uint32_t, uint32_t>&&, Device&);
     BindGroupLayout(Device&);
 
-    union {
-        const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
-        const id<MTLBuffer> m_vertexArgumentBuffer;
-    };
-
-    union {
-        const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
-        const id<MTLBuffer> m_fragmentArgumentBuffer;
-    };
-
-    union {
-        const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
-        const id<MTLBuffer> m_computeArgumentBuffer;
-    };
+    const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
+    const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
+    const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 
     const Ref<Device> m_device;
     const HashMap<uint32_t, uint32_t> m_shaderStageForBinding;
