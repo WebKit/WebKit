@@ -90,7 +90,7 @@ private:
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
     void initializeDebugIndicator();
 
-    void waitForDidUpdateActivityState(ActivityStateChangeID) final;
+    void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) final;
     void hideContentUntilPendingUpdate() final;
     void hideContentUntilAnyUpdate() final;
     bool hasVisibleContent() const final;
@@ -130,6 +130,7 @@ private:
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     CallbackMap m_callbacks;
+    Vector<Ref<WebProcessProxy>> m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver;
 };
 
 } // namespace WebKit

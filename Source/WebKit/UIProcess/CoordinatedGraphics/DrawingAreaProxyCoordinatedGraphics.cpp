@@ -49,8 +49,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy, WebProcessProxy& process)
-    : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy, process)
+DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy)
+    : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy)
 #if !PLATFORM(WPE)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
 #endif
@@ -144,12 +144,12 @@ void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBa
 #if PLATFORM(GTK)
 void DrawingAreaProxyCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
-    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
+    m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
 }
 
 void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin)
 {
-    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
+    m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
 }
 #endif
 
@@ -164,7 +164,7 @@ void DrawingAreaProxyCoordinatedGraphics::update(uint64_t backingStoreStateID, c
 #if !PLATFORM(WPE)
     incorporateUpdate(updateInfo);
 #endif
-    send(Messages::DrawingArea::DisplayDidRefresh());
+    m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
 }
 
 void DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
@@ -176,7 +176,7 @@ void DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState(uint64_t ba
     m_isWaitingForDidUpdateBackingStoreState = false;
 
     // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
-    process().stopResponsivenessTimer();
+    m_webPageProxy.process().stopResponsivenessTimer();
 
     if (layerTreeContext != m_layerTreeContext) {
         if (layerTreeContext.isEmpty() && !m_layerTreeContext.isEmpty()) {
@@ -241,7 +241,7 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint6
 
 void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
 {
-    send(Messages::DrawingArea::TargetRefreshRateDidChange(rate));
+    m_webPageProxy.send(Messages::DrawingArea::TargetRefreshRateDidChange(rate), m_identifier);
 }
 
 #if !PLATFORM(WPE)
@@ -319,13 +319,13 @@ void DrawingAreaProxyCoordinatedGraphics::sendUpdateBackingStoreState(RespondImm
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
 
-    send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset));
+    m_webPageProxy.send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset), m_identifier);
     m_scrollOffset = IntSize();
 
     if (m_isWaitingForDidUpdateBackingStoreState) {
         // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
         // in didUpdateBackingStoreState.
-        process().startResponsivenessTimer();
+        m_webPageProxy.process().startResponsivenessTimer();
     }
 
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
@@ -341,7 +341,7 @@ void DrawingAreaProxyCoordinatedGraphics::waitForAndDispatchDidUpdateBackingStor
 
     if (!m_webPageProxy.hasRunningProcess())
         return;
-    if (process().state() == WebProcessProxy::State::Launching)
+    if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
         return;
     if (!m_webPageProxy.isViewVisible())
         return;
@@ -358,7 +358,7 @@ void DrawingAreaProxyCoordinatedGraphics::waitForAndDispatchDidUpdateBackingStor
     // choose the most recent one, or the one that is closest to our current size.
 
     // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
-    process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_identifier.toUInt64(), Seconds::fromMilliseconds(500));
+    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_identifier.toUInt64(), Seconds::fromMilliseconds(500));
 }
 
 #if !PLATFORM(WPE)

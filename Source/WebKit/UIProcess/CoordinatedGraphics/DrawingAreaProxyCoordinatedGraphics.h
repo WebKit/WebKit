@@ -40,7 +40,7 @@ namespace WebKit {
 
 class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
 public:
-    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
+    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
 #if !PLATFORM(WPE)

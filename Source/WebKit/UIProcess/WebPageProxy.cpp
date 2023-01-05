@@ -1171,7 +1171,7 @@ void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingAre
     if (!m_drawingArea)
         return;
 
-    m_drawingArea->startReceivingMessages();
+    m_drawingArea->startReceivingMessages(process());
     m_drawingArea->setSize(viewSize());
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
@@ -2509,7 +2509,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
 
     m_waitingForDidUpdateActivityState = true;
 
-    m_drawingArea->waitForDidUpdateActivityState(activityStateChangeID);
+    m_drawingArea->waitForDidUpdateActivityState(activityStateChangeID, process());
 }
 
 IntSize WebPageProxy::viewSize() const

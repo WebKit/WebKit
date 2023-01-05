@@ -1665,7 +1665,7 @@ std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(We
 {
     switch (m_drawingAreaType) {
     case DrawingAreaType::TiledCoreAnimation:
-        return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page, process);
+        return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page);
     case DrawingAreaType::RemoteLayerTree:
         return makeUnique<RemoteLayerTreeDrawingAreaProxyMac>(m_page, process);
     }

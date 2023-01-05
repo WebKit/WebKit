@@ -33,7 +33,7 @@ namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy final : public DrawingAreaProxy {
 public:
-    TiledCoreAnimationDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
+    TiledCoreAnimationDrawingAreaProxy(WebPageProxy&);
     virtual ~TiledCoreAnimationDrawingAreaProxy();
 
 private:
@@ -51,7 +51,7 @@ private:
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
-    void waitForDidUpdateActivityState(ActivityStateChangeID) override;
+    void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
     void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) final;
 
