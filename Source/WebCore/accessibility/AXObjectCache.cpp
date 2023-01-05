@@ -1895,7 +1895,8 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
 void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (!document().frame()->selection().isFocusedAndActive())
+    // Use the element's document instead of the cache's document in case we're inside a frame that's managing focus.
+    if (!element.document().frame()->selection().isFocusedAndActive())
         return;
 
     auto* object = getOrCreate(&element);
@@ -1907,25 +1908,37 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
 #endif
 
     // Notify active descendant changes only for the focused element.
-    if (document().focusedElement() != &element)
+    if (element.document().focusedElement() != &element)
         return;
 
     auto* activeDescendant = object->activeDescendant();
-    // We want to notify that the combo box has changed its active descendant,
-    // but we do not want to change the focus, because focus should remain with the combo box.
-    if (activeDescendant && (object->isComboBox() || object->shouldFocusActiveDescendant())) {
-        auto* target = object;
+    if (!activeDescendant)
+        return;
 
+    // Handle active-descendant changes when the target allows for it, or the controlled object allows for it.
+    AccessibilityObject* target = nullptr;
+    if (object->shouldFocusActiveDescendant())
+        target = object;
+    else if (object->isComboBox()) {
 #if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
-        if (object->isComboBox()) {
-            if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
-                target = ownedObject;
-            else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
-                target = controlledObject;
-        }
+        if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
+            target = ownedObject;
+        else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
+            target = controlledObject;
 #endif
+    } else {
+        // Check to see if the active descendant is a child of the controlled object. Then we have to use that
+        // controlled object as the target we use in notifications.
+        auto controlledObjects = object->relatedObjects(AXRelationType::ControllerFor);
+        if (controlledObjects.size()) {
+            target = Accessibility::findAncestor(*activeDescendant, false, [&controlledObjects] (const auto& activeDescendantAncestor) {
+                return controlledObjects.contains(&activeDescendantAncestor);
+            });
+        }
+    }
 
+    if (target) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (target != object)
             updateIsolatedTree(target, AXNotification::AXActiveDescendantChanged);
@@ -4088,8 +4101,14 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
     Vector<RelationOrigin> origins;
     Vector<RelationTarget> targets;
     for (auto& element : descendantsOfType<Element>(rootNode)) {
+        if (element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag))
+            continue;
+
         if (RefPtr shadowRoot = element.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
             updateRelationsForTree(*shadowRoot);
+        if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
+            updateRelationsForTree(*frameOwnerElement->contentDocument());
+
         // Collect all possible origins, i.e., elements with non-empty relation attributes.
         for (const auto& attribute : relationAttributes()) {
             if (m_document.settings().ariaReflectionForElementReferencesEnabled()) {

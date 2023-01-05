@@ -1,0 +1,11 @@
+This test ensures objects that control objects with active descendants generate the correct notifications.
+
+addedNotification: true
+Controller role: AXRole: AXTextField
+Received selected children notification AXRole: AXList
+PASS successfullyParsed is true
+
+TEST COMPLETE
+controller
+1
+2
