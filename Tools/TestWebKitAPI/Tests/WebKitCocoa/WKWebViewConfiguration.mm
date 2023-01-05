@@ -287,3 +287,23 @@ TEST(WebKit, ConfigurationMaskedURLSchemes)
 
     EXPECT_WK_STREQ([delegate waitForAlert], "global code@https://example.com/foo.js:1:17");
 }
+
+TEST(WebKit, ConfigurationWebViewToCloneSessionStorageFrom)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<script>sessionStorage.setItem('key', 'value')</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+
+    [configuration _setWebViewToCloneSessionStorageFrom:webView.get()];
+    auto copiedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [copiedWebView synchronouslyLoadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    __block bool done = false;
+    [copiedWebView evaluateJavaScript:@"sessionStorage.getItem('key')" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        NSString* value = result;
+        EXPECT_TRUE(value);
+        EXPECT_WK_STREQ(@"value", result);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}

@@ -366,6 +366,16 @@ void NetworkStorageManager::clearStorageForWebPage(WebPageProxyIdentifier pageId
     });
 }
 
+void NetworkStorageManager::cloneSessionStorageForWebPage(WebPageProxyIdentifier fromIdentifier, WebPageProxyIdentifier toIdentifier)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, fromIdentifier, toIdentifier]() mutable {
+        cloneSessionStorageNamespace(makeObjectIdentifier<StorageNamespaceIdentifierType>(fromIdentifier.toUInt64()), makeObjectIdentifier<StorageNamespaceIdentifierType>(toIdentifier.toUInt64()));
+    });
+}
+
 void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     ASSERT(RunLoop::isMain());
@@ -903,13 +913,13 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
         originStorageManager(storageArea->origin()).sessionStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
 }
 
-void NetworkStorageManager::cloneSessionStorageNamespace(IPC::Connection& connection, StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
+void NetworkStorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 
     for (auto& manager : m_originStorageManagers.values()) {
         if (auto* sessionStorageManager = manager->existingSessionStorageManager())
-            sessionStorageManager->cloneStorageArea(connection.uniqueID(), fromIdentifier, toIdentifier);
+            sessionStorageManager->cloneStorageArea(fromIdentifier, toIdentifier);
     }
 }
 

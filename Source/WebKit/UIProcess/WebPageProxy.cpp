@@ -605,6 +605,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     if (m_preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
 #endif
+
+    m_pageToCloneSessionStorageFrom = m_configuration->pageToCloneSessionStorageFrom();
 }
 
 WebPageProxy::~WebPageProxy()
@@ -1197,6 +1199,12 @@ void WebPageProxy::initializeWebPage()
         WebPageNetworkParameters parameters { attributedBundleIdentifier };
         websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddWebPageNetworkParameters(sessionID(), m_identifier, WTFMove(parameters)), 0);
     }
+
+    if (auto* networkProcess = websiteDataStore().networkProcessIfExists()) {
+        if (m_pageToCloneSessionStorageFrom)
+            networkProcess->send(Messages::NetworkProcess::CloneSessionStorageForWebPage(sessionID(), m_pageToCloneSessionStorageFrom->identifier(), identifier()), 0);
+    }
+    m_pageToCloneSessionStorageFrom = nullptr;
 
     send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(m_process, *m_drawingArea)), 0);
 

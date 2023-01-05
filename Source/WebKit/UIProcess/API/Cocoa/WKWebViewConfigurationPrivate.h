@@ -56,6 +56,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @interface WKWebViewConfiguration (WKPrivate)
 
 @property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
+@property (nonatomic, weak, setter=_setWebViewToCloneSessionStorageFrom:) WKWebView *_webViewToCloneSessionStorageFrom;
 @property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
 
 @property (nonatomic, strong, setter=_setVisitedLinkStore:) _WKVisitedLinkStore *_visitedLinkStore;

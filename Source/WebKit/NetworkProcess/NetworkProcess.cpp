@@ -2297,6 +2297,12 @@ void NetworkProcess::clearStorage(PAL::SessionID sessionID, CompletionHandler<vo
         completionHandler();
 }
 
+void NetworkProcess::cloneSessionStorageForWebPage(PAL::SessionID sessionID, WebPageProxyIdentifier sourcePage, WebPageProxyIdentifier destinationPage)
+{
+    if (auto* session = networkSession(sessionID))
+        session->storageManager().cloneSessionStorageForWebPage(sourcePage, destinationPage);
+}
+
 void NetworkProcess::didIncreaseQuota(PAL::SessionID sessionID, ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     if (auto* session = networkSession(sessionID))

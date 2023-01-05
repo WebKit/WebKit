@@ -190,6 +190,16 @@ void PageConfiguration::setRelatedPage(WebPageProxy* relatedPage)
     m_relatedPage = relatedPage;
 }
 
+WebKit::WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
+{
+    return m_pageToCloneSessionStorageFrom.get();
+}
+
+void PageConfiguration::setPageToCloneSessionStorageFrom(WebKit::WebPageProxy* pageToCloneSessionStorageFrom)
+{
+    m_pageToCloneSessionStorageFrom = pageToCloneSessionStorageFrom;
+}
+
 WebKit::VisitedLinkStore* PageConfiguration::visitedLinkStore()
 {
     return m_visitedLinkStore.get();

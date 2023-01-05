@@ -86,6 +86,7 @@ public:
     void close(CompletionHandler<void()>&&);
     void clearStorageForTesting(CompletionHandler<void()>&&);
     void clearStorageForWebPage(WebPageProxyIdentifier);
+    void cloneSessionStorageForWebPage(WebPageProxyIdentifier, WebPageProxyIdentifier);
     void didIncreaseQuota(WebCore::ClientOrigin&&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
     enum class ShouldComputeSize : bool { No, Yes };
     void fetchData(OptionSet<WebsiteDataType>, ShouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
@@ -149,7 +150,7 @@ private:
     void connectToStorageAreaSync(IPC::Connection&, WebCore::StorageType, StorageAreaMapIdentifier, StorageNamespaceIdentifier, const WebCore::ClientOrigin&, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&&);
     void cancelConnectToStorageArea(IPC::Connection&, WebCore::StorageType, StorageNamespaceIdentifier, const WebCore::ClientOrigin&);
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
-    void cloneSessionStorageNamespace(IPC::Connection&, StorageNamespaceIdentifier, StorageNamespaceIdentifier);
+    void cloneSessionStorageNamespace(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
     void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&&);
     void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&&);
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);

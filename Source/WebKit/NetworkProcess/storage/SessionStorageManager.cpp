@@ -118,7 +118,7 @@ void SessionStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID 
         storageArea->removeListener(connection);
 }
 
-void SessionStorageManager::cloneStorageArea(IPC::Connection::UniqueID connection, StorageNamespaceIdentifier sourceNamespaceIdentifier, StorageNamespaceIdentifier targetNamespaceIdentifier)
+void SessionStorageManager::cloneStorageArea(StorageNamespaceIdentifier sourceNamespaceIdentifier, StorageNamespaceIdentifier targetNamespaceIdentifier)
 {
     auto identifier = m_storageAreasByNamespace.get(sourceNamespaceIdentifier);
     if (!identifier.isValid())

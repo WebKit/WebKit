@@ -3382,6 +3382,8 @@ private:
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     std::unique_ptr<NetworkIssueReporter> m_networkIssueReporter;
 #endif
+
+    RefPtr<WebKit::WebPageProxy> m_pageToCloneSessionStorageFrom;
 };
 
 #ifdef __OBJC__
