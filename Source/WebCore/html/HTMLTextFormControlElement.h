@@ -117,6 +117,7 @@ protected:
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;
+    bool readOnlyBarsFromConstraintValidation() const final { return true; }
 
     void updateInnerTextElementEditability();
 

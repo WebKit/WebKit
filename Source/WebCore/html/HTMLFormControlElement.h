@@ -163,6 +163,7 @@ protected:
     // This must be called any time the result of willValidate() has changed.
     void updateWillValidateAndValidity();
     virtual bool computeWillValidate() const;
+    virtual bool readOnlyBarsFromConstraintValidation() const { return false; }
 
     bool validationMessageShadowTreeContains(const Node&) const;
 
