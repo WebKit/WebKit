@@ -65,6 +65,7 @@ OBJC_CLASS WKPDFPluginAccessibilityObject;
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 typedef const struct OpaqueJSValue* JSValueRef;
+typedef struct OpaqueJSClass* JSClassRef;
 
 namespace WebCore {
 class AXObjectCache;
@@ -270,6 +271,7 @@ private:
 #endif
 
     JSObjectRef makeJSPDFDoc(JSContextRef);
+    static JSClassRef jsPDFDocClass();
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WeakPtr<PluginView> m_view;
