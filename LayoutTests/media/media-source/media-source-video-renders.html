@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <meta name="fuzzy" content="maxDifference=16-100; totalPixels=940-1150" />
+        <title>MSE video renders in WK1</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../utilities.js"></script>
+        <script>
+
+            async function test()
+            {
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
+
+                const video = document.getElementsByTagName('video')[0];
+                const source = new MediaSource();
+                video.src = URL.createObjectURL(source);
+                await once(source, 'sourceopen');
+
+                const sourceBuffer = source.addSourceBuffer('video/mp4; codecs="avc1.4d401f"');
+                const mediaData = await fetch('content/test-red-3s-480x360.mp4');
+                sourceBuffer.appendBuffer(await mediaData.arrayBuffer());
+
+                await once(video, 'canplaythrough');
+                await video.play();
+                video.pause();
+
+                video.currentTime = 1;
+                once(video, 'seeked');
+
+                video.currentTime = 0;
+                once(video, 'seeked');
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="test();">
+        <video playsinline></video>
+    </body>
+</html>
