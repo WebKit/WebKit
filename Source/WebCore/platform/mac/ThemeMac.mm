@@ -493,61 +493,6 @@ static NSButtonCell *button(ControlPartType type, const ControlStates& controlSt
     setUpButtonCell(cell, type, controlStates, zoomedSize, zoomFactor);
     return cell;
 }
-    
-static void paintButton(ControlPartType type, ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    
-    // Determine the width and height needed for the control and prepare the cell for painting.
-    auto states = controlStates.states();
-    NSButtonCell *buttonCell = button(type, controlStates, IntSize(zoomedRect.size()), zoomFactor);
-    GraphicsContextStateSaver stateSaver(context);
-
-    NSControlSize controlSize = [buttonCell controlSize];
-    IntSize zoomedSize = buttonSizes()[controlSize];
-    zoomedSize.setWidth(zoomedRect.width()); // Buttons don't ever constrain width, so the zoomed width can just be honored.
-    zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
-    FloatRect inflatedRect = zoomedRect;
-    if ([buttonCell bezelStyle] == NSBezelStyleRounded) {
-        // Center the button within the available space.
-        if (inflatedRect.height() > zoomedSize.height()) {
-            inflatedRect.setY(inflatedRect.y() + (inflatedRect.height() - zoomedSize.height()) / 2);
-            inflatedRect.setHeight(zoomedSize.height());
-        }
-
-        // Now inflate it to account for the shadow.
-        inflatedRect = inflateRect(inflatedRect, zoomedSize, buttonMargins(controlSize), zoomFactor);
-
-        if (zoomFactor != 1.0f) {
-            inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
-            inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-            context.translate(inflatedRect.location());
-            context.scale(zoomFactor);
-            context.translate(-inflatedRect.location());
-        }
-    }
-    
-    LocalCurrentGraphicsContext localContext(context);
-    
-    NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
-    NSWindow *window = [view window];
-    NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
-
-    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states.contains(ControlStates::States::Focused), deviceScaleFactor);
-    if (states.contains(ControlStates::States::Default))
-        [window setDefaultButtonCell:buttonCell];
-    else if ([previousDefaultButtonCell isEqual:buttonCell])
-        [window setDefaultButtonCell:nil];
-    
-    controlStates.setNeedsRepaint(needsRepaint);
-
-    [buttonCell setControlView:nil];
-
-    if (![previousDefaultButtonCell isEqual:buttonCell])
-        [window setDefaultButtonCell:previousDefaultButtonCell];
-
-    END_BLOCK_OBJC_EXCEPTIONS
-}
 
 // Stepper
 
@@ -906,12 +851,6 @@ void ThemeMac::paint(ControlPartType type, ControlStates& states, GraphicsContex
     LocalDefaultSystemAppearance localAppearance(useDarkAppearance, tintColor);
 
     switch (type) {
-    case ControlPartType::PushButton:
-    case ControlPartType::DefaultButton:
-    case ControlPartType::Button:
-    case ControlPartType::SquareButton:
-        paintButton(type, states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);
-        break;
 #if ENABLE(INPUT_TYPE_COLOR)
     case ControlPartType::ColorWell:
         paintColorWell(states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);

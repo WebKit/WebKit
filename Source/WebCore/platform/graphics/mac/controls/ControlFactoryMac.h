@@ -32,12 +32,13 @@
 
 namespace WebCore {
 
-class ControlFactoryMac : public ControlFactory {
+class ControlFactoryMac final : public ControlFactory {
 public:
     using ControlFactory::ControlFactory;
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
+    std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) override;
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
     std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) override;
@@ -48,6 +49,8 @@ public:
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) override;
 
 private:
+    NSButtonCell *buttonCell() const;
+    NSButtonCell *defaultButtonCell() const;
     NSButtonCell *checkboxCell() const;
     NSButtonCell *radioCell() const;
     NSLevelIndicatorCell *levelIndicatorCell() const;
@@ -57,6 +60,8 @@ private:
 
     mutable RetainPtr<WebControlView> m_drawingView;
 
+    mutable RetainPtr<NSButtonCell> m_buttonCell;
+    mutable RetainPtr<NSButtonCell> m_defaultButtonCell;
     mutable RetainPtr<NSButtonCell> m_checkboxCell;
     mutable RetainPtr<NSButtonCell> m_radioCell;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;

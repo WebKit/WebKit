@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ButtonMac.h"
 #import "MenuListMac.h"
 #import "MeterMac.h"
 #import "ProgressBarMac.h"
@@ -65,6 +66,35 @@ NSView *ControlFactoryMac::drawingView(const FloatRect& rect, const ControlStyle
     UNUSED_PARAM(style);
 #endif
     return m_drawingView.get();
+}
+
+static RetainPtr<NSButtonCell> createButtonCell()
+{
+    auto buttonCell = adoptNS([[NSButtonCell alloc] init]);
+    [buttonCell setTitle:nil];
+    [buttonCell setButtonType:NSButtonTypeMomentaryPushIn];
+    return buttonCell;
+}
+
+NSButtonCell* ControlFactoryMac::buttonCell() const
+{
+    if (!m_buttonCell) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        m_buttonCell = createButtonCell();
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+    return m_buttonCell.get();
+}
+
+NSButtonCell* ControlFactoryMac::defaultButtonCell() const
+{
+    if (!m_defaultButtonCell) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        m_defaultButtonCell = createButtonCell();
+        [m_defaultButtonCell setKeyEquivalent:@"\r"];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+    return m_defaultButtonCell.get();
 }
 
 static RetainPtr<NSButtonCell> createToggleButtonCell()
@@ -148,6 +178,11 @@ NSTextFieldCell *ControlFactoryMac::textFieldCell() const
         END_BLOCK_OBJC_EXCEPTIONS
     }
     return m_textFieldCell.get();
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonPart& part)
+{
+    return makeUnique<ButtonMac>(part, *this, part.type() == ControlPartType::DefaultButton ? defaultButtonCell() : buttonCell());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuListPart& part)

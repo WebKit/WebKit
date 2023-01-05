@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTheme.h"
 
+#include "ButtonPart.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
@@ -512,7 +513,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case ControlPartType::SquareButton:
     case ControlPartType::Button:
     case ControlPartType::DefaultButton:
-        break;
+        return ButtonPart::create(type);
 
     case ControlPartType::Menulist:
         return MenuListPart::create();

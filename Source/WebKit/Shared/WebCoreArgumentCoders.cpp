@@ -37,6 +37,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
+#include <WebCore/ButtonPart.h>
 #include <WebCore/ByteArrayPixelBuffer.h>
 #include <WebCore/COEPInheritenceViolationReportBody.h>
 #include <WebCore/CORPViolationReportBody.h>
@@ -1612,8 +1613,8 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::SquareButton:
     case WebCore::ControlPartType::Button:
     case WebCore::ControlPartType::DefaultButton:
-        break;
-            
+        return WebCore::ButtonPart::create(*type);
+
     case WebCore::ControlPartType::Menulist:
         return WebCore::MenuListPart::create();
 

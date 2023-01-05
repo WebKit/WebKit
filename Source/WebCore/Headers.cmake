@@ -1742,6 +1742,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ANGLEUtilities.h
     platform/graphics/angle/GraphicsContextGLANGLE.h
 
+    platform/graphics/controls/ButtonPart.h
     platform/graphics/controls/ControlFactory.h
     platform/graphics/controls/ControlPart.h
     platform/graphics/controls/ControlPartType.h
