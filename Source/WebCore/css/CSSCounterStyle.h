@@ -86,7 +86,7 @@ private:
     bool shouldApplyNegativeSymbols(int);
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback
     Ref<CSSCounterStyle> fallback();
-    // Generates a CounterStyle object as it was defined by a 'decimal' descriptor. It is used as a last-resource in case we can't resolve fallback references.
+    // Generates a CSSCounterStyle object as it was defined by a 'decimal' descriptor. It is used as a last-resource in case we can't resolve fallback references.
     void applyPadSymbols(String&);
     void applyNegativeSymbols(String&);
     // Initial text representation for the counter, before applying pad and/or negative symbols. Suffix and Prefix are also not considered as described by https://www.w3.org/TR/css-counter-styles-3/#counter-styles.

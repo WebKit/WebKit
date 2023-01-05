@@ -596,6 +596,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSConditionRule.h
     css/CSSCounterStyle.h
     css/CSSCounterStyleDescriptors.h
+    css/CSSCounterStyleRegistry.h
     css/CSSCounterStyleRule.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h

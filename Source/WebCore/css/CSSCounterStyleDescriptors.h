@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

@@ -70,7 +70,7 @@ String CSSCounterStyle::initialRepresentation(int)
 }
 String CSSCounterStyle::text(int value)
 {
-// FIXME: implement text representation for CounterStyle rdar://103648354.
+// FIXME: implement text representation for CSSCounterStyle rdar://103648354.
     return String::number(value);
 }
 bool CSSCounterStyle::isInRange(int value) const
@@ -165,5 +165,4 @@ void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterSty
     if (!explicitlySetDescriptors().contains(CSSCounterStyleDescriptors::ExplicitlySetDescriptors::SpeakAs))
         setSpeakAs(extendedCounterStyle.speakAs());
 }
-
 }

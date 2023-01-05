@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include "CSSCounterStyleRegistry.h"
+#include "CSSCounterStyleRule.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFamily.h"
 #include "CSSFontValue.h"
@@ -52,6 +54,7 @@
 #include "StyleGeneratedImage.h"
 #include "StyleImageSet.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "WillChangeData.h"
 
 namespace WebCore {
@@ -775,6 +778,13 @@ inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, C
     if (primitiveValue.isValueID()) {
         builderState.style().setListStyleType(primitiveValue);
         builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
+        return;
+    }
+    // FIXME: handle counter-style: rdar://102988393.
+    // We should skip handling counter style until we can represent all systems with CSSCounterStyle::text(). We currently don't accept custom-ident in list-style-type parser-grammar (CSSProperties.json).
+    if (primitiveValue.isCustomIdent()) {
+        builderState.style().setListStyleType(ListStyleType::CustomCounterStyle);
+        builderState.style().setListStyleStringValue(makeAtomString(primitiveValue.stringValue()));
         return;
     }
     builderState.style().setListStyleType(ListStyleType::String);
@@ -1601,6 +1611,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             // Register the fact that the attribute value affects the style.
             builderState.registerContentAttribute(attr.localName());
         } else if (contentValue.isCounter()) {
+            // FIXME: counter-style: we probably want to review this for custom counter-style.
             auto* counterValue = contentValue.counterValue();
             ListStyleType listStyleType = ListStyleType::None;
             CSSValueID listStyleIdent = counterValue->listStyleIdent();

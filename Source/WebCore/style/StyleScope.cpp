@@ -28,6 +28,7 @@
 #include "config.h"
 #include "StyleScope.h"
 
+#include "CSSCounterStyleRegistry.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleSheet.h"
 #include "CustomPropertyRegistry.h"
@@ -68,6 +69,7 @@ Scope::Scope(Document& document)
     : m_document(document)
     , m_pendingUpdateTimer(*this, &Scope::pendingUpdateTimerFired)
     , m_customPropertyRegistry(makeUniqueRef<CustomPropertyRegistry>(*this))
+    , m_counterStyleRegistry(makeUniqueRef<CSSCounterStyleRegistry>())
 {
 }
 
@@ -76,6 +78,7 @@ Scope::Scope(ShadowRoot& shadowRoot)
     , m_shadowRoot(&shadowRoot)
     , m_pendingUpdateTimer(*this, &Scope::pendingUpdateTimerFired)
     , m_customPropertyRegistry(makeUniqueRef<CustomPropertyRegistry>(*this))
+    , m_counterStyleRegistry(makeUniqueRef<CSSCounterStyleRegistry>())
 {
 }
 

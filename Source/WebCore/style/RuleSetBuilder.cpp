@@ -29,6 +29,8 @@
 #include "config.h"
 #include "RuleSetBuilder.h"
 
+#include "CSSCounterStyleRegistry.h"
+#include "CSSCounterStyleRule.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
 #include "CSSSelectorParser.h"
@@ -145,7 +147,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             popCascadeLayer(layerRule.name());
             continue;
         }
-
+        case StyleRuleType::CounterStyle:
         case StyleRuleType::FontFace:
         case StyleRuleType::FontPaletteValues:
         case StyleRuleType::FontFeatureValues:
@@ -164,7 +166,6 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
         case StyleRuleType::Import:
         case StyleRuleType::Margin:
         case StyleRuleType::Namespace:
-        case StyleRuleType::CounterStyle:
         case StyleRuleType::FontFeatureValuesBlock:
             continue;
 
@@ -375,6 +376,14 @@ void RuleSetBuilder::addMutatingRulesToResolver()
         }
         if (is<StyleRuleKeyframes>(rule)) {
             m_resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(rule.get()));
+            continue;
+        }
+        if (is<StyleRuleCounterStyle>(rule)) {
+            auto& registry = m_resolver->document().styleScope().counterStyleRegistry();
+            registry.addCounterStyle(downcast<StyleRuleCounterStyle>(rule.get()).descriptors());
+            // FIXME: we probably need a cache solultion like fontSelector (invalidateMatchedDeclarations)
+            // KeyFrame does it differently, search for keyframesRuleDidChange. (rdar://103018993)
+            // FIXME: Use the shadow tree scope if applicable (or just skip). (rdar://30318695)
             continue;
         }
         if (is<StyleRuleProperty>(rule)) {

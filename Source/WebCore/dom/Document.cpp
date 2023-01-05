@@ -9015,6 +9015,16 @@ const Style::CustomPropertyRegistry& Document::customPropertyRegistry() const
     return styleScope().customPropertyRegistry();
 }
 
+const CSSCounterStyleRegistry& Document::counterStyleRegistry() const
+{
+    return styleScope().counterStyleRegistry();
+}
+
+CSSCounterStyleRegistry& Document::counterStyleRegistry()
+{
+    return styleScope().counterStyleRegistry();
+}
+
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
 {
     if (!m_exposedComputedCSSPropertyIDs.has_value()) {

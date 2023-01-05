@@ -744,6 +744,7 @@ css/CSSContainerRule.cpp
 css/CSSContentDistributionValue.cpp
 css/CSSCounterStyle.cpp
 css/CSSCounterStyleDescriptors.cpp
+css/CSSCounterStyleRegistry.cpp
 css/CSSCounterStyleRule.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp

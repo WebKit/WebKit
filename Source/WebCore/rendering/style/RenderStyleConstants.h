@@ -667,6 +667,8 @@ enum class ListStyleType : uint8_t {
     TraditionalChineseInformal,
     TraditionalChineseFormal,
     EthiopicNumeric,
+    // FIXME: handle counter-style: rdar://102988393.
+    CustomCounterStyle,
     String,
     None
 };
