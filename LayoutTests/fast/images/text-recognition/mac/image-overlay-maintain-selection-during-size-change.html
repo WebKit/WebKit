@@ -36,7 +36,8 @@ addEventListener("load", async () => {
         ]);
     }
 
-    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector(".image-overlay-text"));
+    const imageOverlay = internals.shadowRoot(image).querySelector(".image-overlay-text");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
     updateSelectionDimensions();
 
     shouldBe("selectionWidth", "200");
