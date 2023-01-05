@@ -37,8 +37,8 @@
     if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTFMove(extensions) attachment:attachment]))
         return nil;
 
-    _attestationObject = attestationObject;
-    _transports = transports;
+    _attestationObject = [attestationObject retain];
+    _transports = [transports copy];
     return self;
 }
 
@@ -47,9 +47,16 @@
     if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensionOutputsCBOR:WTFMove(extensionOutputsCBOR) attachment:attachment]))
         return nil;
 
-    _attestationObject = attestationObject;
-    _transports = transports;
+    _attestationObject = [attestationObject retain];
+    _transports = [transports copy];
     return self;
+}
+
+- (void)dealloc
+{
+    [_attestationObject release];
+    [_transports release];
+    [super dealloc];
 }
 
 @end

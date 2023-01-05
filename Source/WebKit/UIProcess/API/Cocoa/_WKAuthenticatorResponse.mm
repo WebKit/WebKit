@@ -38,9 +38,9 @@
     if (!(self = [super init]))
         return nil;
 
-    _clientDataJSON = clientDataJSON;
-    _rawId = rawId;
-    _extensions = extensions;
+    _clientDataJSON = [clientDataJSON retain];
+    _rawId = [rawId retain];
+    _extensions = WTFMove(extensions);
     _attachment = attachment;
 
     return self;
@@ -51,12 +51,20 @@
     if (!(self = [super init]))
         return nil;
 
-    _clientDataJSON = clientDataJSON;
-    _rawId = rawId;
-    _extensionOutputsCBOR = extensionOutputsCBOR;
+    _clientDataJSON = [clientDataJSON retain];
+    _rawId = [rawId retain];
+    _extensionOutputsCBOR = [extensionOutputsCBOR copy];
     _attachment = attachment;
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_clientDataJSON release];
+    [_rawId release];
+    [_extensionOutputsCBOR release];
+    [super dealloc];
 }
 
 - (_WKAuthenticationExtensionsClientOutputs *)extensions
