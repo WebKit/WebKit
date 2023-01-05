@@ -661,7 +661,7 @@ private:
             RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
 
             if (!calleeSavesEntry) {
-                if constexpr (!isARM())
+                if constexpr (!isARM_THUMB2())
                     RELEASE_ASSERT_NOT_REACHED();
                 // This can happen on ARMv7, because there are more callee save
                 // registers in the system convention than in the VM convention,

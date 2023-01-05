@@ -152,7 +152,7 @@ public:
     }
 
 private:
-    static constexpr bool hasPairOp = isARM() || isARM64();
+    static constexpr bool hasPairOp = isARM_THUMB2() || isARM64();
 
     Op& op() { return *reinterpret_cast<Op*>(this); }
 
@@ -314,7 +314,7 @@ public:
         , m_temp2FPR(fpTemp2)
         , m_bufferRegsAttr(attribute)
         {
-        if constexpr (hasPairOp && !(isARM() || isARM64()))
+        if constexpr (hasPairOp && !(isARM_THUMB2() || isARM64()))
             RELEASE_ASSERT_NOT_REACHED(); // unsupported architecture.
     }
 

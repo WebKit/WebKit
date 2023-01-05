@@ -233,7 +233,7 @@ def isKind(token)
 end
 
 def isArch(token)
-    token =~ /\A((x86)|(x86_32)|(x86_64)|(arm)|(armv7)|(arm64e)|(arm64)|(32)|(64))\Z/
+    token =~ /\A((x86)|(x86_32)|(x86_64_avx)|(x86_64)|(arm)|(armv7)|(arm64e)|(arm64_lse)|(arm64)|(32)|(64))\Z/
 end
 
 def isWidth(token)
@@ -328,6 +328,8 @@ class Parser
                 result << "X86"
             when "x86_64"
                 result << "X86_64"
+            when "x86_64_avx"
+                result << "X86_64_AVX"
             when "arm"
                 result << "ARM_THUMB2"
                 result << "ARM64"
@@ -337,6 +339,8 @@ class Parser
                 result << "ARM64"
             when "arm64e"
                 result << "ARM64E"
+            when "arm64_lse"
+                result << "ARM64_LSE"
             when "32"
                 result << "X86"
                 result << "ARM_THUMB2"
@@ -642,20 +646,42 @@ def matchInstOverloadForm(outp, speed, inst)
     }
 end
 
+$runTimeArchs = {
+    "ARM64_LSE" => "ARM64",
+    "X86_64_AVX" => "X86_64"
+}
 def beginArchs(outp, archs)
     return unless archs
     if archs.empty?
         outp.puts "#if 0"
         return
     end
-    outp.puts("#if " + archs.map {
+    compileTime = []
+    runTime = []
+    archs.each {|arch|
+        if $runTimeArchs.has_key? arch
+            compileTime << $runTimeArchs[arch]
+        else
+            compileTime << arch
+        end
+    }
+    if compileTime.empty?
+        outp.puts("#if 1")
+    else
+        outp.puts("#if " + compileTime.map {
+                      | arch |
+                      "CPU(#{arch})"
+                  }.join(" || "))
+    end
+    outp.puts("if (" + archs.map {
                   | arch |
-                  "CPU(#{arch})"
-              }.join(" || "))
+                  "is#{arch}()"
+              }.join(" || ") + ") {")
 end
 
 def endArchs(outp, archs)
     return unless archs
+    outp.puts "}"
     outp.puts "#endif"
 end
 

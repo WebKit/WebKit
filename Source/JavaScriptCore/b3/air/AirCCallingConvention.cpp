@@ -50,7 +50,7 @@ void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, uns
     }
 
     unsigned slotSize, slotAlignment;
-    if ((isARM64() && isDarwin()) || isARM()) {
+    if ((isARM64() && isDarwin()) || isARM_THUMB2()) {
         // Arguments are packed to their natural alignment.
         //
         // In the rare case when the Arg width does not match the argument width

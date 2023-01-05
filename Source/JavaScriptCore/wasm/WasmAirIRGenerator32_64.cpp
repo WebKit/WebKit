@@ -1362,7 +1362,7 @@ TypedTmp AirIRGenerator32::appendGeneralAtomic(ExtAtomicOpType op, B3::Air::Opco
     beginBlock->setSuccessors(reloopBlock);
     m_currentBlock = reloopBlock;
 
-    RELEASE_ASSERT(isARM());
+    RELEASE_ASSERT(isARM_THUMB2());
 
     if (accessWidth == Width64)
         appendEffectful(LoadLinkPair32, address, oldValue.lo(), oldValue.hi());
@@ -1788,7 +1788,7 @@ void AirIRGenerator32::emitModOrDiv(bool isDiv, ExpressionType lhs, ExpressionTy
 
     result = sizeof(IntType) == 4 ? g32() : g64();
 
-    if (isARM()) {
+    if (isARM_THUMB2()) {
         // FIXME: use ARMv7 sdiv/udiv if available
         if (isDiv)
             emitCCall(getSoftDiv<IntType>(), result, lhs, rhs);

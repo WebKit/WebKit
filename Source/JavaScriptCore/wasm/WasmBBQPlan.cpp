@@ -226,7 +226,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 {
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
 
-    if (Options::useBBQTierUpChecks() && !isARM())
+    if (Options::useBBQTierUpChecks() && !isARM_THUMB2())
         m_tierUpCounts[functionIndex] = makeUnique<TierUpCount>();
     else
         m_tierUpCounts[functionIndex] = nullptr;

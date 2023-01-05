@@ -1810,7 +1810,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicLoadOp(ExtAtomicOpTy
     }
 
     std::optional<B3::Air::Opcode> opcode;
-    if (isX86() || isARM64E())
+    if (isX86() || isARM64_LSE())
         opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
     B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
 
@@ -1884,7 +1884,7 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicStoreOp(ExtAtomicOpT
     }
 
     std::optional<B3::Air::Opcode> opcode;
-    if (isX86() || isARM64E())
+    if (isX86() || isARM64_LSE())
         opcode = OPCODE_FOR_WIDTH(AtomicXchg, accessWidth(op));
     B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
 
@@ -1950,7 +1950,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicBinaryRMWOp(ExtAtomi
     case ExtAtomicOpType::I64AtomicRmw16AddU:
     case ExtAtomicOpType::I64AtomicRmw32AddU:
     case ExtAtomicOpType::I64AtomicRmwAdd:
-        if (isX86() || isARM64E())
+        if (isX86() || isARM64_LSE())
             opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
         nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
         commutativity = B3::Commutative;
@@ -1962,7 +1962,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicBinaryRMWOp(ExtAtomi
     case ExtAtomicOpType::I64AtomicRmw16SubU:
     case ExtAtomicOpType::I64AtomicRmw32SubU:
     case ExtAtomicOpType::I64AtomicRmwSub:
-        if (isX86() || isARM64E()) {
+        if (isX86() || isARM64_LSE()) {
             ExpressionType newValue;
             if (valueType.isI64()) {
                 newValue = self().g64();
@@ -1989,7 +1989,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicBinaryRMWOp(ExtAtomi
     case ExtAtomicOpType::I64AtomicRmw16AndU:
     case ExtAtomicOpType::I64AtomicRmw32AndU:
     case ExtAtomicOpType::I64AtomicRmwAnd:
-        if (isARM64E()) {
+        if (isARM64_LSE()) {
             ExpressionType newValue;
             if (valueType.isI64()) {
                 newValue = self().g64();
@@ -2011,7 +2011,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicBinaryRMWOp(ExtAtomi
     case ExtAtomicOpType::I64AtomicRmw16OrU:
     case ExtAtomicOpType::I64AtomicRmw32OrU:
     case ExtAtomicOpType::I64AtomicRmwOr:
-        if (isARM64E())
+        if (isARM64_LSE())
             opcode = OPCODE_FOR_WIDTH(AtomicXchgOr, accessWidth(op));
         nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Or, accessWidth(op));
         commutativity = B3::Commutative;
@@ -2023,7 +2023,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicBinaryRMWOp(ExtAtomi
     case ExtAtomicOpType::I64AtomicRmw16XorU:
     case ExtAtomicOpType::I64AtomicRmw32XorU:
     case ExtAtomicOpType::I64AtomicRmwXor:
-        if (isARM64E())
+        if (isARM64_LSE())
             opcode = OPCODE_FOR_WIDTH(AtomicXchgXor, accessWidth(op));
         nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Xor, accessWidth(op));
         commutativity = B3::Commutative;
@@ -2035,7 +2035,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicBinaryRMWOp(ExtAtomi
     case ExtAtomicOpType::I64AtomicRmw16XchgU:
     case ExtAtomicOpType::I64AtomicRmw32XchgU:
     case ExtAtomicOpType::I64AtomicRmwXchg:
-        if (isX86() || isARM64E())
+        if (isX86() || isARM64_LSE())
             opcode = OPCODE_FOR_WIDTH(AtomicXchg, accessWidth(op));
         nonAtomicOpcode = B3::Air::Nop;
         break;
@@ -2154,7 +2154,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitAtomicCompareExchange(ExtA
     m_currentBlock = failureCase;
     ([&] {
         std::optional<B3::Air::Opcode> opcode;
-        if (isX86() || isARM64E())
+        if (isX86() || isARM64_LSE())
             opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth);
         B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth);
 
@@ -4573,7 +4573,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI32WrapI64(ExpressionType a
 template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addI32Rotl(ExpressionType arg0, ExpressionType arg1, ExpressionType& result) -> PartialResult
 {
-    if (isARM64() || isARM()) {
+    if (isARM64() || isARM_THUMB2()) {
         // ARMs do not have a 'rotate left' instruction.
         auto newShift = isARM64() ? self().g64() : self().g32();
         append(Move, arg1, newShift);

@@ -1428,7 +1428,7 @@ TypedTmp AirIRGenerator64::appendStrongCAS(ExtAtomicOpType op, TypedTmp expected
         return valueResultTmp;
     }
 
-    if (isARM64E()) {
+    if (isARM64_LSE()) {
         append(Move, expectedValueTmp, valueResultTmp);
         appendEffectful(OPCODE_FOR_WIDTH(AtomicStrongCAS, accessWidth), valueResultTmp, newValueTmp, address);
         return valueResultTmp;
