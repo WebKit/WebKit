@@ -1,12 +1,12 @@
-function once(target, name, cb) {
-    let p = new Promise((resolve, reject) => {
+function once(target, name, callback) {
+    let promise = new Promise((resolve, reject) => {
         target.addEventListener(name, (event) => {
             resolve(event);
         }, { once: true });
     });
-    if (cb)
-        p.then(cb);
-    return p;
+    if (callback)
+        promise.then(callback);
+    return promise;
 }
 
 function fetchWithXHR(uri, onLoadFunction) {
