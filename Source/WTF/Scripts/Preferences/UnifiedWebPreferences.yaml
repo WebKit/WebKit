@@ -928,7 +928,7 @@ CSSInputSecurityEnabled:
 
 CSSLeadingTrimEnabled:
   type: bool
-  status: testable
+  status: preview
   humanReadableName: "CSS leading-trim property"
   humanReadableDescription: "Enable leading-trim"
   defaultValue:
@@ -3500,7 +3500,7 @@ MaskWebGLStringsEnabled:
 
 MasonryEnabled:
   type: bool
-  status: testable
+  status: preview
   humanReadableName: "CSS Masonry Layout"
   humanReadableDescription: "Enable Masonry Layout for CSS Grid"
   defaultValue:
