@@ -3813,4 +3813,7 @@ webkit.org/b/249367 imported/w3c/web-platform-tests/html/canvas/offscreen/manual
 
 webkit.org/b/249407 media/audioSession/getUserMedia.html [ Failure ]
 
+# Per-process limit is only for WK2
+http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
+
 webkit.org/b/249486 media/audioSession/audioSessionType.html [ Failure ]

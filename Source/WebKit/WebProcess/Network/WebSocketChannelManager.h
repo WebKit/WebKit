@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,11 @@ namespace WebKit {
 
 class WebSocketChannelManager {
 public:
+    // Choose a per-process limit that matches Firefox and Tor's global count (200),
+    // and Brave's per-process limit (50). Chrome has a global limit of 256, so
+    // any compatibility risk with Chrome should be very low.
+    static constexpr size_t maximumSocketCount = 200;
+
     WebSocketChannelManager() = default;
 
     void networkProcessCrashed();
@@ -48,6 +53,8 @@ public:
 
     void addChannel(WebSocketChannel&);
     void removeChannel(WebSocketChannel& channel) { m_channels.remove(channel.identifier() ); }
+
+    bool hasReachedSocketLimit() const { return m_channels.size() >= maximumSocketCount; }
 
 private:
     HashMap<WebCore::WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;

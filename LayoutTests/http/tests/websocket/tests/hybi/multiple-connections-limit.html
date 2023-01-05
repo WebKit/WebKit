@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<body>
+<p>Test that WebSocket is not subject to HTTP connection limit, but does not exceed a maximum. It should not contain any alerts about unexpected close events, and should say PASS below:</p>
+<p id=result>Running...</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setAllowsAnySSLCertificate(true);
+}
+
+let maxSocketCount = 200;
+let totalAttemptedCount = 201;
+
+var result = document.getElementById("result");
+var sockets = [];
+
+function openSocket() {
+    var num = parseInt(result.innerHTML);
+    if (!num)
+        num = 1;
+    if (num != maxSocketCount - 1)
+        result.innerHTML = num + 1;
+    else {
+        result.innerHTML = "PASS";
+
+        for (j = 0; j < sockets.length; ++j) {
+            sockets[j].onclose = null;
+            sockets[j].close();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }        
+}
+
+let firstHalf = Math.round(totalAttemptedCount / 2);
+
+// Our Python socket test server only allows 256 total open files (including sockets), and some
+// are used for log files, etc. So we can't test a 256-socket limit with a single process.
+// Therefore, split the test so that half go to the WS socket server, and half to the WSS server.
+for (i = 0; i < firstHalf; ++i) {
+    var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+    sockets[i] = ws;
+    ws.onopen = openSocket;
+    ws.onclose = function() {
+        var constructionTimeI = i;
+        if (constructionTimeI < maxSocketCount)
+            alert("FAIL: unexpected close event")
+    }
+}
+
+for (i = firstHalf; i < totalAttemptedCount; ++i) {
+    var ws = new WebSocket("wss://127.0.0.1:9323/websocket/tests/hybi/simple");
+    sockets[i] = ws;
+    ws.onopen = openSocket;
+    ws.onclose = function() {
+        var constructionTimeI = i;
+        if (constructionTimeI < maxSocketCount)
+            alert("FAIL: unexpected close event")
+    }
+}
+
+</script>
+</body>
+</html>
