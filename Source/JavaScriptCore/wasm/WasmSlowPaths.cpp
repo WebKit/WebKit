@@ -401,7 +401,7 @@ WASM_SLOW_PATH_DECL(array_new)
 
     Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
     ASSERT(arraySignature.is<Wasm::ArrayType>());
-    Wasm::Type elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 
     EncodedJSValue value = 0;
     if (useDefault) {
@@ -420,14 +420,23 @@ WASM_SLOW_PATH_DECL(array_get)
     if (JSValue::decode(arrayref).isNull())
         WASM_THROW(Wasm::ExceptionType::NullArrayGet);
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
-
     JSValue arrayValue = JSValue::decode(arrayref);
     ASSERT(arrayValue.isObject());
     JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
-
-    WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
+    Wasm::GCOpType arrayGetKind = static_cast<Wasm::GCOpType>(instruction.m_arrayGetKind);
+    if (arrayGetKind == Wasm::GCOpType::ArrayGetS) {
+        EncodedJSValue value = Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index);
+        Wasm::StorageType type = arrayObject->elementType().type;
+        ASSERT(type.is<Wasm::PackedType>());
+        size_t elementSize = type.as<Wasm::PackedType>() == Wasm::PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
+        uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+        int32_t result = static_cast<int32_t>(value);
+        result = result << bitShift;
+        WASM_RETURN(static_cast<EncodedJSValue>(result >> bitShift));
+    } else
+        WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
 }
 
 WASM_SLOW_PATH_DECL(array_set)

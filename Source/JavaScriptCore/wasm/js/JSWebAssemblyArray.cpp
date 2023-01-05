@@ -30,12 +30,29 @@
 
 #include "JSCInlines.h"
 #include "WasmFormat.h"
+#include "WasmTypeDefinition.h"
 
 namespace JSC {
 
 const ClassInfo JSWebAssemblyArray::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyArray) };
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::Type elementType, size_t size, FixedVector<uint32_t>&& payload)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint8_t>&& payload)
+    : Base(vm, structure)
+    , m_elementType(elementType)
+    , m_size(size)
+    , m_payload8(WTFMove(payload))
+{
+}
+
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint16_t>&& payload)
+    : Base(vm, structure)
+    , m_elementType(elementType)
+    , m_size(size)
+    , m_payload16(WTFMove(payload))
+{
+}
+
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint32_t>&& payload)
     : Base(vm, structure)
     , m_elementType(elementType)
     , m_size(size)
@@ -43,7 +60,7 @@ JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::Type 
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::Type elementType, size_t size, FixedVector<uint64_t>&& payload)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint64_t>&& payload)
     : Base(vm, structure)
     , m_elementType(elementType)
     , m_size(size)
@@ -53,7 +70,19 @@ JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::Type 
 
 JSWebAssemblyArray::~JSWebAssemblyArray()
 {
-    switch (m_elementType.kind) {
+    if (m_elementType.type.is<Wasm::PackedType>()) {
+        switch (m_elementType.type.as<Wasm::PackedType>()) {
+        case Wasm::PackedType::I8:
+            m_payload8.~FixedVector<uint8_t>();
+            break;
+        case Wasm::PackedType::I16:
+            m_payload16.~FixedVector<uint16_t>();
+            break;
+        }
+        return;
+    }
+
+    switch (m_elementType.type.as<Wasm::Type>().kind) {
     case Wasm::TypeKind::I32:
     case Wasm::TypeKind::F32:
         m_payload32.~FixedVector<uint32_t>();
@@ -88,7 +117,7 @@ void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    if (isRefType(thisObject->elementType())) {
+    if (isRefType(thisObject->elementType().type)) {
         for (unsigned i = 0; i < thisObject->size(); ++i)
             visitor.append(bitwise_cast<WriteBarrier<Unknown>>(thisObject->get(i)));
     }

@@ -83,7 +83,12 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     using Wasm::TypeKind;
 
     const uint8_t* targetPointer = fieldPointer(fieldIndex);
-    switch (fieldType(fieldIndex).type.kind) {
+
+    // FIXME: packed types in structs not supported yet:
+    // https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
+
+    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {
     case TypeKind::I32:
     case TypeKind::F32:
         return *bitwise_cast<uint32_t*>(targetPointer);
@@ -106,7 +111,12 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
     using Wasm::TypeKind;
 
     uint8_t* targetPointer = fieldPointer(fieldIndex);
-    switch (fieldType(fieldIndex).type.kind) {
+
+    // FIXME: packed types in structs not supported yet:
+    // https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
+
+    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind) {
     case TypeKind::I32: {
         *bitwise_cast<int32_t*>(targetPointer) = argument.toInt32(globalObject);
         return;

@@ -404,7 +404,7 @@ struct AirIRGeneratorBase {
     // GC (in derived classes)
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
@@ -2491,11 +2491,11 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t ty
 {
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+    const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
 
     ExpressionType tmpForValue;
     if (Wasm::isRefType(elementType))
-        tmpForValue = self().addConstant(elementType, JSValue::encode(jsNull()));
+        tmpForValue = self().addConstant(elementType.as<Type>(), JSValue::encode(jsNull()));
     else {
         tmpForValue = self().g64();
         self().emitZeroInitialize(tmpForValue);
@@ -2510,11 +2510,14 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t ty
 }
 
 template <typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
+    ASSERT(arrayGetKind == GCOpType::ArrayGet || arrayGetKind == GCOpType::ArrayGetS || arrayGetKind == GCOpType::ArrayGetU);
+
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::Type resultType = elementType.unpacked();
 
     // Ensure arrayref is non-null.
     emitThrowOnNullReference(arrayref, ExceptionType::NullArrayGet);
@@ -2533,7 +2536,27 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(uint32_t typeIndex
     // https://bugs.webkit.org/show_bug.cgi?id=245405
     emitCCall(&operationWasmArrayGet, getValue, instanceValue(), self().addConstant(Types::I32, typeIndex), arrayref, index);
 
-    self().emitCoerceFromI64(elementType, getValue, result);
+    self().emitCoerceFromI64(resultType, getValue, result);
+
+    if (elementType.is<PackedType>()) {
+        switch (arrayGetKind) {
+        case GCOpType::ArrayGetU:
+            break;
+        case GCOpType::ArrayGetS: {
+            size_t elementSize = elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
+            uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+            auto tmpForShift = self().g32();
+            append(Move, Arg::imm(bitShift), tmpForShift);
+            self().addShift(Types::I32, Lshift32, result, tmpForShift, result);
+            self().addShift(Types::I32, Rshift32, result, tmpForShift, result);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return { };
+        }
+    }
+
     return { };
 }
 
@@ -2597,7 +2620,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructGet(ExpressionType st
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
 
     uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.getFieldOffset(fieldIndex));
-    const auto& fieldType = structType.field(fieldIndex).type;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structType.field(fieldIndex).type.is<Type>());
+    Type fieldType = structType.field(fieldIndex).type.as<Type>();
     result = tmpForType(fieldType);
     self().emitLoad(payload, fieldOffset, result);
     return { };
@@ -2611,7 +2636,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructSet(ExpressionType st
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
 
     uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.getFieldOffset(fieldIndex));
-    const auto& fieldType = structType.field(fieldIndex).type;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structType.field(fieldIndex).type.is<Type>());
+    Type fieldType = structType.field(fieldIndex).type.as<Type>();
 
     if (isRefType(fieldType)) {
         auto instanceCell = self().gPtr();

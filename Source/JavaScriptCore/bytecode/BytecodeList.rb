@@ -1878,6 +1878,7 @@ op :array_get,
         arrayref: VirtualRegister,
         index: VirtualRegister,
         typeIndex: unsigned,
+        arrayGetKind: unsigned,
     }
 
 op :array_set,
