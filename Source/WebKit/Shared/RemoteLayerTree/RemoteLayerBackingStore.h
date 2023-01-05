@@ -70,6 +70,7 @@ public:
     struct Parameters {
         Type type { Type::Bitmap };
         WebCore::FloatSize size;
+        WebCore::DestinationColorSpace colorSpace { WebCore::DestinationColorSpace::SRGB() };
         float scale { 1.0f };
         bool deepColor { false };
         bool isOpaque { false };
@@ -86,6 +87,7 @@ public:
         {
             return (type == other.type
                 && size == other.size
+                && colorSpace == other.colorSpace
                 && scale == other.scale
                 && deepColor == other.deepColor
                 && isOpaque == other.isOpaque
@@ -115,7 +117,7 @@ public:
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
     bool usesDeepColorBackingStore() const;
-    WebCore::DestinationColorSpace colorSpace() const;
+    WebCore::DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
     WebCore::PixelFormat pixelFormat() const;
     Type type() const { return m_parameters.type; }
     bool isOpaque() const { return m_parameters.isOpaque; }

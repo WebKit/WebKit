@@ -196,22 +196,11 @@ bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
     return false;
 }
 
-DestinationColorSpace RemoteLayerBackingStore::colorSpace() const
-{
-#if PLATFORM(MAC)
-    if (auto* context = m_layer->context())
-        return context->displayColorSpace().value_or(DestinationColorSpace::SRGB());
-#else
-    if (usesDeepColorBackingStore())
-        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
-#endif
-    return DestinationColorSpace::SRGB();
-}
-
 PixelFormat RemoteLayerBackingStore::pixelFormat() const
 {
     if (usesDeepColorBackingStore())
         return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
+
     return PixelFormat::BGRA8;
 }
 
