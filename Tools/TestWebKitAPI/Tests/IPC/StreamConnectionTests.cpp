@@ -45,7 +45,7 @@ using TestObjectIdentifier = ObjectIdentifier<TestObjectIdentifierTag>;
 
 struct MessageInfo {
     IPC::MessageName messageName;
-    uint64_t destinationID;
+    UInt128 destinationID;
 };
 
 struct MockStreamTestMessage1 {

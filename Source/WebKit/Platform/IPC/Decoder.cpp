@@ -78,7 +78,7 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& b
     , m_bufferDeallocator { WTFMove(bufferDeallocator) }
     , m_attachments { WTFMove(attachments) }
 {
-    if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))) {
+    if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(UInt128))) {
         markInvalid();
         return;
     }
@@ -93,7 +93,7 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& b
         return;
 }
 
-Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationID)
+Decoder::Decoder(const uint8_t* stream, size_t streamSize, UInt128 destinationID)
     : m_buffer { stream }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + streamSize }

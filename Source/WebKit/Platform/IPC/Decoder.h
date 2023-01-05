@@ -51,7 +51,7 @@ public:
     static std::unique_ptr<Decoder> create(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&&);
     using BufferDeallocator = Function<void(const uint8_t*, size_t)>;
     static std::unique_ptr<Decoder> create(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&&, Vector<Attachment>&&);
-    Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationID);
+    Decoder(const uint8_t* stream, size_t streamSize, UInt128 destinationID);
 
     ~Decoder();
 
@@ -62,7 +62,7 @@ public:
 
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
-    uint64_t destinationID() const { return m_destinationID; }
+    UInt128 destinationID() const { return m_destinationID; }
     bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
@@ -170,8 +170,8 @@ private:
     OptionSet<MessageFlags> m_messageFlags;
     MessageName m_messageName;
 
-    uint64_t m_destinationID;
     bool m_isAllowedWhenWaitingForSyncReplyOverride { false };
+    UInt128 m_destinationID;
 
 #if PLATFORM(MAC)
     ImportanceAssertion m_importanceAssertion;

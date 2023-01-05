@@ -27,6 +27,7 @@
 
 #include <wtf/Assertions.h>
 #include "Connection.h"
+#include <wtf/Int128.h>
 #include <wtf/UniqueRef.h>
 
 namespace IPC {
@@ -40,7 +41,7 @@ public:
         return send(WTFMove(message), messageSenderDestinationID(), sendOptions);
     }
 
-    template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
+    template<typename T> bool send(T&& message, UInt128 destinationID, OptionSet<SendOption> sendOptions = { })
     {
         static_assert(!T::isSync, "Message is sync!");
 
@@ -66,7 +67,7 @@ public:
     }
 
     template<typename T>
-    SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    SendSyncResult<T> sendSync(T&& message, UInt128 destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
         if (auto* connection = messageSenderConnection())
             return connection->sendSync(WTFMove(message), destinationID, timeout, sendSyncOptions);
@@ -89,7 +90,7 @@ public:
     }
 
     template<typename T, typename C>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, UInt128 destinationID, OptionSet<SendOption> sendOptions = { })
     {
         static_assert(!T::isSync, "Async message expected");
 

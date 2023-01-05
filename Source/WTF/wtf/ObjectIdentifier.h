@@ -28,6 +28,7 @@
 #include <atomic>
 #include <mutex>
 #include <wtf/HashTraits.h>
+#include <wtf/Int128.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
@@ -131,7 +132,7 @@ public:
     };
 
 private:
-    template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(uint64_t);
+    template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(UInt128);
     friend struct HashTraits<ObjectIdentifier>;
     template<typename U> friend struct ObjectIdentifierHash;
 
@@ -147,9 +148,10 @@ private:
     inline static bool m_generationProtected { false };
 };
 
-template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t identifier)
+template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(UInt128 identifier)
 {
-    return ObjectIdentifier<T> { identifier };
+    ASSERT(identifier == static_cast<uint64_t>(identifier));
+    return ObjectIdentifier<T> { static_cast<uint64_t>(identifier) };
 }
 
 template<typename T> inline void add(Hasher& hasher, ObjectIdentifier<T> identifier)

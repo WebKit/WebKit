@@ -412,7 +412,7 @@ TEST(IPCTestingAPI, CanInterceptAlert)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].type"].UTF8String, "String");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].value"].UTF8String, "ok");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[0].syncRequestID)"].UTF8String, "number");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID"].intValue,
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID[0]"].intValue,
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
@@ -444,7 +444,7 @@ TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[3].type"].UTF8String, "uint64_t");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"targetMessage.arguments[3].value"].intValue, [webView stringByEvaluatingJavaScript:@"IPC.pageID.toString()"].intValue);
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(targetMessage.syncRequestID)"].UTF8String, "undefined");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"targetMessage.destinationID"].intValue, 0);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"targetMessage.destinationID[0]"].intValue, 0);
 }
 #endif
 
@@ -477,7 +477,7 @@ TEST(IPCTestingAPI, CanInterceptFindString)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].type"].UTF8String, "uint32_t");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[2].value"].intValue, 1);
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[0].syncRequestID)"].UTF8String, "undefined");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID"].intValue,
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID[0]"].intValue,
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
