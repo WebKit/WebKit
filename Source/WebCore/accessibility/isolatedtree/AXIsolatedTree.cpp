@@ -37,29 +37,14 @@
 
 namespace WebCore {
 
-Lock AXIsolatedTree::s_cacheLock;
-
-static unsigned newTreeID()
-{
-    static unsigned s_currentTreeID = 0;
-    return ++s_currentTreeID;
-}
-
 HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 {
     static NeverDestroyed<HashMap<PageIdentifier, Ref<AXIsolatedTree>>> map;
     return map;
 }
 
-HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& AXIsolatedTree::treeIDCache()
-{
-    static NeverDestroyed<HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>> map;
-    return map;
-}
-
 AXIsolatedTree::AXIsolatedTree(AXObjectCache* axObjectCache)
-    : m_treeID(newTreeID())
-    , m_axObjectCache(axObjectCache)
+    : m_axObjectCache(axObjectCache)
     , m_usedOnAXThread(axObjectCache->usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree"_s);
@@ -78,13 +63,6 @@ void AXIsolatedTree::queueForDestruction()
 
     Locker locker { m_changeLogLock };
     m_queuedForDestruction = true;
-}
-
-RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
-{
-    AXTRACE("AXIsolatedTree::treeForID"_s);
-    Locker locker { s_cacheLock };
-    return treeIDCache().get(treeID);
 }
 
 Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
@@ -113,11 +91,11 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     // Now that the tree is ready to take client requests, add it to the tree
     // maps so that it can be found.
+    AXTreeStore::add(tree->treeID(), tree.copyRef());
     auto pageID = axObjectCache->pageID();
-    Locker locker { s_cacheLock };
+    Locker locker { s_storeLock };
     ASSERT(!treePageCache().contains(*pageID));
     treePageCache().set(*pageID, tree.copyRef());
-    treeIDCache().set(tree->treeID(), tree.copyRef());
     tree->updateLoadingProgress(axObjectCache->loadingProgress());
 
     return tree;
@@ -128,18 +106,16 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
     AXTRACE("AXIsolatedTree::removeTreeForPageID"_s);
     ASSERT(isMainThread());
 
-    Locker locker { s_cacheLock };
+    Locker locker { s_storeLock };
     if (auto tree = treePageCache().take(pageID))
         tree->queueForDestruction();
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 {
-    Locker locker { s_cacheLock };
-
+    Locker locker { s_storeLock };
     if (auto tree = treePageCache().get(pageID))
-        return RefPtr { tree };
-
+        return tree;
     return nullptr;
 }
 
@@ -697,7 +673,7 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
 void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
 {
     AXTRACE("AXIsolatedTree::updateLoadingProgress"_s);
-    AXLOG(makeString("Updating loading progress to ", newProgressValue, " for treeID ", treeID()));
+    AXLOG(makeString("Updating loading progress to ", newProgressValue, " for treeID ", treeID().loggingString()));
     ASSERT(isMainThread());
 
     m_loadingProgress = newProgressValue;
@@ -801,18 +777,17 @@ void AXIsolatedTree::applyPendingChanges()
         // We don't need to bother clearing out any other non-cycle-causing member variables as they
         // will be cleaned up automatically when the tree is destroyed.
 
-        Locker locker { s_cacheLock };
+        Locker locker { s_storeLock };
 #ifndef NDEBUG
-        ASSERT(treeIDCache().contains(treeID()));
-        auto iterator = treeIDCache().find(treeID());
-        if (iterator != treeIDCache().end()) {
-            // At this point, there should only be two references left to this tree -- one in the treeIDCache() map,
+        ASSERT(AXTreeStore::contains(treeID()));
+        if (auto tree = AXTreeStore::treeForID(treeID())) {
+            // At this point, there should only be two references left to this tree -- one in the map,
             // and the `protectedThis` above.
-            ASSERT(iterator->value->refCount() == 2, "Unexpected refcount before attempting to destroy isolated tree: %d", iterator->value->refCount());
+            ASSERT(tree->refCount() == 2, "Unexpected refcount before attempting to destroy isolated tree: %d", tree->refCount());
         }
 #endif
 
-        treeIDCache().remove(treeID());
+        AXTreeStore::remove(treeID());
         return;
     }
 

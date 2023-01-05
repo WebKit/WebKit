@@ -244,11 +244,14 @@ AXObjectCache::AXObjectCache(Document& document)
     if (loadingProgress <= 0)
         loadingProgress = 1;
     m_loadingProgress = loadingProgress;
+
+    AXTreeStore::add(m_id, this);
 }
 
 AXObjectCache::~AXObjectCache()
 {
     AXTRACE(makeString("AXObjectCache::~AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+
     m_notificationPostTimer.stop();
     m_liveRegionChangedPostTimer.stop();
     m_performCacheUpdateTimer.stop();
@@ -260,6 +263,8 @@ AXObjectCache::~AXObjectCache()
     if (m_pageID)
         AXIsolatedTree::removeTreeForPageID(*m_pageID);
 #endif
+
+    AXTreeStore::remove(m_id);
 }
 
 bool AXObjectCache::isModalElement(Element& element) const
@@ -988,18 +993,6 @@ void AXObjectCache::remove(Widget* view)
         return;
     remove(m_widgetObjectMapping.take(view));
 }
-    
-    
-#if !PLATFORM(WIN)
-AXID AXObjectCache::platformGenerateAXID() const
-{
-    AXID objID;
-    do {
-        objID = AXID::generate();
-    } while (!objID.isValid() || m_idsInUse.contains(objID));
-    return objID;
-}
-#endif
 
 Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& axIDs) const
 {
@@ -1015,21 +1008,19 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
     return result;
 }
 
-AXID AXObjectCache::getAXID(AccessibilityObject* obj)
+AXID AXObjectCache::getAXID(AccessibilityObject* object)
 {
     // check for already-assigned ID
-    AXID objID = obj->objectID();
-    if (objID) {
-        ASSERT(m_idsInUse.contains(objID));
-        return objID;
+    AXID objectID = object->objectID();
+    if (objectID.isValid()) {
+        ASSERT(m_idsInUse.contains(objectID));
+        return objectID;
     }
 
-    objID = platformGenerateAXID();
-
-    m_idsInUse.add(objID);
-    obj->setObjectID(objID);
-    
-    return objID;
+    objectID = generateNewID();
+    m_idsInUse.add(objectID);
+    object->setObjectID(objectID);
+    return objectID;
 }
 
 void AXObjectCache::handleTextChanged(AccessibilityObject* object)

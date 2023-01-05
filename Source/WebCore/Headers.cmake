@@ -446,6 +446,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     accessibility/AXLogger.h
     accessibility/AXObjectCache.h
+    accessibility/AXTreeStore.h
     accessibility/AXTextStateChangeIntent.h
     accessibility/AccessibilityListBox.h
     accessibility/AccessibilityMenuListPopup.h

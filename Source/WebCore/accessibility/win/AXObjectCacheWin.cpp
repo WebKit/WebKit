@@ -146,25 +146,6 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
         page->chrome().client().AXFinishFrameLoad();
 }
 
-AXID AXObjectCache::platformGenerateAXID() const
-{
-    static LONG lastUsedID = 0;
-
-    // Generate a new ID. Windows accessibility relies on a positive AXID,
-    // ranging from 1 to LONG_MAX.
-    LONG currentID = lastUsedID;
-    AXID objID;
-    do {
-        objID = makeObjectIdentifier<AXIDType>(++currentID);
-    } while (!objID.isValid() || m_idsInUse.contains(objID));
-
-    ASSERT(objID.isValid() && objID.toUInt64() <= std::numeric_limits<LONG>::max());
-
-    lastUsedID = currentID;
-
-    return objID;
-}
-
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocusedNode)
 {
     if (!newFocusedNode)
