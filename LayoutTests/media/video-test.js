@@ -172,7 +172,7 @@ function runSilently(testFuncString)
     if (printFullTestDetails)
         consoleWrite("RUN(" + testFuncString + ")");
     try {
-        return eval(testFuncString);
+        eval(testFuncString);
     } catch (ex) {
         if (!printFullTestDetails) {
             // No details were printed previous, give some now.
@@ -187,7 +187,7 @@ function run(testFuncString)
 {
     consoleWrite("RUN(" + testFuncString + ")");
     try {
-        return eval(testFuncString);
+        eval(testFuncString);
     } catch (ex) {
         consoleWrite(ex);
     }
