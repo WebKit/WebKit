@@ -32,7 +32,8 @@ addEventListener("load", () => {
         }
     ]);
 
-    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector(".image-overlay-text"));
+    const overlay = internals.shadowRoot(image).querySelector(".image-overlay-text");
+    internals.setSelectionWithoutValidation(overlay, 0, overlay, overlay.childNodes.length);
 });
 </script>
 </body>

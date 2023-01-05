@@ -58,7 +58,8 @@ addEventListener("load", () => {
     eventSender.mouseMoveTo(50, 150);
 
     shouldBeNull("getCopyContextMenuItem()");
-    getSelection().selectAllChildren(internals.shadowRoot(image).getElementById("image-overlay"));
+    const overlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(overlay, 0, overlay, overlay.childNodes.length);
     testPassed("Selected text in image");
     shouldBeNonNull("getCopyContextMenuItem()");
 });
