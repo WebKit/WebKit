@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import sys
 
 from .command import Command
@@ -48,10 +49,18 @@ class Credentials(Command):
         username = None
         password = None
 
-        if rmt and getattr(rmt, 'credentials', None):
-            username, password = rmt.credentials()
+        try:
+            if rmt and getattr(rmt, 'credentials', None):
+                username, password = rmt.credentials()
 
-        print('username={}'.format(username or ''))
-        print('password={}'.format(password or ''))
+            print('username={}'.format(username or ''))
+            print('password={}'.format(password or ''))
 
-        return 0 if username and password else 1
+        except OSError:
+            pass
+
+        if not username or not password:
+            sys.stderr.write('No username and password found\n')
+            sys.stderr.write("Try running '{} setup' to prime the cache with your credentials\n".format(os.path.basename(sys.argv[0])))
+            return 1
+        return 0
