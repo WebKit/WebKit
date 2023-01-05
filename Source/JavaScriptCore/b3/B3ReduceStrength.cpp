@@ -638,9 +638,11 @@ private:
             //    0 + -0 = 0
             //    -0 + 0 = 0
             //    -0 + -0 = -0
-            if (m_value->child(1)->isInt(0) || m_value->child(1)->isNegativeZero()) {
-                replaceWithIdentity(m_value->child(0));
-                break;
+            if (!m_value->isSensitiveToNaN()) {
+                if (m_value->child(1)->isInt(0) || m_value->child(1)->isNegativeZero()) {
+                    replaceWithIdentity(m_value->child(0));
+                    break;
+                }
             }
 
             if (m_value->isInteger()) {
@@ -882,9 +884,11 @@ private:
 
                 // Turn this: Mul(value, 1)
                 // Into this: value
-                if (factor == 1) {
-                    replaceWithIdentity(m_value->child(0));
-                    break;
+                if (!m_value->isSensitiveToNaN()) {
+                    if (factor == 1) {
+                        replaceWithIdentity(m_value->child(0));
+                        break;
+                    }
                 }
             }
 
@@ -1920,9 +1924,11 @@ private:
         case DoubleToFloat:
             // Turn this: DoubleToFloat(FloatToDouble(value))
             // Into this: value
-            if (m_value->child(0)->opcode() == FloatToDouble) {
-                replaceWithIdentity(m_value->child(0)->child(0));
-                break;
+            if (!m_value->isSensitiveToNaN()) {
+                if (m_value->child(0)->opcode() == FloatToDouble) {
+                    replaceWithIdentity(m_value->child(0)->child(0));
+                    break;
+                }
             }
 
             // Turn this: DoubleToFloat(constant)
