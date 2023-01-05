@@ -230,6 +230,8 @@ void DrawingAreaWC::updateRendering()
     m_webPage.finalizeRenderingUpdate(flags);
     m_webPage.didUpdateRendering();
 
+    willStartRenderingUpdateDisplay();
+
     if (isCompositingMode())
         sendUpdateAC();
     else
@@ -372,6 +374,8 @@ RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 void DrawingAreaWC::displayDidRefresh()
 {
     m_waitDidUpdate = false;
+    didCompleteRenderingUpdateDisplay();
+    didCompleteRenderingFrame();
     if (m_forceRepaintCompletionHandler) {
         if (m_isForceRepaintCompletionHandlerDeferred)
             m_isForceRepaintCompletionHandlerDeferred = false;
