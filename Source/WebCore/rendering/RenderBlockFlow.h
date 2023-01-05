@@ -225,6 +225,8 @@ public:
     };
     LayoutUnit marginOffsetForSelfCollapsingBlock();
 
+    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
+
     void layoutBlockChild(RenderBox& child, MarginInfo&, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void adjustPositionedBlock(RenderBox& child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
