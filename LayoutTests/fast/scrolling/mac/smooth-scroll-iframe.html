@@ -29,7 +29,7 @@
          async function runTest()
          {
             document.querySelector('.iframe').scrollTop = 0;            
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             await UIHelper.mouseWheelScrollAt(50, 50, 0, -10);
             await UIHelper.waitForScrollCompletion();
             shouldBe('window.pageYOffset', '200');

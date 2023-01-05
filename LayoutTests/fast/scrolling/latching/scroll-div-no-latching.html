@@ -67,6 +67,7 @@ body {
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
 
+        // FIXME: Use await UIHelper.waitForScrollCompletion();
         setTimeout(checkForScroll, 100);
     }
 

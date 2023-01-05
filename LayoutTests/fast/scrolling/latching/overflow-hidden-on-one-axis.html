@@ -37,7 +37,7 @@
     {
         eventSender.mouseMoveTo(100, 100);
 
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         // Latch to the scroller.
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
@@ -48,7 +48,7 @@
         await UIHelper.waitForScrollCompletion();
         
         // Now scroll on the other axis.
-        eventSender.monitorWheelEvents({ resetLatching: false });
+        await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
         eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');

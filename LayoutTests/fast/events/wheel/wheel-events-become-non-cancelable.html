@@ -29,7 +29,7 @@
                 finishJSTest();
                 return;
             }
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
             await UIHelper.renderingUpdate();

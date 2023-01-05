@@ -76,7 +76,7 @@
 
         var startPosX = windowPosition.x + 0.5 * iframeTarget.clientWidth;
         var startPosY = windowPosition.y + 0.5 * iframeTarget.clientHeight;
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
@@ -129,7 +129,7 @@
 
         var startPosX = windowPosition.x + 0.5 * iframeTarget.clientWidth;
         var startPosY = windowPosition.y + 0.5 * iframeTarget.clientHeight;
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(startPosX, startPosY);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');

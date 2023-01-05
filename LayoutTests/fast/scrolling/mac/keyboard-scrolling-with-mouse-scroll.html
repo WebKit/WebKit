@@ -14,7 +14,7 @@
         
         async function runTest()
         {
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 

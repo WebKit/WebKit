@@ -21,32 +21,31 @@
 <div class=slider id=secondcontainer>
   <div class=scrollable></div>
 </div>
+<script src="../../../resources/ui-helper.js"></script>
 <script>
-  function runTest() {
-    eventSender.monitorWheelEvents();
+  async function runTest() {
+    await UIHelper.startMonitoringWheelEvents();
     // Scroll vertically to reach the bottom scrollable container.
     eventSender.mouseMoveTo(10, 499);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    await UIHelper.waitForScrollCompletion();
 
-    eventSender.callAfterScrollingCompletes(function() {
-      // Scroll horizontally to check if we scroll the bottom scrollable container.
-      eventSender.monitorWheelEvents();
-      eventSender.mouseMoveTo(10, 510);
-      eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
-      eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-      eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
-      eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none'); 
+    // Scroll horizontally to check if we scroll the bottom scrollable container.
+    await UIHelper.startMonitoringWheelEvents();
+    eventSender.mouseMoveTo(10, 510);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none'); 
+    await UIHelper.waitForScrollCompletion();
       
-      eventSender.callAfterScrollingCompletes(function() {
-        var firstOffset = document.getElementById("firstcontainer").scrollLeft;
-        var secondOffset = document.getElementById("secondcontainer").scrollLeft;
-        document.body.innerText = !firstOffset && secondOffset ? "PASS" : "FAIL";  
-        testRunner.notifyDone();
-        }); 
-    });
+    var firstOffset = document.getElementById("firstcontainer").scrollLeft;
+    var secondOffset = document.getElementById("secondcontainer").scrollLeft;
+    document.body.innerText = !firstOffset && secondOffset ? "PASS" : "FAIL";  
+    testRunner.notifyDone();
   }
 
   if (window.eventSender && window.testRunner) {

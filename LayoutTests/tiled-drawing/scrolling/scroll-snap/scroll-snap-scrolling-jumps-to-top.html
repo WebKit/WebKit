@@ -23,9 +23,11 @@
                 scroll-snap-align: start;
             }
         </style>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         let write = s => output.innerHTML += s + "<br>";
-        function run() {
+        async function run()
+        {
             container.scrollTop = 300;
             write(`The scroll position is: ${container.scrollTop}`);
             if (!window.eventSender || !window.testRunner)
@@ -33,8 +35,10 @@
 
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-            eventSender.monitorWheelEvents();
+
             internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            await UIHelper.startMonitoringWheelEvents();
+
             eventSender.mouseMoveTo(container.offsetLeft + container.clientWidth / 2, container.offsetTop + container.clientHeight / 2);
 
             write("Scrolling without momentum to the same position several times")
@@ -46,12 +50,11 @@
                 eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
             }
 
-            setTimeout(() => {
-                eventSender.callAfterScrollingCompletes(() => {
-                    write(`The scroll position is now: ${container.scrollTop}`);
-                    testRunner.notifyDone();
-                });
-            }, 0);
+            await UIHelper.delayFor(0); // Unclear if this is needed.
+            await UIHelper.waitForScrollCompletion();
+
+            write(`The scroll position is now: ${container.scrollTop}`);
+            testRunner.notifyDone();
         }
         </script>
     </head>

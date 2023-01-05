@@ -1,6 +1,5 @@
 <html>
 <head>
-    <script src="../../../resources/js-test-pre.js"></script>
     <style type="text/css">
     #wrapper {
         height: 400px;
@@ -20,6 +19,8 @@
         margin: 0;
     }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
     <script>
     jsTestIsAsync = true;
 
@@ -34,9 +35,9 @@
         finishJSTest();
     }
 
-    function scrollTest()
+    async function scrollTest()
     {
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(200, 50);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
@@ -52,7 +53,8 @@
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-        eventSender.callAfterScrollingCompletes(checkForScroll);
+        await UIHelper.waitForScrollCompletion();
+        checkForScroll();
     }
 
     function setup() {

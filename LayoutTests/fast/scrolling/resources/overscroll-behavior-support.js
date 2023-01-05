@@ -26,11 +26,13 @@ async function mouseWheelScrollAndWait(x, y, beginX, beginY, deltaX, deltaY)
     if (deltaY === undefined)
         deltaY = -10;
 
-    eventSender.monitorWheelEvents();
+    await UIHelper.startMonitoringWheelEvents();
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(beginX, beginY, "began", "none");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(deltaX, deltaY, "changed", "none");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+    // FIXME: Use UIHelper.waitForScrollCompletion() (but doing so causes timeouts).
     return new Promise(resolve => {
         setTimeout(() => {
             requestAnimationFrame(resolve);

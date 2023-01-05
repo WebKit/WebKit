@@ -17,6 +17,7 @@
             background-color: blue;
         }
     </style>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -39,16 +40,15 @@
                 testRunner.notifyDone();
         }
 
-        function doTest()
+        async function doTest()
         {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
+                await UIHelper.startMonitoringWheelEvents();
                 eventSender.keyDown("leftArrow");
                 eventSender.keyDown("leftArrow");
                 eventSender.keyDown("leftArrow");
-                setTimeout(function() {
-                    eventSender.callAfterScrollingCompletes(checkForScroll);
-                }, 0);
+                await UIHelper.waitForScrollCompletion();
+                checkForScroll();
             }
         }
         

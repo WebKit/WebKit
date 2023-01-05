@@ -30,6 +30,7 @@
                 scroll-snap-align: center;
             }
         </style>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         let write = s => output.innerHTML += s + "<br>";
 
@@ -38,14 +39,14 @@
             testRunner.waitUntilDone();
         }
 
-        function run() {
+        async function run() {
             if (!window.testRunner || !window.eventSender) {
                 write("To manually test, verify that scrolling in the overflow container snaps to each of the children.");
                 return;
             }
 
             internals.setPlatformMomentumScrollingPredictionEnabled(false);
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(250, 250);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
@@ -54,10 +55,10 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "begin");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            eventSender.callAfterScrollingCompletes(() => {
-                write(`After swiping, the container's scrollTop is now: ${port.scrollTop}`);
-                testRunner.notifyDone();
-            });
+
+            await UIHelper.waitForScrollCompletion();
+            write(`After swiping, the container's scrollTop is now: ${port.scrollTop}`);
+            testRunner.notifyDone();
         }
         </script>
     </head>

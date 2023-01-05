@@ -14,27 +14,26 @@
             background-color: green;
         }
     </style>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
 		if (window.testRunner)
             testRunner.waitUntilDone();
 
-		function doTest()
+		async function doTest()
         {
             document.scrollingElement.scrollTop = 20;
             document.scrollingElement.scrollTop = 0;
-            
-            eventSender.monitorWheelEvents();
 
-            setTimeout(() => {
-                eventSender.mouseMoveTo(20, 20);
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-                eventSender.callAfterScrollingCompletes(() => {
-                    document.scrollingElement.scrollTop = 0;
-                    testRunner.notifyDone();
-                });
-            }, 0);
+            await UIHelper.startMonitoringWheelEvents();
+            eventSender.mouseMoveTo(20, 20);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            
+            await UIHelper.waitForScrollCompletion();
+
+            document.scrollingElement.scrollTop = 0;
+            testRunner.notifyDone();
         }
 
         window.addEventListener('load', doTest, false);

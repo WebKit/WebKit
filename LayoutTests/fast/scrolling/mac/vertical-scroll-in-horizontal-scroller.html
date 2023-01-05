@@ -29,7 +29,7 @@
 
         async function mouseWheelScrollAt(x, y, deltaX, deltaY)
         {
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(deltaX, deltaY, "none", "none");
             return new Promise(resolve => {

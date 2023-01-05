@@ -27,7 +27,7 @@
             }
 
             eventSender.mouseMoveTo(50, 250); // Inside the iframe.
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
@@ -47,7 +47,7 @@
             shouldBe('iframeTarget.contentWindow.pageYOffset', '410');
             shouldBe('window.pageYOffset', '200');
 
-            eventSender.monitorWheelEvents({ resetLatching: false });
+            await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 1, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'changed', 'none');

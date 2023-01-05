@@ -24,7 +24,7 @@
         {
             scrollContainer = document.querySelector('.scroll-container');
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             
             scrollContainer.focus();
             scrollContainer.scrollTo({

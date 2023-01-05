@@ -45,7 +45,7 @@
         debug('Triggering main page latch; scrolling up');
 
         eventSender.mouseMoveTo(400, 200);
-        eventSender.monitorWheelEvents({ resetLatching: false });
+        await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 2, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 11, 'changed', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
@@ -67,7 +67,7 @@
 
         debug('Checking wheel event over the select again');
         eventSender.mouseMoveTo(50, 200);
-        eventSender.monitorWheelEvents({ resetLatching: false });
+        await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'changed', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');

@@ -29,9 +29,7 @@
                 }
 
                 try {
-                    await UIHelper.delayFor(0);
-
-                    eventSender.monitorWheelEvents();
+                    await UIHelper.startMonitoringWheelEvents();
                     eventSender.mouseMoveTo(10, 10);
 
                     // `direction` is a two-element array with a one in the appropriate direction.

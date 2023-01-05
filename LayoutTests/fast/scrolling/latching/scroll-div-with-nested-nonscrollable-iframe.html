@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../../resources/ui-helper.js"></script>
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
     jsTestIsAsync = true;
@@ -45,7 +46,7 @@
         finishJSTest();
     }
 
-    function scrollTest()
+    async function scrollTest()
     {
         pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
@@ -58,7 +59,7 @@
 
         divScrollPositionBefore = divTarget.scrollTop;
 
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(startPosX, startPosY);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -67,7 +68,8 @@
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        eventSender.callAfterScrollingCompletes(checkForScroll);
+        await UIHelper.waitForScrollCompletion();
+        checkForScroll();
     }
 
     function setupTopLevel()

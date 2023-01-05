@@ -15,14 +15,11 @@
         async function runTest()
         {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
+                await UIHelper.startMonitoringWheelEvents();
                 eventSender.keyDown("downArrow");
 
-                setTimeout(function() {
-                    eventSender.callAfterScrollingCompletes(() => {
-                        testRunner.notifyDone();
-                    });
-                }, 0);
+                UIHelper.waitForScrollCompletion();
+                testRunner.notifyDone();
             }
         }
     </script>

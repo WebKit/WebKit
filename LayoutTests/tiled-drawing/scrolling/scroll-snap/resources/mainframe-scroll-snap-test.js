@@ -54,7 +54,7 @@ async function doScrollTest(targetElement, direction, scrollMotions)
     startPosX += 5;
     startPosY += 5;
 
-    eventSender.monitorWheelEvents();
+    await UIHelper.startMonitoringWheelEvents();
     eventSender.mouseMoveTo(startPosX, startPosY);
 
     // `direction` is a two-element array with a one in the appropriate direction.

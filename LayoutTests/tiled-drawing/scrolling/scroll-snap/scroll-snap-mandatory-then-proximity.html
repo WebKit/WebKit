@@ -26,6 +26,7 @@
                 scroll-snap-align: start;
             }
         </style>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         let write = s => output.innerHTML += s + "<br>";
         if (window.testRunner) {
@@ -33,38 +34,39 @@
             testRunner.waitUntilDone();
         }
 
-        function verticalScrollInContainer(dragDeltas, momentumDeltas)
+        async function verticalScrollInContainer(dragDeltas, momentumDeltas)
         {
-            return new Promise(resolve => {
-                write(`Scrolling in ${container.id} with scroll-snap-type: ${getComputedStyle(container).scrollSnapType}`);
-                eventSender.monitorWheelEvents();
-                internals.setPlatformMomentumScrollingPredictionEnabled(false);
-                eventSender.mouseMoveTo(300, 300);
-                dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-                if (momentumDeltas && momentumDeltas.length) {
-                    momentumDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, "none", i == 0 ? "begin" : "continue"));
-                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-                }
-                eventSender.callAfterScrollingCompletes(() => {
-                    write(`- Did the scrolling snap to the top? ${container.scrollTop == 0 ? "YES" : "NO"}`);
-                    write(`- Did scrolling snap to the second box? ${container.scrollTop == 600 ? "YES" : "NO"}`);
-                    container.style.scrollSnapType = "y proximity"
-                    container.scrollTop = 0;
-                    setTimeout(resolve, 0);
-                });
-            });
+            write(`Scrolling in ${container.id} with scroll-snap-type: ${getComputedStyle(container).scrollSnapType}`);
+            await UIHelper.startMonitoringWheelEvents();
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            eventSender.mouseMoveTo(300, 300);
+            dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            if (momentumDeltas && momentumDeltas.length) {
+                momentumDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, "none", i == 0 ? "begin" : "continue"));
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            }
+            
+            await UIHelper.waitForScrollCompletion();
+            
+            write(`- Did the scrolling snap to the top? ${container.scrollTop == 0 ? "YES" : "NO"}`);
+            write(`- Did scrolling snap to the second box? ${container.scrollTop == 600 ? "YES" : "NO"}`);
+            container.style.scrollSnapType = "y proximity"
+            container.scrollTop = 0;
+
+            await UIHelper.delayFor(0);
         }
 
-        function run() {
+        async function run()
+        {
             if (!window.testRunner || !window.eventSender) {
                 write("This test requires EventSender support.");
                 return;
             }
 
-            verticalScrollInContainer(new Array(16).fill(-1), new Array(3).fill(-1))
-                .then(() => verticalScrollInContainer(new Array(16).fill(-1), new Array(3).fill(-1)))
-                .then(() => testRunner.notifyDone());
+            await verticalScrollInContainer(new Array(16).fill(-1), new Array(3).fill(-1));
+            await verticalScrollInContainer(new Array(16).fill(-1), new Array(3).fill(-1));
+            testRunner.notifyDone();
         }
         </script>
     </head>

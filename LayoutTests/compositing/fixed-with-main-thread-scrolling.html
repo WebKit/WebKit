@@ -21,15 +21,16 @@
             background-attachment: fixed;
         }
     </style>
+    <script src="../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.waitUntilDone();
         }
 
-        function scrollTest()
+        async function scrollTest()
         {
             eventSender.mouseMoveTo(20, 20);
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "changed", "none");
@@ -41,11 +42,8 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            eventSender.callAfterScrollingCompletes(() => {
-                setTimeout(() => {
-                    testRunner.notifyDone()                
-                }, 0);
-            });
+            await UIHelper.waitForScrollCompletion();
+            testRunner.notifyDone()                
         }
 
         window.addEventListener('load', () => {
