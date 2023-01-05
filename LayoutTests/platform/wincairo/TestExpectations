@@ -78,6 +78,7 @@ compositing/layer-creation/will-change-on-normal-flow-content.html [ Skip ]
 
 # GAMEPAD is disabled
 gamepad [ Skip ]
+imported/w3c/web-platform-tests/gamepad [ Skip ]
 
 # GEOLOCATION is disabled
 fast/dom/Geolocation [ Skip ]

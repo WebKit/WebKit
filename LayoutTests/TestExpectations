@@ -317,6 +317,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-re
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-frozen.https.html [ Skip ]
 
 # These tests rely on subdomains and can't work currently with local webserver.
+imported/w3c/web-platform-tests/gamepad/gamepad-default-feature-policy.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/origin [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/strict-origin-when-cross-origin [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/no-referrer [ Skip ]
