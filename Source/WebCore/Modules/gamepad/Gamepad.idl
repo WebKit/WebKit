@@ -35,5 +35,8 @@
     readonly attribute DOMString mapping;
     readonly attribute sequence<double> axes;
     readonly attribute sequence<GamepadButton> buttons;
+
+    // Extension: https://w3c.github.io/gamepad/extensions.html#partial-gamepad-interface
+    [EnabledBySetting=GamepadVibrationActuatorEnabled] readonly attribute GamepadHapticActuator vibrationActuator;
 };
 

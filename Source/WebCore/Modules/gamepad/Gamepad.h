@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class GamepadButton;
+class GamepadHapticActuator;
 class PlatformGamepad;
 
 class Gamepad: public RefCounted<Gamepad> {
@@ -57,6 +58,8 @@ public:
     void updateFromPlatformGamepad(const PlatformGamepad&);
     void setConnected(bool connected) { m_connected = connected; }
 
+    GamepadHapticActuator& vibrationActuator();
+
 private:
     explicit Gamepad(const PlatformGamepad&);
     String m_id;
@@ -67,6 +70,8 @@ private:
 
     Vector<double> m_axes;
     Vector<Ref<GamepadButton>> m_buttons;
+
+    Ref<GamepadHapticActuator> m_vibrationActuator;
 };
 
 } // namespace WebCore

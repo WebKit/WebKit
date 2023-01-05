@@ -300,7 +300,9 @@ $(PROJECT_DIR)/Modules/filesystemaccess/FileSystemSyncAccessHandle.idl
 $(PROJECT_DIR)/Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
 $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
+$(PROJECT_DIR)/Modules/gamepad/GamepadEffectParameters.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
+$(PROJECT_DIR)/Modules/gamepad/GamepadHapticActuator.idl
 $(PROJECT_DIR)/Modules/gamepad/Navigator+Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/WindowEventHandlers+Gamepad.idl
 $(PROJECT_DIR)/Modules/geolocation/Coordinates.idl

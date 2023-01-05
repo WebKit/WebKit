@@ -3453,6 +3453,8 @@ JSGPUVertexStepMode.cpp
 JSGainNode.cpp
 JSGainOptions.cpp
 JSGamepad.cpp
+JSGamepadEffectParameters.cpp
+JSGamepadHapticActuator.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp
 JSGeolocation.cpp

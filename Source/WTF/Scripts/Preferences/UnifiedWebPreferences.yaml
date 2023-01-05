@@ -2322,6 +2322,19 @@ GStreamerEnabled:
     WebKit:
       default: true
 
+GamepadVibrationActuatorEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "Gamepad.vibrationActuator support"
+  humanReadableDescription: "Support for Gamepad.vibrationActuator"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GamepadsEnabled:
   type: bool
   status: embedder
