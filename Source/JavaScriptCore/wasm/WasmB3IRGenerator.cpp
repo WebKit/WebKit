@@ -812,19 +812,6 @@ int32_t B3IRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)
 
 void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* block, Value* arg)
 {
-    if (Context::useFastTLS()) {
-        PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
-        if (CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister())
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
-        patchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister());
-                jit.storeWasmContextInstance(params[0].gpr());
-            });
-        return;
-    }
-
     // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
     // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
     PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
@@ -865,8 +852,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
     m_proc.pinRegister(m_memoryBaseGPR);
 
     m_wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
-    if (!Context::useFastTLS())
-        m_proc.pinRegister(m_wasmContextInstanceGPR);
+    m_proc.pinRegister(m_wasmContextInstanceGPR);
 
     if (mode == MemoryMode::BoundsChecking) {
         m_boundsCheckingSizeGPR = pinnedRegs.boundsCheckingSizeRegister;
@@ -892,21 +878,12 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     {
         B3::PatchpointValue* getInstance = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
-        if (Context::useFastTLS())
-            getInstance->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        else {
-            // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
-            // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
-            getInstance->effects.writesPinned = false;
-            getInstance->effects.readsPinned = true;
-            getInstance->resultConstraints = { ValueRep::reg(m_wasmContextInstanceGPR) };
-        }
-        getInstance->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            if (Context::useFastTLS()) {
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::loadWasmContextInstanceNeedsMacroScratchRegister());
-                jit.loadWasmContextInstance(params[0].gpr());
-            }
-        });
+        // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
+        // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
+        getInstance->effects.writesPinned = false;
+        getInstance->effects.readsPinned = true;
+        getInstance->resultConstraints = { ValueRep::reg(m_wasmContextInstanceGPR) };
+        getInstance->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
         m_instanceValue = getInstance;
     }
 

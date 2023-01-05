@@ -2746,48 +2746,25 @@ op(wasm_function_prologue, macro ()
     crash()
 end)
 
-op(wasm_function_prologue_no_tls, macro ()
-    crash()
-end)
-
 op(wasm_function_prologue_simd, macro ()
     crash()
 end)
 
-op(wasm_function_prologue_no_tls_simd, macro ()
-    crash()
-end)
-
 _wasm_trampoline_wasm_call:
-_wasm_trampoline_wasm_call_no_tls:
 _wasm_trampoline_wasm_call_indirect:
-_wasm_trampoline_wasm_call_indirect_no_tls:
 _wasm_trampoline_wasm_call_ref:
-_wasm_trampoline_wasm_call_ref_no_tls:
 _wasm_trampoline_wasm_call_wide16:
-_wasm_trampoline_wasm_call_no_tls_wide16:
 _wasm_trampoline_wasm_call_indirect_wide16:
-_wasm_trampoline_wasm_call_indirect_no_tls_wide16:
 _wasm_trampoline_wasm_call_ref_wide16:
-_wasm_trampoline_wasm_call_ref_no_tls_wide16:
 _wasm_trampoline_wasm_call_wide32:
-_wasm_trampoline_wasm_call_no_tls_wide32:
 _wasm_trampoline_wasm_call_indirect_wide32:
-_wasm_trampoline_wasm_call_indirect_no_tls_wide32:
 _wasm_trampoline_wasm_call_ref_wide32:
-_wasm_trampoline_wasm_call_ref_no_tls_wide32:
 _wasm_trampoline_wasm_tail_call:
-_wasm_trampoline_wasm_tail_call_no_tls:
 _wasm_trampoline_wasm_tail_call_indirect:
-_wasm_trampoline_wasm_tail_call_indirect_no_tls:
 _wasm_trampoline_wasm_tail_call_wide16:
-_wasm_trampoline_wasm_tail_call_no_tls_wide16:
 _wasm_trampoline_wasm_tail_call_indirect_wide16:
-_wasm_trampoline_wasm_tail_call_indirect_no_tls_wide16:
 _wasm_trampoline_wasm_tail_call_wide32:
-_wasm_trampoline_wasm_tail_call_no_tls_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
-_wasm_trampoline_wasm_tail_call_indirect_no_tls_wide32:
     crash()
 
 end

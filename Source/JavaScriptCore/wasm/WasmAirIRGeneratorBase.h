@@ -954,18 +954,6 @@ int32_t AirIRGeneratorBase<Derived, ExpressionType>::fixupPointerPlusOffset(Expr
 template <typename Derived, typename ExpressionType>
 void AirIRGeneratorBase<Derived, ExpressionType>::restoreWasmContextInstance(BasicBlock* block, ExpressionType instance)
 {
-    if (Context::useFastTLS()) {
-        auto* patchpoint = addPatchpoint(B3::Void);
-        if (CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister())
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister());
-            jit.storeWasmContextInstance(params[0].gpr());
-        });
-        emitPatchpoint(block, patchpoint, ExpressionType(), instance);
-        return;
-    }
-
     // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
     // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
     auto* patchpoint = addPatchpoint(B3::Void);
@@ -1000,8 +988,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     m_wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
-    if (!Context::useFastTLS())
-        m_code.pinRegister(m_wasmContextInstanceGPR);
+    m_code.pinRegister(m_wasmContextInstanceGPR);
 
     if constexpr (Derived::supportsPinnedStateRegisters) {
 
@@ -1017,7 +1004,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
         ASSERT(InvalidGPRReg == pinnedRegs.boundsCheckingSizeRegister);
     }
 
-    m_prologueWasmContextGPR = Context::useFastTLS() ? wasmCallingConvention().prologueScratchGPRs[1] : m_wasmContextInstanceGPR;
+    m_prologueWasmContextGPR = m_wasmContextInstanceGPR;
 
     m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1069,9 +1056,6 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
             needsOverflowCheck = needsOverflowCheck || needUnderflowCheck;
             bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
 
-            if ((needsOverflowCheck || m_usesInstanceValue || mayHaveExceptionHandlers) && Context::useFastTLS())
-                jit.loadWasmContextInstance(m_prologueWasmContextGPR);
-
             // We need to setup JSWebAssemblyInstance in |this| slot first.
             if (mayHaveExceptionHandlers) {
                 GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
@@ -1096,21 +1080,11 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });
-                if (m_prologueWasmContextGPR == wasmCallingConvention().prologueScratchGPRs[1]) {
-                    ASSERT(Context::useFastTLS());
-                    jit.loadWasmContextInstance(m_prologueWasmContextGPR);
-                }
             }
-
         }
     });
 
-    if (Context::useFastTLS()) {
-        m_instanceValue = self().gPtr();
-        // FIXME: Would be nice to only do this if we use instance value.
-        append(Move, Tmp(m_prologueWasmContextGPR), m_instanceValue);
-    } else
-        m_instanceValue = { Tmp(m_prologueWasmContextGPR), Types::IPtr };
+    m_instanceValue = { Tmp(m_prologueWasmContextGPR), Types::IPtr };
 
     append(EntrySwitch);
     m_mainEntrypointStart = m_code.addBlock();
@@ -1139,14 +1113,9 @@ void AirIRGeneratorBase<Derived, ExpressionType>::finalizeEntrypoints()
         m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
 
     if (m_catchEntrypoints.size()) {
-        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([this] (CCallHelpers& jit, B3::Air::Code& code) {
+        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([](CCallHelpers& jit, B3::Air::Code& code) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             emitCatchPrologueShared(code, jit);
-
-            if (Context::useFastTLS()) {
-                // Shared prologue expects this in this register when entering the function using fast TLS.
-                jit.loadWasmContextInstance(m_prologueWasmContextGPR);
-            }
         });
 
         for (unsigned i = 0; i < m_catchEntrypoints.size(); ++i)

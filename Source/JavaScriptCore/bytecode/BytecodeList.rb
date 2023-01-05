@@ -1469,9 +1469,7 @@ op :op_put_by_val_return_location
 op :op_iterator_open_return_location
 op :op_iterator_next_return_location
 op :wasm_function_prologue
-op :wasm_function_prologue_no_tls
 op :wasm_function_prologue_simd
-op :wasm_function_prologue_no_tls_simd
 
 op :op_call_slow_return_location
 op :op_construct_slow_return_location
@@ -1503,15 +1501,10 @@ op :js_trampoline_llint_function_for_call_arity_check_tag
 op :js_trampoline_llint_function_for_construct_arity_check_untag
 op :js_trampoline_llint_function_for_construct_arity_check_tag
 op :wasm_trampoline_wasm_call
-op :wasm_trampoline_wasm_call_no_tls
 op :wasm_trampoline_wasm_call_indirect
-op :wasm_trampoline_wasm_call_indirect_no_tls
 op :wasm_trampoline_wasm_call_ref
-op :wasm_trampoline_wasm_call_ref_no_tls
 op :wasm_trampoline_wasm_tail_call
-op :wasm_trampoline_wasm_tail_call_no_tls
 op :wasm_trampoline_wasm_tail_call_indirect
-op :wasm_trampoline_wasm_tail_call_indirect_no_tls
 
 end_section :NativeHelpers
 
@@ -1526,15 +1519,11 @@ autogenerate_wasm_opcodes
 # Helpers
 
 op :throw_from_slow_path_trampoline
-op :throw_from_fault_handler_trampoline_fastTLS
 op :throw_from_fault_handler_trampoline_reg_instance
 
 op :call_return_location
-op :call_no_tls_return_location
 op :call_indirect_return_location
-op :call_indirect_no_tls_return_location
 op :call_ref_return_location
-op :call_ref_no_tls_return_location
 
 # FIXME: Wasm and JS LLInt should share common opcodes
 # https://bugs.webkit.org/show_bug.cgi?id=203656
@@ -1681,13 +1670,6 @@ op :call,
         numberOfStackArgs: unsigned,
     }
 
-op :call_no_tls,
-    args: {
-        functionIndex: unsigned,
-        stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
-    }
-
 op :tail_call,
     args: {
         functionIndex: unsigned,
@@ -1696,24 +1678,7 @@ op :tail_call,
         numberOfCallerStackArgs: unsigned,
     }
 
-op :tail_call_no_tls,
-    args: {
-        functionIndex: unsigned,
-        stackOffset: unsigned,
-        numberOfCalleeStackArgs: unsigned,
-        numberOfCallerStackArgs: unsigned,
-    }
-
 op :call_indirect,
-    args: {
-        functionIndex: VirtualRegister,
-        typeIndex: unsigned,
-        stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
-        tableIndex: unsigned,
-    }
-
-op :call_indirect_no_tls,
     args: {
         functionIndex: VirtualRegister,
         typeIndex: unsigned,
@@ -1732,25 +1697,7 @@ op :tail_call_indirect,
         tableIndex: unsigned,
     }
 
-op :tail_call_indirect_no_tls,
-    args: {
-        functionIndex: VirtualRegister,
-        signatureIndex: unsigned,
-        stackOffset: unsigned,
-        numberOfCalleeStackArgs: unsigned,
-        numberOfCallerStackArgs: unsigned,
-        tableIndex: unsigned,
-    }
-
 op :call_ref,
-    args: {
-        functionReference: VirtualRegister,
-        typeIndex: unsigned,
-        stackOffset: unsigned,
-        numberOfStackArgs: unsigned,
-    }
-
-op :call_ref_no_tls,
     args: {
         functionReference: VirtualRegister,
         typeIndex: unsigned,
@@ -1887,7 +1834,6 @@ op :rethrow,
 op_group :Catch,
     [
         :catch,
-        :catch_no_tls,
     ],
     args: {
         exceptionIndex: unsigned,
@@ -1899,7 +1845,6 @@ op_group :Catch,
 op_group :CatchAll,
     [
         :catch_all,
-        :catch_all_no_tls,
     ],
     args: {
         exception: VirtualRegister,

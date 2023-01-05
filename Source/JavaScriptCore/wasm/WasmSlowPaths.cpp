@@ -563,14 +563,6 @@ WASM_SLOW_PATH_DECL(call)
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
-WASM_SLOW_PATH_DECL(call_no_tls)
-{
-    UNUSED_PARAM(callFrame);
-
-    auto instruction = pc->as<WasmCallNoTls>();
-    return doWasmCall(instance, instruction.m_functionIndex);
-}
-
 inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
 {
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
@@ -593,13 +585,6 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
 WASM_SLOW_PATH_DECL(call_indirect)
 {
     auto instruction = pc->as<WasmCallIndirect>();
-    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
-    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
-}
-
-WASM_SLOW_PATH_DECL(call_indirect_no_tls)
-{
-    auto instruction = pc->as<WasmCallIndirectNoTls>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
@@ -632,13 +617,6 @@ WASM_SLOW_PATH_DECL(call_ref)
     return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
 }
 
-WASM_SLOW_PATH_DECL(call_ref_no_tls)
-{
-    auto instruction = pc->as<WasmCallRefNoTls>();
-    JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
-    return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
-}
-
 WASM_SLOW_PATH_DECL(tail_call)
 {
     UNUSED_PARAM(callFrame);
@@ -646,23 +624,9 @@ WASM_SLOW_PATH_DECL(tail_call)
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
-WASM_SLOW_PATH_DECL(tail_call_no_tls)
-{
-    UNUSED_PARAM(callFrame);
-    auto instruction = pc->as<WasmTailCallNoTls>();
-    return doWasmCall(instance, instruction.m_functionIndex);
-}
-
 WASM_SLOW_PATH_DECL(tail_call_indirect)
 {
     auto instruction = pc->as<WasmTailCallIndirect>();
-    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
-    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
-}
-
-WASM_SLOW_PATH_DECL(tail_call_indirect_no_tls)
-{
-    auto instruction = pc->as<WasmTailCallIndirectNoTls>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
 }
@@ -906,10 +870,6 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
         handleCatch(pc->as<WasmCatch>());
     else if (pc->is<WasmCatchAll>())
         handleCatchAll(pc->as<WasmCatchAll>());
-    else if (pc->is<WasmCatchNoTls>())
-        handleCatch(pc->as<WasmCatchNoTls>());
-    else if (pc->is<WasmCatchAllNoTls>())
-        handleCatchAll(pc->as<WasmCatchAllNoTls>());
     else
         RELEASE_ASSERT_NOT_REACHED();
 

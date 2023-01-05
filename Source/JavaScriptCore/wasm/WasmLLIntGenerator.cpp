@@ -1129,10 +1129,7 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
     for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i)
         results.append(push());
 
-    if (Context::useFastTLS())
-        WasmCatch::emit(this, exceptionIndex, exception, exceptionSignature.as<FunctionSignature>()->argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
-    else
-        WasmCatchNoTls::emit(this, exceptionIndex, exception, exceptionSignature.as<FunctionSignature>()->argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
+    WasmCatch::emit(this, exceptionIndex, exception, exceptionSignature.as<FunctionSignature>()->argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
 
     for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
         VirtualRegister dst = results[i];
@@ -1181,10 +1178,7 @@ auto LLIntGenerator::addCatchAllToUnreachable(ControlType& data) -> PartialResul
     ControlCatch& catchData = std::get<ControlCatch>(data);
     catchData.m_kind = CatchKind::CatchAll;
 
-    if (Context::useFastTLS())
-        WasmCatchAll::emit(this, exception);
-    else
-        WasmCatchAllNoTls::emit(this, exception);
+    WasmCatchAll::emit(this, exception);
 
     m_codeBlock->addExceptionHandler({ HandlerType::CatchAll, catchData.m_tryStart->location(), catchData.m_tryEnd->location(), catchLabel->location(), m_tryDepth, 0 });
     return { };
@@ -1387,15 +1381,9 @@ auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
         uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
 
-        if (Context::useFastTLS())
-            WasmTailCall::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments, callerStackArgs);
-        else
-            WasmTailCallNoTls::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments, callerStackArgs);
-
-    } else if (Context::useFastTLS())
+        WasmTailCall::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments, callerStackArgs);
+    } else
         WasmCall::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments);
-    else
-        WasmCallNoTls::emit(this, functionIndex, wasmCalleeInfo.stackOffset, wasmCalleeInfo.numberOfStackArguments);
 
     wasmCalleeInfo.commitResults(results);
 
@@ -1425,15 +1413,9 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
         const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
         uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
 
-        if (Context::useFastTLS())
-            WasmTailCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, callerStackArgs, tableIndex);
-        else
-            WasmTailCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, callerStackArgs, tableIndex);
-
-    } else if (Context::useFastTLS())
+        WasmTailCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, callerStackArgs, tableIndex);
+    } else
         WasmCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, tableIndex);
-    else
-        WasmCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), calleeInfo.stackOffset, calleeInfo.numberOfStackArguments, tableIndex);
 
     calleeInfo.commitResults(results);
 
@@ -1447,10 +1429,7 @@ auto LLIntGenerator::addCallRef(const TypeDefinition& signature, Vector<Expressi
     const auto& functionSignature = *signature.expand().as<FunctionSignature>();
     LLIntCallInformation info = callInformationForCaller(functionSignature);
     unifyValuesWithBlock(info.arguments, args);
-    if (Context::useFastTLS())
-        WasmCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
-    else
-        WasmCallRefNoTls::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
+    WasmCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
     info.commitResults(results);
 
     return { };

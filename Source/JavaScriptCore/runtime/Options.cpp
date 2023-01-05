@@ -596,9 +596,6 @@ void Options::notifyOptionsChanged()
             Options::useFTLJIT() = false;
         }
 
-        if (!Options::useWebAssembly())
-            Options::useFastTLSForWasmContext() = false;
-
         if (Options::dumpDisassembly()
             || Options::asyncDisassembly()
             || Options::dumpDFGDisassembly()

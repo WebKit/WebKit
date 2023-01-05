@@ -112,7 +112,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatch(OpcodeSize size)
     if (Options::useJIT())
         return handleWasmCatchThunk(size);
 #endif
-    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch : wasm_catch_no_tls;
+    WasmOpcodeID opcode = wasm_catch;
     switch (size) {
     case OpcodeSize::Narrow:
         return LLInt::getCodeRef<ExceptionHandlerPtrTag>(opcode);
@@ -131,7 +131,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAll(OpcodeSize size
     if (Options::useJIT())
         return handleWasmCatchAllThunk(size);
 #endif
-    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch_all : wasm_catch_all_no_tls;
+    WasmOpcodeID opcode = wasm_catch_all;
     switch (size) {
     case OpcodeSize::Narrow:
         return LLInt::getCodeRef<ExceptionHandlerPtrTag>(opcode);
