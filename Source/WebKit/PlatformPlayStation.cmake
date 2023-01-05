@@ -158,6 +158,12 @@ if (ENABLE_GAMEPAD)
     )
 endif ()
 
+if (ENABLE_WEBDRIVER AND USE_WPE_BACKEND_PLAYSTATION)
+    list(APPEND WebKit_SOURCES
+        UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
+    )
+endif ()
+
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebKit_SOURCES
         Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
