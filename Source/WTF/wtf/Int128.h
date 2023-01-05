@@ -1268,12 +1268,12 @@ using Int128 = Int128Impl;
 #endif
 
 template<> struct DefaultHash<UInt128> {
-    static unsigned hash(const UInt128& i) { return pairIntHash(static_cast<uint64_t>(i >> 64), static_cast<uint64_t>(i)); }
+    static unsigned hash(const UInt128& i) { return pairIntHash(intHash(static_cast<uint64_t>(i >> 64)), intHash(static_cast<uint64_t>(i))); }
     static bool equal(const UInt128& a, const UInt128& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 template<> struct DefaultHash<Int128> {
-    static unsigned hash(const UInt128& i) { return pairIntHash(static_cast<uint64_t>(i >> 64), static_cast<uint64_t>(i)); }
+    static unsigned hash(const UInt128& i) { return pairIntHash(intHash(static_cast<uint64_t>(i >> 64)), intHash(static_cast<uint64_t>(i))); }
     static bool equal(const Int128& a, const Int128& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
