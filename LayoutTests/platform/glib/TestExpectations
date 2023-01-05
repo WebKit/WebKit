@@ -912,6 +912,11 @@ webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Tim
 # Expected to pass when we enable playbin3 by default and update the SDK to GStreamer 1.20.
 webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 
+# Expected to pass when we enable playbin3 by default.
+webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
+webkit.org/b/131546 webkit.org/b/198830 media/track/track-in-band-legacy-api.html [ Failure Crash ]
+webkit.org/b/131546 media/track/track-in-band-mode.html [ Failure ]
+
 # Even with playbin3 enabled there is still a failure here, h264parse is unable
 # to calculate the framerate of test.mp4 and the calculated bitrate tag is too
 # low, probably because we would need a playing pipeline to have better average
@@ -2056,10 +2061,7 @@ media/media-captions.html [ WontFix Failure ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]
-webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
-webkit.org/b/131546 webkit.org/b/198830 media/track/track-in-band-legacy-api.html [ Failure Crash ]
-webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
-media/track/track-in-band-chapters.html [ Skip ]
+media/track/track-in-band-chapters.html [ Failure ]
 
 # DataCue.value not enabled
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]
