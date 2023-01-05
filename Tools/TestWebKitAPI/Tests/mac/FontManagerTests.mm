@@ -101,9 +101,9 @@ static RetainPtr<FontManagerTestWKWebView> webViewForFontManagerTesting(NSFontMa
 
 static RetainPtr<FontManagerTestWKWebView> webViewForFontManagerTesting(NSFontManager *fontManager)
 {
-    return webViewForFontManagerTesting(fontManager, @"<body contenteditable>"
+    return webViewForFontManagerTesting(fontManager, @"<body oninput='lastInputEvent = event' contenteditable>"
         "<span id='foo'>foo</span> <span id='bar'>bar</span> <span id='baz'>baz</span>"
-        "</body><script>document.body.addEventListener('input', event => lastInputEvent = event)</script>");
+        "</body>");
 }
 
 static RetainPtr<NSMenuItemCell> menuItemCellForFontAction(NSUInteger tag)
@@ -211,9 +211,10 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [webView selectWord:nil];
     [fontManager modifyFontViaPanel:fontPanel];
     EXPECT_WK_STREQ("foo", [webView selectedText]);
-    EXPECT_WK_STREQ("Helvetica", [webView stylePropertyAtSelectionStart:@"font-family"]);
-    EXPECT_WK_STREQ("20px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("<span id=\"foo\" style=\"font-size: 20px;\"><font face=\"Helvetica\">foo</font></span>", [webView stringByEvaluatingJavaScript:@"foo.outerHTML"]);
+    EXPECT_WK_STREQ("Helvetica", [webView stringByEvaluatingJavaScript:@"getComputedStyle(foo.firstChild)['font-family']"]);
+    EXPECT_WK_STREQ("20px", [webView stringByEvaluatingJavaScript:@"getComputedStyle(foo.firstChild)['font-size']"]);
+    EXPECT_WK_STREQ("400", [webView stringByEvaluatingJavaScript:@"getComputedStyle(foo.firstChild)['font-weight']"]);
     expectSameAttributes(largeHelveticaFont, fontManager.selectedFont);
 
     NSFont *smallBoldTimesFont = [fontManager fontWithFamily:@"Times New Roman" traits:NSBoldFontMask weight:NSFontWeightBold size:10];
@@ -221,9 +222,10 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [webView selectNextWord];
     [fontManager modifyFontViaPanel:fontPanel];
     EXPECT_WK_STREQ("bar", [webView selectedText]);
-    EXPECT_WK_STREQ("\"Times New Roman\"", [webView stylePropertyAtSelectionStart:@"font-family"]);
-    EXPECT_WK_STREQ("10px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("<span id=\"bar\"><font face=\"Times New Roman\" size=\"1\"><b>bar</b></font></span>", [webView stringByEvaluatingJavaScript:@"bar.outerHTML"]);
+    EXPECT_WK_STREQ("\"Times New Roman\"", [webView stringByEvaluatingJavaScript:@"getComputedStyle(bar.firstChild.firstChild)['font-family']"]);
+    EXPECT_WK_STREQ("10px", [webView stringByEvaluatingJavaScript:@"getComputedStyle(bar.firstChild.firstChild)['font-size']"]);
+    EXPECT_WK_STREQ("700", [webView stringByEvaluatingJavaScript:@"getComputedStyle(bar.firstChild.firstChild)['font-weight']"]);
     expectSameAttributes(smallBoldTimesFont, fontManager.selectedFont);
 
     NSFont *boldItalicArialFont = [fontManager fontWithFamily:@"Arial" traits:NSBoldFontMask | NSItalicFontMask weight:NSFontWeightBold size:14];
@@ -231,9 +233,11 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [webView selectNextWord];
     [fontManager modifyFontViaPanel:fontPanel];
     EXPECT_WK_STREQ("baz", [webView selectedText]);
-    EXPECT_WK_STREQ("Arial", [webView stylePropertyAtSelectionStart:@"font-family"]);
-    EXPECT_WK_STREQ("14px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("<span id=\"baz\" style=\"font-size: 14px;\"><font face=\"Arial\"><b><i>baz</i></b></font></span>", [webView stringByEvaluatingJavaScript:@"baz.outerHTML"]);
+    EXPECT_WK_STREQ("Arial", [webView stringByEvaluatingJavaScript:@"getComputedStyle(baz.querySelector('i'))['font-family']"]);
+    EXPECT_WK_STREQ("14px", [webView stringByEvaluatingJavaScript:@"getComputedStyle(baz.querySelector('i'))['font-size']"]);
+    EXPECT_WK_STREQ("700", [webView stringByEvaluatingJavaScript:@"getComputedStyle(baz.querySelector('i'))['font-weight']"]);
+    EXPECT_WK_STREQ("italic", [webView stringByEvaluatingJavaScript:@"getComputedStyle(baz.querySelector('i'))['font-style']"]);
     expectSameAttributes(boldItalicArialFont, fontManager.selectedFont);
 
     NSFont *largeItalicLightAvenirFont = [fontManager fontWithFamily:@"Avenir" traits:NSItalicFontMask weight:NSFontWeightLight size:24];
@@ -241,9 +245,10 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [webView selectAll:nil];
     [fontManager modifyFontViaPanel:fontPanel];
     EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
-    EXPECT_WK_STREQ("Avenir-LightOblique", [webView stylePropertyAtSelectionStart:@"font-family"]);
-    EXPECT_WK_STREQ("24px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("<font face=\"Avenir-LightOblique\" size=\"5\"><i><span id=\"foo\"><font>foo</font></span> <span id=\"bar\">bar</span> <span id=\"baz\"><font>baz</font></span></i></font>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("Avenir-LightOblique", [webView stringByEvaluatingJavaScript:@"getComputedStyle(foo)['font-family']"]);
+    EXPECT_WK_STREQ("24px", [webView stringByEvaluatingJavaScript:@"getComputedStyle(foo)['font-size']"]);
+    EXPECT_WK_STREQ("400", [webView stringByEvaluatingJavaScript:@"getComputedStyle(foo)['font-weight']"]);
     expectSameAttributes(largeItalicLightAvenirFont, fontManager.selectedFont);
 }
 
@@ -256,38 +261,22 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel setIsVisible:YES];
     [webView waitForNextPresentationUpdate];
 
-    auto textDecorationsAroundSelection = [webView] {
-        NSString *decorationsAtStart = [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"];
-        NSString *decorationsAtEnd = [webView stylePropertyAtSelectionEnd:@"-webkit-text-decorations-in-effect"];
-        if ([decorationsAtStart isEqualToString:decorationsAtEnd] || decorationsAtStart == decorationsAtEnd)
-            return decorationsAtStart;
-        return [NSString stringWithFormat:@"(%@, %@)", decorationsAtStart, decorationsAtEnd];
-    };
-
-    auto textShadowAroundSelection = [webView] {
-        NSString *shadowAtStart = [webView stylePropertyAtSelectionStart:@"text-shadow"];
-        NSString *shadowAtEnd = [webView stylePropertyAtSelectionEnd:@"text-shadow"];
-        if ([shadowAtStart isEqualToString:shadowAtEnd] || shadowAtStart == shadowAtEnd)
-            return shadowAtStart;
-        return [NSString stringWithFormat:@"(%@, %@)", shadowAtStart, shadowAtEnd];
-    };
-
     [webView selectWord:nil];
     [fontPanel chooseUnderlineMenuItemWithTitle:@"single"];
     EXPECT_WK_STREQ("foo", [webView selectedText]);
-    EXPECT_WK_STREQ("underline", textDecorationsAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"foo\"><u>foo</u></span>", [webView stringByEvaluatingJavaScript:@"foo.outerHTML"]);
 
     [fontPanel chooseUnderlineMenuItemWithTitle:@"none"];
-    EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"foo\">foo</span>", [webView stringByEvaluatingJavaScript:@"foo.outerHTML"]);
 
     [webView selectNextWord];
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
     EXPECT_WK_STREQ("bar", [webView selectedText]);
-    EXPECT_WK_STREQ("line-through", textDecorationsAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"bar\"><strike>bar</strike></span>", [webView stringByEvaluatingJavaScript:@"bar.outerHTML"]);
     EXPECT_EQ(NSUnderlineStyleSingle, [[webView typingAttributes][NSStrikethroughStyleAttributeName] intValue]);
 
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
-    EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"bar\">bar</span>", [webView stringByEvaluatingJavaScript:@"bar.outerHTML"]);
     EXPECT_EQ(NSUnderlineStyleNone, [[webView typingAttributes][NSStrikethroughStyleAttributeName] intValue]);
 
     [webView selectNextWord];
@@ -296,7 +285,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     fontPanel.shadowLength = 0.25;
     [fontPanel toggleShadow];
     EXPECT_WK_STREQ("baz", [webView selectedText]);
-    EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 2.5px 8px", textShadowAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"baz\" style=\"text-shadow: rgb(0, 0, 0) 0px 2.5px 8px;\">baz</span>", [webView stringByEvaluatingJavaScript:@"baz.outerHTML"]);
     {
         NSShadow *shadow = [webView typingAttributes][NSShadowAttributeName];
         EXPECT_EQ(shadow.shadowOffset.width, 0);
@@ -306,7 +295,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     }
 
     [fontPanel toggleShadow];
-    EXPECT_WK_STREQ("none", textShadowAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"baz\">baz</span>", [webView stringByEvaluatingJavaScript:@"baz.outerHTML"]);
     EXPECT_NULL([webView typingAttributes][NSShadowAttributeName]);
 
     // Now combine all three attributes together.
@@ -318,8 +307,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel chooseUnderlineMenuItemWithTitle:@"single"];
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
     EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
-    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 5px 5px", textShadowAroundSelection());
-    EXPECT_WK_STREQ("underline line-through", textDecorationsAroundSelection());
+    EXPECT_WK_STREQ("<u style=\"text-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;\"><strike><span id=\"foo\">foo</span> <span id=\"bar\">bar</span> <span id=\"baz\">baz</span></strike></u>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
     {
         NSDictionary *typingAttributes = [webView typingAttributes];
         EXPECT_EQ(NSUnderlineStyleSingle, [typingAttributes[NSUnderlineStyleAttributeName] intValue]);
@@ -335,8 +323,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
     [fontPanel toggleShadow];
     [fontPanel chooseUnderlineMenuItemWithTitle:@"none"];
     [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
-    EXPECT_WK_STREQ("none", textShadowAroundSelection());
-    EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+    EXPECT_WK_STREQ("<span id=\"foo\">foo</span> <span id=\"bar\">bar</span> <span id=\"baz\">baz</span>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
     EXPECT_EQ(NSUnderlineStyleNone, [[webView typingAttributes][NSStrikethroughStyleAttributeName] intValue]);
     EXPECT_NULL([webView typingAttributes][NSShadowAttributeName]);
 }
@@ -347,9 +334,7 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     colorPanel.showsAlpha = YES;
 
     auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager);
-    auto checkFontColorAtStartAndEndWithInputEvents = [webView] (const char* colorAsString) {
-        EXPECT_WK_STREQ(colorAsString, [webView stylePropertyAtSelectionStart:@"color"]);
-        EXPECT_WK_STREQ(colorAsString, [webView stylePropertyAtSelectionEnd:@"color"]);
+    auto checkFontColorOfInputEvents = [webView] (const char* colorAsString) {
         EXPECT_WK_STREQ("formatFontColor", [webView stringByEvaluatingJavaScript:@"lastInputEvent.inputType"]);
         EXPECT_WK_STREQ(colorAsString, [webView stringByEvaluatingJavaScript:@"lastInputEvent.data"]);
     };
@@ -359,7 +344,9 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     [webView selectWord:nil];
     [webView waitForNextPresentationUpdate];
     [webView changeColor:colorPanel];
-    checkFontColorAtStartAndEndWithInputEvents("rgb(255, 0, 0)");
+    EXPECT_WK_STREQ("foo", [webView selectedText]);
+    EXPECT_WK_STREQ("<span id=\"foo\"><font color=\"#ff0000\">foo</font></span>", [webView stringByEvaluatingJavaScript:@"foo.outerHTML"]);
+    checkFontColorOfInputEvents("rgb(255, 0, 0)");
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"!!foo.querySelector('font')"] boolValue]);
 
     // 2. Now select "bar" and try a few different colors, starting with a color with alpha.
@@ -367,19 +354,23 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     [webView selectNextWord];
     [webView waitForNextPresentationUpdate];
     [webView changeColor:colorPanel];
-    checkFontColorAtStartAndEndWithInputEvents("rgba(255, 255, 255, 0.2)");
+    EXPECT_WK_STREQ("bar", [webView selectedText]);
+    EXPECT_WK_STREQ("<span id=\"bar\" style=\"color: rgba(255, 255, 255, 0.2);\">bar</span>", [webView stringByEvaluatingJavaScript:@"bar.outerHTML"]);
+    checkFontColorOfInputEvents("rgba(255, 255, 255, 0.2)");
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
 
     // 3a. Switch back to a solid color.
     colorPanel.color = [NSColor colorWithRed:0.8 green:0.7 blue:0.2 alpha:1];
     [webView changeColor:colorPanel];
-    checkFontColorAtStartAndEndWithInputEvents("rgb(204, 179, 51)");
+    EXPECT_WK_STREQ("<span id=\"bar\"><font color=\"#ccb333\">bar</font></span>", [webView stringByEvaluatingJavaScript:@"bar.outerHTML"]);
+    checkFontColorOfInputEvents("rgb(204, 179, 51)");
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
 
     // 3b. Switch back again to a color with alpha.
     colorPanel.color = [NSColor colorWithRed:0.8 green:0.7 blue:0.2 alpha:0.2];
     [webView changeColor:colorPanel];
-    checkFontColorAtStartAndEndWithInputEvents("rgba(204, 179, 51, 0.2)");
+    EXPECT_WK_STREQ("<span id=\"bar\" style=\"color: rgba(204, 179, 51, 0.2);\">bar</span>", [webView stringByEvaluatingJavaScript:@"bar.outerHTML"]);
+    checkFontColorOfInputEvents("rgba(204, 179, 51, 0.2)");
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
 
     // 4a. Now collapse the selection to the end and set the typing style color to green.
@@ -393,8 +384,9 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     [webView insertText:@"green"];
     [webView moveWordBackward:nil];
     [webView selectWord:nil];
-    EXPECT_WK_STREQ("rgba(204, 179, 51, 0.2)", [webView stylePropertyAtSelectionStart:@"color"]);
-    EXPECT_WK_STREQ("rgb(0, 255, 0)", [webView stylePropertyAtSelectionEnd:@"color"]);
+    EXPECT_WK_STREQ("bargreen", [webView selectedText]);
+    EXPECT_WK_STREQ("<span id=\"foo\"><font color=\"#ff0000\">foo</font></span> <span id=\"bar\" style=\"color: rgba(204, 179, 51, 0.2);\">bar</span><font color=\"#00ff00\">green</font> <span id=\"baz\">baz</span>",
+        [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(FontManagerTests, ChangeTypingAttributesWithInspectorBar)
