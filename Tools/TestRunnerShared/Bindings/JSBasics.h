@@ -35,6 +35,8 @@ namespace WTR {
 std::optional<bool> toOptionalBool(JSContextRef, JSValueRef);
 std::optional<double> toOptionalDouble(JSContextRef, JSValueRef);
 
+bool isValidValue(JSContextRef, JSValueRef);
+
 JSRetainPtr<JSStringRef> createJSString(const char* = "");
 JSRetainPtr<JSStringRef> createJSString(JSContextRef, JSValueRef);
 

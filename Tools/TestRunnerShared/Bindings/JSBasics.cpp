@@ -38,6 +38,11 @@ std::optional<double> toOptionalDouble(JSContextRef context, JSValueRef value)
     return JSValueIsUndefined(context, value) || JSValueIsNull(context, value) ? std::nullopt : std::make_optional(JSValueToNumber(context, value, nullptr));
 }
 
+bool isValidValue(JSContextRef context, JSValueRef value)
+{
+    return value && !JSValueIsUndefined(context, value) && !JSValueIsNull(context, value);
+}
+
 JSValueRef makeValue(JSContextRef context, std::optional<bool> value)
 {
     return value ? JSValueMakeBoolean(context, value.value()) : JSValueMakeNull(context);
@@ -77,19 +82,19 @@ JSRetainPtr<JSStringRef> stringProperty(JSContextRef context, JSObjectRef object
 bool booleanProperty(JSContextRef context, JSObjectRef object, const char* name, bool defaultValue)
 {
     auto value = property(context, object, name);
-    return value ? JSValueToBoolean(context, value) : defaultValue;
+    return isValidValue(context, value) ? JSValueToBoolean(context, value) : defaultValue;
 }
 
 double numericProperty(JSContextRef context, JSObjectRef object, const char* name)
 {
     auto value = property(context, object, name);
-    return value ? JSValueToNumber(context, value, nullptr) : 0;
+    return isValidValue(context, value) ? JSValueToNumber(context, value, nullptr) : 0;
 }
 
 JSObjectRef objectProperty(JSContextRef context, JSObjectRef object, const char* name)
 {
     auto value = property(context, object, name);
-    return value && JSValueIsObject(context, value) ? const_cast<JSObjectRef>(value) : nullptr;
+    return isValidValue(context, value) && JSValueIsObject(context, value) ? const_cast<JSObjectRef>(value) : nullptr;
 }
 
 JSObjectRef objectProperty(JSContextRef context, JSObjectRef object, std::initializer_list<const char*> names)
