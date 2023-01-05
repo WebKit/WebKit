@@ -124,11 +124,9 @@ private:
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSliderThumbStyle(RenderStyle&, const Element*) const final;
 
-    bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
 
     void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const final;
-    bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
     void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;

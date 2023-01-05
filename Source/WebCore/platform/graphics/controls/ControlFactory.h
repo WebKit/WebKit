@@ -31,6 +31,8 @@ class MeterPart;
 class MenuListPart;
 class PlatformControl;
 class ProgressBarPart;
+class SearchFieldCancelButtonPart;
+class SearchFieldPart;
 class TextAreaPart;
 class TextFieldPart;
 class ToggleButtonPart;
@@ -47,6 +49,8 @@ public:
     virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) = 0;

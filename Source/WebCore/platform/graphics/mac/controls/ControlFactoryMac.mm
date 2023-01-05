@@ -31,10 +31,13 @@
 #import "MenuListMac.h"
 #import "MeterMac.h"
 #import "ProgressBarMac.h"
+#import "SearchFieldCancelButtonMac.h"
+#import "SearchFieldMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
 #import "ToggleButtonMac.h"
 #import "ToggleButtonPart.h"
+#import <pal/spi/mac/NSSearchFieldCellSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -117,7 +120,20 @@ NSPopUpButtonCell *ControlFactoryMac::popUpButtonCell() const
     return m_popUpButtonCell.get();
 }
 
-NSTextFieldCell* ControlFactoryMac::textFieldCell() const
+NSSearchFieldCell *ControlFactoryMac::searchFieldCell() const
+{
+    if (!m_searchFieldCell) {
+        m_searchFieldCell = adoptNS([[NSSearchFieldCell alloc] initTextCell:@""]);
+        [m_searchFieldCell setBezelStyle:NSTextFieldRoundedBezel];
+        [m_searchFieldCell setBezeled:YES];
+        [m_searchFieldCell setEditable:YES];
+        [m_searchFieldCell setFocusRingType:NSFocusRingTypeExterior];
+        [m_searchFieldCell setCenteredLook:NO];
+    }
+    return m_searchFieldCell.get();
+}
+
+NSTextFieldCell *ControlFactoryMac::textFieldCell() const
 {
     if (!m_textFieldCell) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -147,6 +163,16 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPar
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformProgressBar(ProgressBarPart& part)
 {
     return makeUnique<ProgressBarMac>(part, *this);
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchField(SearchFieldPart& part)
+{
+    return makeUnique<SearchFieldMac>(part, *this, searchFieldCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart& part)
+{
+    return makeUnique<SearchFieldCancelButtonMac>(part, *this, searchFieldCell());
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)

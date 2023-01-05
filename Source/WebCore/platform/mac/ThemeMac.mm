@@ -641,7 +641,7 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
         [themeView _setSemanticContext:NSViewSemanticContextForm];
 #endif
 
-    themeWindowHasKeyAppearance = !controlStates.states().contains(ControlStates::States::WindowInactive);
+    themeWindowHasKeyAppearance = controlStates.states().contains(ControlStates::States::WindowActive);
 
     return themeView;
 }

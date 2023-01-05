@@ -468,6 +468,9 @@ platform/graphics/mac/controls/ControlMac.mm
 platform/graphics/mac/controls/MenuListMac.mm
 platform/graphics/mac/controls/MeterMac.mm
 platform/graphics/mac/controls/ProgressBarMac.mm
+platform/graphics/mac/controls/SearchControlMac.mm
+platform/graphics/mac/controls/SearchFieldCancelButtonMac.mm
+platform/graphics/mac/controls/SearchFieldMac.mm
 platform/graphics/mac/controls/TextAreaMac.mm
 platform/graphics/mac/controls/TextFieldMac.mm
 platform/graphics/mac/controls/ToggleButtonMac.mm

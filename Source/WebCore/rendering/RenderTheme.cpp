@@ -53,6 +53,8 @@
 #include "RenderProgress.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "SearchFieldCancelButtonPart.h"
+#include "SearchFieldPart.h"
 #include "ShadowPseudoIds.h"
 #include "SliderThumbElement.h"
 #include "SpinButtonElement.h"
@@ -526,7 +528,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     case ControlPartType::SliderHorizontal:
     case ControlPartType::SliderVertical:
+        break;
+            
     case ControlPartType::SearchField:
+        return SearchFieldPart::create();
+            
 #if ENABLE(APPLE_PAY)
     case ControlPartType::ApplePayButton:
 #endif
@@ -557,7 +563,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case ControlPartType::SearchFieldDecoration:
     case ControlPartType::SearchFieldResultsDecoration:
     case ControlPartType::SearchFieldResultsButton:
+        break;
+
     case ControlPartType::SearchFieldCancelButton:
+        return SearchFieldCancelButtonPart::create();
+
     case ControlPartType::SliderThumbHorizontal:
     case ControlPartType::SliderThumbVertical:
         break;
@@ -588,7 +598,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         states.add(ControlStyle::State::Checked);
     if (isDefault(renderer))
         states.add(ControlStyle::State::Default);
-    if (isActive(renderer))
+    if (isWindowActive(renderer))
         states.add(ControlStyle::State::WindowActive);
     if (isIndeterminate(renderer))
         states.add(ControlStyle::State::Indeterminate);
@@ -614,13 +624,27 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
     return states;
 }
 
-ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& renderer) const
+ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) const
 {
+    const RenderObject* renderer = &box;
+    ControlPartType type = box.style().effectiveAppearance();
+
+    if (type == ControlPartType::SearchFieldCancelButton) {
+        auto* input = box.element()->shadowHost();
+        if (!input)
+            input = box.element();
+
+        if (!is<RenderBox>(input->renderer()))
+            return { };
+
+        renderer = downcast<RenderBox>(input->renderer());
+    }
+
     return {
-        extractControlStyleStatesForRenderer(renderer),
-        renderer.style().computedFontPixelSize(),
-        renderer.style().effectiveZoom(),
-        renderer.style().effectiveAccentColor()
+        extractControlStyleStatesForRenderer(*renderer),
+        renderer->style().computedFontPixelSize(),
+        renderer->style().effectiveZoom(),
+        renderer->style().effectiveAccentColor()
     };
 }
 
@@ -1104,8 +1128,8 @@ OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(co
         states.add(ControlStates::States::Checked);
     if (isDefault(o))
         states.add(ControlStates::States::Default);
-    if (!isActive(o))
-        states.add(ControlStates::States::WindowInactive);
+    if (isWindowActive(o))
+        states.add(ControlStates::States::WindowActive);
     if (isIndeterminate(o))
         states.add(ControlStates::States::Indeterminate);
     if (isPresenting(o))
@@ -1113,7 +1137,7 @@ OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(co
     return states;
 }
 
-bool RenderTheme::isActive(const RenderObject& renderer) const
+bool RenderTheme::isWindowActive(const RenderObject& renderer) const
 {
     return renderer.page().focusController().isActive();
 }
@@ -1195,7 +1219,7 @@ bool RenderTheme::isPresenting(const RenderObject& o) const
 bool RenderTheme::isDefault(const RenderObject& o) const
 {
     // A button should only have the default appearance if the page is active
-    if (!isActive(o))
+    if (!isWindowActive(o))
         return false;
 
     return o.style().effectiveAppearance() == ControlPartType::DefaultButton;

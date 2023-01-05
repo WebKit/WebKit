@@ -52,7 +52,7 @@ public:
         Enabled = 1 << 3,
         Checked = 1 << 4,
         Default = 1 << 5,
-        WindowInactive = 1 << 6,
+        WindowActive = 1 << 6,
         Indeterminate = 1 << 7,
         SpinUp = 1 << 8, // Sub-state for HoverState and PressedState.
         Presenting = 1 << 9,

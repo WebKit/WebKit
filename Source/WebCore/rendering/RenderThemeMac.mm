@@ -75,6 +75,7 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
+#import <pal/spi/mac/NSSearchFieldCellSPI.h>
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
@@ -86,11 +87,6 @@
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
-
-// FIXME: This should go into an SPI.h file in the spi directory.
-@interface NSSearchFieldCell ()
-@property (getter=isCenteredLook) BOOL centeredLook;
-@end
 
 constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
 
@@ -232,6 +228,8 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
     case ControlPartType::Meter:
     case ControlPartType::ProgressBar:
     case ControlPartType::Radio:
+    case ControlPartType::SearchField:
+    case ControlPartType::SearchFieldCancelButton:
     case ControlPartType::TextArea:
     case ControlPartType::TextField:
         return true;
@@ -253,7 +251,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == ControlPartType::Menulist
         || type == ControlPartType::Meter
         || type == ControlPartType::ProgressBar
-        || type == ControlPartType::Radio;
+        || type == ControlPartType::Radio
+        || type == ControlPartType::SearchField
+        || type == ControlPartType::SearchFieldCancelButton;
 }
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
@@ -858,7 +858,7 @@ void RenderThemeMac::updateFocusedState(NSCell *cell, const RenderObject* o)
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
 {
     bool oldPressed = [cell isHighlighted];
-    bool pressed = is<Element>(o.node()) && downcast<Element>(*o.node()).active();
+    bool pressed = isPressed(o);
     if (pressed != oldPressed)
         [cell setHighlighted:pressed];
 }
@@ -1614,44 +1614,6 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     return false;
 }
 
-bool RenderThemeMac::paintSearchField(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    NSSearchFieldCell* search = this->search();
-
-    setSearchCellState(o, r);
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    float zoomLevel = o.style().effectiveZoom();
-
-    FloatRect unzoomedRect = r;
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-
-    // Set the search button to nil before drawing.  Then reset it so we can draw it later.
-    [search setSearchButtonCell:nil];
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(search, o, paintInfo, unzoomedRect);
-    [search setControlView:nil];
-    [search resetSearchButtonCell];
-
-#if ENABLE(DATALIST_ELEMENT)
-    if (!is<HTMLInputElement>(o.generatingNode()))
-        return false;
-
-    const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
-    if (input.list())
-        paintListButtonForInput(o, paintInfo.context(), FloatRect(unzoomedRect.x(), unzoomedRect.y() + 1, unzoomedRect.width(), unzoomedRect.height() - 2));
-#endif
-
-    return false;
-}
-
 void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
 {
     NSSearchFieldCell* search = this->search();
@@ -1710,60 +1672,6 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element*) 
     style.setPaddingBottom(Length(padding, LengthType::Fixed));
 
     style.setBoxShadow(nullptr);
-}
-
-bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& r)
-{
-    auto adjustedCancelButtonRect = [this, &box] (const FloatRect& localBoundsForCancelButton) -> FloatRect
-    {
-        IntSize cancelButtonSizeBasedOnFontSize = sizeForSystemFont(box.style(), cancelButtonSizes());
-        FloatSize diff = localBoundsForCancelButton.size() - FloatSize(cancelButtonSizeBasedOnFontSize);
-        if (!diff.width() && !diff.height())
-            return localBoundsForCancelButton;
-        // Vertically centered and right aligned.
-        FloatRect adjustedLocalBoundsForCancelButton = localBoundsForCancelButton;
-        adjustedLocalBoundsForCancelButton.move(diff.width(), floorToDevicePixel(diff.height() / 2, box.document().deviceScaleFactor()));
-        adjustedLocalBoundsForCancelButton.setSize(cancelButtonSizeBasedOnFontSize);
-        return adjustedLocalBoundsForCancelButton;
-    };
-
-    if (!box.element())
-        return false;
-    Element* input = box.element()->shadowHost();
-    if (!input)
-        input = box.element();
-
-    if (!is<RenderBox>(input->renderer()))
-        return false;
-
-    const RenderBox& inputBox = downcast<RenderBox>(*input->renderer());
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    setSearchCellState(inputBox, r);
-
-    NSSearchFieldCell* search = this->search();
-
-    if (!input->isDisabledFormControl() && (is<HTMLTextFormControlElement>(*input) && !downcast<HTMLTextFormControlElement>(*input).isReadOnly()))
-        updatePressedState([search cancelButtonCell], box);
-    else if ([[search cancelButtonCell] isHighlighted])
-        [[search cancelButtonCell] setHighlighted:NO];
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    FloatRect localBounds = adjustedCancelButtonRect([search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
-    // Set the original horizontal position back (cancelButtonRectForBounds() moves it based on the system direction).
-    localBounds.setX(inputBox.contentBoxRect().x() + box.x());
-    FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
-
-    FloatRect unzoomedRect(paintingPos, localBounds.size());
-    auto zoomLevel = box.style().effectiveZoom();
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search cancelButtonCell], box, paintInfo, unzoomedRect);
-    [[search cancelButtonCell] setControlView:nil];
-    return false;
 }
 
 const IntSize* RenderThemeMac::cancelButtonSizes() const

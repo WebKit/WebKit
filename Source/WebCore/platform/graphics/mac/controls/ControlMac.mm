@@ -244,6 +244,9 @@ void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float
 #if ENABLE(DATALIST_ELEMENT)
 void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
 {
+    if (!style.states.contains(ControlStyle::State::ListButton))
+        return;
+
     // We can't paint an NSComboBoxCell since they are not height-resizable.
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 

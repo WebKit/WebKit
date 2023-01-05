@@ -98,6 +98,8 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/SearchFieldCancelButtonPart.h>
+#include <WebCore/SearchFieldPart.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedAttachmentData.h>
@@ -1636,7 +1638,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 
     case WebCore::ControlPartType::SliderHorizontal:
     case WebCore::ControlPartType::SliderVertical:
+        break;
+
     case WebCore::ControlPartType::SearchField:
+        return WebCore::SearchFieldPart::create();
+
 #if ENABLE(APPLE_PAY)
     case WebCore::ControlPartType::ApplePayButton:
 #endif
@@ -1667,7 +1673,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::SearchFieldDecoration:
     case WebCore::ControlPartType::SearchFieldResultsDecoration:
     case WebCore::ControlPartType::SearchFieldResultsButton:
+        break;
+
     case WebCore::ControlPartType::SearchFieldCancelButton:
+        return WebCore::SearchFieldCancelButtonPart::create();
+
     case WebCore::ControlPartType::SliderThumbHorizontal:
     case WebCore::ControlPartType::SliderThumbVertical:
         break;
