@@ -143,7 +143,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisRect(const Li
     }
     auto ellipsisWidth = !lineBox.lineIndex() ? root().firstLineStyle().fontCascade().width(TextUtil::ellipsisTextRun()) : root().style().fontCascade().width(TextUtil::ellipsisTextRun());
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    auto ellipsisRect = FloatRect { lineBoxVisualRect.x() + ellipsisStart, lineBoxVisualRect.y() + rootInlineBoxRect.top(), ellipsisWidth, rootInlineBoxRect.height() };
+    auto ellipsisRect = FloatRect { lineBoxVisualRect.x() + rootInlineBoxRect.left() + ellipsisStart, lineBoxVisualRect.y() + rootInlineBoxRect.top(), ellipsisWidth, rootInlineBoxRect.height() };
 
     if (root().style().isLeftToRightDirection())
         return ellipsisRect;
