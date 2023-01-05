@@ -85,8 +85,9 @@ public:
         InlineLayoutUnit lineInitialLogicalLeft { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
         InlineLayoutUnit lineLogicalWidth { 0.f };
+        InlineLayoutUnit contentLogicalLeft { 0.f };
         InlineLayoutUnit contentLogicalWidth { 0.f };
-        InlineLayoutUnit contentLogicalRight { 0.f };
+        InlineLayoutUnit contentLogicalRightIncludingNegativeMargin { 0.f }; // Note that with negative horizontal margin value, contentLogicalLeft + contentLogicalWidth is not necessarily contentLogicalRight.
         struct HangingContent {
             bool shouldContributeToScrollableOverflow { false };
             InlineLayoutUnit width { 0.f };
@@ -161,7 +162,8 @@ private:
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
-    TextDirection inlineBaseDirectionForLineContent();
+    TextDirection inlineBaseDirectionForLineContent() const;
+    InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
