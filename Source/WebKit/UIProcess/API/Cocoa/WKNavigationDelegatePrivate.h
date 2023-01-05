@@ -104,6 +104,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didFinishLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 - (void)_webView:(WKWebView *)webView didFailLoadDueToNetworkConnectionIntegrityWithURL:(NSURL *)url WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView didChangeLookalikeCharactersFromURL:(NSURL *)originalURL toURL:(NSURL *)adjustedURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 - (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti;

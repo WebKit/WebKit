@@ -1565,6 +1565,7 @@ public:
     void didNegotiateModernTLS(const URL&);
 
     void didFailLoadDueToNetworkConnectionIntegrity(const URL&);
+    void didChangeLookalikeCharacters(const URL&, const URL&);
 
     SpellDocumentTag spellDocumentTag();
 

@@ -628,4 +628,6 @@ messages -> WebPageProxy {
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
     ClassifyModalContainerControls(Vector<String> texts) -> (Vector<WebCore::ModalContainerControlType> types)
     DecidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> types) -> (enum:uint8_t WebCore::ModalContainerDecision decision)
+
+    DidChangeLookalikeCharacters(URL originalURL, URL adjustedURL)
 }

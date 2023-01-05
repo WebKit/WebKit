@@ -8942,6 +8942,11 @@ void WebPageProxy::didFailLoadDueToNetworkConnectionIntegrity(const URL& url)
     m_navigationClient->didFailLoadDueToNetworkConnectionIntegrity(*this, url);
 }
 
+void WebPageProxy::didChangeLookalikeCharacters(const URL& originalURL, const URL& adjustedURL)
+{
+    m_navigationClient->didChangeLookalikeCharacters(*this, originalURL, adjustedURL);
+}
+
 void WebPageProxy::exceededDatabaseQuota(FrameIdentifier frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&& reply)
 {
     requestStorageSpace(frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, [reply = WTFMove(reply)](auto quota) mutable {
