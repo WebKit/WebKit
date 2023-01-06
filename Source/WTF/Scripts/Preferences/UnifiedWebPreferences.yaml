@@ -2938,6 +2938,7 @@ IsAccessibilityIsolatedTreeEnabled:
   status: embedder
   humanReadableName: "Isolated Accessibility Tree Mode"
   humanReadableDescription: "Enable an accessibility hierarchy for VoiceOver that can be accessed on a secondary thread for improved performance"
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(ACCESSIBILITY_ISOLATED_TREE)
   defaultValue:
     WebKitLegacy:
