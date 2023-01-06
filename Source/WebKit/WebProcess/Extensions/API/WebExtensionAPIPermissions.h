@@ -27,39 +27,36 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPINamespace.h"
-#include "WebExtensionAPIExtension.h"
+#include "JSWebExtensionAPIPermissions.h"
+#include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIPermissions.h"
-#include "WebExtensionAPIRuntime.h"
-#include "WebExtensionAPITest.h"
-#include "WebExtensionAPIWebNavigation.h"
+#include "WebExtensionMatchPattern.h"
 
 namespace WebKit {
 
-class WebExtensionAPIExtension;
-class WebExtensionAPIRuntime;
+class WebPage;
 
-class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace);
+class WebExtensionAPIPermissions : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIPermissions, permissions);
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    void getAll(Ref<WebExtensionCallbackHandler>&&);
+    void contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
+    void request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
+    void remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
 
-    WebExtensionAPIExtension& extension();
-    WebExtensionAPIPermissions& permissions();
-    WebExtensionAPIRuntime& runtime() final;
-    WebExtensionAPITest& test();
-    WebExtensionAPIWebNavigation& webNavigation();
-#endif
+    WebExtensionAPIEvent& onAdded();
+    WebExtensionAPIEvent& onRemoved();
 
 private:
-    RefPtr<WebExtensionAPIExtension> m_extension;
-    RefPtr<WebExtensionAPIPermissions> m_permissions;
-    RefPtr<WebExtensionAPIRuntime> m_runtime;
-    RefPtr<WebExtensionAPITest> m_test;
-    RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
+    RefPtr<WebExtensionAPIEvent> m_onAdded;
+    RefPtr<WebExtensionAPIEvent> m_onRemoved;
+
+    void parseDetailsDictionary(NSDictionary *, HashSet<String>& permissions, HashSet<String>& origins);
+    bool verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);
+    bool validatePermissionsDetails(HashSet<String>& permissions, HashSet<String>& origins, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);
+#endif
 };
 
 } // namespace WebKit

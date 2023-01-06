@@ -52,6 +52,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIExtension.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIExtension.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPINamespace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPINamespace.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIPermissions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIPermissions.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPITest.h

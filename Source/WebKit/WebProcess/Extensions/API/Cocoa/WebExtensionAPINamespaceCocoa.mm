@@ -38,6 +38,9 @@ namespace WebKit {
 
 bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
 {
+    if (name == "permissions"_s)
+        return true;
+
     // This property is only allowed in testing contexts.
     if (name == "test"_s)
         return extensionContext().inTestingMode();
@@ -54,6 +57,13 @@ WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
     if (!m_extension)
         m_extension = WebExtensionAPIExtension::create(forMainWorld(), runtime(), extensionContext());
     return *m_extension;
+}
+
+WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
+{
+    if (!m_permissions)
+        m_permissions = WebExtensionAPIPermissions::create(forMainWorld(), runtime(), extensionContext());
+    return *m_permissions;
 }
 
 WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()

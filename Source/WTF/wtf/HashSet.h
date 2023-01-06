@@ -166,6 +166,10 @@ public:
     template<typename OtherCollection>
     void formSymmetricDifference(const OtherCollection&);
 
+    // Returns true if all the elements of this set are also in the given collection.
+    template<typename OtherCollection>
+    bool isSubset(const OtherCollection&);
+
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
     template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
     template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
@@ -450,6 +454,13 @@ inline void HashSet<T, U, V, W>::formSymmetricDifference(const OtherCollection& 
         if (!remove(value))
             addVoid(value);
     }
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline bool HashSet<T, U, V, W>::isSubset(const OtherCollection& other)
+{
+    return intersectionWith(other).size() == size();
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
