@@ -83,6 +83,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/GamepadProvider.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformScreen.h>
@@ -1648,6 +1649,16 @@ void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection, Completio
 
     ASSERT(m_processesUsingGamepads.contains(*proxy));
     processStoppedUsingGamepads(*proxy);
+}
+
+void WebProcessPool::playGamepadEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType type, const WebCore::GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+    GamepadProvider::singleton().playEffect(gamepadIndex, gamepadID, type, parameters, WTFMove(completionHandler));
+}
+
+void WebProcessPool::stopGamepadEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
+{
+    GamepadProvider::singleton().stopEffects(gamepadIndex, gamepadID, WTFMove(completionHandler));
 }
 
 void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)

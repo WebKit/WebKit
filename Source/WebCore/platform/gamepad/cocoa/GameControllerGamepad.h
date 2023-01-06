@@ -44,6 +44,8 @@ public:
 
     const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
     const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
+    void playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(CompletionHandler<void()>&&) final;
 
     const char* source() const final { return "GameController"_s; }
 

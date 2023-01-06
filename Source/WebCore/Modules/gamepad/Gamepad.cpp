@@ -41,8 +41,8 @@ Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
     , m_connected(true)
     , m_timestamp(platformGamepad.lastUpdateTime())
     , m_mapping(platformGamepad.mapping())
+    , m_supportedEffectTypes(platformGamepad.supportedEffectTypes())
     , m_axes(platformGamepad.axisValues().size(), 0.0)
-    , m_vibrationActuator(GamepadHapticActuator::create())
 {
     unsigned buttonCount = platformGamepad.buttonValues().size();
     m_buttons.reserveInitialCapacity(buttonCount);
@@ -74,7 +74,9 @@ void Gamepad::updateFromPlatformGamepad(const PlatformGamepad& platformGamepad)
 
 GamepadHapticActuator& Gamepad::vibrationActuator()
 {
-    return m_vibrationActuator.get();
+    if (!m_vibrationActuator)
+        m_vibrationActuator = GamepadHapticActuator::create(*this);
+    return *m_vibrationActuator;
 }
 
 } // namespace WebCore

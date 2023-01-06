@@ -193,6 +193,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystemaccess/WorkerFileSystemStorageConnection.h
     Modules/filesystemaccess/WorkerFileSystemStorageConnectionCallbackIdentifier.h
 
+    Modules/gamepad/GamepadEffectParameters.h
+    Modules/gamepad/GamepadHapticEffectType.h
+
     Modules/geolocation/Geolocation.h
     Modules/geolocation/GeolocationClient.h
     Modules/geolocation/GeolocationController.h

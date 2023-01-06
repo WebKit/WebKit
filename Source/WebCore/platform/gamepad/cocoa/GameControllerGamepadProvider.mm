@@ -34,6 +34,7 @@
 #import "Logging.h"
 #import <GameController/GameController.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/NeverDestroyed.h>
 
 #import "GameControllerSoftLink.h"
@@ -264,6 +265,28 @@ void GameControllerGamepadProvider::inputNotificationTimerFired()
     m_shouldMakeInvisibleGamepadsVisible = false;
 
     dispatchPlatformGamepadInputActivity();
+}
+
+void GameControllerGamepadProvider::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (gamepadIndex >= m_gamepadVector.size())
+        return completionHandler(false);
+    auto* gamepad = m_gamepadVector[gamepadIndex];
+    if (!gamepad || gamepad->id() != gamepadID)
+        return completionHandler(false);
+
+    gamepad->playEffect(type, parameters, WTFMove(completionHandler));
+}
+
+void GameControllerGamepadProvider::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
+{
+    if (gamepadIndex >= m_gamepadVector.size())
+        return completionHandler();
+    auto* gamepad = m_gamepadVector[gamepadIndex];
+    if (!gamepad || gamepad->id() != gamepadID)
+        return completionHandler();
+
+    gamepad->stopEffects(WTFMove(completionHandler));
 }
 
 } // namespace WebCore

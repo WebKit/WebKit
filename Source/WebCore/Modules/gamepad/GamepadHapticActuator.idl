@@ -28,10 +28,6 @@ enum GamepadHapticActuatorType {
   "dual-rumble"
 };
 
-enum GamepadHapticEffectType {
-  "dual-rumble"
-};
-
 enum GamepadHapticResult {
   "complete",
   "preempted"
@@ -44,6 +40,9 @@ enum GamepadHapticResult {
 ] interface GamepadHapticActuator {
     readonly attribute GamepadHapticActuatorType type;
     boolean canPlayEffectType(GamepadHapticEffectType type);
-    Promise<GamepadHapticResult> playEffect(GamepadHapticEffectType type, optional GamepadEffectParameters params = {});
-    Promise<GamepadHapticResult> reset();
+    [CallWith=RelevantDocument] Promise<GamepadHapticResult> playEffect(GamepadHapticEffectType type, optional GamepadEffectParameters params = {});
+    [CallWith=RelevantDocument] Promise<GamepadHapticResult> reset();
+
+    // Non standard: Supported for compatibility with Blink.
+    [ImplementedAs=canPlayEffectType] boolean canPlay(GamepadHapticEffectType type);
 };

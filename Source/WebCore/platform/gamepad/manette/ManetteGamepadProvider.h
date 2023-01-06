@@ -49,6 +49,8 @@ public:
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
+    void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
 
     void deviceConnected(ManetteDevice*);
     void deviceDisconnected(ManetteDevice*);

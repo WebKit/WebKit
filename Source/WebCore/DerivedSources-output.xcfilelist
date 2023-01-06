@@ -1261,6 +1261,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadHapticActuator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadHapticActuator.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadHapticEffectType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepadHapticEffectType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGenericTransformStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGenericTransformStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeolocation.cpp

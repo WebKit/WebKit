@@ -3457,6 +3457,7 @@ JSGainOptions.cpp
 JSGamepad.cpp
 JSGamepadEffectParameters.cpp
 JSGamepadHapticActuator.cpp
+JSGamepadHapticEffectType.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp
 JSGeolocation.cpp

@@ -30,6 +30,7 @@
 
 #include "GamepadProviderClient.h"
 #include "MockGamepad.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -157,6 +158,16 @@ void MockGamepadProvider::clearMockGamepads()
             disconnectMockGamepad(i);
     }
     m_mockGamepadVector.clear();
+}
+
+void MockGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(true);
+}
+
+void MockGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 #import "GameControllerGamepadProvider.h"
 #import "GamepadConstants.h"
+#import "NotImplemented.h"
 #import <GameController/GCControllerElement.h>
 #import <GameController/GameController.h>
 
@@ -68,6 +69,14 @@ void GameControllerGamepad::setupElements()
     m_buttonValues.resize(homeButton ? numberOfStandardGamepadButtonsWithHomeButton : numberOfStandardGamepadButtonsWithoutHomeButton);
 
     m_id = makeString(String(m_gcController.get().vendorName), m_gcController.get().extendedGamepad ? " Extended Gamepad"_s : " Gamepad"_s);
+
+    if (auto *haptics = [m_gcController haptics]) {
+        if (canLoad_GameController_GCHapticsLocalityLeftHandle() && canLoad_GameController_GCHapticsLocalityRightHandle()) {
+            if ([haptics.supportedLocalities containsObject:get_GameController_GCHapticsLocalityLeftHandle()] && [haptics.supportedLocalities containsObject:get_GameController_GCHapticsLocalityRightHandle()])
+                m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
+        }
+    }
+
     if (m_gcController.get().extendedGamepad)
         m_mapping = standardGamepadMappingString();
 
@@ -147,6 +156,20 @@ void GameControllerGamepad::setupElements()
         m_lastUpdateTime = MonotonicTime::now();
         GameControllerGamepadProvider::singleton().gamepadHadInput(*this, false);
     };
+}
+
+void GameControllerGamepad::playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    // FIXME(webkit.org/b/250217): Implement support.
+    notImplemented();
+    completionHandler(false);
+}
+
+void GameControllerGamepad::stopEffects(CompletionHandler<void()>&& completionHandler)
+{
+    // FIXME(webkit.org/b/250217): Implement support.
+    notImplemented();
+    completionHandler();
 }
 
 } // namespace WebCore
