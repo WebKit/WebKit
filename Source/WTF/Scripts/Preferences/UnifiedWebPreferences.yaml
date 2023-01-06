@@ -1143,12 +1143,13 @@ CacheAPIEnabled:
   status: embedder
   humanReadableName: "Cache API"
   humanReadableDescription: "Cache API"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 CanvasColorSpaceEnabled:
   type: bool

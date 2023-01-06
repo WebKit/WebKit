@@ -99,9 +99,6 @@ public:
     static bool offscreenCanvasInWorkersEnabled() { return shared().m_isOffscreenCanvasInWorkersEnabled; }
 #endif
 
-    static void setCacheAPIEnabled(bool isEnabled) { shared().m_isCacheAPIEnabled = isEnabled; }
-    static bool cacheAPIEnabled() { return shared().m_isCacheAPIEnabled; }
-
     static void setWebSocketEnabled(bool isEnabled) { shared().m_isWebSocketEnabled = isEnabled; }
     static bool webSocketEnabled() { return shared().m_isWebSocketEnabled; }
 
@@ -287,7 +284,6 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     bool m_isOffscreenCanvasInWorkersEnabled { false };
 #endif
-    bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
