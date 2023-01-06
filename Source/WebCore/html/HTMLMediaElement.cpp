@@ -8837,6 +8837,11 @@ SecurityOriginData HTMLMediaElement::documentSecurityOrigin() const
     return document().securityOrigin().data();
 }
 
+Ref<SecurityOrigin> HTMLMediaElement::topDocumentSecurityOrigin() const
+{
+    return document().topOrigin();
+}
+
 void HTMLMediaElement::setShowPosterFlag(bool flag)
 {
     if (m_showPoster == flag)

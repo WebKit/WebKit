@@ -215,6 +215,8 @@ private:
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final { return nullptr; }
 #endif
 
+    Ref<SecurityOrigin> topDocumentSecurityOrigin() const { return SecurityOrigin::createOpaque(); }
+
     const std::optional<Vector<String>>& allowedMediaContainerTypes() const final { return nullOptionalStringVector(); }
     const std::optional<Vector<String>>& allowedMediaCodecTypes() const final { return nullOptionalStringVector(); }
     const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const final { return nullOptionalFourCCVector(); }
@@ -1788,6 +1790,11 @@ void MediaPlayer::remoteEngineFailedToLoad()
 SecurityOriginData MediaPlayer::documentSecurityOrigin() const
 {
     return client().documentSecurityOrigin();
+}
+
+Ref<SecurityOrigin> MediaPlayer::topDocumentSecurityOrigin() const
+{
+    return client().topDocumentSecurityOrigin();
 }
 
 void MediaPlayer::setPreferredDynamicRangeMode(DynamicRangeMode mode)
