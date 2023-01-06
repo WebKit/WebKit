@@ -99,10 +99,6 @@ void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
 }
 
-void EventSenderProxy::monitorWheelEvents()
-{
-}
-
 #if ENABLE(TOUCH_EVENTS)
 
 void EventSenderProxy::addTouchPoint(int x, int y)

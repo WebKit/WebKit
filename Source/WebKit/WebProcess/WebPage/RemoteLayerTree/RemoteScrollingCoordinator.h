@@ -82,6 +82,10 @@ private:
     void animatedScrollDidEndForNode(WebCore::ScrollingNodeID);
     void currentSnapPointIndicesChangedForNode(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
+    void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);
+    void startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
+    void stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
+
     WebPage* m_webPage;
 
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveRubberBanding;

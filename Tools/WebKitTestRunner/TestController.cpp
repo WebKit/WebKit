@@ -1861,11 +1861,6 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
             return;
         }
 
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MonitorWheelEvents")) {
-            m_eventSenderProxy->monitorWheelEvents();
-            return;
-        }
-
 #if PLATFORM(GTK)
         if (WKStringIsEqualToUTF8CString(subMessageName, "SetWheelHasPreciseDeltas")) {
             auto hasPreciseDeltas = booleanValue(dictionary, "HasPreciseDeltas");

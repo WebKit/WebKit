@@ -824,11 +824,6 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
     }
 }
 
-void EventSenderProxy::monitorWheelEvents()
-{
-    [m_testController->mainWebView()->platformView() _startMonitoringWheelEvents];
-}
-
 #if ENABLE(MAC_GESTURE_EVENTS)
 
 void EventSenderProxy::scaleGestureStart(double scale)
