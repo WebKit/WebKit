@@ -612,7 +612,8 @@ bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSi
             , pageHeightChanged
             , layoutState ? layoutState->maximumLineCountForLineClamp() : std::nullopt
             , layoutState ? layoutState->visibleLineCountForLineClamp() : std::nullopt
-            , layoutState ? layoutState->leadingTrim() : RenderLayoutState::LeadingTrim()));
+            , layoutState ? layoutState->leadingTrim() : RenderLayoutState::LeadingTrim()
+            , layoutState ? layoutState->groupAlignSpacing() : std::pair<float, float> { 0.0, 0.0 }));
         return true;
     }
     return false;

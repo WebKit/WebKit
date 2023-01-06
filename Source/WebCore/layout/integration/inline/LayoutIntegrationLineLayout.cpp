@@ -606,9 +606,15 @@ void LineLayout::updateInlineContentConstraints()
     auto padding = logicalPadding(flow, isLeftToRightInlineDirection, writingMode);
     auto border = logicalBorder(flow, isLeftToRightInlineDirection, writingMode);
     auto scrollbarSize = scrollbarLogicalSize(flow);
+    auto* renderLayoutState = flow.view().frameView().layoutContext().layoutState();
 
+    auto [groupAlignSpacingLeft, groupAlignSpacingRight] = renderLayoutState->groupAlignSpacing();
+    if (flow.style().textGroupAlign() != TextGroupAlign::None)
+        ALWAYS_LOG_WITH_STREAM(stream << "LineLayout::updateInlineContentConstraints (" << groupAlignSpacingLeft << ", " << groupAlignSpacingRight << ")");
     auto contentBoxWidth = WebCore::isHorizontalWritingMode(writingMode) ? flow.contentWidth() : flow.contentHeight();
-    auto contentBoxLeft = border.horizontal.left + padding.horizontal.left;
+    contentBoxWidth -= groupAlignSpacingLeft + groupAlignSpacingRight;
+
+    auto contentBoxLeft = border.horizontal.left + padding.horizontal.left + LayoutUnit(groupAlignSpacingLeft);
     auto contentBoxTop = border.vertical.top + padding.vertical.top;
 
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLeft, contentBoxWidth };

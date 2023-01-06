@@ -52,6 +52,10 @@ public:
 
     LineBox(PathVariant&&);
 
+    float left() const;
+    float right() const;
+    float width() const { return right() - left(); }
+
     float top() const;
     float bottom() const;
     float height() const { return bottom() - top(); }
@@ -187,6 +191,20 @@ inline float LineBox::bottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.bottom();
+    });
+}
+
+inline float LineBox::left() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.left();
+    });
+}
+
+inline float LineBox::right() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.right();
     });
 }
 

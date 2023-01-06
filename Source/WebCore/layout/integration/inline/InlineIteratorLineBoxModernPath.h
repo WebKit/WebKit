@@ -51,6 +51,8 @@ public:
     float contentLogicalBottom() const { return line().enclosingContentBottom(); }
     float top() const { return line().lineBoxTop(); }
     float bottom() const { return line().lineBoxBottom(); }
+    float left() const { return line().lineBoxLeft(); }
+    float right() const { return line().lineBoxRight(); }
     float inkOverflowTop() const { return line().inkOverflow().y(); }
     float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
 

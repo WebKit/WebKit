@@ -48,8 +48,12 @@ public:
     float contentLogicalBottom() const { return m_rootInlineBox->lineBottom().toFloat(); }
     float contentLogicalTopAdjustedForPrecedingLineBox() const { return m_rootInlineBox->selectionTop().toFloat(); }
     float contentLogicalBottomAdjustedForFollowingLineBox() const { return m_rootInlineBox->selectionBottom().toFloat(); }
+
     float top() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
     float bottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
+    float left() const { return m_rootInlineBox->blockFlow().logicalLeftOffsetForLine(m_rootInlineBox->lineBoxTop(), IndentTextOrNot::IndentText).toFloat(); }
+    float right() const { return m_rootInlineBox->blockFlow().logicalRightOffsetForLine(m_rootInlineBox->lineBoxTop(), IndentTextOrNot::IndentText).toFloat(); }
+
     float inkOverflowTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
 

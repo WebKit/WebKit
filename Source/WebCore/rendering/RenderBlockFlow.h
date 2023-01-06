@@ -531,6 +531,11 @@ private:
     void setLeadingTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd = nullptr);
     void adjustLeadingTrimAfterLayout();
 
+    bool computeGroupAlignmentSpacing();
+    float groupAlignmentExtraSpacing() const;
+
+    bool m_groupAligned { false };
+
 #if ENABLE(TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;
     unsigned m_lineCountForTextAutosizing : 2;

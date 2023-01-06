@@ -633,7 +633,74 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         }
     }
 
+    if (!m_groupAligned) {
+        if (computeGroupAlignmentSpacing()) {
+            m_groupAligned = true;
+            layoutBlock(true);
+        }
+        m_groupAligned = true;
+    }
+
     clearNeedsLayout();
+}
+
+bool RenderBlockFlow::computeGroupAlignmentSpacing()
+{
+    if (m_groupAligned || !childrenInline())
+        return false;
+    ALWAYS_LOG_WITH_STREAM(stream << "computeGroupAlignmentSpacing");
+
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+    auto textGroupAlign = style().textGroupAlign();
+    if (textGroupAlign == TextGroupAlign::None) {
+        m_groupAligned = true;
+        layoutState->resetGroupAlignSpacing();
+        return false;
+    }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "textGroupAlign: " << textGroupAlign << ", text-align: " << style().textAlign());
+
+    if (textGroupAlign == TextGroupAlign::Start)
+        textGroupAlign = style().isLeftToRightDirection() ? TextGroupAlign::Left : TextGroupAlign::Right;
+    else if (textGroupAlign == TextGroupAlign::End)
+        textGroupAlign = style().isLeftToRightDirection() ? TextGroupAlign::Right : TextGroupAlign::Left;
+
+    float totalSpacing = groupAlignmentExtraSpacing();
+    float leftSpacing = 0;
+    float rightSpacing = 0;
+
+    switch (textGroupAlign) {
+    case TextGroupAlign::Left:
+        leftSpacing = totalSpacing;
+        break;
+    case TextGroupAlign::Right:
+        rightSpacing = totalSpacing;
+        break;
+    case TextGroupAlign::Center:
+        leftSpacing = totalSpacing / 2;
+        rightSpacing = leftSpacing;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "(" << leftSpacing << ", " << rightSpacing << ")");
+    layoutState->setGroupAlignSpacing(leftSpacing, rightSpacing);
+    return true;
+}
+
+float RenderBlockFlow::groupAlignmentExtraSpacing() const
+{
+    std::optional<float> extraSpacing;
+
+    for (auto lineBox = InlineIterator::firstLineBoxFor(*this); lineBox; lineBox.traverseNext()) {
+        float lineBoxAvailableSpace = lineBox->width() - lineBox->contentLogicalWidth();
+        ALWAYS_LOG_WITH_STREAM(stream << "lineBox width: " << lineBox->width() << ", rootLineBox width:" << lineBox->contentLogicalWidth());
+        extraSpacing = std::min(lineBoxAvailableSpace, extraSpacing.value_or(lineBoxAvailableSpace));
+    }
+
+    return extraSpacing.value_or(0);
 }
 
 static RenderBlockFlow* firstInlineFormattingContextRoot(const RenderBlockFlow& enclosingBlockContainer)

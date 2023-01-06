@@ -58,7 +58,7 @@ public:
 #endif
     {
     }
-    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim>);
+    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim>, std::pair<float, float>);
     enum class IsPaginated { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -111,6 +111,21 @@ public:
     void addLeadingTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
     void resetLeadingTrim() { m_leadingTrim = { }; }
 
+    std::pair<float, float> groupAlignSpacing()
+    {
+        return m_groupAlignSpacing;
+    }
+
+    void setGroupAlignSpacing(float left, float right)
+    {
+        m_groupAlignSpacing = { left, right };
+    }
+
+    void resetGroupAlignSpacing()
+    {
+        m_groupAlignSpacing = { 0, 0 };
+    }
+
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
     void computeClipRect(const RenderLayoutState& ancestor, RenderBox&);
@@ -154,6 +169,7 @@ private:
     std::optional<size_t> m_maximumLineCountForLineClamp;
     std::optional<size_t> m_visibleLineCountForLineClamp;
     std::optional<LeadingTrim> m_leadingTrim;
+    std::pair<float, float> m_groupAlignSpacing { 0, 0 };
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif
