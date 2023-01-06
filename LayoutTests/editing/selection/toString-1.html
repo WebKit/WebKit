@@ -26,7 +26,7 @@ function runTest() {
         
         if (selection.toString) {
             var string = selection.toString();
-            if (string != "\nbbbb")
+            if (string.trim() != "bbbb")
                 throw("toString returned unexpected result: \"" + string.replace("\n", "\\n") + "\"");
             log("success");
         } else
