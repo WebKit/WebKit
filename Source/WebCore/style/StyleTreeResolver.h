@@ -45,6 +45,8 @@ class ShadowRoot;
 namespace Style {
 
 class Resolver;
+struct ElementStyle;
+struct MatchResult;
 struct ResolutionContext;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
@@ -59,7 +61,7 @@ public:
 
 private:
     enum class ResolutionType : uint8_t { FastPathInherit, Full };
-    std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, ResolutionType, const ResolutionContext&);
+    ElementStyle styleForStyleable(const Styleable&, ResolutionType, const ResolutionContext&);
 
     void resolveComposedTree();
 
@@ -72,7 +74,9 @@ private:
 
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, const RenderStyle* existingStyle, ResolutionType);
 
-    ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
+    ElementUpdate createAnimatedElementUpdate(ElementStyle&&, const Styleable&, Change, const ResolutionContext&);
+    void applyCascadeAfterAnimation(RenderStyle&, const HashSet<AnimatableProperty>&, const MatchResult&, const Element&, const ResolutionContext&);
+
     std::optional<ElementUpdate> resolvePseudoElement(Element&, PseudoId, const ElementUpdate&);
     std::optional<ElementUpdate> resolveAncestorPseudoElement(Element&, PseudoId, const ElementUpdate&);
     std::unique_ptr<RenderStyle> resolveAncestorFirstLinePseudoElement(Element&, const ElementUpdate&);

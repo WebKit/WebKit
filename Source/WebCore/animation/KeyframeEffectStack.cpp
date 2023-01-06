@@ -140,7 +140,7 @@ void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssA
     m_isSorted = false;
 }
 
-OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
 
@@ -174,13 +174,8 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
         };
 
         auto cssVariableChanged = [&]() {
-            auto customPropertyValueMapDidChange = [](const CustomPropertyValueMap& a, const CustomPropertyValueMap& b) {
-                return &a != &b && a != b;
-            };
-
             if (previousLastStyleChangeEventStyle && effect->containsCSSVariableReferences()) {
-                if (customPropertyValueMapDidChange(previousLastStyleChangeEventStyle->inheritedCustomProperties(), targetStyle.inheritedCustomProperties())
-                    || customPropertyValueMapDidChange(previousLastStyleChangeEventStyle->nonInheritedCustomProperties(), targetStyle.nonInheritedCustomProperties()))
+                if (!previousLastStyleChangeEventStyle->customPropertiesEqual(targetStyle))
                     return true;
             }
             return false;
@@ -206,6 +201,8 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             ASSERT(animation->timeline());
             animation->timeline()->animationTimingDidChange(*animation);
         }
+
+        affectedProperties.formUnion(effect->animatedProperties());
     }
 
     return impact;

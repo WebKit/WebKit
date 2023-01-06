@@ -601,7 +601,7 @@ public:
 
         auto parenthesesDisjunction = makeUnique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::Type::ParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, false, parenthesisMatchDirection()));
-        m_alternative = parenthesesDisjunction->addNewAlternative(parenthesisMatchDirection());
+        m_alternative = parenthesesDisjunction->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
         pushParenthesisContext();
         m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
     }
@@ -610,7 +610,7 @@ public:
     {
         auto parenthesesDisjunction = makeUnique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::Type::ParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction.get(), false, invert, matchDirection));
-        m_alternative = parenthesesDisjunction->addNewAlternative(matchDirection);
+        m_alternative = parenthesesDisjunction->addNewAlternative(m_pattern.m_numSubpatterns, matchDirection);
         pushParenthesisContext();
         setParenthesisInvert(invert);
         setParenthesisMatchDirection(matchDirection);
@@ -738,7 +738,8 @@ public:
                     newDisjunction = makeUnique<PatternDisjunction>();
                     newDisjunction->m_parent = disjunction->m_parent;
                 }
-                PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->matchDirection());
+                PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->m_firstSubpatternId, alternative->matchDirection());
+                newAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
                 newAlternative->m_terms.reserveInitialCapacity(alternative->m_terms.size());
                 for (unsigned i = 0; i < alternative->m_terms.size(); ++i)
                     newAlternative->m_terms.append(copyTerm(alternative->m_terms[i], filterStartsWithBOL));
@@ -832,9 +833,14 @@ public:
         }
     }
 
-    void disjunction()
+    void disjunction(CreateDisjunctionPurpose purpose = CreateDisjunctionPurpose::NotForNextAlternative)
     {
-        m_alternative = m_alternative->m_parent->addNewAlternative(parenthesisMatchDirection());
+        if (purpose == CreateDisjunctionPurpose::ForNextAlternative && !m_alternative->m_parent->m_parent) {
+            // Top level alternative, record captured ranges to clear out from prior alternatives.
+            m_alternative->m_lastSubpatternId = m_pattern.m_numSubpatterns;
+        }
+        
+        m_alternative = m_alternative->m_parent->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
     }
 
     ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition, unsigned& newCallFrameSize) WARN_UNUSED_RETURN

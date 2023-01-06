@@ -329,31 +329,6 @@ macro usePreviousFrame()
     end
 end
 
-
-macro loadWasmInstanceFromTLSTo(reg)
-if  HAVE_FAST_TLS
-    tls_loadp WTF_WASM_CONTEXT_KEY, reg
-else
-    crash()
-end
-end
-
-macro loadWasmInstanceFromTLS()
-if  HAVE_FAST_TLS
-    loadWasmInstanceFromTLSTo(wasmInstance)
-else
-    crash()
-end
-end
-
-macro storeWasmInstanceToTLS(instance)
-if HAVE_FAST_TLS
-    tls_storep instance, WTF_WASM_CONTEXT_KEY
-else
-    crash()
-end
-end
-
 macro reloadMemoryRegistersFromInstance(instance, scratch1, scratch2)
 if not ARMv7
     loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
@@ -400,11 +375,10 @@ else
 end
 end
 
-macro wasmPrologue(loadWasmInstance)
+macro wasmPrologue()
     # Set up the call frame and check if we should OSR.
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
-    loadWasmInstance()
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
 
     loadp Wasm::Instance::m_owner[wasmInstance], ws0
@@ -414,7 +388,10 @@ if not JSVALUE64
 end
 
     loadp Callee[cfr], ws0
-    andp ~3, ws0
+    andp ~(constexpr JSValue::WasmTag), ws0
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
     storep ws0, CodeBlock[cfr]
 
     # Get new sp in ws1 and check stack height.
@@ -496,11 +473,10 @@ macro forEachVectorArgument(fn)
 end
 
 # Tier up immediately, while saving full vectors in argument FPRs
-macro wasmPrologueSIMD(loadWasmInstance)
+macro wasmPrologueSIMD()
 if WEBASSEMBLY_B3JIT and not ARMv7
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
-    loadWasmInstance()
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
 
     loadp Wasm::Instance::m_owner[wasmInstance], ws0
@@ -510,7 +486,10 @@ if not JSVALUE64
 end
 
     loadp Callee[cfr], ws0
-    andp ~3, ws0
+    andp ~(constexpr JSValue::WasmTag), ws0
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
     storep ws0, CodeBlock[cfr]
 
     # Get new sp in ws1 and check stack height.
@@ -788,26 +767,12 @@ end
 
 # Entry point
 
-macro wasmCodeBlockGetter(targetRegister)
-    loadp Callee[cfr], targetRegister
-    andp ~3, targetRegister
-end
-
 op(wasm_function_prologue, macro ()
     if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
         error
     end
 
-    wasmPrologue(loadWasmInstanceFromTLS)
-    wasmNextInstruction()
-end)
-
-op(wasm_function_prologue_no_tls, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
-        error
-    end
-
-    wasmPrologue(macro () end)
+    wasmPrologue()
     wasmNextInstruction()
 end)
 
@@ -816,16 +781,7 @@ op(wasm_function_prologue_simd, macro ()
         error
     end
 
-    wasmPrologueSIMD(loadWasmInstanceFromTLS)
-    break
-end)
-
-op(wasm_function_prologue_no_tls_simd, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
-        error
-    end
-
-    wasmPrologueSIMD(macro () end)
+    wasmPrologueSIMD()
     break
 end)
 
@@ -867,11 +823,6 @@ macro wasm_throw_from_fault_handler(instance)
     cCall4(_slow_path_wasm_throw_exception)
     jumpToException()
 end
-
-op(wasm_throw_from_fault_handler_trampoline_fastTLS, macro ()
-    loadWasmInstanceFromTLSTo(a2)
-    wasm_throw_from_fault_handler(a2)
-end)
 
 op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
     move wasmInstance, a2
@@ -1352,27 +1303,15 @@ end
 end
 
 unprefixedWasmOp(wasm_call, WasmCall, macro(ctx)
-    slowPathForWasmCall(ctx, _slow_path_wasm_call, storeWasmInstanceToTLS)
-end)
-
-unprefixedWasmOp(wasm_call_no_tls, WasmCallNoTls, macro(ctx)
-    slowPathForWasmCall(ctx, _slow_path_wasm_call_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
+    slowPathForWasmCall(ctx, _slow_path_wasm_call, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
 wasmOp(call_indirect, WasmCallIndirect, macro(ctx)
-    slowPathForWasmCall(ctx, _slow_path_wasm_call_indirect, storeWasmInstanceToTLS)
-end)
-
-wasmOp(call_indirect_no_tls, WasmCallIndirectNoTls, macro(ctx)
-    slowPathForWasmCall(ctx, _slow_path_wasm_call_indirect_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
+    slowPathForWasmCall(ctx, _slow_path_wasm_call_indirect, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
 wasmOp(call_ref, WasmCallRef, macro(ctx)
-    slowPathForWasmCall(ctx, _slow_path_wasm_call_ref, storeWasmInstanceToTLS)
-end)
-
-wasmOp(call_ref_no_tls, WasmCallRefNoTls, macro(ctx)
-    slowPathForWasmCall(ctx, _slow_path_wasm_call_ref_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
+    slowPathForWasmCall(ctx, _slow_path_wasm_call_ref, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
 # In the prologue of every Wasm function, we call preserveCalleeSavesUsedByWasm() which saves
@@ -1390,12 +1329,6 @@ end)
 
 wasmOp(tail_call, WasmTailCall, macro(ctx)
     slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call,
-    storeWasmInstanceToTLS,
-    restoreWasmInstanceCalleeSavesForTailCallWhenUsingTLS)
-end)
-
-wasmOp(tail_call_no_tls, WasmTailCallNoTls, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_no_tls,
     macro(targetInstance)
         move targetInstance, wasmInstance
     end,
@@ -1406,12 +1339,6 @@ end)
 
 wasmOp(tail_call_indirect, WasmTailCallIndirect, macro(ctx)
     slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect,
-    storeWasmInstanceToTLS,
-    restoreWasmInstanceCalleeSavesForTailCallWhenUsingTLS)
-end)
-
-wasmOp(tail_call_indirect_no_tls, WasmTailCallIndirectNoTls, macro(ctx)
-    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect_no_tls,
     macro(targetInstance)
         move targetInstance, wasmInstance
     end,
@@ -2271,18 +2198,10 @@ end
 end
 
 commonWasmOp(wasm_catch, WasmCatch, macro() end, macro(ctx)
-    catchImpl(ctx, storeWasmInstanceToTLS)
-end)
-
-commonWasmOp(wasm_catch_no_tls, WasmCatch, macro() end, macro(ctx)
     catchImpl(ctx, macro(instance) end)
 end)
 
 commonWasmOp(wasm_catch_all, WasmCatchAll, macro() end, macro(ctx)
-    catchAllImpl(ctx, storeWasmInstanceToTLS)
-end)
-
-commonWasmOp(wasm_catch_all_no_tls, WasmCatchAll, macro() end, macro(ctx)
     catchAllImpl(ctx, macro(instance) end)
 end)
 

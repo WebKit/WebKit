@@ -26,6 +26,7 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
@@ -36,14 +37,20 @@ namespace WebGPU {
 
 class BindGroupLayout;
 class Device;
+class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpipeline
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, uint32_t vertexShaderInputBufferCount, Device& device)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, MTLRenderPipelineReflection *reflection, uint32_t vertexShaderInputBufferCount, Device& device)
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilState, vertexShaderInputBufferCount, device));
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilState, reflection, vertexShaderInputBufferCount, device));
+    }
+
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, id<MTLDepthStencilState> depthStencilState, const PipelineLayout &pipelineLayout, uint32_t vertexShaderInputBufferCount, Device& device)
+    {
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilState, pipelineLayout, vertexShaderInputBufferCount, device));
     }
 
     static Ref<RenderPipeline> createInvalid(Device& device)
@@ -68,17 +75,23 @@ public:
     uint32_t vertexShaderInputBufferCount() const { return m_vertexShaderInputBufferCount; }
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, id<MTLDepthStencilState>, uint32_t, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, id<MTLDepthStencilState>, MTLRenderPipelineReflection*, uint32_t, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, id<MTLDepthStencilState>, const PipelineLayout&, uint32_t, Device&);
     RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
 
     const Ref<Device> m_device;
+    HashMap<uint32_t, Ref<BindGroupLayout>> m_cachedBindGroupLayouts;
     MTLPrimitiveType m_primitiveType;
     std::optional<MTLIndexType> m_indexType;
     MTLWinding m_frontFace;
     MTLCullMode m_cullMode;
     id<MTLDepthStencilState> m_depthStencilState;
+#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
+    MTLRenderPipelineReflection *m_reflection { nil };
+#endif
+    const PipelineLayout *m_pipelineLayout { nullptr };
     uint32_t m_vertexShaderInputBufferCount { 0 };
 };
 

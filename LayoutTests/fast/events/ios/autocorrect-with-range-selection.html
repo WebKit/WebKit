@@ -14,9 +14,9 @@
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
-            var inputEl = document.getElementById("editable");
-            await UIHelper.activateElementAndWaitForInputSession(inputEl);
-            window.getSelection().setBaseAndExtent(inputEl, 0, inputEl, 2);
+            const editable = document.getElementById("editable");
+            await UIHelper.activateElementAndWaitForInputSession(editable);
+            window.getSelection().setBaseAndExtent(editable, 0, editable, 1);
             await UIHelper.applyAutocorrection("To", "Ti");
             testRunner.notifyDone();
         }

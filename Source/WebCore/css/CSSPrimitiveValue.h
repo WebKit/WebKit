@@ -208,8 +208,6 @@ public:
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;
     void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const;
 
-    static void setUseLegacyPrecision(bool useLegacyPrecision) { s_useLegacyPrecision = useLegacyPrecision; }
-
 private:
     friend class CSSValuePool;
     friend class StaticCSSValuePool;
@@ -263,8 +261,6 @@ private:
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isResolution(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
-
-    static bool s_useLegacyPrecision;
 
     union {
         CSSPropertyID propertyID;

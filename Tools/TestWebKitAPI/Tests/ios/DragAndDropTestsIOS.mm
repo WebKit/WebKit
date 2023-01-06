@@ -2195,7 +2195,7 @@ TEST(DragAndDropTests, CanStartDragOnModel)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
         if ([feature.key isEqualToString:@"ModelElementEnabled"])
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            [[configuration preferences] _setEnabled:YES forExperimentalFeature:feature];
     }
 
     // FIXME: Remove this after <rdar://problem/83863149> is fixed.

@@ -110,7 +110,7 @@ private:
     bool trySendStream(Span&, T& message, AdditionalData&&...);
     template<typename T>
     std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, Span&);
-    bool trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
+    bool trySendDestinationIDIfNeeded(UInt128 destinationID, Timeout);
     void sendProcessOutOfStreamMessage(Span&&);
 
     std::optional<Span> tryAcquire(Timeout);
@@ -151,7 +151,7 @@ private:
         Connection::Client& m_receiver;
     };
     std::optional<DedicatedConnectionClient> m_dedicatedConnectionClient;
-    uint64_t m_currentDestinationID { 0 };
+    UInt128 m_currentDestinationID { 0 };
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
     struct Semaphores {
@@ -300,7 +300,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     return result;
 }
 
-inline bool StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)
+inline bool StreamClientConnection::trySendDestinationIDIfNeeded(UInt128 destinationID, Timeout timeout)
 {
     if (destinationID == m_currentDestinationID)
         return true;

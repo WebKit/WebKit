@@ -29,8 +29,11 @@
 #if PLATFORM(MAC)
 
 #import "GraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ProgressBarPart.h"
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 

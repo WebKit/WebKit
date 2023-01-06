@@ -38,10 +38,11 @@
 namespace WebCore {
 namespace Style {
 
-PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties)
+PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties, const HashSet<AnimatableProperty>* animatedProperties)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
+    , m_animationLayer(animatedProperties ? std::optional { AnimationLayer { *animatedProperties } } : std::nullopt)
 {
     buildCascade();
 }
@@ -57,6 +58,17 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
 }
 
 PropertyCascade::~PropertyCascade() = default;
+
+PropertyCascade::AnimationLayer::AnimationLayer(const HashSet<AnimatableProperty>& properties)
+    : properties(properties)
+{
+    hasCustomProperties = std::find_if(properties.begin(), properties.end(), [](auto& property) {
+        return std::holds_alternative<AtomString>(property);
+    }) != properties.end();
+
+    hasFontSize = properties.contains(CSSPropertyFontSize);
+    hasLineHeight = properties.contains(CSSPropertyLineHeight);
+}
 
 void PropertyCascade::buildCascade()
 {
@@ -96,11 +108,6 @@ void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, 
         property.cssValue[matchedProperties.linkMatchType] = &cssValue;
 }
 
-static void initializeCSSValue(PropertyCascade::Property& property)
-{
-    property.cssValue = { };
-}
-
 void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
     ASSERT(!CSSProperty::isInLogicalPropertyGroup(id));
@@ -115,7 +122,7 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
         if (!hasValue) {
             Property property;
             property.id = id;
-            initializeCSSValue(property);
+            property.cssValue = { };
             setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
             m_customProperties.set(customValue.name(), property);
         } else {
@@ -127,7 +134,7 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
     }
 
     if (!m_propertyIsPresent[id])
-        initializeCSSValue(property);
+        property.cssValue = { };
     m_propertyIsPresent.set(id);
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
 }
@@ -139,7 +146,7 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
 
     auto& property = m_properties[id];
     if (!hasDeferredProperty(id)) {
-        initializeCSSValue(property);
+        property.cssValue = { };
         m_lowestSeenDeferredProperty = std::min(m_lowestSeenDeferredProperty, id);
         m_highestSeenDeferredProperty = std::max(m_highestSeenDeferredProperty, id);
     }
@@ -194,12 +201,19 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         if (important != current.isImportant())
             continue;
 
-        if (m_includedProperties == IncludedProperties::InheritedOnly && !current.isInherited()) {
-            // Inherited only mode is used after matched properties cache hit.
-            // A match with a value that is explicitly inherited should never have been cached.
-            ASSERT(!current.value()->isInheritValue());
-            continue;
+        if (m_includedProperties == IncludedProperties::InheritedOnly) {
+            if (!current.isInherited()) {
+                // Inherited only mode is used after matched properties cache hit.
+                // A match with a value that is explicitly inherited should never have been cached.
+                ASSERT(!current.value()->isInheritValue());
+                continue;
+            }
+        } else if (m_includedProperties == IncludedProperties::AfterAnimation) {
+            // We only want to re-apply properties that may depend on animated values, or are overriden by !import.
+            if (!shouldApplyAfterAnimation(current))
+                continue;
         }
+
         auto propertyID = current.id();
 
 #if ENABLE(VIDEO)
@@ -216,6 +230,53 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
     }
 
     return hasImportantProperties;
+}
+
+bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyReference& property)
+{
+    ASSERT(m_animationLayer);
+
+    auto id = property.id();
+    auto* customProperty = dynamicDowncast<CSSCustomPropertyValue>(*property.value());
+
+    auto hasPropertyAlready = [&] {
+        if (customProperty)
+            return hasCustomProperty(customProperty->name());
+        return id < firstDeferredProperty ? hasNormalProperty(id) : hasDeferredProperty(id);
+    }();
+
+    if (hasPropertyAlready)
+        return true;
+
+    auto isAnimatedProperty = [&] {
+        if (customProperty)
+            return m_animationLayer->properties.contains(customProperty->name());
+        return m_animationLayer->properties.contains(id);
+    }();
+
+    if (isAnimatedProperty) {
+        // "Important declarations from all origins take precedence over animations."
+        // https://drafts.csswg.org/css-cascade-5/#importance
+        return property.isImportant();
+    }
+
+    // If we are animating custom properties they may affect other properties so we need to re-resolve them.
+    if (m_animationLayer->hasCustomProperties && property.value()->isVariableReferenceValue()) {
+        // We could check if the we are actually animating the referenced variable. Indirect cases would need to be taken into account.
+        return true;
+    }
+
+    // Check for 'em' units and similar property dependencies.
+    if (m_animationLayer->hasFontSize || m_animationLayer->hasLineHeight) {
+        HashSet<CSSPropertyID> dependencies;
+        property.value()->collectDirectComputationalDependencies(dependencies);
+        if (m_animationLayer->hasFontSize && dependencies.contains(CSSPropertyFontSize))
+            return true;
+        if (m_animationLayer->hasLineHeight && dependencies.contains(CSSPropertyLineHeight))
+            return true;
+    }
+
+    return false;
 }
 
 static auto& declarationsForCascadeLevel(const MatchResult& matchResult, CascadeLevel cascadeLevel)

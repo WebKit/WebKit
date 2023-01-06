@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderListMarker.h"
 
+#include "CSSCounterStyleRegistry.h"
 #include "Document.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
@@ -34,6 +35,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderView.h"
+#include "StyleScope.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -302,6 +304,8 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
 {
     // Note, the following switch statement has been explicitly grouped by list-style-type ordinal range.
     switch (type) {
+    // FIXME: handle counter-style: rdar://102988393.
+    case ListStyleType::CustomCounterStyle:
     case ListStyleType::ArabicIndic:
     case ListStyleType::Bengali:
     case ListStyleType::Binary:
@@ -418,6 +422,9 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
 static StringView listMarkerSuffix(ListStyleType type)
 {
     switch (type) {
+    // FIXME: handle counter-style: rdar://102988393.
+    case ListStyleType::CustomCounterStyle:
+        return { };
     case ListStyleType::Asterisks:
     case ListStyleType::Circle:
     case ListStyleType::Disc:
@@ -530,7 +537,7 @@ static StringView listMarkerSuffix(ListStyleType type)
     return ". "_s;
 }
 
-String listMarkerText(ListStyleType type, int value)
+String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterStyle)
 {
     switch (effectiveListMarkerType(type, value)) {
     case ListStyleType::None:
@@ -560,6 +567,11 @@ String listMarkerText(ListStyleType type, int value)
     case ListStyleType::DisclosureOpen:
         return { &blackDownPointingSmallTriangle, 1 };
 
+    // FIXME: handle counter-style: rdar://102988393.
+    case ListStyleType::CustomCounterStyle:
+        if (!counterStyle)
+            return String::number(value);
+        return counterStyle->text(value);
     case ListStyleType::Decimal:
         return String::number(value);
 
@@ -1830,6 +1842,8 @@ void RenderListMarker::updateContent()
 
     auto type = style().listStyleType();
     switch (type) {
+    // FIXME: handle CSSCounterStyle case rdar://102988393.
+    case ListStyleType::CustomCounterStyle:
     case ListStyleType::String:
         m_textWithSuffix = style().listStyleStringValue();
         m_textWithoutSuffixLength = m_textWithSuffix.length();
@@ -2004,6 +2018,11 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
 StringView RenderListMarker::textWithoutSuffix() const
 {
     return StringView { m_textWithSuffix }.left(m_textWithoutSuffixLength);
+}
+
+CSSCounterStyle* RenderListMarker::counterStyle() const
+{
+    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleStringValue()).get();
 }
 
 } // namespace WebCore

@@ -26,9 +26,11 @@
 
 namespace WebCore {
 
+class CSSCounterStyle;
 class RenderListItem;
+class StyleRuleCounterStyle;
 
-String listMarkerText(ListStyleType, int value);
+String listMarkerText(ListStyleType, int value, CSSCounterStyle* = nullptr);
 
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.
@@ -77,6 +79,8 @@ private:
 
     struct TextRunWithUnderlyingString;
     TextRunWithUnderlyingString textRun() const;
+
+    CSSCounterStyle* counterStyle() const;
 
     String m_textWithSuffix;
     uint8_t m_textWithoutSuffixLength { 0 };

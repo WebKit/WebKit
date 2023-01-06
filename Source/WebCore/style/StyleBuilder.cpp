@@ -77,8 +77,8 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
-Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, PropertyCascade::IncludedProperties includedProperties)
-    : m_cascade(matchResult, cascadeLevel, includedProperties)
+Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, PropertyCascade::IncludedProperties includedProperties, const HashSet<AnimatableProperty>* animatedPropertes)
+    : m_cascade(matchResult, cascadeLevel, includedProperties, animatedPropertes)
     , m_state(*this, style, WTFMove(context))
 {
 }
@@ -87,6 +87,9 @@ Builder::~Builder() = default;
 
 void Builder::applyAllProperties()
 {
+    if (m_cascade.isEmpty())
+        return;
+
     applyTopPriorityProperties();
     applyHighPriorityProperties();
     applyNonHighPriorityProperties();

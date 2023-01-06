@@ -459,12 +459,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         }
     } else if (signature.returnCount() > 1) {
         GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
-        if (Context::useFastTLS()) {
-            wasmContextInstanceGPR = GPRInfo::argumentGPR1;
-            static_assert(std::is_same_v<Wasm::Instance*, typename FunctionTraits<decltype(operationIterateResults)>::ArgumentType<1>>, "Instance should be the second parameter.");
-            jit.loadWasmContextInstance(wasmContextInstanceGPR);
-        }
-
         constexpr GPRReg savedResultsGPR = preferredArgumentGPR<decltype(operationIterateResults), 4>();
         jit.move(CCallHelpers::stackPointerRegister, savedResultsGPR);
         if constexpr (!!maxFrameExtentForSlowPathCall)

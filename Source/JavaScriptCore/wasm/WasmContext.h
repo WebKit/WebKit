@@ -39,11 +39,8 @@ struct Context {
     Instance* load() const;
     void store(Instance*);
 
-    static bool useFastTLS();
-
     Instance** pointerToInstance()
     {
-        ASSERT(!useFastTLS());
         return &instance;
     }
 

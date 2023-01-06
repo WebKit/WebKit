@@ -127,13 +127,13 @@ async function scrollTest()
     // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
 }
 
-function setupTopLevel()
+async function setupTopLevel()
 {
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

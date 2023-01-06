@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledByDeprecatedGlobalSetting=DirectoryUploadEnabled,
+    EnabledBySetting=DirectoryUploadEnabled,
     InterfaceName=FileSystem,
     Exposed=Window
 ] interface DOMFileSystem {

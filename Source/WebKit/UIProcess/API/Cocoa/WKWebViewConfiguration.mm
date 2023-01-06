@@ -128,6 +128,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
     LazyInitialized<RetainPtr<WKWebpagePreferences>> _defaultWebpagePreferences;
     WeakObjCPtr<WKWebView> _relatedWebView;
+    WeakObjCPtr<WKWebView> _webViewToCloneSessionStorageFrom;
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
     std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
@@ -387,6 +388,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration.defaultWebpagePreferences = self.defaultWebpagePreferences;
     configuration._visitedLinkStore = self._visitedLinkStore;
     configuration._relatedWebView = _relatedWebView.get().get();
+    configuration._webViewToCloneSessionStorageFrom = _webViewToCloneSessionStorageFrom.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
 #if PLATFORM(IOS_FAMILY)
     configuration._contentProviderRegistry = self._contentProviderRegistry;
@@ -677,6 +679,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setRelatedWebView:(WKWebView *)relatedWebView
 {
     _relatedWebView = relatedWebView;
+}
+
+- (WKWebView *)_webViewToCloneSessionStorageFrom
+{
+    return _webViewToCloneSessionStorageFrom.getAutoreleased();
+}
+
+- (void)_setWebViewToCloneSessionStorageFrom:(WKWebView *)webViewToCloneSessionStorageFrom
+{
+    _webViewToCloneSessionStorageFrom = webViewToCloneSessionStorageFrom;
 }
 
 - (WKWebView *)_alternateWebViewForNavigationGestures

@@ -46,7 +46,7 @@
         
         async function doMouseWheelScroll()
         {
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -5, "changed", "none");

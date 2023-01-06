@@ -144,7 +144,11 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentSetupController.h>
 #endif
 #if PLATFORM(MAC)
+#if HAVE(PASSKIT_MAC_HELPER_TEMP)
+#import <PassKitMacHelperTemp/PKPaymentAuthorizationViewController_Private.h>
+#else
 #import <PassKitMacHelper/PKPaymentAuthorizationViewController_Private.h>
+#endif
 #endif
 #if PLATFORM(IOS_FAMILY)
 #import <PassKitUI/PKPaymentAuthorizationController_Private.h>

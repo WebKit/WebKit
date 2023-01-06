@@ -102,6 +102,24 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
+struct SameSizeAsNode : public EventTarget {
+#if ASSERT_ENABLED
+    bool deletionHasBegun;
+    bool inRemovedLastRefFunction;
+    bool adoptionIsRequired;
+#endif
+    uint32_t refCountAndParentBit;
+    uint32_t nodeFlags;
+    void* parentNode;
+    void* treeScope;
+    void* previous;
+    void* next;
+    uint8_t rendererWithStyleFlags[8];
+    uint8_t rareDataWithBitfields[8];
+};
+
+static_assert(sizeof(Node) == sizeof(SameSizeAsNode), "Node should stay small");
+
 #if DUMP_NODE_STATISTICS
 static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& liveNodeSet()
 {

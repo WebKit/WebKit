@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<iframe width=500 height=500 id="frame1" title="frame1"></iframe>
+
+<script>
+var output = "This test ensures that objects with relationships in frames work.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var frame1 = document.getElementById("frame1");
+    frame1.onload = function(e) {
+        setTimeout(async () => {
+            touchAccessibilityTree(accessibilityController.rootElement);
+            var controller = await waitForElementById("controller");
+            var output = `controller role: ${controller.role}\n`;
+            var controlled = controller.ariaControlsElementAtIndex(0);
+            output += `controller controls role: ${controlled.domIdentifier}\n`;
+   
+            var listbox = await waitForElementById("listbox");
+            output += `listbox role: ${listbox.role}\n`;
+            output += `aria-controls textbox->listbox : ${controlled.isEqual(listbox)}\n`;
+
+            frame1.contentDocument.getElementById("controller").setAttribute("aria-controls", "listbox2");
+            controlled = controller.ariaControlsElementAtIndex(0);
+            output += `controller controls role after change: ${controlled.domIdentifier}\n`;
+            debug(output);
+            finishJSTest(); 
+       }, 0);
+    };
+
+    var html = `<div role="textbox" contenteditable tabindex="0" aria-controls="listbox" id="controller">
+        controller
+    </div>
+    <div role="listbox" id="listbox">
+        <div role="option" id="option1">1</div>
+        <div role="option" id="option2">2</div>
+    </div>
+    <div role="listbox" id="listbox2">
+    </div>`;
+
+    frame1.src = "data:text/html,<body>" + html + "</body>";
+}
+
+</script>
+</body>
+</html>

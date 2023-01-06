@@ -1,6 +1,7 @@
 <html>
     <head>
         <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
             var expectedScrollTop = 5;
             var expectedScrollLeft = 3;
@@ -10,7 +11,7 @@
 
             jsTestIsAsync = true;
 
-            function dispatchWheelEvent()
+            async function dispatchWheelEvent()
             {
                 if (!window.eventSender) {
                     finishJSTest();
@@ -22,9 +23,10 @@
                     overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
 
                 eventSender.mouseMoveTo(100, 110);
-                eventSender.monitorWheelEvents();
+                await UIHelper.startMonitoringWheelEvents();
                 eventSender.mouseScrollBy(-expectedScrollLeft, -expectedScrollTop);
-                eventSender.callAfterScrollingCompletes(checkOffsets);
+                await UIHelper.waitForScrollCompletion();
+                checkOffsets();
             }
 
             function checkOffsets()

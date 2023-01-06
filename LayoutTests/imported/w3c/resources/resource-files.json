@@ -3971,6 +3971,7 @@
         "web-platform-tests/fullscreen/crashtests/chrome-1312699.html",
         "web-platform-tests/fullscreen/rendering/backdrop-iframe-ref.html",
         "web-platform-tests/fullscreen/rendering/backdrop-object-ref.html",
+        "web-platform-tests/gamepad/feature-policy-gamepad.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-2.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-0.html",

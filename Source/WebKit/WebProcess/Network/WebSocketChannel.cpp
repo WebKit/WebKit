@@ -113,6 +113,14 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     if (!m_document)
         return ConnectStatus::KO;
 
+    if (WebProcess::singleton().webSocketChannelManager().hasReachedSocketLimit()) {
+        auto reason = "Connection failed: Insufficient resources"_s;
+        logErrorMessage(reason);
+        if (m_client)
+            m_client->didReceiveMessageError(String { reason });
+        return ConnectStatus::KO;
+    }
+
     auto request = webSocketConnectRequest(*m_document, url);
     if (!request)
         return ConnectStatus::KO;

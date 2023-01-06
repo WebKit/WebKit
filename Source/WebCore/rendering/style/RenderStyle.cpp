@@ -2669,6 +2669,12 @@ void RenderStyle::setNonInheritedCustomPropertyValue(const AtomString& name, Ref
     m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value));
 }
 
+bool RenderStyle::customPropertiesEqual(const RenderStyle& other) const
+{
+    return m_rareNonInheritedData->customProperties == other.m_rareNonInheritedData->customProperties
+        && m_rareInheritedData->customProperties == other.m_rareInheritedData->customProperties;
+}
+
 const LengthBox& RenderStyle::scrollMargin() const
 {
     return m_rareNonInheritedData->scrollMargin;

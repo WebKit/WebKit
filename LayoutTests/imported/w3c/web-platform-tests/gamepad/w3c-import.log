@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/feature-policy-gamepad.html
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/gamepad-default-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/gamepad-secure-context.html
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/gamepad-supported-by-feature-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/idlharness-extensions.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/gamepad/not-fully-active.https.html

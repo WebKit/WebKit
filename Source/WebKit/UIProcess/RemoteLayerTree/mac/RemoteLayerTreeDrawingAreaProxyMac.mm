@@ -101,14 +101,14 @@ DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::exisingDisplayLink()
     if (!m_displayID)
         return nullptr;
     
-    return process().processPool().displayLinks().displayLinkForDisplay(*m_displayID);
+    return m_webPageProxy.process().processPool().displayLinks().displayLinkForDisplay(*m_displayID);
 }
 
 DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::ensureDisplayLink()
 {
     ASSERT(m_displayID);
 
-    auto& displayLinks = process().processPool().displayLinks();
+    auto& displayLinks = m_webPageProxy.process().processPool().displayLinks();
     auto* displayLink = displayLinks.displayLinkForDisplay(*m_displayID);
     if (!displayLink) {
         auto newDisplayLink = makeUnique<DisplayLink>(*m_displayID);
@@ -199,7 +199,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
     // FIXME: Update the scrolling tree via WebPageProxy::adjustLayersForLayoutViewport() here.
 
     // FIXME: Only send these messages as fast as the web process is responding to them.
-    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
+    m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
@@ -211,7 +211,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     
     // FIXME: Need to constrain the last scale and origin and do a "bounce back" animation if necessary (see TiledCoreAnimationDrawingArea).
     m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
-    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
+    m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
@@ -305,7 +305,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
 
 void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()
 {
-    send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()));
+    m_webPageProxy.send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()), m_identifier);
 }
 
 } // namespace WebKit

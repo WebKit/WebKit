@@ -1,0 +1,4 @@
+1 2
+
+PASS Button element with "readonly" attribute shouldn't be barred from constraint validation
+

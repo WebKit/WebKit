@@ -88,7 +88,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
 
     // When we don't use fast TLS to store the context, the JS
     // entry wrapper expects a JSWebAssemblyInstance as the |this| value argument.
-    JSValue context = Wasm::Context::useFastTLS() ? JSValue() : instance;
+    JSValue context = instance;
     JSValue* args = boxedArgs.data();
     int argCount = boxedArgs.size() + 1;
 
@@ -345,20 +345,13 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     // At this point, we're committed to doing a fast call.
 
-    if (Wasm::Context::useFastTLS()) 
-        jit.loadWasmContextInstance(scratchJSR.payloadGPR());
-    else
-        jit.loadPtr(vm.wasmContext.pointerToInstance(), scratchJSR.payloadGPR());
+    jit.loadPtr(vm.wasmContext.pointerToInstance(), scratchJSR.payloadGPR());
     ptrdiff_t previousInstanceOffset = Wasm::JSToWasmICCallee::previousInstanceOffset(registersToSpill);
     jit.storePtr(scratchJSR.payloadGPR(), CCallHelpers::Address(GPRInfo::callFrameRegister, previousInstanceOffset));
 
     jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), scratchJSR.payloadGPR());
-    if (Wasm::Context::useFastTLS()) 
-        jit.storeWasmContextInstance(scratchJSR.payloadGPR());
-    else {
-        jit.move(scratchJSR.payloadGPR(), pinnedRegs.wasmContextInstancePointer);
-        jit.storePtr(scratchJSR.payloadGPR(), vm.wasmContext.pointerToInstance());
-    }
+    jit.move(scratchJSR.payloadGPR(), pinnedRegs.wasmContextInstancePointer);
+    jit.storePtr(scratchJSR.payloadGPR(), vm.wasmContext.pointerToInstance());
 
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     if (!!instance()->instance().module().moduleInformation().memory) {
@@ -411,10 +404,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     ASSERT(!RegisterSetBuilder::runtimeTagRegisters().contains(GPRInfo::nonPreservedNonReturnGPR, IgnoreVectors));
     jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, previousInstanceOffset), GPRInfo::nonPreservedNonReturnGPR);
-    if (Wasm::Context::useFastTLS())
-        jit.storeWasmContextInstance(GPRInfo::nonPreservedNonReturnGPR);
-    else
-        jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, vm.wasmContext.pointerToInstance());
+    jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, vm.wasmContext.pointerToInstance());
 
     jit.emitRestore(registersToSpill, GPRInfo::callFrameRegister);
     jit.emitFunctionEpilogue();

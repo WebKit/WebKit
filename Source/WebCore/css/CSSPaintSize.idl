@@ -24,7 +24,7 @@
 */
 
 [
-    EnabledByDeprecatedGlobalSetting=CSSPaintingAPIEnabled,
+    EnabledBySetting=CSSPaintingAPIEnabled,
     Conditional=CSS_PAINTING_API,
     Exposed=PaintWorklet,
 ] interface CSSPaintSize {

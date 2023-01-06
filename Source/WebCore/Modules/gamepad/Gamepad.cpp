@@ -29,6 +29,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "GamepadButton.h"
+#include "GamepadHapticActuator.h"
 #include "PlatformGamepad.h"
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +42,7 @@ Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
     , m_timestamp(platformGamepad.lastUpdateTime())
     , m_mapping(platformGamepad.mapping())
     , m_axes(platformGamepad.axisValues().size(), 0.0)
+    , m_vibrationActuator(GamepadHapticActuator::create())
 {
     unsigned buttonCount = platformGamepad.buttonValues().size();
     m_buttons.reserveInitialCapacity(buttonCount);
@@ -68,6 +70,11 @@ void Gamepad::updateFromPlatformGamepad(const PlatformGamepad& platformGamepad)
         m_buttons[i]->setValue(platformGamepad.buttonValues()[i].value());
 
     m_timestamp = platformGamepad.lastUpdateTime();
+}
+
+GamepadHapticActuator& Gamepad::vibrationActuator()
+{
+    return m_vibrationActuator.get();
 }
 
 } // namespace WebCore

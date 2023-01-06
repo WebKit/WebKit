@@ -271,7 +271,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
     if (state.style()->usesViewportUnits())
         document().setHasStyleWithViewportUnits();
 
-    return { state.takeStyle(), WTFMove(elementStyleRelations) };
+    return { state.takeStyle(), WTFMove(elementStyleRelations), collector.releaseMatchResult() };
 }
 
 std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, KeyframeValue& keyframeValue)

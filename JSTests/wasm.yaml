@@ -54,94 +54,14 @@
 - path: wasm/branch-hints
   cmd: runWebAssemblySuite unless parseRunCommands
 
-- path: wasm/references-spec-tests/elem.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/ref_null.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/ref_is_null.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/ref_func.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_copy.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_init.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/select.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/memory_fill.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/memory_copy.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/memory_init.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table-sub.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_get.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_set.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_size.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_fill.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table_grow.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/bulk.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/binary-leb128.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/binary.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/br_table.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/call_indirect.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/custom.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/data.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/exports.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/global.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/imports.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/memory_grow.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/table.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/unreached-invalid.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-- path: wasm/references-spec-tests/linking.wast.js
-  cmd: runWebAssemblyReferenceSpecTest :normal
-
-- path: wasm/multi-value-spec-tests/block.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/br.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/br_if.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/call.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/call_indirect.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/func.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/if.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/loop.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/multi-value-spec-tests/type.wast.js
-  cmd: runWebAssemblySpecTest :normal
-
 - path: wasm/threads-spec-tests/atomic.wast.js
-  cmd: if 'arm' == $architecture; skip; else runWebAssemblySpecTest :normal; end
+  cmd: if 'arm' == $architecture; skip; else runWebAssemblyThreadsSpecTest :normal; end
 - path: wasm/threads-spec-tests/memory.wast.js
-  cmd: if 'arm' == $architecture; skip; else runWebAssemblySpecTest :normal; end
+  cmd: if 'arm' == $architecture; skip; else runWebAssemblyThreadsSpecTest :normal; end
 - path: wasm/threads-spec-tests/atomic-signed.wast.js
-  cmd: if 'arm' == $architecture; skip; else; runWebAssemblySpecTest :normal; end
+  cmd: if 'arm' == $architecture; skip; else; runWebAssemblyThreadsSpecTest :normal; end
 - path: wasm/threads-spec-tests/wait-large.wast.js
-  cmd: if 'arm' == $architecture; skip; else; runWebAssemblySpecTest :normal; end
+  cmd: if 'arm' == $architecture; skip; else; runWebAssemblyThreadsSpecTest :normal; end
 
 - path: wasm/function-references-spec-tests/call_ref.wast.js
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
@@ -160,262 +80,297 @@
   cmd: runWebAssemblyGCSpecTest :normal
 
 - path: wasm/spec-tests/address.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/align.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/binary.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/block.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/br.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/br_if.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/br_table.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/call.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/call_indirect.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/comments.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/const.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/conversions.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/endianness.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/exports.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/f32.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/f32_bitwise.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/f32_cmp.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/f64.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/f64_bitwise.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/f64_cmp.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/fac.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/float_exprs.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/float_literals.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/float_memory.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/float_misc.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/forward.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/func.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/func_ptrs.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/global.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/i32.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/i64.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/if.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/imports.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/inline-module.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/int_exprs.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/int_literals.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/labels.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/left-to-right.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/linking.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/loop.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/memory.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/memory_redundancy.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/memory_trap.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/names.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/nop.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/return.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/select.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/skip-stack-guard-page.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/stack.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/start.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/switch.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/table.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/token.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/traps.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/type.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/unreachable.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/unreached-invalid.wast.js
-  cmd: runWebAssemblySpecTest :skip # https://bugs.webkit.org/show_bug.cgi?id=173279
-- path: wasm/spec-tests/unwind.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/utf8-custom-section-id.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/utf8-import-field.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/utf8-import-module.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/binary-leb128.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/binary.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/block.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/br.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/br_if.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/br_table.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/bulk.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/call.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/call_indirect.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/comments.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/const.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/conversions.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/custom.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/data.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/elem.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/endianness.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/exports.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/f32.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/f32_bitwise.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/f32_cmp.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/f64.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/f64_bitwise.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/f64_cmp.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/fac.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/float_exprs.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/float_literals.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/float_memory.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/float_misc.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/forward.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/func.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/func_ptrs.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/global.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/i32.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/i64.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/if.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/imports.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/inline-module.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/int_exprs.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/int_literals.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/labels.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/left-to-right.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/linking.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/load.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/local_get.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/local_set.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/local_tee.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/loop.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/memory.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/memory_copy.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/memory_fill.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/memory_grow.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/memory_init.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/memory_redundancy.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/memory_size.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/memory_trap.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/names.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/nop.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/ref_func.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/ref_is_null.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/ref_null.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/return.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/select.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/skip-stack-guard-page.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/stack.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/start.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/store.wast.js
-  cmd: runWebAssemblySpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/switch.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table-sub.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_copy.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_fill.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_get.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_grow.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_init.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_set.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/table_size.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/token.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/tokens.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/traps.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/type.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/unreachable.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/unreached-invalid.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/unreached-valid.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/unwind.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/utf8-custom-section-id.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/utf8-import-field.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/spec-tests/utf8-import-module.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/spec-tests/utf8-invalid-encoding.wast.js
-  cmd: runWebAssemblySpecTest :normal
-- path: wasm/spec-tests/simd_address.wast.js
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+
+- path: wasm/simd-spec-tests/simd_address.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_align.wast.js
+- path: wasm/simd-spec-tests/simd_align.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_bit_shift.wast.js
+- path: wasm/simd-spec-tests/simd_bit_shift.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_bitwise.wast.js
+- path: wasm/simd-spec-tests/simd_bitwise.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_boolean.wast.js
+- path: wasm/simd-spec-tests/simd_boolean.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_const.wast.js
+- path: wasm/simd-spec-tests/simd_const.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_conversions.wast.js
+- path: wasm/simd-spec-tests/simd_conversions.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f32x4.wast.js
+- path: wasm/simd-spec-tests/simd_f32x4.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f32x4_arith.wast.js
+- path: wasm/simd-spec-tests/simd_f32x4_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f32x4_cmp.wast.js
+- path: wasm/simd-spec-tests/simd_f32x4_cmp.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f32x4_pmin_pmax.wast.js
+- path: wasm/simd-spec-tests/simd_f32x4_pmin_pmax.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f32x4_rounding.wast.js
+- path: wasm/simd-spec-tests/simd_f32x4_rounding.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f64x2.wast.js
+- path: wasm/simd-spec-tests/simd_f64x2.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f64x2_arith.wast.js
+- path: wasm/simd-spec-tests/simd_f64x2_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f64x2_cmp.wast.js
+- path: wasm/simd-spec-tests/simd_f64x2_cmp.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f64x2_pmin_pmax.wast.js
+- path: wasm/simd-spec-tests/simd_f64x2_pmin_pmax.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_f64x2_rounding.wast.js
+- path: wasm/simd-spec-tests/simd_f64x2_rounding.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_arith.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_arith2.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_arith2.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_cmp.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_cmp.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_extadd_pairwise_i8x16.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_extadd_pairwise_i8x16.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_extmul_i8x16.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_extmul_i8x16.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_q15mulr_sat_s.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_q15mulr_sat_s.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i16x8_sat_arith.wast.js
+- path: wasm/simd-spec-tests/simd_i16x8_sat_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_arith.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_arith2.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_arith2.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_cmp.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_cmp.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_dot_i16x8.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_dot_i16x8.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_extadd_pairwise_i16x8.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_extadd_pairwise_i16x8.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_extmul_i16x8.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_extmul_i16x8.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_trunc_sat_f32x4.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_trunc_sat_f32x4.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i32x4_trunc_sat_f64x2.wast.js
+- path: wasm/simd-spec-tests/simd_i32x4_trunc_sat_f64x2.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i64x2_arith.wast.js
+- path: wasm/simd-spec-tests/simd_i64x2_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i64x2_arith2.wast.js
+- path: wasm/simd-spec-tests/simd_i64x2_arith2.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i64x2_cmp.wast.js
+- path: wasm/simd-spec-tests/simd_i64x2_cmp.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i64x2_extmul_i32x4.wast.js
+- path: wasm/simd-spec-tests/simd_i64x2_extmul_i32x4.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i8x16_arith.wast.js
+- path: wasm/simd-spec-tests/simd_i8x16_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i8x16_arith2.wast.js
+- path: wasm/simd-spec-tests/simd_i8x16_arith2.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i8x16_cmp.wast.js
+- path: wasm/simd-spec-tests/simd_i8x16_cmp.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_i8x16_sat_arith.wast.js
+- path: wasm/simd-spec-tests/simd_i8x16_sat_arith.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_int_to_int_extend.wast.js
+- path: wasm/simd-spec-tests/simd_int_to_int_extend.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_lane.wast.js
+- path: wasm/simd-spec-tests/simd_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load.wast.js
+- path: wasm/simd-spec-tests/simd_load.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load16_lane.wast.js
+- path: wasm/simd-spec-tests/simd_load16_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load32_lane.wast.js
+- path: wasm/simd-spec-tests/simd_load32_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load64_lane.wast.js
+- path: wasm/simd-spec-tests/simd_load64_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load8_lane.wast.js
+- path: wasm/simd-spec-tests/simd_load8_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load_extend.wast.js
+- path: wasm/simd-spec-tests/simd_load_extend.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load_splat.wast.js
+- path: wasm/simd-spec-tests/simd_load_splat.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_load_zero.wast.js
+- path: wasm/simd-spec-tests/simd_load_zero.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_splat.wast.js
+- path: wasm/simd-spec-tests/simd_splat.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_store.wast.js
+- path: wasm/simd-spec-tests/simd_store.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_store16_lane.wast.js
+- path: wasm/simd-spec-tests/simd_store16_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_store32_lane.wast.js
+- path: wasm/simd-spec-tests/simd_store32_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_store64_lane.wast.js
+- path: wasm/simd-spec-tests/simd_store64_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
-- path: wasm/spec-tests/simd_store8_lane.wast.js
+- path: wasm/simd-spec-tests/simd_store8_lane.wast.js
   cmd: runWebAssemblySIMDSpecTest :normal
 
 - path: wasm/tail-call

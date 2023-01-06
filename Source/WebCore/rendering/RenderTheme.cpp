@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTheme.h"
 
+#include "ButtonPart.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
@@ -43,7 +44,9 @@
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "InnerSpinButtonPart.h"
 #include "LocalizedStrings.h"
+#include "MenuListPart.h"
 #include "MeterPart.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -52,8 +55,12 @@
 #include "RenderProgress.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "SearchFieldCancelButtonPart.h"
+#include "SearchFieldPart.h"
 #include "ShadowPseudoIds.h"
 #include "SliderThumbElement.h"
+#include "SliderThumbPart.h"
+#include "SliderTrackPart.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextAreaPart.h"
@@ -492,6 +499,51 @@ static RefPtr<ControlPart> createProgressBarPartForRenderer(const RenderObject& 
     return ProgressBarPart::create(renderProgress.position(), renderProgress.animationStartTime().secondsSinceEpoch());
 }
 
+static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& renderer)
+{
+    auto type = renderer.style().effectiveAppearance();
+    if (type != ControlPartType::SliderHorizontal && type != ControlPartType::SliderVertical)
+        return nullptr;
+
+    auto& input = downcast<HTMLInputElement>(*renderer.node());
+    if (!input.isRangeControl())
+        return nullptr;
+
+    IntSize thumbSize;
+    if (const auto* thumbRenderer = input.sliderThumbElement()->renderer()) {
+        const auto& thumbStyle = thumbRenderer->style();
+        thumbSize = IntSize { thumbStyle.width().intValue(), thumbStyle.height().intValue() };
+    }
+
+    IntRect trackBounds;
+    if (const auto* trackRenderer = input.sliderTrackElement()->renderer()) {
+        trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
+        
+        // We can ignoring transforms because transform is handled by the graphics context.
+        auto sliderBounds = renderer.absoluteBoundingBoxRectIgnoringTransforms();
+        
+        // Make position relative to the transformed ancestor element.
+        trackBounds.moveBy(-sliderBounds.location());
+    }
+
+    Vector<double> tickRatios;
+#if ENABLE(DATALIST_ELEMENT)
+    if (auto dataList = input.dataList()) {
+        double minimum = input.minimum();
+        double maximum = input.maximum();
+
+        for (auto& optionElement : dataList->suggestions()) {
+            auto optionValue = input.listOptionValueAsDouble(optionElement);
+            if (!optionValue)
+                continue;
+            double tickRatio = (*optionValue - minimum) / (maximum - minimum);
+            tickRatios.append(tickRatio);
+        }
+    }
+#endif
+    return SliderTrackPart::create(type, thumbSize, trackBounds, WTFMove(tickRatios));
+}
+
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
@@ -509,7 +561,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case ControlPartType::SquareButton:
     case ControlPartType::Button:
     case ControlPartType::DefaultButton:
+        return ButtonPart::create(type);
+
     case ControlPartType::Menulist:
+        return MenuListPart::create();
+
     case ControlPartType::MenulistButton:
         break;
 
@@ -521,7 +577,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     case ControlPartType::SliderHorizontal:
     case ControlPartType::SliderVertical:
+        return createSliderTrackPartForRenderer(renderer);
+
     case ControlPartType::SearchField:
+        return SearchFieldPart::create();
+            
 #if ENABLE(APPLE_PAY)
     case ControlPartType::ApplePayButton:
 #endif
@@ -545,17 +605,25 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 #if ENABLE(SERVICE_CONTROLS)
     case ControlPartType::ImageControlsButton:
 #endif
+        break;
+
     case ControlPartType::InnerSpinButton:
+        return InnerSpinButtonPart::create();
+
 #if ENABLE(DATALIST_ELEMENT)
     case ControlPartType::ListButton:
 #endif
     case ControlPartType::SearchFieldDecoration:
     case ControlPartType::SearchFieldResultsDecoration:
     case ControlPartType::SearchFieldResultsButton:
+        break;
+
     case ControlPartType::SearchFieldCancelButton:
+        return SearchFieldCancelButtonPart::create();
+
     case ControlPartType::SliderThumbHorizontal:
     case ControlPartType::SliderThumbVertical:
-        break;
+        return SliderThumbPart::create(type);
     }
 
     ASSERT_NOT_REACHED();
@@ -583,7 +651,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         states.add(ControlStyle::State::Checked);
     if (isDefault(renderer))
         states.add(ControlStyle::State::Default);
-    if (isActive(renderer))
+    if (isWindowActive(renderer))
         states.add(ControlStyle::State::WindowActive);
     if (isIndeterminate(renderer))
         states.add(ControlStyle::State::Indeterminate);
@@ -606,16 +674,33 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
             states.add(ControlStyle::State::ListButtonPressed);
     }
 #endif
+    if (!renderer.style().isHorizontalWritingMode())
+        states.add(ControlStyle::State::VerticalWritingMode);
     return states;
 }
 
-ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& renderer) const
+ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) const
 {
+    const RenderObject* renderer = &box;
+    ControlPartType type = box.style().effectiveAppearance();
+
+    if (type == ControlPartType::SearchFieldCancelButton) {
+        auto* input = box.element()->shadowHost();
+        if (!input)
+            input = box.element();
+
+        if (!is<RenderBox>(input->renderer()))
+            return { };
+
+        renderer = downcast<RenderBox>(input->renderer());
+    }
+
     return {
-        extractControlStyleStatesForRenderer(renderer),
-        renderer.style().computedFontPixelSize(),
-        renderer.style().effectiveZoom(),
-        renderer.style().effectiveAccentColor()
+        extractControlStyleStatesForRenderer(*renderer),
+        renderer->style().computedFontPixelSize(),
+        renderer->style().effectiveZoom(),
+        renderer->style().effectiveAccentColor(),
+        renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor)
     };
 }
 
@@ -1099,8 +1184,8 @@ OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(co
         states.add(ControlStates::States::Checked);
     if (isDefault(o))
         states.add(ControlStates::States::Default);
-    if (!isActive(o))
-        states.add(ControlStates::States::WindowInactive);
+    if (isWindowActive(o))
+        states.add(ControlStates::States::WindowActive);
     if (isIndeterminate(o))
         states.add(ControlStates::States::Indeterminate);
     if (isPresenting(o))
@@ -1108,7 +1193,7 @@ OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(co
     return states;
 }
 
-bool RenderTheme::isActive(const RenderObject& renderer) const
+bool RenderTheme::isWindowActive(const RenderObject& renderer) const
 {
     return renderer.page().focusController().isActive();
 }
@@ -1190,7 +1275,7 @@ bool RenderTheme::isPresenting(const RenderObject& o) const
 bool RenderTheme::isDefault(const RenderObject& o) const
 {
     // A button should only have the default appearance if the page is active
-    if (!isActive(o))
+    if (!isWindowActive(o))
         return false;
 
     return o.style().effectiveAppearance() == ControlPartType::DefaultButton;

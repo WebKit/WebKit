@@ -1,4 +1,4 @@
-Test for WI.Font.
+Test for WI.FontStyles.
 
 Basic Properties Test
 Feature Property Ligatures Test
@@ -10,47 +10,47 @@ Feature Property East Asian Test
 Unregisted Feature Property Test
 Variable Font Test
 
-== Running test suite: WI.Font
--- Running test case: WI.Font.BasicPropertiesTest
+== Running test suite: WI.FontStyles
+-- Running test case: WI.FontStyles.BasicPropertiesTest
 PASS: Font size property value should be '2rem'.
 PASS: Font size property value should be 'italic'.
 PASS: Font size property value should be '700'.
 PASS: Font size property value should be '150%'.
 
--- Running test case: WI.Font.FeaturePropertyLigaturesTest
+-- Running test case: WI.FontStyles.FeaturePropertyLigaturesTest
 PASS: Property value should be 'no-common-ligatures'.
 PASS: 'calt' feature value should be '1'.
 PASS: 'dlig' feature value should be '1'.
 PASS: 'hlig' feature value should be '1'.
 
--- Running test case: WI.Font.FeaturePropertyPositionTest
+-- Running test case: WI.FontStyles.FeaturePropertyPositionTest
 PASS: Property value should be 'super'.
 PASS: 'sups' feature value should be '0'.
 PASS: 'subs' feature value should be '1'.
 
--- Running test case: WI.Font.FeaturePropertyCapitalsTest
+-- Running test case: WI.FontStyles.FeaturePropertyCapitalsTest
 PASS: Property value should be 'all-small-caps'.
 PASS: 'c2sc' feature value should be '1'.
 PASS: 'smcp' feature value should be '1'.
 
--- Running test case: WI.Font.FeaturePropertyNumericTest
+-- Running test case: WI.FontStyles.FeaturePropertyNumericTest
 PASS: Property value should be 'lining-nums tabular-nums stacked-fractions'.
 PASS: 'zero' feature value should be '1'.
 
--- Running test case: WI.Font.FeaturePropertyAlternatesTest
+-- Running test case: WI.FontStyles.FeaturePropertyAlternatesTest
 PASS: Property value should be 'historical-forms'.
 PASS: 'hist' feature value should be '1'.
 
--- Running test case: WI.Font.FeaturePropertyEastAsianTest
+-- Running test case: WI.FontStyles.FeaturePropertyEastAsianTest
 PASS: Property value should be 'jis78 full-width'.
 PASS: 'jp78' feature value should be '1'.
 
--- Running test case: WI.Font.UnregisteredFeaturePropertyTest
+-- Running test case: WI.FontStyles.UnregisteredFeaturePropertyTest
 PASS: 'appl' feature value should be '1'.
 
 -- Running test setup.
 PASS: Font should be loaded.
--- Running test case: WI.Font.VariableFontTest
+-- Running test case: WI.FontStyles.VariableFontTest
 PASS: Width property value should be '50%'.
 PASS: Width axis name should be 'Width'.
 PASS: Width axis value should be '777'.

@@ -22,7 +22,6 @@
 #include "PrintContext.h"
 
 #include "CommonAtomStrings.h"
-#include "DeprecatedGlobalSettings.h"
 #include "ElementTraversal.h"
 #include "GraphicsContext.h"
 #include "Frame.h"
@@ -85,7 +84,7 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
 {
     if (!frame() || !frame()->document())
         return printMargin;
-    if (!DeprecatedGlobalSettings::pageAtRuleSupportEnabled())
+    if (!frame()->settings().pageAtRuleSupportEnabled())
         return printMargin;
     // FIXME Currently no pseudo class is supported.
     auto style = frame()->document()->styleScope().resolver().styleForPage(0);

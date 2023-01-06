@@ -198,6 +198,7 @@ public:
     const CSSCustomPropertyValue* getCustomProperty(const AtomString&) const;
     void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
     void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
+    bool customPropertiesEqual(const RenderStyle&) const;
 
     void setUsesViewportUnits() { m_nonInheritedFlags.usesViewportUnits = true; }
     bool usesViewportUnits() const { return m_nonInheritedFlags.usesViewportUnits; }
@@ -1148,7 +1149,6 @@ public:
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
     void setListStyleImage(RefPtr<StyleImage>&&);
     void setListStylePosition(ListStylePosition v) { m_inheritedFlags.listStylePosition = static_cast<unsigned>(v); }
-
     void resetMargin() { SET_VAR(m_surroundData, margin, LengthBox(LengthType::Fixed)); }
     void setMarginTop(Length&& length) { SET_VAR(m_surroundData, margin.top(), WTFMove(length)); }
     void setMarginBottom(Length&& length) { SET_VAR(m_surroundData, margin.bottom(), WTFMove(length)); }

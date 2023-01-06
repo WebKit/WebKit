@@ -84,7 +84,7 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
 
         auto* context = protectedThis->scriptExecutionContext();
         if (!context) {
-            protectedThis->closeSyncAccessHandle(identifier, { });
+            protectedThis->closeSyncAccessHandle(identifier);
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
         }
 
@@ -92,12 +92,12 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
     });
 }
 
-void FileSystemFileHandle::closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
+void FileSystemFileHandle::closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
 {
     if (isClosed())
-        return completionHandler(Exception { InvalidStateError, "Handle is closed"_s });
+        return;
 
-    connection().closeSyncAccessHandle(identifier(), accessHandleIdentifier, WTFMove(completionHandler));
+    connection().closeSyncAccessHandle(identifier(), accessHandleIdentifier);
 }
 
 void FileSystemFileHandle::registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier, FileSystemSyncAccessHandle& handle)

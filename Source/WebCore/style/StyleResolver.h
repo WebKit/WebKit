@@ -73,13 +73,9 @@ namespace Style {
 struct SelectorMatchingState;
 
 struct ElementStyle {
-    ElementStyle(std::unique_ptr<RenderStyle> renderStyle, std::unique_ptr<Relations> relations = { })
-        : renderStyle(WTFMove(renderStyle))
-        , relations(WTFMove(relations))
-    { }
-
     std::unique_ptr<RenderStyle> renderStyle;
-    std::unique_ptr<Relations> relations;
+    std::unique_ptr<Relations> relations { };
+    std::unique_ptr<MatchResult> matchResult { };
 };
 
 struct ResolutionContext {

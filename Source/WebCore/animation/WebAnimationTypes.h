@@ -53,7 +53,7 @@ struct WebAnimationsMarkableDoubleTraits {
     }
 };
 
-enum class AnimationImpact {
+enum class AnimationImpact : uint8_t {
     RequiresRecomposite     = 1 << 0,
     ForcesStackingContext   = 1 << 1
 };

@@ -204,10 +204,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk()
     static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        if (Wasm::Context::useFastTLS())
-            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue, "function for wasm call"));
-        else
-            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_no_tls, "function for wasm call"));
+        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue, "function for wasm call"));
     });
     return codeRef;
 }
@@ -217,10 +214,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunkSIMD()
     static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        if (Wasm::Context::useFastTLS())
-            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_simd, "function for wasm SIMD call"));
-        else
-            codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_no_tls_simd, "function for wasm SIMD call"));
+        codeRef.construct(generateThunkWithJumpToPrologue<JITThunkPtrTag>(wasm_function_prologue_simd, "function for wasm SIMD call"));
     });
     return codeRef;
 }
@@ -310,7 +304,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize size)
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchThunk(OpcodeSize size)
 {
-    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch : wasm_catch_no_tls;
+    WasmOpcodeID opcode = wasm_catch;
     switch (size) {
     case OpcodeSize::Narrow: {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
@@ -343,7 +337,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchThunk(OpcodeSize si
 
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAllThunk(OpcodeSize size)
 {
-    WasmOpcodeID opcode = Wasm::Context::useFastTLS() ? wasm_catch_all : wasm_catch_all_no_tls;
+    WasmOpcodeID opcode = wasm_catch_all;
     switch (size) {
     case OpcodeSize::Narrow: {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;

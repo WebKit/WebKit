@@ -46,6 +46,6 @@
     attribute EventHandler onmessage;
     attribute EventHandler onmessageerror;
 
-    [Conditional=NOTIFICATION_EVENT, EnabledByDeprecatedGlobalSetting=NotificationEventEnabled] attribute EventHandler onnotificationclick;
-    [Conditional=NOTIFICATION_EVENT, EnabledByDeprecatedGlobalSetting=NotificationEventEnabled] attribute EventHandler onnotificationclose;
+    [Conditional=NOTIFICATION_EVENT, EnabledBySetting=NotificationEventEnabled] attribute EventHandler onnotificationclick;
+    [Conditional=NOTIFICATION_EVENT, EnabledBySetting=NotificationEventEnabled] attribute EventHandler onnotificationclose;
 };

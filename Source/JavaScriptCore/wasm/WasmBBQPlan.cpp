@@ -80,7 +80,7 @@ bool BBQPlan::prepareImpl()
     if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), " WebAssembly functions")
         || !tryReserveCapacity(m_wasmInternalFunctionLinkBuffers, functions.size(), " compilation contexts")
         || !tryReserveCapacity(m_compilationContexts, functions.size(), " compilation contexts")
-        || !tryReserveCapacity(m_tierUpCounts, functions.size(), " tier-up counts")
+        || !tryReserveCapacity(m_callees, functions.size(), " BBQ callees")
         || !tryReserveCapacity(m_allLoopEntrypoints, functions.size(), " loop entrypoints"))
         return false;
 
@@ -88,7 +88,7 @@ bool BBQPlan::prepareImpl()
     m_wasmInternalFunctionLinkBuffers.resize(functions.size());
     m_exceptionHandlerLocations.resize(functions.size());
     m_compilationContexts.resize(functions.size());
-    m_tierUpCounts.resize(functions.size());
+    m_callees.resize(functions.size());
     m_allLoopEntrypoints.resize(functions.size());
 
     return true;
@@ -148,7 +148,15 @@ void BBQPlan::work(CompilationEffort effort)
 #if !CPU(ARM) // We don't want to attempt tier up to OMG on ARM just yet. Not initialising this counter achieves just that.
     tierUp = makeUnique<TierUpCount>();
 #endif
-    std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, context, unlinkedWasmToWasmCalls, tierUp.get());
+    size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
+    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
+    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+
+    bool usesSIMD = m_moduleInformation->isSIMDFunction(m_functionIndex);
+    SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
+    auto* tierUpPointer = tierUp.get();
+    Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
+    std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls, tierUpPointer);
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
@@ -163,13 +171,6 @@ void BBQPlan::work(CompilationEffort effort)
 
     computePCToCodeOriginMap(context, linkBuffer);
 
-    size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
-    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-
-    bool usesSIMD = m_moduleInformation->isSIMDFunction(m_functionIndex);
-    SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
-
     dataLogLnIf(shouldDumpDisassemblyFor(CompilationMode::BBQMode), "Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     dumpDisassembly(context, linkBuffer);
     bool dumpDisassemblyAgain = false;
@@ -179,9 +180,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     CodePtr<WasmEntryPtrTag> entrypoint;
     {
-        Ref<BBQCallee> callee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations), WTFMove(loopEntrypointLocations), function->osrEntryScratchBufferSize, savedFPWidth);
-        for (auto& moveLocation : function->calleeMoveLocations)
-            MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
+        callee->setEntrypoint(WTFMove(function->entrypoint), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations), WTFMove(loopEntrypointLocations), function->osrEntryScratchBufferSize);
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)
@@ -226,33 +225,40 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 {
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
 
-    if (Options::useBBQTierUpChecks() && !isARM())
-        m_tierUpCounts[functionIndex] = makeUnique<TierUpCount>();
-    else
-        m_tierUpCounts[functionIndex] = nullptr;
+    std::unique_ptr<TierUpCount> tierUp;
+    if (Options::useBBQTierUpChecks() && !isARM_THUMB2())
+        tierUp = makeUnique<TierUpCount>();
 
-    m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, m_compilationContexts[functionIndex], m_unlinkedWasmToWasmCalls[functionIndex], m_tierUpCounts[functionIndex].get());
+    unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
+    bool usesSIMD = m_moduleInformation->isSIMDFunction(functionIndex);
+    SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
+    auto* tierUpPointer = tierUp.get();
+    auto& context = m_compilationContexts[functionIndex];
+    Ref<BBQCallee> bbqCallee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
+    m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, bbqCallee.get(), context, m_unlinkedWasmToWasmCalls[functionIndex], tierUpPointer);
     {
-        auto linkBuffer = makeUnique<LinkBuffer>(*m_compilationContexts[functionIndex].wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
         if (linkBuffer->isValid())
             m_wasmInternalFunctionLinkBuffers[functionIndex] = WTFMove(linkBuffer);
     }
+    m_callees[functionIndex] = WTFMove(bbqCallee);
 
     if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
         Locker locker { m_lock };
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-        m_compilationContexts[functionIndex].embedderEntrypointJIT = makeUnique<CCallHelpers>();
-        auto embedderToWasmInternalFunction = createJSToWasmWrapper(*m_compilationContexts[functionIndex].embedderEntrypointJIT, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
-        auto linkBuffer = makeUnique<LinkBuffer>(*m_compilationContexts[functionIndex].embedderEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
+        auto callee = EmbedderEntrypointCallee::create();
+        context.embedderEntrypointJIT = makeUnique<CCallHelpers>();
+        auto embedderToWasmInternalFunction = createJSToWasmWrapper(*context.embedderEntrypointJIT, callee.get(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.embedderEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
 
-        auto result = m_embedderToWasmInternalFunctions.add(functionIndex, std::pair { WTFMove(linkBuffer), WTFMove(embedderToWasmInternalFunction) });
+        auto result = m_embedderToWasmInternalFunctions.add(functionIndex, std::tuple { WTFMove(callee), WTFMove(linkBuffer), WTFMove(embedderToWasmInternalFunction) });
         ASSERT_UNUSED(result, result.isNewEntry);
     }
 }
 
-std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, TierUpCount* tierUp)
+std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, Callee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, TierUpCount* tierUp)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
@@ -262,9 +268,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
     if (!planGeneratesLoopOSREntrypoints(m_moduleInformation.get()))
-        parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
+        parseAndCompileResult = parseAndCompileB3(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
     else
-        parseAndCompileResult = parseAndCompileAir(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
+        parseAndCompileResult = parseAndCompileAir(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -311,8 +317,8 @@ void BBQPlan::didCompleteCompilation()
         {
             auto iter = m_embedderToWasmInternalFunctions.find(functionIndex);
             if (iter != m_embedderToWasmInternalFunctions.end()) {
-                LinkBuffer& linkBuffer = *iter->value.first;
-                const auto& embedderToWasmInternalFunction = iter->value.second;
+                LinkBuffer& linkBuffer = *std::get<1>(iter->value);
+                const auto& embedderToWasmInternalFunction = std::get<2>(iter->value);
 
                 if (linkBuffer.didFailToAllocate()) {
                     Base::fail(makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
@@ -320,8 +326,7 @@ void BBQPlan::didCompleteCompilation()
                 }
 
                 embedderToWasmInternalFunction->entrypoint.compilation = makeUnique<Compilation>(
-                    FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
-                    nullptr);
+                    FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()), nullptr);
             }
         }
     }
@@ -343,31 +348,24 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
 {
     ASSERT(!failed());
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
-
         RefPtr<EmbedderEntrypointCallee> embedderEntrypointCallee;
+        RefPtr<BBQCallee> wasmEntrypointCallee = m_callees[internalFunctionIndex];
         {
             auto iter = m_embedderToWasmInternalFunctions.find(internalFunctionIndex);
             if (iter != m_embedderToWasmInternalFunctions.end()) {
-                const auto& embedderToWasmFunction = iter->value.second;
-                embedderEntrypointCallee = EmbedderEntrypointCallee::create(WTFMove(embedderToWasmFunction->entrypoint));
-                for (auto& moveLocation : embedderToWasmFunction->calleeMoveLocations)
-                    MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(embedderEntrypointCallee.get()));
+                const auto& embedderToWasmFunction = std::get<2>(iter->value);
+                embedderEntrypointCallee = std::get<0>(iter->value);
+                embedderEntrypointCallee->setEntrypoint(WTFMove(embedderToWasmFunction->entrypoint));
             }
         }
 
         InternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
-        size_t functionIndexSpace = internalFunctionIndex + m_moduleInformation->importFunctionCount();
-        bool usesSIMD = m_moduleInformation->isSIMDFunction(internalFunctionIndex);
-        SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
-        Ref<BBQCallee> wasmEntrypointCallee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(m_tierUpCounts[internalFunctionIndex]), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]), WTFMove(m_allLoopEntrypoints[internalFunctionIndex]), function->osrEntryScratchBufferSize, savedFPWidth);
-
-        for (auto& moveLocation : function->calleeMoveLocations)
-            MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
+        wasmEntrypointCallee->setEntrypoint(WTFMove(function->entrypoint), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]), WTFMove(m_allLoopEntrypoints[internalFunctionIndex]), function->osrEntryScratchBufferSize);
 
         if (m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap)
-            CalleeRegistry::singleton().addPCToCodeOriginMap(wasmEntrypointCallee.ptr(), WTFMove(m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap));
+            CalleeRegistry::singleton().addPCToCodeOriginMap(wasmEntrypointCallee.get(), WTFMove(m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap));
 
-        callback(internalFunctionIndex, WTFMove(embedderEntrypointCallee), WTFMove(wasmEntrypointCallee));
+        callback(internalFunctionIndex, WTFMove(embedderEntrypointCallee), wasmEntrypointCallee.releaseNonNull());
     }
 }
 

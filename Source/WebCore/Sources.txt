@@ -744,6 +744,7 @@ css/CSSContainerRule.cpp
 css/CSSContentDistributionValue.cpp
 css/CSSCounterStyle.cpp
 css/CSSCounterStyleDescriptors.cpp
+css/CSSCounterStyleRegistry.cpp
 css/CSSCounterStyleRule.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
@@ -2207,6 +2208,7 @@ platform/graphics/controls/ControlPartType.cpp
 platform/graphics/controls/ControlStyle.cpp
 platform/graphics/controls/MeterPart.cpp
 platform/graphics/controls/ProgressBarPart.cpp
+platform/graphics/controls/SliderTrackPart.cpp
 platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
@@ -3454,6 +3456,8 @@ JSGPUVertexStepMode.cpp
 JSGainNode.cpp
 JSGainOptions.cpp
 JSGamepad.cpp
+JSGamepadEffectParameters.cpp
+JSGamepadHapticActuator.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp
 JSGeolocation.cpp

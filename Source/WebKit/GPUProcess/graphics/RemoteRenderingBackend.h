@@ -103,6 +103,9 @@ public:
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
 
     void releaseResource(WebCore::RenderingResourceIdentifier);
+
+    GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
+
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamServerConnection::Handle&&);
     void startListeningForIPC();

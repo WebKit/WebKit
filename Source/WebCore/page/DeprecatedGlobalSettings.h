@@ -91,24 +91,13 @@ public:
     static void setMenuItemElementEnabled(bool isEnabled) { shared().m_isMenuItemElementEnabled = isEnabled; }
     static bool menuItemElementEnabled() { return shared().m_isMenuItemElementEnabled; }
 
-    static void setDirectoryUploadEnabled(bool isEnabled) { shared().m_isDirectoryUploadEnabled = isEnabled; }
-    static bool directoryUploadEnabled() { return shared().m_isDirectoryUploadEnabled; }
-
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
-
-#if ENABLE(OFFSCREEN_CANVAS)
-    static void setOffscreenCanvasEnabled(bool isEnabled) { shared().m_isOffscreenCanvasEnabled = isEnabled; }
-    static bool offscreenCanvasEnabled() { return shared().m_isOffscreenCanvasEnabled; }
-#endif
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     static void setOffscreenCanvasInWorkersEnabled(bool isEnabled) { shared().m_isOffscreenCanvasInWorkersEnabled = isEnabled; }
     static bool offscreenCanvasInWorkersEnabled() { return shared().m_isOffscreenCanvasInWorkersEnabled; }
 #endif
-
-    static void setCacheAPIEnabled(bool isEnabled) { shared().m_isCacheAPIEnabled = isEnabled; }
-    static bool cacheAPIEnabled() { return shared().m_isCacheAPIEnabled; }
 
     static void setWebSocketEnabled(bool isEnabled) { shared().m_isWebSocketEnabled = isEnabled; }
     static bool webSocketEnabled() { return shared().m_isWebSocketEnabled; }
@@ -131,22 +120,11 @@ public:
     static void setAttrStyleEnabled(bool isEnabled) { shared().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return shared().m_attrStyleEnabled; }
 
-    static void setWebAPIStatisticsEnabled(bool isEnabled) { shared().m_webAPIStatisticsEnabled = isEnabled; }
-    static bool webAPIStatisticsEnabled() { return shared().m_webAPIStatisticsEnabled; }
-
     static void setLayoutFormattingContextEnabled(bool isEnabled) { shared().m_layoutFormattingContextEnabled = isEnabled; }
     static bool layoutFormattingContextEnabled() { return shared().m_layoutFormattingContextEnabled; }
 
     static void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { shared().m_inlineFormattingContextIntegrationEnabled = isEnabled; }
     static bool inlineFormattingContextIntegrationEnabled() { return shared().m_inlineFormattingContextIntegrationEnabled; }
-
-#if ENABLE(CSS_PAINTING_API)
-    static void setCSSPaintingAPIEnabled(bool isEnabled) { shared().m_CSSPaintingAPIEnabled = isEnabled; }
-    static bool cssPaintingAPIEnabled() { return shared().m_CSSPaintingAPIEnabled; }
-#endif
-
-    static void setCSSTypedOMEnabled(bool isEnabled) { shared().m_CSSTypedOMEnabled = isEnabled; }
-    static bool cssTypedOMEnabled() { return shared().m_CSSTypedOMEnabled; }
 
     static void setWebSQLEnabled(bool isEnabled) { shared().m_webSQLEnabled = isEnabled; }
     static bool webSQLEnabled() { return shared().m_webSQLEnabled; }
@@ -187,9 +165,6 @@ public:
     static void setReadableByteStreamAPIEnabled(bool isEnabled) { shared().m_isReadableByteStreamAPIEnabled = isEnabled; }
     static bool readableByteStreamAPIEnabled() { return shared().m_isReadableByteStreamAPIEnabled; }
 
-    static void setCSSLogicalEnabled(bool isEnabled) { shared().m_CSSLogicalEnabled = isEnabled; }
-    static bool cssLogicalEnabled() { return shared().m_CSSLogicalEnabled; }
-
     static void setLineHeightUnitsEnabled(bool isEnabled) { shared().m_lineHeightUnitsEnabled = isEnabled; }
     static bool lineHeightUnitsEnabled() { return shared().m_lineHeightUnitsEnabled; }
 
@@ -199,22 +174,14 @@ public:
     static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
 
 #if ENABLE(TOUCH_EVENTS)
-    static bool mouseEventsSimulationEnabled() { return shared().m_mouseEventsSimulationEnabled; }
-    static void setMouseEventsSimulationEnabled(bool isEnabled) { shared().m_mouseEventsSimulationEnabled = isEnabled; }
     static bool touchEventsEnabled();
     static void setTouchEventsEnabled(bool isEnabled) { shared().m_touchEventsEnabled = isEnabled; }
 #endif
-
-    static bool pageAtRuleSupportEnabled() { return shared().m_pageAtRuleSupportEnabled; }
-    static void setPageAtRuleSupportEnabled(bool isEnabled) { shared().m_pageAtRuleSupportEnabled = isEnabled; }
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
     static bool isNSURLSessionWebSocketEnabled() { return shared().m_isNSURLSessionWebSocketEnabled; }
     static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
 #endif
-
-    static bool secureContextChecksEnabled() { return shared().m_secureContextChecksEnabled; }
-    static void setSecureContextChecksEnabled(bool isEnabled) { shared().m_secureContextChecksEnabled = isEnabled; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
@@ -228,7 +195,7 @@ public:
     static void setIncrementalPDFLoadingEnabled(bool isEnabled) { shared().m_incrementalPDFLoadingEnabled = isEnabled; }
     static bool incrementalPDFLoadingEnabled() { return shared().m_incrementalPDFLoadingEnabled; }
 #endif
-    
+
 #if ENABLE(WEBM_FORMAT_READER)
     static void setWebMFormatReaderEnabled(bool isEnabled) { shared().m_webMFormatReaderEnabled = isEnabled; }
     static bool webMFormatReaderEnabled() { return shared().m_webMFormatReaderEnabled; }
@@ -262,11 +229,6 @@ public:
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { shared().m_builtInNotificationsEnabled = isEnabled; }
     static bool builtInNotificationsEnabled() { return shared().m_builtInNotificationsEnabled; }
-#endif
-
-#if ENABLE(NOTIFICATION_EVENT)
-    static void setNotificationEventEnabled(bool isEnabled) { shared().m_notificationEventEnabled = isEnabled; }
-    static bool notificationEventEnabled() { return shared().m_notificationEventEnabled; }
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
@@ -309,15 +271,10 @@ private:
 
     bool m_isPaintTimingEnabled { false };
     bool m_isMenuItemElementEnabled { false };
-    bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
-#if ENABLE(OFFSCREEN_CANVAS)
-    bool m_isOffscreenCanvasEnabled { false };
-#endif
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     bool m_isOffscreenCanvasInWorkersEnabled { false };
 #endif
-    bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
@@ -325,21 +282,13 @@ private:
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };
-    bool m_webAPIStatisticsEnabled { false };
     bool m_syntheticEditingCommandsEnabled { true };
     bool m_webSQLEnabled { false };
     bool m_keygenElementEnabled { false };
-    bool m_pageAtRuleSupportEnabled { false };
     bool m_highlightAPIEnabled { false };
 
     bool m_layoutFormattingContextEnabled { false };
     bool m_inlineFormattingContextIntegrationEnabled { true };
-
-#if ENABLE(CSS_PAINTING_API)
-    bool m_CSSPaintingAPIEnabled { false };
-#endif
-
-    bool m_CSSTypedOMEnabled { false };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };
@@ -363,8 +312,6 @@ private:
 
     bool m_isReadableByteStreamAPIEnabled { false };
 
-    bool m_CSSLogicalEnabled { false };
-
     // False by default until https://bugs.webkit.org/show_bug.cgi?id=211351 /
     // https://github.com/w3c/csswg-drafts/issues/3257 have been sorted out.
     bool m_lineHeightUnitsEnabled { false };
@@ -377,15 +324,12 @@ private:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    bool m_mouseEventsSimulationEnabled { false };
     std::optional<bool> m_touchEventsEnabled;
 #endif
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
     bool m_isNSURLSessionWebSocketEnabled { false };
 #endif
-
-    bool m_secureContextChecksEnabled { true };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
@@ -423,10 +367,6 @@ private:
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     bool m_builtInNotificationsEnabled { false };
-#endif
-
-#if ENABLE(NOTIFICATION_EVENT)
-    bool m_notificationEventEnabled { true };
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

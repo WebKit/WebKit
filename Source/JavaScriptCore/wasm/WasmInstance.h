@@ -126,7 +126,7 @@ public:
 
     int32_t loadI32Global(unsigned i) const
     {
-        Global::Value* slot = m_globals.get() + i;
+        Global::Value* slot = m_globals + i;
         if (m_globalsToBinding.get(i)) {
             slot = slot->m_pointer;
             if (!slot)
@@ -136,7 +136,7 @@ public:
     }
     int64_t loadI64Global(unsigned i) const
     {
-        Global::Value* slot = m_globals.get() + i;
+        Global::Value* slot = m_globals + i;
         if (m_globalsToBinding.get(i)) {
             slot = slot->m_pointer;
             if (!slot)
@@ -146,7 +146,7 @@ public:
     }
     void setGlobal(unsigned i, int64_t bits)
     {
-        Global::Value* slot = m_globals.get() + i;
+        Global::Value* slot = m_globals + i;
         if (m_globalsToBinding.get(i)) {
             slot = slot->m_pointer;
             if (!slot)
@@ -157,7 +157,7 @@ public:
 
     v128_t loadV128Global(unsigned i) const
     {
-        Global::Value* slot = m_globals.get() + i;
+        Global::Value* slot = m_globals + i;
         if (m_globalsToBinding.get(i)) {
             slot = slot->m_pointer;
             if (!slot)
@@ -167,7 +167,7 @@ public:
     }
     void setGlobal(unsigned i, v128_t bits)
     {
-        Global::Value* slot = m_globals.get() + i;
+        Global::Value* slot = m_globals + i;
         if (m_globalsToBinding.get(i)) {
             slot = slot->m_pointer;
             if (!slot)
@@ -186,7 +186,7 @@ public:
     Wasm::Global* getGlobalBinding(unsigned i)
     {
         ASSERT(m_globalsToBinding.get(i));
-        Wasm::Global::Value* pointer = m_globals.get()[i].m_pointer;
+        Global::Value* pointer = m_globals[i].m_pointer;
         if (!pointer)
             return nullptr;
         return &Wasm::Global::fromBinding(*pointer);
@@ -220,6 +220,7 @@ public:
 
     static_assert(sizeof(ImportFunctionInfo) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(ImportFunctionInfo)), "We rely on this for the alignment to be correct");
     static constexpr size_t offsetOfTablePtr(unsigned numImportFunctions, unsigned i) { return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * i; }
+    static constexpr size_t offsetOfGlobalPtr(unsigned numImportFunctions, unsigned numTables, unsigned i) { return roundUpToMultipleOf<sizeof(Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables) + sizeof(Global::Value) * i; }
 
     void storeTopCallFrame(void* callFrame)
     {
@@ -232,9 +233,9 @@ public:
 private:
     Instance(VM&, Ref<Module>&&);
     
-    static size_t allocationSize(Checked<size_t> numImportFunctions, Checked<size_t> numTables)
+    static size_t allocationSize(Checked<size_t> numImportFunctions, Checked<size_t> numTables, Checked<size_t> numGlobals)
     {
-        return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables;
+        return roundUpToMultipleOf<sizeof(Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables) + sizeof(Global::Value) * numGlobals;
     }
     void* m_owner { nullptr }; // In a JS embedding, this is a JSWebAssemblyInstance*.
     VM* m_vm;
@@ -243,7 +244,7 @@ private:
     Ref<Module> m_module;
     RefPtr<Memory> m_memory;
 
-    MallocPtr<Global::Value, VMMalloc> m_globals;
+    Global::Value* m_globals { nullptr };
     FunctionWrapperMap m_functionWrappers;
     BitVector m_globalsToMark;
     BitVector m_globalsToBinding;

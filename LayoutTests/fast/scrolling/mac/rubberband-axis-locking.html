@@ -34,7 +34,7 @@
 
             window.addEventListener('scroll', scrollListener);
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             // Pull down and slightly sideways
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 2, "began", "none");
@@ -58,7 +58,7 @@
 
             window.addEventListener('scroll', scrollListener);
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             // Pull left and slightly sideways
             eventSender.mouseScrollByWithWheelAndMomentumPhases(2, 0, "began", "none");

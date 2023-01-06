@@ -102,6 +102,7 @@ class AppHighlightStorage;
 class Attr;
 class CanvasBase;
 class CDATASection;
+class CSSCounterStyleRegistry;
 class CSSCustomPropertyValue;
 class CSSFontSelector;
 class CSSStyleDeclaration;
@@ -593,6 +594,8 @@ public:
     const ExtensionStyleSheets& extensionStyleSheets() const { return *m_extensionStyleSheets; }
 
     const Style::CustomPropertyRegistry& customPropertyRegistry() const;
+    const CSSCounterStyleRegistry& counterStyleRegistry() const;
+    CSSCounterStyleRegistry& counterStyleRegistry();
 
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }

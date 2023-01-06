@@ -96,6 +96,12 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #endif
     ApplyDeviceScaleFactor(float scaleFactor)
     FlushContext(WebKit::DisplayListRecorderFlushIdentifier identifier)
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    PaintVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, bool shouldDiscardAlpha) NotStreamEncodable
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
+    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

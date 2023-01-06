@@ -46,7 +46,7 @@
                 return;
             }
             
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(20, 20);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "changed", "none");

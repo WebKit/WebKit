@@ -134,8 +134,6 @@ public:
     bool needsVP9FullRangeFlagQuirk() const;
     bool needsHDRPixelDepthQuirk() const;
     
-    bool needsFlightAwareSerializationQuirk() const;
-
     bool requiresUserGestureToPauseInPictureInPicture() const;
     bool requiresUserGestureToLoadInPictureInPicture() const;
 
@@ -201,7 +199,6 @@ private:
     mutable std::optional<bool> m_shouldBypassAsyncScriptDeferring;
     mutable std::optional<bool> m_needsVP9FullRangeFlagQuirk;
     mutable std::optional<bool> m_needsHDRPixelDepthQuirk;
-    mutable std::optional<bool> m_needsFlightAwareSerializationQuirk;
     mutable std::optional<bool> m_needsBlackFullscreenBackgroundQuirk;
     mutable std::optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
     mutable std::optional<bool> m_requiresUserGestureToLoadInPictureInPicture;

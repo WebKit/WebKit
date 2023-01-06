@@ -337,10 +337,26 @@ void RemoteDisplayListRecorderProxy::recordFillEllipse(const FloatRect& rect)
     send(Messages::RemoteDisplayListRecorder::FillEllipse(rect));
 }
 
+#if ENABLE(VIDEO)
 void RemoteDisplayListRecorderProxy::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     send(Messages::RemoteDisplayListRecorder::PaintFrameForMedia(player.identifier(), destination));
 }
+
+void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
+{
+#if PLATFORM(COCOA)
+    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(frame, [&](auto& semaphore) {
+        send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameSemaphore { semaphore });
+    }, [&](auto& handle) {
+        send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameMemory { handle });
+    });
+    if (!sharedVideoFrame)
+        return;
+    send(Messages::RemoteDisplayListRecorder::PaintVideoFrame(*sharedVideoFrame, destination, shouldDiscardAlpha));
+#endif
+}
+#endif
 
 void RemoteDisplayListRecorderProxy::recordStrokeRect(const FloatRect& rect, float width)
 {
@@ -508,6 +524,9 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(con
 void RemoteDisplayListRecorderProxy::disconnect()
 {
     m_renderingBackend = nullptr;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    m_sharedVideoFrameWriter.disable();
+#endif
 }
 
 } // namespace WebCore

@@ -42,9 +42,9 @@ constexpr bool isARMv7IDIVSupported()
 #endif
 }
 
-constexpr bool isARM()
+constexpr bool isARM_THUMB2()
 {
-#if CPU(ARM)
+#if CPU(ARM_THUMB2)
     return true;
 #else
     return false;
@@ -69,6 +69,23 @@ constexpr bool isARM64E()
 #endif
 }
 
+#if CPU(ARM64)
+#if CPU(ARM64E) || OS(MAC_OS_X)
+// ARM64E or all macOS ARM64 CPUs have LSE.
+constexpr bool isARM64_LSE()
+{
+    return true;
+}
+#else
+JS_EXPORT_PRIVATE bool isARM64_LSE();
+#endif
+#else
+constexpr bool isARM64_LSE()
+{
+    return false;
+}
+#endif
+
 constexpr bool isX86()
 {
 #if CPU(X86_64) || CPU(X86)
@@ -86,6 +103,15 @@ constexpr bool isX86_64()
     return false;
 #endif
 }
+
+#if CPU(X86_64)
+JS_EXPORT_PRIVATE bool isX86_64_AVX();
+#else
+constexpr bool isX86_64_AVX()
+{
+    return false;
+}
+#endif
 
 constexpr bool isMIPS()
 {

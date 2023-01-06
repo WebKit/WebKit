@@ -55,7 +55,7 @@ async function test()
         await rootHandle.removeEntry("sync-access-handle.txt").then(() => { }, () => { });
         var fileHandle = await rootHandle.getFileHandle("sync-access-handle.txt", { "create" : true  });
         accessHandle = await fileHandle.createSyncAccessHandle();
-        fileSize = await accessHandle.getSize();
+        fileSize = accessHandle.getSize();
         shouldBe("fileSize", "0");
 
         debug("test read() and write():");
@@ -75,22 +75,22 @@ async function test()
         shouldThrow("accessHandle.write(new ArrayBuffer(1), { \"at\" : Number.MAX_SAFE_INTEGER })");
 
         debug("test flush():");
-        await accessHandle.flush();
-        fileSize = await accessHandle.getSize();
+        accessHandle.flush();
+        fileSize = accessHandle.getSize();
         shouldBe("fileSize", "totalWriteSize");
 
         debug("test truncate():");
-        await accessHandle.truncate(4);
-        await accessHandle.flush();
-        fileSize = await accessHandle.getSize();
+        accessHandle.truncate(4);
+        accessHandle.flush();
+        fileSize = accessHandle.getSize();
         shouldBe("fileSize", "4");
 
         debug("test write() with pending operation:");
         evalAndLog("accessHandle.truncate(0)");
         readBuffer = new ArrayBuffer(4);
-        shouldThrow("accessHandle.read(readBuffer, { \"at\" : 0 })");
+        shouldBe("accessHandle.read(readBuffer, { \"at\" : 0 })", "0");
 
-        await accessHandle.close();
+        accessHandle.close();
         finishTest();
     } catch (error) {
         finishTest(error);

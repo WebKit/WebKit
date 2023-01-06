@@ -86,8 +86,7 @@ void TextFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float d
     }
 
 #if ENABLE(DATALIST_ELEMENT)
-    if (states.contains(ControlStyle::State::ListButton))
-        drawListButton(context, rect, deviceScaleFactor, style);
+    drawListButton(context, rect, deviceScaleFactor, style);
 #endif
 }
 

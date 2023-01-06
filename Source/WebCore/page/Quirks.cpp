@@ -358,7 +358,7 @@ bool Quirks::isGoogleMaps() const
 
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
-    if (DeprecatedGlobalSettings::mouseEventsSimulationEnabled())
+    if (m_document->settings().mouseEventsSimulationEnabled())
         return true;
 
     if (!needsQuirks())
@@ -1280,18 +1280,6 @@ bool Quirks::needsHDRPixelDepthQuirk() const
         m_needsHDRPixelDepthQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "www.youtube.com"_s);
 
     return *m_needsHDRPixelDepthQuirk;
-}
-
-// FIXME: remove this once rdar://92531240 has been fixed.
-bool Quirks::needsFlightAwareSerializationQuirk() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_needsFlightAwareSerializationQuirk)
-        m_needsFlightAwareSerializationQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "flightaware.com"_s);
-
-    return *m_needsFlightAwareSerializationQuirk;
 }
 
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const

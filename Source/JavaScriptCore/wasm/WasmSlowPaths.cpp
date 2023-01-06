@@ -401,7 +401,7 @@ WASM_SLOW_PATH_DECL(array_new)
 
     Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
     ASSERT(arraySignature.is<Wasm::ArrayType>());
-    Wasm::Type elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 
     EncodedJSValue value = 0;
     if (useDefault) {
@@ -420,14 +420,23 @@ WASM_SLOW_PATH_DECL(array_get)
     if (JSValue::decode(arrayref).isNull())
         WASM_THROW(Wasm::ExceptionType::NullArrayGet);
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
-
     JSValue arrayValue = JSValue::decode(arrayref);
     ASSERT(arrayValue.isObject());
     JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
-
-    WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
+    Wasm::GCOpType arrayGetKind = static_cast<Wasm::GCOpType>(instruction.m_arrayGetKind);
+    if (arrayGetKind == Wasm::GCOpType::ArrayGetS) {
+        EncodedJSValue value = Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index);
+        Wasm::StorageType type = arrayObject->elementType().type;
+        ASSERT(type.is<Wasm::PackedType>());
+        size_t elementSize = type.as<Wasm::PackedType>() == Wasm::PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
+        uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+        int32_t result = static_cast<int32_t>(value);
+        result = result << bitShift;
+        WASM_RETURN(static_cast<EncodedJSValue>(result >> bitShift));
+    } else
+        WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
 }
 
 WASM_SLOW_PATH_DECL(array_set)
@@ -563,14 +572,6 @@ WASM_SLOW_PATH_DECL(call)
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
-WASM_SLOW_PATH_DECL(call_no_tls)
-{
-    UNUSED_PARAM(callFrame);
-
-    auto instruction = pc->as<WasmCallNoTls>();
-    return doWasmCall(instance, instruction.m_functionIndex);
-}
-
 inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
 {
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
@@ -593,13 +594,6 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
 WASM_SLOW_PATH_DECL(call_indirect)
 {
     auto instruction = pc->as<WasmCallIndirect>();
-    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
-    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
-}
-
-WASM_SLOW_PATH_DECL(call_indirect_no_tls)
-{
-    auto instruction = pc->as<WasmCallIndirectNoTls>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
@@ -632,13 +626,6 @@ WASM_SLOW_PATH_DECL(call_ref)
     return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
 }
 
-WASM_SLOW_PATH_DECL(call_ref_no_tls)
-{
-    auto instruction = pc->as<WasmCallRefNoTls>();
-    JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
-    return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
-}
-
 WASM_SLOW_PATH_DECL(tail_call)
 {
     UNUSED_PARAM(callFrame);
@@ -646,23 +633,9 @@ WASM_SLOW_PATH_DECL(tail_call)
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
-WASM_SLOW_PATH_DECL(tail_call_no_tls)
-{
-    UNUSED_PARAM(callFrame);
-    auto instruction = pc->as<WasmTailCallNoTls>();
-    return doWasmCall(instance, instruction.m_functionIndex);
-}
-
 WASM_SLOW_PATH_DECL(tail_call_indirect)
 {
     auto instruction = pc->as<WasmTailCallIndirect>();
-    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
-    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
-}
-
-WASM_SLOW_PATH_DECL(tail_call_indirect_no_tls)
-{
-    auto instruction = pc->as<WasmTailCallIndirectNoTls>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
 }
@@ -906,10 +879,6 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
         handleCatch(pc->as<WasmCatch>());
     else if (pc->is<WasmCatchAll>())
         handleCatchAll(pc->as<WasmCatchAll>());
-    else if (pc->is<WasmCatchNoTls>())
-        handleCatch(pc->as<WasmCatchNoTls>());
-    else if (pc->is<WasmCatchAllNoTls>())
-        handleCatchAll(pc->as<WasmCatchAllNoTls>());
     else
         RELEASE_ASSERT_NOT_REACHED();
 

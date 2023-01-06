@@ -35,6 +35,7 @@
             }
         </style>
         <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         window.jsTestIsAsync = true;
 
@@ -43,7 +44,8 @@
         var divScrollPositionBeforeSnap;
         var divScrollPositionBeforeSingleAxisGlide;
 
-        function checkForSingleAxisGlide() {
+        function checkForSingleAxisGlide()
+        {
             if (divTarget.scrollTop == divScrollPositionBeforeSingleAxisGlide.y + 400 && divTarget.scrollLeft == divScrollPositionBeforeSingleAxisGlide.x)
                 testPassed("div successfully snapped after dragging along one axis and then scrolling in the other.");
             else
@@ -51,13 +53,14 @@
             finishJSTest();
         }
 
-        function scrollAndGlideInSingleAxisTest() {
+        async function scrollAndGlideInSingleAxisTest()
+        {
             divScrollPositionBeforeSingleAxisGlide = {
                 x: divTarget.scrollLeft,
                 y: divTarget.scrollTop
             };
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
@@ -69,10 +72,12 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "begin");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            eventSender.callAfterScrollingCompletes(checkForSingleAxisGlide);
+            await UIHelper.waitForScrollCompletion();
+            checkForSingleAxisGlide();
         }
 
-        function checkForScrollSnap() {
+        function checkForScrollSnap()
+        {
             if (divTarget.scrollTop == divScrollPositionBeforeSnap.y && divTarget.scrollLeft == divScrollPositionBeforeSnap.x)
                 testPassed("div successfully snapped diagonally.");
             else
@@ -80,22 +85,25 @@
             setTimeout(scrollAndGlideInSingleAxisTest, 0);
         }
 
-        function scrollSnapTest() {
+        async function scrollSnapTest()
+        {
             divScrollPositionBeforeSnap = {
                 x: divTarget.scrollLeft,
                 y: divTarget.scrollTop
             };
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-            eventSender.callAfterScrollingCompletes(checkForScrollSnap);
+            await UIHelper.waitForScrollCompletion();
+            checkForScrollSnap();
         }
 
-        function checkForScrollGlide() {
+        function checkForScrollGlide()
+        {
             // The div should have scrolled (glided) to the next snap point.
             if (divTarget.scrollTop == divScrollPositionBeforeGlide.y + 400 && divTarget.scrollLeft == divScrollPositionBeforeGlide.x + 400)
                 testPassed("div successfully scrolled diagonally.");
@@ -104,14 +112,15 @@
             setTimeout(scrollSnapTest, 0);
         }
 
-        function scrollGlideTest() {
+        async function scrollGlideTest()
+        {
             divTarget = document.getElementById("grid-container");
             divScrollPositionBeforeGlide = {
                 x: divTarget.scrollLeft,
                 y: divTarget.scrollTop
             };
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
@@ -121,10 +130,12 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "begin");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            eventSender.callAfterScrollingCompletes(checkForScrollGlide);
+            await UIHelper.waitForScrollCompletion();
+            checkForScrollGlide();
         }
 
-        function onLoad() {
+        function onLoad()
+        {
             if (window.eventSender) {
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(scrollGlideTest, 0);

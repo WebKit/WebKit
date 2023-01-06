@@ -219,6 +219,13 @@
     --image-button-navigation-item-width: 26px;
 
     --blackboxed-opacity: 0.5;
+
+    --slider-thumb-background: white;
+    --slider-thumb-background-active: hsl(0, 0%, 94%);
+    --slider-thumb-box-shadow: 0px 0 2px 0 hsl(0, 0%, 55%);
+    --slider-track-background: hsl(0, 0%, 88%);
+    --slider-track-box-shadow: inset 0 0 3px hsl(0, 0%, 70%);
+    --slider-track-tick-background: hsl(0, 0%, 70%);
 }
 
 body.window-inactive {
@@ -387,6 +394,13 @@ body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
         --diff-addition-background-color: hsl(90, 40%, 19%);
         --diff-deletion-text-color: hsl(0, 84%, 75%);
         --diff-deletion-background-color: hsl(5, 40%, 28%);
+
+        --slider-thumb-background: hsl(0, 0%, 60%);
+        --slider-thumb-background-active: hsl(0, 0%, 70%);
+        --slider-thumb-box-shadow: 0px 0 2px 0 hsl(0, 0%, 10%);
+        --slider-track-background: hsl(0, 0%, 35%);
+        --slider-track-box-shadow: inset 0 0 3px hsl(0, 0%, 20%);
+        --slider-track-tick-background: hsl(0, 0%, 55%);
     }
 
 

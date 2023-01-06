@@ -1582,6 +1582,7 @@ enum class WebCore::AlphaPremultiplication : uint8_t {
 
 enum class WebCore::PixelFormat : uint8_t {
     RGBA8,
+    BGRX8,
     BGRA8,
     RGB10,
     RGB10A8,
@@ -2356,7 +2357,8 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     LargeControls,
     ReadOnly,
     ListButton,
-    ListButtonPressed
+    ListButtonPressed,
+    VerticalWritingMode
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ControlStyle {
@@ -2364,6 +2366,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     unsigned fontSize;
     float zoomFactor;
     WebCore::Color accentColor;
+    WebCore::Color textColor;
 };
 
 enum class WebCore::ControlPartType : uint8_t {
@@ -2428,6 +2431,13 @@ enum class WebCore::ControlPartType : uint8_t {
     double position();
     Seconds animationStartTime();
 };
+
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackPart {
+    WebCore::ControlPartType type();
+    WebCore::IntSize thumbSize();
+    WebCore::IntRect trackBounds();
+    Vector<double> tickRatios();
+}
 
 enum class WebCore::HasInsecureContent : bool
 

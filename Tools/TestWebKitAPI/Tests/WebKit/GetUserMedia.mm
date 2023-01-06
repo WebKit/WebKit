@@ -719,10 +719,8 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
             [preferences _setEnabled:NO forInternalDebugFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forInternalDebugFeature:feature];
-    }
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
         if ([feature.key isEqualToString:@"WebRTCPlatformCodecsInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forFeature:feature];
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
     }
 
     initializeMediaCaptureConfiguration(configuration.get());

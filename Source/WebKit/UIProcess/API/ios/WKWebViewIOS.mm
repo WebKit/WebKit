@@ -938,7 +938,15 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && !WebKit::scalesAreEssentiallyEqual([_scrollView zoomScale], layerTreeTransaction.pageScaleFactor())) {
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());
+
+        // When web-process-originated scale changes occur, pin the
+        // vertical scroll position to the top edge of the content,
+        // instead of the center (which UIScrollView does by default).
+        CGFloat contentOffsetY = [_scrollView contentOffset].y * layerTreeTransaction.pageScaleFactor() / [_scrollView zoomScale];
+
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
+
+        [_scrollView setContentOffset:CGPointMake([_scrollView contentOffset].x, contentOffsetY)];
     }
 }
 
@@ -1007,6 +1015,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         [self _didCommitLayerTreeDuringAnimatedResize:layerTreeTransaction];
         return;
     }
+
+    if (_perProcessState.liveResizeParameters)
+        return;
 
     if (_resizeAnimationView)
         WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _didCommitLayerTree:] - dynamicViewportUpdateMode is NotResizing, but still have a live resizeAnimationView (unpaired begin/endAnimatedResize?)", self);
@@ -2090,12 +2101,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_dispatchSetViewLayoutSize:(WebCore::FloatSize)viewLayoutSize
 {
-    if (_perProcessState.lastSentViewLayoutSize && CGSizeEqualToSize(_perProcessState.lastSentViewLayoutSize.value(), viewLayoutSize))
+    auto newMinimumEffectiveDeviceWidth = _page->minimumEffectiveDeviceWidth();
+    if (_perProcessState.lastSentViewLayoutSize && CGSizeEqualToSize(_perProcessState.lastSentViewLayoutSize.value(), viewLayoutSize) && _perProcessState.lastSentMinimumEffectiveDeviceWidth && _perProcessState.lastSentMinimumEffectiveDeviceWidth == newMinimumEffectiveDeviceWidth)
         return;
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _dispatchSetViewLayoutSize:] " << viewLayoutSize << " contentZoomScale " << contentZoomScale(self));
-    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor(), _page->minimumEffectiveDeviceWidth());
+    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor(), newMinimumEffectiveDeviceWidth);
     _perProcessState.lastSentViewLayoutSize = viewLayoutSize;
+    _perProcessState.lastSentMinimumEffectiveDeviceWidth = newMinimumEffectiveDeviceWidth;
 }
 
 - (void)_dispatchSetDeviceOrientation:(int32_t)deviceOrientation
@@ -2489,8 +2502,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         || _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard) {
         _perProcessState.didDeferUpdateVisibleContentRectsForAnyReason = YES;
         _perProcessState.didDeferUpdateVisibleContentRectsForUnstableScrollView = YES;
-        WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _updateVisibleContentRects:] - scroll view state is non-stable, bailing (dynamicViewportUpdateMode %d, needsResetViewStateAfterCommitLoadForMainFrame %d, sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, currentlyAdjustingScrollViewInsetsForKeyboard %d)",
-            self, _page->identifier().toUInt64(), _perProcessState.dynamicViewportUpdateMode, _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard);
+        WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _updateVisibleContentRects:] - scroll view state is non-stable, bailing (shouldDeferGeometryUpdates %d, dynamicViewportUpdateMode %d, needsResetViewStateAfterCommitLoadForMainFrame %d, sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, currentlyAdjustingScrollViewInsetsForKeyboard %d)",
+            self, _page->identifier().toUInt64(), self._shouldDeferGeometryUpdates, _perProcessState.dynamicViewportUpdateMode, _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard);
         return;
     }
 
@@ -2687,8 +2700,9 @@ static int32_t activeOrientation(WKWebView *webView)
     auto newMinimumUnobscuredSize = activeMinimumUnobscuredSize(self, newBounds);
     auto newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
     int32_t newOrientation = activeOrientation(self);
+    auto newMinimumEffectiveDeviceWidth = [self _minimumEffectiveDeviceWidth];
 
-    if (!_perProcessState.lastSentViewLayoutSize || newViewLayoutSize != _perProcessState.lastSentViewLayoutSize.value())
+    if (!_perProcessState.lastSentViewLayoutSize || newViewLayoutSize != _perProcessState.lastSentViewLayoutSize.value() || newMinimumEffectiveDeviceWidth != _perProcessState.lastSentMinimumEffectiveDeviceWidth.value())
         [self _dispatchSetViewLayoutSize:newViewLayoutSize];
 
     if (_minimumUnobscuredSizeOverride)
@@ -3701,6 +3715,7 @@ static bool isLockdownModeWarningNeeded()
 
     _perProcessState.lastSentViewLayoutSize = newViewLayoutSize;
     _perProcessState.lastSentDeviceOrientation = newOrientation;
+    _perProcessState.lastSentMinimumEffectiveDeviceWidth = newMinimumEffectiveDeviceWidth;
 
     _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMinimumUnobscuredSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID);
     if (WebKit::DrawingAreaProxy* drawingArea = _page->drawingArea())

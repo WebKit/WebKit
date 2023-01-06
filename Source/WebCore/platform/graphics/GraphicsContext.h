@@ -274,8 +274,6 @@ public:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);
-#endif
-#if ENABLE(WEB_CODECS)
     WEBCORE_EXPORT virtual void paintVideoFrame(VideoFrame&, const FloatRect& destination, bool shouldDiscardAlpha);
 #endif
 

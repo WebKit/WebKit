@@ -39,7 +39,7 @@
             }
 
             eventSender.mouseMoveTo(200, 350); // Over the overflow.
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');

@@ -44,7 +44,7 @@ void WebPage::updateSettingsGenerated(const WebPreferencesStore& store, WebCore:
 #if <%= @pref.condition %>
 <%- end -%>
 <%- if @pref.exposed -%>
-    settings.set<%= @pref.webcoreNameUpper %>(store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()));
+    settings.set<%= @pref.webcoreNameUpper %>(<%= @pref.upcast %>store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key())<%= ")" if @pref.upcast %>);
 <%- else -%>
     settings.set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
 <%- end -%>

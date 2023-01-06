@@ -163,6 +163,7 @@ struct PerWebProcessState {
 
     std::optional<WebCore::FloatSize> lastSentViewLayoutSize;
     std::optional<int32_t> lastSentDeviceOrientation;
+    std::optional<CGFloat> lastSentMinimumEffectiveDeviceWidth;
 
     std::optional<CGRect> frozenVisibleContentRect;
     std::optional<CGRect> frozenUnobscuredContentRect;

@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledByDeprecatedGlobalSetting=DirectoryUploadEnabled,
+    EnabledBySetting=DirectoryUploadEnabled,
     Exposed=Window
 ] interface FileSystemFileEntry : FileSystemEntry {
     [CallWith=CurrentScriptExecutionContext] undefined file(FileCallback successCallback, optional ErrorCallback? errorCallback);

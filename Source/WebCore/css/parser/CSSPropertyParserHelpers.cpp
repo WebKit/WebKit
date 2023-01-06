@@ -78,7 +78,6 @@
 #include "ColorLuminance.h"
 #include "ColorNormalization.h"
 #include "Counter.h"
-#include "DeprecatedGlobalSettings.h"
 #include "FontFace.h"
 #include "Logging.h"
 #include "Pair.h"
@@ -4295,9 +4294,9 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
 }
 
 #if ENABLE(CSS_PAINTING_API)
-static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args)
+static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    if (!DeprecatedGlobalSettings::cssPaintingAPIEnabled())
+    if (!context.cssPaintingAPIEnabled)
         return nullptr;
     if (args.peek().type() != IdentToken)
         return nullptr;
@@ -4351,7 +4350,7 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, const 
         result = consumeFilterImage(args, context);
 #if ENABLE(CSS_PAINTING_API)
     else if (id == CSSValuePaint)
-        result = consumeCustomPaint(args);
+        result = consumeCustomPaint(args, context);
 #endif
     if (!result || !args.atEnd())
         return nullptr;

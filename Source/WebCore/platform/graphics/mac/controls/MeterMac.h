@@ -28,10 +28,9 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import "MeterPart.h"
 
 namespace WebCore {
-
-class MeterPart;
 
 class MeterMac : public ControlMac {
 public:

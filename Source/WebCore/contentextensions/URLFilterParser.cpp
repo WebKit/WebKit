@@ -239,7 +239,7 @@ public:
         m_floatingTerm = m_openGroups.takeLast();
     }
 
-    void disjunction()
+    void disjunction(JSC::Yarr::CreateDisjunctionPurpose)
     {
         fail(URLFilterParser::Disjunction);
     }

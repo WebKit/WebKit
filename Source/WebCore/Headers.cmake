@@ -446,6 +446,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     accessibility/AXLogger.h
     accessibility/AXObjectCache.h
+    accessibility/AXTreeStore.h
     accessibility/AXTextStateChangeIntent.h
     accessibility/AccessibilityListBox.h
     accessibility/AccessibilityMenuListPopup.h
@@ -595,6 +596,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSConditionRule.h
     css/CSSCounterStyle.h
     css/CSSCounterStyleDescriptors.h
+    css/CSSCounterStyleRegistry.h
     css/CSSCounterStyleRule.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
@@ -1741,13 +1743,20 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ANGLEUtilities.h
     platform/graphics/angle/GraphicsContextGLANGLE.h
 
+    platform/graphics/controls/ButtonPart.h
     platform/graphics/controls/ControlFactory.h
     platform/graphics/controls/ControlPart.h
     platform/graphics/controls/ControlPartType.h
     platform/graphics/controls/ControlStyle.h
+    platform/graphics/controls/InnerSpinButtonPart.h
+    platform/graphics/controls/MenuListPart.h
     platform/graphics/controls/MeterPart.h
     platform/graphics/controls/PlatformControl.h
     platform/graphics/controls/ProgressBarPart.h
+    platform/graphics/controls/SearchFieldCancelButtonPart.h
+    platform/graphics/controls/SearchFieldPart.h
+    platform/graphics/controls/SliderThumbPart.h
+    platform/graphics/controls/SliderTrackPart.h
     platform/graphics/controls/TextAreaPart.h
     platform/graphics/controls/TextFieldPart.h
     platform/graphics/controls/ToggleButtonPart.h

@@ -12998,7 +12998,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 @implementation WKFoundTextRange
 
-
 + (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)webRange
 {
     auto range = adoptNS([[WKFoundTextRange alloc] init]);
@@ -13007,6 +13006,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     [range setFrameIdentifier:webRange.frameIdentifier];
     [range setOrder:webRange.order];
     return range.autorelease();
+}
+
+- (void)dealloc
+{
+    [_frameIdentifier release];
+    [super dealloc];
 }
 
 - (WKFoundTextPosition *)start

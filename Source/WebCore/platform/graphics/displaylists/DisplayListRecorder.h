@@ -119,6 +119,7 @@ protected:
     virtual void recordFillEllipse(const FloatRect&) = 0;
 #if ENABLE(VIDEO)
     virtual void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) = 0;
+    virtual void recordPaintVideoFrame(VideoFrame&, const FloatRect& destination, bool shouldDiscardAlpha) = 0;
 #endif
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
@@ -273,8 +274,6 @@ private:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
-#endif
-#if ENABLE(WEB_CODECS)
     WEBCORE_EXPORT void paintVideoFrame(VideoFrame&, const FloatRect&, bool shouldDiscardAlpha) final;
 #endif
 

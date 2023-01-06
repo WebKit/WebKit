@@ -113,9 +113,11 @@ void Config::initialize()
         if (header) {
             unsigned long size = 0;
             const auto* data = getsegmentdata(header, "__PAGEZERO", &size);
-            if (size) {
+            if (!data && size) {
+                // If __PAGEZERO starts with 0 address and it has size. [0, size] region cannot be
+                // mapped for accessible pages.
                 uintptr_t afterZeroPages = bitwise_cast<uintptr_t>(data) + size;
-                g_wtfConfig.lowestAccessibleAddress = std::max<uintptr_t>(onePage, afterZeroPages);
+                g_wtfConfig.lowestAccessibleAddress = roundDownToMultipleOf(onePage, std::max<uintptr_t>(onePage, afterZeroPages));
                 return;
             }
         }

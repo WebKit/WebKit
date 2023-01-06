@@ -2468,6 +2468,11 @@ class YarrGenerator final : public YarrJITInfo {
                     // PRIOR alteranative, and we will only check input availability if we
                     // need to progress it forwards.
                     op.m_reentry = m_jit.label();
+                    if (m_compileMode == JITCompileMode::IncludeSubpatterns
+                        && priorAlternative->needToCleanupCaptures()) {
+                            for (unsigned subpattern = priorAlternative->firstCleanupSubpatternId(); subpattern <= priorAlternative->m_lastSubpatternId; subpattern++)
+                                clearSubpatternStart(subpattern);
+                    }
                     if (alternative->m_minimumSize > priorAlternative->m_minimumSize) {
                         m_jit.add32(MacroAssembler::Imm32(alternative->m_minimumSize - priorAlternative->m_minimumSize), m_regs.index);
                         op.m_jumps.append(jumpIfNoAvailableInput());
@@ -2847,8 +2852,13 @@ class YarrGenerator final : public YarrJITInfo {
                 loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheticalAssertion::beginIndex(), m_regs.index);
 
                 // If inverted, a successful match of the assertion must be treated
-                // as a failure, so jump to backtracking.
+                // as a failure, clear any nested captures and jump to backtracking.
                 if (term->invert()) {
+                    if (m_compileMode == JITCompileMode::IncludeSubpatterns
+                        && term->containsAnyCaptures()) {
+                        for (unsigned subpattern = term->parentheses.subpatternId; subpattern <= term->parentheses.lastSubpatternId; subpattern++)
+                            clearSubpatternStart(subpattern);
+                    }
                     op.m_jumps.append(m_jit.jump());
                     op.m_reentry = m_jit.label();
                 }
@@ -3482,10 +3492,6 @@ class YarrGenerator final : public YarrJITInfo {
                 break;
             }
             case YarrOpCode::ParentheticalAssertionEnd: {
-                // FIXME: We should really be clearing any nested subpattern
-                // matches on bailing out from after the pattern. Firefox has
-                // this bug too (presumably because they use YARR!)
-
                 // Never backtrack into an assertion; later failures bail to before the begin.
                 m_backtrackingState.takeBacktracksToJumpList(op.m_jumps, &m_jit);
                 break;

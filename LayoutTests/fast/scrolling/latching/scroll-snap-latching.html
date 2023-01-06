@@ -48,7 +48,7 @@
 
     async function sendWheelEvents()
     {
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(100, 100);
         // This sequence needs to be long enough (> resetLatchedStateTimeout or 100ms) to allow latching to time out.
 

@@ -2463,7 +2463,7 @@ private:
             return;
         }
 
-        if (isARM64E()) {
+        if (isARM64_LSE()) {
             if (isBranch) {
                 switch (width) {
                 case Width8:
@@ -4873,7 +4873,7 @@ private:
             if (appendVoidAtomic(OPCODE_FOR_WIDTH(AtomicAnd, atomic->accessWidth())))
                 return;
 
-            if (isARM64E()) {
+            if (isARM64_LSE()) {
                 Arg address = addr(atomic);
                 Air::Opcode opcode = OPCODE_FOR_WIDTH(AtomicXchgClear, atomic->accessWidth());
                 if (isValidForm(opcode, Arg::Tmp, address.kind(), Arg::Tmp)) {

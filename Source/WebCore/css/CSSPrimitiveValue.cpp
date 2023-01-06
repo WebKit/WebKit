@@ -52,8 +52,6 @@
 
 namespace WebCore {
 
-bool CSSPrimitiveValue::s_useLegacyPrecision;
-
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
 {
     switch (unitType) {
@@ -1220,8 +1218,6 @@ NEVER_INLINE String CSSPrimitiveValue::formatInfiniteOrNanValue(ASCIILiteral suf
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(ASCIILiteral suffix) const
 {
-    if (m_cachedCSSTextUsesLegacyPrecision)
-        return formatIntegerValue(suffix);
     if (std::isnan(m_value.num) || std::isinf(m_value.num))
         return formatInfiniteOrNanValue(suffix);
     return makeString(FormattedCSSNumber::create(m_value.num), suffix);
@@ -1518,11 +1514,10 @@ String CSSPrimitiveValue::customCSSText() const
 
     CSSTextCache& cssTextCache = WebCore::cssTextCache();
 
-    if (m_hasCachedCSSText && m_cachedCSSTextUsesLegacyPrecision == s_useLegacyPrecision) {
+    if (m_hasCachedCSSText) {
         ASSERT(cssTextCache.contains(this));
         return cssTextCache.get(this);
     }
-    m_cachedCSSTextUsesLegacyPrecision = s_useLegacyPrecision;
 
     String text = formatNumberForCustomCSSText();
 

@@ -3774,7 +3774,7 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
 
 #endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
-#if CPU(ARM64E)
+#if CPU(ARM64)
 
 void testAtomicStrongCASFill8()
 {
@@ -5892,9 +5892,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testOrUnsignedRightShift64());
 #endif
 
-#if CPU(ARM64E)
-    RUN(testAtomicStrongCASFill8());
-    RUN(testAtomicStrongCASFill16());
+#if CPU(ARM64)
+    if (isARM64_LSE()) {
+        RUN(testAtomicStrongCASFill8());
+        RUN(testAtomicStrongCASFill16());
+    }
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)

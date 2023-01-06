@@ -52,11 +52,13 @@ struct ControlStyle {
         ReadOnly            = 1 << 14,
         ListButton          = 1 << 15,
         ListButtonPressed   = 1 << 16,
+        VerticalWritingMode = 1 << 17,
     };
     OptionSet<State> states;
     unsigned fontSize { 12 };
     float zoomFactor { 1 };
     Color accentColor;
+    Color textColor;
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ControlStyle::State);

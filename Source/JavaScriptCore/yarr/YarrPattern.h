@@ -295,7 +295,8 @@ struct PatternTerm {
 
     bool containsAnyCaptures()
     {
-        ASSERT(this->type == Type::ParenthesesSubpattern);
+        ASSERT(this->type == Type::ParenthesesSubpattern
+            || this->type == Type::ParentheticalAssertion);
         return parentheses.lastSubpatternId >= parentheses.subpatternId;
     }
 
@@ -323,8 +324,10 @@ struct PatternTerm {
 struct PatternAlternative {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PatternAlternative(PatternDisjunction* disjunction, MatchDirection matchDirection = Forward)
+    PatternAlternative(PatternDisjunction* disjunction, unsigned firstSubpatternId, MatchDirection matchDirection = Forward)
         : m_parent(disjunction)
+        , m_firstSubpatternId(firstSubpatternId)
+        , m_lastSubpatternId(0)
         , m_direction(matchDirection)
         , m_onceThrough(false)
         , m_hasFixedSize(false)
@@ -355,6 +358,24 @@ public:
         return m_onceThrough;
     }
 
+    bool needToCleanupCaptures() const
+    {
+        return !!m_lastSubpatternId;
+    }
+
+    unsigned firstCleanupSubpatternId()
+    {
+        unsigned firstSubpatternIdToClear = m_firstSubpatternId;
+
+        // We want to clear subpatterns, which start at 1.
+        if (!firstSubpatternIdToClear)
+            firstSubpatternIdToClear++;
+        
+        ASSERT(firstSubpatternIdToClear <= m_lastSubpatternId);
+
+        return firstSubpatternIdToClear;
+    }
+
     MatchDirection matchDirection() const
     {
         return m_direction;
@@ -365,6 +386,8 @@ public:
     Vector<PatternTerm> m_terms;
     PatternDisjunction* m_parent;
     unsigned m_minimumSize;
+    unsigned m_firstSubpatternId;
+    unsigned m_lastSubpatternId;
     MatchDirection m_direction;
     bool m_onceThrough : 1;
     bool m_hasFixedSize : 1;
@@ -381,9 +404,9 @@ public:
     {
     }
     
-    PatternAlternative* addNewAlternative(MatchDirection matchDirection = Forward)
+    PatternAlternative* addNewAlternative(unsigned firstSubpatternId = 1, MatchDirection matchDirection = Forward)
     {
-        m_alternatives.append(makeUnique<PatternAlternative>(this, matchDirection));
+        m_alternatives.append(makeUnique<PatternAlternative>(this, firstSubpatternId, matchDirection));
         return static_cast<PatternAlternative*>(m_alternatives.last().get());
     }
 

@@ -372,7 +372,7 @@ private:
                         break;
                 }
 
-                if (isARM64E()) {
+                if (isARM64_LSE()) {
                     if (m_value->opcode() == AtomicXchgSub) {
                         m_value->setOpcodeUnsafely(AtomicXchgAdd);
                         m_value->child(0) = m_insertionSet.insert<Value>(

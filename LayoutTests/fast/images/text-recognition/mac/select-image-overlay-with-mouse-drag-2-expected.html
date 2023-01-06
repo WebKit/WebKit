@@ -54,7 +54,8 @@ addEventListener("load", () => {
         }
     ]);
 
-    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector("div#image-overlay"));
+    const overlay = internals.shadowRoot(image).querySelector("div#image-overlay");
+    internals.setSelectionWithoutValidation(overlay, 0, overlay, overlay.childNodes.length);
 });
 </script>
 </body>

@@ -205,7 +205,7 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
-        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
+        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));
         ASSERT_NOT_REACHED();
         return;
     }
@@ -232,7 +232,7 @@ bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Dec
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
-        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
+        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -2061,7 +2061,7 @@ void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::Res
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
-    uint64_t destinationID = networkDataTask.pendingDownloadID().toUInt64();
+    UInt128 destinationID = networkDataTask.pendingDownloadID().toUInt64();
 
     String suggestedFilename = networkDataTask.suggestedFilename();
 
@@ -2295,6 +2295,12 @@ void NetworkProcess::clearStorage(PAL::SessionID sessionID, CompletionHandler<vo
         session->storageManager().clearStorageForTesting(WTFMove(completionHandler));
     else
         completionHandler();
+}
+
+void NetworkProcess::cloneSessionStorageForWebPage(PAL::SessionID sessionID, WebPageProxyIdentifier sourcePage, WebPageProxyIdentifier destinationPage)
+{
+    if (auto* session = networkSession(sessionID))
+        session->storageManager().cloneSessionStorageForWebPage(sourcePage, destinationPage);
 }
 
 void NetworkProcess::didIncreaseQuota(PAL::SessionID sessionID, ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)

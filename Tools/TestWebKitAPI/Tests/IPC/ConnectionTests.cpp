@@ -410,7 +410,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
     dispatchAndWait(runLoop, [&] {
         ASSERT_TRUE(openB());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t value) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (UInt128 value) {
                 if (!value)
                     WTFLogAlways("GOT: %llu", j);
                 EXPECT_GE(value, 100u);

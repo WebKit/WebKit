@@ -28,7 +28,8 @@
         
         debug('Scrolling the main frame with latching');
         eventSender.mouseMoveTo(100, 10); // Above the slow region.
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
+
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         // 100ms has to elapse between the start of the gesture and some momentum event to trigger the bug.
         await UIHelper.delayFor(25);

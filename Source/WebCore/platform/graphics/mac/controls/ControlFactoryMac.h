@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,29 +32,46 @@
 
 namespace WebCore {
 
-class ControlFactoryMac : public ControlFactory {
+class ControlFactoryMac final : public ControlFactory {
 public:
     using ControlFactory::ControlFactory;
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
-    std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
 
 private:
+    NSButtonCell *buttonCell() const;
+    NSButtonCell *defaultButtonCell() const;
     NSButtonCell *checkboxCell() const;
     NSButtonCell *radioCell() const;
-    NSLevelIndicatorCell* levelIndicatorCell() const;
-    NSTextFieldCell* textFieldCell() const;
+    NSLevelIndicatorCell *levelIndicatorCell() const;
+    NSPopUpButtonCell *popUpButtonCell() const;
+    NSSearchFieldCell *searchFieldCell() const;
+    NSSliderCell *sliderCell() const;
+    NSTextFieldCell *textFieldCell() const;
 
     mutable RetainPtr<WebControlView> m_drawingView;
 
+    mutable RetainPtr<NSButtonCell> m_buttonCell;
+    mutable RetainPtr<NSButtonCell> m_defaultButtonCell;
     mutable RetainPtr<NSButtonCell> m_checkboxCell;
     mutable RetainPtr<NSButtonCell> m_radioCell;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
+    mutable RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
+    mutable RetainPtr<NSSearchFieldCell> m_searchFieldCell;
+    mutable RetainPtr<NSSliderCell> m_sliderCell;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };
 

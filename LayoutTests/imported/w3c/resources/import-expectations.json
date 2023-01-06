@@ -241,7 +241,7 @@
     "web-platform-tests/fonts": "import",
     "web-platform-tests/fonts/noto": "import",
     "web-platform-tests/fullscreen": "import",
-    "web-platform-tests/gamepad": "skip",
+    "web-platform-tests/gamepad": "import",
     "web-platform-tests/generic-sensor": "skip",
     "web-platform-tests/geolocation-API": "import",
     "web-platform-tests/gyroscope": "skip",

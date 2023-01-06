@@ -39,6 +39,7 @@ class Wasm:
                 self.expectedVersionNumber = str(pre["value"])
         self.preamble = wasm["preamble"]
         self.types = wasm["type"]
+        self.packed_types = wasm["packed_type"]
         self.opcodes = wasm["opcode"]
         self.header = """/*
  * Copyright (C) 2016-2017 Apple Inc. All rights reserved.

@@ -37,6 +37,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
+#include <WebCore/ButtonPart.h>
 #include <WebCore/ByteArrayPixelBuffer.h>
 #include <WebCore/COEPInheritenceViolationReportBody.h>
 #include <WebCore/CORPViolationReportBody.h>
@@ -69,12 +70,14 @@
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/IdentityTransformOperation.h>
 #include <WebCore/Image.h>
+#include <WebCore/InnerSpinButtonPart.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/Matrix3DTransformOperation.h>
 #include <WebCore/MatrixTransformOperation.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/MenuListPart.h>
 #include <WebCore/MeterPart.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/Pasteboard.h>
@@ -97,6 +100,8 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/SearchFieldCancelButtonPart.h>
+#include <WebCore/SearchFieldPart.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedAttachmentData.h>
@@ -107,6 +112,8 @@
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SkewTransformOperation.h>
+#include <WebCore/SliderThumbPart.h>
+#include <WebCore/SliderTrackPart.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextAreaPart.h>
@@ -1553,6 +1560,9 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
 
     case WebCore::ControlPartType::SliderHorizontal:
     case WebCore::ControlPartType::SliderVertical:
+        encoder << downcast<WebCore::SliderTrackPart>(part);
+        break;
+
     case WebCore::ControlPartType::SearchField:
 #if ENABLE(APPLE_PAY)
     case WebCore::ControlPartType::ApplePayButton:
@@ -1609,7 +1619,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::SquareButton:
     case WebCore::ControlPartType::Button:
     case WebCore::ControlPartType::DefaultButton:
+        return WebCore::ButtonPart::create(*type);
+
     case WebCore::ControlPartType::Menulist:
+        return WebCore::MenuListPart::create();
+
     case WebCore::ControlPartType::MenulistButton:
         break;
 
@@ -1630,8 +1644,17 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     }
 
     case WebCore::ControlPartType::SliderHorizontal:
-    case WebCore::ControlPartType::SliderVertical:
+    case WebCore::ControlPartType::SliderVertical: {
+        std::optional<Ref<WebCore::SliderTrackPart>> sliderTrackPart;
+        decoder >> sliderTrackPart;
+        if (sliderTrackPart)
+            return WTFMove(*sliderTrackPart);
+        break;
+    }
+
     case WebCore::ControlPartType::SearchField:
+        return WebCore::SearchFieldPart::create();
+
 #if ENABLE(APPLE_PAY)
     case WebCore::ControlPartType::ApplePayButton:
 #endif
@@ -1655,17 +1678,25 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 #if ENABLE(SERVICE_CONTROLS)
     case WebCore::ControlPartType::ImageControlsButton:
 #endif
+        break;
+
     case WebCore::ControlPartType::InnerSpinButton:
+        return WebCore::InnerSpinButtonPart::create();
+
 #if ENABLE(DATALIST_ELEMENT)
     case WebCore::ControlPartType::ListButton:
 #endif
     case WebCore::ControlPartType::SearchFieldDecoration:
     case WebCore::ControlPartType::SearchFieldResultsDecoration:
     case WebCore::ControlPartType::SearchFieldResultsButton:
+        break;
+
     case WebCore::ControlPartType::SearchFieldCancelButton:
+        return WebCore::SearchFieldCancelButtonPart::create();
+
     case WebCore::ControlPartType::SliderThumbHorizontal:
     case WebCore::ControlPartType::SliderThumbVertical:
-        break;
+        return WebCore::SliderThumbPart::create(*type);
     }
 
     ASSERT_NOT_REACHED();

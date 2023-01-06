@@ -610,9 +610,7 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
 {
     player.playerPrivate()->paintCurrentFrameInContext(*this, destination);
 }
-#endif
 
-#if ENABLE(WEB_CODECS)
 void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
     frame.paintInContext(*this, destination, ImageOrientation::None, shouldDiscardAlpha);

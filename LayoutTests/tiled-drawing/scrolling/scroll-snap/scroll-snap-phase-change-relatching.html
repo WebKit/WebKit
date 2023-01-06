@@ -20,6 +20,7 @@
         }
     </style>
     <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
     jsTestIsAsync = true;
 
@@ -32,7 +33,7 @@
         finishJSTest();
     }
 
-    function scrollTest()
+    async function scrollTest()
     {
         targetScroller = document.getElementById('scroller');
 
@@ -42,7 +43,7 @@
         var dy = -1;
         var startPosX = targetRect.left + 50;
         var startPosY = targetRect.top + 50;
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(startPosX, startPosY);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
@@ -52,7 +53,8 @@
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'begin');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'continue');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        eventSender.callAfterScrollingCompletes(checkEndState);
+        await UIHelper.waitForScrollCompletion();
+        checkEndState();
     }
 
     function startTest()

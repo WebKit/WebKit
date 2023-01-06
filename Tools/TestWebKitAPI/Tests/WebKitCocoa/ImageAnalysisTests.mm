@@ -433,7 +433,8 @@ TEST(ImageAnalysisTests, MenuControllerItems)
     [webView _setEditable:YES];
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
-    [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; getSelection().setBaseAndExtent(image, 0, image, 1);"];
+    [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; nodeIndex = [...image.parentNode.childNodes].indexOf(image);"
+        "getSelection().setBaseAndExtent(image.parentNode, nodeIndex, image.parentNode, nodeIndex + 1);"];
     [webView waitForNextPresentationUpdate];
     simulateCalloutBarAppearance(webView.get());
 
@@ -449,7 +450,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
     [webView buildMenuWithBuilder:menuBuilder.get()];
     EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground()]);
 
-    [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1);"];
+    [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, image.parentNode, nodeIndex + 1);"];
     [webView waitForNextPresentationUpdate];
     simulateCalloutBarAppearance(webView.get());
 
@@ -485,7 +486,7 @@ static RetainPtr<TestWKWebView> runMarkupTest(NSString *testPage, NSString *scri
 
 TEST(ImageAnalysisTests, PerformRemoveBackground)
 {
-    runMarkupTest(@"multiple-images", @"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1)", [](TestWKWebView *webView, NSString *previousSelectedText) {
+    runMarkupTest(@"multiple-images", @"image = document.images[0]; getSelection().setBaseAndExtent(document.body, 0, image.parentNode, [...image.parentNode.childNodes].indexOf(image) + 1)", [](TestWKWebView *webView, NSString *previousSelectedText) {
         EXPECT_WK_STREQ(previousSelectedText, webView.selectedText);
         Util::waitForConditionWithLogging([&] {
             return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width"] intValue] == 215;
@@ -512,7 +513,8 @@ TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
 
     RemoveBackgroundSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
-    [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; getSelection().setBaseAndExtent(image, 0, image, 1)"];
+    [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; nodeIndex = [...image.parentNode.childNodes].indexOf(image);"
+        "getSelection().setBaseAndExtent(image.parentNode, nodeIndex, image.parentNode, nodeIndex + 1)"];
     [webView waitForNextPresentationUpdate];
     simulateCalloutBarAppearance(webView.get());
 

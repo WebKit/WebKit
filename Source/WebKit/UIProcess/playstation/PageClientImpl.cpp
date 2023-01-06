@@ -38,9 +38,9 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 }
 
 // PageClient's pure virtual functions
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& processProxy)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy&)
 {
-    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page(), processProxy);
+    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page());
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)

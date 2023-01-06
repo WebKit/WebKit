@@ -19,6 +19,7 @@
             #item1 { background-color: green; }
         </style>
         <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         window.jsTestIsAsync = true;
 
@@ -53,6 +54,7 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "none");
             // Wait for the snapping to finish.
+            // FIXME: Use await UIHelper.waitForScrollCompletion();
             setTimeout(function() {
                 if (divTarget.scrollTop != 400)
                     testFailed("div did not snap to the green region. Expected 400, but got " + divTarget.scrollTop + ".");
@@ -63,12 +65,11 @@
             }, 2000);
         }
 
-
-        function onLoad()
+        async function onLoad()
         {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                await UIHelper.startMonitoringWheelEvents();
                 setTimeout(scrollSnapTest, 0);
             } else {
                 var messageLocationH = document.getElementById("item0");

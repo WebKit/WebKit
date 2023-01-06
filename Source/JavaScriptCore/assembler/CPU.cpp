@@ -31,6 +31,10 @@
 #include <sys/sysctl.h>
 #endif
 
+#if ENABLE(ASSEMBLER)
+#include "MacroAssembler.h"
+#endif
+
 namespace JSC {
 
 #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
@@ -91,5 +95,28 @@ int32_t hwPhysicalCPUMax()
 }
 
 #endif // #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
+
+#if CPU(ARM64) && !(CPU(ARM64E) || OS(MAC_OS_X))
+bool isARM64_LSE()
+{
+#if ENABLE(ASSEMBLER)
+    return MacroAssembler::supportsLSE();
+#else
+    return false;
+#endif
+}
+#endif
+
+#if CPU(X86_64)
+bool isX86_64_AVX()
+{
+    // We need runtime check since macOS Rosetta2 does not support AVX.
+#if ENABLE(ASSEMBLER)
+    return MacroAssembler::supportsAVX();
+#else
+    return false;
+#endif
+}
+#endif
 
 } // namespace JSC

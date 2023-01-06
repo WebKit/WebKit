@@ -45,29 +45,10 @@ void ButtonControlMac::updateCellStates(const FloatRect& rect, const ControlStyl
 
     const auto& states = style.states;
 
-    // Pressed state
-    bool oldPressed = [m_buttonCell isHighlighted];
-    bool pressed = states.contains(ControlStyle::State::Pressed);
-    if (pressed != oldPressed)
-        [m_buttonCell _setHighlighted:pressed animated:false];
-
-    // Enabled state
-    bool oldEnabled = [m_buttonCell isEnabled];
-    bool enabled = states.contains(ControlStyle::State::Enabled);
-    if (oldEnabled != enabled)
-        [m_buttonCell setEnabled:enabled];
-
-    // Checked and Indeterminate
-    bool oldIndeterminate = [m_buttonCell state] == NSControlStateValueMixed;
-    bool oldChecked = [m_buttonCell state] == NSControlStateValueOn;
-    bool indeterminate = states.contains(ControlStyle::State::Indeterminate);
-    bool checked = states.contains(ControlStyle::State::Checked);
-    if (oldIndeterminate != indeterminate || checked != oldChecked) {
-        NSControlStateValue newState = indeterminate ? NSControlStateValueMixed : (checked ? NSControlStateValueOn : NSControlStateValueOff);
-        [m_buttonCell _setState:newState animated:false];
-    }
-
-    // Presenting state
+    updatePressedState(m_buttonCell.get(), style);
+    updateEnabledState(m_buttonCell.get(), style);
+    updateCheckedState(m_buttonCell.get(), style);
+    
     if (states.contains(ControlStyle::State::Presenting))
         [m_buttonCell _setHighlighted:YES animated:NO];
 

@@ -53,6 +53,9 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaMac::delegatedScrollingMode() c
 void RemoteLayerTreeDrawingAreaMac::setColorSpace(std::optional<WebCore::DestinationColorSpace> colorSpace)
 {
     m_displayColorSpace = colorSpace;
+
+    // We rely on the fact that the full style recalc that happens when moving a window between displays triggers repaints,
+    // which causes PlatformCALayerRemote::updateBackingStore() to re-create backing stores with the new colorspace.
 }
 
 std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeDrawingAreaMac::displayColorSpace() const

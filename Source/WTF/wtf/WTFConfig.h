@@ -114,6 +114,8 @@ extern "C" WTF_EXPORT_PRIVATE Config g_wtfConfig;
 
 #endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
+constexpr size_t offsetOfWTFConfigLowestAccessibleAddress = offsetof(WTF::Config, lowestAccessibleAddress);
+
 ALWAYS_INLINE Config::AssertNotFrozenScope::AssertNotFrozenScope()
 {
     RELEASE_ASSERT(!g_wtfConfig.isPermanentlyFrozen);

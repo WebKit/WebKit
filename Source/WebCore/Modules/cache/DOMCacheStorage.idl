@@ -29,7 +29,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     ActiveDOMObject,
     SecureContext,
     Exposed=(Window,Worker),
-    EnabledByDeprecatedGlobalSetting=CacheAPIEnabled,
+    EnabledBySetting=CacheAPIEnabled,
     InterfaceName=CacheStorage,
 ] interface DOMCacheStorage {
     [NewObject] Promise<any> match(RequestInfo request, optional MultiCacheQueryOptions options);

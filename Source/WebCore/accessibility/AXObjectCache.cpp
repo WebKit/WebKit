@@ -244,11 +244,14 @@ AXObjectCache::AXObjectCache(Document& document)
     if (loadingProgress <= 0)
         loadingProgress = 1;
     m_loadingProgress = loadingProgress;
+
+    AXTreeStore::add(m_id, this);
 }
 
 AXObjectCache::~AXObjectCache()
 {
     AXTRACE(makeString("AXObjectCache::~AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+
     m_notificationPostTimer.stop();
     m_liveRegionChangedPostTimer.stop();
     m_performCacheUpdateTimer.stop();
@@ -260,6 +263,8 @@ AXObjectCache::~AXObjectCache()
     if (m_pageID)
         AXIsolatedTree::removeTreeForPageID(*m_pageID);
 #endif
+
+    AXTreeStore::remove(m_id);
 }
 
 bool AXObjectCache::isModalElement(Element& element) const
@@ -988,18 +993,6 @@ void AXObjectCache::remove(Widget* view)
         return;
     remove(m_widgetObjectMapping.take(view));
 }
-    
-    
-#if !PLATFORM(WIN)
-AXID AXObjectCache::platformGenerateAXID() const
-{
-    AXID objID;
-    do {
-        objID = AXID::generate();
-    } while (!objID.isValid() || m_idsInUse.contains(objID));
-    return objID;
-}
-#endif
 
 Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& axIDs) const
 {
@@ -1015,21 +1008,19 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
     return result;
 }
 
-AXID AXObjectCache::getAXID(AccessibilityObject* obj)
+AXID AXObjectCache::getAXID(AccessibilityObject* object)
 {
     // check for already-assigned ID
-    AXID objID = obj->objectID();
-    if (objID) {
-        ASSERT(m_idsInUse.contains(objID));
-        return objID;
+    AXID objectID = object->objectID();
+    if (objectID.isValid()) {
+        ASSERT(m_idsInUse.contains(objectID));
+        return objectID;
     }
 
-    objID = platformGenerateAXID();
-
-    m_idsInUse.add(objID);
-    obj->setObjectID(objID);
-    
-    return objID;
+    objectID = generateNewID();
+    m_idsInUse.add(objectID);
+    object->setObjectID(objectID);
+    return objectID;
 }
 
 void AXObjectCache::handleTextChanged(AccessibilityObject* object)
@@ -1891,7 +1882,8 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
 
 void AXObjectCache::handleActiveDescendantChanged(Element& element)
 {
-    if (!document().frame()->selection().isFocusedAndActive())
+    // Use the element's document instead of the cache's document in case we're inside a frame that's managing focus.
+    if (!element.document().frame()->selection().isFocusedAndActive())
         return;
 
     auto* object = getOrCreate(&element);
@@ -1903,25 +1895,37 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
 #endif
 
     // Notify active descendant changes only for the focused element.
-    if (document().focusedElement() != &element)
+    if (element.document().focusedElement() != &element)
         return;
 
     auto* activeDescendant = object->activeDescendant();
-    // We want to notify that the combo box has changed its active descendant,
-    // but we do not want to change the focus, because focus should remain with the combo box.
-    if (activeDescendant && (object->isComboBox() || object->shouldFocusActiveDescendant())) {
-        auto* target = object;
+    if (!activeDescendant)
+        return;
 
+    // Handle active-descendant changes when the target allows for it, or the controlled object allows for it.
+    AccessibilityObject* target = nullptr;
+    if (object->shouldFocusActiveDescendant())
+        target = object;
+    else if (object->isComboBox()) {
 #if PLATFORM(COCOA)
         // If the combobox's activeDescendant is inside a descendant owned or controlled by the combobox, that descendant should be the target of the notification and not the combobox itself.
-        if (object->isComboBox()) {
-            if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
-                target = ownedObject;
-            else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
-                target = controlledObject;
-        }
+        if (auto* ownedObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::OwnerFor, *activeDescendant))
+            target = ownedObject;
+        else if (auto* controlledObject = Accessibility::findRelatedObjectInAncestry(*object, AXRelationType::ControllerFor, *activeDescendant))
+            target = controlledObject;
 #endif
+    } else {
+        // Check to see if the active descendant is a child of the controlled object. Then we have to use that
+        // controlled object as the target we use in notifications.
+        auto controlledObjects = object->relatedObjects(AXRelationType::ControllerFor);
+        if (controlledObjects.size()) {
+            target = Accessibility::findAncestor(*activeDescendant, false, [&controlledObjects] (const auto& activeDescendantAncestor) {
+                return controlledObjects.contains(&activeDescendantAncestor);
+            });
+        }
+    }
 
+    if (target) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (target != object)
             updateIsolatedTree(target, AXNotification::AXActiveDescendantChanged);
@@ -4083,8 +4087,14 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
     Vector<RelationOrigin> origins;
     Vector<RelationTarget> targets;
     for (auto& element : descendantsOfType<Element>(rootNode)) {
+        if (element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag))
+            continue;
+
         if (RefPtr shadowRoot = element.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
             updateRelationsForTree(*shadowRoot);
+        if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
+            updateRelationsForTree(*frameOwnerElement->contentDocument());
+
         // Collect all possible origins, i.e., elements with non-empty relation attributes.
         for (const auto& attribute : relationAttributes()) {
             if (m_document.settings().ariaReflectionForElementReferencesEnabled()) {

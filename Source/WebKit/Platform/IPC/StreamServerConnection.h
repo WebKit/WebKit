@@ -64,9 +64,9 @@ public:
     static Ref<StreamServerConnection> create(Handle&&, StreamConnectionWorkQueue&);
     ~StreamServerConnection() final;
 
-    void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
+    void startReceivingMessages(StreamMessageReceiver&, ReceiverName, UInt128 destinationID);
     // Stops the message receipt. Note: already received messages might still be delivered.
-    void stopReceivingMessages(ReceiverName, uint64_t destinationID);
+    void stopReceivingMessages(ReceiverName, UInt128 destinationID);
 
     Connection& connection() { return m_connection; }
 
@@ -132,9 +132,9 @@ private:
 
     bool m_isDispatchingStreamMessage { false };
     Lock m_receiversLock;
-    using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
+    using ReceiversMap = HashMap<std::pair<uint8_t, UInt128>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
-    uint64_t m_currentDestinationID { 0 };
+    UInt128 m_currentDestinationID { 0 };
 
     friend class StreamConnectionWorkQueue;
 };

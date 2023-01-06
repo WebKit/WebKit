@@ -94,8 +94,7 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
             };
 
             if (didFaultInWasm(faultingInstruction)) {
-                MachineContext::setInstructionPointer(context,
-                    LLInt::getCodePtr<CFunctionPtrTag>(Wasm::Context::useFastTLS() ? wasm_throw_from_fault_handler_trampoline_fastTLS : wasm_throw_from_fault_handler_trampoline_reg_instance));
+                MachineContext::setInstructionPointer(context, LLInt::getCodePtr<CFunctionPtrTag>(wasm_throw_from_fault_handler_trampoline_reg_instance));
                 return SignalAction::Handled;
             }
         }

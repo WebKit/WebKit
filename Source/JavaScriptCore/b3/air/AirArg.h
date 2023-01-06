@@ -633,13 +633,13 @@ public:
     {
         switch (scale) {
         case 1:
-            if (isX86() || isARM64() || isARM())
+            if (isX86() || isARM64() || isARM_THUMB2())
                 return true;
             return false;
         case 2:
         case 4:
         case 8:
-            if (isX86() || isARM())
+            if (isX86() || isARM_THUMB2())
                 return true;
             if (isARM64()) {
                 if (!width)
@@ -1276,7 +1276,7 @@ public:
             return B3::isRepresentableAs<int32_t>(value);
         if (isARM64())
             return isUInt12(value);
-        if (isARM())
+        if (isARM_THUMB2())
             return isValidARMThumb2Immediate(value);
         return false;
     }
@@ -1287,7 +1287,7 @@ public:
             return B3::isRepresentableAs<int32_t>(value);
         if (isARM64())
             return ARM64LogicalImmediate::create32(value).isValid();
-        if (isARM())
+        if (isARM_THUMB2())
             return isValidARMThumb2Immediate(value);
         return false;
     }
@@ -1355,7 +1355,7 @@ public:
             return false;
         if (isX86())
             return true;
-        if (isARM64() || isARM())
+        if (isARM64() || isARM_THUMB2())
             return !offset;
         return false;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All right reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All right reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,14 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://html.spec.whatwg.org/#other-elements,-attributes-and-apis
+// https://html.spec.whatwg.org/#the-pre-element
+
 [
     Exposed=Window
 ] interface HTMLPreElement : HTMLElement {
     // FIXME: DOM spec says that width should be of type DOMString
     // see http://bugs.webkit.org/show_bug.cgi?id=8992
     [CEReactions=NotNeeded, Reflect] attribute long width;
-    
-    // Extensions
-    [CEReactions=NotNeeded, Reflect] attribute boolean wrap;
 };
 

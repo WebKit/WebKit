@@ -35,7 +35,7 @@
             const x = selectBounds.left + 10;
             const y = selectBounds.top + 10;
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(x, y);
 
             debug('Scrolling up then down in the select');
@@ -47,7 +47,7 @@
             await UIHelper.waitForScrollCompletion();
 
             // Scroll up again to trigger a document bounce.
-            eventSender.monitorWheelEvents({ resetLatching: false });
+            await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 20, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
@@ -55,7 +55,7 @@
             await UIHelper.waitForScrollCompletion();
 
             // Scroll down. This should scroll the select, not the document.
-            eventSender.monitorWheelEvents({ resetLatching: false });
+            await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -2, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "changed", "none");

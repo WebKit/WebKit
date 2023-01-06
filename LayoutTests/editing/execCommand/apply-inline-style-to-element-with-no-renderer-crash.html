@@ -23,9 +23,9 @@ test(function() {
     colorprofile.appendChild(li);
     document.implementation.createDocument('' ,'' ,null).adoptNode(colorprofile)
 
-    input=document.createElement('input');
+    input = document.createElement('input');
     textPath.parentNode.insertBefore(input, textPath);
-    window.getSelection().setBaseAndExtent(input, 0, null, 0);
+    window.getSelection().setBaseAndExtent(input, 0, input, 0);
 
     document.designMode='on';
     document.execCommand('Transpose');

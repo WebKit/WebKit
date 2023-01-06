@@ -149,8 +149,8 @@ public:
     friend AirIRGeneratorBase<AirIRGenerator32, TypedTmp>;
     using ExpressionType = TypedTmp;
 
-    AirIRGenerator32(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize)
-        : AirIRGeneratorBase(info, procedure, compilation, unlinkedWasmToWasmCalls, mode, functionIndex, hasExceptionHandlers, tierUp, originalSignature, osrEntryScratchBufferSize)
+    AirIRGenerator32(const ModuleInformation& info, Callee& callee, B3::Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize)
+        : AirIRGeneratorBase(info, callee, procedure, unlinkedWasmToWasmCalls, mode, functionIndex, hasExceptionHandlers, tierUp, originalSignature, osrEntryScratchBufferSize)
     {
     }
 
@@ -1362,7 +1362,7 @@ TypedTmp AirIRGenerator32::appendGeneralAtomic(ExtAtomicOpType op, B3::Air::Opco
     beginBlock->setSuccessors(reloopBlock);
     m_currentBlock = reloopBlock;
 
-    RELEASE_ASSERT(isARM());
+    RELEASE_ASSERT(isARM_THUMB2());
 
     if (accessWidth == Width64)
         appendEffectful(LoadLinkPair32, address, oldValue.lo(), oldValue.hi());
@@ -1788,7 +1788,7 @@ void AirIRGenerator32::emitModOrDiv(bool isDiv, ExpressionType lhs, ExpressionTy
 
     result = sizeof(IntType) == 4 ? g32() : g64();
 
-    if (isARM()) {
+    if (isARM_THUMB2()) {
         // FIXME: use ARMv7 sdiv/udiv if available
         if (isDiv)
             emitCCall(getSoftDiv<IntType>(), result, lhs, rhs);
@@ -2141,9 +2141,9 @@ auto AirIRGenerator32::addI31GetU(ExpressionType ref, ExpressionType& result) ->
     return { };
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
-    return parseAndCompileAirImpl<AirIRGenerator32>(compilationContext, function, signature, unlinkedWasmToWasmCalls, info, mode, functionIndex, hasExceptionHandlers, tierUp);
+    return parseAndCompileAirImpl<AirIRGenerator32>(compilationContext, callee, function, signature, unlinkedWasmToWasmCalls, info, mode, functionIndex, hasExceptionHandlers, tierUp);
 }
 
 }

@@ -174,7 +174,8 @@ void LLIntPlan::didCompleteCompilation()
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
-            std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
+            Ref<EmbedderEntrypointCallee> callee = EmbedderEntrypointCallee::create();
+            std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
@@ -186,11 +187,7 @@ void LLIntPlan::didCompleteCompilation()
                 FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
                 nullptr);
 
-            Ref<EmbedderEntrypointCallee> callee = EmbedderEntrypointCallee::create(WTFMove(function->entrypoint));
-            // FIXME: remove this repatchPointer - just pass in the callee directly
-            // https://bugs.webkit.org/show_bug.cgi?id=166462
-            for (auto& moveLocation : function->calleeMoveLocations)
-                MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
+            callee->setEntrypoint(WTFMove(function->entrypoint));
 
             auto result = m_embedderCallees.add(functionIndex, WTFMove(callee));
             ASSERT_UNUSED(result, result.isNewEntry);

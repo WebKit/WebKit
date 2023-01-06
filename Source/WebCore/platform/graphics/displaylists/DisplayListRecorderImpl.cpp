@@ -316,6 +316,11 @@ void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect
 {
     append<PaintFrameForMedia>(player, destination);
 }
+
+void RecorderImpl::recordPaintVideoFrame(VideoFrame&, const FloatRect&, bool /* shouldDiscardAlpha */)
+{
+    // FIXME: TODO
+}
 #endif // ENABLE(VIDEO)
 
 void RecorderImpl::recordStrokeRect(const FloatRect& rect, float width)

@@ -35,6 +35,7 @@
         }
     </style>
     <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
         jsTestIsAsync = true;
         var outerScroller;
@@ -49,7 +50,7 @@
             finishJSTest();
         }
 
-        function scrollTest()
+        async function scrollTest()
         {
             outerScroller = document.getElementById('outer');
             innerScroller = document.getElementById('inner');
@@ -63,13 +64,14 @@
                 return;
             }
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(150, 300); // Over the horizontally scrollable overflow.
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            eventSender.callAfterScrollingCompletes(checkForScroll);
+            await UIHelper.waitForScrollCompletion();
+            checkForScroll();
         }
 
         window.addEventListener('load', () => {

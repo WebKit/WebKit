@@ -3,9 +3,9 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2008-2014 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
  *
@@ -5587,16 +5587,11 @@ static bool isValidNameNonASCII(const LChar* characters, unsigned length)
 
 static bool isValidNameNonASCII(const UChar* characters, unsigned length)
 {
-    unsigned i = 0;
-
-    UChar32 c;
-    U16_NEXT(characters, i, length, c);
-    if (!isValidNameStart(c))
-        return false;
-
-    while (i < length) {
-        U16_NEXT(characters, i, length, c);
-        if (!isValidNamePart(c))
+    for (unsigned i = 0; i < length;) {
+        bool first = !i;
+        UChar32 c;
+        U16_NEXT(characters, i, length, c); // Increments i.
+        if (first ? !isValidNameStart(c) : !isValidNamePart(c))
             return false;
     }
 
@@ -6632,7 +6627,7 @@ bool Document::isSecureContext() const
 {
     if (!m_frame)
         return true;
-    if (!DeprecatedGlobalSettings::secureContextChecksEnabled())
+    if (!settings().secureContextChecksEnabled())
         return true;
     if (page() && page()->isServiceWorkerPage())
         return true;
@@ -9015,6 +9010,16 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
 const Style::CustomPropertyRegistry& Document::customPropertyRegistry() const
 {
     return styleScope().customPropertyRegistry();
+}
+
+const CSSCounterStyleRegistry& Document::counterStyleRegistry() const
+{
+    return styleScope().counterStyleRegistry();
+}
+
+CSSCounterStyleRegistry& Document::counterStyleRegistry()
+{
+    return styleScope().counterStyleRegistry();
 }
 
 const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()

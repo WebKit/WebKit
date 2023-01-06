@@ -72,7 +72,7 @@ bool shouldSaveIRBeforePhase()
 
 GPRReg extendedOffsetAddrRegister()
 {
-    RELEASE_ASSERT(isARM64() || isRISCV64() || isARM());
+    RELEASE_ASSERT(isARM64() || isRISCV64() || isARM_THUMB2());
 #if CPU(ARM64) || CPU(RISCV64)
     return MacroAssembler::linkRegister;
 #elif CPU(ARM)

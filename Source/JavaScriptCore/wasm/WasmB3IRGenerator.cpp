@@ -313,7 +313,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
+    B3IRGenerator(const ModuleInformation&, Callee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
 
     // SIMD
     void notifyFunctionUsesSIMD() { ASSERT(m_info.isSIMDFunction(m_functionIndex)); }
@@ -555,7 +555,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
@@ -658,6 +658,7 @@ private:
     Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
 
     void emitStructSet(Value*, uint32_t, const StructType&, ExpressionType&);
+    ExpressionType WARN_UNUSED_RETURN pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size);
 
     void unify(Value* phi, const ExpressionType source);
     void unifyValuesWithBlock(const Stack& resultStack, const ControlData& block);
@@ -751,6 +752,7 @@ private:
 
     FunctionParser<B3IRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
+    Callee& m_callee;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
     const CompilationMode m_compilationMode;
     const unsigned m_functionIndex { UINT_MAX };
@@ -812,19 +814,6 @@ int32_t B3IRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)
 
 void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* block, Value* arg)
 {
-    if (Context::useFastTLS()) {
-        PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
-        if (CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister())
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
-        patchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister());
-                jit.storeWasmContextInstance(params[0].gpr());
-            });
-        return;
-    }
-
     // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
     // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
     PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
@@ -840,8 +829,9 @@ void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* bloc
     });
 }
 
-B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
+B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
     : m_info(info)
+    , m_callee(callee)
     , m_mode(mode)
     , m_compilationMode(compilationMode)
     , m_functionIndex(functionIndex)
@@ -865,8 +855,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
     m_proc.pinRegister(m_memoryBaseGPR);
 
     m_wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
-    if (!Context::useFastTLS())
-        m_proc.pinRegister(m_wasmContextInstanceGPR);
+    m_proc.pinRegister(m_wasmContextInstanceGPR);
 
     if (mode == MemoryMode::BoundsChecking) {
         m_boundsCheckingSizeGPR = pinnedRegs.boundsCheckingSizeRegister;
@@ -892,43 +881,21 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     {
         B3::PatchpointValue* getInstance = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
-        if (Context::useFastTLS())
-            getInstance->clobber(RegisterSetBuilder::macroClobberedRegisters());
-        else {
-            // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
-            // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
-            getInstance->effects.writesPinned = false;
-            getInstance->effects.readsPinned = true;
-            getInstance->resultConstraints = { ValueRep::reg(m_wasmContextInstanceGPR) };
-        }
-        getInstance->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            if (Context::useFastTLS()) {
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::loadWasmContextInstanceNeedsMacroScratchRegister());
-                jit.loadWasmContextInstance(params[0].gpr());
-            }
-        });
+        // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
+        // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
+        getInstance->effects.writesPinned = false;
+        getInstance->effects.readsPinned = true;
+        getInstance->resultConstraints = { ValueRep::reg(m_wasmContextInstanceGPR) };
+        getInstance->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
         m_instanceValue = getInstance;
     }
 
     {
-        auto* calleeMoveLocations = &compilation->calleeMoveLocations;
         static_assert(CallFrameSlot::codeBlock * sizeof(Register) < WasmCallingConvention::headerSizeInBytes, "We rely on this here for now.");
         static_assert(CallFrameSlot::callee * sizeof(Register) < WasmCallingConvention::headerSizeInBytes, "We rely on this here for now.");
-        B3::PatchpointValue* getCalleePatchpoint = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Int64, Origin());
-        getCalleePatchpoint->resultConstraints = { B3::ValueRep::SomeRegister };
-        getCalleePatchpoint->effects = B3::Effects::none();
-        getCalleePatchpoint->setGenerator(
-            [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                GPRReg result = params[0].gpr();
-                MacroAssembler::DataLabelPtr moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), result);
-                jit.addLinkTask([calleeMoveLocations, moveLocation] (LinkBuffer& linkBuffer) {
-                    calleeMoveLocations->append(linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation));
-                });
-            });
-
         B3::Value* offsetOfCallee = m_currentBlock->appendNew<B3::Const64Value>(m_proc, Origin(), CallFrameSlot::callee * sizeof(Register));
         m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(),
-            getCalleePatchpoint,
+            constant(B3::Int64, bitwise_cast<uint64_t>(CalleeBits::boxWasm(&m_callee))),
             m_currentBlock->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), offsetOfCallee));
     }
 
@@ -1596,14 +1563,13 @@ auto B3IRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialRes
 auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> PartialResult
 {
     const Wasm::GlobalInformation& global = m_info.globals[index];
-    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value))));
+        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index))));
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
         ASSERT(global.mutability == Wasm::Mutability::Mutable);
-        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value)));
+        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index)));
         result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), pointer));
         break;
     }
@@ -1615,16 +1581,15 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 {
     const Wasm::GlobalInformation& global = m_info.globals[index];
     ASSERT(toB3Type(global.type) == value->type());
-    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobals()));
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value)));
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index)));
         if (isRefType(global.type))
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
         ASSERT(global.mutability == Wasm::Mutability::Mutable);
-        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Global::Value)));
+        Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index)));
         m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), pointer);
         // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
         if (isRefType(global.type)) {
@@ -2325,7 +2290,11 @@ void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const
 {
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), structValue, JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
-    const auto& fieldType = structType.field(fieldIndex).type;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structType.field(fieldIndex).type.is<Type>());
+
+    Type fieldType = structType.field(fieldIndex).type.as<Type>();
     switch (fieldType.kind) {
     case TypeKind::I32:
     case TypeKind::Funcref:
@@ -2634,13 +2603,23 @@ auto B3IRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> Pa
     return { };
 }
 
+Variable* B3IRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size)
+{
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    return push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(size), initValue));
+}
+
 auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
 #if ASSERT_ENABLED
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
-    ASSERT(toB3Type(elementType) == value->type());
+    const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
+    ASSERT(toB3Type(elementType.unpacked()) == value->type());
 #endif
 
     Value* initValue = get(value);
@@ -2653,44 +2632,33 @@ auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Express
         initValue = patchpoint;
     }
 
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(size), initValue));
+    result = pushArrayNew(typeIndex, initValue, size);
 
     return { };
 }
 
 auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    // FIXME: Abstract and generalize with addArrayNew.
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
 
     Value* initValue;
-    if (Wasm::isRefType(elementType))
+    if (Wasm::isRefType(arraySignature.as<ArrayType>()->elementType().type))
         initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
     else
         initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
 
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(size), initValue));
+    result = pushArrayNew(typeIndex, initValue, size);
 
     return { };
 }
 
-auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
-    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::Type resultType = elementType.unpacked();
 
     // Ensure arrayref is non-null.
     {
@@ -2719,10 +2687,10 @@ auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, Exp
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
         get(arrayref), get(index));
 
-    switch (toB3Type(elementType).kind()) {
+    switch (toB3Type(resultType).kind()) {
     case B3::Float:
     case B3::Double: {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(elementType), origin());
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(resultType), origin());
         patchpoint->appendSomeRegister(arrayResult);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move64ToDouble(params[1].gpr(), params[0].fpr());
@@ -2731,12 +2699,28 @@ auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, Exp
         break;
     }
     case B3::Int32: {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(elementType), origin());
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(resultType), origin());
         patchpoint->appendSomeRegister(arrayResult);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move(params[1].gpr(), params[0].gpr());
         });
-        result = push(patchpoint);
+        Value* postProcess = patchpoint;
+        switch (arrayGetKind) {
+        case GCOpType::ArrayGet:
+        case GCOpType::ArrayGetU:
+            break;
+        case GCOpType::ArrayGetS: {
+            size_t elementSize = elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
+            uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+            Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), patchpoint, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            postProcess = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return { };
+        }
+        result = push(postProcess);
         break;
     }
     case B3::Int64:
@@ -2837,7 +2821,11 @@ auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructTyp
 {
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(structReference), JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
-    switch (structType.field(fieldIndex).type.kind) {
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+    ASSERT(structType.field(fieldIndex).type.is<Type>());
+
+    switch (structType.field(fieldIndex).type.as<Type>().kind) {
     case TypeKind::I32:
         result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin(), payloadBase, fieldOffset));
         break;
@@ -4157,6 +4145,8 @@ void B3IRGenerator::dump(const ControlStack& controlStack, const Stack* expressi
 
 auto B3IRGenerator::origin() -> Origin
 {
+    if (!m_parser)
+        return Origin();
     OpcodeOrigin origin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
     ASSERT(isValidOpType(static_cast<uint8_t>(origin.opcode())));
     return bitwise_cast<Origin>(origin);
@@ -4173,7 +4163,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -4210,7 +4200,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
 
     procedure.code().setForceIRCRegisterAllocation();
 
-    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, hasExceptionHandlers, loopIndexForOSREntry, tierUp);
+    B3IRGenerator irGenerator(info, callee, procedure, unlinkedWasmToWasmCalls, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, hasExceptionHandlers, loopIndexForOSREntry, tierUp);
     FunctionParser<B3IRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
@@ -4752,7 +4742,7 @@ using namespace B3;
 #if !USE(JSVALUE64)
 // On 32-bit platforms, we stub out the entire B3 generator
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t, std::optional<bool>, uint32_t, TierUpCount*)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext&, Callee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t, std::optional<bool>, uint32_t, TierUpCount*)
 {
     UNREACHABLE_FOR_PLATFORM();
 }

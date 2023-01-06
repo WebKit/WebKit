@@ -38,11 +38,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy, WebProcessProxy& process)
+DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy)
     : m_type(type)
     , m_identifier(DrawingAreaIdentifier::generate())
     , m_webPageProxy(webPageProxy)
-    , m_process(process)
     , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
     , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
@@ -52,14 +51,14 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPagePr
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
-    if (m_startedReceivingMessages)
-        process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier);
+    for (auto& process : m_processesWithRegisteredDrawingAreaProxyMessageReceiver)
+        process->removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier);
 }
 
-void DrawingAreaProxy::startReceivingMessages()
+void DrawingAreaProxy::startReceivingMessages(WebProcessProxy& process)
 {
-    m_startedReceivingMessages = true;
-    process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier, *this);
+    process.addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier, *this);
+    m_processesWithRegisteredDrawingAreaProxyMessageReceiver.append(process);
 }
 
 DelegatedScrollingMode DrawingAreaProxy::delegatedScrollingMode() const
@@ -85,21 +84,6 @@ MachSendRight DrawingAreaProxy::createFence()
 }
 #endif
 
-IPC::Connection* DrawingAreaProxy::messageSenderConnection() const
-{
-    return process().connection();
-}
-
-bool DrawingAreaProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)
-{
-    return process().sendMessage(WTFMove(encoder), sendOptions);
-}
-
-bool DrawingAreaProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, AsyncReplyHandler handler, OptionSet<IPC::SendOption> sendOptions)
-{
-    return m_process->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
-}
-
 #if PLATFORM(MAC)
 void DrawingAreaProxy::didChangeViewExposedRect()
 {
@@ -119,7 +103,7 @@ void DrawingAreaProxy::viewExposedRectChangedTimerFired()
     if (viewExposedRect == m_lastSentViewExposedRect)
         return;
 
-    send(Messages::DrawingArea::SetViewExposedRect(viewExposedRect));
+    m_webPageProxy.send(Messages::DrawingArea::SetViewExposedRect(viewExposedRect), m_identifier);
     m_lastSentViewExposedRect = viewExposedRect;
 }
 #endif // PLATFORM(MAC)

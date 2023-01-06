@@ -27,9 +27,16 @@
 
 namespace WebCore {
 
+class ButtonPart;
+class InnerSpinButtonPart;
 class MeterPart;
+class MenuListPart;
 class PlatformControl;
 class ProgressBarPart;
+class SearchFieldCancelButtonPart;
+class SearchFieldPart;
+class SliderThumbPart;
+class SliderTrackPart;
 class TextAreaPart;
 class TextFieldPart;
 class ToggleButtonPart;
@@ -37,17 +44,26 @@ class ToggleButtonPart;
 class ControlFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ControlFactory() = default;
     virtual ~ControlFactory() = default;
 
     WEBCORE_EXPORT static std::unique_ptr<ControlFactory> createControlFactory();
     static ControlFactory& sharedControlFactory();
 
+    virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) = 0;
+
+protected:
+    ControlFactory() = default;
 };
 
 } // namespace WebCore

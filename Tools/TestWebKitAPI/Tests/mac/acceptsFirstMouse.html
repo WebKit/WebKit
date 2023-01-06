@@ -16,7 +16,8 @@
     <img class="selectable">
     <script>
         var target = document.getElementById("target");
-        getSelection().setBaseAndExtent(target, 0, target, 1);
+        var nodeIndex = [...target.parentNode.childNodes].indexOf(target);
+        getSelection().setBaseAndExtent(target.parentNode, nodeIndex, target.parentNode, nodeIndex + 1);
         scrollBy(0, 100);
     </script>
 </body>

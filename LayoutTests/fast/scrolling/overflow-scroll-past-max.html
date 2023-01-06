@@ -100,14 +100,14 @@
             checkForScroll();
         }
 
-        function startTest()
+        async function startTest()
         {
             if (window.eventSender) {
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
 
-                eventSender.monitorWheelEvents();
-                setTimeout(scrollTest, 0);
+                await UIHelper.startMonitoringWheelEvents();
+                await scrollTest();
             }
         }
         

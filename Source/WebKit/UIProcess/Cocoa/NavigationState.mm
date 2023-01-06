@@ -170,6 +170,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFailNavigationWithErrorUserInfo = [delegate respondsToSelector:@selector(_webView:didFailNavigation:withError:userInfo:)];
     m_navigationDelegateMethods.webViewDidFailLoadWithRequestInFrameWithError = [delegate respondsToSelector:@selector(_webView:didFailLoadWithRequest:inFrame:withError:)];
     m_navigationDelegateMethods.webViewDidFailLoadDueToNetworkConnectionIntegrityWithURL = [delegate respondsToSelector:@selector(_webView:didFailLoadDueToNetworkConnectionIntegrityWithURL:)];
+    m_navigationDelegateMethods.webViewDidChangeLookalikeCharactersFromURLToURL = [delegate respondsToSelector:@selector(_webView:didChangeLookalikeCharactersFromURL:toURL:)];
     
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
     m_navigationDelegateMethods.webViewWillPerformClientRedirect = [delegate respondsToSelector:@selector(_webView:willPerformClientRedirectToURL:delay:)];
@@ -858,6 +859,19 @@ void NavigationState::NavigationClient::didFailLoadDueToNetworkConnectionIntegri
 
     if (m_navigationState->m_navigationDelegateMethods.webViewDidFailLoadDueToNetworkConnectionIntegrityWithURL)
         [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didFailLoadDueToNetworkConnectionIntegrityWithURL:url];
+}
+
+void NavigationState::NavigationClient::didChangeLookalikeCharacters(WebPageProxy& page, const URL& originalURL, const URL& adjustedURL)
+{
+    if (!m_navigationState)
+        return;
+    
+    auto navigationDelegate = m_navigationState->m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidChangeLookalikeCharactersFromURLToURL)
+        [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didChangeLookalikeCharactersFromURL:originalURL toURL:adjustedURL];
 }
 
 void NavigationState::NavigationClient::didFailNavigationWithError(WebPageProxy& page, const FrameInfoData& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userInfo)

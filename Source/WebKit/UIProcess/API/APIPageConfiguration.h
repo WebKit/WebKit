@@ -103,6 +103,9 @@ public:
     WebKit::WebPageProxy* relatedPage() const;
     void setRelatedPage(WebKit::WebPageProxy*);
 
+    WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
+    void setPageToCloneSessionStorageFrom(WebKit::WebPageProxy*);
+
     WebKit::VisitedLinkStore* visitedLinkStore();
     void setVisitedLinkStore(WebKit::VisitedLinkStore*);
 
@@ -222,6 +225,7 @@ private:
     RefPtr<WebKit::WebPageGroup> m_pageGroup;
     RefPtr<WebKit::WebPreferences> m_preferences;
     RefPtr<WebKit::WebPageProxy> m_relatedPage;
+    WeakPtr<WebKit::WebPageProxy> m_pageToCloneSessionStorageFrom;
     RefPtr<WebKit::VisitedLinkStore> m_visitedLinkStore;
 
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;

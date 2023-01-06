@@ -12,10 +12,15 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
       list(APPEND _sourceListFileTruePaths "${CMAKE_CURRENT_SOURCE_DIR}/${_sourcesListFile}")
     endforeach ()
 
+    set(gusb_args --derived-sources-path ${_derivedSourcesPath} --source-tree-path ${CMAKE_CURRENT_SOURCE_DIR})
+    # Windows needs a larger bundle size because that helps keep WebCore.lib's size below the 4GB maximum in debug builds.
+    if (MSVC AND ${_framework} STREQUAL "WebCore" AND ${_framework}_LIBRARY_TYPE STREQUAL "STATIC")
+        list(APPEND gusb_args --max-bundle-size 16)
+    endif ()
+
     if (ENABLE_UNIFIED_BUILDS)
         execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
-            "--derived-sources-path" "${_derivedSourcesPath}"
-            "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
+            ${gusb_args}
             "--print-bundled-sources"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE _resultTmp
@@ -32,8 +37,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         unset(_sourceFileTmp)
 
         execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
-            "--derived-sources-path" "${_derivedSourcesPath}"
-            "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
+            ${gusb_args}
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE  _resultTmp
             OUTPUT_VARIABLE _outputTmp)
@@ -47,8 +51,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         unset(_outputTmp)
     else ()
         execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
-            "--derived-sources-path" "${_derivedSourcesPath}"
-            "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
+            ${gusb_args}
             "--print-all-sources"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE _resultTmp

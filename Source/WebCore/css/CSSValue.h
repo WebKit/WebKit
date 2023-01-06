@@ -257,7 +257,6 @@ protected:
     // CSSPrimitiveValue:
     unsigned m_primitiveUnitType : 7 { 0 }; // CSSUnitType
     mutable unsigned m_hasCachedCSSText : 1 { false };
-    mutable unsigned m_cachedCSSTextUsesLegacyPrecision : 1 { false };
     unsigned m_isImplicit : 1 { false };
 
     // CSSValueList and CSSValuePair:

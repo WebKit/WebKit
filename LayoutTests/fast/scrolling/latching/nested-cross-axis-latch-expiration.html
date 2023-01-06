@@ -54,7 +54,7 @@
 
             eventSender.mouseMoveTo(150, 150);
 
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             // Latch to the inner vertical scroller.
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             await UIHelper.renderingUpdate();
@@ -70,7 +70,7 @@
             await UIHelper.waitForScrollCompletion();
         
             // Now try to scroll on the other axis while still latched.
-            eventSender.monitorWheelEvents({ resetLatching: false });
+            await UIHelper.startMonitoringWheelEvents({ resetLatching: false });
             await UIHelper.renderingUpdate();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
             await UIHelper.renderingUpdate();

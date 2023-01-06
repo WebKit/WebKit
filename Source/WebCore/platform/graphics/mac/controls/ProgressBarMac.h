@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import "ProgressBarPart.h"
 
 namespace WebCore {
 

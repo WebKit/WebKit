@@ -85,7 +85,7 @@ private:
     void getFile(WebCore::FileSystemHandleIdentifier, StringCallback&&) final;
 
     void createSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::GetAccessHandleCallback&&) final;
-    void closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::FileSystemStorageConnection::VoidCallback&&) final;
+    void closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier) final;
     void registerSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier) final;
     void unregisterSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;

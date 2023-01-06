@@ -26,6 +26,7 @@
                 position: fixed;
             }
         </style>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         let write = s => output.innerHTML += s + "<br>";
         if (window.testRunner) {
@@ -33,26 +34,27 @@
             testRunner.waitUntilDone();
         }
 
-        function verticalScrollInBody(dragDeltas)
+        async function verticalScrollInBody(dragDeltas)
         {
-            return new Promise(resolve => {
-                write(`Scrolling body with ${dragDeltas.length} drag ticks`);
-                eventSender.monitorWheelEvents();
-                internals.setPlatformMomentumScrollingPredictionEnabled(false);
-                eventSender.mouseMoveTo(window.innerWidth / 2, window.innerHeight / 2);
-                dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-                eventSender.callAfterScrollingCompletes(() => {
-                    let areaHeight = document.querySelector(".area").clientHeight;
-                    write(`- Did the scrolling snap to the top? ${document.scrollingElement.scrollTop == 0 ? "YES" : "NO"}`);
-                    write(`- Did scrolling snap to the second box? ${document.scrollingElement.scrollTop == areaHeight ? "YES" : "NO"}`);
-                    document.scrollingElement.scrollTop = 0;
-                    setTimeout(resolve, 0);
-                });
-            });
+            write(`Scrolling body with ${dragDeltas.length} drag ticks`);
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            await UIHelper.startMonitoringWheelEvents();
+            eventSender.mouseMoveTo(window.innerWidth / 2, window.innerHeight / 2);
+            dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            await UIHelper.waitForScrollCompletion();
+
+            let areaHeight = document.querySelector(".area").clientHeight;
+            write(`- Did the scrolling snap to the top? ${document.scrollingElement.scrollTop == 0 ? "YES" : "NO"}`);
+            write(`- Did scrolling snap to the second box? ${document.scrollingElement.scrollTop == areaHeight ? "YES" : "NO"}`);
+            document.scrollingElement.scrollTop = 0;
+
+            await UIHelper.delayFor(0);
         }
 
-        function run() {
+        async function run()
+        {
             if (!window.testRunner || !window.eventSender) {
                 write("To manually test, verify that scrolling near one of the boundaries between the colored boxes");
                 write("snaps to the edge of the nearest colored box, but scrolling somewhere near the middle of two");
@@ -61,10 +63,11 @@
             }
 
             let areaHeight = document.querySelector(".area").clientHeight;
-            verticalScrollInBody(new Array(2).fill(-1))
-                .then(() => verticalScrollInBody(new Array(Math.round(areaHeight / 20)).fill(-1)))
-                .then(() => verticalScrollInBody(new Array(Math.round(areaHeight / 10)).fill(-1)))
-                .then(() => testRunner.notifyDone());
+            
+            await verticalScrollInBody(new Array(2).fill(-1));
+            await verticalScrollInBody(new Array(Math.round(areaHeight / 20)).fill(-1));
+            await verticalScrollInBody(new Array(Math.round(areaHeight / 10)).fill(-1));
+            testRunner.notifyDone();
         }
         </script>
     </head>

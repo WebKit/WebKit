@@ -1356,6 +1356,15 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
     return logicalTop;
 }
 
+bool RenderBlockFlow::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+{
+    if (!child.style().isDisplayBlockLevel() || !style().marginTrim().contains(marginTrimType))
+        return false;
+    if (marginTrimType == MarginTrimType::BlockStart)
+        return firstInFlowChildBox() == &child;
+    return lastInFlowChildBox() == &child;
+}
+
 LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& marginInfo, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos)
 {
     LayoutUnit heightIncrease = getClearDelta(child, yPos);

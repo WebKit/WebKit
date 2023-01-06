@@ -72,7 +72,7 @@
 
         wrapperScrollPositionBefore = wrapperTarget.scrollTop;
 
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -101,7 +101,7 @@
         var startPosX = divTarget.offsetLeft + divTarget.clientWidth + 50;
         var startPosY = Math.round(divTarget.offsetTop) - 42; // One wheel turn before end.
 
-        eventSender.monitorWheelEvents();
+        await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');

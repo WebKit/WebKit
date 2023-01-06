@@ -41,6 +41,7 @@
             #itemH5, #itemV5 { background-color: fuchsia; }
         </style>
         <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
         <script>
         window.jsTestIsAsync = true;
 
@@ -85,7 +86,7 @@
                 finishJSTest();
         }
 
-        function scrollSnapTest(targetLabel)
+        async function scrollSnapTest(targetLabel)
         {
             debug("Testing scroll-snap snap for " + targetLabel + ":");
             var divTarget = document.getElementById(targetLabel);
@@ -104,13 +105,14 @@
 
             var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-            eventSender.callAfterScrollingCompletes(function() { return checkForScrollSnap(targetLabel); });
+            await UIHelper.waitForScrollCompletion();
+            checkForScrollSnap(targetLabel);
         }
 
         function checkForScrollGlide(targetLabel)
@@ -133,7 +135,7 @@
             setTimeout(function() { scrollSnapTest(targetLabel) }, 0);
         }
 
-        function scrollGlideTest(targetLabel)
+        async function scrollGlideTest(targetLabel)
         {
             debug("Testing scroll-snap glide for " + targetLabel + ":");
             var divTarget = document.getElementById(targetLabel);
@@ -152,7 +154,7 @@
 
             var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
-            eventSender.monitorWheelEvents();
+            await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
@@ -162,7 +164,8 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'begin');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'continue');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-            eventSender.callAfterScrollingCompletes(function() { return checkForScrollGlide(targetLabel); });
+            await UIHelper.waitForScrollCompletion();
+            checkForScrollGlide(targetLabel);
         }
 
         function onLoad()

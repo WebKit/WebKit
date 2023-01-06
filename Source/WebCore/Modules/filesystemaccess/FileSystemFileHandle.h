@@ -41,7 +41,7 @@ public:
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
 
     void createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&&);
-    void closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&);
+    void closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
 

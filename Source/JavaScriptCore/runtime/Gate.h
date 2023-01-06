@@ -68,11 +68,8 @@ namespace JSC {
 
 #define JSC_WASM_GATE_OPCODES(v) \
     v(wasm_call, JSEntrySlowPathPtrTag) \
-    v(wasm_call_no_tls, JSEntrySlowPathPtrTag) \
     v(wasm_call_indirect, JSEntrySlowPathPtrTag) \
-    v(wasm_call_indirect_no_tls, JSEntrySlowPathPtrTag) \
     v(wasm_call_ref, JSEntrySlowPathPtrTag) \
-    v(wasm_call_ref_no_tls, JSEntrySlowPathPtrTag) \
 
 #else
 #define JSC_WASM_GATE_OPCODES(v)

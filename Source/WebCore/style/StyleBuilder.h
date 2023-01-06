@@ -35,7 +35,7 @@ namespace Style {
 class Builder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All);
+    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All, const HashSet<AnimatableProperty>* = nullptr);
     ~Builder();
 
     void applyAllProperties();

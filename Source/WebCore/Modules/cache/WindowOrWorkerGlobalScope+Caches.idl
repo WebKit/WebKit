@@ -25,7 +25,7 @@
 
 // https://w3c.github.io/ServiceWorker/#self-caches
 [
-    EnabledByDeprecatedGlobalSetting=CacheAPIEnabled,
+    EnabledBySetting=CacheAPIEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeCaches
 ] partial interface mixin WindowOrWorkerGlobalScope {
     [CallWith=CurrentScriptExecutionContext, SecureContext, SameObject] readonly attribute DOMCacheStorage caches;

@@ -721,6 +721,7 @@ fast/forms/file/open-file-panel.html [ Skip ]
 # ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
 http/tests/misc/gamepads-insecure.html [ Skip ]
+imported/w3c/web-platform-tests/gamepad [ Skip ]
 
 # TODO Userscripts stuff is not implemented
 webkit.org/b/140258 userscripts/ [ Skip ]
@@ -5243,3 +5244,6 @@ fast/frames/consume_transient_activation.html [ Skip ]
 fast/canvas/offscreen-enabled.html [ Skip ]
 http/wpt/offscreen-canvas [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip ]
+
+# Per-process limit is only for WK2
+http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]

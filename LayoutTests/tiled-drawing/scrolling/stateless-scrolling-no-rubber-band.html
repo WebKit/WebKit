@@ -20,6 +20,7 @@
             #cell5 { background-color: #6666FF; }
         </style>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
         <script>
 
         function checkScrollOffsets()
@@ -38,13 +39,13 @@
             setTimeout(checkScrollOffsets, 0);
         }
 
-        function setup()
+        async function setup()
         {
             if (window.eventSender) {
                 window.jsTestIsAsync = true;
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
-                eventSender.monitorWheelEvents();
+                await UIHelper.startMonitoringWheelEvents();
                 setTimeout(testStatelessScrollingAgainstEdge, 0);
             }
         }

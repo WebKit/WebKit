@@ -176,6 +176,7 @@
 		CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA072A9236FFBF70018839C /* CrashReporter.cpp */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
 		DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 862A8D32278DE74A0014120C /* SignedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD28468829248DDA0009A61D /* UnifiedWebPreferences.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC85E27A4BF8E007E5B61 /* WeakHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B67F3F12228D5310030DE9C /* WeakHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC85F27A4BF8E007E5B61 /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472B6151A825A004123FF /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86027A4BF8E007E5B61 /* Observer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD48A87024C8A21600F5800C /* Observer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -602,13 +603,8 @@
 		DDF307F327C086EA006A526F /* UTF8Conversion.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47358151A825B004123FF /* UTF8Conversion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307F427C086EA006A526F /* Collator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4734A151A825B004123FF /* Collator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307F527C0870E006A526F /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4748B151A8264004123FF /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF307FE27C08A77006A526F /* WebPreferences.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0327A4E176007E5B61 /* WebPreferences.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF307FF27C08A77006A526F /* WebPreferencesDebug.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0127A4E176007E5B61 /* WebPreferencesDebug.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF3080027C08A77006A526F /* WebPreferencesExperimental.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0227A4E176007E5B61 /* WebPreferencesExperimental.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF3080127C08A77006A526F /* WebPreferencesInternal.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0427A4E176007E5B61 /* WebPreferencesInternal.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3080227C08A77006A526F /* generate-unified-source-bundles.rb in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF3080427C08B34006A526F /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3082327C44F08006A526F /* filteredbrk.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB3027B347C500C109E0 /* filteredbrk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3082427C44F08006A526F /* udatpg.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB1727B347C500C109E0 /* udatpg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3082527C44F08006A526F /* utypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB7927B347C500C109E0 /* utypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1451,10 +1447,7 @@
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
-		DD3DCA0127A4E176007E5B61 /* WebPreferencesDebug.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesDebug.yaml; sourceTree = "<group>"; };
-		DD3DCA0227A4E176007E5B61 /* WebPreferencesExperimental.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesExperimental.yaml; sourceTree = "<group>"; };
-		DD3DCA0327A4E176007E5B61 /* WebPreferences.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferences.yaml; sourceTree = "<group>"; };
-		DD3DCA0427A4E176007E5B61 /* WebPreferencesInternal.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesInternal.yaml; sourceTree = "<group>"; };
+		DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = UnifiedWebPreferences.yaml; sourceTree = "<group>"; };
 		DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = "generate-unified-source-bundles.rb"; sourceTree = "<group>"; };
 		DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
 		DD403D5528EB93BE009B4684 /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2543,10 +2536,7 @@
 		DD3DCA0027A4E176007E5B61 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				DD3DCA0327A4E176007E5B61 /* WebPreferences.yaml */,
-				DD3DCA0127A4E176007E5B61 /* WebPreferencesDebug.yaml */,
-				DD3DCA0227A4E176007E5B61 /* WebPreferencesExperimental.yaml */,
-				DD3DCA0427A4E176007E5B61 /* WebPreferencesInternal.yaml */,
+				DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
@@ -2890,7 +2880,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDF3080427C08B34006A526F /* (null) in Headers */,
 				E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */,
 				DD3DC8FA27A4BF8E007E5B61 /* AggregateLogger.h in Headers */,
 				DD3DC96027A4BF8E007E5B61 /* Algorithms.h in Headers */,
@@ -3307,6 +3296,7 @@
 				DDF306FD27C086CC006A526F /* TypeCastsCocoa.h in Headers */,
 				DD3DC8C927A4BF8E007E5B61 /* UnalignedAccess.h in Headers */,
 				DD3DC86A27A4BF8E007E5B61 /* Unexpected.h in Headers */,
+				DD28468829248DDA0009A61D /* UnifiedWebPreferences.yaml in Headers */,
 				DD3DC8A627A4BF8E007E5B61 /* UnionFind.h in Headers */,
 				DD3DC98727A4BF8E007E5B61 /* UniqueArray.h in Headers */,
 				DDF307E527C086DF006A526F /* UniquedStringImpl.h in Headers */,
@@ -3341,10 +3331,6 @@
 				DD3DC91927A4BF8E007E5B61 /* WeakRandom.h in Headers */,
 				DD3DC88A27A4BF8E007E5B61 /* WeakRandomNumber.h in Headers */,
 				DDF3073B27C086CD006A526F /* WebCoreThread.h in Headers */,
-				DDF307FE27C08A77006A526F /* WebPreferences.yaml in Headers */,
-				DDF307FF27C08A77006A526F /* WebPreferencesDebug.yaml in Headers */,
-				DDF3080027C08A77006A526F /* WebPreferencesExperimental.yaml in Headers */,
-				DDF3080127C08A77006A526F /* WebPreferencesInternal.yaml in Headers */,
 				DD4901EA27B4748A00D7E50D /* WindowsExtras.h in Headers */,
 				DD3DC8AE27A4BF8E007E5B61 /* WordLock.h in Headers */,
 				DD3DC92327A4BF8E007E5B61 /* WorkerPool.h in Headers */,

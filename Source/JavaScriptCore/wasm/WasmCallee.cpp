@@ -37,14 +37,12 @@ namespace JSC { namespace Wasm {
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : m_compilationMode(compilationMode)
 {
-    CalleeRegistry::singleton().registerCallee(this);
 }
 
 Callee::Callee(Wasm::CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : m_compilationMode(compilationMode)
     , m_indexOrName(index, WTFMove(name))
 {
-    CalleeRegistry::singleton().registerCallee(this);
 }
 
 template<typename Func>
@@ -141,17 +139,15 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode)
 {
 }
 
-JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
-    : Callee(compilationMode)
-    , m_entrypoint(WTFMove(entrypoint))
+JITCallee::JITCallee(Wasm::CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    : Callee(compilationMode, index, WTFMove(name))
 {
 }
 
-JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-    : Callee(compilationMode, index, WTFMove(name))
-    , m_wasmToWasmCallsites(WTFMove(unlinkedCalls))
-    , m_entrypoint(WTFMove(entrypoint))
+void JITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
 {
+    m_entrypoint = WTFMove(entrypoint);
+    CalleeRegistry::singleton().registerCallee(this);
 }
 
 ptrdiff_t JSToWasmICCallee::previousInstanceOffset(const RegisterAtOffsetList& calleeSaveRegisters)
@@ -211,6 +207,13 @@ LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, st
             handler.initialize(unlinkedHandler, target);
         }
     }
+}
+
+void LLIntCallee::setEntrypoint(CodePtr<WasmEntryPtrTag> entrypoint)
+{
+    ASSERT(!m_entrypoint);
+    m_entrypoint = entrypoint;
+    CalleeRegistry::singleton().registerCallee(this);
 }
 
 RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()

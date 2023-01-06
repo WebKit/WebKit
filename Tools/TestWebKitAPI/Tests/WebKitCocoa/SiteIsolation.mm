@@ -30,8 +30,8 @@
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
-#import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #import <wtf/BlockPtr.h>
 
 namespace TestWebKitAPI {
@@ -39,9 +39,9 @@ namespace TestWebKitAPI {
 static void enableSiteIsolation(WKWebViewConfiguration *configuration)
 {
     auto preferences = [configuration preferences];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
         if ([feature.key isEqualToString:@"SiteIsolationEnabled"]) {
-            [preferences _setEnabled:YES forExperimentalFeature:feature];
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
             break;
         }
     }

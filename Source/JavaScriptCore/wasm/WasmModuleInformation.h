@@ -86,6 +86,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t memoryCount() const { return memory ? 1 : 0; }
     uint32_t tableCount() const { return tables.size(); }
     uint32_t elementCount() const { return elements.size(); }
+    uint32_t globalCount() const { return globals.size(); }
     uint32_t dataSegmentsCount() const { return numberOfDataSegments.value_or(0); }
 
     const TableInformation& table(unsigned index) const { return tables[index]; }

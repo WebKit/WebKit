@@ -75,6 +75,7 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
+#import <pal/spi/mac/NSSearchFieldCellSPI.h>
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
@@ -86,11 +87,6 @@
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
-
-// FIXME: This should go into an SPI.h file in the spi directory.
-@interface NSSearchFieldCell ()
-@property (getter=isCenteredLook) BOOL centeredLook;
-@end
 
 constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
 
@@ -226,11 +222,23 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
 #if ENABLE(APPLE_PAY)
     case ControlPartType::ApplePayButton:
 #endif
+    case ControlPartType::Button:
     case ControlPartType::Checkbox:
+    case ControlPartType::DefaultButton:
+    case ControlPartType::InnerSpinButton:
     case ControlPartType::Listbox:
+    case ControlPartType::Menulist:
     case ControlPartType::Meter:
     case ControlPartType::ProgressBar:
     case ControlPartType::Radio:
+    case ControlPartType::PushButton:
+    case ControlPartType::SearchField:
+    case ControlPartType::SearchFieldCancelButton:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
+    case ControlPartType::SquareButton:
     case ControlPartType::TextArea:
     case ControlPartType::TextField:
         return true;
@@ -248,10 +256,22 @@ RenderThemeMac::RenderThemeMac()
 bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::Checkbox
+    return type == ControlPartType::Button
+        || type == ControlPartType::Checkbox
+        || type == ControlPartType::DefaultButton
+        || type == ControlPartType::InnerSpinButton
+        || type == ControlPartType::Menulist
         || type == ControlPartType::Meter
         || type == ControlPartType::ProgressBar
-        || type == ControlPartType::Radio;
+        || type == ControlPartType::PushButton
+        || type == ControlPartType::Radio
+        || type == ControlPartType::SearchField
+        || type == ControlPartType::SearchFieldCancelButton
+        || type == ControlPartType::SliderThumbHorizontal
+        || type == ControlPartType::SliderThumbVertical
+        || type == ControlPartType::SliderHorizontal
+        || type == ControlPartType::SliderVertical
+        || type == ControlPartType::SquareButton;
 }
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
@@ -856,7 +876,7 @@ void RenderThemeMac::updateFocusedState(NSCell *cell, const RenderObject* o)
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
 {
     bool oldPressed = [cell isHighlighted];
-    bool pressed = is<Element>(o.node()) && downcast<Element>(*o.node()).active();
+    bool pressed = isPressed(o);
     if (pressed != oldPressed)
         [cell setHighlighted:pressed];
 }
@@ -1143,39 +1163,6 @@ const int* RenderThemeMac::popupButtonPadding(NSControlSize size, bool isRTL) co
     return isRTL ? paddingRTL[size] : paddingLTR[size];
 }
 
-bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    setPopupButtonCellState(renderer, IntSize(rect.size()));
-
-    NSPopUpButtonCell* popupButton = this->popupButton();
-
-    float zoomLevel = renderer.style().effectiveZoom();
-    IntSize size = popupButtonSizes()[[popupButton controlSize]];
-    size.setHeight(size.height() * zoomLevel);
-    size.setWidth(rect.width());
-
-    // Now inflate it to account for the shadow.
-    FloatRect inflatedRect = rect;
-    if (rect.width() >= minimumMenuListSize(renderer.style()))
-        inflatedRect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    if (zoomLevel != 1.0f) {
-        inflatedRect.setWidth(inflatedRect.width() / zoomLevel);
-        inflatedRect.setHeight(inflatedRect.height() / zoomLevel);
-        paintInfo.context().translate(inflatedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-inflatedRect.location());
-    }
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(popupButton, renderer, paintInfo, inflatedRect);
-    [popupButton setControlView:nil];
-
-    return false;
-}
-
 FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const FloatRect& bounds) const
 {
     auto* control = const_cast<RenderMeter&>(renderMeter).ensureControlPartForRenderer();
@@ -1246,16 +1233,6 @@ static void MainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outDa
 {
     static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
     static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
-}
-
-static void TrackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
-{
-    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.678f };
-    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.13f };
     float a = inData[0];
     int i = 0;
     for (i = 0; i < 4; i++)
@@ -1522,165 +1499,15 @@ int RenderThemeMac::minimumMenuListSize(const RenderStyle& style) const
     return sizeForSystemFont(style, menuListSizes()).width();
 }
 
-const int trackWidth = 5;
-const int trackRadius = 2;
-
 void RenderThemeMac::adjustSliderTrackStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
-}
-
-bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    IntRect bounds = r;
-    float zoomLevel = o.style().effectiveZoom();
-    float zoomedTrackWidth = trackWidth * zoomLevel;
-
-    if (o.style().effectiveAppearance() ==  ControlPartType::SliderHorizontal) {
-        bounds.setHeight(zoomedTrackWidth);
-        bounds.setY(r.y() + r.height() / 2 - zoomedTrackWidth / 2);
-    } else if (o.style().effectiveAppearance() == ControlPartType::SliderVertical) {
-        bounds.setWidth(zoomedTrackWidth);
-        bounds.setX(r.x() + r.width() / 2 - zoomedTrackWidth / 2);
-    }
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    CGContextRef context = localContext.cgContext();
-    CGColorSpaceRef cspace = sRGBColorSpaceRef();
-
-#if ENABLE(DATALIST_ELEMENT)
-    paintSliderTicks(o, paintInfo, r);
-#endif
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    CGContextClipToRect(context, bounds);
-
-    struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
-    RetainPtr<CGShadingRef> mainShading;
-    if (o.style().effectiveAppearance() == ControlPartType::SliderVertical)
-        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
-    else
-        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
-
-    IntSize radius(trackRadius, trackRadius);
-    paintInfo.context().clipRoundedRect(FloatRoundedRect(bounds, radius, radius, radius, radius));
-    context = localContext.cgContext();
-    CGContextDrawShading(context, mainShading.get());
-
-    return false;
 }
 
 void RenderThemeMac::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(style, element);
     style.setBoxShadow(nullptr);
-}
-
-const float verticalSliderHeightPadding = 0.1f;
-
-bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    NSSliderCell* sliderThumbCell = o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical
-        ? sliderThumbVertical()
-        : sliderThumbHorizontal();
-
-    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-
-    // Update the various states we respond to.
-    updateEnabledState(sliderThumbCell, o);
-    RefPtr element = dynamicDowncast<Element>(o.node());
-    RefPtr delegate = element;
-    if (is<SliderThumbElement>(element))
-        delegate = downcast<SliderThumbElement>(*element).hostInput();
-    updateFocusedState(sliderThumbCell, delegate ? delegate->renderer() : nullptr);
-
-    // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
-    bool oldPressed;
-    if (o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
-        oldPressed = m_isSliderThumbVerticalPressed;
-    else
-        oldPressed = m_isSliderThumbHorizontalPressed;
-
-    bool pressed = isPressed(o);
-
-    if (o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
-        m_isSliderThumbVerticalPressed = pressed;
-    else
-        m_isSliderThumbHorizontalPressed = pressed;
-
-    NSView *view = documentViewFor(o);
-
-    if (pressed != oldPressed) {
-        if (pressed)
-            [sliderThumbCell startTrackingAt:NSPoint() inView:view];
-        else
-            [sliderThumbCell stopTracking:NSPoint() at:NSPoint() inView:view mouseIsUp:YES];
-    }
-
-    FloatRect bounds = r;
-    // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.
-    if (o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
-        bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o.style().effectiveZoom());
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    float zoomLevel = o.style().effectiveZoom();
-
-    FloatRect unzoomedRect = bounds;
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-
-    bool shouldDrawCell = true;
-    bool shouldDrawFocusRing = false;
-    float deviceScaleFactor = o.page().deviceScaleFactor();
-    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, deviceScaleFactor);
-    [sliderThumbCell setControlView:nil];
-
-    return false;
-}
-
-bool RenderThemeMac::paintSearchField(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    NSSearchFieldCell* search = this->search();
-
-    setSearchCellState(o, r);
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    float zoomLevel = o.style().effectiveZoom();
-
-    FloatRect unzoomedRect = r;
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-
-    // Set the search button to nil before drawing.  Then reset it so we can draw it later.
-    [search setSearchButtonCell:nil];
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(search, o, paintInfo, unzoomedRect);
-    [search setControlView:nil];
-    [search resetSearchButtonCell];
-
-#if ENABLE(DATALIST_ELEMENT)
-    if (!is<HTMLInputElement>(o.generatingNode()))
-        return false;
-
-    const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
-    if (input.list())
-        paintListButtonForInput(o, paintInfo.context(), FloatRect(unzoomedRect.x(), unzoomedRect.y() + 1, unzoomedRect.width(), unzoomedRect.height() - 2));
-#endif
-
-    return false;
 }
 
 void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
@@ -1741,60 +1568,6 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element*) 
     style.setPaddingBottom(Length(padding, LengthType::Fixed));
 
     style.setBoxShadow(nullptr);
-}
-
-bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& r)
-{
-    auto adjustedCancelButtonRect = [this, &box] (const FloatRect& localBoundsForCancelButton) -> FloatRect
-    {
-        IntSize cancelButtonSizeBasedOnFontSize = sizeForSystemFont(box.style(), cancelButtonSizes());
-        FloatSize diff = localBoundsForCancelButton.size() - FloatSize(cancelButtonSizeBasedOnFontSize);
-        if (!diff.width() && !diff.height())
-            return localBoundsForCancelButton;
-        // Vertically centered and right aligned.
-        FloatRect adjustedLocalBoundsForCancelButton = localBoundsForCancelButton;
-        adjustedLocalBoundsForCancelButton.move(diff.width(), floorToDevicePixel(diff.height() / 2, box.document().deviceScaleFactor()));
-        adjustedLocalBoundsForCancelButton.setSize(cancelButtonSizeBasedOnFontSize);
-        return adjustedLocalBoundsForCancelButton;
-    };
-
-    if (!box.element())
-        return false;
-    Element* input = box.element()->shadowHost();
-    if (!input)
-        input = box.element();
-
-    if (!is<RenderBox>(input->renderer()))
-        return false;
-
-    const RenderBox& inputBox = downcast<RenderBox>(*input->renderer());
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    setSearchCellState(inputBox, r);
-
-    NSSearchFieldCell* search = this->search();
-
-    if (!input->isDisabledFormControl() && (is<HTMLTextFormControlElement>(*input) && !downcast<HTMLTextFormControlElement>(*input).isReadOnly()))
-        updatePressedState([search cancelButtonCell], box);
-    else if ([[search cancelButtonCell] isHighlighted])
-        [[search cancelButtonCell] setHighlighted:NO];
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    FloatRect localBounds = adjustedCancelButtonRect([search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
-    // Set the original horizontal position back (cancelButtonRectForBounds() moves it based on the system direction).
-    localBounds.setX(inputBox.contentBoxRect().x() + box.x());
-    FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
-
-    FloatRect unzoomedRect(paintingPos, localBounds.size());
-    auto zoomLevel = box.style().effectiveZoom();
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search cancelButtonCell], box, paintInfo, unzoomedRect);
-    [[search cancelButtonCell] setControlView:nil];
-    return false;
 }
 
 const IntSize* RenderThemeMac::cancelButtonSizes() const

@@ -33,6 +33,7 @@
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import <WebCore/AnimationUtilities.h>
+#import <WebCore/ColorSpaceCG.h>
 #import <WebCore/EventRegion.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
@@ -238,6 +239,14 @@ void PlatformCALayerRemote::updateBackingStore()
     RemoteLayerBackingStore::Parameters parameters;
     parameters.type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
     parameters.size = m_properties.bounds.size();
+
+#if PLATFORM(IOS_FAMILY)
+    parameters.colorSpace = m_wantsDeepColorBackingStore ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
+#else
+    if (auto displayColorSpace = m_context->displayColorSpace())
+        parameters.colorSpace = displayColorSpace.value();
+#endif
+
     parameters.scale = m_properties.contentsScale;
     parameters.deepColor = m_wantsDeepColorBackingStore;
     parameters.isOpaque = m_properties.opaque;

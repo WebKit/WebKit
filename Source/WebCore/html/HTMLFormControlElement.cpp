@@ -401,8 +401,9 @@ bool HTMLFormControlElement::computeWillValidate() const
         m_dataListAncestorState = NotInsideDataList;
 #endif
     }
-    // readonly bars constraint validation for *all* <input> elements, regardless of the <input> type, for compat reasons.
-    return m_dataListAncestorState == NotInsideDataList && !isDisabledFormControl() && !m_hasReadOnlyAttribute;
+    // readonly attribute bars *all* <input> elements from constraint validation, regardless of the <input> type, for compat reasons:
+    // https://html.spec.whatwg.org/multipage/input.html#the-readonly-attribute:barred-from-constraint-validation
+    return m_dataListAncestorState == NotInsideDataList && !isDisabledFormControl() && !(m_hasReadOnlyAttribute && readOnlyBarsFromConstraintValidation());
 }
 
 bool HTMLFormControlElement::willValidate() const

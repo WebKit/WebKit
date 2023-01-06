@@ -29,8 +29,8 @@
             scrollContainer = document.querySelector('.scroll-container');
 
             if (window.eventSender)
-                eventSender.monitorWheelEvents();
-            
+                await UIHelper.startMonitoringWheelEvents();
+
             scrollContainer.scrollTo({
                 top: 0,
                 left: 500,

@@ -432,12 +432,8 @@ typedef enum {
 @interface UIKeyboard ()
 + (instancetype)activeKeyboard;
 + (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
-- (void)activate;
-- (void)geometryChangeDone:(BOOL)keyboardVisible;
-- (void)prepareForGeometryChange;
 + (BOOL)isInHardwareKeyboardMode;
 + (BOOL)isOnScreen;
-+ (void)removeAllDynamicDictionaries;
 @end
 
 @interface UIKeyboardImpl : UIView <UIKeyboardCandidateListDelegate>

@@ -1288,11 +1288,15 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
     bool resetLatching = true;
 
-    if (![options isKindOfClass:[WebUndefined class]]) {
-        if (id resetLatchingValue = [options valueForKey:@"resetLatching"]) {
-            if ([resetLatchingValue isKindOfClass:[NSNumber class]])
-                resetLatching = [resetLatchingValue boolValue];
+    @try {
+        if (![options isKindOfClass:[WebUndefined class]]) {
+            if (id resetLatchingValue = [options valueForKey:@"resetLatching"]) {
+                if ([resetLatchingValue isKindOfClass:[NSNumber class]])
+                    resetLatching = [resetLatchingValue boolValue];
+            }
         }
+    }
+    @catch(NSException *) {
     }
 
     WebCoreTestSupport::monitorWheelEvents(*frame, resetLatching);

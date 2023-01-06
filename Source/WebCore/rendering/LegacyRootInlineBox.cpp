@@ -917,6 +917,11 @@ bool LegacyRootInlineBox::includesRootLineBoxFontOrLeading() const
     return renderer().style().lineBoxContain().containsAny({ LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Font });
 }
 
+LayoutUnit LegacyRootInlineBox::lineBoxWidth() const
+{
+    return blockFlow().availableLogicalWidthForLine(lineBoxTop(), isFirstLine() ? IndentText : DoNotIndentText, lineBoxHeight());
+}
+
 #if ENABLE(TREE_DEBUGGING)
 
 void LegacyRootInlineBox::outputLineBox(WTF::TextStream& stream, bool mark, int depth) const

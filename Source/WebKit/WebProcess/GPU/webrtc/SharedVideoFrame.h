@@ -100,6 +100,8 @@ private:
 class SharedVideoFrameReader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    ~SharedVideoFrameReader();
+
     enum class UseIOSurfaceBufferPool { No, Yes };
     explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, const WebCore::ProcessIdentity& = { }, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
     SharedVideoFrameReader();

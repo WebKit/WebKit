@@ -41,6 +41,8 @@ void Kind::dump(PrintStream& out) const
         out.print(comma, "Chill");
     if (traps())
         out.print(comma, "Traps");
+    if (isSensitiveToNaN())
+        out.print(comma, "SensitiveToNaN");
     if (comma.didPrint())
         out.print(">");
 }

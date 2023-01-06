@@ -74,7 +74,7 @@ public:
     RefPtr<ControlPart> createControlPart(const RenderObject&) const;
 
     OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;
-    ControlStyle extractControlStyleForRenderer(const RenderObject&) const;
+    ControlStyle extractControlStyleForRenderer(const RenderBox&) const;
 
     // These methods are called to paint the widget as a background of the RenderObject. A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself. The boolean return value indicates
@@ -385,7 +385,7 @@ protected:
 public:
     void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;
     OptionSet<ControlStates::States> extractControlStatesForRenderer(const RenderObject&) const;
-    bool isActive(const RenderObject&) const;
+    bool isWindowActive(const RenderObject&) const;
     bool isChecked(const RenderObject&) const;
     bool isIndeterminate(const RenderObject&) const;
     bool isEnabled(const RenderObject&) const;

@@ -49,17 +49,9 @@ PASS FileSystemSyncAccessHandle interface: existence and properties of interface
 PASS FileSystemSyncAccessHandle interface: existence and properties of interface prototype object's @@unscopables property
 PASS FileSystemSyncAccessHandle interface: operation read(BufferSource, optional FileSystemReadWriteOptions)
 PASS FileSystemSyncAccessHandle interface: operation write(BufferSource, optional FileSystemReadWriteOptions)
-FAIL FileSystemSyncAccessHandle interface: operation truncate(unsigned long long) assert_throws_js: calling operation with this = null didn't throw TypeError function "function () {
-            fn.apply(obj, args);
-        }" did not throw
-FAIL FileSystemSyncAccessHandle interface: operation getSize() assert_throws_js: calling operation with this = null didn't throw TypeError function "function () {
-            fn.apply(obj, args);
-        }" did not throw
-FAIL FileSystemSyncAccessHandle interface: operation flush() assert_throws_js: calling operation with this = null didn't throw TypeError function "function () {
-            fn.apply(obj, args);
-        }" did not throw
-FAIL FileSystemSyncAccessHandle interface: operation close() assert_throws_js: calling operation with this = null didn't throw TypeError function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS FileSystemSyncAccessHandle interface: operation truncate(unsigned long long)
+PASS FileSystemSyncAccessHandle interface: operation getSize()
+PASS FileSystemSyncAccessHandle interface: operation flush()
+PASS FileSystemSyncAccessHandle interface: operation close()
 PASS StorageManager interface: operation getDirectory()
 

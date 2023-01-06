@@ -39,7 +39,7 @@
         var clickTarget = document.getElementById("clickTarget");
 
         var target = document.getElementById("target");        
-        window.getSelection().setBaseAndExtent(target, 0, target, 6);
+        window.getSelection().setBaseAndExtent(target, 0, target, 1);
 
         await UIHelper.activateElement(clickTarget);
         setTimeout(() => testRunner.notifyDone(), 0);

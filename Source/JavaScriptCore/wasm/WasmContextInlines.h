@@ -35,41 +35,18 @@
 
 namespace JSC { namespace Wasm {
 
-inline bool Context::useFastTLS()
-{
-#if ENABLE(FAST_TLS_JIT)
-    return Options::useFastTLSForWasmContext();
-#else
-    return false;
-#endif
-}
-
 inline Instance* Context::load() const
 {
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        return bitwise_cast<Instance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
-#endif
     return instance;
 }
 
 inline void Context::store(Instance* inst)
 {
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS()) {
-        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(inst));
-        return;
-    }
-#endif
     instance = inst;
 }
 
 inline Instance* Context::tryLoadInstanceFromTLS()
 {
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        return bitwise_cast<Instance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
-#endif
     return nullptr;
 }
 

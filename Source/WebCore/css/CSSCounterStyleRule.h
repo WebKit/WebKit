@@ -40,6 +40,7 @@ public:
     Ref<StyleRuleCounterStyle> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
 
     const StyleProperties& properties() const { return m_properties; }
+    const CSSCounterStyleDescriptors& descriptors() const { return m_descriptors; };
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID id) const { return m_properties->getPropertyCSSValue(id); }
     MutableStyleProperties& mutableProperties();
 

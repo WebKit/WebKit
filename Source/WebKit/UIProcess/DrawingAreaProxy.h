@@ -29,7 +29,6 @@
 #include "DrawingAreaInfo.h"
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
-#include "MessageSender.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
@@ -60,7 +59,7 @@ class WebProcessProxy;
 class UpdateInfo;
 #endif
 
-class DrawingAreaProxy : public IPC::MessageReceiver, protected IPC::MessageSender {
+class DrawingAreaProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
 
@@ -70,7 +69,7 @@ public:
     DrawingAreaType type() const { return m_type; }
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
-    void startReceivingMessages();
+    void startReceivingMessages(WebProcessProxy&);
 
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
@@ -106,7 +105,7 @@ public:
 
     virtual void updateDebugIndicator() { }
 
-    virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }
+    virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
     
     virtual void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) { ASSERT_NOT_REACHED(); }
 
@@ -132,16 +131,14 @@ public:
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }
 
     WebPageProxy& page() const { return m_webPageProxy; }
-    WebProcessProxy& process() { return m_process.get(); }
-    const WebProcessProxy& process() const { return m_process.get(); }
 
 protected:
-    DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
+    DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 
     DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
     WebPageProxy& m_webPageProxy;
-    Ref<WebProcessProxy> m_process;
+    Vector<Ref<WebProcessProxy>> m_processesWithRegisteredDrawingAreaProxyMessageReceiver;
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;
@@ -151,11 +148,6 @@ protected:
 
 private:
     virtual void sizeDidChange() = 0;
-
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
-    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
-    bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;
 
     // Message handlers.
     // FIXME: These should be pure virtual.
@@ -176,7 +168,6 @@ private:
     virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
 #endif
-    bool m_startedReceivingMessages { false };
 };
 
 } // namespace WebKit

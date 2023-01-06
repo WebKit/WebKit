@@ -84,6 +84,9 @@ TextStream& operator<<(TextStream& ts, ControlStyle::State state)
     case ControlStyle::State::ListButtonPressed:
         ts << "list-button-pressed";
         break;
+    case ControlStyle::State::VerticalWritingMode:
+        ts << "vertical-writing-mode";
+        break;
     }
     return ts;
 }

@@ -37,7 +37,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     readonly attribute long long lastModified;
 
     // https://wicg.github.io/entries-api/#file-interface
-    [EnabledByDeprecatedGlobalSetting=DirectoryUploadEnabled, ImplementedAs=relativePath] readonly attribute USVString webkitRelativePath;
+    [EnabledBySetting=DirectoryUploadEnabled, ImplementedAs=relativePath] readonly attribute USVString webkitRelativePath;
 };
 
 dictionary FilePropertyBag : BlobPropertyBag {

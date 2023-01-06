@@ -131,6 +131,14 @@ class CodeGenerator:
             params.append(self.generateOpcode())
         self.parseError("Parsing arguments fell off end")
 
+    def generateB3OpCode(self, index, op, params):
+        self.code.append("Value* " + temp(index) + " = m_currentBlock->appendNew<Value>(m_proc, B3::" + op + ", origin(), " + ", ".join(params) + ");")
+        self.code.append("if (B3::Kind::hasIsSensitiveToNaN(" + op + ") && " + temp(index) + "->type().isFloat())")
+        self.code.append("    " + temp(index) + "->setKindUnsafely(sensitiveToNaN(B3::" + op + "));")
+
+    def generateConstCode(self, index, value, type):
+        self.code.append("Value* " + temp(index) + " = constant(" + type + ", " + value + ");")
+
     def generateOpcode(self):
         result = None
         if self.token() == "i32" or self.token() == "i64":
@@ -139,7 +147,7 @@ class CodeGenerator:
                 type = "Int64"
             self.advance()
             self.consume("(")
-            self.code.append(generateConstCode(self.index, self.token(), type))
+            self.generateConstCode(self.index, self.token(), type)
             result = temp(self.index)
             self.advance()
             self.consume(")")
@@ -151,33 +159,30 @@ class CodeGenerator:
             index = self.index
             self.advance()
             params = self.generateParameters()
-            self.code.append(generateB3OpCode(index, op, params))
+            self.generateB3OpCode(index, op, params)
             result = temp(index)
 
         return result
 
     def makeResult(self, resultValue):
-        return resultValue + ";\n" + "result = push(resultValue->type());\n" + "m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), result, resultValue);"
+        return resultValue + ";\n" + "    result = push(resultValue->type());\n" + "    m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), result, resultValue);"
 
     def generate(self, wasmOp):
         if len(self.tokens) == 1:
+            op = self.token()
+            index = self.index
             params = ["get(arg" + str(param) + ")" for param in range(len(wasmOp["parameter"]))]
-            return self.makeResult("    Value* resultValue = m_currentBlock->appendNew<Value>(m_proc, B3::" + self.token() + ", origin(), " + ", ".join(params) + ")")
+            self.generateB3OpCode(index, op, params)
+            result = temp(index)
+            self.code.append("Value* resultValue = " + result)
+            return self.makeResult("    " + "\n    ".join(self.code))
         result = self.generateOpcode()
         self.code.append("Value* resultValue = " + result)
-        return self.makeResult("    " + "    \n".join(self.code))
+        return self.makeResult("    " + "\n    ".join(self.code))
 
 
 def temp(index):
     return "temp" + str(index)
-
-
-def generateB3OpCode(index, op, params):
-    return "Value* " + temp(index) + " = m_currentBlock->appendNew<Value>(m_proc, B3::" + op + ", origin(), " + ", ".join(params) + ");"
-
-
-def generateConstCode(index, value, type):
-    return "Value* " + temp(index) + " = constant(" + type + ", " + value + ");"
 
 
 def generateB3Code(wasmOp, source):

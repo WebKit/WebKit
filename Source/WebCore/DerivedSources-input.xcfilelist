@@ -12,10 +12,7 @@ $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformHave.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformLegacy.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformOS.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformUse.h
-$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferences.yaml
-$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesDebug.yaml
-$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesExperimental.yaml
-$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesInternal.yaml
+$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/UnifiedWebPreferences.yaml
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/UpdateContents.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/builtins_generate_combined_header.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/builtins_generate_combined_implementation.py
@@ -303,7 +300,9 @@ $(PROJECT_DIR)/Modules/filesystemaccess/FileSystemSyncAccessHandle.idl
 $(PROJECT_DIR)/Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
 $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
+$(PROJECT_DIR)/Modules/gamepad/GamepadEffectParameters.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
+$(PROJECT_DIR)/Modules/gamepad/GamepadHapticActuator.idl
 $(PROJECT_DIR)/Modules/gamepad/Navigator+Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/WindowEventHandlers+Gamepad.idl
 $(PROJECT_DIR)/Modules/geolocation/Coordinates.idl

@@ -987,11 +987,6 @@
 
 (disable-syscall-inference)
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-(deny user-preference-read (with enable-state-flag "WebContentProcessLaunched")
-    (preference-domain "com.apple.WebKit.WebContent.Launch"))
-#endif
-
 (define (syscall-unix-only-in-use-during-launch)
     (syscall-number
         SYS_bsdthread_register

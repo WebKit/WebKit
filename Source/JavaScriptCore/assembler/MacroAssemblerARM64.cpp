@@ -870,19 +870,37 @@ void MacroAssemblerARM64::collectCPUFeatures()
         // https://www.kernel.org/doc/Documentation/arm64/elf_hwcaps.txt
         uint64_t hwcaps = getauxval(AT_HWCAP);
 
+#if !defined(HWCAP_ATOMICS)
+#define HWCAP_ATOMICS (1 << 8)
+#endif
+
 #if !defined(HWCAP_JSCVT)
 #define HWCAP_JSCVT (1 << 13)
 #endif
 
+        s_lseCheckState = (hwcaps & HWCAP_ATOMICS) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         s_jscvtCheckState = (hwcaps & HWCAP_JSCVT) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
     });
-#elif HAVE(FJCVTZS_INSTRUCTION)
-    s_jscvtCheckState = CPUIDCheckState::Set;
-#else
-    s_jscvtCheckState = CPUIDCheckState::Clear;
 #endif
+
+    if (s_lseCheckState == CPUIDCheckState::NotChecked) {
+#if HAVE(LSE_INSTRUCTION)
+        s_lseCheckState = CPUIDCheckState::Set;
+#else
+        s_lseCheckState = CPUIDCheckState::Clear;
+#endif
+    }
+
+    if (s_jscvtCheckState == CPUIDCheckState::NotChecked) {
+#if HAVE(FJCVTZS_INSTRUCTION)
+        s_jscvtCheckState = CPUIDCheckState::Set;
+#else
+        s_jscvtCheckState = CPUIDCheckState::Clear;
+#endif
+    }
 }
 
+MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_lseCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerARM64::CPUIDCheckState MacroAssemblerARM64::s_jscvtCheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC

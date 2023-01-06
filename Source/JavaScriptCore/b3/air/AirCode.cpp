@@ -48,7 +48,7 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 
     // NOTE: on ARM64, if the callee saves have bigger offsets due to a potential tail call,
     // the macro assembler might assert scratch register usage on store operations emitted by emitSave.
-    AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM64E() || isARM());
+    AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM_THUMB2());
 
     if (code.frameSize()) {
         jit.subPtr(MacroAssembler::TrustedImm32(code.frameSize()), MacroAssembler::stackPointerRegister);

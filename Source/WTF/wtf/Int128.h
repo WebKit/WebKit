@@ -40,6 +40,9 @@
 #include <iosfwd>
 #include <limits>
 #include <utility>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/Platform.h>
 
 #if COMPILER(MSVC)
@@ -1264,10 +1267,78 @@ using UInt128 = UInt128Impl;
 using Int128 = Int128Impl;
 #endif
 
+template<> struct DefaultHash<UInt128> {
+    static unsigned hash(const UInt128& i) { return pairIntHash(intHash(static_cast<uint64_t>(i >> 64)), intHash(static_cast<uint64_t>(i))); }
+    static bool equal(const UInt128& a, const UInt128& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct DefaultHash<Int128> {
+    static unsigned hash(const UInt128& i) { return pairIntHash(intHash(static_cast<uint64_t>(i >> 64)), intHash(static_cast<uint64_t>(i))); }
+    static bool equal(const Int128& a, const Int128& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<> struct HashTraits<UInt128> : GenericHashTraits<UInt128> {
+    static constexpr bool emptyValueIsZero = true;
+    static void constructDeletedValue(UInt128& slot) { slot = static_cast<UInt128>(-1); }
+    static bool isDeletedValue(UInt128 value) { return value == static_cast<UInt128>(-1); }
+};
+
+template<> struct HashTraits<Int128> : GenericHashTraits<Int128> {
+    static constexpr bool emptyValueIsZero = true;
+    static void constructDeletedValue(Int128& slot) { slot = static_cast<Int128>(-1); }
+    static bool isDeletedValue(Int128 value) { return value == static_cast<Int128>(-1); }
+};
+
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, UInt128);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, Int128);
 
 }  // namespace WTF
+
+namespace IPC {
+template<> struct ArgumentCoder<WTF::UInt128> {
+    template<typename Encoder> static void encode(Encoder& encoder, const WTF::UInt128& i)
+    {
+        encoder << static_cast<uint64_t>(i >> 64);
+        encoder << static_cast<uint64_t>(i);
+    }
+    template<typename Decoder> static std::optional<WTF::UInt128> decode(Decoder& decoder)
+    {
+        std::optional<uint64_t> high;
+        decoder >> high;
+        if (!high)
+            return std::nullopt;
+
+        std::optional<uint64_t> low;
+        decoder >> low;
+        if (!low)
+            return std::nullopt;
+
+        return (static_cast<WTF::UInt128>(*high) << 64) | *low;
+    }
+};
+template<> struct ArgumentCoder<WTF::Int128> {
+    template<typename Encoder> static void encode(Encoder& encoder, const WTF::Int128& i)
+    {
+        encoder << static_cast<int64_t>(i >> 64);
+        encoder << static_cast<int64_t>(i);
+    }
+    template<typename Decoder> static std::optional<WTF::Int128> decode(Decoder& decoder)
+    {
+        std::optional<int64_t> high;
+        decoder >> high;
+        if (!high)
+            return std::nullopt;
+
+        std::optional<uint64_t> low;
+        decoder >> low;
+        if (!low)
+            return std::nullopt;
+
+        return (static_cast<WTF::Int128>(*high) << 64) | *low;
+    }
+};
+}
 
 using WTF::Int128;
 using WTF::UInt128;

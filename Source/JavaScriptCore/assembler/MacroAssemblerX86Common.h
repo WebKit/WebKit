@@ -1774,11 +1774,11 @@ public:
     void divDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         // dest = op1 / op2
-        // B := A / B is invalid.
-        ASSERT(op1 == dest || op2 != dest);
         if (supportsAVX())
             m_assembler.vdivsd_rrr(op2, op1, dest);
         else {
+            // B := A / B is invalid.
+            ASSERT(op1 == dest || op2 != dest);
             moveDouble(op1, dest);
             divDouble(op2, dest);
         }
@@ -1807,6 +1807,19 @@ public:
             m_assembler.vdivss_mrr(src.offset, src.base, dest, dest);
         else
             m_assembler.divss_mr(src.offset, src.base, dest);
+    }
+
+    void divFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        // dest = op1 / op2
+        if (supportsAVX())
+            m_assembler.vdivss_rrr(op2, op1, dest);
+        else {
+            // B := A / B is invalid.
+            ASSERT(op1 == dest || op2 != dest);
+            moveDouble(op1, dest);
+            divFloat(op2, dest);
+        }
     }
 
     void subDouble(FPRegisterID src, FPRegisterID dest)

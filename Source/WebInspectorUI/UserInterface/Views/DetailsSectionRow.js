@@ -33,6 +33,8 @@ WI.DetailsSectionRow = class DetailsSectionRow extends WI.Object
         this._element.className = "row";
 
         this._emptyMessage = emptyMessage || "";
+        this._warningMessage = null;
+        this._warningElement = null;
     }
 
     // Public
@@ -55,6 +57,30 @@ WI.DetailsSectionRow = class DetailsSectionRow extends WI.Object
             this.showEmptyMessage();
     }
 
+    get warningMessage()
+    {
+        return this._warningMessage;
+    }
+
+    set warningMessage(message)
+    {
+        if (this._warningMessage === message)
+            return;
+
+        this._warningMessage = message;
+        this.element.title = this._warningMessage ?? "";
+
+        if (!this._warningElement) {
+            this._warningElement = document.createElement("div");
+            this._warningElement.className = WI.DetailsSectionRow.WarningStyleClassName;
+        }
+
+        if (!this._warningElement.parentNode && this._warningMessage)
+            this.element.appendChild(this._warningElement);
+        else
+            this._warningElement.remove();
+    }
+
     showEmptyMessage()
     {
         this.element.classList.add(WI.DetailsSectionRow.EmptyStyleClassName);
@@ -74,3 +100,4 @@ WI.DetailsSectionRow = class DetailsSectionRow extends WI.Object
 };
 
 WI.DetailsSectionRow.EmptyStyleClassName = "empty";
+WI.DetailsSectionRow.WarningStyleClassName = "warning";

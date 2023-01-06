@@ -419,15 +419,6 @@ enum class BoxDirection : uint8_t {
 
 // CSS3 Flexbox Properties
 
-enum class AlignContent : uint8_t {
-    FlexStart,
-    FlexEnd,
-    Center,
-    SpaceBetween,
-    SpaceAround,
-    Stretch
-};
-
 enum class FlexDirection : uint8_t {
     Row,
     RowReverse,
@@ -676,6 +667,8 @@ enum class ListStyleType : uint8_t {
     TraditionalChineseInformal,
     TraditionalChineseFormal,
     EthiopicNumeric,
+    // FIXME: handle counter-style: rdar://102988393.
+    CustomCounterStyle,
     String,
     None
 };

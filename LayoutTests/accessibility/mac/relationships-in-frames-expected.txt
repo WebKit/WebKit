@@ -1,0 +1,10 @@
+controller role: AXRole: AXTextField
+controller controls role: listbox
+listbox role: AXRole: AXList
+aria-controls textbox->listbox : true
+controller controls role after change: listbox2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

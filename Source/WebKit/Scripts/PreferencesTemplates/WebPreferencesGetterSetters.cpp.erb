@@ -32,57 +32,17 @@
 
 namespace WebKit {
 
-<%- for @pref in (@exposedPreferencesNotDebug + @exposedPreferencesDebug) do -%>
+<%- for @pref in @exposedPreferences do -%>
 void WebPreferences::set<%= @pref.name %>(const <%= @pref.type %>& value)
 {
     if (!m_store.set<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
         return;
-    update<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value);
+    update<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value, <%= @pref.ephemeral? %>);
 }
 
 <%= @pref.type %> WebPreferences::<%= @pref.nameLower %>() const
 {
     return m_store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
-}
-
-void WebPreferences::delete<%= @pref.name %>()
-{
-    deleteKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
-}
-
-<%- end -%>
-
-<%- for @pref in @exposedExperimentalFeatures do -%>
-void WebPreferences::set<%= @pref.name %>(const bool& value)
-{
-    if (!m_store.setBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
-        return;
-    updateBoolValueForExperimentalFeatureKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value);
-}
-
-bool WebPreferences::<%= @pref.nameLower %>() const
-{
-    return m_store.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
-}
-
-void WebPreferences::delete<%= @pref.name %>()
-{
-    deleteKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
-}
-
-<%- end -%>
-
-<%- for @pref in @exposedInternalFeatures do -%>
-void WebPreferences::set<%= @pref.name %>(const bool& value)
-{
-    if (!m_store.setBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value))
-        return;
-    updateBoolValueForInternalDebugFeatureKey(WebPreferencesKey::<%= @pref.nameLower %>Key(), value);
-}
-
-bool WebPreferences::<%= @pref.nameLower %>() const
-{
-    return m_store.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
 }
 
 void WebPreferences::delete<%= @pref.name %>()
