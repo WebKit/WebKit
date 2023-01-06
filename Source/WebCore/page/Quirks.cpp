@@ -1282,18 +1282,6 @@ bool Quirks::needsHDRPixelDepthQuirk() const
     return *m_needsHDRPixelDepthQuirk;
 }
 
-// FIXME: remove this once rdar://92531240 has been fixed.
-bool Quirks::needsFlightAwareSerializationQuirk() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_needsFlightAwareSerializationQuirk)
-        m_needsFlightAwareSerializationQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "flightaware.com"_s);
-
-    return *m_needsFlightAwareSerializationQuirk;
-}
-
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)

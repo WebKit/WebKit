@@ -308,16 +308,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
     if (!isExposed(propertyID))
         return { };
 
-    if (auto* wrapper = this->wrapper()) {
-        if (auto* globalObject = wrapper->globalObject()) {
-            if (auto* document = activeDOMWindow(*globalObject).document())
-                CSSPrimitiveValue::setUseLegacyPrecision(document->quirks().needsFlightAwareSerializationQuirk());
-        }
-    }
-
     auto value = m_propertySet->getPropertyValue(propertyID);
-
-    CSSPrimitiveValue::setUseLegacyPrecision(false);
 
     if (!value.isEmpty())
         return value;
