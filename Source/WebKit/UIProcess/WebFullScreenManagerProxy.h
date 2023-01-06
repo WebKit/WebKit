@@ -80,7 +80,7 @@ public:
     void willExitFullScreen();
     void didExitFullScreen();
     void setAnimatingFullScreen(bool);
-    void requestRestoreFullScreen();
+    void requestEnterFullScreen();
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();

@@ -44,12 +44,11 @@
 {
     [super setUp];
 
-    XCUIDevice.sharedDevice.orientation = UIDeviceOrientationPortrait;
-
     self.continueAfterFailure = NO;
 
     exists = [NSPredicate predicateWithFormat:@"exists == 1"];
     app = [[XCUIApplication alloc] init];
+    [app launch];
 }
 
 - (void)tearDown
@@ -62,34 +61,6 @@
     [self expectationForPredicate:exists evaluatedWithObject:button handler:nil];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [button tap];
-}
-
-- (void)waitForWindowNamed:(NSString *)name forApp:(XCUIApplication *)targetApp {
-    XCUIElement *window = targetApp.windows[name];
-    [self expectationForPredicate:exists evaluatedWithObject:window handler:nil];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-}
-
-- (void)waitForOtherElementNamed:(NSString *)name forApp:(XCUIApplication *)targetApp {
-    XCUIElement *window = targetApp.otherElements[name];
-    [self expectationForPredicate:exists evaluatedWithObject:window handler:nil];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-}
-
-- (void)tapMiddleTopOfApp:(XCUIApplication *)targetApp {
-    XCUICoordinate* middleTop = [targetApp coordinateWithNormalizedOffset:CGVectorMake(0.5, 0.25)];
-    [middleTop tap];
-}
-
-- (void)launchURL:(NSString *)url {
-
-    app.launchArguments = @[ url ];
-    [app launch];
-}
-
-- (void)launchPageNamed:(NSString *)name {
-    NSString* url = [NSBundle.mainBundle URLForResource:name withExtension:@"html" subdirectory:@"PlugIns/MobileMiniBrowserUITests.xctest"].absoluteString;
-    [self launchURL:url];
 }
 
 - (void)loadURL:(NSString *)url {
@@ -134,69 +105,57 @@
 
 - (void)testBasicVideoPlayback
 {
-    [self launchPageNamed:@"looping"];
-    [self waitToTapButtonNamed:@"Play" forApp:app];
-    [self waitToTapButtonNamed:@"Pause" forApp:app];
+    [self loadURL:@"bundle:/looping.html"];
+    [self waitToTapButtonNamed:@"Start Playback" forApp:app];
+
+    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    if (idiom == UIUserInterfaceIdiomPhone) {
+        [self waitToTapButtonNamed:@"PauseButton" forApp:app];
+        [self waitToTapButtonNamed:@"Done" forApp:app];
+    } else if (idiom == UIUserInterfaceIdiomPad)
+        [self waitToTapButtonNamed:@"Pause" forApp:app];
 }
 
 - (void)testBasicVideoFullscreen
 {
-    [self launchPageNamed:@"looping"];
-    [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
-
-    [app tap];
-
-    [self waitToTapButtonNamed:@"Play/Pause" forApp:app];
-    [self waitToTapButtonNamed:@"Close" forApp:app];
-}
-
-- (void)testRepeatedFullScreenToPiPAndBack
-{
-    [self launchPageNamed:@"looping"];
-    [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
-
-    [app tap];
-
-    [self waitToTapButtonNamed:@"Play/Pause" forApp:app];
-    [self waitToTapButtonNamed:@"minimize video" forApp:app];
-
-    XCUIApplication* springboard = [[XCUIApplication alloc] initPrivateWithPath:nil bundleID:@"com.apple.springboard"];
-    [self waitForWindowNamed:@"Picture in Picture" forApp:springboard];
-    [self waitToTapButtonNamed:@"Restore fullscreen" forApp:springboard];
-
-    [self waitForOtherElementNamed:@"Media" forApp:app];
-    [self tapMiddleTopOfApp:app];
-
-    [self waitToTapButtonNamed:@"minimize video" forApp:app];
-    [self waitForWindowNamed:@"Picture in Picture" forApp:springboard];
-    [self waitToTapButtonNamed:@"Restore fullscreen" forApp:springboard];
-
-    [self waitForOtherElementNamed:@"Media" forApp:app];
-    [self tapMiddleTopOfApp:app];
-
-    [self waitToTapButtonNamed:@"Close" forApp:app];
+    [self loadURL:@"bundle:/looping.html"];
+    [self waitToTapButtonNamed:@"Start Playback" forApp:app];
+    
+    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    if (idiom == UIUserInterfaceIdiomPad)
+        [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
+    
+    [self waitToTapButtonNamed:@"PauseButton" forApp:app];
+    [self waitToTapButtonNamed:@"Done" forApp:app];
 }
 
 - (void)testVideoFullscreenAndRotationAnimation
 {
-    [self launchPageNamed:@"looping"];
-    [self waitToTapButtonNamed:@"Play" forApp:app];
+    XCUIDevice *device = [XCUIDevice sharedDevice];
+    device.orientation = UIDeviceOrientationPortrait;
     
-    [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
+    [self loadURL:@"bundle:/looping.html"];
+    [self waitToTapButtonNamed:@"Start Playback" forApp:app];
+    
+    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    if (idiom == UIUserInterfaceIdiomPad)
+        [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
     
     [self requireMinFPS:30 sampleDurationSeconds:1 message:@"Framerate during enter fullscreen animation."];
-    XCUIDevice.sharedDevice.orientation = UIDeviceOrientationLandscapeLeft;
+    device.orientation = UIDeviceOrientationLandscapeLeft;
     [self requireMinFPS:30 sampleDurationSeconds:1 message:@"Framerate during rotation animation."];
-    [app tap];
-    [self waitToTapButtonNamed:@"Close" forApp:app];
+    [self waitToTapButtonNamed:@"Done" forApp:app];
     [self requireMinFPS:30 sampleDurationSeconds:1 message:@"Framerate during exit fullscreen  animation."];
 }
 
 - (void)testVideoFullscreenControlCenter
 {
-    [self launchPageNamed:@"looping"];
-    [self waitToTapButtonNamed:@"Play" forApp:app];
-    [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
+    [self loadURL:@"bundle:/looping.html"];
+    [self waitToTapButtonNamed:@"Start Playback" forApp:app];
+    
+    UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
+    if (idiom == UIUserInterfaceIdiomPad)
+        [self waitToTapButtonNamed:@"Display Full Screen" forApp:app];
     
     XCUIElement* window = [app.windows allElementsBoundByIndex][0];
     XCUICoordinate* top = [window coordinateWithNormalizedOffset:CGVectorMake(0.5, 0.5)];
@@ -231,13 +190,13 @@
 // rdar://problem/27685077
 - (void)testLoopingFullscreenLockup
 {
-    [self launchPageNamed:@"looping2s"];
-
+    [self loadURL:@"bundle:/looping2s.html"];
+    
     XCUIElement* window = [app.windows allElementsBoundByIndex][0];
     XCUICoordinate* gifLoc = [window coordinateWithNormalizedOffset:CGVectorMake(0.5, 0.75)];
     [gifLoc pressForDuration:0];
     
-    [self waitToTapButtonNamed:@"Play" forApp:app];
+    [self waitToTapButtonNamed:@"Start Playback" forApp:app];
     
     [self waitToTapButtonNamed:@"ExitFullScreenButton" forApp:app];
     [self waitToTapButtonNamed:@"ExitFullScreenButton" forApp:app];

@@ -111,9 +111,9 @@ void WebFullScreenManagerProxy::setAnimatingFullScreen(bool animating)
     m_page.send(Messages::WebFullScreenManager::SetAnimatingFullScreen(animating));
 }
 
-void WebFullScreenManagerProxy::requestRestoreFullScreen()
+void WebFullScreenManagerProxy::requestEnterFullScreen()
 {
-    m_page.send(Messages::WebFullScreenManager::RequestRestoreFullScreen());
+    m_page.send(Messages::WebFullScreenManager::RequestEnterFullScreen());
 }
 
 void WebFullScreenManagerProxy::requestExitFullScreen()
