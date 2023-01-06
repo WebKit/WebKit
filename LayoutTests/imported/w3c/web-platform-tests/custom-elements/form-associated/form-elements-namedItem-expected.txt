@@ -1,5 +1,5 @@
 
-FAIL Form associated custom elements should work with document.forms.elements.namedItem() assert_equals: Single input should be returned as-is expected (object) Element node <custom-input id="custom-1" name="alone"></custom-input> but got (undefined) undefined
-FAIL Form associated custom elements should work with document.forms.elements.namedItem() after upgrading assert_equals: Single button should be returned after upgrading expected (object) Element node <custom-button id="custom-4" name="upgrade"></custom-button> but got (undefined) undefined
-FAIL Form associated custom elements should work with document.forms.elements.namedItem() after updating the name attribute assert_equals: Single input should be returned as-is expected (object) Element node <custom-input id="custom-1" name="alone"></custom-input> but got (undefined) undefined
+PASS Form associated custom elements should work with document.forms.elements.namedItem()
+PASS Form associated custom elements should work with document.forms.elements.namedItem() after upgrading
+PASS Form associated custom elements should work with document.forms.elements.namedItem() after updating the name attribute
 

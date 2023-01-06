@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<input id=emptyOnFirstVisit>
+
+<script>
+jsTestIsAsync = true;
+
+window.__formData1 = new FormData;
+__formData1.append("foo", "bar");
+
+window.__formData2 = new FormData;
+__formData2.append("a", "1");
+__formData2.append("b", "2");
+
+function getXFooConstructor() {
+    return class extends HTMLElement {
+        static formAssociated = true;
+
+        constructor() {
+            super();
+            this._internals = this.attachInternals();
+        }
+
+        connectedCallback() {
+            this._internals.setFormValue(
+                this._parseFormValue(this.dataset.submissionValue),
+                this._parseFormValue(this.dataset.state),
+            );
+        }
+
+        formStateRestoreCallback(state) {
+            this.restoredState = state;
+        }
+
+        _parseFormValue(attrValue) {
+            return typeof attrValue === "string" && attrValue.startsWith("@") ? window[`__${attrValue.slice(1)}`] : attrValue;
+        }
+    };
+}
+
+function isFormDataEqual(a, b) {
+    const bEntries = [...b];
+
+    return [...a].every(([aKey, aValue], index) => {
+        const [bKey, bValue] = bEntries[index];
+        return aKey === bKey && aValue === bValue;
+    });
+}
+
+customElements.define("x-foo-predefined", getXFooConstructor());
+
+function makeForms(stage) {
+    var beforeForms = '<div id=parent>' +
+        '<x-foo-upgrade id="noowner-upgrade2" name="noowner-upgrade2" data-submission-value="@formData2" data-state="bar"></x-foo-upgrade>' +
+        '<x-foo-upgrade id="noowner-upgrade4" name="noowner-upgrade4" data-submission-value="foo" data-state="@formData1"></x-foo-upgrade>' +
+        '<x-foo-predefined id="noowner-predefined2" name="noowner-predefined2" data-submission-value="foo" data-state="bar"></x-foo-predefined>' +
+        '<x-foo-predefined id="noowner-predefined4" name="noowner-predefined4" data-submission-value="@formData1" data-state="@formData2"></x-foo-predefined>';
+
+    var backForm = '<form action="data:text/html,&lt;script>history.back();&lt;/script>" id=form1 name=form1>' +
+        '</form>';
+
+    var query = stage == 1 ? "?session=0123456" : "?session=7654321111";
+    var sameActionForm1 = '<form action="http://example.com/foo.cgi' + query + '#bar" id=form2 name=form2>' +
+        '<x-foo-upgrade id="upgrade2" name="upgrade2" data-submission-value="foo"></x-foo-upgrade>' +
+        '<x-foo-upgrade id="upgrade4" name="upgrade4" data-submission-value="foo" data-state="bar"></x-foo-upgrade>' +
+        '<x-foo-predefined id="predefined2" name="predefined2" data-submission-value="foo" data-state="@formData1"></x-foo-predefined>' +
+        '<x-foo-predefined id="predefined4" name="predefined4" data-submission-value="@formData2" data-state="foo"></x-foo-predefined>' +
+        '</form>';
+
+    var sameActionForm2 = '<form action="http://example.com/foo.cgi?action=login#bar" id=form3 name=form3>' +
+        '<x-foo-upgrade id="upgrade1" name="upgrade1" data-submission-value="@formData2"></x-foo-upgrade>' +
+        '<x-foo-upgrade id="upgrade3" name="upgrade3" data-submission-value="@formData2" data-state="@formData1"></x-foo-upgrade>' +
+        '<x-foo-predefined id="predefined1" name="predefined1" data-submission-value="foo"></x-foo-predefined>' +
+        '<x-foo-predefined id="predefined3" name="predefined3" data-submission-value="bar"></x-foo-predefined>' +
+        '</form>';
+
+    var afterForms =
+        '<x-foo-upgrade id="noowner-upgrade1" name="noowner-upgrade1" data-submission-value="foo"></x-foo-upgrade>' +
+        '<x-foo-upgrade id="noowner-upgrade3" name="noowner-upgrade3" data-submission-value="@formData2"></x-foo-upgrade>' +
+        '<x-foo-predefined id="noowner-predefined1" name="noowner-predefined1" data-submission-value="foo"></x-foo-predefined>' +
+        '<x-foo-predefined id="noowner-predefined3" name="noowner-predefined3" data-submission-value="@formData1"></x-foo-predefined>' +
+        '</div>';
+
+    document.write(
+        beforeForms +
+        (stage === 1 ? backForm + sameActionForm1 : sameActionForm1 + backForm) +
+        sameActionForm2 +
+        afterForms
+    );
+
+    customElements.define("x-foo-upgrade", getXFooConstructor());
+}
+
+function runTest()
+{
+    var state = $('emptyOnFirstVisit');
+    if (!state.value) {
+        state.value = 'visited';
+        makeForms(1);
+    
+        setTimeout(function() {
+            $('form1').submit();
+        });
+    } else {
+        makeForms(2);
+
+        debug('\nUpgraded form-associated custom elements without an owner:');
+        shouldBeEqualToString('$("noowner-upgrade1").restoredState', 'foo');
+        shouldBeEqualToString('$("noowner-upgrade2").restoredState', 'bar');
+        shouldBeTrue('isFormDataEqual($("noowner-upgrade3").restoredState, __formData2)');
+        shouldBeTrue('isFormDataEqual($("noowner-upgrade4").restoredState, __formData1)');
+
+        debug('\nUpgraded form-associated custom elements with a form owner:');
+        shouldBeTrue('isFormDataEqual($("upgrade1").restoredState, __formData2)');
+        shouldBeEqualToString('$("upgrade2").restoredState', 'foo');
+        shouldBeTrue('isFormDataEqual($("upgrade3").restoredState, __formData1)');
+        shouldBeEqualToString('$("upgrade4").restoredState', 'bar');
+
+        debug('\nPredefined form-associated custom elements without an owner:');
+        shouldBeEqualToString('$("noowner-predefined1").restoredState', 'foo');
+        shouldBeEqualToString('$("noowner-predefined2").restoredState', 'bar');
+        shouldBeTrue('isFormDataEqual($("noowner-predefined3").restoredState, __formData1)');
+        shouldBeTrue('isFormDataEqual($("noowner-predefined4").restoredState, __formData2)');
+
+        debug('\nPredefined form-associated custom elements with a form owner:');
+        shouldBeEqualToString('$("predefined1").restoredState', 'foo');
+        shouldBeTrue('isFormDataEqual($("predefined2").restoredState, __formData1)');
+        shouldBeEqualToString('$("predefined3").restoredState', 'bar');
+        shouldBeEqualToString('$("predefined4").restoredState', 'foo');
+
+        $('parent').innerHTML = '';
+        setTimeout(function() { finishJSTest(); });
+    }
+}
+
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

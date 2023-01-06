@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Form-associated custom elements aren't considered labels' controls in precustomized state</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<label id="theLabel">
+    <x-foo></x-foo>
+</label>
+
+<script>
+test(() => {
+    const callbackHistory = [];
+
+    customElements.define("x-foo", class extends HTMLElement {
+        static formAssociated = true;
+
+        constructor() {
+            super();
+
+            window.el = this;
+            window.internals = this.attachInternals();
+
+            window.controlInConstructor = theLabel.control;
+            window.labelsInConstructor = internals.labels;
+        }
+    });
+
+    assert_equals(controlInConstructor, null);
+    assert_equals(labelsInConstructor, null);
+
+    assert_equals(theLabel.control, el);
+    assert_array_equals(internals.labels, [theLabel]);
+});
+</script>

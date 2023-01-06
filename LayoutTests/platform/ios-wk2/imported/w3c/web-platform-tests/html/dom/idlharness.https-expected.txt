@@ -4341,15 +4341,15 @@ PASS ElementInternals interface: existence and properties of interface prototype
 PASS ElementInternals interface: existence and properties of interface prototype object's "constructor" property
 PASS ElementInternals interface: existence and properties of interface prototype object's @@unscopables property
 PASS ElementInternals interface: attribute shadowRoot
-FAIL ElementInternals interface: operation setFormValue((File or USVString or FormData)?, optional (File or USVString or FormData)?) assert_own_property: interface prototype object missing non-static operation expected property "setFormValue" missing
-FAIL ElementInternals interface: attribute form assert_true: The prototype object must have a property "form" expected true got false
-FAIL ElementInternals interface: operation setValidity(optional ValidityStateFlags, optional DOMString, optional HTMLElement) assert_own_property: interface prototype object missing non-static operation expected property "setValidity" missing
-FAIL ElementInternals interface: attribute willValidate assert_true: The prototype object must have a property "willValidate" expected true got false
-FAIL ElementInternals interface: attribute validity assert_true: The prototype object must have a property "validity" expected true got false
-FAIL ElementInternals interface: attribute validationMessage assert_true: The prototype object must have a property "validationMessage" expected true got false
-FAIL ElementInternals interface: operation checkValidity() assert_own_property: interface prototype object missing non-static operation expected property "checkValidity" missing
-FAIL ElementInternals interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
-FAIL ElementInternals interface: attribute labels assert_true: The prototype object must have a property "labels" expected true got false
+PASS ElementInternals interface: operation setFormValue((File or USVString or FormData)?, optional (File or USVString or FormData)?)
+PASS ElementInternals interface: attribute form
+PASS ElementInternals interface: operation setValidity(optional ValidityStateFlags, optional DOMString, optional HTMLElement)
+PASS ElementInternals interface: attribute willValidate
+PASS ElementInternals interface: attribute validity
+PASS ElementInternals interface: attribute validationMessage
+PASS ElementInternals interface: operation checkValidity()
+PASS ElementInternals interface: operation reportValidity()
+PASS ElementInternals interface: attribute labels
 PASS DataTransfer interface: existence and properties of interface object
 PASS DataTransfer interface object length
 PASS DataTransfer interface object name

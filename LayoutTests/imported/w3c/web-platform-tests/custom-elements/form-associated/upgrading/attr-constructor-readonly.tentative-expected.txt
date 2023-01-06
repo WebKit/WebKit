@@ -1,0 +1,3 @@
+
+PASS "readonly" attribute set in constructor doesn't affect constraint validation in precustomized state
+

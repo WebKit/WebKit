@@ -37,9 +37,11 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
@@ -796,13 +798,14 @@ RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementIn
                 *customElementInterface = elementInterface;
                 return nullptr;
             }
-            element = HTMLElement::create(qualifiedNameForHTMLTag(token), ownerDocument);
+            ASSERT(qualifiedNameForHTMLTag(token) == elementInterface->name());
+            element = elementInterface->createElement(ownerDocument);
             element->setIsCustomElementUpgradeCandidate();
             element->enqueueToUpgrade(*elementInterface);
         } else {
             auto qualifiedName = qualifiedNameForHTMLTag(token);
             if (Document::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
-                element = HTMLElement::create(qualifiedName, ownerDocument);
+                element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
                 element->setIsCustomElementUpgradeCandidate();
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);

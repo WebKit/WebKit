@@ -25,12 +25,18 @@
 
 #pragma once
 
+#include "CustomElementFormValue.h"
 #include "HTMLElement.h"
 #include "ScriptWrappable.h"
+#include "ValidityState.h"
+#include "ValidityStateFlags.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class HTMLFormElement;
+class FormAssociatedCustomElement;
 
 class ElementInternals final : public ScriptWrappable, public RefCounted<ElementInternals> {
     WTF_MAKE_ISO_ALLOCATED(ElementInternals);
@@ -42,6 +48,19 @@ public:
 
     Element* element() const { return m_element.get(); }
     ShadowRoot* shadowRoot() const;
+
+    ExceptionOr<RefPtr<HTMLFormElement>> form() const;
+
+    ExceptionOr<void> setFormValue(std::optional<CustomElementFormValue>&&, std::optional<CustomElementFormValue>&& = std::nullopt);
+
+    ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
+    ExceptionOr<bool> willValidate() const;
+    ExceptionOr<RefPtr<ValidityState>> validity();
+    ExceptionOr<String> validationMessage() const;
+    ExceptionOr<bool> reportValidity();
+    ExceptionOr<bool> checkValidity();
+
+    ExceptionOr<RefPtr<NodeList>> labels();
 
     // For ARIAMixin
     const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
@@ -57,6 +76,8 @@ private:
         : m_element(element)
     {
     }
+
+    FormAssociatedCustomElement* elementAsFormAssociatedCustom() const;
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_element;
 };

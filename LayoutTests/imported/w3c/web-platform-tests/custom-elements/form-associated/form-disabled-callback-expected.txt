@@ -1,17 +1,11 @@
-CONSOLE MESSAGE: TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
-CONSOLE MESSAGE: TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
-CONSOLE MESSAGE: TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
-CONSOLE MESSAGE: TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
-CONSOLE MESSAGE: TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
 
 
 
-Harness Error (FAIL), message = TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
 
-FAIL Adding/removing disabled content attribute this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
-FAIL Relationship with FIELDSET assert_true: expected true got false
+PASS Adding/removing disabled content attribute
+PASS Relationship with FIELDSET
 PASS A disabled form-associated custom element should not provide an entry for it
-FAIL A disabled form-associated custom element should not submit an entry for it assert_not_equals: got disallowed value -1
-FAIL Disabled attribute affects focus-capability this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue('my-control-value')', 'this.internals_.setFormValue' is undefined)
-FAIL Upgrading an element with disabled content attribute assert_array_equals: value is undefined, expected array
+PASS A disabled form-associated custom element should not submit an entry for it
+PASS Disabled attribute affects focus-capability
+PASS Upgrading an element with disabled content attribute
 

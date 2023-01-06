@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HTMLFormControlElementWithState.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLOptionElement.h"
 #include "TypeAhead.h"
 #include <wtf/CompletionHandler.h>
@@ -34,7 +34,7 @@ namespace WebCore {
 
 class HTMLOptionsCollection;
 
-class HTMLSelectElement : public HTMLFormControlElementWithState, private TypeAheadDataSource {
+class HTMLSelectElement : public HTMLFormControlElement, private TypeAheadDataSource {
     WTF_MAKE_ISO_ALLOCATED(HTMLSelectElement);
 public:
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
@@ -108,6 +108,9 @@ public:
     bool allowsNonContiguousSelection() const { return m_allowsNonContiguousSelection; };
 
     CompletionHandlerCallingScope optionToSelectFromChildChangeScope(const ChildChange&, HTMLOptGroupElement* parentOptGroup = nullptr);
+
+    bool canContainRangeEndPoint() const override { return false; }
+    bool shouldSaveAndRestoreFormControlState() const final { return true; }
 
 protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);

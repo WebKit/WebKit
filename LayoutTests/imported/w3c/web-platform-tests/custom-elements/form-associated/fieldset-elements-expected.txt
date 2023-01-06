@@ -1,4 +1,4 @@
 
 
-FAIL Form associated custom elements should work with fieldset.elements assert_array_equals: The items in the collection must be children of the inner fieldset element. lengths differ, expected array [undefined] length 1, got object "[object HTMLCollection]" length 0
+PASS Form associated custom elements should work with fieldset.elements
 
