@@ -128,6 +128,7 @@ public:
     static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
     static std::optional<GridPosition> convertGridPosition(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
+    static Vector<StyleContentAlignmentData> convertContentAlignmentDataList(BuilderState&, const CSSValue&);
     static MasonryAutoFlow convertMasonryAutoFlow(BuilderState&, const CSSValue&);
     static std::optional<Length> convertWordSpacing(BuilderState&, const CSSValue&);
     static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
@@ -1301,6 +1302,21 @@ inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const C
     }
 
     return autoFlow;
+}
+
+inline Vector<StyleContentAlignmentData> BuilderConverter::convertContentAlignmentDataList(BuilderState& builder, const CSSValue& value)
+{
+    auto& list = downcast<CSSValueList>(value);
+
+    Vector<StyleContentAlignmentData> tracks;
+    tracks.reserveInitialCapacity(list.length());
+
+    for (auto value : list) {
+        auto& contentDistributionValue = downcast<CSSContentDistributionValue>(value.get());
+        tracks.append(convertContentAlignmentData(builder, contentDistributionValue));
+    }
+
+    return tracks;
 }
 
 inline MasonryAutoFlow BuilderConverter::convertMasonryAutoFlow(BuilderState&, const CSSValue& value)

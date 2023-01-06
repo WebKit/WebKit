@@ -28,6 +28,7 @@
 #include "GridArea.h"
 #include "GridTrackSize.h"
 #include "RenderStyleConstants.h"
+#include "StyleContentAlignmentData.h"
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -49,12 +50,14 @@ struct GridTrackEntrySubgrid {
         return true;
     }
 };
+
 struct GridTrackEntryMasonry {
     bool operator==(const GridTrackEntryMasonry&) const
     {
         return true;
     }
 };
+
 struct GridTrackEntryRepeat {
     bool operator==(const GridTrackEntryRepeat& other) const
     {
@@ -64,6 +67,7 @@ struct GridTrackEntryRepeat {
     unsigned repeats;
     RepeatTrackList list;
 };
+
 struct GridTrackEntryAutoRepeat {
     bool operator==(const GridTrackEntryAutoRepeat& other) const
     {
@@ -83,6 +87,7 @@ struct MasonryAutoFlow {
     MasonryAutoFlowPlacementAlgorithm placementAlgorithm;
     MasonryAutoFlowPlacementOrder placementOrder;
 };
+
 typedef std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry> GridTrackEntry;
 typedef Vector<GridTrackEntry> GridTrackList;
 
@@ -96,7 +101,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow;
+        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow && alignTracks == o.alignTracks && justifyTracks == o.justifyTracks;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -144,6 +149,9 @@ public:
 
     unsigned gridAutoFlow : GridAutoFlowBits;
     MasonryAutoFlow masonryAutoFlow;
+
+    Vector<StyleContentAlignmentData> alignTracks;
+    Vector<StyleContentAlignmentData> justifyTracks;
 
     Vector<GridTrackSize> gridAutoRows;
     Vector<GridTrackSize> gridAutoColumns;

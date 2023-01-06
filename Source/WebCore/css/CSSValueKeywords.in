@@ -677,7 +677,7 @@ block-axis
 single
 multiple
 
-// CSS_PROP_ALIGN_CONTENT
+// align-content / align-tracks
 flex-start
 flex-end
 // center
@@ -695,7 +695,7 @@ first-baseline
 last-baseline
 // stretch
 
-// CSS_PROP_JUSTIFY_CONTENT
+// justify-content / justify-tracks
 // start
 // end
 // flex-start
@@ -1423,8 +1423,9 @@ span
 // grid-template-{columns|rows}
 minmax
 subgrid
-// grid masonry keywords
 masonry
+
+// masonry-auto-flow
 pack
 next
 definite-first

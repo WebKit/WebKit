@@ -3,6 +3,7 @@ PASS accent-color
 PASS align-content
 PASS align-items
 PASS align-self
+PASS align-tracks
 PASS alignment-baseline
 PASS alt
 PASS animation-composition
@@ -167,6 +168,7 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
+PASS justify-tracks
 PASS kerning
 PASS left
 PASS letter-spacing

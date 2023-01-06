@@ -1,0 +1,26 @@
+
+PASS e.style['align-tracks'] = "auto" should not set the property value
+PASS e.style['align-tracks'] = "baseline last" should not set the property value
+PASS e.style['align-tracks'] = "center baseline" should not set the property value
+PASS e.style['align-tracks'] = "first" should not set the property value
+PASS e.style['align-tracks'] = "flex-start flex-end" should not set the property value
+PASS e.style['align-tracks'] = "last" should not set the property value
+PASS e.style['align-tracks'] = "left" should not set the property value
+PASS e.style['align-tracks'] = "legacy center" should not set the property value
+PASS e.style['align-tracks'] = "legacy left" should not set the property value
+PASS e.style['align-tracks'] = "legacy" should not set the property value
+PASS e.style['align-tracks'] = "normal baseline" should not set the property value
+PASS e.style['align-tracks'] = "right legacy" should not set the property value
+PASS e.style['align-tracks'] = "safe self-end" should not set the property value
+PASS e.style['align-tracks'] = "safe" should not set the property value
+PASS e.style['align-tracks'] = "self-end unsafe" should not set the property value
+PASS e.style['align-tracks'] = "self-start" should not set the property value
+PASS e.style['align-tracks'] = "start safe" should not set the property value
+PASS e.style['align-tracks'] = "unsafe right" should not set the property value
+PASS e.style['align-tracks'] = "unsafe" should not set the property value
+PASS e.style['align-tracks'] = "auto, left" should not set the property value
+PASS e.style['align-tracks'] = "foo, auto" should not set the property value
+PASS e.style['align-tracks'] = "start, left, end" should not set the property value
+PASS e.style['align-tracks'] = "left, start, end" should not set the property value
+PASS e.style['align-tracks'] = "start, end, left" should not set the property value
+

@@ -1,0 +1,17 @@
+
+PASS Property justify-tracks value 'normal'
+PASS Property justify-tracks value 'space-between'
+PASS Property justify-tracks value 'space-around'
+PASS Property justify-tracks value 'space-evenly'
+PASS Property justify-tracks value 'stretch'
+PASS Property justify-tracks value 'center'
+PASS Property justify-tracks value 'start'
+PASS Property justify-tracks value 'end'
+PASS Property justify-tracks value 'flex-start'
+PASS Property justify-tracks value 'flex-end'
+PASS Property justify-tracks value 'unsafe end'
+PASS Property justify-tracks value 'safe flex-start'
+PASS Property justify-tracks value 'left'
+PASS Property justify-tracks value 'unsafe right'
+FAIL Property justify-tracks value 'normal, normal' assert_equals: expected "normal" but got "normal, normal"
+

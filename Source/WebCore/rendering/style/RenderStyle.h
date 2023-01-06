@@ -626,6 +626,8 @@ public:
     size_t namedGridAreaRowCount() const { return m_rareNonInheritedData->grid->namedGridAreaRowCount; }
     size_t namedGridAreaColumnCount() const { return m_rareNonInheritedData->grid->namedGridAreaColumnCount; }
     GridAutoFlow gridAutoFlow() const { return static_cast<GridAutoFlow>(m_rareNonInheritedData->grid->gridAutoFlow); }
+    Vector<StyleContentAlignmentData> alignTracks() const { return m_rareNonInheritedData->grid->alignTracks; }
+    Vector<StyleContentAlignmentData> justifyTracks() const { return m_rareNonInheritedData->grid->justifyTracks; }
     MasonryAutoFlow masonryAutoFlow() const { return m_rareNonInheritedData->grid->masonryAutoFlow; }
     bool gridSubgridRows() const { return m_rareNonInheritedData->grid->subgridRows(); }
     bool gridSubgridColumns() const { return m_rareNonInheritedData->grid->subgridColumns(); }
@@ -1281,6 +1283,9 @@ public:
     void setGridItemColumnEnd(const GridPosition& columnEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridColumnEnd, columnEndPosition); }
     void setGridItemRowStart(const GridPosition& rowStartPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowStart, rowStartPosition); }
     void setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowEnd, rowEndPosition); }
+
+    void setAlignTracks(Vector<StyleContentAlignmentData> tracks) { SET_NESTED_VAR(m_rareNonInheritedData, grid, alignTracks, tracks); };
+    void setJustifyTracks(Vector<StyleContentAlignmentData> tracks) { SET_NESTED_VAR(m_rareNonInheritedData, grid, justifyTracks, tracks); };
     void setMasonryAutoFlow(MasonryAutoFlow flow) { SET_NESTED_VAR(m_rareNonInheritedData, grid, masonryAutoFlow, flow); };
 
     void setMarqueeIncrement(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, increment, WTFMove(length)); }
@@ -1856,6 +1861,8 @@ public:
     static AutoRepeatType initialGridAutoRepeatType() { return AutoRepeatType::None; }
 
     static GridAutoFlow initialGridAutoFlow() { return AutoFlowRow; }
+    static Vector<StyleContentAlignmentData> initialAlignTracks() { return { initialContentAlignment() }; }
+    static Vector<StyleContentAlignmentData> initialJustifyTracks() { return { initialContentAlignment() }; }
     static MasonryAutoFlow initialMasonryAutoFlow() { return { MasonryAutoFlowPlacementAlgorithm::Pack, MasonryAutoFlowPlacementOrder::DefiniteFirst }; }
 
     static Vector<GridTrackSize> initialGridAutoColumns() { return { GridTrackSize(Length(LengthType::Auto)) }; }

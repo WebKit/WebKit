@@ -221,6 +221,8 @@ bool isContentPositionOrLeftOrRightKeyword(CSSValueID);
 bool isSelfPositionKeyword(CSSValueID);
 bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
 
+RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange&);
+RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
