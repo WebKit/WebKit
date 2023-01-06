@@ -120,9 +120,6 @@ public:
     static void setAttrStyleEnabled(bool isEnabled) { shared().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return shared().m_attrStyleEnabled; }
 
-    static void setLayoutFormattingContextEnabled(bool isEnabled) { shared().m_layoutFormattingContextEnabled = isEnabled; }
-    static bool layoutFormattingContextEnabled() { return shared().m_layoutFormattingContextEnabled; }
-
     static void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { shared().m_inlineFormattingContextIntegrationEnabled = isEnabled; }
     static bool inlineFormattingContextIntegrationEnabled() { return shared().m_inlineFormattingContextIntegrationEnabled; }
 
@@ -287,7 +284,6 @@ private:
     bool m_keygenElementEnabled { false };
     bool m_highlightAPIEnabled { false };
 
-    bool m_layoutFormattingContextEnabled { false };
     bool m_inlineFormattingContextIntegrationEnabled { true };
 
 #if ENABLE(ATTACHMENT_ELEMENT)

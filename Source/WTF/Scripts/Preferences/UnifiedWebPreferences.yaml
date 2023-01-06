@@ -3159,11 +3159,12 @@ LayoutFormattingContextEnabled:
   status: unstable
   humanReadableName: "Full next-generation layout (LFC)"
   humanReadableDescription: "Enable full next-generation layout (LFC)"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 LayoutViewportHeightExpansionFactor:

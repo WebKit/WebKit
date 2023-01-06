@@ -47,7 +47,6 @@
 #include "DatabaseProvider.h"
 #include "DebugOverlayRegions.h"
 #include "DebugPageOverlays.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DisplayRefreshMonitorManager.h"
@@ -1777,7 +1776,7 @@ void Page::doAfterUpdateRendering()
     // Code here should do once-per-frame work that needs to be done before painting, and requires
     // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
 
-    if (DeprecatedGlobalSettings::layoutFormattingContextEnabled()) {
+    if (settings().layoutFormattingContextEnabled()) {
         forEachDocument([] (Document& document) {
             if (auto* frameView = document.view())
                 frameView->displayView().prepareForDisplay();

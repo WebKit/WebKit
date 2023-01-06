@@ -37,7 +37,6 @@
 #include "ColorBlending.h"
 #include "DOMWindow.h"
 #include "DebugPageOverlays.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -968,7 +967,7 @@ void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
 
 bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
 {
-    if (DeprecatedGlobalSettings::layoutFormattingContextEnabled()) {
+    if (m_frame->settings().layoutFormattingContextEnabled()) {
         if (auto* view = existingDisplayView())
             view->flushLayers();
         return true;
