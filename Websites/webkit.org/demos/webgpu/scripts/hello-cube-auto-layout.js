@@ -76,20 +76,6 @@ async function helloCube() {
     });
 
     /*** Shader Setup ***/
-    
-    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [{binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {}}] });
-    const uniformBindGroup = device.createBindGroup({
-        layout: uniformBindGroupLayout,
-        entries: [
-          {
-            binding: 0,
-            resource: {
-              buffer: uniformBuffer,
-              offset: 0
-            },
-          },
-        ],
-      });
 /*
     FIXME: Use WGSL once compiler is brought up
     const wgslSource = `
@@ -171,6 +157,19 @@ async function helloCube() {
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
     
+    const uniformBindGroup = device.createBindGroup({
+        layout: renderPipeline.getBindGroupLayout(1),
+        entries: [
+          {
+            binding: 0,
+            resource: {
+              buffer: uniformBuffer,
+              offset: 0
+            },
+          },
+        ],
+      });
+
     /*** Swap Chain Setup ***/
     function frameUpdate() {
         const secondsBuffer = new Float32Array(3);

@@ -122,7 +122,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
 
 #if HAVE(TIER2_ARGUMENT_BUFFERS)
     if ([m_device argumentBuffersSupport] != MTLArgumentBuffersTier1) {
-        HashMap<uint32_t, uint32_t> shaderStageForBinding;
+        HashMap<uint32_t, WGPUShaderStageFlags> shaderStageForBinding;
 
         for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
             const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
@@ -132,7 +132,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         }
 
-        return BindGroupLayout::create(WTFMove(shaderStageForBinding), *this);
+        return BindGroupLayout::create(WTFMove(shaderStageForBinding));
     }
 #endif // HAVE(TIER2_ARGUMENT_BUFFERS)
 
@@ -229,25 +229,22 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     fragmentArgumentEncoder.label = label;
     computeArgumentEncoder.label = label;
 
-    return BindGroupLayout::create(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, *this);
+    return BindGroupLayout::create(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder);
 }
 
-BindGroupLayout::BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device& device)
+BindGroupLayout::BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
     : m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)
-    , m_device(device)
 {
 }
 
-BindGroupLayout::BindGroupLayout(HashMap<uint32_t, uint32_t>&& shaderStageForBinding, Device& device)
-    : m_device(device)
-    , m_shaderStageForBinding(WTFMove(shaderStageForBinding))
+BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding)
+    : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
 {
 }
 
-BindGroupLayout::BindGroupLayout(Device& device)
-    : m_device(device)
+BindGroupLayout::BindGroupLayout()
 {
 }
 

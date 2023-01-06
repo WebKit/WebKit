@@ -41,17 +41,17 @@ class Device;
 class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayout> create(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device& device)
+    static Ref<BindGroupLayout> create(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
     {
-        return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, device));
+        return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder));
     }
-    static Ref<BindGroupLayout> create(HashMap<uint32_t, uint32_t>&& stageMapTable, Device& device)
+    static Ref<BindGroupLayout> create(HashMap<uint32_t, WGPUShaderStageFlags>&& stageMapTable)
     {
-        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), device));
+        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable)));
     }
-    static Ref<BindGroupLayout> createInvalid(Device& device)
+    static Ref<BindGroupLayout> createInvalid(Device&)
     {
-        return adoptRef(*new BindGroupLayout(device));
+        return adoptRef(*new BindGroupLayout());
     }
 
     ~BindGroupLayout();
@@ -66,21 +66,18 @@ public:
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
-    Device& device() const { return m_device; }
-
     uint32_t stagesForBinding(uint32_t binding) const;
 
 private:
-    BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device&);
-    BindGroupLayout(HashMap<uint32_t, uint32_t>&&, Device&);
-    BindGroupLayout(Device&);
+    BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder);
+    BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&);
+    BindGroupLayout();
 
     const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 
-    const Ref<Device> m_device;
-    const HashMap<uint32_t, uint32_t> m_shaderStageForBinding;
+    const HashMap<uint32_t, WGPUShaderStageFlags> m_shaderStageForBinding;
 };
 
 } // namespace WebGPU

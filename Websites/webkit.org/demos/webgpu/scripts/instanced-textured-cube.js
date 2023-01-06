@@ -127,41 +127,6 @@ async function helloCube() {
     });
 
     /*** Shader Setup ***/
-    
-    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [
-        { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {} },
-        { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: {} },
-        { binding: 2, visibility: GPUShaderStage.FRAGMENT, texture: {} },
-        { binding: 3, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
-    ] });
-
-    const uniformBindGroup = device.createBindGroup({
-        layout: uniformBindGroupLayout,
-        entries: [
-          {
-            binding: 0,
-            resource: {
-              buffer: uniformBuffer,
-              offset: 0
-            },
-          },
-          {
-            binding: 1,
-            resource: {
-              buffer: translationBuffer,
-              offset: 0
-            },
-          },
-          {
-            binding: 2,
-            resource: texture.createView(),
-          },
-          {
-            binding: 3,
-            resource: sampler,
-          },
-        ],
-      });
 
     const mslSource = `
                 #define vertexInputPackedFloatSize 10
@@ -267,7 +232,35 @@ async function helloCube() {
 
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
-    
+
+    const uniformBindGroup = device.createBindGroup({
+        layout: renderPipeline.getBindGroupLayout(1),
+        entries: [
+          {
+            binding: 0,
+            resource: {
+              buffer: uniformBuffer,
+              offset: 0
+            },
+          },
+          {
+            binding: 1,
+            resource: {
+              buffer: translationBuffer,
+              offset: 0
+            },
+          },
+          {
+            binding: 2,
+            resource: texture.createView(),
+          },
+          {
+            binding: 3,
+            resource: sampler,
+          },
+        ],
+      });
+
     /*** Swap Chain Setup ***/
     function frameUpdate() {
         const d = new Date();
