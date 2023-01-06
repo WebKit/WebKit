@@ -201,7 +201,7 @@ void RenderTextControlSingleLine::layout()
             auto placeholderHeight = [&] {
                 if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*placeholderBox)) {
                     if (auto placeholderLineBox = InlineIterator::firstLineBoxFor(*blockFlow))
-                        return LayoutUnit { std::max(placeholderLineBox->height(), placeholderLineBox->contentLogicalHeight()) };
+                        return LayoutUnit { std::max(placeholderLineBox->logicalHeight(), placeholderLineBox->contentLogicalHeight()) };
                 }
                 return placeholderBox->logicalHeight();
             };
