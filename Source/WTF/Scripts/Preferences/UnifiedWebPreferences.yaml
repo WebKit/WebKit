@@ -1032,16 +1032,16 @@ CSSPaintingAPIEnabled:
 
 CSSRelativeColorSyntaxEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "CSS Relative Color Syntax"
   humanReadableDescription: "Enable support for CSS Relative Color Syntax defined in CSS Color 5"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSScrollAnchoringEnabled:
   type: bool
