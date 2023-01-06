@@ -49,7 +49,7 @@ enum OffscreenRenderingContextType
 
 [
     GenerateIsReachable=Impl,
-    EnabledByDeprecatedGlobalSetting=OffscreenCanvasEnabled,
+    EnabledBySetting=OffscreenCanvasEnabled,
     Conditional=OFFSCREEN_CANVAS,
     ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKERS,
     EnabledForContext,

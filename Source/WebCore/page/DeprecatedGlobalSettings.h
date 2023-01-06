@@ -94,11 +94,6 @@ public:
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
-#if ENABLE(OFFSCREEN_CANVAS)
-    static void setOffscreenCanvasEnabled(bool isEnabled) { shared().m_isOffscreenCanvasEnabled = isEnabled; }
-    static bool offscreenCanvasEnabled() { return shared().m_isOffscreenCanvasEnabled; }
-#endif
-
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     static void setOffscreenCanvasInWorkersEnabled(bool isEnabled) { shared().m_isOffscreenCanvasInWorkersEnabled = isEnabled; }
     static bool offscreenCanvasInWorkersEnabled() { return shared().m_isOffscreenCanvasInWorkersEnabled; }
@@ -289,9 +284,6 @@ private:
     bool m_isPaintTimingEnabled { false };
     bool m_isMenuItemElementEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
-#if ENABLE(OFFSCREEN_CANVAS)
-    bool m_isOffscreenCanvasEnabled { false };
-#endif
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     bool m_isOffscreenCanvasInWorkersEnabled { false };
 #endif
