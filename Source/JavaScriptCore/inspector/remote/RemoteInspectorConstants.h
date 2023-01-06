@@ -29,7 +29,6 @@
 // the WebInspector framework on the OS X side, webinspectord, and
 // iOS WebKit on the device side.
 
-#define WIRSimulatorTCPPortNumber               27753
 #define WIRXPCMachPortName                      "com.apple.webinspector"
 #define WIRXPCDebuggerServiceName               "com.apple.webinspector.debugger"
 #define WIRServiceAvailableNotification         "com.apple.webinspectord.available"
