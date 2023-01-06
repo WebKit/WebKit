@@ -137,14 +137,6 @@ public:
     static void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { shared().m_inlineFormattingContextIntegrationEnabled = isEnabled; }
     static bool inlineFormattingContextIntegrationEnabled() { return shared().m_inlineFormattingContextIntegrationEnabled; }
 
-#if ENABLE(CSS_PAINTING_API)
-    static void setCSSPaintingAPIEnabled(bool isEnabled) { shared().m_CSSPaintingAPIEnabled = isEnabled; }
-    static bool cssPaintingAPIEnabled() { return shared().m_CSSPaintingAPIEnabled; }
-#endif
-
-    static void setCSSTypedOMEnabled(bool isEnabled) { shared().m_CSSTypedOMEnabled = isEnabled; }
-    static bool cssTypedOMEnabled() { return shared().m_CSSTypedOMEnabled; }
-
     static void setWebSQLEnabled(bool isEnabled) { shared().m_webSQLEnabled = isEnabled; }
     static bool webSQLEnabled() { return shared().m_webSQLEnabled; }
 
@@ -320,12 +312,6 @@ private:
 
     bool m_layoutFormattingContextEnabled { false };
     bool m_inlineFormattingContextIntegrationEnabled { true };
-
-#if ENABLE(CSS_PAINTING_API)
-    bool m_CSSPaintingAPIEnabled { false };
-#endif
-
-    bool m_CSSTypedOMEnabled { false };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };

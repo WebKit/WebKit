@@ -90,6 +90,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , subgridEnabled { document.settings().subgridEnabled() }
     , masonryEnabled { document.settings().masonryEnabled() }
     , cssNestingEnabled { document.settings().cssNestingEnabled() }
+    , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -125,6 +126,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.subgridEnabled == b.subgridEnabled
         && a.masonryEnabled == b.masonryEnabled
         && a.cssNestingEnabled == b.cssNestingEnabled
+        && a.cssPaintingAPIEnabled == b.cssPaintingAPIEnabled
         && a.propertySettings == b.propertySettings
     ;
 }
@@ -154,7 +156,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.subgridEnabled                            << 18
         | context.masonryEnabled                            << 19
         | context.cssNestingEnabled                         << 20
-        | (uint64_t)context.mode                            << 21; // This is multiple bits, so keep it last.
+        | context.cssPaintingAPIEnabled                     << 21
+        | (uint64_t)context.mode                            << 22; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

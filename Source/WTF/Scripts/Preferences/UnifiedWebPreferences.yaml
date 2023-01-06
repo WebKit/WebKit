@@ -1009,13 +1009,14 @@ CSSPaintingAPIEnabled:
   status: testable
   humanReadableName: "CSS Painting API"
   humanReadableDescription: "Enable the CSS Painting API"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(CSS_PAINTING_API)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)": true
+      default: false
+    WebCore:
       default: false
 
 CSSRelativeColorSyntaxEnabled:

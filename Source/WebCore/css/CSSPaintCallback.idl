@@ -24,7 +24,7 @@
 */
 
 [
-    EnabledByDeprecatedGlobalSetting=CSSPaintingAPIEnabled,
+    EnabledBySetting=CSSPaintingAPIEnabled,
     Conditional=CSS_PAINTING_API,
     CallbackThisObject=any
 ] callback CSSPaintCallback = undefined (PaintRenderingContext2D context, CSSPaintSize size, StylePropertyMapReadOnly styleMap, sequence<USVString> arguments);
