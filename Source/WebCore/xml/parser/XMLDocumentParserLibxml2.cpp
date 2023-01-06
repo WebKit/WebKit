@@ -482,7 +482,7 @@ static void* openFunc(const char* uri)
             FetchOptions options;
             options.mode = FetchOptions::Mode::SameOrigin;
             options.credentials = FetchOptions::Credentials::Include;
-            cachedResourceLoader.frame()->loader().loadResourceSynchronously(url, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
+            cachedResourceLoader.frame()->loader().loadResourceSynchronously({ url }, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
 
             if (response.url().isEmpty()) {
                 if (Page* page = document ? document->page() : nullptr)

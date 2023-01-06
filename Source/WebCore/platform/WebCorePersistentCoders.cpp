@@ -37,6 +37,8 @@
 #include "RegistrationDatabase.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScopedURL.h"
+#include "SecurityOrigin.h"
 #include <wtf/persistence/PersistentCoders.h>
 
 #if PLATFORM(COCOA)
@@ -199,7 +201,7 @@ void Coder<WebCore::ResourceRequest>::encode(Encoder& encoder, const WebCore::Re
 
 std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decode(Decoder& decoder)
 {
-    std::optional<URL> url;
+    std::optional<WebCore::ScopedURL> url;
     decoder >> url;
     if (!url)
         return std::nullopt;
@@ -279,6 +281,23 @@ std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decode(
     request.setRequester(*requester);
     request.setIsAppInitiated(*isAppInitiated);
     return { request };
+}
+
+void Coder<WebCore::ScopedURL>::encode(Encoder& encoder, const WebCore::ScopedURL& instance)
+{
+    encoder << instance.asURL();
+}
+
+std::optional<WebCore::ScopedURL> Coder<WebCore::ScopedURL>::decode(Decoder& decoder)
+{
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+
+    return { WebCore::ScopedURL {
+        WTFMove(*url),
+    } };
 }
 
 #if PLATFORM(COCOA)

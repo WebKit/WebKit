@@ -31,6 +31,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "ScopedURL.h"
 #include "Settings.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
@@ -60,7 +61,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     options.referrerPolicy = m_referrerPolicy;
     options.nonce = m_nonce;
 
-    auto request = createPotentialAccessControlRequest(sourceURL, WTFMove(options), document, crossOriginMode);
+    auto request = createPotentialAccessControlRequest({ sourceURL }, WTFMove(options), document, crossOriginMode);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setCharset(m_charset);
     request.setPriority(WTFMove(resourceLoadPriority));

@@ -48,6 +48,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ScopedURL.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/SetForScope.h>
 
@@ -489,7 +490,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->loadRequest(URL { m_underTest ? WebInspectorUIProxy::inspectorTestPageURL() : WebInspectorUIProxy::inspectorPageURL() });
+    m_inspectorPage->loadRequest(ScopedURL { m_underTest ? WebInspectorUIProxy::inspectorTestPageURL() : WebInspectorUIProxy::inspectorPageURL() });
 }
 
 void WebInspectorUIProxy::open()

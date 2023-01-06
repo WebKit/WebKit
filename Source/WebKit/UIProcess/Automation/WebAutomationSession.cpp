@@ -45,6 +45,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/PointerEventTypeNames.h>
+#include <WebCore/ScopedURL.h>
 #include <algorithm>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -697,7 +698,7 @@ void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Au
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->loadRequest(URL { url });
+    page->loadRequest(ScopedURL { url });
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTFMove(callback));
 }
 

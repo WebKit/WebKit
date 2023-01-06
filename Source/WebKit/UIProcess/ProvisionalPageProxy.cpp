@@ -48,6 +48,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/ScopedURL.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
@@ -68,7 +69,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_request(request)
     , m_processSwapRequestedByClient(processSwapRequestedByClient)
     , m_isProcessSwappingOnNavigationResponse(isProcessSwappingOnNavigationResponse)
-    , m_provisionalLoadURL(isProcessSwappingOnNavigationResponse ? request.url() : URL())
+    , m_provisionalLoadURL(isProcessSwappingOnNavigationResponse ? request.url() : ScopedURL())
 #if USE(RUNNINGBOARD)
     , m_provisionalLoadActivity(m_process->throttler().foregroundActivity("Provisional Load"_s))
 #endif

@@ -29,7 +29,7 @@
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
 #include "WKData.h"
-#include <wtf/URL.h>
+#include <WebCore/ScopedURL.h>
 
 WKTypeID WKURLRequestGetTypeID()
 {
@@ -38,7 +38,7 @@ WKTypeID WKURLRequestGetTypeID()
 
 WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
 {
-    return WebKit::toAPI(&API::URLRequest::create(URL { WebKit::toImpl(url)->string() }).leakRef());
+    return WebKit::toAPI(&API::URLRequest::create(WebCore::ScopedURL { WebKit::toImpl(url)->string() }).leakRef());
 }
 
 WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)

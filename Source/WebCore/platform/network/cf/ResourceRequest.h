@@ -51,24 +51,24 @@ using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, Resou
 
 class ResourceRequest : public ResourceRequestBase {
 public:
-    explicit ResourceRequest(const String& url) 
-        : ResourceRequestBase(URL({ }, url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
+    explicit ResourceRequest(const String& url)
+        : ResourceRequestBase(ScopedURL({ }, url), ResourceRequestCachePolicy::UseProtocolCachePolicy)
     {
     }
 
-    ResourceRequest(const URL& url) 
+    ResourceRequest(const ScopedURL& url)
         : ResourceRequestBase(url, ResourceRequestCachePolicy::UseProtocolCachePolicy)
     {
     }
 
-    ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = ResourceRequestCachePolicy::UseProtocolCachePolicy)
+    ResourceRequest(const ScopedURL& url, const String& referrer, ResourceRequestCachePolicy policy = ResourceRequestCachePolicy::UseProtocolCachePolicy)
         : ResourceRequestBase(url, policy)
     {
         setHTTPReferrer(referrer);
     }
     
     ResourceRequest()
-        : ResourceRequestBase(URL(), ResourceRequestCachePolicy::UseProtocolCachePolicy)
+        : ResourceRequestBase(ScopedURL(), ResourceRequestCachePolicy::UseProtocolCachePolicy)
     {
     }
     

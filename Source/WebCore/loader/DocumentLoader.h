@@ -198,7 +198,7 @@ public:
 
     const SubstituteData& substituteData() const { return m_substituteData; }
 
-    const URL& url() const;
+    const ScopedURL& url() const;
     const URL& unreachableURL() const;
 
     const URL& originalURL() const;
@@ -762,7 +762,7 @@ inline ResourceRequest& DocumentLoader::request()
     return m_request;
 }
 
-inline const URL& DocumentLoader::url() const
+inline const ScopedURL& DocumentLoader::url() const
 {
     return m_request.url();
 }

@@ -1281,7 +1281,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
     // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
     Ref protectedFrame { m_frame };
 
-    URL url = request.resourceRequest().url();
+    auto url = request.resourceRequest().url();
 
     ASSERT(m_frame.document());
     if (!request.requesterSecurityOrigin().canDisplay(url)) {
@@ -1394,7 +1394,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         return;
     }
 
-    const URL& newURL = frameLoadRequest.resourceRequest().url();
+    const ScopedURL& newURL = frameLoadRequest.resourceRequest().url();
     ResourceRequest request(newURL);
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
@@ -3140,7 +3140,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     NewFrameOpenerPolicy openerPolicy = request.newFrameOpenerPolicy();
 
     const ResourceRequest& inRequest = request.resourceRequest();
-    const URL& url = inRequest.url();
+    const auto& url = inRequest.url();
     const String& contentType = inRequest.httpContentType();
     String origin = inRequest.httpOrigin();
 

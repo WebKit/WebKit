@@ -1219,7 +1219,7 @@ header: <WebCore/FrameLoaderTypes.h>
 
 header: <WebCore/ResourceRequest.h>
 [CustomHeader, Nested] class WebCore::ResourceRequest::RequestData {
-    URL m_url;
+    WebCore::ScopedURL m_url;
     double m_timeoutInterval;
     URL m_firstPartyForCookies;
     String m_httpMethod;

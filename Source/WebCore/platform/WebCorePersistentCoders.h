@@ -37,6 +37,7 @@ class ContentSecurityPolicyResponseHeaders;
 class HTTPHeaderMap;
 class ResourceResponse;
 class ResourceRequest;
+class ScopedURL;
 
 struct ClientOrigin;
 struct CrossOriginEmbedderPolicy;
@@ -73,6 +74,7 @@ DECLARE_CODER(WebCore::ImportedScriptAttributes);
 #endif
 DECLARE_CODER(WebCore::ResourceResponse);
 DECLARE_CODER(WebCore::ResourceRequest);
+DECLARE_CODER(WebCore::ScopedURL);
 DECLARE_CODER(WebCore::SecurityOriginData);
 #if ENABLE(SERVICE_WORKER)
 DECLARE_CODER(WebCore::NavigationPreloadState);
