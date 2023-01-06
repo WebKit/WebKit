@@ -120,9 +120,6 @@ public:
     static void setAttrStyleEnabled(bool isEnabled) { shared().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return shared().m_attrStyleEnabled; }
 
-    static void setWebAPIStatisticsEnabled(bool isEnabled) { shared().m_webAPIStatisticsEnabled = isEnabled; }
-    static bool webAPIStatisticsEnabled() { return shared().m_webAPIStatisticsEnabled; }
-
     static void setLayoutFormattingContextEnabled(bool isEnabled) { shared().m_layoutFormattingContextEnabled = isEnabled; }
     static bool layoutFormattingContextEnabled() { return shared().m_layoutFormattingContextEnabled; }
 
@@ -291,7 +288,6 @@ private:
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };
-    bool m_webAPIStatisticsEnabled { false };
     bool m_syntheticEditingCommandsEnabled { true };
     bool m_webSQLEnabled { false };
     bool m_keygenElementEnabled { false };

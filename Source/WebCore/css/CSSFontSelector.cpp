@@ -38,7 +38,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CachedResourceLoader.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -387,7 +386,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     auto* document = dynamicDowncast<Document>(m_context.get());
     auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
     if (face) {
-        if (document && DeprecatedGlobalSettings::webAPIStatisticsEnabled())
+        if (document && document->settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), true);
         return face->fontRanges(*fontDescriptionForLookup, fontPaletteValues, fontFeatureValues);
     }
@@ -396,7 +395,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
         resolveAndAssignGenericFamily();
 
     auto font = FontCache::forCurrentThread().fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues, fontFeatureValues });
-    if (document && DeprecatedGlobalSettings::webAPIStatisticsEnabled())
+    if (document && document->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };
 }
@@ -427,7 +426,7 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
         return nullptr;
     auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
     auto font = FontCache::forCurrentThread().fontForFamily(fontDescription, pictographFontFamily);
-    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled() && is<Document>(m_context))
+    if (is<Document>(m_context) && m_context->settingsValues().webAPIStatisticsEnabled)
         ResourceLoadObserver::shared().logFontLoad(downcast<Document>(*m_context), pictographFontFamily, !!font);
 
     return font;

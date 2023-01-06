@@ -30,7 +30,6 @@
 #include "CSSFontSelector.h"
 #include "CachedFontLoadRequest.h"
 #include "CachedSVGFont.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -186,7 +185,7 @@ void CSSFontFaceSource::load(Document* document)
             fontDescription.setComputedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(m_face.allowUserInstalledFonts());
             success = FontCache::forCurrentThread().fontForFamily(fontDescription, m_fontFaceName, { }, true);
-            if (document && DeprecatedGlobalSettings::webAPIStatisticsEnabled())
+            if (document && document->settings().webAPIStatisticsEnabled())
                 ResourceLoadObserver::shared().logFontLoad(*document, m_fontFaceName.string(), success);
         }
         setStatus(success ? Status::Success : Status::Failure);

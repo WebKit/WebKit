@@ -6275,11 +6275,12 @@ WebAPIStatisticsEnabled:
   status: unstable
   humanReadableName: "Web API Statistics"
   humanReadableDescription: "Enable Web API Statistics"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 WebAPIsInShadowRealmEnabled:
