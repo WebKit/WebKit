@@ -79,9 +79,7 @@
            (global-name "com.apple.coremedia.formatreader.xpc")
            (global-name "com.apple.coremedia.mediaparserd.fairplaypsshatomparser.xpc")
            (global-name "com.apple.coremedia.mediaparserd.formatreader.xpc")
-#if USE(MEDIAPARSERD)
            (global-name "com.apple.coremedia.mediaparserd.manifold.xpc")
-#endif
            (global-name "com.apple.coremedia.player.xpc")
            (global-name "com.apple.coremedia.remaker")
            (global-name "com.apple.coremedia.routediscoverer.xpc")
@@ -104,6 +102,7 @@
             "com.apple.coremedia.mediaplaybackd.cpeprotector.xpc"
             "com.apple.coremedia.mediaplaybackd.customurlloader.xpc"
             "com.apple.coremedia.mediaplaybackd.figcontentkeysession.xpc"
+            "com.apple.coremedia.mediaplaybackd.figcontentkeyboss.xpc"
             "com.apple.coremedia.mediaplaybackd.figcpecryptor.xpc"
             "com.apple.coremedia.mediaplaybackd.formatreader.xpc"
             "com.apple.coremedia.mediaplaybackd.player.xpc"
@@ -123,6 +122,7 @@
         (global-name "com.apple.coremedia.cpeprotector.xpc")
         (global-name "com.apple.coremedia.endpoint.xpc")
         (global-name "com.apple.coremedia.figcontentkeysession.xpc")
+        (global-name "com.apple.coremedia.figcontentkeyboss.xpc")
         (global-name "com.apple.coremedia.routingsessionmanager.xpc")
         (global-name "com.apple.coremedia.sts"))
 
