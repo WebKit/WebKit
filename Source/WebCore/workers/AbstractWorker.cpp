@@ -32,6 +32,7 @@
 #include "AbstractWorker.h"
 
 #include "ContentSecurityPolicy.h"
+#include "ScopedURL.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerOptions.h"

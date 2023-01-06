@@ -1264,6 +1264,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteFrame.h
     page/RemoteFrameClient.h
     page/RenderingUpdateScheduler.h
+    page/ScopedURL.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h
     page/ScrollBehavior.h

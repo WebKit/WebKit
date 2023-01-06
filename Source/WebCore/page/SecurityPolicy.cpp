@@ -89,7 +89,7 @@ String SecurityPolicy::referrerToOriginString(const String& referrer)
     return originString + "/";
 }
 
-String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer)
+String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const ScopedURL& url, const String& referrer)
 {
     ASSERT(referrer == URL { referrer }.strippedForUseAsReferrer()
         || referrer == SecurityOrigin::create(URL { referrer })->toString());
@@ -142,7 +142,7 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
     return shouldHideReferrer(url, referrer) ? String() : referrer;
 }
 
-String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const URL& url, const SecurityOrigin& securityOrigin)
+String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const ScopedURL& url, const SecurityOrigin& securityOrigin)
 {
     switch (referrerPolicy) {
     case ReferrerPolicy::NoReferrer:
@@ -202,7 +202,7 @@ bool SecurityPolicy::allowSubstituteDataAccessToLocal()
     return localLoadPolicy != SecurityPolicy::AllowLocalLoadsForLocalOnly;
 }
 
-bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL)
+bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const ScopedURL& targetURL)
 {
     ASSERT(targetOrigin.equal(SecurityOrigin::create(targetURL).ptr()));
     {
@@ -222,7 +222,7 @@ bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const S
     return false;
 }
 
-bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& url)
+bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const ScopedURL& url)
 {
     return isAccessAllowed(activeOrigin, SecurityOrigin::create(url).get(), url);
 }

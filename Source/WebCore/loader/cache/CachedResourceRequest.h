@@ -41,10 +41,11 @@ struct ContentRuleListResults;
 class Document;
 class FrameLoader;
 class Page;
+class ScopedURL;
 struct ServiceWorkerRegistrationData;
 enum class ReferrerPolicy : uint8_t;
 
-bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
+bool isRequestCrossOrigin(SecurityOrigin*, const ScopedURL& requestURL, const ResourceLoaderOptions&);
 
 class CachedResourceRequest {
 public:

@@ -33,6 +33,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScopedURL.h"
 #include "ScriptBuffer.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -74,7 +75,7 @@ public:
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
-    const URL& url() const { return m_url; }
+    const ScopedURL& url() const { return m_url; }
     const URL& responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
     bool isRedirected() const { return m_isRedirected; }
@@ -138,7 +139,7 @@ private:
     RefPtr<ThreadableLoader> m_threadableLoader;
     RefPtr<TextResourceDecoder> m_decoder;
     ScriptBuffer m_script;
-    URL m_url;
+    ScopedURL m_url;
     URL m_responseURL;
     CertificateInfo m_certificateInfo;
     String m_responseMIMEType;

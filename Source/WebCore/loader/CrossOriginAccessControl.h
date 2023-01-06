@@ -45,6 +45,7 @@ class HTTPHeaderMap;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class ScopedURL;
 class SecurityOrigin;
 
 struct ResourceLoaderOptions;
@@ -88,7 +89,7 @@ WEBCORE_EXPORT Expected<void, String> passesAccessControlCheck(const ResourceRes
 WEBCORE_EXPORT Expected<void, String> validatePreflightResponse(PAL::SessionID, const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
 
 enum class ForNavigation : bool { No, Yes };
-WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation);
+WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, const SecurityOrigin&, const ScopedURL&, const ResourceResponse&, ForNavigation);
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
 String validateCrossOriginRedirectionURL(const URL&);
 

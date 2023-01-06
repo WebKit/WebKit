@@ -40,6 +40,7 @@ class BlobDataFileReference;
 class BlobPart;
 class BlobRegistry;
 class BlobRegistryImpl;
+class ScopedURL;
 
 struct PolicyContainer;
 
@@ -50,26 +51,26 @@ class WEBCORE_EXPORT BlobRegistry {
 public:
 
     // Registers a blob URL referring to the specified file.
-    virtual void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) = 0;
+    virtual void registerFileBlobURL(const ScopedURL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) = 0;
 
     // Registers a blob URL referring to the specified blob data.
-    virtual void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) = 0;
+    virtual void registerBlobURL(const ScopedURL&, Vector<BlobPart>&&, const String& contentType) = 0;
     
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
-    virtual void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&) = 0;
+    virtual void registerBlobURL(const ScopedURL&, const ScopedURL& srcURL, const PolicyContainer&) = 0;
 
     // Registers a new blob URL referring to the blob data identified by the specified srcURL or, if none found, referring to the file found at the given path.
-    virtual void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
+    virtual void registerBlobURLOptionallyFileBacked(const ScopedURL&, const ScopedURL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
 
     // Negative start and end values select from the end.
-    virtual void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) = 0;
+    virtual void registerBlobURLForSlice(const ScopedURL&, const ScopedURL& srcURL, long long start, long long end, const String& contentType) = 0;
 
-    virtual void unregisterBlobURL(const URL&) = 0;
+    virtual void unregisterBlobURL(const ScopedURL&) = 0;
 
-    virtual void registerBlobURLHandle(const URL&) = 0;
-    virtual void unregisterBlobURLHandle(const URL&) = 0;
+    virtual void registerBlobURLHandle(const ScopedURL&) = 0;
+    virtual void unregisterBlobURLHandle(const ScopedURL&) = 0;
 
-    virtual unsigned long long blobSize(const URL&) = 0;
+    virtual unsigned long long blobSize(const ScopedURL&) = 0;
 
     virtual void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;
 

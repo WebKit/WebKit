@@ -46,6 +46,7 @@ class ArrayBufferView;
 namespace WebCore {
 
 class Blob;
+class ScopedURL;
 class ThreadableWebSocketChannel;
 
 class WebSocket final : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, private WebSocketChannelClient {
@@ -81,7 +82,7 @@ public:
 
     RefPtr<ThreadableWebSocketChannel> channel() const;
 
-    const URL& url() const;
+    const ScopedURL& url() const;
     State readyState() const;
     unsigned bufferedAmount() const;
 
@@ -131,7 +132,7 @@ private:
     RefPtr<ThreadableWebSocketChannel> m_channel;
 
     State m_state { CONNECTING };
-    URL m_url;
+    ScopedURL m_url;
     unsigned m_bufferedAmount { 0 };
     unsigned m_bufferedAmountAfterClose { 0 };
     BinaryType m_binaryType { BinaryType::Blob };

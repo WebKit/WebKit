@@ -121,7 +121,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
 }
 
 // FIXME: For this constructor, we should probably mandate that the URL has no fragment identifier.
-CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
+CachedResource::CachedResource(const ScopedURL& url, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : m_resourceRequest(url)
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)

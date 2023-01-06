@@ -27,6 +27,7 @@
 
 #include "ApplicationCacheResourceLoader.h"
 #include "DOMApplicationCache.h"
+#include "ScopedURL.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -53,7 +54,7 @@ class ApplicationCacheGroup : public CanMakeWeakPtr<ApplicationCacheGroup> {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ApplicationCacheGroup(Ref<ApplicationCacheStorage>&&, const URL& manifestURL);
+    explicit ApplicationCacheGroup(Ref<ApplicationCacheStorage>&&, const ScopedURL& manifestURL);
     virtual ~ApplicationCacheGroup();
     
     enum UpdateStatus { Idle, Checking, Downloading };
@@ -65,7 +66,7 @@ public:
     static void selectCacheWithoutManifestURL(Frame&);
 
     ApplicationCacheStorage& storage() { return m_storage; }
-    const URL& manifestURL() const { return m_manifestURL; }
+    const ScopedURL& manifestURL() const { return m_manifestURL; }
     const SecurityOrigin& origin() const { return m_origin.get(); }
     UpdateStatus updateStatus() const { return m_updateStatus; }
     void setUpdateStatus(UpdateStatus status);
@@ -124,11 +125,11 @@ private:
     
     void stopLoading();
 
-    ResourceRequest createRequest(URL&&, ApplicationCacheResource*);
+    ResourceRequest createRequest(ScopedURL&&, ApplicationCacheResource*);
 
     Ref<ApplicationCacheStorage> m_storage;
 
-    URL m_manifestURL;
+    ScopedURL m_manifestURL;
     Ref<SecurityOrigin> m_origin;
     UpdateStatus m_updateStatus { Idle };
     

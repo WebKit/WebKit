@@ -30,6 +30,7 @@
 #include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
+#include "ScopedURL.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/CompletionHandler.h>

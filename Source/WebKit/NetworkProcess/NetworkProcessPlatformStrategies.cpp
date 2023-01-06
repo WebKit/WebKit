@@ -57,16 +57,17 @@ BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
 {
     using namespace WebCore;
     class EmptyBlobRegistry : public WebCore::BlobRegistry {
-        void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&) final { ASSERT_NOT_REACHED(); }
-        void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void unregisterBlobURL(const URL&) final { ASSERT_NOT_REACHED(); }
-        unsigned long long blobSize(const URL&) final { ASSERT_NOT_REACHED(); return 0; }
+        private:
+        void registerFileBlobURL(const ScopedURL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) final { ASSERT_NOT_REACHED(); }
+        void registerBlobURL(const ScopedURL&, Vector<BlobPart>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
+        void registerBlobURL(const ScopedURL&, const ScopedURL& srcURL, const PolicyContainer&) final { ASSERT_NOT_REACHED(); }
+        void registerBlobURLOptionallyFileBacked(const ScopedURL&, const ScopedURL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
+        void registerBlobURLForSlice(const ScopedURL&, const ScopedURL& srcURL, long long start, long long end, const String& contentType) final { ASSERT_NOT_REACHED(); }
+        void unregisterBlobURL(const ScopedURL&) final { ASSERT_NOT_REACHED(); }
+        unsigned long long blobSize(const ScopedURL&) final { ASSERT_NOT_REACHED(); return 0; }
         void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final { ASSERT_NOT_REACHED(); }
-        void registerBlobURLHandle(const URL&) final { ASSERT_NOT_REACHED(); }
-        void unregisterBlobURLHandle(const URL&) final { ASSERT_NOT_REACHED(); }
+        void registerBlobURLHandle(const ScopedURL&) final { ASSERT_NOT_REACHED(); }
+        void unregisterBlobURLHandle(const ScopedURL&) final { ASSERT_NOT_REACHED(); }
     };
     static NeverDestroyed<EmptyBlobRegistry> blobRegistry;
     return &blobRegistry.get();

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ScopedURL.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -33,8 +34,9 @@ namespace WebCore {
 class URLKeepingBlobAlive {
 public:
     URLKeepingBlobAlive() = default;
-    URLKeepingBlobAlive(URL&&);
-    URLKeepingBlobAlive(const URL& url) : URLKeepingBlobAlive(URL { url }) { }
+    URLKeepingBlobAlive(ScopedURL&&);
+    URLKeepingBlobAlive(const ScopedURL& url)
+        : URLKeepingBlobAlive(ScopedURL { url }) { }
     ~URLKeepingBlobAlive();
 
     URLKeepingBlobAlive(URLKeepingBlobAlive&&) = default;
@@ -42,11 +44,11 @@ public:
     URLKeepingBlobAlive& operator=(const URLKeepingBlobAlive&);
     URLKeepingBlobAlive& operator=(URLKeepingBlobAlive&&);
 
-    operator const URL&() const { return m_url; }
-    const URL& url() const { return m_url; }
+    operator const ScopedURL&() const { return m_url; }
+    const ScopedURL& url() const { return m_url; }
 
-    URLKeepingBlobAlive& operator=(URL&&);
-    URLKeepingBlobAlive& operator=(const URL& url) { return *this = URL { url }; }
+    URLKeepingBlobAlive& operator=(ScopedURL&&);
+    URLKeepingBlobAlive& operator=(const ScopedURL& url) { return *this = ScopedURL { url }; }
 
     URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() const &;
     URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() &&;
@@ -55,7 +57,7 @@ private:
     void registerBlobURLHandleIfNecessary();
     void unregisterBlobURLHandleIfNecessary();
 
-    URL m_url;
+    ScopedURL m_url;
 };
 
 } // namespace WebCore

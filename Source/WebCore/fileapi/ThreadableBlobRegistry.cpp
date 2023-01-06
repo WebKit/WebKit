@@ -38,6 +38,7 @@
 #include "BlobURL.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "PolicyContainer.h"
+#include "ScopedURL.h"
 #include "SecurityOrigin.h"
 #include <mutex>
 #include <wtf/CrossThreadQueue.h>
@@ -76,7 +77,7 @@ static ThreadSpecific<HashCountedSet<String>>& blobURLReferencesMap()
     return *map;
 }
 
-void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& replacementPath, const String& contentType)
+void ThreadableBlobRegistry::registerFileBlobURL(const ScopedURL& url, const String& path, const String& replacementPath, const String& contentType)
 {
     String effectivePath = !replacementPath.isNull() ? replacementPath : path;
 
@@ -90,7 +91,7 @@ void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& p
     });
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void ThreadableBlobRegistry::registerBlobURL(const ScopedURL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     if (isMainThread()) {
         blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
@@ -111,7 +112,7 @@ static inline bool isBlobURLContainsNullOrigin(const URL& url)
     return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
 }
 
-static void unregisterBlobURLOriginIfNecessary(const URL& url)
+static void unregisterBlobURLOriginIfNecessary(const ScopedURL& url)
 {
     if (!isBlobURLContainsNullOrigin(url))
         return;
@@ -121,7 +122,7 @@ static void unregisterBlobURLOriginIfNecessary(const URL& url)
         originMap()->remove(urlWithoutFragment);
 }
 
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const ScopedURL& url, const ScopedURL& srcURL)
 {
     // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
     if (origin && isBlobURLContainsNullOrigin(url)) {
@@ -140,7 +141,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
     });
 }
 
-void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
+void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const ScopedURL& url, const ScopedURL& srcURL, const String& fileBackedPath, const String& contentType)
 {
     if (isMainThread()) {
         blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath), contentType);
@@ -151,7 +152,7 @@ void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url,
     });
 }
 
-void ThreadableBlobRegistry::registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end, const String& contentType)
+void ThreadableBlobRegistry::registerBlobURLForSlice(const ScopedURL& newURL, const ScopedURL& srcURL, long long start, long long end, const String& contentType)
 {
     if (isMainThread()) {
         blobRegistry().registerBlobURLForSlice(newURL, srcURL, start, end, contentType);
@@ -163,7 +164,7 @@ void ThreadableBlobRegistry::registerBlobURLForSlice(const URL& newURL, const UR
     });
 }
 
-unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
+unsigned long long ThreadableBlobRegistry::blobSize(const ScopedURL& url)
 {
     if (isMainThread())
         return blobRegistry().blobSize(url);
@@ -175,7 +176,7 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
     return resultSize;
 }
 
-void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
+void ThreadableBlobRegistry::unregisterBlobURL(const ScopedURL& url)
 {
     unregisterBlobURLOriginIfNecessary(url);
 
@@ -184,7 +185,7 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
     });
 }
 
-void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url)
+void ThreadableBlobRegistry::registerBlobURLHandle(const ScopedURL& url)
 {
     if (isBlobURLContainsNullOrigin(url))
         blobURLReferencesMap()->add(url.stringWithoutFragmentIdentifier());
@@ -194,7 +195,7 @@ void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url)
     });
 }
 
-void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url)
+void ThreadableBlobRegistry::unregisterBlobURLHandle(const ScopedURL& url)
 {
     unregisterBlobURLOriginIfNecessary(url);
 

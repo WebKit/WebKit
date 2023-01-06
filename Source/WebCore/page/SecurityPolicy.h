@@ -49,9 +49,9 @@ public:
     // Returns the referrer modified according to the referrer policy for a
     // navigation to a given URL. If the referrer returned is empty, the
     // referrer header should be omitted.
-    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const URL&, const String& referrer);
+    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const ScopedURL&, const String& referrer);
 
-    static String generateOriginHeader(ReferrerPolicy, const URL&, const SecurityOrigin&);
+    static String generateOriginHeader(ReferrerPolicy, const ScopedURL&, const SecurityOrigin&);
 
     static bool shouldInheritSecurityOriginFromOwner(const URL&);
 
@@ -72,8 +72,8 @@ public:
     WEBCORE_EXPORT static void removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
     WEBCORE_EXPORT static void resetOriginAccessAllowlists();
 
-    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL);
-    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& targetURL);
+    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const ScopedURL& targetURL);
+    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const ScopedURL& targetURL);
 };
 
 } // namespace WebCore

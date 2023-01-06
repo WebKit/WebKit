@@ -1420,7 +1420,7 @@ header: <WebCore/FormData.h>
 }
 
 [Nested] struct WebCore::FormDataElement::EncodedBlobData {
-    URL url;
+    WebCore::ScopedURL url;
 }
 
 header: <WebCore/NetworkLoadInformation.h>
@@ -1565,6 +1565,10 @@ struct WebCore::SecurityOriginData {
 struct WebCore::ClientOrigin {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
+};
+
+class WebCore::ScopedURL {
+    String string();
 };
 
 enum class WebCore::AlphaPremultiplication : uint8_t {

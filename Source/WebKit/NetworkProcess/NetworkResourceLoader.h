@@ -188,7 +188,7 @@ private:
     void dataReceivedThroughContentFilter(const WebCore::SharedBuffer&, size_t) final;
     WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
     void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
-    void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&) final;
+    void handleProvisionalLoadFailureFromContentFilter(const WebCore::ScopedURL& blockedPageURL, WebCore::SubstituteData&) final;
 #endif
 
     void processClearSiteDataHeader(const WebCore::ResourceResponse&, CompletionHandler<void()>&&);

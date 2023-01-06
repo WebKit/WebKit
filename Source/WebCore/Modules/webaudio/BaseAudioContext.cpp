@@ -265,7 +265,7 @@ Document* BaseAudioContext::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
+bool BaseAudioContext::wouldTaintOrigin(const ScopedURL& url) const
 {
     if (url.protocolIsData())
         return false;

@@ -28,6 +28,7 @@
 #include "MessagePortIdentifier.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
+#include "ScopedURL.h"
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/CompletionHandler.h>
@@ -45,7 +46,7 @@ struct WorkerInitializationData;
 class SharedWorkerScriptLoader : private WorkerScriptLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SharedWorkerScriptLoader(URL&&, SharedWorker&, WorkerOptions&&);
+    SharedWorkerScriptLoader(ScopedURL&&, SharedWorker&, WorkerOptions&&);
 
     void load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
 
@@ -60,7 +61,7 @@ private:
     const WorkerOptions m_options;
     const Ref<SharedWorker> m_worker;
     const Ref<WorkerScriptLoader> m_loader;
-    const URL m_url;
+    const ScopedURL m_url;
     CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)> m_completionHandler;
 };
 

@@ -28,6 +28,7 @@
 #include "NetworkCacheBlobStorage.h"
 #include "NetworkCacheData.h"
 #include "NetworkCacheKey.h"
+#include <WebCore/ScopedURL.h>
 #include <WebCore/Timer.h>
 #include <wtf/BloomFilter.h>
 #include <wtf/CompletionHandler.h>

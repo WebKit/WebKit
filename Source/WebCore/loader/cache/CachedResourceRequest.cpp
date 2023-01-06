@@ -275,7 +275,7 @@ void CachedResourceRequest::updateUserAgentHeader(FrameLoader& frameLoader)
     frameLoader.applyUserAgentIfNeeded(m_resourceRequest);
 }
 
-bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const ResourceLoaderOptions& options)
+bool isRequestCrossOrigin(SecurityOrigin* origin, const ScopedURL& requestURL, const ResourceLoaderOptions& options)
 {
     if (!origin)
         return false;

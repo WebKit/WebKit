@@ -31,6 +31,7 @@
 #include "LinkLoader.h"
 #include "LinkLoaderClient.h"
 #include "LinkRelAttribute.h"
+#include "ScopedURL.h"
 
 namespace WebCore {
 
@@ -146,7 +147,7 @@ private:
     String m_type;
     String m_media;
     String m_integrityMetadataForPendingSheetRequest;
-    URL m_url;
+    ScopedURL m_url;
     std::unique_ptr<DOMTokenList> m_sizes;
     std::unique_ptr<DOMTokenList> m_relList;
     DisabledState m_disabledState;

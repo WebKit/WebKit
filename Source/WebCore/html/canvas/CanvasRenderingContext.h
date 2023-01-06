@@ -44,6 +44,7 @@ class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class CSSStyleImageValue;
+class ScopedURL;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
 
@@ -99,14 +100,14 @@ protected:
     bool wouldTaintOrigin(const HTMLImageElement*);
     bool wouldTaintOrigin(const HTMLVideoElement*);
     bool wouldTaintOrigin(const ImageBitmap*);
-    bool wouldTaintOrigin(const URL&);
+    bool wouldTaintOrigin(const ScopedURL&);
 
     template<class T> void checkOrigin(const T* arg)
     {
         if (wouldTaintOrigin(arg))
             m_canvas.setOriginTainted();
     }
-    void checkOrigin(const URL&);
+    void checkOrigin(const ScopedURL&);
     void checkOrigin(const CSSStyleImageValue&);
 
     bool m_hasActiveInspectorCanvasCallTracer { false };

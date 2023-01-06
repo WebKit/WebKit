@@ -53,6 +53,7 @@ class Blob;
 class BlobLoader;
 class DeferredPromise;
 class ReadableStream;
+class ScopedURL;
 class ScriptExecutionContext;
 class FragmentedSharedBuffer;
 class WebCoreOpaqueRoot;
@@ -95,7 +96,7 @@ public:
 
     virtual ~Blob();
 
-    URL url() const { return m_internalURL; }
+    ScopedURL url() const { return m_internalURL; }
     const String& type() const { return m_type; }
 
     WEBCORE_EXPORT unsigned long long size() const;
@@ -154,7 +155,7 @@ private:
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
-    URL m_internalURL;
+    ScopedURL m_internalURL;
 
     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };
