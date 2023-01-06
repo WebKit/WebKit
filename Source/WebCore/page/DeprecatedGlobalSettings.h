@@ -88,9 +88,6 @@ public:
     static void setPaintTimingEnabled(bool isEnabled) { shared().m_isPaintTimingEnabled = isEnabled; }
     static bool paintTimingEnabled() { return shared().m_isPaintTimingEnabled; }
 
-    static void setMenuItemElementEnabled(bool isEnabled) { shared().m_isMenuItemElementEnabled = isEnabled; }
-    static bool menuItemElementEnabled() { return shared().m_isMenuItemElementEnabled; }
-
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
@@ -262,7 +259,7 @@ private:
     String m_networkInterfaceName;
 
     bool m_isPaintTimingEnabled { false };
-    bool m_isMenuItemElementEnabled { false };
+
     bool m_isCustomPasteboardDataEnabled { false };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     bool m_isOffscreenCanvasInWorkersEnabled { false };

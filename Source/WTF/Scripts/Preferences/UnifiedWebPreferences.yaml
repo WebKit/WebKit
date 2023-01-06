@@ -3827,11 +3827,12 @@ MediaVideoCodecIDsAllowedInLockdownMode:
 MenuItemElementEnabled:
   type: bool
   status: embedder
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 MinimumFontSize:

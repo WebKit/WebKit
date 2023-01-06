@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledByDeprecatedGlobalSetting=MenuItemElementEnabled,
+    EnabledBySetting=MenuItemElementEnabled,
     Exposed=Window
 ] interface HTMLMenuItemElement : HTMLElement {
 };
