@@ -33,53 +33,17 @@ from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
 from steps import GitHub
 from twisted.internet import defer
-from twisted.internet import reactor
 from twisted.internet.defer import succeed
 from twisted.python import log
-from twisted.web.client import Agent
-from twisted.web.http_headers import Headers
-from twisted.web.iweb import IBodyProducer
-from zope.interface import implementer
+
+from twisted_additions import TwistedAdditions
 
 custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
-
-@implementer(IBodyProducer)
-class JSONProducer(object):
-    """
-    Perform JSON asynchronously as to not lock the buildbot main event loop
-    """
-
-    def __init__(self, data):
-        try:
-            self.body = json.dumps(data, default=self.json_serialize_datetime).encode('utf-8')
-        except TypeError:
-            self.body = ''
-        self.length = len(self.body)
-
-    def startProducing(self, consumer):
-        if self.body:
-            consumer.write(self.body)
-        return succeed(None)
-
-    def pauseProducing(self):
-        pass
-
-    def stopProducing(self):
-        pass
-
-    def json_serialize_datetime(self, obj):
-        """
-        Serializing buildbot dates into UNIX epoch timestamps.
-        """
-        if isinstance(obj, datetime.datetime):
-            return int(calendar.timegm(obj.timetuple()))
-
-        raise TypeError("Type %s not serializable" % type(obj))
 
 
 class Events(service.BuildbotService):
 
-    EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix).encode()
+    EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix)
     MAX_GITHUB_DESCRIPTION = 140
     SHORT_STEPS = (
         'configure-build',
@@ -111,10 +75,13 @@ class Events(service.BuildbotService):
     def sendDataToEWS(self, data):
         if os.getenv('EWS_API_KEY', None):
             data['EWS_API_KEY'] = os.getenv('EWS_API_KEY')
-        agent = Agent(reactor)
-        body = JSONProducer(data)
 
-        agent.request(b'POST', self.EVENT_SERVER_ENDPOINT, Headers({'Content-Type': ['application/json']}), body)
+        TwistedAdditions.request(
+            url=self.EVENT_SERVER_ENDPOINT,
+            type=b'POST',
+            headers={'Content-Type': ['application/json']},
+            json=data,
+        )
 
     def sendDataToGitHub(self, repository, sha, data, user=None):
         username, access_token = GitHub.credentials(user=user)
@@ -125,14 +92,16 @@ class Events(service.BuildbotService):
 
         auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
 
-        agent = Agent(reactor)
-        body = JSONProducer(data)
-        d = agent.request(b'POST', GitHub.commit_status_url(sha, repository).encode('utf-8'), Headers({
-            'Authorization': ['Basic {}'.format(auth_header)],
-            'User-Agent': ['python-twisted/{}'.format(twisted.__version__)],
-            'Accept': ['application/vnd.github.v3+json'],
-            'Content-Type': ['application/json'],
-        }), body)
+        TwistedAdditions.request(
+            url=GitHub.commit_status_url(sha, repository),
+            type=b'POST',
+            headers={
+                'Authorization': ['Basic {}'.format(auth_header)],
+                'User-Agent': ['python-twisted/{}'.format(twisted.__version__)],
+                'Accept': ['application/vnd.github.v3+json'],
+                'Content-Type': ['application/json'],
+            }, json=data,
+        )
 
     def getBuilderName(self, build):
         if not (build and 'properties' in build):
