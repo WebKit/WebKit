@@ -267,17 +267,18 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
     if (!context)
         return;
 
-    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, capturedPromise = WTFMove(promise), contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
+    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, promise = WTFMove(promise), contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
         if (result.hasException()) {
-            auto promise = WTFMove(capturedPromise);
-            promise->reject(result.releaseException());
+            auto protectedPromise = WTFMove(promise);
+            protectedPromise->reject(result.releaseException());
             return;
         }
 
         auto& value = result.returnValue();
         if (value.empty()) {
+            auto protectedPromise = WTFMove(promise);
             auto buffer = builder.takeAsContiguous();
-            resolveWithData(WTFMove(capturedPromise), contentType, buffer->data(), buffer->size());
+            resolveWithData(WTFMove(protectedPromise), contentType, buffer->data(), buffer->size());
             return;
         }
 
@@ -297,6 +298,7 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
         return;
 
     m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, source = Ref { source }](auto&& result) {
+        auto protectedSource = source;
         if (result.hasException()) {
             source->error(result.releaseException());
             return;
@@ -326,16 +328,20 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         ASSERT(!m_sink);
         m_sink = ReadableStreamToSharedBufferSink::create([promise = WTFMove(promise), data = SharedBufferBuilder(), type = m_type, contentType](auto&& result) mutable {
             if (result.hasException()) {
-                promise->reject(result.releaseException());
+                auto protectedPromise = WTFMove(promise);
+                protectedPromise->reject(result.releaseException());
                 return;
             }
 
-            if (auto* chunk = result.returnValue())
-                data.append(chunk->data(), chunk->size());
-            else {
+            auto* chunk = result.returnValue();
+            if (!chunk) {
+                auto protectedPromise = WTFMove(promise);
                 auto buffer = data.takeAsContiguous();
-                resolveWithTypeAndData(WTFMove(promise), type, contentType, buffer->data(), buffer->size());
+                resolveWithTypeAndData(WTFMove(protectedPromise), type, contentType, buffer->data(), buffer->size());
+                return;
             }
+
+            data.append(chunk->data(), chunk->size());
         });
         m_sink->pipeFrom(*stream);
         return;
