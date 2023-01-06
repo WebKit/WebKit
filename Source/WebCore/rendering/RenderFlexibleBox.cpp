@@ -413,7 +413,10 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     
     bool oldInLayout = m_inLayout;
     m_inLayout = true;
-    
+
+    if (!style().marginTrim().isEmpty())
+        initializeMarginTrimState();
+
     if (recomputeLogicalWidth())
         relayoutChildren = true;
 
@@ -885,6 +888,20 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(const RenderBox& chi
     return marginTop();
 }
 
+void RenderFlexibleBox::initializeMarginTrimState()
+{
+    // When computeIntrinsicLogicalWidth goes through each of the children, it
+    // will include the margins when computing the flexbox's min and max widths.
+    // We need to trim the margins of the first and last child early so that
+    // these margins do not incorrectly constribute to the box's min/max width
+    auto marginTrim = style().marginTrim();
+    auto isRowsFlexbox = isHorizontalFlow();
+    if (auto child = firstInFlowChildBox(); child && marginTrim.contains(MarginTrimType::InlineStart))
+        isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineStart.add(child) : m_marginTrimItems.m_itemsOnFirstFlexLine.add(child);
+    if (auto child = lastInFlowChildBox(); child && marginTrim.contains(MarginTrimType::InlineEnd))
+        isRowsFlexbox ? m_marginTrimItems.m_itemsAtFlexLineEnd.add(child) : m_marginTrimItems.m_itemsOnLastFlexLine.add(child);
+}
+
 LayoutUnit RenderFlexibleBox::mainAxisMarginExtentForChild(const RenderBox& child) const
 {
     if (!child.needsLayout())
@@ -911,6 +928,88 @@ LayoutUnit RenderFlexibleBox::crossAxisMarginExtentForChild(const RenderBox& chi
     else
         child.computeInlineDirectionMargins(*this, child.containingBlockLogicalWidthForContentInFragment(nullptr), child.logicalWidth(), marginStart, marginEnd);
     return marginStart + marginEnd;
+}
+
+bool RenderFlexibleBox::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+{
+    auto isMarginParallelWithMainAxis = [this](MarginTrimType marginTrimType) {
+        if (isHorizontalFlow())
+            return marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::BlockEnd;
+        return marginTrimType == MarginTrimType::InlineStart || marginTrimType == MarginTrimType::InlineEnd;
+    };
+    if (!style().marginTrim().contains(marginTrimType))
+        return false;
+    if (isMarginParallelWithMainAxis(marginTrimType))
+        return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsOnFirstFlexLine.contains(&child) : m_marginTrimItems.m_itemsOnLastFlexLine.contains(&child);
+    return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsAtFlexLineStart.contains(&child) : m_marginTrimItems.m_itemsAtFlexLineEnd.contains(&child);
+}
+
+bool RenderFlexibleBox::shouldTrimMainAxisMarginStart() const
+{
+    if (isHorizontalFlow())
+        return style().marginTrim().contains(MarginTrimType::InlineStart);
+    return style().marginTrim().contains(MarginTrimType::BlockStart);
+}
+
+bool RenderFlexibleBox::shouldTrimMainAxisMarginEnd() const
+{
+    if (isHorizontalFlow())
+        return style().marginTrim().contains(MarginTrimType::InlineEnd);
+    return style().marginTrim().contains(MarginTrimType::BlockEnd);
+}
+
+bool RenderFlexibleBox::shouldTrimCrossAxisMarginStart() const
+{
+    if (isHorizontalFlow())
+        return style().marginTrim().contains(MarginTrimType::BlockStart);
+    return style().marginTrim().contains(MarginTrimType::InlineStart);
+}
+
+bool RenderFlexibleBox::shouldTrimCrossAxisMarginEnd() const
+{
+    if (isHorizontalFlow())
+        return style().marginTrim().contains(MarginTrimType::BlockEnd);
+    return style().marginTrim().contains(MarginTrimType::InlineEnd);
+}
+
+void RenderFlexibleBox::trimMainAxisMarginStart(const FlexItem& flexItem)
+{
+    auto horizontalFlow = isHorizontalFlow();
+    flexItem.mainAxisMargin -= horizontalFlow ? flexItem.box.marginStart(&style()) : flexItem.box.marginBefore(&style());
+    if (horizontalFlow) 
+        flexItem.box.setMarginStart(0_lu, &style());
+    else
+        flexItem.box.setMarginBefore(0_lu, &style());
+    m_marginTrimItems.m_itemsAtFlexLineStart.add(&flexItem.box);
+}
+
+void RenderFlexibleBox::trimMainAxisMarginEnd(const FlexItem& flexItem)
+{
+    auto horizontalFlow = isHorizontalFlow();
+    flexItem.mainAxisMargin -= horizontalFlow ? flexItem.box.marginEnd(&style()) : flexItem.box.marginAfter(&style());
+    if (horizontalFlow)
+        flexItem.box.setMarginEnd(0_lu, &style());
+    else
+        flexItem.box.setMarginAfter(0_lu, &style());
+    m_marginTrimItems.m_itemsAtFlexLineEnd.add(&flexItem.box);
+}
+
+void RenderFlexibleBox::trimCrossAxisMarginStart(const FlexItem& flexItem)
+{
+    if (isHorizontalFlow())
+        flexItem.box.setMarginBefore(0_lu, &style());
+    else
+        flexItem.box.setMarginStart(0_lu, &style());
+    m_marginTrimItems.m_itemsOnFirstFlexLine.add(&flexItem.box);
+}
+
+void RenderFlexibleBox::trimCrossAxisMarginEnd(const FlexItem& flexItem)
+{
+    if (isHorizontalFlow())
+        flexItem.box.setMarginAfter(0_lu, &style());
+    else
+        flexItem.box.setMarginEnd(0_lu, &style());
+    m_marginTrimItems.m_itemsOnLastFlexLine.add(&flexItem.box);
 }
 
 LayoutUnit RenderFlexibleBox::crossAxisScrollbarExtent() const
@@ -1210,7 +1309,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
     LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
     LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
-    FlexLayoutAlgorithm flexAlgorithm(style(), lineBreakLength, allItems, gapBetweenItems, gapBetweenLines);
+    FlexLayoutAlgorithm flexAlgorithm(*this, lineBreakLength, allItems, gapBetweenItems, gapBetweenLines);
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     Vector<FlexItem> lineItems;
     size_t nextIndex = 0;
@@ -1219,7 +1318,17 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     while (flexAlgorithm.computeNextFlexLine(nextIndex, lineItems, sumFlexBaseSize, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink, sumHypotheticalMainSize)) {
         ++numLines;
         InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(*this, nextIndex);
-
+        // Cross axis margins should only be trimmed if they are on the first/last flex line
+        auto shouldTrimCrossAxisStart = shouldTrimCrossAxisMarginStart() && !lineContexts.size();
+        auto shouldTrimCrossAxisEnd = shouldTrimCrossAxisMarginEnd() && &allItems.last().box == &lineItems.last().box;
+        if (shouldTrimCrossAxisStart || shouldTrimCrossAxisEnd) {
+            for (auto& flexItem : lineItems) {
+                if (shouldTrimCrossAxisStart)
+                    trimCrossAxisMarginStart(flexItem);
+                if (shouldTrimCrossAxisEnd)
+                    trimCrossAxisMarginEnd(flexItem);
+            }
+        }
         LayoutUnit containerMainInnerSize = mainAxisContentExtent(sumHypotheticalMainSize);
         // availableFreeSpace is the initial amount of free space in this flexbox.
         // remainingFreeSpace starts out at the same value but as we place and lay
