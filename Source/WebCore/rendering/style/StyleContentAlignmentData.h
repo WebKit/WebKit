@@ -35,7 +35,7 @@ namespace WebCore {
 
 class StyleContentAlignmentData {
 public:
-    // Style data for Content-Distribution properties: align-content, justify-content.
+    // Style data for Content-Distribution properties: align-tracks, align-content, justify-content, and justify-tracks.
     // <content-distribution> || [ <overflow-position>? && <content-position> ]
     StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution, OverflowAlignment overflow = OverflowAlignment::Default)
         : m_position(static_cast<unsigned>(position))

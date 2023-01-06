@@ -626,8 +626,8 @@ public:
     size_t namedGridAreaRowCount() const { return m_rareNonInheritedData->grid->namedGridAreaRowCount; }
     size_t namedGridAreaColumnCount() const { return m_rareNonInheritedData->grid->namedGridAreaColumnCount; }
     GridAutoFlow gridAutoFlow() const { return static_cast<GridAutoFlow>(m_rareNonInheritedData->grid->gridAutoFlow); }
-    Vector<StyleContentAlignmentData> alignTracks() const { return m_rareNonInheritedData->grid->alignTracks; }
-    Vector<StyleContentAlignmentData> justifyTracks() const { return m_rareNonInheritedData->grid->justifyTracks; }
+    const Vector<StyleContentAlignmentData>& alignTracks() const { return m_rareNonInheritedData->grid->alignTracks; }
+    const Vector<StyleContentAlignmentData>& justifyTracks() const { return m_rareNonInheritedData->grid->justifyTracks; }
     MasonryAutoFlow masonryAutoFlow() const { return m_rareNonInheritedData->grid->masonryAutoFlow; }
     bool gridSubgridRows() const { return m_rareNonInheritedData->grid->subgridRows(); }
     bool gridSubgridColumns() const { return m_rareNonInheritedData->grid->subgridColumns(); }
@@ -1284,8 +1284,8 @@ public:
     void setGridItemRowStart(const GridPosition& rowStartPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowStart, rowStartPosition); }
     void setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowEnd, rowEndPosition); }
 
-    void setAlignTracks(Vector<StyleContentAlignmentData> tracks) { SET_NESTED_VAR(m_rareNonInheritedData, grid, alignTracks, tracks); };
-    void setJustifyTracks(Vector<StyleContentAlignmentData> tracks) { SET_NESTED_VAR(m_rareNonInheritedData, grid, justifyTracks, tracks); };
+    void setAlignTracks(const Vector<StyleContentAlignmentData>& tracks) { SET_NESTED_VAR(m_rareNonInheritedData, grid, alignTracks, tracks); };
+    void setJustifyTracks(const Vector<StyleContentAlignmentData>& tracks) { SET_NESTED_VAR(m_rareNonInheritedData, grid, justifyTracks, tracks); };
     void setMasonryAutoFlow(MasonryAutoFlow flow) { SET_NESTED_VAR(m_rareNonInheritedData, grid, masonryAutoFlow, flow); };
 
     void setMarqueeIncrement(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, increment, WTFMove(length)); }
