@@ -3756,7 +3756,9 @@ MediaSessionPlaylistEnabled:
 
 MediaSourceEnabled:
   type: bool
-  status: embedder
+  status: stable
+  humanReadableName: "Media Source API"
+  humanReadableDescription: "Media Source API"
   defaultValue:
     WebKitLegacy:
       "ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)": WebKit::defaultMediaSourceEnabled()
