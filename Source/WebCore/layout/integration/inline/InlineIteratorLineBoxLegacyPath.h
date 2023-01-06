@@ -50,6 +50,7 @@ public:
     float contentLogicalBottomAdjustedForFollowingLineBox() const { return m_rootInlineBox->selectionBottom().toFloat(); }
     float top() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
     float bottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
+    float width() const { return m_rootInlineBox->lineBoxWidth().toFloat(); }
     float inkOverflowTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
 

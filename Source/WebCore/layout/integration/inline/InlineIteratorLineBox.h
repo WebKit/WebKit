@@ -55,6 +55,7 @@ public:
     float top() const;
     float bottom() const;
     float height() const { return bottom() - top(); }
+    float width() const;
 
     float contentLogicalTop() const;
     float contentLogicalBottom() const;
@@ -187,6 +188,13 @@ inline float LineBox::bottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.bottom();
+    });
+}
+
+inline float LineBox::width() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.width();
     });
 }
 

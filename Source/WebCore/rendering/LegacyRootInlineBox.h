@@ -53,6 +53,7 @@ public:
 
     LayoutUnit lineTop() const { return m_lineTop; }
     LayoutUnit lineBottom() const { return m_lineBottom; }
+    LayoutUnit lineBoxWidth() const;
 
     LayoutUnit lineBoxTop() const { return m_lineBoxTop; }
     LayoutUnit lineBoxBottom() const { return m_lineBoxBottom; }
