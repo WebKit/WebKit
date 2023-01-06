@@ -107,7 +107,7 @@ private
 
     SMALLEST_EQUAL_OPERATION = 3
 
-    OPENSOURCE_GITHUB_URL = "https://github.com/WebKit/WebKit/blob/"
+    OPENSOURCE_GITHUB_URL = "https://github.com/WebKit/WebKit/blob/main/"
 
     OPENSOURCE_DIRS = Set.new %w[
         Examples
