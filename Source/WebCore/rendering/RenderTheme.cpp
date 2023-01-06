@@ -1446,7 +1446,6 @@ String RenderTheme::colorInputStyleSheet(const Settings&) const
 
 String RenderTheme::dataListStyleSheet() const
 {
-    ASSERT(DeprecatedGlobalSettings::dataListElementEnabled());
     return "datalist { display: none; }"_s;
 }
 

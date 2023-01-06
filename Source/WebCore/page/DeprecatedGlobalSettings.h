@@ -154,11 +154,6 @@ public:
     static bool webRTCAudioLatencyAdaptationEnabled() { return shared().m_isWebRTCAudioLatencyAdaptationEnabled; }
     static void setWebRTCAudioLatencyAdaptationEnabled(bool isEnabled) { shared().m_isWebRTCAudioLatencyAdaptationEnabled = isEnabled; }
 
-#if ENABLE(DATALIST_ELEMENT)
-    static bool dataListElementEnabled() { return shared().m_isDataListElementEnabled; }
-    static void setDataListElementEnabled(bool isEnabled) { shared().m_isDataListElementEnabled = isEnabled; }
-#endif
-
     static void setReadableByteStreamAPIEnabled(bool isEnabled) { shared().m_isReadableByteStreamAPIEnabled = isEnabled; }
     static bool readableByteStreamAPIEnabled() { return shared().m_isReadableByteStreamAPIEnabled; }
 
@@ -301,10 +296,6 @@ private:
     bool m_isWebRTCPlatformUDPSocketsEnabled { false };
 #endif
     bool m_isWebRTCAudioLatencyAdaptationEnabled { true };
-
-#if ENABLE(DATALIST_ELEMENT)
-    bool m_isDataListElementEnabled { false };
-#endif
 
     bool m_isReadableByteStreamAPIEnabled { false };
 

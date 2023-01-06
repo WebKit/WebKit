@@ -1601,12 +1601,14 @@ DataListElementEnabled:
   status: embedder
   humanReadableName: "DataList Element"
   humanReadableDescription: "Enable datalist elements"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(DATALIST_ELEMENT)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebCore:
       "PLATFORM(WATCHOS)": false
       default: true
 
