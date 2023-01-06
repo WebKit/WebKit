@@ -5321,11 +5321,12 @@ ShouldTakeSuspendedAssertions:
   status: internal
   humanReadableName: "Take WebKit:Suspended assertions on background web content processes"
   humanReadableDescription: "Take WebKit:Suspended assertions on background web content processes"
+  exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
-      default: true
+      default: WebKit::defaultShouldTakeSuspendedAssertions()
     WebCore:
       default: true
 

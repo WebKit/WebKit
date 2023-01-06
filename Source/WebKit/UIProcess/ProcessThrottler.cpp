@@ -320,10 +320,6 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 
 void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
 {
-#if PLATFORM(COCOA)
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent))
-        shouldTakeSuspendedAssertion = true;
-#endif
     const bool shouldUpdateAssertion = m_shouldTakeSuspendedAssertion != shouldTakeSuspendedAssertion;
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
     if (shouldUpdateAssertion && m_state == ProcessThrottleState::Suspended)
