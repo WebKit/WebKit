@@ -34,7 +34,6 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
-#include "DeprecatedGlobalSettings.h"
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
 #include "IDBConnectionProxy.h"
@@ -183,7 +182,7 @@ void WorkerGlobalScope::removeAllEventListeners()
 
 bool WorkerGlobalScope::isSecureContext() const
 {
-    if (!DeprecatedGlobalSettings::secureContextChecksEnabled())
+    if (!settingsValues().secureContextChecksEnabled)
         return true;
 
     return m_topOrigin->isPotentiallyTrustworthy();

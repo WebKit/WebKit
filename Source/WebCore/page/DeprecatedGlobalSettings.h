@@ -186,9 +186,6 @@ public:
     static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
 #endif
 
-    static bool secureContextChecksEnabled() { return shared().m_secureContextChecksEnabled; }
-    static void setSecureContextChecksEnabled(bool isEnabled) { shared().m_secureContextChecksEnabled = isEnabled; }
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
     static bool isAccessibilityIsolatedTreeEnabled() { return shared().m_accessibilityIsolatedTree; }
@@ -201,7 +198,7 @@ public:
     static void setIncrementalPDFLoadingEnabled(bool isEnabled) { shared().m_incrementalPDFLoadingEnabled = isEnabled; }
     static bool incrementalPDFLoadingEnabled() { return shared().m_incrementalPDFLoadingEnabled; }
 #endif
-    
+
 #if ENABLE(WEBM_FORMAT_READER)
     static void setWebMFormatReaderEnabled(bool isEnabled) { shared().m_webMFormatReaderEnabled = isEnabled; }
     static bool webMFormatReaderEnabled() { return shared().m_webMFormatReaderEnabled; }
@@ -337,8 +334,6 @@ private:
 #if HAVE(NSURLSESSION_WEBSOCKET)
     bool m_isNSURLSessionWebSocketEnabled { false };
 #endif
-
-    bool m_secureContextChecksEnabled { true };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };

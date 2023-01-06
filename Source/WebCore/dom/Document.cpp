@@ -6630,7 +6630,7 @@ bool Document::isSecureContext() const
 {
     if (!m_frame)
         return true;
-    if (!DeprecatedGlobalSettings::secureContextChecksEnabled())
+    if (!settings().secureContextChecksEnabled())
         return true;
     if (page() && page()->isServiceWorkerPage())
         return true;
