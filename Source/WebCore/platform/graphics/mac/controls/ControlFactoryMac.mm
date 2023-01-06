@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ButtonMac.h"
+#import "ColorWellMac.h"
 #import "InnerSpinButtonMac.h"
 #import "MenuListMac.h"
 #import "MeterMac.h"
@@ -208,6 +209,13 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuL
 {
     return makeUnique<MenuListMac>(part, *this, popUpButtonCell());
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ColorWellPart& part)
+{
+    return makeUnique<ColorWellMac>(part, *this, buttonCell());
+}
+#endif
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPart& part)
 {

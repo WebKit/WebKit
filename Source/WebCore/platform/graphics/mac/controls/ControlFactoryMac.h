@@ -38,7 +38,11 @@ public:
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
+private:
     std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
+#if ENABLE(INPUT_TYPE_COLOR)
+    std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) final;
+#endif
     std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) final;
@@ -51,7 +55,6 @@ public:
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
 
-private:
     NSButtonCell *buttonCell() const;
     NSButtonCell *defaultButtonCell() const;
     NSButtonCell *checkboxCell() const;

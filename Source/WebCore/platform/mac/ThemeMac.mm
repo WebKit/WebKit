@@ -602,45 +602,6 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
     return needsRepaint;
 }
 
-// Color Well
-
-#if ENABLE(INPUT_TYPE_COLOR)
-static void paintColorWell(ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    // Determine the width and height needed for the control and prepare the cell for painting.
-    auto states = controlStates.states();
-    NSButtonCell *buttonCell = button(ControlPartType::ColorWell, controlStates, IntSize(zoomedRect.size()), zoomFactor);
-    GraphicsContextStateSaver stateSaver(context);
-
-    NSControlSize controlSize = [buttonCell controlSize];
-    IntSize zoomedSize = buttonSizes()[controlSize];
-    zoomedSize.setWidth(zoomedRect.width()); // Buttons don't ever constrain width, so the zoomed width can just be honored.
-    zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
-    FloatRect inflatedRect = zoomedRect;
-
-    LocalCurrentGraphicsContext localContext(context);
-
-    NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
-    NSWindow *window = [view window];
-    NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
-
-    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states.contains(ControlStates::States::Focused), deviceScaleFactor);
-    if ([previousDefaultButtonCell isEqual:buttonCell])
-        [window setDefaultButtonCell:nil];
-
-    controlStates.setNeedsRepaint(needsRepaint);
-
-    [buttonCell setControlView:nil];
-
-    if (![previousDefaultButtonCell isEqual:buttonCell])
-        [window setDefaultButtonCell:previousDefaultButtonCell];
-
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-#endif
-
 // Theme overrides
 
 int ThemeMac::baselinePositionAdjustment(ControlPartType type) const
@@ -794,24 +755,6 @@ void ThemeMac::inflateControlPaintRect(ControlPartType type, const ControlStates
         break;
     }
     END_BLOCK_OBJC_EXCEPTIONS
-}
-
-void ThemeMac::paint(ControlPartType type, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor)
-{
-    UNUSED_PARAM(useSystemAppearance);
-    UNUSED_PARAM(pageScaleFactor);
-
-    LocalDefaultSystemAppearance localAppearance(useDarkAppearance, tintColor);
-
-    switch (type) {
-#if ENABLE(INPUT_TYPE_COLOR)
-    case ControlPartType::ColorWell:
-        paintColorWell(states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);
-        break;
-#endif
-    default:
-        break;
-    }
 }
 
 bool ThemeMac::userPrefersReducedMotion() const

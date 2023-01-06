@@ -464,6 +464,7 @@ platform/graphics/mac/WebKitNSImageExtras.mm
 platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/controls/ButtonMac.mm
 platform/graphics/mac/controls/ButtonControlMac.mm
+platform/graphics/mac/controls/ColorWellMac.mm
 platform/graphics/mac/controls/ControlFactoryMac.mm
 platform/graphics/mac/controls/ControlMac.mm
 platform/graphics/mac/controls/InnerSpinButtonMac.mm

@@ -224,6 +224,9 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
 #endif
     case ControlPartType::Button:
     case ControlPartType::Checkbox:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ControlPartType::ColorWell:
+#endif
     case ControlPartType::DefaultButton:
     case ControlPartType::InnerSpinButton:
     case ControlPartType::Listbox:
@@ -258,6 +261,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
     ControlPartType type = renderer.style().effectiveAppearance();
     return type == ControlPartType::Button
         || type == ControlPartType::Checkbox
+#if ENABLE(INPUT_TYPE_COLOR)
+        || type == ControlPartType::ColorWell
+#endif
         || type == ControlPartType::DefaultButton
         || type == ControlPartType::InnerSpinButton
         || type == ControlPartType::Menulist
