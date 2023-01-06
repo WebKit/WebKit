@@ -81,7 +81,7 @@ class Text;
 class UniqueElementData;
 class WebAnimation;
 
-enum class AnimationImpact;
+enum class AnimationImpact : uint8_t;
 enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
 enum class FullscreenNavigationUI : uint8_t;

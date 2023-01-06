@@ -198,6 +198,7 @@ public:
     const CSSCustomPropertyValue* getCustomProperty(const AtomString&) const;
     void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
     void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
+    bool customPropertiesEqual(const RenderStyle&) const;
 
     void setUsesViewportUnits() { m_nonInheritedFlags.usesViewportUnits = true; }
     bool usesViewportUnits() const { return m_nonInheritedFlags.usesViewportUnits; }

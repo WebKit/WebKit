@@ -38,7 +38,7 @@ class RenderStyle;
 class SVGElement;
 class Settings;
 
-enum class AnimationImpact;
+enum class AnimationImpact : uint8_t;
 
 namespace Style {
 

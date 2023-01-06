@@ -1,3 +1,3 @@
 
-FAIL Identical elements are all responsive to font-size animation assert_equals: expected "15px" but got "1px"
+PASS Identical elements are all responsive to font-size animation
 

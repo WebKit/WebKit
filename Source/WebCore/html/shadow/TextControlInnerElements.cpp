@@ -137,7 +137,7 @@ std::optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(c
         newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
     }
 
-    return { WTFMove(newStyle) };
+    return Style::ElementStyle { WTFMove(newStyle) };
 }
 
 // MARK: TextControlInnerTextElement
@@ -198,7 +198,7 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
 std::optional<Style::ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
 {
     auto style = downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
-    return { makeUnique<RenderStyle>(WTFMove(style)) };
+    return Style::ElementStyle { makeUnique<RenderStyle>(WTFMove(style)) };
 }
 
 // MARK: TextControlPlaceholderElement

@@ -1,5 +1,0 @@
-
-FAIL em units respond to font-size transition assert_equals: expected "15px" but got "20px"
-FAIL ex units respond to font-size transition assert_equals: expected "6.875px" but got "9.171875px"
-PASS var() references respond to custom property transition
-

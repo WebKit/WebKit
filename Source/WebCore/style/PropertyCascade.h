@@ -27,6 +27,7 @@
 
 #include "CascadeLevel.h"
 #include "MatchResult.h"
+#include "WebAnimationTypes.h"
 #include <bitset>
 
 namespace WebCore {
@@ -38,9 +39,9 @@ namespace Style {
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum IncludedProperties { All, InheritedOnly };
+    enum IncludedProperties { All, InheritedOnly, AfterAnimation };
 
-    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties);
+    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, const HashSet<AnimatableProperty>* = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -53,6 +54,8 @@ public:
         FromStyleAttribute fromStyleAttribute;
         std::array<CSSValue*, 3> cssValue; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
+
+    bool isEmpty() const { return m_propertyIsPresent.none() && !m_seenDeferredPropertyCount; }
 
     bool hasNormalProperty(CSSPropertyID) const;
     const Property& normalProperty(CSSPropertyID) const;
@@ -72,6 +75,7 @@ private:
     bool addNormalMatches(CascadeLevel);
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
+    bool shouldApplyAfterAnimation(const StyleProperties::PropertyReference&);
 
     void set(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
     void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
@@ -87,6 +91,16 @@ private:
     const CascadeLevel m_maximumCascadeLevel;
     const std::optional<ScopeOrdinal> m_rollbackScope;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
+
+    struct AnimationLayer {
+        AnimationLayer(const HashSet<AnimatableProperty>&);
+
+        const HashSet<AnimatableProperty>& properties;
+        bool hasCustomProperties { false };
+        bool hasFontSize { false };
+        bool hasLineHeight { false };
+    };
+    const std::optional<AnimationLayer> m_animationLayer;
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.

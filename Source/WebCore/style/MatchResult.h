@@ -45,6 +45,8 @@ struct MatchedProperties {
 };
 
 struct MatchResult {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     bool isCacheable { true };
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
