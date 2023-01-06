@@ -55,12 +55,13 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
             else
                 return std::make_tuple(8u, 32u, static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaFirst));
 
+        case PixelFormat::BGRX8:
         case PixelFormat::RGB10:
         case PixelFormat::RGB10A8:
             break;
         }
 
-        // We currently only support 8 bit pixel formats for these conversions.
+        // We currently only support 8 bit pixel formats with alpha for these conversions.
 
         ASSERT_NOT_REACHED();
         return std::make_tuple(8u, 32u, static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaFirst));
@@ -236,7 +237,7 @@ static void convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView
 
 void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
-    // We don't currently support converting pixel data with non-8-bit buffers.
+    // We currently only support converting between RGBA8 and BGRA8.
     ASSERT(source.format.pixelFormat == PixelFormat::RGBA8 || source.format.pixelFormat == PixelFormat::BGRA8);
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8);
 
