@@ -196,6 +196,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
     m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
 
     readStateFromStorage();
+    writeStateToStorage();
 
     // FIXME: <https://webkit.org/b/248430> Move local storage (if base URL changed).
 
@@ -1161,8 +1162,9 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
 
 URL WebExtensionContext::backgroundContentURL()
 {
-    ASSERT(extension().hasBackgroundContent());
-    return URL { m_baseURL, extension().backgroundContentPath() };
+    if (!extension().hasBackgroundContent())
+        return { };
+    return { m_baseURL, extension().backgroundContentPath() };
 }
 
 void WebExtensionContext::loadBackgroundWebViewDuringLoad()

@@ -218,6 +218,9 @@ public:
     bool inTestingMode() const { return m_testingMode; }
     void setTestingMode(bool);
 
+    URL backgroundContentURL();
+    WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
+
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
     void didFinishNavigation(WKWebView *, WKNavigation *);
     void didFailNavigation(WKWebView *, WKNavigation *, NSError *);
@@ -253,8 +256,6 @@ private:
     PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, NSString *notificationName = nil);
 
     WKWebViewConfiguration *webViewConfiguration();
-
-    URL backgroundContentURL();
 
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebView();

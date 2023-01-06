@@ -250,6 +250,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->backgroundContentIsPersistent();
 }
 
+- (BOOL)_backgroundContentIsServiceWorker
+{
+    return _webExtension->backgroundContentIsServiceWorker();
+}
+
 - (BOOL)_backgroundContentUsesModules
 {
     return _webExtension->backgroundContentUsesModules();
@@ -407,6 +412,11 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 }
 
 - (BOOL)backgroundContentIsPersistent
+{
+    return NO;
+}
+
+- (BOOL)_backgroundContentIsServiceWorker
 {
     return NO;
 }
