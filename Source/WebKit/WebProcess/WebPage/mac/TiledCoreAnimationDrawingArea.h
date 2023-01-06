@@ -108,7 +108,6 @@ private:
     void addFence(const WTF::MachSendRight&) override;
 
     void addTransactionCallbackID(CallbackID) override;
-    void setShouldScaleViewToFitDocument(bool) override;
 
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
     void sendDidFirstLayerFlushIfNeeded();
@@ -132,8 +131,6 @@ private:
 
     void updateDebugInfoLayer(bool showLayer);
 
-    void scaleViewToFitDocumentIfNeeded();
-
     void sendPendingNewlyReachedPaintingMilestones();
 
     void scheduleRenderingUpdateRunLoopObserver();
@@ -156,9 +153,6 @@ private:
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
-    WebCore::IntSize m_lastViewSizeForScaleToFit;
-    WebCore::IntSize m_lastDocumentSizeForScaleToFit;
-
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 
@@ -176,8 +170,6 @@ private:
     bool m_isPaintingSuspended { false };
     bool m_inUpdateGeometry { false };
     bool m_layerTreeStateIsFrozen { false };
-    bool m_shouldScaleViewToFitDocument { false };
-    bool m_isScalingViewToFitDocument { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
     bool m_needsSendDidFirstLayerFlush { true };
     bool m_shouldHandleActivityStateChangeCallbacks { false };

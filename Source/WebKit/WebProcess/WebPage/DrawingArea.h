@@ -136,8 +136,6 @@ public:
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
 
-    virtual void setShouldScaleViewToFitDocument(bool) { }
-
     virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const { return { }; }
 
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
@@ -166,6 +164,8 @@ public:
     
     WebCore::TiledBacking* mainFrameTiledBacking() const;
     void prepopulateRectForZoom(double scale, WebCore::FloatPoint origin);
+    void setShouldScaleViewToFitDocument(bool);
+    void scaleViewToFitDocumentIfNeeded();
 
 protected:
     DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
@@ -178,6 +178,10 @@ protected:
     const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
     WebPage& m_webPage;
+    WebCore::IntSize m_lastViewSizeForScaleToFit;
+    WebCore::IntSize m_lastDocumentSizeForScaleToFit;
+    bool m_isScalingViewToFitDocument { false };
+    bool m_shouldScaleViewToFitDocument { false };
 
 private:
     // IPC::MessageReceiver.
