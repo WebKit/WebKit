@@ -646,6 +646,7 @@ protected:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
     SecurityOriginData documentSecurityOrigin() const final;
+    Ref<SecurityOrigin> topDocumentSecurityOrigin() const final;
 
     String audioOutputDeviceId() const final { return m_audioOutputPersistentDeviceId; }
     String audioOutputDeviceIdOverride() const final { return m_audioOutputPersistentDeviceId; }

@@ -43,6 +43,7 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformMediaResourceLoader.h>
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -281,6 +282,8 @@ private:
     bool mediaPlayerShouldUsePersistentCache() const final;
     const String& mediaPlayerMediaCacheDirectory() const final;
     WebCore::LayoutRect mediaPlayerContentBoxRect() const final;
+
+    Ref<WebCore::SecurityOrigin> topDocumentSecurityOrigin() const { return WebCore::SecurityOrigin::createOpaque(); }
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 

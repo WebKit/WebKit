@@ -36,6 +36,7 @@
 #include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
 #include "PlatformTextTrack.h"
+#include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoFrame.h"
@@ -284,6 +285,7 @@ public:
     virtual void mediaPlayerSeekableTimeRangesChanged() { }
 
     virtual SecurityOriginData documentSecurityOrigin() const { return { }; }
+    virtual Ref<SecurityOrigin> topDocumentSecurityOrigin() const { return SecurityOrigin::createOpaque(); }
 
     virtual String audioOutputDeviceId() const { return { }; }
     virtual String audioOutputDeviceIdOverride() const { return { }; }
@@ -687,6 +689,7 @@ public:
 
     void remoteEngineFailedToLoad();
     SecurityOriginData documentSecurityOrigin() const;
+    Ref<SecurityOrigin> topDocumentSecurityOrigin() const;
 
 #if USE(GSTREAMER)
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }
