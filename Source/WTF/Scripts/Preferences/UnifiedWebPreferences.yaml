@@ -965,16 +965,16 @@ CSSMotionPathEnabled:
 
 CSSNestingEnabled:
   type: bool
-  status: testable
+  status: preview
   humanReadableName: "CSS Nesting"
   humanReadableDescription: "Enable support for CSS nesting https://www.w3.org/TR/css-nesting-1/"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSOMViewScrollingAPIEnabled:
   type: bool
