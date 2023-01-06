@@ -44,6 +44,8 @@ public:
     std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) override;
     std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) override;
     std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) override;
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) override;
     std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) override;
     std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) override;
@@ -56,6 +58,7 @@ private:
     NSLevelIndicatorCell *levelIndicatorCell() const;
     NSPopUpButtonCell *popUpButtonCell() const;
     NSSearchFieldCell *searchFieldCell() const;
+    NSSliderCell *sliderCell() const;
     NSTextFieldCell *textFieldCell() const;
 
     mutable RetainPtr<WebControlView> m_drawingView;
@@ -67,6 +70,7 @@ private:
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
     mutable RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
     mutable RetainPtr<NSSearchFieldCell> m_searchFieldCell;
+    mutable RetainPtr<NSSliderCell> m_sliderCell;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };
 

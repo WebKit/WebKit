@@ -233,6 +233,10 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
     case ControlPartType::PushButton:
     case ControlPartType::SearchField:
     case ControlPartType::SearchFieldCancelButton:
+    case ControlPartType::SliderThumbHorizontal:
+    case ControlPartType::SliderThumbVertical:
+    case ControlPartType::SliderHorizontal:
+    case ControlPartType::SliderVertical:
     case ControlPartType::SquareButton:
     case ControlPartType::TextArea:
     case ControlPartType::TextField:
@@ -261,6 +265,10 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == ControlPartType::Radio
         || type == ControlPartType::SearchField
         || type == ControlPartType::SearchFieldCancelButton
+        || type == ControlPartType::SliderThumbHorizontal
+        || type == ControlPartType::SliderThumbVertical
+        || type == ControlPartType::SliderHorizontal
+        || type == ControlPartType::SliderVertical
         || type == ControlPartType::SquareButton;
 }
 
@@ -1229,16 +1237,6 @@ static void MainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outDa
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-static void TrackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
-{
-    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.678f };
-    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.13f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
-}
-
 void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     if (r.isEmpty())
@@ -1499,127 +1497,15 @@ int RenderThemeMac::minimumMenuListSize(const RenderStyle& style) const
     return sizeForSystemFont(style, menuListSizes()).width();
 }
 
-const int trackWidth = 5;
-const int trackRadius = 2;
-
 void RenderThemeMac::adjustSliderTrackStyle(RenderStyle& style, const Element*) const
 {
     style.setBoxShadow(nullptr);
-}
-
-bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    IntRect bounds = r;
-    float zoomLevel = o.style().effectiveZoom();
-    float zoomedTrackWidth = trackWidth * zoomLevel;
-
-    if (o.style().effectiveAppearance() ==  ControlPartType::SliderHorizontal) {
-        bounds.setHeight(zoomedTrackWidth);
-        bounds.setY(r.y() + r.height() / 2 - zoomedTrackWidth / 2);
-    } else if (o.style().effectiveAppearance() == ControlPartType::SliderVertical) {
-        bounds.setWidth(zoomedTrackWidth);
-        bounds.setX(r.x() + r.width() / 2 - zoomedTrackWidth / 2);
-    }
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    CGContextRef context = localContext.cgContext();
-    CGColorSpaceRef cspace = sRGBColorSpaceRef();
-
-#if ENABLE(DATALIST_ELEMENT)
-    paintSliderTicks(o, paintInfo, r);
-#endif
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    CGContextClipToRect(context, bounds);
-
-    struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
-    RetainPtr<CGShadingRef> mainShading;
-    if (o.style().effectiveAppearance() == ControlPartType::SliderVertical)
-        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
-    else
-        mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
-
-    IntSize radius(trackRadius, trackRadius);
-    paintInfo.context().clipRoundedRect(FloatRoundedRect(bounds, radius, radius, radius, radius));
-    context = localContext.cgContext();
-    CGContextDrawShading(context, mainShading.get());
-
-    return false;
 }
 
 void RenderThemeMac::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(style, element);
     style.setBoxShadow(nullptr);
-}
-
-const float verticalSliderHeightPadding = 0.1f;
-
-bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    NSSliderCell* sliderThumbCell = o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical
-        ? sliderThumbVertical()
-        : sliderThumbHorizontal();
-
-    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-
-    // Update the various states we respond to.
-    updateEnabledState(sliderThumbCell, o);
-    RefPtr element = dynamicDowncast<Element>(o.node());
-    RefPtr delegate = element;
-    if (is<SliderThumbElement>(element))
-        delegate = downcast<SliderThumbElement>(*element).hostInput();
-    updateFocusedState(sliderThumbCell, delegate ? delegate->renderer() : nullptr);
-
-    // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
-    bool oldPressed;
-    if (o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
-        oldPressed = m_isSliderThumbVerticalPressed;
-    else
-        oldPressed = m_isSliderThumbHorizontalPressed;
-
-    bool pressed = isPressed(o);
-
-    if (o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
-        m_isSliderThumbVerticalPressed = pressed;
-    else
-        m_isSliderThumbHorizontalPressed = pressed;
-
-    NSView *view = documentViewFor(o);
-
-    if (pressed != oldPressed) {
-        if (pressed)
-            [sliderThumbCell startTrackingAt:NSPoint() inView:view];
-        else
-            [sliderThumbCell stopTracking:NSPoint() at:NSPoint() inView:view mouseIsUp:YES];
-    }
-
-    FloatRect bounds = r;
-    // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.
-    if (o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
-        bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o.style().effectiveZoom());
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    float zoomLevel = o.style().effectiveZoom();
-
-    FloatRect unzoomedRect = bounds;
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-
-    bool shouldDrawCell = true;
-    bool shouldDrawFocusRing = false;
-    float deviceScaleFactor = o.page().deviceScaleFactor();
-    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, deviceScaleFactor);
-    [sliderThumbCell setControlView:nil];
-
-    return false;
 }
 
 void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)

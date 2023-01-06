@@ -58,6 +58,8 @@
 #include "SearchFieldPart.h"
 #include "ShadowPseudoIds.h"
 #include "SliderThumbElement.h"
+#include "SliderThumbPart.h"
+#include "SliderTrackPart.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextAreaPart.h"
@@ -496,6 +498,51 @@ static RefPtr<ControlPart> createProgressBarPartForRenderer(const RenderObject& 
     return ProgressBarPart::create(renderProgress.position(), renderProgress.animationStartTime().secondsSinceEpoch());
 }
 
+static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& renderer)
+{
+    auto type = renderer.style().effectiveAppearance();
+    if (type != ControlPartType::SliderHorizontal && type != ControlPartType::SliderVertical)
+        return nullptr;
+
+    auto& input = downcast<HTMLInputElement>(*renderer.node());
+    if (!input.isRangeControl())
+        return nullptr;
+
+    IntSize thumbSize;
+    if (const auto* thumbRenderer = input.sliderThumbElement()->renderer()) {
+        const auto& thumbStyle = thumbRenderer->style();
+        thumbSize = IntSize { thumbStyle.width().intValue(), thumbStyle.height().intValue() };
+    }
+
+    IntRect trackBounds;
+    if (const auto* trackRenderer = input.sliderTrackElement()->renderer()) {
+        trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
+        
+        // We can ignoring transforms because transform is handled by the graphics context.
+        auto sliderBounds = renderer.absoluteBoundingBoxRectIgnoringTransforms();
+        
+        // Make position relative to the transformed ancestor element.
+        trackBounds.moveBy(-sliderBounds.location());
+    }
+
+    Vector<double> tickRatios;
+#if ENABLE(DATALIST_ELEMENT)
+    if (auto dataList = input.dataList()) {
+        double minimum = input.minimum();
+        double maximum = input.maximum();
+
+        for (auto& optionElement : dataList->suggestions()) {
+            auto optionValue = input.listOptionValueAsDouble(optionElement);
+            if (!optionValue)
+                continue;
+            double tickRatio = (*optionValue - minimum) / (maximum - minimum);
+            tickRatios.append(tickRatio);
+        }
+    }
+#endif
+    return SliderTrackPart::create(type, thumbSize, trackBounds, WTFMove(tickRatios));
+}
+
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
 {
     ControlPartType type = renderer.style().effectiveAppearance();
@@ -529,8 +576,8 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     case ControlPartType::SliderHorizontal:
     case ControlPartType::SliderVertical:
-        break;
-            
+        return createSliderTrackPartForRenderer(renderer);
+
     case ControlPartType::SearchField:
         return SearchFieldPart::create();
             
@@ -571,7 +618,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     case ControlPartType::SliderThumbHorizontal:
     case ControlPartType::SliderThumbVertical:
-        break;
+        return SliderThumbPart::create(type);
     }
 
     ASSERT_NOT_REACHED();
@@ -622,6 +669,8 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
             states.add(ControlStyle::State::ListButtonPressed);
     }
 #endif
+    if (!renderer.style().isHorizontalWritingMode())
+        states.add(ControlStyle::State::VerticalWritingMode);
     return states;
 }
 
@@ -645,7 +694,8 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) c
         extractControlStyleStatesForRenderer(*renderer),
         renderer->style().computedFontPixelSize(),
         renderer->style().effectiveZoom(),
-        renderer->style().effectiveAccentColor()
+        renderer->style().effectiveAccentColor(),
+        renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor)
     };
 }
 

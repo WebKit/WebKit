@@ -1754,6 +1754,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/controls/ProgressBarPart.h
     platform/graphics/controls/SearchFieldCancelButtonPart.h
     platform/graphics/controls/SearchFieldPart.h
+    platform/graphics/controls/SliderThumbPart.h
+    platform/graphics/controls/SliderTrackPart.h
     platform/graphics/controls/TextAreaPart.h
     platform/graphics/controls/TextFieldPart.h
     platform/graphics/controls/ToggleButtonPart.h

@@ -34,6 +34,8 @@
 #import "ProgressBarMac.h"
 #import "SearchFieldCancelButtonMac.h"
 #import "SearchFieldMac.h"
+#import "SliderThumbMac.h"
+#import "SliderTrackMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
 #import "ToggleButtonMac.h"
@@ -163,6 +165,17 @@ NSSearchFieldCell *ControlFactoryMac::searchFieldCell() const
     return m_searchFieldCell.get();
 }
 
+NSSliderCell *ControlFactoryMac::sliderCell() const
+{
+    if (!m_sliderCell) {
+        m_sliderCell = adoptNS([[NSSliderCell alloc] init]);
+        [m_sliderCell setSliderType:NSSliderTypeLinear];
+        [m_sliderCell setControlSize:NSControlSizeSmall];
+        [m_sliderCell setFocusRingType:NSFocusRingTypeExterior];
+    }
+    return m_sliderCell.get();
+}
+
 NSTextFieldCell *ControlFactoryMac::textFieldCell() const
 {
     if (!m_textFieldCell) {
@@ -208,6 +221,16 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchField(Se
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart& part)
 {
     return makeUnique<SearchFieldCancelButtonMac>(part, *this, searchFieldCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderThumb(SliderThumbPart& part)
+{
+    return makeUnique<SliderThumbMac>(part, *this, sliderCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderTrack(SliderTrackPart& part)
+{
+    return makeUnique<SliderTrackMac>(part, *this);
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)

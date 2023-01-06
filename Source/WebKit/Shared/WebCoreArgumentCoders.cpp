@@ -111,6 +111,8 @@
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SkewTransformOperation.h>
+#include <WebCore/SliderThumbPart.h>
+#include <WebCore/SliderTrackPart.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextAreaPart.h>
@@ -1557,6 +1559,9 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
 
     case WebCore::ControlPartType::SliderHorizontal:
     case WebCore::ControlPartType::SliderVertical:
+        encoder << downcast<WebCore::SliderTrackPart>(part);
+        break;
+
     case WebCore::ControlPartType::SearchField:
 #if ENABLE(APPLE_PAY)
     case WebCore::ControlPartType::ApplePayButton:
@@ -1638,8 +1643,13 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     }
 
     case WebCore::ControlPartType::SliderHorizontal:
-    case WebCore::ControlPartType::SliderVertical:
+    case WebCore::ControlPartType::SliderVertical: {
+        std::optional<Ref<WebCore::SliderTrackPart>> sliderTrackPart;
+        decoder >> sliderTrackPart;
+        if (sliderTrackPart)
+            return WTFMove(*sliderTrackPart);
         break;
+    }
 
     case WebCore::ControlPartType::SearchField:
         return WebCore::SearchFieldPart::create();
@@ -1681,7 +1691,7 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 
     case WebCore::ControlPartType::SliderThumbHorizontal:
     case WebCore::ControlPartType::SliderThumbVertical:
-        break;
+        return WebCore::SliderThumbPart::create(*type);
     }
 
     ASSERT_NOT_REACHED();

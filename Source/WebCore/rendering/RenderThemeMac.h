@@ -118,10 +118,8 @@ private:
 
     void adjustProgressBarStyle(RenderStyle&, const Element*) const final;
 
-    bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSliderTrackStyle(RenderStyle&, const Element*) const final;
 
-    bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSliderThumbStyle(RenderStyle&, const Element*) const final;
 
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
