@@ -91,9 +91,6 @@ public:
     static void setMenuItemElementEnabled(bool isEnabled) { shared().m_isMenuItemElementEnabled = isEnabled; }
     static bool menuItemElementEnabled() { return shared().m_isMenuItemElementEnabled; }
 
-    static void setDirectoryUploadEnabled(bool isEnabled) { shared().m_isDirectoryUploadEnabled = isEnabled; }
-    static bool directoryUploadEnabled() { return shared().m_isDirectoryUploadEnabled; }
-
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
@@ -299,7 +296,6 @@ private:
 
     bool m_isPaintTimingEnabled { false };
     bool m_isMenuItemElementEnabled { false };
-    bool m_isDirectoryUploadEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };

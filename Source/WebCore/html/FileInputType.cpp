@@ -24,7 +24,6 @@
 
 #include "Chrome.h"
 #include "DOMFormData.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DirectoryFileListCreator.h"
 #include "DragData.h"
 #include "ElementChildIterator.h"
@@ -349,9 +348,9 @@ void FileInputType::applyFileChooserSettings()
 
 bool FileInputType::allowsDirectories() const
 {
-    if (!DeprecatedGlobalSettings::directoryUploadEnabled())
-        return false;
     ASSERT(element());
+    if (!element()->document().settings().directoryUploadEnabled())
+        return false;
     return element()->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }
 

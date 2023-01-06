@@ -1826,12 +1826,13 @@ DirectoryUploadEnabled:
   status: embedder
   humanReadableName: "Directory Upload"
   humanReadableDescription: "input.webkitdirectory / dataTransferItem.webkitGetAsEntry()"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
+    WebCore:
       default: false
 
 # FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
