@@ -31,85 +31,99 @@
 
 namespace JSC {
 
+#define FOR_EACH_SIMD_LANE_OPERATION(v) \
+    v(Not) \
+    v(AddSat) \
+    v(LoadLane16) \
+    v(Andnot) \
+    v(GreaterThan) \
+    v(Abs) \
+    v(And) \
+    v(Store) \
+    v(StoreLane8) \
+    v(Xor) \
+    v(Trunc) \
+    v(ExtmulHigh) \
+    v(Splat) \
+    v(LoadExtend16S) \
+    v(LoadExtend8U) \
+    v(GreaterThanOrEqual) \
+    v(LoadLane8) \
+    v(Shl) \
+    v(DotProduct) \
+    v(Const) \
+    v(Demote) \
+    v(Convert) \
+    v(NotEqual) \
+    v(Sqrt) \
+    v(Pmin) \
+    v(StoreLane32) \
+    v(Pmax) \
+    v(LoadExtend32S) \
+    v(ExtendHigh) \
+    v(StoreLane64) \
+    v(LessThan) \
+    v(AvgRound) \
+    v(Min) \
+    v(Equal) \
+    v(LoadSplat8) \
+    v(LoadSplat32) \
+    v(LoadPad64) \
+    v(LoadExtend32U) \
+    v(Promote) \
+    v(Narrow) \
+    v(Load) \
+    v(Shuffle) \
+    v(SubSat) \
+    v(Max) \
+    v(AnyTrue) \
+    v(Ceil) \
+    v(LoadLane32) \
+    v(Mul) \
+    v(StoreLane16) \
+    v(Nearest) \
+    v(LoadExtend8S) \
+    v(ExtmulLow) \
+    v(Swizzle) \
+    v(Div) \
+    v(ConvertLow) \
+    v(Floor) \
+    v(LoadSplat16) \
+    v(AllTrue) \
+    v(Popcnt) \
+    v(LessThanOrEqual) \
+    v(Or) \
+    v(LoadExtend16U) \
+    v(ExtaddPairwise) \
+    v(TruncSat) \
+    v(LoadPad32) \
+    v(ExtractLane) \
+    v(ReplaceLane) \
+    v(ExtendLow) \
+    v(Shr) \
+    v(Add) \
+    v(LoadSplat64) \
+    v(LoadLane64) \
+    v(BitwiseSelect) \
+    v(Sub) \
+    v(Bitmask) \
+    v(Neg) \
+    v(MulSat)
+
 enum class SIMDLaneOperation : uint8_t {
-    Not,
-    AddSat,
-    LoadLane16,
-    Andnot,
-    GreaterThan,
-    Abs,
-    And,
-    Store,
-    StoreLane8,
-    Xor,
-    Trunc,
-    ExtmulHigh,
-    Splat,
-    LoadExtend16S,
-    LoadExtend8U,
-    GreaterThanOrEqual,
-    LoadLane8,
-    Shl,
-    DotProduct,
-    Const,
-    Demote,
-    Convert,
-    NotEqual,
-    Sqrt,
-    Pmin,
-    StoreLane32,
-    Pmax,
-    LoadExtend32S,
-    ExtendHigh,
-    StoreLane64,
-    LessThan,
-    AvgRound,
-    Min,
-    Equal,
-    LoadSplat8,
-    LoadSplat32,
-    LoadPad64,
-    LoadExtend32U,
-    Promote,
-    Narrow,
-    Load,
-    Shuffle,
-    SubSat,
-    Max,
-    AnyTrue,
-    Ceil,
-    LoadLane32,
-    Mul,
-    StoreLane16,
-    Nearest,
-    LoadExtend8S,
-    ExtmulLow,
-    Swizzle,
-    Div,
-    ConvertLow,
-    Floor,
-    LoadSplat16,
-    AllTrue,
-    Popcnt,
-    LessThanOrEqual,
-    Or,
-    LoadExtend16U,
-    ExtaddPairwise,
-    TruncSat,
-    LoadPad32,
-    ExtractLane,
-    ReplaceLane,
-    ExtendLow,
-    Shr,
-    Add,
-    LoadSplat64,
-    LoadLane64,
-    BitwiseSelect,
-    Sub,
-    Bitmask,
-    Neg,
-    MulSat,
+#define DEFINE_SIMD_LANE_OPERATION(op_) op_,
+    FOR_EACH_SIMD_LANE_OPERATION(DEFINE_SIMD_LANE_OPERATION)
+#undef DEFINE_SIMD_LANE_OPERATION
 };
+
+constexpr size_t countNumberOfSIMDLaneOperations()
+{
+#define COUNT_SIMD_LANE_OPERATION(op_) count++;
+    size_t count = 0;
+    FOR_EACH_SIMD_LANE_OPERATION(COUNT_SIMD_LANE_OPERATION)
+    return count;
+#undef COUNT_SIMD_LANE_OPERATION
+}
 
 #define FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
 macro(I8x16Eq,                    0x23,  Equal,               SIMDLane::i8x16,  SIMDSignMode::None,      B3::Air::Arg::relCond(MacroAssembler::Equal)) \

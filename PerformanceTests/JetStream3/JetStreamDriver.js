@@ -1518,16 +1518,18 @@ let testPlans = [
         iterations: 80,
         testGroup: RexBenchGroup
     },
-    {
-        name: "UniPoker",
-        files: [
-            "./RexBench/UniPoker/poker.js"
-            , "./RexBench/UniPoker/expected.js"
-            , "./RexBench/UniPoker/benchmark.js"
-        ],
-        deterministicRandom: true,
-        testGroup: RexBenchGroup
-    },
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250157
+    // UniPoker fails on browser with error message `Expected Player 1 to have 59864, but they have 57360`.
+    // {
+    //     name: "UniPoker",
+    //     files: [
+    //         "./RexBench/UniPoker/poker.js"
+    //         , "./RexBench/UniPoker/expected.js"
+    //         , "./RexBench/UniPoker/benchmark.js"
+    //     ],
+    //     deterministicRandom: true,
+    //     testGroup: RexBenchGroup
+    // },
     // Simple
     {
         name: "async-fs",
@@ -1651,18 +1653,20 @@ let testPlans = [
         deterministicRandom: true,
         testGroup: BigIntNobleGroup,
     },
-    {
-        name: "bigint-paillier",
-        files: [
-            "./bigint/web-crypto-sham.js",
-            "./bigint/paillier-bundle.js",
-            "./bigint/paillier-benchmark.js",
-        ],
-        iterations: 10,
-        worstCaseCount: 2,
-        deterministicRandom: true,
-        testGroup: BigIntMiscGroup,
-    },
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250157
+    // bigint-paillier hangs with `deterministicRandom` is true.
+    // {
+    //     name: "bigint-paillier",
+    //     files: [
+    //         "./bigint/web-crypto-sham.js",
+    //         "./bigint/paillier-bundle.js",
+    //         "./bigint/paillier-benchmark.js",
+    //     ],
+    //     iterations: 10,
+    //     worstCaseCount: 2,
+    //     deterministicRandom: true,
+    //     testGroup: BigIntMiscGroup,
+    // },
     {
         name: "bigint-bigdenary",
         files: [
@@ -1763,6 +1767,29 @@ let testPlans = [
             wasmBinary: "./wasm/richards.wasm"
         },
         benchmarkClass: WasmBenchmark,
+        testGroup: WasmGroup
+    },
+    {
+        name: "tfjs-wasm",
+        files: [
+            "./wasm/tfjs-model-helpers.js",
+            "./wasm/tfjs-model-mobilenet-v3.js",
+            "./wasm/tfjs-model-mobilenet-v1.js",
+            "./wasm/tfjs-model-coco-ssd.js",
+            "./wasm/tfjs-model-use.js",
+            "./wasm/tfjs-model-use-vocab.js",
+            "./wasm/tfjs-bundle.js",
+            "./wasm/tfjs-benchmark.js"
+        ],
+        preload: {
+            tfjsBackendWasmSimdBlobURL: "./wasm/tfjs-backend-wasm-simd.wasm",
+            tfjsBackendWasmThreadedSimdBlobURL: "./wasm/tfjs-backend-wasm-threaded-simd.wasm",
+            tfjsBackendWasmBlobURL: "./wasm/tfjs-backend-wasm.wasm",
+        },
+        iterations: 3,
+        worstCaseCount: 1,
+        benchmarkClass: AsyncBenchmark,
+        deterministicRandom: true,
         testGroup: WasmGroup
     },
     // WorkerTests
