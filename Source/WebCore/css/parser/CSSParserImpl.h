@@ -87,7 +87,7 @@ public:
         KeyframeRules,
         CounterStyleRules,
         FontFeatureValuesRules,
-        NoRules, // For parsing at-rules inside declaration lists
+        NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
     static CSSParser::ParseResult parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, const CSSParserContext&);
@@ -112,6 +112,12 @@ public:
     CSSTokenizer* tokenizer() const { return m_tokenizer.get(); };
 
 private:
+    struct NestingContext {
+        // FIXME: Can we build StylePropertySets directly?
+        // FIXME: Investigate using a smaller inline buffer
+        ParsedPropertyVector m_parsedProperties;
+        Vector<Ref<StyleRuleBase>> m_parsedRules;
+    };
     CSSParserImpl(const CSSParserContext&, StyleSheetContents*);
 
     enum RuleListType {
@@ -126,7 +132,10 @@ private:
     bool consumeRuleList(CSSParserTokenRange, RuleListType, T callback);
 
     // This function updates the range it's given.
-    RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType, RefPtr<StyleRule> parentRule = { });
+    RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
+
+    // This function is used for all the nested group rules (@media, @supports,..etc)
+    Vector<RefPtr<StyleRuleBase>>consumeRegularRuleList(CSSParserTokenRange block);
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleImport> consumeImportRule(CSSParserTokenRange prelude);
@@ -146,22 +155,32 @@ private:
     RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block, RefPtr<StyleRule> parentRule = { });
+    RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     // FIXME: We should return value for all those functions instead of using class member attributes.
-    void consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange, StyleRuleType, RefPtr<StyleRule> parentRule = { });
+    void consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationList(CSSParserTokenRange, StyleRuleType);
-    void consumeStyleBlock(CSSParserTokenRange, StyleRuleType, RefPtr<StyleRule> parentRule = { });
+    void consumeStyleBlock(CSSParserTokenRange, StyleRuleType);
     void consumeDeclaration(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, bool important, StyleRuleType);
     void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, bool important);
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
-    // FIXME: Can we build StylePropertySets directly?
-    // FIXME: Investigate using a smaller inline buffer
-    ParsedPropertyVector m_parsedProperties;
-    Vector<Ref<StyleRuleBase>> m_parsedRules;
+    RefPtr<StyleRuleBase> createNestingParentRule();
+    void runInNewNestingContext(auto&& run);
+    NestingContext& topContext()
+    {
+        ASSERT(!m_nestingContextStack.isEmpty());
+        return m_nestingContextStack.last();
+    }
+    bool isNestedContext()
+    {
+        return m_styleRuleNestingDepth && context().cssNestingEnabled;
+    }
+
+    unsigned m_styleRuleNestingDepth { 0 };
+    Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;
 
     RefPtr<StyleSheetContents> m_styleSheet;

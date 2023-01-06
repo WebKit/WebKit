@@ -83,18 +83,18 @@ CSSParser::ParseResult CSSParserImpl::parseValue(MutableStyleProperties* declara
     CSSParserImpl parser(context, string);
     auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
     parser.consumeDeclarationValue(parser.tokenizer()->tokenRange(), propertyID, important, ruleType);
-    if (parser.m_parsedProperties.isEmpty())
+    if (parser.topContext().m_parsedProperties.isEmpty())
         return CSSParser::ParseResult::Error;
-    return declaration->addParsedProperties(parser.m_parsedProperties) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
+    return declaration->addParsedProperties(parser.topContext().m_parsedProperties) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 CSSParser::ParseResult CSSParserImpl::parseCustomPropertyValue(MutableStyleProperties* declaration, const AtomString& propertyName, const String& string, bool important, const CSSParserContext& context)
 {
     CSSParserImpl parser(context, string);
     parser.consumeCustomPropertyValue(parser.tokenizer()->tokenRange(), propertyName, important);
-    if (parser.m_parsedProperties.isEmpty())
+    if (parser.topContext().m_parsedProperties.isEmpty())
         return CSSParser::ParseResult::Error;
-    return declaration->addParsedProperties(parser.m_parsedProperties) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
+    return declaration->addParsedProperties(parser.topContext().m_parsedProperties) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 static inline void filterProperties(bool important, const ParsedPropertyVector& input, ParsedPropertyVector& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomString>& seenCustomProperties)
@@ -145,7 +145,7 @@ Ref<ImmutableStyleProperties> CSSParserImpl::parseInlineStyleDeclaration(const S
 
     CSSParserImpl parser(context, string);
     parser.consumeDeclarationList(parser.tokenizer()->tokenRange(), StyleRuleType::Style);
-    return createStyleProperties(parser.m_parsedProperties, context.mode);
+    return createStyleProperties(parser.topContext().m_parsedProperties, context.mode);
 }
 
 bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, const String& string, const CSSParserContext& context)
@@ -153,15 +153,15 @@ bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, co
     CSSParserImpl parser(context, string);
     auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
     parser.consumeDeclarationList(parser.tokenizer()->tokenRange(), ruleType);
-    if (parser.m_parsedProperties.isEmpty())
+    if (parser.topContext().m_parsedProperties.isEmpty())
         return false;
 
     std::bitset<numCSSProperties> seenProperties;
-    size_t unusedEntries = parser.m_parsedProperties.size();
+    size_t unusedEntries = parser.topContext().m_parsedProperties.size();
     ParsedPropertyVector results(unusedEntries);
     HashSet<AtomString> seenCustomProperties;
-    filterProperties(true, parser.m_parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
-    filterProperties(false, parser.m_parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
+    filterProperties(true, parser.topContext().m_parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
+    filterProperties(false, parser.topContext().m_parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
     if (unusedEntries)
         results.remove(0, unusedEntries);
     return declaration->addParsedProperties(results);
@@ -246,10 +246,10 @@ Vector<double> CSSParserImpl::parseKeyframeKeyList(const String& keyList)
 
 bool CSSParserImpl::supportsDeclaration(CSSParserTokenRange& range)
 {
-    ASSERT(m_parsedProperties.isEmpty());
+    ASSERT(topContext().m_parsedProperties.isEmpty());
     consumeDeclaration(range, StyleRuleType::Style);
-    bool result = !m_parsedProperties.isEmpty();
-    m_parsedProperties.clear();
+    bool result = !topContext().m_parsedProperties.isEmpty();
+    topContext().m_parsedProperties.clear();
     return result;
 }
 
@@ -414,12 +414,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
 }
 
 // https://drafts.csswg.org/css-syntax/#consume-a-qualified-rule
-RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRulesType allowedRules, RefPtr<StyleRule> parentRule)
+RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& range, AllowedRulesType allowedRules)
 {
-    auto isNestedContext = [&]() {
-        return parentRule && context().cssNestingEnabled;
-    };
-
     const CSSParserToken* preludeStart = &range.peek();
 
     // Parsing a selector (aka a component value) should stop at the first semicolon (and goes to error recovery)
@@ -441,7 +437,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeQualifiedRule(CSSParserTokenRange& r
     CSSParserTokenRange block = range.consumeBlockCheckingForEditability(m_styleSheet.get());
 
     if (allowedRules <= RegularRules)
-        return consumeStyleRule(prelude, block, parentRule);
+        return consumeStyleRule(prelude, block);
     
     if (allowedRules == KeyframeRules)
         return consumeKeyframeStyleRule(prelude, block);
@@ -558,20 +554,58 @@ RefPtr<StyleRuleNamespace> CSSParserImpl::consumeNamespaceRule(CSSParserTokenRan
     return StyleRuleNamespace::create(namespacePrefix, uri);
 }
 
-RefPtr<StyleRuleMedia> CSSParserImpl::consumeMediaRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+void CSSParserImpl::runInNewNestingContext(auto&& run)
+{
+    m_nestingContextStack.append(NestingContext { });
+    run();
+    m_nestingContextStack.removeLast();
+}
+
+RefPtr<StyleRuleBase> CSSParserImpl::createNestingParentRule()
+{
+    CSSSelector nestingParentSelector;
+    nestingParentSelector.setMatch(CSSSelector::Match::PseudoClass);
+    nestingParentSelector.setPseudoClassType(CSSSelector::PseudoClassType::PseudoClassNestingParent);
+    auto parserSelector = makeUnique<CSSParserSelector>(nestingParentSelector);
+    Vector<std::unique_ptr<CSSParserSelector>> selectorList;
+    selectorList.append(WTFMove(parserSelector));
+    auto styleRule = StyleRule::create(m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) });
+    styleRule->setProperties(createStyleProperties(topContext().m_parsedProperties, m_context.mode));
+    return styleRule;
+}
+
+Vector<RefPtr<StyleRuleBase>> CSSParserImpl::consumeRegularRuleList(CSSParserTokenRange block)
 {
     Vector<RefPtr<StyleRuleBase>> rules;
+    if (isNestedContext()) {
+        runInNewNestingContext([&]() {
+            consumeStyleBlock(block, StyleRuleType::Style);
+            if (!topContext().m_parsedProperties.isEmpty()) {
+                // This at-rule contains orphan declarations, we attach them to an implicit parent nesting rule
+                rules.append(createNestingParentRule());
+            }
+            for (auto& rule : topContext().m_parsedRules)
+                rules.append(rule.ptr());
+        });
 
+    } else {
+        consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
+            rules.append(rule);
+        });
+    }
+    rules.shrinkToFit();
+    return rules;
+}
+
+RefPtr<StyleRuleMedia> CSSParserImpl::consumeMediaRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
     if (m_observerWrapper) {
         m_observerWrapper->observer().startRuleHeader(StyleRuleType::Media, m_observerWrapper->startOffset(prelude));
         m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 
-    consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
-        rules.append(rule);
-    });
-    rules.shrinkToFit();
+    auto rules = consumeRegularRuleList(block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -591,11 +625,7 @@ RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 
-    Vector<RefPtr<StyleRuleBase>> rules;
-    consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
-        rules.append(rule);
-    });
-    rules.shrinkToFit();
+    auto rules = consumeRegularRuleList(block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -617,7 +647,7 @@ RefPtr<StyleRuleFontFace> CSSParserImpl::consumeFontFaceRule(CSSParserTokenRange
     }
 
     consumeDeclarationList(block, StyleRuleType::FontFace);
-    return StyleRuleFontFace::create(createStyleProperties(m_parsedProperties, m_context.mode));
+    return StyleRuleFontFace::create(createStyleProperties(topContext().m_parsedProperties, m_context.mode));
 }
 
 // The associated number represents the maximum number of allowed values for this font-feature-values type.
@@ -765,7 +795,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     }
 
     consumeDeclarationList(block, StyleRuleType::FontPaletteValues);
-    auto properties = createStyleProperties(m_parsedProperties, m_context.mode);
+    auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);
 
     AtomString fontFamily;
     if (auto fontFamilyValue = properties->getPropertyCSSValue(CSSPropertyFontFamily))
@@ -849,7 +879,7 @@ RefPtr<StyleRulePage> CSSParserImpl::consumePageRule(CSSParserTokenRange prelude
 
     consumeDeclarationList(block, StyleRuleType::Style);
     
-    return StyleRulePage::create(createStyleProperties(m_parsedProperties, m_context.mode), WTFMove(selectorList));
+    return StyleRulePage::create(createStyleProperties(topContext().m_parsedProperties, m_context.mode), WTFMove(selectorList));
 }
 
 RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -870,7 +900,7 @@ RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTo
     }
 
     consumeDeclarationList(block, StyleRuleType::CounterStyle);
-    return StyleRuleCounterStyle::create(name, createStyleProperties(m_parsedProperties, m_context.mode));
+    return StyleRuleCounterStyle::create(name, createStyleProperties(topContext().m_parsedProperties, m_context.mode));
 }
 
 RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)
@@ -922,11 +952,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(*block));
     }
 
-    Vector<RefPtr<StyleRuleBase>> rules;
-    consumeRuleList(*block, RegularRuleList, [&](RefPtr<StyleRuleBase> rule) {
-        rules.append(rule);
-    });
-    rules.shrinkToFit();
+    auto rules = consumeRegularRuleList(*block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(*block));
@@ -952,18 +978,13 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (!prelude.atEnd())
         return nullptr;
 
-    Vector<RefPtr<StyleRuleBase>> rules;
-
     if (m_observerWrapper) {
         m_observerWrapper->observer().startRuleHeader(StyleRuleType::Container, m_observerWrapper->startOffset(originalPreludeRange));
         m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(originalPreludeRange));
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 
-    consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
-        rules.append(rule);
-    });
-    rules.shrinkToFit();
+    auto rules = consumeRegularRuleList(block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -988,7 +1009,7 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
 
     auto propertyDescriptor = StyleRuleProperty::Descriptor { name };
 
-    for (auto& property : m_parsedProperties) {
+    for (auto& property : topContext().m_parsedProperties) {
         switch (property.id()) {
         case CSSPropertySyntax:
             propertyDescriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
@@ -1004,7 +1025,7 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
         };
     };
 
-    m_parsedProperties.clear();
+    topContext().m_parsedProperties.clear();
 
     return StyleRuleProperty::create(WTFMove(propertyDescriptor));
 }
@@ -1021,7 +1042,7 @@ RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserToken
     }
 
     consumeDeclarationList(block, StyleRuleType::Keyframe);
-    return StyleRuleKeyframe::create(WTFMove(keyList), createStyleProperties(m_parsedProperties, m_context.mode));
+    return StyleRuleKeyframe::create(WTFMove(keyList), createStyleProperties(topContext().m_parsedProperties, m_context.mode));
 }
 
 static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRange selectors)
@@ -1044,35 +1065,33 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
     wrapper.observer().endRuleHeader(wrapper.endOffset(originalRange));
 }
 
-RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block, RefPtr<StyleRule> parentRule)
+RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    auto selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get(), parentRule ? CSSSelectorParser::IsNestedContext::Yes : CSSSelectorParser::IsNestedContext::No);
+    auto selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSSelectorParser::IsNestedContext::Yes : CSSSelectorParser::IsNestedContext::No);
     if (!selectorList)
         return nullptr; // Parse error, invalid selector list
 
     if (m_observerWrapper)
         observeSelectors(*m_observerWrapper, prelude);
     
-    // Save the already parsed properties to avoid mixing them with the nested ones.
-    ParsedPropertyVector previouslyParsedProperties;
-    std::swap(m_parsedProperties, previouslyParsedProperties);
-    
     auto styleRule = StyleRule::create(m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
 
-    consumeStyleBlock(block, StyleRuleType::Style, styleRule.ptr());
-    
-    styleRule->setProperties(createStyleProperties(m_parsedProperties, m_context.mode));
-    
-    // Restore the old (= caller) state
-    m_parsedProperties = WTFMove(previouslyParsedProperties);
+    runInNewNestingContext([&]() {
+        m_styleRuleNestingDepth += 1;
+        consumeStyleBlock(block, StyleRuleType::Style);  
+        styleRule->setNestedRules(WTFMove(topContext().m_parsedRules));
+        styleRule->setProperties(createStyleProperties(topContext().m_parsedProperties, m_context.mode));
+        m_styleRuleNestingDepth -= 1;
+    });
     
     return styleRule;
 }
 
 // parentRule determines if we are in a declaration list or in a style block
-void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange range, StyleRuleType ruleType, RefPtr<StyleRule> parentRule)
+void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange range, StyleRuleType ruleType)
 {
-    ASSERT(m_parsedProperties.isEmpty());
+    ASSERT(topContext().m_parsedProperties.isEmpty());
+    ASSERT(topContext().m_parsedRules.isEmpty());
 
     bool useObserver = m_observerWrapper && (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::CounterStyle);
     if (useObserver) {
@@ -1106,20 +1125,28 @@ void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange
             break;
         }
         case AtKeywordToken: {
-            // FIXME: Add support for nested rules
-            auto rule = consumeAtRule(range, NoRules);
-            ASSERT_UNUSED(rule, !rule);
+            if (m_styleRuleNestingDepth && context().cssNestingEnabled) {
+                auto rule = consumeAtRule(range, RegularRules);
+                if (!rule)
+                    break;
+                // FIXME: add @scope
+                if (!rule->isMediaRule() && !rule->isSupportsRule() && !rule->isLayerRule() && !rule->isContainerRule())
+                    break;
+                topContext().m_parsedRules.append(*rule);
+            } else {
+                auto rule = consumeAtRule(range, NoRules);
+                ASSERT_UNUSED(rule, !rule);    
+            }
             break;
         }
         default: 
-            if (parentRule && context().cssNestingEnabled) {
-                auto rule = consumeQualifiedRule(range, AllowedRulesType::RegularRules, parentRule);
+            if (m_styleRuleNestingDepth && context().cssNestingEnabled) {
+                auto rule = consumeQualifiedRule(range, AllowedRulesType::RegularRules);
                 if (!rule)
                     break;
-                // FIXME: Add support for valid at-rules (@media, ...)
                 if (!rule->isStyleRule())
                     break;
-                parentRule->appendNestedRule(downcast<StyleRule>(*rule));
+                topContext().m_parsedRules.append(*rule);
                 break;
             }
         FALLTHROUGH;
@@ -1139,12 +1166,12 @@ void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange
 
 void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleType ruleType)
 {
-    consumeDeclarationListOrStyleBlockHelper(range, ruleType, nullptr);
+    consumeDeclarationListOrStyleBlockHelper(range, ruleType);
 }
 
-void CSSParserImpl::consumeStyleBlock(CSSParserTokenRange range, StyleRuleType ruleType, RefPtr<StyleRule> parentRule)
+void CSSParserImpl::consumeStyleBlock(CSSParserTokenRange range, StyleRuleType ruleType)
 {
-    consumeDeclarationListOrStyleBlockHelper(range, ruleType, parentRule);
+    consumeDeclarationListOrStyleBlockHelper(range, ruleType);
 }
 
 static void removeTrailingWhitespace(const CSSParserTokenRange& range, const CSSParserToken*& position)
@@ -1184,7 +1211,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
         }
     }
 
-    size_t propertiesCount = m_parsedProperties.size();
+    size_t propertiesCount = topContext().m_parsedProperties.size();
 
     if (!isExposed(propertyID, &m_context.propertySettings))
         propertyID = CSSPropertyInvalid;
@@ -1203,21 +1230,21 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
     if (m_observerWrapper && (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe)) {
         m_observerWrapper->observer().observeProperty(
             m_observerWrapper->startOffset(rangeCopy), m_observerWrapper->endOffset(rangeCopy),
-            important, m_parsedProperties.size() != propertiesCount);
+            important, topContext().m_parsedProperties.size() != propertiesCount);
     }
 }
 
 void CSSParserImpl::consumeCustomPropertyValue(CSSParserTokenRange range, const AtomString& variableName, bool important)
 {
     if (range.atEnd())
-        m_parsedProperties.append(CSSProperty(CSSPropertyCustom, CSSCustomPropertyValue::createEmpty(variableName), important));
+        topContext().m_parsedProperties.append(CSSProperty(CSSPropertyCustom, CSSCustomPropertyValue::createEmpty(variableName), important));
     else if (auto value = CSSVariableParser::parseDeclarationValue(variableName, range, m_context))
-        m_parsedProperties.append(CSSProperty(CSSPropertyCustom, WTFMove(value), important));
+        topContext().m_parsedProperties.append(CSSProperty(CSSPropertyCustom, WTFMove(value), important));
 }
 
 void CSSParserImpl::consumeDeclarationValue(CSSParserTokenRange range, CSSPropertyID propertyID, bool important, StyleRuleType ruleType)
 {
-    CSSPropertyParser::parseValue(propertyID, important, range, m_context, m_parsedProperties, ruleType);
+    CSSPropertyParser::parseValue(propertyID, important, range, m_context, topContext().m_parsedProperties, ruleType);
 }
 
 Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)

@@ -67,6 +67,7 @@ struct PossiblyQuotedIdentifier {
 
         bool hasExplicitNestingParent() const;
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
+        void replaceNestingParentByNotAll();
 
         // How the attribute value has to match. Default is Exact.
         enum Match {
@@ -343,6 +344,7 @@ struct PossiblyQuotedIdentifier {
         CSSSelector* tagHistory() { return m_isLastInTagHistory ? nullptr : this + 1; }
 
         CSSSelector& operator=(const CSSSelector&) = delete;
+        CSSSelector(CSSSelector&&) = delete;
 
         struct RareData : public RefCounted<RareData> {
             WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);

@@ -34,13 +34,14 @@ public:
     ~RuleSetBuilder();
 
     void addRulesFromSheet(const StyleSheetContents&, const MQ::MediaQueryList& sheetQuery = { });
-    void addStyleRule(const StyleRule&, const CSSSelectorList* parentResolvedSelectorList = nullptr);
+    void addStyleRule(const StyleRule&);
 
 private:
     RuleSetBuilder(const MQ::MediaQueryEvaluator&);
 
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
+    void addChildRule(RefPtr<StyleRuleBase>);
     void disallowDynamicMediaQueryEvaluationIfNeeded();
 
     void registerLayers(const Vector<CascadeLayerName>&);
@@ -50,6 +51,7 @@ private:
     
     void addMutatingRulesToResolver();
     void updateDynamicMediaQueries();
+    void populateStyleRuleResolvedSelectorList(const StyleRule&);
 
     struct MediaQueryCollector {
         ~MediaQueryCollector();
@@ -80,6 +82,7 @@ private:
     CascadeLayerName m_resolvedCascadeLayerName;
     HashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap;
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
+    Vector<const CSSSelectorList*> m_styleRuleStack;
 
     RuleSet::ContainerQueryIdentifier m_currentContainerQueryIdentifier { 0 };
 
