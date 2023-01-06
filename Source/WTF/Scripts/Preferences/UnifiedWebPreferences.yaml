@@ -1653,7 +1653,7 @@ DateTimeInputsEditableComponentsEnabled:
 
 DeclarativeShadowDOMEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Declarative Shadow DOM"
   humanReadableDescription: "Enable Declarative Shadow DOM"
   defaultValue:
@@ -5582,7 +5582,7 @@ StorageBlockingPolicy:
 
 StreamingDeclarativeShadowDOMEnabled:
   type: bool
-  status: unstable
+  status: stable
   humanReadableName: "Streaming for Declarative Shadow DOM"
   humanReadableDescription: "Enable Streaming for Declarative Shadow DOM"
   defaultValue:
