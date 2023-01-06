@@ -259,11 +259,6 @@ public:
     static bool builtInNotificationsEnabled() { return shared().m_builtInNotificationsEnabled; }
 #endif
 
-#if ENABLE(NOTIFICATION_EVENT)
-    static void setNotificationEventEnabled(bool isEnabled) { shared().m_notificationEventEnabled = isEnabled; }
-    static bool notificationEventEnabled() { return shared().m_notificationEventEnabled; }
-#endif
-
 #if ENABLE(MODEL_ELEMENT)
     static void setModelDocumentEnabled(bool isEnabled) { shared().m_modelDocumentEnabled = isEnabled; }
     static bool modelDocumentEnabled() { return shared().m_modelDocumentEnabled; }
@@ -415,10 +410,6 @@ private:
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     bool m_builtInNotificationsEnabled { false };
-#endif
-
-#if ENABLE(NOTIFICATION_EVENT)
-    bool m_notificationEventEnabled { true };
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

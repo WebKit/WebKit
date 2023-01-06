@@ -45,8 +45,8 @@
     [NewObject] Promise<undefined> update();
     [NewObject] Promise<boolean> unregister();
 
-    [Conditional=NOTIFICATION_EVENT, EnabledByDeprecatedGlobalSetting=NotificationEventEnabled, CallWith=CurrentScriptExecutionContext] Promise<undefined> showNotification(DOMString title, optional NotificationOptions options);
-    [Conditional=NOTIFICATION_EVENT, EnabledByDeprecatedGlobalSetting=NotificationEventEnabled] Promise<sequence<Notification>> getNotifications(optional GetNotificationOptions filter);
+    [Conditional=NOTIFICATION_EVENT, EnabledBySetting=NotificationEventEnabled, CallWith=CurrentScriptExecutionContext] Promise<undefined> showNotification(DOMString title, optional NotificationOptions options);
+    [Conditional=NOTIFICATION_EVENT, EnabledBySetting=NotificationEventEnabled] Promise<sequence<Notification>> getNotifications(optional GetNotificationOptions filter);
 
     // event
     attribute EventHandler onupdatefound;

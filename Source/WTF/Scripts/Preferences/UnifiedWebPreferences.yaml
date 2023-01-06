@@ -4068,7 +4068,6 @@ NotificationEventEnabled:
   status: embedder
   humanReadableName: "NotificationEvent support"
   humanReadableDescription: "NotificationEvent and ServiceWorkerRegistration.showNotification() support"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(NOTIFICATION_EVENT)
   defaultValue:
     WebCore:

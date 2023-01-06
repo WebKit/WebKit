@@ -26,7 +26,7 @@
 [
     Exposed=ServiceWorker,
     Conditional=NOTIFICATION_EVENT,
-    EnabledByDeprecatedGlobalSetting=NotificationEventEnabled,
+    EnabledBySetting=NotificationEventEnabled,
 ]
 interface NotificationEvent : ExtendableEvent {
     constructor([AtomString] DOMString type, NotificationEventInit eventInitDict);
