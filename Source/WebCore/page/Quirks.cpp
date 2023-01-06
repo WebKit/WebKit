@@ -358,7 +358,7 @@ bool Quirks::isGoogleMaps() const
 
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
-    if (DeprecatedGlobalSettings::mouseEventsSimulationEnabled())
+    if (m_document->settings().mouseEventsSimulationEnabled())
         return true;
 
     if (!needsQuirks())

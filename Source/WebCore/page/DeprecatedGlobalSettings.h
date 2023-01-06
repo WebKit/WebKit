@@ -196,8 +196,6 @@ public:
     static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
 
 #if ENABLE(TOUCH_EVENTS)
-    static bool mouseEventsSimulationEnabled() { return shared().m_mouseEventsSimulationEnabled; }
-    static void setMouseEventsSimulationEnabled(bool isEnabled) { shared().m_mouseEventsSimulationEnabled = isEnabled; }
     static bool touchEventsEnabled();
     static void setTouchEventsEnabled(bool isEnabled) { shared().m_touchEventsEnabled = isEnabled; }
 #endif
@@ -372,7 +370,6 @@ private:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    bool m_mouseEventsSimulationEnabled { false };
     std::optional<bool> m_touchEventsEnabled;
 #endif
 

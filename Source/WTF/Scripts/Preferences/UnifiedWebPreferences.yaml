@@ -3958,12 +3958,13 @@ MouseEventsSimulationEnabled:
   status: internal
   humanReadableName: "Mouse events simulation"
   humanReadableDescription: "Enable mouse events dispatch along with touch events on iOS"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(TOUCH_EVENTS)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 MuteCameraOnMicrophoneInterruptionEnabled:
