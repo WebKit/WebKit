@@ -4200,11 +4200,12 @@ PageAtRuleSupportEnabled:
   status: unstable
   humanReadableName: "@page CSS at-rule support"
   humanReadableDescription: "Enable @page support"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 PageVisibilityBasedProcessSuppressionEnabled:

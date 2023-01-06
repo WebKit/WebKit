@@ -178,9 +178,6 @@ public:
     static void setTouchEventsEnabled(bool isEnabled) { shared().m_touchEventsEnabled = isEnabled; }
 #endif
 
-    static bool pageAtRuleSupportEnabled() { return shared().m_pageAtRuleSupportEnabled; }
-    static void setPageAtRuleSupportEnabled(bool isEnabled) { shared().m_pageAtRuleSupportEnabled = isEnabled; }
-
 #if HAVE(NSURLSESSION_WEBSOCKET)
     static bool isNSURLSessionWebSocketEnabled() { return shared().m_isNSURLSessionWebSocketEnabled; }
     static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
@@ -288,7 +285,6 @@ private:
     bool m_syntheticEditingCommandsEnabled { true };
     bool m_webSQLEnabled { false };
     bool m_keygenElementEnabled { false };
-    bool m_pageAtRuleSupportEnabled { false };
     bool m_highlightAPIEnabled { false };
 
     bool m_layoutFormattingContextEnabled { false };
