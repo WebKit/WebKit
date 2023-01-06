@@ -51,6 +51,7 @@ private:
     void getType(const String&, Ref<DeferredPromise>&&) final;
     void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) final;
 
+    void clearItemTypeLoaders();
     void invokeCompletionHandler();
 
     using BufferOrString = std::variant<String, Ref<SharedBuffer>>;
@@ -67,6 +68,8 @@ private:
         void didFailToResolve();
         void didResolveToBlob(ScriptExecutionContext&, Ref<Blob>&&);
 
+        void invokeCompletionHandler();
+
         const String& type() { return m_type; }
         const BufferOrString& data() { return m_data; }
 
@@ -74,7 +77,6 @@ private:
         ClipboardItemTypeLoader(const String& type, CompletionHandler<void()>&&);
 
         void sanitizeDataIfNeeded();
-        void invokeCompletionHandler();
 
         // FileReaderLoaderClient methods.
         void didStartLoading() final { }
