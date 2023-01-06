@@ -612,7 +612,6 @@ AutomaticLiveResizeEnabled:
       "HAVE(UIKIT_WEBKIT_INTERNALS)": true
       default: false
 
-
 BackgroundWebContentRunningBoardThrottlingEnabled:
   type: bool
   status: unstable
@@ -1853,6 +1852,7 @@ DisableScreenSizeOverride:
   type: bool
   status: internal
   humanReadableName: "Disable screen size override"
+  webcoreBinding: DeprecatedGlobalSettings
   condition: PLATFORM(IOS_FAMILY)
   defaultValue:
     WebKitLegacy:
@@ -2211,7 +2211,6 @@ FocusVisibleEnabled:
       default: true
     WebCore:
       default: true
-
 
 ForceAlwaysUserScalable:
   type: bool
@@ -2580,7 +2579,6 @@ ImageControlsEnabled:
       default: false
     WebCore:
       default: false
-
 
 ImperativeSlotAPIEnabled:
   type: bool
@@ -4153,6 +4151,7 @@ OffscreenCanvasInWorkersEnabled:
       "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 
@@ -5112,6 +5111,8 @@ ServiceWorkersEnabled:
   condition: ENABLE(SERVICE_WORKER)
   exposed: [ WebKit ]
   defaultValue:
+    WebKitLegacy:
+      default: false
     WebKit:
       default: true
     WebCore:
@@ -5735,7 +5736,6 @@ TextAutosizingUsesIdempotentMode:
     WebCore:
       default: false
 
-
 TextInteractionEnabled:
   type: bool
   status: embedder
@@ -5855,7 +5855,6 @@ UndoManagerAPIEnabled:
       default: false
     WebCore:
       default: false
-
 
 UnprefixedFullscreenAPIEnabled:
   type: bool
