@@ -59,7 +59,7 @@ void AcceptsFirstMouse::runTest(View view)
     NSEvent *mouseEventInsideSelection = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:pointInsideSelection modifierFlags:0 timestamp:0 windowNumber:[window.get() windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1];
     EXPECT_TRUE([[view hitTest:pointInsideSelection] acceptsFirstMouse:mouseEventInsideSelection]);
 
-    NSPoint pointOutsideSelection = NSMakePoint(50, viewHeight - 150);
+    NSPoint pointOutsideSelection = NSMakePoint(150, viewHeight - 150);
     NSEvent *mouseEventOutsideSelection = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:pointOutsideSelection modifierFlags:0 timestamp:0 windowNumber:[window.get() windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1];
     EXPECT_FALSE([[view hitTest:pointInsideSelection] acceptsFirstMouse:mouseEventOutsideSelection]);
 }
