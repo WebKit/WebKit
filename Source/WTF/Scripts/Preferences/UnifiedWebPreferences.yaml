@@ -341,7 +341,7 @@ AlternateFormControlDesignEnabled:
       default: false
     WebCore:
       default: false
-      
+
 AlternateFullScreenControlDesignEnabled:
   type: bool
   status: embedder
@@ -391,7 +391,7 @@ AnimatedImageAsyncDecodingEnabled:
       default: true
     WebCore:
       default: true
-      
+
 AppBadgeEnabled:
   type: bool
   status: unstable
@@ -719,7 +719,7 @@ CFNetworkNetworkLoaderEnabled:
 
 CSS3DTransformInteroperabilityEnabled:
   type: bool
-  status: unstable
+  status: stable
   humanReadableName: "CSS 3D Transform Interoperability"
   humanReadableDescription: "Enable 3D transform behavior that is specification-compliant but backwards incompatible"
   defaultValue:
@@ -771,7 +771,7 @@ CSSColorContrastEnabled:
 
 CSSColorMixEnabled:
   type: bool
-  status: preview
+  status: stable
   humanReadableName: "CSS color-mix()"
   humanReadableDescription: "Enable support for CSS color-mix() defined in CSS Color 5"
   defaultValue:
@@ -797,7 +797,7 @@ CSSContainIntrinsicSizeEnabled:
 
 CSSContainerQueriesEnabled:
   type: bool
-  status: preview
+  status: stable
   humanReadableName: "CSS Container Queries"
   humanReadableDescription: "Enable CSS Container Queries"
   defaultValue:
@@ -862,7 +862,7 @@ CSSCounterStyleAtRulesEnabled:
 
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "CSS Custom Properties and Values API"
   humanReadableDescription: "Enable CSS Custom Properties and Values API"
   defaultValue:
@@ -875,7 +875,7 @@ CSSCustomPropertiesAndValuesEnabled:
 
 CSSGradientInterpolationColorSpacesEnabled:
   type: bool
-  status: unstable
+  status: stable
   humanReadableName: "CSS Gradient Interpolation Color Spaces"
   humanReadableDescription: "Enable custom interpolation in CSS gradients"
   defaultValue:
@@ -888,7 +888,7 @@ CSSGradientInterpolationColorSpacesEnabled:
 
 CSSGradientPremultipliedAlphaInterpolationEnabled:
   type: bool
-  status: unstable
+  status: stable
   humanReadableName: "CSS Gradient Premultiplied Alpha Interpolation"
   humanReadableDescription: "Enable premultiplied alpha interpolated CSS gradients"
   defaultValue:
@@ -1137,17 +1137,16 @@ CSSTypedOMColorEnabled:
 
 CSSTypedOMEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "CSS Typed OM"
   humanReadableDescription: "Enable the CSS Typed OM"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)": true
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 CacheAPIEnabled:
@@ -1515,7 +1514,7 @@ CustomPasteboardDataEnabled:
     WebKit:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WIN)": true
       default: false
-  
+
 DNSPrefetchingEnabled:
   type: bool
   status: embedder
@@ -2075,7 +2074,7 @@ FTPEnabled:
       default: false
     WebKitLegacy:
       default: false
-      
+
 FantasyFontFamily:
   type: String
   status: embedder
@@ -2171,7 +2170,6 @@ FileSystemAccessEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
-
 FixedFontFamily:
   type: String
   status: embedder
@@ -2254,8 +2252,6 @@ ForceWebGLUsesLowPower:
     WebCore:
       default: false
 
-
-
 FormAssociatedCustomElementsEnabled:
   type: bool
   status: testable
@@ -2284,7 +2280,7 @@ FrameFlatteningEnabled:
 
 FullScreenEnabled:
   type: bool
-  status: unstable
+  status: embedder
   humanReadableName: "Fullscreen API"
   humanReadableDescription: "Fullscreen API"
   condition: ENABLE(FULLSCREEN_API)
@@ -2668,7 +2664,7 @@ InertAttributeEnabled:
 
 InlineFormattingContextIntegrationEnabled:
   type: bool
-  status: unstable
+  status: stable
   humanReadableName: "Next-generation inline layout integration (IFC)"
   humanReadableDescription: "Enable next-generation inline layout integration (IFC)"
   webcoreBinding: DeprecatedGlobalSettings
@@ -3023,8 +3019,6 @@ IsNSURLSessionWebSocketEnabled:
     WebKit:
       default: true
 
-
-
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
 IsSameSiteStrictEnforcementEnabled:
   type: bool
@@ -3265,7 +3259,7 @@ LegacyOverflowScrollingTouchEnabled:
 
 LineHeightUnitsEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "lh / rlh units"
   humanReadableDescription: "Enable the lh and rlh units"
   webcoreBinding: DeprecatedGlobalSettings
@@ -3532,7 +3526,6 @@ MaxParseDuration:
       default: -1
     WebCore:
       default: -1
-
 
 MediaAudioCodecIDsAllowedInLockdownMode:
   type: String
@@ -4313,7 +4306,7 @@ PasswordEchoEnabled:
 
 PdfJSViewerEnabled:
   type: bool
-  status: unstable
+  status: testable
   humanReadableName: "Enable PDF.js viewer"
   humanReadableDescription: "Enable PDF.js viewer"
   condition: ENABLE(PDFJS)
@@ -4965,7 +4958,7 @@ ScrollAnimatorEnabled:
       default: false
     WebCore:
       default: false
-      
+
 ScrollToTextFragmentEnabled:
   type: bool
   status: stable
@@ -5803,7 +5796,6 @@ TiledScrollingIndicatorVisible:
     WebCore:
       default: false
 
-
 TrackConfigurationEnabled:
   type: bool
   status: testable
@@ -5858,7 +5850,7 @@ UndoManagerAPIEnabled:
 
 UnprefixedFullscreenAPIEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Unprefixed Fullscreen API"
   humanReadableDescription: "Enable Unprefixed Fullscreen API"
   defaultValue:
