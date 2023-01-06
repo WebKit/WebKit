@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ButtonMac.h"
+#import "InnerSpinButtonMac.h"
 #import "MenuListMac.h"
 #import "MeterMac.h"
 #import "ProgressBarMac.h"
@@ -196,6 +197,11 @@ NSTextFieldCell *ControlFactoryMac::textFieldCell() const
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonPart& part)
 {
     return makeUnique<ButtonMac>(part, *this, part.type() == ControlPartType::DefaultButton ? defaultButtonCell() : buttonCell());
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformInnerSpinButton(InnerSpinButtonPart& part)
+{
+    return makeUnique<InnerSpinButtonMac>(part, *this);
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuListPart& part)

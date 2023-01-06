@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class ButtonPart;
+class InnerSpinButtonPart;
 class MeterPart;
 class MenuListPart;
 class PlatformControl;
@@ -49,6 +50,7 @@ public:
     static ControlFactory& sharedControlFactory();
 
     virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;

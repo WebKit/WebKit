@@ -225,6 +225,7 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
     case ControlPartType::Button:
     case ControlPartType::Checkbox:
     case ControlPartType::DefaultButton:
+    case ControlPartType::InnerSpinButton:
     case ControlPartType::Listbox:
     case ControlPartType::Menulist:
     case ControlPartType::Meter:
@@ -258,6 +259,7 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
     return type == ControlPartType::Button
         || type == ControlPartType::Checkbox
         || type == ControlPartType::DefaultButton
+        || type == ControlPartType::InnerSpinButton
         || type == ControlPartType::Menulist
         || type == ControlPartType::Meter
         || type == ControlPartType::ProgressBar

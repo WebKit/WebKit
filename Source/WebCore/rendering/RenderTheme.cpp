@@ -44,6 +44,7 @@
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "InnerSpinButtonPart.h"
 #include "LocalizedStrings.h"
 #include "MenuListPart.h"
 #include "MeterPart.h"
@@ -604,7 +605,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 #if ENABLE(SERVICE_CONTROLS)
     case ControlPartType::ImageControlsButton:
 #endif
+        break;
+
     case ControlPartType::InnerSpinButton:
+        return InnerSpinButtonPart::create();
+
 #if ENABLE(DATALIST_ELEMENT)
     case ControlPartType::ListButton:
 #endif

@@ -70,6 +70,7 @@
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/IdentityTransformOperation.h>
 #include <WebCore/Image.h>
+#include <WebCore/InnerSpinButtonPart.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
@@ -1677,7 +1678,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 #if ENABLE(SERVICE_CONTROLS)
     case WebCore::ControlPartType::ImageControlsButton:
 #endif
+        break;
+
     case WebCore::ControlPartType::InnerSpinButton:
+        return WebCore::InnerSpinButtonPart::create();
+
 #if ENABLE(DATALIST_ELEMENT)
     case WebCore::ControlPartType::ListButton:
 #endif

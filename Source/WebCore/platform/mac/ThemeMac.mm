@@ -518,53 +518,6 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
     return NSControlSizeMini;
 }
 
-static void paintStepper(ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*)
-{
-    // We don't use NSStepperCell because there are no ways to draw an
-    // NSStepperCell with the up button highlighted.
-
-    NSString *coreUIState;
-    auto states = controlStates.states();
-    if (!states.contains(ControlStates::States::Enabled))
-        coreUIState = (__bridge NSString *)kCUIStateDisabled;
-    else if (states.contains(ControlStates::States::Pressed))
-        coreUIState = (__bridge NSString *)kCUIStatePressed;
-    else
-        coreUIState = (__bridge NSString *)kCUIStateActive;
-
-    NSString *coreUISize;
-    auto controlSize = controlSizeFromPixelSize(stepperSizes(), IntSize(zoomedRect.size()), zoomFactor);
-    if (controlSize == NSControlSizeMini)
-        coreUISize = (__bridge NSString *)kCUISizeMini;
-    else if (controlSize == NSControlSizeSmall)
-        coreUISize = (__bridge NSString *)kCUISizeSmall;
-    else
-        coreUISize = (__bridge NSString *)kCUISizeRegular;
-
-    IntRect rect(zoomedRect);
-    GraphicsContextStateSaver stateSaver(context);
-    if (zoomFactor != 1.0f) {
-        rect.setWidth(rect.width() / zoomFactor);
-        rect.setHeight(rect.height() / zoomFactor);
-        context.translate(rect.location());
-        context.scale(zoomFactor);
-        context.translate(-rect.location());
-    }
-
-    LocalCurrentGraphicsContext localContext(context);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:rect context:localContext.cgContext() options:@{
-    ALLOW_DEPRECATED_DECLARATIONS_END
-        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetButtonLittleArrows,
-        (__bridge NSString *)kCUISizeKey: coreUISize,
-        (__bridge NSString *)kCUIStateKey: coreUIState,
-        (__bridge NSString *)kCUIValueKey: states.contains(ControlStates::States::SpinUp) ? @1 : @0,
-        (__bridge NSString *)kCUIIsFlippedKey: @NO,
-        (__bridge NSString *)kCUIScaleKey: @1,
-        (__bridge NSString *)kCUIMaskOnlyKey: @NO
-    }];
-}
-
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
 // If the ScrollView doesn't have an NSView, we will return a fake NSView set up in the way AppKit expects.
 NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& controlStates, bool useUnparentedView)
@@ -856,9 +809,6 @@ void ThemeMac::paint(ControlPartType type, ControlStates& states, GraphicsContex
         paintColorWell(states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor);
         break;
 #endif
-    case ControlPartType::InnerSpinButton:
-        paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
-        break;
     default:
         break;
     }

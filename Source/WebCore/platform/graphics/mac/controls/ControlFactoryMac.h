@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,16 +39,17 @@ public:
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 
     std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
-    std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) override;
-    std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) override;
+    std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformTextField(TextFieldPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformToggleButton(ToggleButtonPart&) final;
 
 private:
     NSButtonCell *buttonCell() const;
