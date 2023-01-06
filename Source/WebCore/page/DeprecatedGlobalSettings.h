@@ -187,9 +187,6 @@ public:
     static void setReadableByteStreamAPIEnabled(bool isEnabled) { shared().m_isReadableByteStreamAPIEnabled = isEnabled; }
     static bool readableByteStreamAPIEnabled() { return shared().m_isReadableByteStreamAPIEnabled; }
 
-    static void setCSSLogicalEnabled(bool isEnabled) { shared().m_CSSLogicalEnabled = isEnabled; }
-    static bool cssLogicalEnabled() { return shared().m_CSSLogicalEnabled; }
-
     static void setLineHeightUnitsEnabled(bool isEnabled) { shared().m_lineHeightUnitsEnabled = isEnabled; }
     static bool lineHeightUnitsEnabled() { return shared().m_lineHeightUnitsEnabled; }
 
@@ -362,8 +359,6 @@ private:
 #endif
 
     bool m_isReadableByteStreamAPIEnabled { false };
-
-    bool m_CSSLogicalEnabled { false };
 
     // False by default until https://bugs.webkit.org/show_bug.cgi?id=211351 /
     // https://github.com/w3c/csswg-drafts/issues/3257 have been sorted out.

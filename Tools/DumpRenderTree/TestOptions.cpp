@@ -133,7 +133,6 @@ const TestFeatures& TestOptions::defaults()
             { "CSSGradientInterpolationColorSpacesEnabled", true },
             { "CSSGradientPremultipliedAlphaInterpolationEnabled", true },
             { "CSSInputSecurityEnabled", true },
-            { "CSSLogicalEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
             { "CSSTextAlignLastEnabled", true },
             { "CSSTextJustifyEnabled", true },

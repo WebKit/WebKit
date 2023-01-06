@@ -2817,16 +2817,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitMediaCapabilitiesEnabledPreferenceKey];
 }
 
-- (BOOL)cssLogicalEnabled
-{
-    return [self _boolValueForKey:WebKitCSSLogicalEnabledPreferenceKey];
-}
-
-- (void)setCSSLogicalEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCSSLogicalEnabledPreferenceKey];
-}
-
 - (BOOL)lineHeightUnitsEnabled
 {
     return [self _boolValueForKey:WebKitLineHeightUnitsEnabledPreferenceKey];

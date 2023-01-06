@@ -938,18 +938,6 @@ CSSLeadingTrimEnabled:
     WebCore:
       default: false
 
-CSSLogicalEnabled:
-  type: bool
-  status: unstable
-  humanReadableName: "CSS Logical Properties and Values"
-  humanReadableDescription: "Enable CSS Logical Properties and Values"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 CSSMarginTrimEnabled:
   type: bool
   status: testable
