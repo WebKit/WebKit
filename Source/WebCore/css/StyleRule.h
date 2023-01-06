@@ -40,6 +40,7 @@ namespace WebCore {
 
 class CSSRule;
 class CSSGroupingRule;
+class CSSStyleRule;
 class CSSStyleSheet;
 class MutableStyleProperties;
 class StyleRuleKeyframe;
@@ -76,6 +77,7 @@ public:
 
     Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet& parentSheet) const;
     Ref<CSSRule> createCSSOMWrapper(CSSGroupingRule& parentRule) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSStyleRule& parentRule) const;
 
     // This is only needed to support getMatchedCSSRules.
     Ref<CSSRule> createCSSOMWrapper() const;
@@ -92,7 +94,7 @@ private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
 
-    Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSGroupingRule* parentRule) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
 
     unsigned m_type : 5; // StyleRuleType
 

@@ -186,3 +186,23 @@ PASS: Setting text should succeed.
 PASS: Text should change.
 PASS: Text should change on the same grouping attached to a different rule.
 
+-- Running test case: CSS.setGroupingHeaderText.StyleRule
+PASS: Should have 2 authored rule.
+PASS: Should find grouping of type 'style-rule'.
+Setting text to '#test, #test2'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+Setting text to '#test {} #test'.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to ''.
+PASS: Setting text should fail.
+PASS: Text should not change.
+PASS: Text should not change on the same grouping attached to a different rule.
+Setting text to '#test'.
+PASS: Setting text should succeed.
+PASS: Text should change.
+PASS: Text should change on the same grouping attached to a different rule.
+

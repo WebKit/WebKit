@@ -1,0 +1,33 @@
+Tests for the CSS.getMatchedStyleForNode command and container rule groups.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.NestingStyleGrouping
+-- Running test case: CSS.getMatchedStyleForNode.NestingStyleGrouping.NormalProperty
+PASS: Should have 1 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#outerA".
+PASS: "color" property value should be "red".
+PASS: Rule should have no groupings.
+
+-- Running test case: CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand
+PASS: Should have 2 authored rules.
+- Testing rule #0
+PASS: Selector text should be ".innerA".
+PASS: "color" property value should be "green".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "style-rule".
+PASS: Grouping 0 should have a text of "#outerA".
+- Testing rule #1
+PASS: Selector text should be "#outerA".
+PASS: "color" property value should be "red".
+PASS: Rule should have no groupings.
+
+-- Running test case: CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand
+PASS: Should have 1 authored rules.
+- Testing rule #0
+PASS: Selector text should be ".outer:not(&)".
+PASS: "color" property value should be "blue".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "style-rule".
+PASS: Grouping 0 should have a text of "#outerA".
+

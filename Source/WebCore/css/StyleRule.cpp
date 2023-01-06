@@ -65,6 +65,11 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSGroupingRule& parentRule) cons
     return createCSSOMWrapper(nullptr, &parentRule);
 }
 
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleRule& parentRule) const
+{
+    return createCSSOMWrapper(nullptr, &parentRule);
+}
+
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper() const
 {
     return createCSSOMWrapper(nullptr, nullptr);
@@ -141,7 +146,7 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     });
 }
 
-Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSGroupingRule* parentRule) const
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
     // FIXME: const_cast is required here because a wrapper for a style rule can be used to *modify* the style rule's selector; use of const in the style system is thus inaccurate.
     auto wrapper = const_cast<StyleRuleBase&>(*this).visitDerived(WTF::makeVisitor(

@@ -26,6 +26,7 @@
 
 namespace WebCore {
 
+class CSSRuleList;
 class CSSStyleDeclaration;
 class DeclaredStylePropertyMap;
 class StylePropertyMap;
@@ -46,6 +47,10 @@ public:
     // FIXME: Not CSSOM. Remove.
     StyleRule& styleRule() const { return m_styleRule.get(); }
 
+    CSSRuleList& cssRules() const;
+    unsigned length() const;
+    CSSRule* item(unsigned index) const;
+
     StylePropertyMap& styleMap();
 
 private:
@@ -60,6 +65,9 @@ private:
     Ref<StyleRule> m_styleRule;
     Ref<DeclaredStylePropertyMap> m_styleMap;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+
+    mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
+    mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore

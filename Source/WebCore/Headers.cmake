@@ -653,8 +653,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h
     css/parser/CSSParserMode.h
+    css/parser/CSSParserSelector.h
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
+    css/parser/CSSSelectorParser.h
 
     css/query/GenericMediaQueryTypes.h
     css/query/MediaQuery.h

@@ -330,7 +330,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             let grouping = groupings[i];
             let groupingTypeElement = this._groupingsContainerElement.appendChild(document.createElement("div"));
             groupingTypeElement.classList.add("grouping");
-            groupingTypeElement.textContent = grouping.prefix + " ";
+
+            let prefix = grouping.prefix;
+            if (prefix)
+                groupingTypeElement.textContent = prefix + " ";
 
             let groupingTextElement = groupingTypeElement.appendChild(document.createElement("span"));
             groupingTextElement.textContent = grouping.text ?? "";

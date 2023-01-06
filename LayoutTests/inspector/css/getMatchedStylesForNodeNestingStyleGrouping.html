@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.NestingStyleGrouping");
+
+    function expectRuleAtIndex(rules, index, {selectorText, colorPropertyValue, groupings})
+    {
+        InspectorTest.log(`- Testing rule #${index}`);
+
+        let rule = rules[index];
+        InspectorTest.expectEqual(rule.selectorText, selectorText, `Selector text should be "${selectorText}".`);
+        InspectorTest.expectEqual(rule.style.propertyForName("color").value, colorPropertyValue, `"color" property value should be "${colorPropertyValue}".`);
+
+        if (!groupings) {
+            InspectorTest.expectEmpty(rule.groupings, "Rule should have no groupings.");
+            return;
+        }
+
+        InspectorTest.expectEqual(rule.groupings.length, groupings.length, `Rule should have ${groupings.length} grouping(s).`);
+
+        for (let i = 0; i < groupings.length; ++i) {
+            InspectorTest.expectEqual(rule.groupings[i].type, groupings[i].type, `Grouping ${i} should have a type of "${groupings[i].type}".`);
+
+            if (groupings[i].text)
+                InspectorTest.expectEqual(rule.groupings[i].text, groupings[i].text, `Grouping ${i} should have a text of "${groupings[i].text}".`);
+            else
+                InspectorTest.expectNull(rule.groupings[i].text, `Grouping ${i} should not have any text.`);
+        }
+    }
+
+    function addTestCase({name, description, selector, expectedAuthoredRuleCount, authoredRulesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '#item'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refresh();
+
+                let flatInheritedRules = domNodeStyles.inheritedRules.flatMap((inheritedRuleInfo) => inheritedRuleInfo.matchedRules);
+
+                let authoredRules = [...domNodeStyles.matchedRules, ...flatInheritedRules].filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, expectedAuthoredRuleCount, `Should have ${expectedAuthoredRuleCount} authored rules.`);
+                authoredRulesHandler(authoredRules);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestingStyleGrouping.NormalProperty",
+        description: "Non-nested properties should be visible even when nested style rules are present.",
+        selector: "#outerA",
+        expectedAuthoredRuleCount: 1,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "#outerA",
+                colorPropertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand",
+        description: "Nested rules with an implicit ampersand should have a grouping representing the outer style rule.",
+        selector: "#outerA .innerA",
+        expectedAuthoredRuleCount: 2,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: ".innerA",
+                colorPropertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "#outerA",
+                colorPropertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand",
+        description: "Nested rules with an explicit ampersand should have a grouping representing the outer style rule, even when the outer rule's style does not apply to the element.",
+        selector: "#outerB",
+        expectedAuthoredRuleCount: 1,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: ".outer:not(&)",
+                colorPropertyValue: "blue",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
+                ],
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #outerA {
+        color: red;
+
+        .innerA {
+            color: green;
+        }
+
+        .outer:not(&) {
+            color: blue;
+        }
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command and container rule groups.</p>
+    <div id="outerA" class="outer">
+        <div class="innerA"></div>
+    </div>
+    <div id="outerB" class="outer">
+    </div>
+</body>
+</html>

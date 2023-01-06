@@ -121,6 +121,11 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
         return this._type === WI.CSSGrouping.Type.ContainerRule;
     }
 
+    get isStyle()
+    {
+        return this._type === WI.CSSGrouping.Type.StyleRule;
+    }
+
     get prefix()
     {
         if (this.isSupports)
@@ -131,6 +136,9 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
 
         if (this.isContainer)
             return "@container";
+
+        if (this.isStyle)
+            return null;
 
         console.assert(this.isMedia);
         return "@media";
@@ -146,6 +154,7 @@ WI.CSSGrouping.Type = {
     LayerRule: "layer-rule",
     LayerImportRule: "layer-import-rule",
     ContainerRule: "container-rule",
+    StyleRule: "style-rule",
 };
 
 WI.CSSGrouping.Event = {

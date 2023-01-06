@@ -7,14 +7,14 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("CSS.setGroupingHeaderText");
 
-    function addTestCase({name, description, groupingType, subtestCases})
+    function addTestCase({name, description, selector, groupingType, subtestCases})
     {
         suite.addTestCase({
             name,
             description,
             async test() {
                 let documentNode = await WI.domManager.requestDocument();
-                let nodeId = await documentNode.querySelector("#test");
+                let nodeId = await documentNode.querySelector(selector);
                 let domNode = WI.domManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, `Should find DOM Node for selector '#test'.`);
 
@@ -60,6 +60,7 @@ function test()
     addTestCase({
         name: "CSS.setGroupingHeaderText.MediaRule",
         description: "@media rules should be mutable and should only accept syntactically correct text.",
+        selector: "#test",
         groupingType: WI.CSSGrouping.Type.MediaRule,
         subtestCases: [
             { text: "not print" },
@@ -78,6 +79,7 @@ function test()
     addTestCase({
         name: "CSS.setGroupingHeaderText.SupportsRule",
         description: "@supports rules should be mutable and should only accept syntactically correct text.",
+        selector: "#test",
         groupingType: WI.CSSGrouping.Type.SupportsRule,
         subtestCases: [
             { text: "(color: purple)" },
@@ -98,6 +100,7 @@ function test()
     addTestCase({
         name: "CSS.setGroupingHeaderText.LayerRule",
         description: "@layer rules should be mutable and should only accept syntactically correct text.",
+        selector: "#test",
         groupingType: WI.CSSGrouping.Type.LayerRule,
         subtestCases: [
             { text: "howdy" },
@@ -112,6 +115,7 @@ function test()
     addTestCase({
         name: "CSS.setGroupingHeaderText.ContainerRule",
         description: "@container rules should be mutable and should only accept syntactically correct text.",
+        selector: "#test",
         groupingType: WI.CSSGrouping.Type.ContainerRule,
         subtestCases: [
             { text: "name (min-width: 42px)" },
@@ -123,6 +127,18 @@ function test()
             { text: "invalidkeyword, (max-width: 9999px)", expectsFailure: true },
             { text: "(max-width: 9999px), invalidkeyword", expectsFailure: true },
             { text: "(min-width:1px) {} @container(min-width:1px)", expectsFailure: true },
+            { text: "", expectsFailure: true },
+        ],
+    });
+
+    addTestCase({
+        name: "CSS.setGroupingHeaderText.StyleRule",
+        description: "Parent style rules for a nested style rule should be mutable and should only accept syntactically correct text.",
+        selector: "#nested",
+        groupingType: WI.CSSGrouping.Type.StyleRule,
+        subtestCases: [
+            { text: "#test, #test2" },
+            { text: "#test {} #test", expectsFailure: true },
             { text: "", expectsFailure: true },
         ],
     });
@@ -141,6 +157,14 @@ function test()
                 @container (min-width: 1px) {
                     #test {
                         color: lawngreen;
+
+                        #nested {
+                            color: rebeccapurple;
+                        }
+
+                        .nested {
+                            color: seagreen;
+                        }
                     }
 
                     .test {
@@ -154,6 +178,8 @@ function test()
 </head>
 <body onload="runTest()">
     <p>Tests for the CSS.setGroupingHeaderText command.</p>
-    <div id="test" class="test"></div>
+    <div id="test" class="test">
+        <div id="nested" class="nested"></div>
+    </div>
 </body>
 </html>

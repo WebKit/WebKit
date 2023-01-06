@@ -23,6 +23,7 @@
 #include "CSSStyleRule.h"
 
 #include "CSSParser.h"
+#include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "DeclaredStylePropertyMap.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -45,6 +46,7 @@ CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_styleRule(styleRule)
     , m_styleMap(DeclaredStylePropertyMap::create(*this))
+    , m_childRuleCSSOMWrappers(styleRule.nestedRules().size())
 {
 }
 
@@ -150,6 +152,33 @@ void CSSStyleRule::reattach(StyleRuleBase& rule)
     m_styleRule = downcast<StyleRule>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
+}
+
+unsigned CSSStyleRule::length() const
+{
+    return m_styleRule->nestedRules().size();
+}
+
+CSSRule* CSSStyleRule::item(unsigned index) const
+{
+    if (index >= length())
+        return nullptr;
+
+    ASSERT(m_childRuleCSSOMWrappers.size() == m_styleRule->nestedRules().size());
+
+    auto& rule = m_childRuleCSSOMWrappers[index];
+    if (!rule)
+        rule = m_styleRule->nestedRules()[index]->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
+
+    return rule.get();
+}
+
+CSSRuleList& CSSStyleRule::cssRules() const
+{
+    if (!m_ruleListCSSOMWrapper)
+        m_ruleListCSSOMWrapper = makeUnique<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this));
+
+    return *m_ruleListCSSOMWrapper;
 }
 
 } // namespace WebCore
