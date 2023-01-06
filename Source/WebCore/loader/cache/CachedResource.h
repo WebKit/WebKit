@@ -303,7 +303,7 @@ public:
 
 protected:
     // CachedResource constructor that may be used when the CachedResource can already be filled with response data.
-    CachedResource(const URL&, Type, PAL::SessionID, const CookieJar*);
+    CachedResource(const ScopedURL&, Type, PAL::SessionID, const CookieJar*);
 
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);

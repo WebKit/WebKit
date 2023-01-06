@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-SharedWorkerScriptLoader::SharedWorkerScriptLoader(URL&& url, SharedWorker& worker, WorkerOptions&& options)
+SharedWorkerScriptLoader::SharedWorkerScriptLoader(ScopedURL&& url, SharedWorker& worker, WorkerOptions&& options)
     : m_options(WTFMove(options))
     , m_worker(worker)
     , m_loader(WorkerScriptLoader::create())

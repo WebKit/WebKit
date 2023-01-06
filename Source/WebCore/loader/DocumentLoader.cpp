@@ -2491,7 +2491,7 @@ ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler 
     return handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
 }
 
-void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData& substituteData)
+void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const ScopedURL& blockedPageURL, SubstituteData& substituteData)
 {
     frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
 }

@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-IconLoader::IconLoader(DocumentLoader& documentLoader, const URL& url)
+IconLoader::IconLoader(DocumentLoader& documentLoader, const ScopedURL& url)
     : m_documentLoader(documentLoader)
     , m_url(url)
 {

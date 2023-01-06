@@ -36,6 +36,7 @@
 #include "NetworkProcess.h"
 #include "PreconnectTask.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/ScopedURL.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/NeverDestroyed.h>

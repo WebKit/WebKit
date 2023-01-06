@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-URLKeepingBlobAlive::URLKeepingBlobAlive(URL&& url)
+URLKeepingBlobAlive::URLKeepingBlobAlive(ScopedURL&& url)
     : m_url(WTFMove(url))
 {
     registerBlobURLHandleIfNecessary();
@@ -47,7 +47,7 @@ URLKeepingBlobAlive::~URLKeepingBlobAlive()
     unregisterBlobURLHandleIfNecessary();
 }
 
-URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URL&& url)
+URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(ScopedURL&& url)
 {
     unregisterBlobURLHandleIfNecessary();
     m_url = WTFMove(url);
@@ -72,7 +72,7 @@ URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
         return *this;
 
     unregisterBlobURLHandleIfNecessary();
-    m_url = std::exchange(other.m_url, URL { });
+    m_url = std::exchange(other.m_url, ScopedURL { });
     return *this;
 }
 

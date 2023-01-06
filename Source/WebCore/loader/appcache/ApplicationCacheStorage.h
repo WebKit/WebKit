@@ -70,10 +70,10 @@ public:
     WEBCORE_EXPORT bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
     bool checkOriginQuota(ApplicationCacheGroup*, ApplicationCache* oldCache, ApplicationCache* newCache, int64_t& totalSpaceNeeded);
 
-    ApplicationCacheGroup* cacheGroupForURL(const URL&); // Cache to load a main resource from.
-    ApplicationCacheGroup* fallbackCacheGroupForURL(const URL&); // Cache that has a fallback entry to load a main resource from if normal loading fails.
+    ApplicationCacheGroup* cacheGroupForURL(const ScopedURL&); // Cache to load a main resource from.
+    ApplicationCacheGroup* fallbackCacheGroupForURL(const ScopedURL&); // Cache that has a fallback entry to load a main resource from if normal loading fails.
 
-    ApplicationCacheGroup* findOrCreateCacheGroup(const URL& manifestURL);
+    ApplicationCacheGroup* findOrCreateCacheGroup(const ScopedURL& manifestURL);
     void cacheGroupDestroyed(ApplicationCacheGroup&);
     void cacheGroupMadeObsolete(ApplicationCacheGroup&);
 
@@ -106,7 +106,7 @@ private:
     WEBCORE_EXPORT ApplicationCacheStorage(const String& cacheDirectory, const String& flatFileSubdirectoryName);
 
     RefPtr<ApplicationCache> loadCache(unsigned storageID);
-    ApplicationCacheGroup* loadCacheGroup(const URL& manifestURL);
+    ApplicationCacheGroup* loadCacheGroup(const ScopedURL& manifestURL);
     std::optional<Vector<URL>> manifestURLs();
     ApplicationCacheGroup* findInMemoryCacheGroup(const URL& manifestURL) const;
     bool deleteCacheGroup(const String& manifestURL);

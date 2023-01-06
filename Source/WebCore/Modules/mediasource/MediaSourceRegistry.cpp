@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSource.h"
+#include "ScopedURL.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -62,7 +63,7 @@ void MediaSourceRegistry::registerURL(const ScriptExecutionContext& context, con
     m_mediaSources.add(urlString, std::pair { RefPtr { &source }, context.identifier() });
 }
 
-void MediaSourceRegistry::unregisterURL(const URL& url)
+void MediaSourceRegistry::unregisterURL(const ScopedURL& url)
 {
     // MediaSource objects are not exposed to workers.
     if (!isMainThread())

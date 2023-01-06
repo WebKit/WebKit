@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "HTMLParserIdioms.h"
 #include "PolicyContainer.h"
+#include "ScopedURL.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include <wtf/text/StringBuilder.h>
@@ -59,7 +60,7 @@ void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPo
     m_contentSecurityPolicy = WTFMove(contentSecurityPolicy);
 }
 
-bool SecurityContext::isSecureTransitionTo(const URL& url) const
+bool SecurityContext::isSecureTransitionTo(const ScopedURL& url) const
 {
     // If we haven't initialized our security origin by now, this is probably
     // a new window created via the API (i.e., that lacks an origin and lacks
@@ -67,7 +68,7 @@ bool SecurityContext::isSecureTransitionTo(const URL& url) const
     if (!haveInitializedSecurityOrigin())
         return true;
 
-    return securityOriginPolicy()->origin().isSameOriginDomain(SecurityOrigin::create(url).get());
+    return securityOrigin()->isSameOriginDomain(SecurityOrigin::create(url).get());
 }
 
 void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource source)

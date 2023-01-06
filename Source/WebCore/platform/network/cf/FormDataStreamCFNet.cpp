@@ -32,6 +32,7 @@
 #include "BlobRegistryImpl.h"
 #include "FormData.h"
 #include "PlatformStrategies.h"
+#include "ScopedURL.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/Assertions.h>

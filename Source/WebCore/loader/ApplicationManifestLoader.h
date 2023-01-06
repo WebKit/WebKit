@@ -30,6 +30,7 @@
 #include "ApplicationManifest.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ScopedURL.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
 
@@ -43,7 +44,7 @@ WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 
-    ApplicationManifestLoader(DocumentLoader&, const URL&, bool);
+    ApplicationManifestLoader(DocumentLoader&, const ScopedURL&, bool);
     virtual ~ApplicationManifestLoader();
 
     bool startLoading();
@@ -56,7 +57,7 @@ private:
 
     DocumentLoader& m_documentLoader;
     std::optional<ApplicationManifest> m_processedManifest;
-    URL m_url;
+    ScopedURL m_url;
     bool m_useCredentials;
     CachedResourceHandle<CachedApplicationManifest> m_resource;
 };

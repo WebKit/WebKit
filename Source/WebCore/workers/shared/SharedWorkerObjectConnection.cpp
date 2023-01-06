@@ -47,7 +47,7 @@ SharedWorkerObjectConnection::SharedWorkerObjectConnection() = default;
 
 SharedWorkerObjectConnection::~SharedWorkerObjectConnection() = default;
 
-void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WorkerOptions&& workerOptions, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&& completionHandler)
+void SharedWorkerObjectConnection::fetchScriptInClient(ScopedURL&& url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WorkerOptions&& workerOptions, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&& completionHandler)
 {
     ASSERT(isMainThread());
 
