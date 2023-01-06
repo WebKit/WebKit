@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-ApplicationCacheGroup::ApplicationCacheGroup(Ref<ApplicationCacheStorage>&& storage, const URL& manifestURL)
+ApplicationCacheGroup::ApplicationCacheGroup(Ref<ApplicationCacheStorage>&& storage, const ScopedURL& manifestURL)
     : m_storage(WTFMove(storage))
     , m_manifestURL(manifestURL)
     , m_origin(SecurityOrigin::create(manifestURL))
@@ -461,7 +461,7 @@ void ApplicationCacheGroup::update(Frame& frame, ApplicationCacheUpdateOption up
     });
 }
 
-ResourceRequest ApplicationCacheGroup::createRequest(URL&& url, ApplicationCacheResource* resource)
+ResourceRequest ApplicationCacheGroup::createRequest(ScopedURL&& url, ApplicationCacheResource* resource)
 {
     ResourceRequest request { WTFMove(url) };
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());

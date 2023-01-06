@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class ScopedURL;
+
 class PreloadRequest {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -56,7 +58,7 @@ public:
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
-    URL completeURL(Document&);
+    ScopedURL completeURL(Document&);
 
     ASCIILiteral m_initiatorType;
     String m_resourceURL;

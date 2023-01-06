@@ -28,6 +28,7 @@
 
 #include "HTTPParsers.h"
 #include "ResourceResponse.h"
+#include "ScopedURL.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

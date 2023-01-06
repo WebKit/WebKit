@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
+WorkerFontLoadRequest::WorkerFontLoadRequest(ScopedURL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
     : m_url(WTFMove(url))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {

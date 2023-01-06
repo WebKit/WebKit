@@ -20,6 +20,7 @@
 #pragma once
 
 #include "BlobData.h"
+#include "ScopedURL.h"
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
@@ -51,10 +52,10 @@ struct FormDataElement {
         : data(WTFMove(array)) { }
     FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
-    explicit FormDataElement(const URL& blobURL)
+    explicit FormDataElement(const ScopedURL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
 
-    uint64_t lengthInBytes(const Function<uint64_t(const URL&)>&) const;
+    uint64_t lengthInBytes(const Function<uint64_t(const ScopedURL&)>&) const;
     uint64_t lengthInBytes() const;
 
     FormDataElement isolatedCopy() const;
@@ -82,7 +83,7 @@ struct FormDataElement {
     };
 
     struct EncodedBlobData {
-        URL url;
+        ScopedURL url;
 
         bool operator==(const EncodedBlobData& other) const
         {
@@ -158,7 +159,7 @@ public:
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath);
     WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
-    WEBCORE_EXPORT void appendBlob(const URL& blobURL);
+    WEBCORE_EXPORT void appendBlob(const ScopedURL& blobURL);
 
     WEBCORE_EXPORT Vector<uint8_t> flatten() const; // omits files
     String flattenToString() const; // omits files

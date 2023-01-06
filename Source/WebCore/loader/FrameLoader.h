@@ -300,7 +300,7 @@ public:
 
     void loadProgressingStatusChanged();
 
-    const URL& previousURL() const { return m_previousURL; }
+    const ScopedURL& previousURL() const { return m_previousURL; }
 
     WEBCORE_EXPORT void completePageTransitionIfNeeded();
 
@@ -507,7 +507,7 @@ private:
 
     bool m_checkingLoadCompleteForDetachment { false };
 
-    URL m_previousURL;
+    ScopedURL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
 
     bool m_alwaysAllowLocalWebarchive { false };

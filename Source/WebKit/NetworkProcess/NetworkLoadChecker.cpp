@@ -39,6 +39,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/ScopedURL.h>
 #include <wtf/Scope.h>
 
 #define LOAD_CHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)
@@ -47,7 +48,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static inline bool isSameOrigin(const URL& url, const SecurityOrigin* origin)
+static inline bool isSameOrigin(const ScopedURL& url, const SecurityOrigin* origin)
 {
     return url.protocolIsData() || url.protocolIsBlob() || !origin || origin->canRequest(url);
 }

@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class MediaSource;
+class ScopedURL;
 
 class MediaSourceRegistry final : public URLRegistry {
     friend class NeverDestroyed<MediaSourceRegistry>;
@@ -49,7 +50,7 @@ public:
 
     // Registers a blob URL referring to the specified media source.
     void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) final;
-    void unregisterURL(const URL&) final;
+    void unregisterURL(const ScopedURL&) final;
     void unregisterURLsForContext(const ScriptExecutionContext&) final;
     URLRegistrable* lookup(const String&) const final;
 

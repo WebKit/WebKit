@@ -32,9 +32,9 @@
 #import "WebDatabaseQuotaManager.h"
 #import "WebQuotaManager.h"
 #import <WebCore/DatabaseTracker.h>
+#import <WebCore/ScopedURL.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
-#import <wtf/URL.h>
 
 using namespace WebCore;
 
@@ -59,7 +59,7 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    _private = reinterpret_cast<WebSecurityOriginPrivate *>(&SecurityOrigin::create(URL([url absoluteURL])).leakRef());
+    _private = reinterpret_cast<WebSecurityOriginPrivate *>(&SecurityOrigin::create(ScopedURL([url absoluteURL])).leakRef());
     return self;
 }
 

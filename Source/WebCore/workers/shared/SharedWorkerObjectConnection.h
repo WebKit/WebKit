@@ -35,6 +35,7 @@ namespace WebCore {
 
 class MessagePort;
 class ResourceError;
+class ScopedURL;
 class SharedWorkerScriptLoader;
 
 struct SharedWorkerKey;
@@ -53,7 +54,7 @@ public:
 
 protected:
     // IPC messages.
-    WEBCORE_EXPORT void fetchScriptInClient(URL&&, WebCore::SharedWorkerObjectIdentifier, WorkerOptions&&, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
+    WEBCORE_EXPORT void fetchScriptInClient(ScopedURL&&, WebCore::SharedWorkerObjectIdentifier, WorkerOptions&&, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
     WEBCORE_EXPORT void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const ResourceError&);
     WEBCORE_EXPORT void postExceptionToWorkerObject(SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
 

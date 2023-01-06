@@ -40,6 +40,7 @@
 #include "MediaProducer.h"
 #include "MediaUniqueIdentifier.h"
 #include "ReducedResolutionSeconds.h"
+#include "ScopedURL.h"
 #include "TextTrackClient.h"
 #include "VideoTrackClient.h"
 #include "VisibilityChangeClient.h"
@@ -1233,7 +1234,7 @@ private:
     friend class TrackDisplayUpdateScope;
 
     RefPtr<Blob> m_blob;
-    URL m_blobURLForReading;
+    ScopedURL m_blobURLForReading;
     MediaProvider m_mediaProvider;
     WTF::Observer<WebCoreOpaqueRoot()> m_opaqueRootProvider;
 

@@ -40,6 +40,7 @@ class FloatSize;
 class MemoryCache;
 class RenderElement;
 class RenderObject;
+class ScopedURL;
 class SecurityOrigin;
 
 struct Length;
@@ -51,7 +52,7 @@ public:
     CachedImage(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
     CachedImage(Image*, PAL::SessionID, const CookieJar*);
     // Constructor to use for manually cached images.
-    CachedImage(const URL&, Image*, PAL::SessionID, const CookieJar*, const String& domainForCachePartition);
+    CachedImage(const ScopedURL&, Image*, PAL::SessionID, const CookieJar*, const String& domainForCachePartition);
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image() const; // Returns the nullImage() if the image is not available yet.

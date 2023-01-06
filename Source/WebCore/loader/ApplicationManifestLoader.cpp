@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-ApplicationManifestLoader::ApplicationManifestLoader(DocumentLoader& documentLoader, const URL& url, bool useCredentials)
+ApplicationManifestLoader::ApplicationManifestLoader(DocumentLoader& documentLoader, const ScopedURL& url, bool useCredentials)
     : m_documentLoader(documentLoader)
     , m_url(url)
     , m_useCredentials(useCredentials)

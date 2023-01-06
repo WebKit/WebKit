@@ -33,6 +33,7 @@ namespace WebCore {
 
 class ContentFilterUnblockHandler;
 class ResourceError;
+class ScopedURL;
 class SharedBuffer;
 class SubstituteData;
 
@@ -45,7 +46,7 @@ public:
     virtual void dataReceivedThroughContentFilter(const SharedBuffer&, size_t) = 0;
     virtual ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) = 0;
     virtual void cancelMainResourceLoadForContentFilter(const ResourceError&) = 0;
-    virtual void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) = 0;
+    virtual void handleProvisionalLoadFailureFromContentFilter(const ScopedURL& blockedPageURL, SubstituteData&) = 0;
 };
 
 } // namespace WebCore

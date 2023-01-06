@@ -28,9 +28,9 @@
 
 #include "FontLoadRequest.h"
 #include "ResourceLoaderOptions.h"
+#include "ScopedURL.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoaderClient.h"
-#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -44,13 +44,13 @@ struct FontCustomPlatformData;
 class WorkerFontLoadRequest : public FontLoadRequest, public ThreadableLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerFontLoadRequest(URL&&, LoadedFromOpaqueSource);
+    WorkerFontLoadRequest(ScopedURL&&, LoadedFromOpaqueSource);
     ~WorkerFontLoadRequest() = default;
 
     void load(WorkerGlobalScope&);
 
 private:
-    const URL& url() const final { return m_url; }
+    const ScopedURL& url() const final { return m_url; }
     bool isPending() const final { return !m_isLoading && !m_errorOccurred && !m_data; }
     bool isLoading() const final { return m_isLoading; }
     bool errorOccurred() const final { return m_errorOccurred; }
@@ -67,7 +67,7 @@ private:
     void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
     void didFail(const ResourceError&) final;
 
-    URL m_url;
+    ScopedURL m_url;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource;
 
     bool m_isLoading { false };

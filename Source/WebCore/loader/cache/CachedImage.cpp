@@ -76,7 +76,7 @@ CachedImage::CachedImage(Image* image, PAL::SessionID sessionID, const CookieJar
 {
 }
 
-CachedImage::CachedImage(const URL& url, Image* image, PAL::SessionID sessionID, const CookieJar* cookieJar, const String& domainForCachePartition)
+CachedImage::CachedImage(const ScopedURL& url, Image* image, PAL::SessionID sessionID, const CookieJar* cookieJar, const String& domainForCachePartition)
     : CachedResource(url, Type::ImageResource, sessionID, cookieJar)
     , m_image(image)
     , m_updateImageDataCount(0)

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-URL PreloadRequest::completeURL(Document& document)
+ScopedURL PreloadRequest::completeURL(Document& document)
 {
     return document.completeURL(m_resourceURL, m_baseURL.isEmpty() ? document.baseURL() : m_baseURL);
 }

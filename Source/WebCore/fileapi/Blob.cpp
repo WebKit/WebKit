@@ -40,6 +40,7 @@
 #include "PolicyContainer.h"
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
+#include "ScopedURL.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
@@ -58,7 +59,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Blob);
 class BlobURLRegistry final : public URLRegistry {
 public:
     void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) final;
-    void unregisterURL(const URL&) final;
+    void unregisterURL(const ScopedURL&) final;
     void unregisterURLsForContext(const ScriptExecutionContext&) final;
 
     static URLRegistry& registry();
@@ -77,7 +78,7 @@ void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const U
     ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.policyContainer(), publicURL, static_cast<Blob&>(blob).url());
 }
 
-void BlobURLRegistry::unregisterURL(const URL& url)
+void BlobURLRegistry::unregisterURL(const ScopedURL& url)
 {
     bool isURLRegistered = false;
     {

@@ -44,6 +44,7 @@ namespace WebCore {
 class ResourceHandle;
 class ResourceHandleClient;
 class ResourceRequest;
+class ScopedURL;
 class ThreadSafeDataBuffer;
 struct PolicyContainer;
 
@@ -53,24 +54,24 @@ class WEBCORE_EXPORT BlobRegistryImpl {
 public:
     virtual ~BlobRegistryImpl();
 
-    BlobData* getBlobDataFromURL(const URL&) const;
+    BlobData* getBlobDataFromURL(const ScopedURL&) const;
 
     Ref<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
-    void writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler);
+    void writeBlobToFilePath(const ScopedURL& blobURL, const String& path, Function<void(bool success)>&& completionHandler);
 
     void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
-    void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType);
-    void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType);
-    void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&);
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const PolicyContainer&);
-    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType);
-    void unregisterBlobURL(const URL&);
+    void registerFileBlobURL(const ScopedURL&, Ref<BlobDataFileReference>&&, const String& contentType);
+    void registerBlobURL(const ScopedURL&, Vector<BlobPart>&&, const String& contentType);
+    void registerBlobURL(const ScopedURL&, const ScopedURL& srcURL, const PolicyContainer&);
+    void registerBlobURLOptionallyFileBacked(const ScopedURL&, const ScopedURL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const PolicyContainer&);
+    void registerBlobURLForSlice(const ScopedURL&, const ScopedURL& srcURL, long long start, long long end, const String& contentType);
+    void unregisterBlobURL(const ScopedURL&);
 
-    void registerBlobURLHandle(const URL&);
-    void unregisterBlobURLHandle(const URL&);
+    void registerBlobURLHandle(const ScopedURL&);
+    void unregisterBlobURLHandle(const ScopedURL&);
 
-    unsigned long long blobSize(const URL&);
+    unsigned long long blobSize(const ScopedURL&);
 
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
@@ -80,7 +81,7 @@ public:
     };
 
     bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);
-    Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&) const;
+    Vector<RefPtr<BlobDataFileReference>> filesInBlob(const ScopedURL&) const;
 
     void setFileDirectory(String&&);
 

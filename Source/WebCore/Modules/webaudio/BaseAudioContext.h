@@ -68,6 +68,7 @@ class MediaElementAudioSourceNode;
 class OscillatorNode;
 class PannerNode;
 class PeriodicWave;
+class ScopedURL;
 class ScriptProcessorNode;
 class SecurityOrigin;
 class StereoPannerNode;
@@ -123,7 +124,7 @@ public:
 
     AudioWorklet& audioWorklet() { return m_worklet.get(); }
 
-    bool wouldTaintOrigin(const URL&) const;
+    bool wouldTaintOrigin(const ScopedURL&) const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
     ExceptionOr<Ref<AudioBufferSourceNode>> createBufferSource();

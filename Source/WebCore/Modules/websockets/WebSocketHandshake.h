@@ -34,6 +34,7 @@
 #include "CookieRequestHeaderFieldProxy.h"
 #include <wtf/URL.h>
 #include "ResourceResponse.h"
+#include "ScopedURL.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"
 #include <wtf/WeakPtr.h>
@@ -49,7 +50,7 @@ public:
     enum Mode {
         Incomplete, Normal, Failed, Connected
     };
-    WEBCORE_EXPORT WebSocketHandshake(const URL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
+    WEBCORE_EXPORT WebSocketHandshake(const ScopedURL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
     WEBCORE_EXPORT ~WebSocketHandshake();
 
     const URL& url() const;
@@ -95,7 +96,7 @@ private:
     void processHeaders();
     bool checkResponseHeaders();
 
-    URL m_url;
+    ScopedURL m_url;
     String m_clientProtocol;
     bool m_secure;
 

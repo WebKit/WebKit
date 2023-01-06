@@ -34,6 +34,7 @@
 #include "OriginAccessEntry.h"
 #include "PublicSuffix.h"
 #include "RuntimeApplicationChecks.h"
+#include "ScopedURL.h"
 #include "SecurityPolicy.h"
 #include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
@@ -84,7 +85,7 @@ URL SecurityOrigin::extractInnerURL(const URL& url)
     return URL { PAL::decodeURLEscapeSequences(url.path()) };
 }
 
-static RefPtr<SecurityOrigin> getCachedOrigin(const URL& url)
+static RefPtr<SecurityOrigin> getCachedOrigin(const ScopedURL& url)
 {
     if (url.protocolIsBlob())
         return ThreadableBlobRegistry::getCachedOrigin(url);
@@ -175,7 +176,7 @@ bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
     return shouldTreatAsPotentiallyTrustworthy(url.protocol(), url.host());
 }
 
-SecurityOrigin::SecurityOrigin(const URL& url)
+SecurityOrigin::SecurityOrigin(const ScopedURL& url)
     : m_data(SecurityOriginData::fromURL(url))
     , m_isLocal(LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(m_data.protocol))
 {
@@ -215,7 +216,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
 {
 }
 
-Ref<SecurityOrigin> SecurityOrigin::create(const URL& url)
+Ref<SecurityOrigin> SecurityOrigin::create(const ScopedURL& url)
 {
     if (RefPtr<SecurityOrigin> cachedOrigin = getCachedOrigin(url))
         return cachedOrigin.releaseNonNull();
@@ -229,6 +230,14 @@ Ref<SecurityOrigin> SecurityOrigin::create(const URL& url)
     return adoptRef(*new SecurityOrigin(url));
 }
 
+Ref<SecurityOrigin> SecurityOrigin::emptyOrigin()
+{
+    static SecurityOrigin* s_emptySecurityOrigin { nullptr };
+    if (!s_emptySecurityOrigin)
+        s_emptySecurityOrigin = new SecurityOrigin();
+    return *s_emptySecurityOrigin;
+}
+
 Ref<SecurityOrigin> SecurityOrigin::createOpaque()
 {
     Ref<SecurityOrigin> origin(adoptRef(*new SecurityOrigin));
@@ -236,7 +245,7 @@ Ref<SecurityOrigin> SecurityOrigin::createOpaque()
     return origin;
 }
 
-Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL& url, const String& filePath)
+Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const ScopedURL& url, const String& filePath)
 {
     ASSERT(!url.isLocalFile());
     auto securityOrigin = SecurityOrigin::create(url);
@@ -255,7 +264,7 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
     m_domain = newDomain.convertToASCIILowercase();
 }
 
-bool SecurityOrigin::isSecure(const URL& url)
+bool SecurityOrigin::isSecure(const ScopedURL& url)
 {
     // Invalid URLs are secure, as are URLs which have a secure protocol.
     if (!url.isValid() || LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol()))
@@ -323,7 +332,7 @@ bool SecurityOrigin::passesFileCheck(const SecurityOrigin& other) const
     return !m_enforcesFilePathSeparation && !other.m_enforcesFilePathSeparation;
 }
 
-bool SecurityOrigin::canRequest(const URL& url) const
+bool SecurityOrigin::canRequest(const ScopedURL& url) const
 {
     if (m_universalAccess)
         return true;
@@ -383,7 +392,7 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
         || startsWithLettersIgnoringASCIICase(string, "feedsearch:https:"_s);
 }
 
-bool SecurityOrigin::canDisplay(const URL& url) const
+bool SecurityOrigin::canDisplay(const ScopedURL& url) const
 {
     ASSERT(!isInNetworkProcess());
     if (m_universalAccess)

@@ -1991,7 +1991,7 @@ void NetworkResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore
     RELEASE_ASSERT(m_contentFilter);
 }
 
-void NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData& substituteData)
+void NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter(const ScopedURL& blockedPageURL, WebCore::SubstituteData& substituteData)
 {
     send(Messages::WebResourceLoader::ContentFilterDidBlockLoad(m_unblockHandler, m_unblockRequestDeniedScript, m_contentFilter->blockedError(), blockedPageURL, substituteData));
 }

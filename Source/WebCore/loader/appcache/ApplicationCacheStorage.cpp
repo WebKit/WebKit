@@ -91,7 +91,7 @@ static unsigned urlHostHash(const URL& url)
     return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.characters16(), host.length()));
 }
 
-ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manifestURL)
+ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const ScopedURL& manifestURL)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
@@ -126,7 +126,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manife
     return &group;
 }    
 
-ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const URL& manifestURL)
+ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const ScopedURL& manifestURL)
 {
     ASSERT(!manifestURL.hasFragmentIdentifier());
 
@@ -180,7 +180,7 @@ void ApplicationCacheStorage::loadManifestHostHashes()
         m_cacheHostSet.add(static_cast<unsigned>(statement->columnInt64(0)));
 }    
 
-ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
+ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const ScopedURL& url)
 {
     ASSERT(!url.hasFragmentIdentifier());
     
@@ -254,7 +254,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
     return nullptr;
 }
 
-ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const URL& url)
+ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const ScopedURL& url)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 

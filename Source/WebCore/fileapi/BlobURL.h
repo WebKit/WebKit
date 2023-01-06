@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class ScopedURL;
 class SecurityOrigin;
 
 // Blob URLs are of the form
@@ -50,8 +51,8 @@ public:
     static URL createPublicURL(SecurityOrigin*);
     static URL createInternalURL();
 
-    static URL getOriginURL(const URL&);
-    static bool isSecureBlobURL(const URL&);
+    static URL getOriginURL(const ScopedURL&);
+    static bool isSecureBlobURL(const ScopedURL&);
 
 private:
     static URL createBlobURL(StringView originString);

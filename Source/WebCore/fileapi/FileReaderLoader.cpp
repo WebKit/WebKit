@@ -79,7 +79,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     start(scriptExecutionContext, blob.url());
 }
 
-void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, const URL& blobURL)
+void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, const ScopedURL& blobURL)
 {
     ASSERT(scriptExecutionContext);
 

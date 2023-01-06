@@ -175,7 +175,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const ImageBitmap* imageBitmap)
     return !imageBitmap->originClean();
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
+bool CanvasRenderingContext::wouldTaintOrigin(const ScopedURL& url)
 {
     if (!m_canvas.originClean())
         return false;
@@ -186,7 +186,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
     return !m_canvas.securityOrigin()->canRequest(url);
 }
 
-void CanvasRenderingContext::checkOrigin(const URL& url)
+void CanvasRenderingContext::checkOrigin(const ScopedURL& url)
 {
     if (wouldTaintOrigin(url))
         m_canvas.setOriginTainted();

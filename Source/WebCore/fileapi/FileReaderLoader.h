@@ -32,6 +32,7 @@
 
 #include "BlobResourceHandle.h"
 #include "ExceptionCode.h"
+#include "ScopedURL.h"
 #include "ThreadableLoaderClient.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
@@ -67,7 +68,7 @@ public:
     ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);
-    void start(ScriptExecutionContext*, const URL&);
+    void start(ScriptExecutionContext*, const ScopedURL&);
     WEBCORE_EXPORT void cancel();
 
     // ThreadableLoaderClient
@@ -104,7 +105,7 @@ private:
     PAL::TextEncoding m_encoding;
     String m_dataType;
 
-    URL m_urlForReading;
+    ScopedURL m_urlForReading;
     RefPtr<ThreadableLoader> m_loader;
 
     RefPtr<JSC::ArrayBuffer> m_rawData;

@@ -6608,7 +6608,7 @@ bool Document::isContextThread() const
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
-static bool isURLPotentiallyTrustworthy(const URL& url)
+static bool isURLPotentiallyTrustworthy(const ScopedURL& url)
 {
     if (url.protocolIsAbout())
         return url.isAboutBlank() || url.isAboutSrcDoc();

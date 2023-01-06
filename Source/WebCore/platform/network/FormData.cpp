@@ -128,7 +128,7 @@ unsigned FormData::imageOrMediaFilesCount() const
     return imageOrMediaFilesCount;
 }
 
-uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
+uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const ScopedURL&)>& blobSize) const
 {
     return WTF::switchOn(data,
         [] (const Vector<uint8_t>& bytes) {
@@ -187,7 +187,7 @@ void FormData::appendFileRange(const String& filename, long long start, long lon
     m_lengthInBytes = std::nullopt;
 }
 
-void FormData::appendBlob(const URL& blobURL)
+void FormData::appendBlob(const ScopedURL& blobURL)
 {
     m_elements.append(FormDataElement(blobURL));
     m_lengthInBytes = std::nullopt;
@@ -296,7 +296,7 @@ String FormData::flattenToString() const
     return PAL::Latin1Encoding().decode(bytes.data(), bytes.size());
 }
 
-static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const URL& url)
+static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const ScopedURL& url)
 {
     if (!blobRegistry) {
         LOG_ERROR("Tried to resolve a blob without a usable registry");

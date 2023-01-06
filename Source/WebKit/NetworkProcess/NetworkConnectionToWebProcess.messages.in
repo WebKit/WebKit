@@ -48,16 +48,16 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     UnsubscribeFromCookieChangeNotifications(HashSet<String> hosts)
 #endif
 
-    RegisterFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
-    RegisterBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
-    RegisterBlobURLFromURL(URL url, URL srcURL, struct WebCore::PolicyContainer policyContainer)
-    RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
-    RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
-    UnregisterBlobURL(URL url)
-    BlobSize(URL url) -> (uint64_t resultSize) Synchronous
+    RegisterFileBlobURL(WebCore::ScopedURL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterBlobURL(WebCore::ScopedURL url, Vector<WebCore::BlobPart> blobParts, String contentType)
+    RegisterBlobURLFromURL(WebCore::ScopedURL url, WebCore::ScopedURL srcURL, struct WebCore::PolicyContainer policyContainer)
+    RegisterBlobURLOptionallyFileBacked(WebCore::ScopedURL url, WebCore::ScopedURL srcURL, String fileBackedPath, String contentType)
+    RegisterBlobURLForSlice(WebCore::ScopedURL url, WebCore::ScopedURL srcURL, int64_t start, int64_t end, String contentType)
+    UnregisterBlobURL(WebCore::ScopedURL url)
+    BlobSize(WebCore::ScopedURL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
-    RegisterBlobURLHandle(URL url);
-    UnregisterBlobURLHandle(URL url);
+    RegisterBlobURLHandle(WebCore::ScopedURL url);
+    UnregisterBlobURLHandle(WebCore::ScopedURL url);
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
