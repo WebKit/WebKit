@@ -90,7 +90,9 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , subgridEnabled { document.settings().subgridEnabled() }
     , masonryEnabled { document.settings().masonryEnabled() }
     , cssNestingEnabled { document.settings().cssNestingEnabled() }
+#if ENABLE(CSS_PAINTING_API)
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
+#endif
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
