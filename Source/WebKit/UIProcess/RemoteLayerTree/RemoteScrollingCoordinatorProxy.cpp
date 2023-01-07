@@ -288,7 +288,6 @@ void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(M
 
 void RemoteScrollingCoordinatorProxy::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
-    ALWAYS_LOG_WITH_STREAM(stream << "  RemoteScrollingCoordinatorProxy::receivedWheelEventWithPhases " << phase << " momentumPhase " << momentumPhase);
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ReceivedWheelEventWithPhases(phase, momentumPhase));
 }
 
