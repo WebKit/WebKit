@@ -591,6 +591,10 @@
 (allow mach-lookup 
     (global-name "com.apple.mobileasset.autoasset"))
 
+;; <rdar://problem/103895412>
+(allow file-read*
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_WebContentRestrictions"))
+
 ;; Access to ContainerManager
 (allow mach-lookup 
     (global-name
