@@ -1,0 +1,4 @@
+
+PASS Permanent redirections should not reuse a previous custom header - request without custom header
+PASS Permanent redirections should not allow reusing custom header - request with custom header
+

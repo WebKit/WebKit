@@ -108,6 +108,9 @@ private:
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
 #endif
     bool isAlwaysOnLoggingAllowed() const;
+#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
+    void applyBasicAuthorizationHeader(WebCore::ResourceRequest&, const WebCore::Credential&);
+#endif
 
     WeakPtr<SessionWrapper> m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;

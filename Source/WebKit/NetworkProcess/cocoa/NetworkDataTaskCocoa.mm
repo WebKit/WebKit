@@ -88,9 +88,12 @@ void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried
 }
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
-static void applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, const WebCore::Credential& credential)
+void NetworkDataTaskCocoa::applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, const WebCore::Credential& credential)
 {
-    request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, credential.serializationForBasicAuthorizationHeader());
+    auto value = credential.serializationForBasicAuthorizationHeader();
+    if (m_client)
+        m_client->setRequestAuthorizationHeader(value);
+    request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, WTFMove(value));
 }
 #endif
 
@@ -372,6 +375,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (!m_initialCredential.isEmpty() && !request.hasHTTPHeaderField(WebCore::HTTPHeaderName::Authorization)) {
         // FIXME: Support Digest authentication, and Proxy-Authorization.
         applyBasicAuthorizationHeader(request, m_initialCredential);
+        client.setRequestAuthorizationHeader(request.httpHeaderField(WebCore::HTTPHeaderName::Authorization));
     }
 #endif
 
@@ -504,7 +508,6 @@ void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBy
 void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
 {
     WTFEmitSignpost(m_task.get(), "DataTask", "received challenge");
-
     if (tryPasswordBasedAuthentication(challenge, completionHandler))
         return;
 
@@ -558,7 +561,6 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
     WTFEmitSignpost(m_task.get(), "DataTask", "redirect");
-
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url());
 
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
@@ -606,6 +608,9 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
                 // FIXME: Support Digest authentication, and Proxy-Authorization.
                 applyBasicAuthorizationHeader(request, m_initialCredential);
+                if (m_client)
+                    m_client->setRequestAuthorizationHeader(request.httpHeaderField(WebCore::HTTPHeaderName::Authorization));
+
             }
 #endif
         }
