@@ -102,12 +102,6 @@
     return self;
 }
 
-- (const WebCore::KeyboardScrollParameters &)parameters
-{
-    static const WebCore::KeyboardScrollParameters parameters;
-    return parameters;
-}
-
 - (void)invalidate
 {
     [self stopAnimatedScroll];
@@ -261,17 +255,19 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
     // FIXME (227461): Replace with call to WebCore::KeyboardScroll constructor.
     // FIXME (245749): Use `ScrollableArea::adjustVerticalPageScrollStepForFixedContent` to account for fixed content
 
+    constexpr auto parameters = WebCore::KeyboardScrollParameters::parameters();
+
     CGFloat scrollDistance = [_scrollable distanceForIncrement:increment inDirection:direction];
 
     WebCore::KeyboardScroll scroll;
     scroll.offset = WebCore::unitVectorForScrollDirection(direction).scaled(scrollDistance);
     scroll.granularity = increment;
     scroll.direction = direction;
-    scroll.maximumVelocity = scroll.offset.scaled(self.parameters.maximumVelocityMultiplier);
+    scroll.maximumVelocity = scroll.offset.scaled(parameters.maximumVelocityMultiplier);
 
     // Apply a constant force to achieve Vmax in timeToMaximumVelocity seconds.
     // F_constant = m * Vmax / t
-    scroll.force = scroll.maximumVelocity.scaled(self.parameters.springMass / self.parameters.timeToMaximumVelocity);
+    scroll.force = scroll.maximumVelocity.scaled(parameters.springMass / parameters.timeToMaximumVelocity);
     
     return scroll;
 }
@@ -349,11 +345,13 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     if (!_currentScroll)
         return;
 
+    constexpr auto parameters = WebCore::KeyboardScrollParameters::parameters();
+
     // Determine the settling position of the spring, conserving the system's current energy.
     // Kinetic = elastic potential
     // 1/2 * m * v^2 = 1/2 * k * x^2
     // x = sqrt(v^2 * m / k)
-    auto displacementMagnitudeSquared = (_velocity * _velocity).scaled(self.parameters.springMass / self.parameters.springStiffness);
+    auto displacementMagnitudeSquared = (_velocity * _velocity).scaled(parameters.springMass / parameters.springStiffness);
     WebCore::FloatSize displacement = {
         std::copysign(sqrt(displacementMagnitudeSquared.width()), _velocity.width()),
         std::copysign(sqrt(displacementMagnitudeSquared.height()), _velocity.height())
@@ -400,6 +398,8 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     WebCore::FloatSize force;
     WebCore::FloatSize axesToApplySpring = { 1, 1 };
 
+    constexpr auto parameters = WebCore::KeyboardScrollParameters::parameters();
+
     if (_currentScroll) {
         auto scrollableDirections = [_scrollable scrollableDirectionsFromOffset:_currentPosition];
         auto direction = _currentScroll->direction;
@@ -413,7 +413,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
             // The scroll view cannot scroll in this direction, and is rubber-banding.
             // Apply a constant and significant force; otherwise, the force for a
             // single-line increment is not strong enough to rubber-band perceptibly.
-            force = WebCore::unitVectorForScrollDirection(direction).scaled(self.parameters.rubberBandForce);
+            force = WebCore::unitVectorForScrollDirection(direction).scaled(parameters.rubberBandForce);
         }
 
         // If we've reached or exceeded the maximum velocity, stop applying any force.
@@ -430,12 +430,12 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
     // Compute the spring's force, and apply it in allowed directions.
     // F_spring = -k * x - c * v
-    auto springForce = - displacement.scaled(self.parameters.springStiffness) - _velocity.scaled(self.parameters.springDamping);
+    auto springForce = - displacement.scaled(parameters.springStiffness) - _velocity.scaled(parameters.springDamping);
     force += springForce * axesToApplySpring;
 
     // Integrate acceleration -> velocity -> position for this time step.
     CFTimeInterval frameDuration = sender.targetTimestamp - sender.timestamp;
-    WebCore::FloatSize acceleration = force.scaled(1. / self.parameters.springMass);
+    WebCore::FloatSize acceleration = force.scaled(1. / parameters.springMass);
     _velocity += acceleration.scaled(frameDuration);
     _currentPosition += _velocity.scaled(frameDuration);
 

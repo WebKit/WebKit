@@ -124,7 +124,7 @@ void ScrollAnimationKeyboard::stopKeyboardScrollAnimation()
     if (!m_currentKeyboardScroll)
         return;
 
-    auto params = KeyboardScrollParameters::parameters();
+    constexpr auto params = KeyboardScrollParameters::parameters();
 
     // Determine the settling position of the spring, conserving the system's current energy.
     // Kinetic = elastic potential
@@ -168,7 +168,7 @@ bool ScrollAnimationKeyboard::animateScroll(MonotonicTime currentTime)
 {
     auto force = FloatSize { };
     auto axesToApplySpring = FloatSize { 1, 1 };
-    KeyboardScrollParameters params = KeyboardScrollParameters::parameters();
+    constexpr auto parameters = KeyboardScrollParameters::parameters();
 
     if (m_currentKeyboardScroll) {
         auto scrollableDirections = scrollableDirectionsFromPosition(m_currentOffset);
@@ -183,7 +183,7 @@ bool ScrollAnimationKeyboard::animateScroll(MonotonicTime currentTime)
             // The scroll view cannot scroll in this direction, and is rubber-banding.
             // Apply a constant and significant force; otherwise, the force for a
             // single-line increment is not strong enough to rubber-band perceptibly.
-            force = unitVectorForScrollDirection(direction).scaled(params.rubberBandForce);
+            force = unitVectorForScrollDirection(direction).scaled(parameters.rubberBandForce);
         }
 
         if (fabs(m_velocity.width()) >= fabs(m_currentKeyboardScroll->maximumVelocity.width()))
@@ -198,13 +198,13 @@ bool ScrollAnimationKeyboard::animateScroll(MonotonicTime currentTime)
     FloatPoint idealPosition = (IntPoint(m_currentKeyboardScroll ? m_currentOffset : m_idealPosition).constrainedBetween(IntPoint(extents.minimumScrollOffset()), IntPoint(extents.maximumScrollOffset())));
     FloatSize displacement = m_currentOffset - idealPosition;
 
-    auto springForce = -displacement.scaled(params.springStiffness) - m_velocity.scaled(params.springDamping);
+    auto springForce = -displacement.scaled(parameters.springStiffness) - m_velocity.scaled(parameters.springDamping);
     force += springForce * axesToApplySpring;
 
     float frameDuration = (currentTime - m_timeAtLastFrame).value();
     m_timeAtLastFrame = currentTime;
 
-    FloatSize acceleration = force.scaled(1. / params.springMass);
+    FloatSize acceleration = force.scaled(1. / parameters.springMass);
     m_velocity += acceleration.scaled(frameDuration);
     m_currentOffset = m_currentOffset + m_velocity.scaled(frameDuration);
 
