@@ -24,6 +24,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import calendar
+import datetime
 import json
 import os
 import re
@@ -32,7 +34,7 @@ import twisted
 from twisted.internet import defer, error, interfaces, protocol, reactor, task
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
-from twisted.web import http, _newclient
+from twisted.web import iweb, http, _newclient
 
 from zope.interface import implementer
 
@@ -182,6 +184,32 @@ class TwistedAdditions(object):
         def json(self):
             return json.loads(self.text)
 
+    @implementer(iweb.IBodyProducer)
+    class JSONProducer(object):
+        @classmethod
+        def serialize(cls, obj):
+            if isinstance(obj, datetime.datetime):
+                return int(calendar.timegm(obj.timetuple()))
+            raise TypeError("Type %s not serializable" % type(obj))
+
+        def __init__(self, data):
+            try:
+                self.body = json.dumps(data, default=self.serialize).encode('utf-8')
+            except TypeError:
+                self.body = ''
+            self.length = len(self.body)
+
+        def startProducing(self, consumer):
+            if self.body:
+                consumer.write(self.body)
+            return defer.succeed(None)
+
+        def pauseProducing(self):
+            pass
+
+        def stopProducing(self):
+            pass
+
     class Printer(protocol.Protocol):
         def __init__(self, finished):
             self.finished = finished
@@ -195,7 +223,7 @@ class TwistedAdditions(object):
 
     @classmethod
     @defer.inlineCallbacks
-    def request(cls, url, type=None, params=None, headers=None, logger=None, timeout=10):
+    def request(cls, url, type=None, params=None, headers=None, logger=None, timeout=10, json=None):
         logger = logger or (lambda _: None)
         typ = type or b'GET'
 
@@ -219,7 +247,8 @@ class TwistedAdditions(object):
             else:
                 agent = Agent(reactor, connectTimeout=timeout)
 
-            response = yield agent.request(typ, url.encode('utf-8'), Headers(headers))
+            body = cls.JSONProducer(json) if json else None
+            response = yield agent.request(typ, url.encode('utf-8'), Headers(headers), body)
             finished = defer.Deferred()
             response.deliverBody(cls.Printer(finished))
             data = yield finished
