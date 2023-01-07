@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "RenderingMode.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 #if USE(CORE_IMAGE)
 OBJC_CLASS CIImage;
@@ -63,9 +62,13 @@ public:
     RenderingMode renderingMode() const { return m_renderingMode; }
     const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
 
-    WEBCORE_EXPORT ImageBuffer* imageBuffer();
-    PixelBuffer* pixelBuffer(AlphaPremultiplication);
+    ImageBuffer* imageBuffer() const;
+    ImageBuffer* imageBufferSlot() const;
 
+    PixelBuffer* pixelBuffer(AlphaPremultiplication) const;
+    PixelBuffer* pixelBufferSlot() const;
+    PixelBuffer* pixelBufferSlot(AlphaPremultiplication) const;
+    
     RefPtr<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
     void copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
 
@@ -73,7 +76,8 @@ public:
     void transformToColorSpace(const DestinationColorSpace&);
 
 #if USE(CORE_IMAGE)
-    RetainPtr<CIImage> ciImage() const { return m_ciImage; }
+    RetainPtr<CIImage> ciImage() const;
+    RetainPtr<CIImage> ciImageSlot() const;
     void setCIImage(RetainPtr<CIImage>&&);
 #endif
 
@@ -81,15 +85,17 @@ private:
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
 
-    RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
-
-    ImageBuffer* imageBufferFromPixelBuffer();
-
+    RefPtr<ImageBuffer> createImageBuffer() const;
+    RefPtr<ImageBuffer> createImageBuffer(const PixelBuffer&) const;
 #if USE(CORE_IMAGE)
-    ImageBuffer* imageBufferFromCIImage();
+    RefPtr<ImageBuffer> createImageBuffer(RetainPtr<CIImage>&) const;
 #endif
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
+
+    RefPtr<PixelBuffer> createPixelBuffer(const PixelBufferFormat&) const;
+    RefPtr<PixelBuffer> createPixelBuffer(const PixelBuffer&, const PixelBufferFormat&) const;
+    RefPtr<PixelBuffer> createPixelBuffer(const ImageBuffer&, const PixelBufferFormat&) const;
 
     FloatRect m_primitiveSubregion;
     FloatRect m_imageRect;
@@ -100,14 +106,16 @@ private:
     RenderingMode m_renderingMode;
     DestinationColorSpace m_colorSpace;
 
-    RefPtr<ImageBuffer> m_imageBuffer;
-    RefPtr<PixelBuffer> m_unpremultipliedPixelBuffer;
-    RefPtr<PixelBuffer> m_premultipliedPixelBuffer;
-
+    using Buffer = std::variant<
+        std::monostate,
 #if USE(CORE_IMAGE)
-    RetainPtr<CIImage> m_ciImage;
+        RetainPtr<CIImage>,
 #endif
+        Ref<ImageBuffer>,
+        Ref<PixelBuffer>
+    >;
 
+    mutable Buffer m_buffer;
     ImageBufferAllocator& m_allocator;
 };
 
