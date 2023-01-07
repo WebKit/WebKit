@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKContextMenuElementInfo.h"
+#pragma once
 
-#import "APIHitTestResult.h"
-#import "_WKContextMenuElementInfoInternal.h"
-#import "_WKHitTestResultInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/RetainPtr.h>
+#if PLATFORM(MAC)
 
-#if !PLATFORM(IOS_FAMILY)
+#include "APIObject.h"
+#include "WebHitTestResultData.h"
 
-@implementation _WKContextMenuElementInfo
+namespace API {
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
+class ContextMenuElementInfoMac final : public ObjectImpl<Object::Type::ContextMenuElementInfoMac> {
+public:
+    template<typename... Args> static Ref<ContextMenuElementInfoMac> create(Args&&... args)
+    {
+        return adoptRef(*new ContextMenuElementInfoMac(std::forward<Args>(args)...));
+    }
 
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKContextMenuElementInfo.class, self))
-        return;
-    _contextMenuElementInfoMac->API::ContextMenuElementInfoMac::~ContextMenuElementInfoMac();
-    [super dealloc];
-}
+    const WebKit::WebHitTestResultData& hitTestResultData() const { return m_hitTestResultData; }
 
-- (_WKHitTestResult *)hitTestResult
-{
-    auto& hitTestResultData = _contextMenuElementInfoMac->hitTestResultData();
-    auto apiHitTestResult = API::HitTestResult::create(hitTestResultData);
-    return retainPtr(wrapper(apiHitTestResult)).autorelease();
-}
+private:
+    ContextMenuElementInfoMac(const WebKit::WebHitTestResultData& hitTestResultData)
+        : m_hitTestResultData(hitTestResultData) { }
 
-// MARK: WKObject protocol implementation
+    WebKit::WebHitTestResultData m_hitTestResultData;
+};
 
-- (API::Object&)_apiObject
-{
-    return *_contextMenuElementInfoMac;
-}
+} // namespace API
 
-@end
-
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(MAC)

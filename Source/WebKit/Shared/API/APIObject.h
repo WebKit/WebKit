@@ -109,6 +109,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
         ContextMenuElementInfo,
 #endif
+#if PLATFORM(MAC)
+        ContextMenuElementInfoMac,
+#endif
         ContextMenuListener,
         CustomHeaderFields,
         InternalDebugFeature,
@@ -363,6 +366,9 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::ContentWorld,
 #if PLATFORM(IOS_FAMILY)
         API::Object::Type::ContextMenuElementInfo,
+#endif
+#if PLATFORM(MAC)
+        API::Object::Type::ContextMenuElementInfoMac,
 #endif
         API::Object::Type::ContextMenuListener,
         API::Object::Type::CustomHeaderFields,
