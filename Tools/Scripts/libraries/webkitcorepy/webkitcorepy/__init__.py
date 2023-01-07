@@ -34,6 +34,7 @@ from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 from webkitcorepy.timeout import Timeout
 from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run, Thread
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
+from webkitcorepy.null_context import NullContext
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.timer import Timer
 from webkitcorepy.terminal import Terminal
@@ -44,9 +45,8 @@ from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
-from webkitcorepy.null_context import NullContext
 
-version = Version(0, 13, 19)
+version = Version(0, 13, 20)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
