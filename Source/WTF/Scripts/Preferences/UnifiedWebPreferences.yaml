@@ -6097,11 +6097,12 @@ UserGesturePromisePropagationEnabled:
   status: internal
   humanReadableName: "UserGesture Promise Propagation"
   humanReadableDescription: "UserGesture Promise Propagation"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.

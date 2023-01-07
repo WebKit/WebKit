@@ -28,7 +28,6 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
@@ -237,10 +236,11 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
     JSDOMWindowBase& thisObject = static_cast<JSDOMWindowBase&>(object);
 
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
-    auto& eventLoop = thisObject.scriptExecutionContext()->eventLoop();
+    auto* objectScriptExecutionContext = thisObject.scriptExecutionContext();
+    auto& eventLoop = objectScriptExecutionContext->eventLoop();
     // Propagating media only user gesture for Fetch API's promise chain.
     auto userGestureToken = UserGestureIndicator::currentUserGesture();
-    if (userGestureToken && (!userGestureToken->isPropagatedFromFetch() || !DeprecatedGlobalSettings::userGesturePromisePropagationEnabled()))
+    if (userGestureToken && (!userGestureToken->isPropagatedFromFetch() || !objectScriptExecutionContext->settingsValues().userGesturePromisePropagationEnabled))
         userGestureToken = nullptr;
     eventLoop.queueMicrotask([callback = WTFMove(callback), userGestureToken = WTFMove(userGestureToken)]() mutable {
         if (!userGestureToken) {

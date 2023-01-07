@@ -120,9 +120,6 @@ public:
     static bool attachmentElementEnabled() { return shared().m_isAttachmentElementEnabled; }
 #endif
 
-    static bool userGesturePromisePropagationEnabled() { return shared().m_userGesturePromisePropagationEnabled; }
-    static void setUserGesturePromisePropagationEnabled(bool isEnabled) { shared().m_userGesturePromisePropagationEnabled = isEnabled; }
-
 #if ENABLE(WEB_RTC)
     static bool webRTCH264LowLatencyEncoderEnabled() { return shared().m_isWebRTCH264LowLatencyEncoderEnabled; }
     static void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { shared().m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
@@ -244,8 +241,6 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };
 #endif
-
-    bool m_userGesturePromisePropagationEnabled { true };
 
 #if ENABLE(WEB_RTC)
     bool m_isWebRTCH264SimulcastEnabled { true };
