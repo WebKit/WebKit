@@ -1,3 +1,6 @@
+// Copyright 2014 Google Inc.  All rights reserved.
+// Copyright 2023 Apple Inc.  All rights reserved.
+
 if (self.testRunner) {
 	// svg/dynamic-updates tests set enablePixelTesting=true, as we want to dump text + pixel results
     if (self.enablePixelTesting)
@@ -605,6 +608,27 @@ function shouldBeDefined(_a)
     testPassed(_a + " is defined.");
   else
     testFailed(_a + " should be defined. Was " + _av);
+}
+
+function shouldBeGreaterThan(_a, _b) {
+    if (typeof _a != "string" || typeof _b != "string")
+        debug("WARN: shouldBeGreaterThan expects string arguments");
+
+    var _exception;
+    var _av;
+    try {
+        _av = eval(_a);
+    } catch (e) {
+        _exception = e;
+    }
+    var _bv = eval(_b);
+
+    if (_exception)
+        testFailed(_a + " should be > " + _b + ". Threw exception " + _exception);
+    else if (typeof _av == "undefined" || _av <= _bv)
+        testFailed(_a + " should be > " + _b + ". Was " + _av + " (of type " + typeof _av + ").");
+    else
+        testPassed(_a + " is > " + _b);
 }
 
 function shouldBeGreaterThanOrEqual(_a, _b) {
