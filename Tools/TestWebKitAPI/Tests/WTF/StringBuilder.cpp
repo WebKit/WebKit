@@ -102,7 +102,7 @@ TEST(StringBuilderTest, Append)
     builderForUChar32Append.appendCharacter(static_cast<UChar32>('A'));
     EXPECT_EQ(3U, builderForUChar32Append.length());
     const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
-    expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builderForUChar32Append);
+    expectBuilderContent(String(resultArray, std::size(resultArray)), builderForUChar32Append);
     {
         StringBuilder builder;
         StringBuilder builder2;
@@ -116,7 +116,7 @@ TEST(StringBuilderTest, Append)
         builder.appendCharacters(data, 2);
         EXPECT_EQ(4U, builder.length());
         const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
-        expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builder);
+        expectBuilderContent(String(resultArray, std::size(resultArray)), builder);
     }
 }
 

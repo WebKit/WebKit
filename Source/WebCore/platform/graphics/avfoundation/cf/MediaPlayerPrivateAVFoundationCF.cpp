@@ -1599,7 +1599,7 @@ static RetainPtr<CFArrayRef> createLegibleOutputSubtypes()
     int webVTTInt = 'wvtt'; // kCMSubtitleFormatType_WebVTT;
     RetainPtr<CFNumberRef> webVTTNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &webVTTInt));
     CFTypeRef formatTypes[] = { webVTTNumber.get() };
-    return adoptCF(CFArrayCreate(0, formatTypes, WTF_ARRAY_LENGTH(formatTypes), &kCFTypeArrayCallBacks));
+    return adoptCF(CFArrayCreate(0, formatTypes, std::size(formatTypes), &kCFTypeArrayCallBacks));
 }
 #endif
 

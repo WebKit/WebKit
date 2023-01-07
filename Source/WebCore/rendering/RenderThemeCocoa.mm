@@ -237,7 +237,7 @@ static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
     CFNumberGetValue(resultRef.get(), kCFNumberFloatType, &result);
     // These numbers were experimentally gathered from weights of the system font.
     static constexpr float weightThresholds[] = { -0.6, -0.365, -0.115, 0.130, 0.235, 0.350, 0.5, 0.7 };
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(weightThresholds); ++i) {
+    for (unsigned i = 0; i < std::size(weightThresholds); ++i) {
         if (result < weightThresholds[i])
             return FontSelectionValue((static_cast<int>(i) + 1) * 100);
     }

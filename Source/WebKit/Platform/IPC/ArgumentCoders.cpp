@@ -180,13 +180,13 @@ std::optional<SHA1::Digest> ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder
 
 void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t& auditToken)
 {
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++)
+    for (unsigned i = 0; i < std::size(auditToken.val); i++)
         encoder << auditToken.val[i];
 }
 
 WARN_UNUSED_RETURN bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& auditToken)
 {
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++) {
+    for (unsigned i = 0; i < std::size(auditToken.val); i++) {
         if (!decoder.decode(auditToken.val[i]))
             return false;
     }

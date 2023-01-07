@@ -41,7 +41,7 @@ String convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
     };
     static_assert(static_cast<size_t>(TestStandaloneEnumeration::EnumValue1) == 0, "TestStandaloneEnumeration::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestStandaloneEnumeration::EnumValue2) == 1, "TestStandaloneEnumeration::EnumValue2 is not 1 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

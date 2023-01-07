@@ -206,8 +206,8 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
 static String generateTemporaryPath(const Function<bool(const String&)>& action)
 {
     wchar_t tempPath[MAX_PATH];
-    int tempPathLength = ::GetTempPathW(WTF_ARRAY_LENGTH(tempPath), tempPath);
-    if (tempPathLength <= 0 || tempPathLength > WTF_ARRAY_LENGTH(tempPath))
+    int tempPathLength = ::GetTempPathW(std::size(tempPath), tempPath);
+    if (tempPathLength <= 0 || tempPathLength > std::size(tempPath))
         return String();
 
     String proposedPath;
@@ -222,7 +222,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
         for (int i = 0; i < randomPartLength; ++i)
             tempFile[i] = validChars[tempFile[i] % (sizeof(validChars) - 1)];
 
-        ASSERT(wcslen(tempFile) == WTF_ARRAY_LENGTH(tempFile) - 1);
+        ASSERT(wcslen(tempFile) == std::size(tempFile) - 1);
 
         proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
         if (proposedPath.isEmpty())

@@ -90,7 +90,7 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
         ++count;
     }
 
-    ASSERT(count <= WTF_ARRAY_LENGTH(keys));
+    ASSERT(count <= std::size(keys));
 
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }

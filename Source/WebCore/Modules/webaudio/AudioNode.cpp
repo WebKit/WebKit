@@ -94,7 +94,7 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     static_assert(static_cast<size_t>(AudioNode::NodeTypeIIRFilter) == 19, "AudioNode::NodeTypeIIRFilter is not 19 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeWorklet) == 20, "AudioNode::NodeTypeWorklet is not 20 as expected");
 
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     
     return values[static_cast<size_t>(enumerationValue)];
 }

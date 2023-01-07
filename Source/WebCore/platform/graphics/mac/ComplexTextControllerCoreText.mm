@@ -143,7 +143,7 @@ static CFDictionaryRef typesetterOptions()
         short embeddingLevelValue = isLTR ? 0 : 1;
         const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
         const void* optionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue) };
-        options.construct(adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, optionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)));
+        options.construct(adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, optionValues, std::size(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)));
     });
     return options.get().get();
 }

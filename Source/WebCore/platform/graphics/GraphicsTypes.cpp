@@ -72,8 +72,8 @@ static constexpr ASCIILiteral blendOperatorNames[] = {
     "plus-darker"_s,
     "plus-lighter"_s
 };
-const uint8_t numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
-const uint8_t numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
+const uint8_t numCompositeOperatorNames = std::size(compositeOperatorNames);
+const uint8_t numBlendOperatorNames = std::size(blendOperatorNames);
 
 bool parseBlendMode(const String& s, BlendMode& blendMode)
 {

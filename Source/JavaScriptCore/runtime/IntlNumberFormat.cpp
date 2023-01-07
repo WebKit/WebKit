@@ -168,7 +168,7 @@ static unsigned computeCurrencyDigits(const String& currency)
         { "XOF", 0 },
         { "XPF", 0 }
     };
-    auto* currencyMinorUnit = tryBinarySearch<std::pair<const char*, unsigned>>(currencyMinorUnits, WTF_ARRAY_LENGTH(currencyMinorUnits), computeCurrencySortKey(currency), extractCurrencySortKey);
+    auto* currencyMinorUnit = tryBinarySearch<std::pair<const char*, unsigned>>(currencyMinorUnits, std::size(currencyMinorUnits), computeCurrencySortKey(currency), extractCurrencySortKey);
     if (currencyMinorUnit)
         return currencyMinorUnit->second;
     return 2;

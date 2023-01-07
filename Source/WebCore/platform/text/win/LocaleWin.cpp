@@ -124,13 +124,13 @@ void LocaleWin::ensureShortMonthLabels()
         LOCALE_SABBREVMONTHNAME11,
         LOCALE_SABBREVMONTHNAME12,
     };
-    m_shortMonthLabels.reserveCapacity(WTF_ARRAY_LENGTH(types));
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(types); ++i) {
+    m_shortMonthLabels.reserveCapacity(std::size(types));
+    for (unsigned i = 0; i < std::size(types); ++i) {
         m_shortMonthLabels.append(getLocaleInfoString(types[i]));
         if (m_shortMonthLabels.last().isEmpty()) {
             m_shortMonthLabels.shrink(0);
-            m_shortMonthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthName));
-            for (unsigned m = 0; m < WTF_ARRAY_LENGTH(WTF::monthName); ++m)
+            m_shortMonthLabels.reserveCapacity(std::size(WTF::monthName));
+            for (unsigned m = 0; m < std::size(WTF::monthName); ++m)
                 m_shortMonthLabels.append(WTF::monthName[m]);
             return;
         }
@@ -259,13 +259,13 @@ void LocaleWin::ensureMonthLabels()
         LOCALE_SMONTHNAME11,
         LOCALE_SMONTHNAME12,
     };
-    m_monthLabels.reserveCapacity(WTF_ARRAY_LENGTH(types));
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(types); ++i) {
+    m_monthLabels.reserveCapacity(std::size(types));
+    for (unsigned i = 0; i < std::size(types); ++i) {
         m_monthLabels.append(getLocaleInfoString(types[i]));
         if (m_monthLabels.last().isEmpty()) {
             m_monthLabels.shrink(0);
-            m_monthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthFullName));
-            for (unsigned m = 0; m < WTF_ARRAY_LENGTH(WTF::monthFullName); ++m)
+            m_monthLabels.reserveCapacity(std::size(WTF::monthFullName));
+            for (unsigned m = 0; m < std::size(WTF::monthFullName); ++m)
                 m_monthLabels.append(WTF::monthFullName[m]);
             return;
         }

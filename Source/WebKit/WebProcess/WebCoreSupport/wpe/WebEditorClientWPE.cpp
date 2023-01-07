@@ -142,9 +142,9 @@ static const char* interpretKeyEvent(const KeyboardEvent& event)
     static NeverDestroyed<HashMap<int, const char*>> keyPressCommandsMap;
 
     if (keyDownCommandsMap.get().isEmpty()) {
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(keyDownEntries); i++)
+        for (unsigned i = 0; i < std::size(keyDownEntries); i++)
             keyDownCommandsMap.get().set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(keyPressEntries); i++)
+        for (unsigned i = 0; i < std::size(keyPressEntries); i++)
             keyPressCommandsMap.get().set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
     }
 

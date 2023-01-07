@@ -165,14 +165,6 @@ inline size_t bitCount(uint64_t bits)
     return bitCount(static_cast<unsigned>(bits)) + bitCount(static_cast<unsigned>(bits >> 32));
 }
 
-// Macro that returns a compile time constant with the length of an array, but gives an error if passed a non-array.
-template<typename T, size_t Size> char (&ArrayLengthHelperFunction(T (&)[Size]))[Size];
-// GCC needs some help to deduce a 0 length array.
-#if COMPILER(GCC_COMPATIBLE)
-template<typename T> char (&ArrayLengthHelperFunction(T (&)[0]))[0];
-#endif
-#define WTF_ARRAY_LENGTH(array) sizeof(::WTF::ArrayLengthHelperFunction(array))
-
 inline constexpr bool isPowerOfTwo(size_t size) { return !(size & (size - 1)); }
 
 template<typename T> constexpr T mask(T value, uintptr_t mask)

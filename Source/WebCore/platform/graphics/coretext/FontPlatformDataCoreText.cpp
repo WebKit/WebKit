@@ -100,11 +100,11 @@ static RetainPtr<CFDictionaryRef> cascadeToLastResortAttributesDictionary()
     auto lastResort = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0));
 
     CFTypeRef descriptors[] = { lastResort.get() };
-    RetainPtr<CFArrayRef> array = adoptCF(CFArrayCreate(kCFAllocatorDefault, descriptors, WTF_ARRAY_LENGTH(descriptors), &kCFTypeArrayCallBacks));
+    RetainPtr<CFArrayRef> array = adoptCF(CFArrayCreate(kCFAllocatorDefault, descriptors, std::size(descriptors), &kCFTypeArrayCallBacks));
 
     CFTypeRef keys[] = { kCTFontCascadeListAttribute };
     CFTypeRef values[] = { array.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 static CTFontDescriptorRef cascadeToLastResortAndVariationsFontDescriptor()

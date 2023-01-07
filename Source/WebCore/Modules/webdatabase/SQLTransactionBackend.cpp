@@ -417,7 +417,7 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
         &SQLTransactionBackend::unreachableState             // 12. deliverSuccessCallback
     };
 
-    ASSERT(WTF_ARRAY_LENGTH(stateFunctions) == static_cast<int>(SQLTransactionState::NumberOfStates));
+    ASSERT(std::size(stateFunctions) == static_cast<int>(SQLTransactionState::NumberOfStates));
     ASSERT(state < SQLTransactionState::NumberOfStates);
 
     return stateFunctions[static_cast<int>(state)];

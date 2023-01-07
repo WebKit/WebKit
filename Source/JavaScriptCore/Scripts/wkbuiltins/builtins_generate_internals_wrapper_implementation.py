@@ -138,7 +138,7 @@ class BuiltinsInternalsWrapperImplementationGenerator(BuiltinsGenerator):
         for object in self.internals:
             lines.append(BuiltinsGenerator.wrap_with_guard(object.annotations.get('conditional'), self.property_macro(object)))
         lines.append("    };")
-        lines.append("    globalObject.addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));")
+        lines.append("    globalObject.addStaticGlobals(staticGlobals, std::size(staticGlobals));")
         lines.append("    UNUSED_PARAM(clientData);")
         return '\n'.join(lines)
 

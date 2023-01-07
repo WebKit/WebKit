@@ -82,7 +82,7 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
     static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::Seeking) == 0, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::Seeking is not 0 as expected");
     static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingForAvailableFame) == 1, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingForAvailableFame is not 1 as expected");
     static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::SeekCompleted) == 2, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::SeekCompleted is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

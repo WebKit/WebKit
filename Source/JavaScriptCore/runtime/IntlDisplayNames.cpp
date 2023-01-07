@@ -132,7 +132,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
         UDISPCTX_NO_SUBSTITUTE,
     };
     m_localeCString = m_locale.utf8();
-    m_displayNames = std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter>(uldn_openForContext(m_localeCString.data(), contexts, WTF_ARRAY_LENGTH(contexts), &status));
+    m_displayNames = std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter>(uldn_openForContext(m_localeCString.data(), contexts, std::size(contexts), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DisplayNames"_s);
         return;

@@ -353,7 +353,7 @@ void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyp
 
     sizeVariants.clear();
     hb_ot_math_glyph_variant_t variants[10];
-    unsigned variantsSize = WTF_ARRAY_LENGTH(variants);
+    unsigned variantsSize = std::size(variants);
     unsigned count;
     unsigned offset = 0;
     do {
@@ -366,7 +366,7 @@ void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyp
 
     assemblyParts.clear();
     hb_ot_math_glyph_part_t parts[10];
-    unsigned partsSize = WTF_ARRAY_LENGTH(parts);
+    unsigned partsSize = std::size(parts);
     offset = 0;
     do {
         count = partsSize;

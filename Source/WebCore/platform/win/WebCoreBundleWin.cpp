@@ -48,9 +48,9 @@ static RetainPtr<CFBundleRef> createWebKitBundle()
         return existingBundle;
 
     wchar_t dllPathBuffer[MAX_PATH];
-    DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), dllPathBuffer, WTF_ARRAY_LENGTH(dllPathBuffer));
+    DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), dllPathBuffer, std::size(dllPathBuffer));
     ASSERT(length);
-    ASSERT(length < WTF_ARRAY_LENGTH(dllPathBuffer));
+    ASSERT(length < std::size(dllPathBuffer));
 
     RetainPtr<CFStringRef> dllPath = adoptCF(CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
     RetainPtr<CFURLRef> dllURL = adoptCF(CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));

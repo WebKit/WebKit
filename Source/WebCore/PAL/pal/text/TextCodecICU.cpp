@@ -68,7 +68,7 @@ DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "ma
 DECLARE_ALIASES(x_mac_turkish, "windows-10081", "mactr", "x-MacTurkish");
 
 #define DECLARE_ENCODING_NAME(encoding, alias_array) \
-    { encoding, WTF_ARRAY_LENGTH(alias_array##_aliases), alias_array##_aliases }
+    { encoding, std::size(alias_array##_aliases), alias_array##_aliases }
 
 #define DECLARE_ENCODING_NAME_NO_ALIASES(encoding) \
     { encoding, 0, nullptr }

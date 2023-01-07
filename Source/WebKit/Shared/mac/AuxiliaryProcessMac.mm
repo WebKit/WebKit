@@ -208,7 +208,7 @@ static std::optional<Vector<char>> fileContents(const String& path, bool shouldL
         return std::nullopt;
 
     char chunk[4096];
-    constexpr size_t chunkSize = WTF_ARRAY_LENGTH(chunk);
+    constexpr size_t chunkSize = std::size(chunk);
     size_t contentSize = 0;
     Vector<char> contents;
     contents.reserveInitialCapacity(chunkSize);

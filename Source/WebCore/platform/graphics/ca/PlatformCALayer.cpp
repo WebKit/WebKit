@@ -160,7 +160,7 @@ void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y
         strokeCGColor.get(),
     };
 
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(text), length, kCFStringEncodingUTF8, false, kCFAllocatorNull));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
     auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));

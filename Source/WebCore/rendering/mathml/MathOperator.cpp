@@ -206,7 +206,7 @@ static const UChar32 characterFallback[][maxFallbackPerCharacter] = {
     { 0x02C6, 0x0302, 0 }, // MODIFIER LETTER CIRCUMFLEX ACCENT
     { 0x02C7, 0x030C, 0 } // CARON
 };
-const unsigned characterFallbackSize = WTF_ARRAY_LENGTH(characterFallback);
+const unsigned characterFallbackSize = std::size(characterFallback);
 
 void MathOperator::getMathVariantsWithFallback(const RenderStyle& style, bool isVertical, Vector<Glyph>& sizeVariants, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts)
 {
@@ -406,7 +406,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
 
         // If the font does not have a MATH table, we fallback to the Unicode-only constructions.
         const StretchyCharacter* stretchyCharacter = nullptr;
-        const unsigned maxIndex = WTF_ARRAY_LENGTH(stretchyCharacters);
+        const unsigned maxIndex = std::size(stretchyCharacters);
         for (unsigned index = 0; index < maxIndex; ++index) {
             if (stretchyCharacters[index].character == m_baseCharacter) {
                 stretchyCharacter = &stretchyCharacters[index];

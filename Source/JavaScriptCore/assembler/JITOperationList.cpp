@@ -186,7 +186,7 @@ static LLIntOperations llintOperations()
             JSC_WASM_GATE_OPCODES(LLINT_RETURN_LOCATION)
         };
         operations = operationsStorage;
-        numberOfOperations = WTF_ARRAY_LENGTH(operationsStorage);
+        numberOfOperations = std::size(operationsStorage);
     });
     return { operations, numberOfOperations };
 }

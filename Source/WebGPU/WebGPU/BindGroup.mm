@@ -63,7 +63,7 @@ static auto sizeOfEntries(const WGPUBindGroupDescriptor& descriptor, BindGroupLa
         bool samplerIsPresent = WebGPU::samplerIsPresent(entry);
         bool textureViewIsPresent = WebGPU::textureViewIsPresent(entry);
 
-        for (size_t currentStage = 0; currentStage < WTF_ARRAY_LENGTH(shaderStage); ++currentStage) {
+        for (size_t currentStage = 0; currentStage < std::size(shaderStage); ++currentStage) {
             WGPUShaderStage renderStage = shaderStage[currentStage];
             if (!(stages & renderStage))
                 continue;
@@ -91,7 +91,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         auto bindGroupLayout = descriptor.layout ? &WebGPU::fromAPI(descriptor.layout) : nullptr;
         auto bufferSizes = sizeOfEntries(descriptor, bindGroupLayout);
         constexpr WGPUShaderStage shaderStage[] = { WGPUShaderStage_Vertex, WGPUShaderStage_Fragment, WGPUShaderStage_Compute };
-        constexpr auto shaderStageLength = WTF_ARRAY_LENGTH(shaderStage);
+        constexpr auto shaderStageLength = std::size(shaderStage);
         id<MTLBuffer> argumentBuffer[shaderStageLength];
         for (size_t i = 0; i < shaderStageLength; ++i)
             argumentBuffer[i] = bufferSizes[i] ? safeCreateBuffer(bufferSizes[i], MTLStorageModeShared) : nil;

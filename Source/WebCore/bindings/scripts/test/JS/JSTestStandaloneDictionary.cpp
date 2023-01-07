@@ -339,7 +339,7 @@ String convertEnumerationToString(TestStandaloneDictionary::EnumInStandaloneDict
     };
     static_assert(static_cast<size_t>(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1) == 0, "TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2) == 1, "TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2 is not 1 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

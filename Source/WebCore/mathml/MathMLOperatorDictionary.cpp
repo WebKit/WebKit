@@ -1153,7 +1153,7 @@ std::optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form
 
 bool MathMLOperatorDictionary::isVertical(UChar32 textContent)
 {
-    return !tryBinarySearch<const UChar32, UChar32>(horizontalOperators, WTF_ARRAY_LENGTH(horizontalOperators), textContent, ExtractKeyHorizontal);
+    return !tryBinarySearch<const UChar32, UChar32>(horizontalOperators, std::size(horizontalOperators), textContent, ExtractKeyHorizontal);
 }
 
 }

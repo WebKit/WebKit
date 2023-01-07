@@ -51,7 +51,7 @@ TEST(WebKit, TextWidth)
     // Use CFAttributedString so we don't have to deal with NSFont / UIFont and have this code be platform-dependent.
     CFTypeRef keys[] = { kCTFontAttributeName };
     CFTypeRef values[] = { font.get() };
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, CFSTR("This is a test string"), attributes.get()));
     auto line = adoptCF(CTLineCreateWithAttributedString(static_cast<CFAttributedStringRef>(attributedString)));
     double coreTextWidth = CTLineGetTypographicBounds(line.get(), nullptr, nullptr, nullptr);

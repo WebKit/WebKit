@@ -111,7 +111,7 @@ _Check_return_
 STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID* ppv)
 {
     bool found = false;
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(gRegCLSIDs); ++i) {
+    for (size_t i = 0; i < std::size(gRegCLSIDs); ++i) {
         if (IsEqualGUID(rclsid, gRegCLSIDs[i])) {
             found = true;
             break;

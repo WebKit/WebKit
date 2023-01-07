@@ -849,7 +849,7 @@ static inline bool isASCIIOctalDigitOrSeparator(CharacterType character)
 static inline LChar singleEscape(int c)
 {
     if (c < 128) {
-        ASSERT(static_cast<size_t>(c) < WTF_ARRAY_LENGTH(singleCharacterEscapeValuesForASCII));
+        ASSERT(static_cast<size_t>(c) < std::size(singleCharacterEscapeValuesForASCII));
         return singleCharacterEscapeValuesForASCII[c];
     }
     return 0;

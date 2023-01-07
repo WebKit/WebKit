@@ -309,7 +309,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
         };
 
         Node* originalApproximateNode = approximateNode;
-        for (unsigned n = 0; n < WTF_ARRAY_LENGTH(testOffsets); n += 2) {
+        for (unsigned n = 0; n < std::size(testOffsets); n += 2) {
             IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
             IntPoint testPoint = testCenter + testOffset;
 
@@ -352,7 +352,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
         IntRect testRect(testCenter, IntSize());
         testRect.inflate(searchRadius);
         int currentTestRadius = 0;
-        for (unsigned n = 0; n < WTF_ARRAY_LENGTH(testOffsets); n += 2) {
+        for (unsigned n = 0; n < std::size(testOffsets); n += 2) {
             IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
             IntPoint testPoint = testCenter + testOffset;
             int testRadius = std::max(abs(testOffset.width()), abs(testOffset.height()));

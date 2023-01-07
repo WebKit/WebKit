@@ -1910,9 +1910,9 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
         WCHAR className[256];
 
         // Make sure truncation won't affect the comparison.
-        ASSERT(WTF_ARRAY_LENGTH(className) > wcslen(PopupMenuWin::popupClassName()));
+        ASSERT(std::size(className) > wcslen(PopupMenuWin::popupClassName()));
 
-        if (GetClassNameW(focusedWindow, className, WTF_ARRAY_LENGTH(className)) && !wcscmp(className, PopupMenuWin::popupClassName())) {
+        if (GetClassNameW(focusedWindow, className, std::size(className)) && !wcscmp(className, PopupMenuWin::popupClassName())) {
             // We don't let the WebView scroll here for two reasons - 1) To match Firefox behavior, 2) If we do scroll, we lose the
             // focus ring around the select menu.
             SetFocus(m_viewWindow);
@@ -2109,10 +2109,10 @@ const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
         keyDownCommandsMap = new HashMap<int, const char*>;
         keyPressCommandsMap = new HashMap<int, const char*>;
 
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyDownEntries); ++i)
+        for (size_t i = 0; i < std::size(keyDownEntries); ++i)
             keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
 
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyPressEntries); ++i)
+        for (size_t i = 0; i < std::size(keyPressEntries); ++i)
             keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
     }
 

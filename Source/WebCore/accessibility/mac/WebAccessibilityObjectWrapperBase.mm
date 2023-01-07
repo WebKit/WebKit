@@ -1095,7 +1095,7 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
     };
     
     AccessibilitySearchKeyMap* searchKeyMap = new AccessibilitySearchKeyMap;
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(searchKeys); i++)
+    for (size_t i = 0; i < std::size(searchKeys); i++)
         searchKeyMap->set(searchKeys[i].key, searchKeys[i].value);
     
     return searchKeyMap;

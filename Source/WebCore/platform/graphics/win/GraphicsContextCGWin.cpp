@@ -192,17 +192,17 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     const float lowerOpacity = 0.88f;
 
     //Top line
-    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, WTF_ARRAY_LENGTH(edge_dash_lengths));
+    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, std::size(edge_dash_lengths));
     CGContextSetAlpha(context, upperOpacity);
     CGContextStrokeLineSegments(context, upperPoints, 2);
  
     // Middle line
-    CGContextSetLineDash(context, middle_offset, middle_dash_lengths, WTF_ARRAY_LENGTH(middle_dash_lengths));
+    CGContextSetLineDash(context, middle_offset, middle_dash_lengths, std::size(middle_dash_lengths));
     CGContextSetAlpha(context, middleOpacity);
     CGContextStrokeLineSegments(context, middlePoints, 2);
     
     // Bottom line
-    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, WTF_ARRAY_LENGTH(edge_dash_lengths));
+    CGContextSetLineDash(context, edge_offset, edge_dash_lengths, std::size(edge_dash_lengths));
     CGContextSetAlpha(context, lowerOpacity);
     CGContextStrokeLineSegments(context, lowerPoints, 2);
 

@@ -59,7 +59,7 @@ static inline void appendTrueTypeFeature(CFMutableArrayRef features, int type, i
     auto selectorNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &selector));
     CFTypeRef featureKeys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
     CFTypeRef featureValues[] = { typeNumber.get(), selectorNumber.get() };
-    auto feature = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureKeys, featureValues, WTF_ARRAY_LENGTH(featureKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto feature = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureKeys, featureValues, std::size(featureKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFArrayAppendValue(features, feature.get());
 }
 
@@ -75,7 +75,7 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
     auto featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawFeatureValue));
     CFTypeRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
     CFTypeRef featureDictionaryValues[] = { featureKey.get(), featureValue.get() };
-    auto featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, WTF_ARRAY_LENGTH(featureDictionaryValues), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, std::size(featureDictionaryValues), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFArrayAppendValue(features, featureDictionary.get());
 }
 
@@ -166,13 +166,13 @@ static struct {
     { 0.56, 860 },
     { 0.62, 1000 },
 };
-static_assert(WTF_ARRAY_LENGTH(keyframes) > 0);
+static_assert(std::size(keyframes) > 0);
 
 float normalizeCTWeight(float value)
 {
     if (value < keyframes[0].ctWeight)
         return keyframes[0].cssWeight;
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyframes) - 1; ++i) {
+    for (size_t i = 0; i < std::size(keyframes) - 1; ++i) {
         auto& before = keyframes[i];
         auto& after = keyframes[i + 1];
         if (value >= before.ctWeight && value <= after.ctWeight) {
@@ -180,7 +180,7 @@ float normalizeCTWeight(float value)
             return ratio * (after.cssWeight - before.cssWeight) + before.cssWeight;
         }
     }
-    return keyframes[WTF_ARRAY_LENGTH(keyframes) - 1].cssWeight;
+    return keyframes[std::size(keyframes) - 1].cssWeight;
 }
 
 static inline float normalizeSlope(float value)
@@ -197,7 +197,7 @@ float denormalizeCTWeight(float value)
 {
     if (value < keyframes[0].cssWeight)
         return keyframes[0].ctWeight;
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyframes) - 1; ++i) {
+    for (size_t i = 0; i < std::size(keyframes) - 1; ++i) {
         auto& before = keyframes[i];
         auto& after = keyframes[i + 1];
         if (value >= before.cssWeight && value <= after.cssWeight) {
@@ -205,7 +205,7 @@ float denormalizeCTWeight(float value)
             return ratio * (after.ctWeight - before.ctWeight) + before.ctWeight;
         }
     }
-    return keyframes[WTF_ARRAY_LENGTH(keyframes) - 1].ctWeight;
+    return keyframes[std::size(keyframes) - 1].ctWeight;
 }
 
 static inline float denormalizeSlope(float value)
@@ -1093,7 +1093,7 @@ static void autoActivateFont(const String& name, CGFloat size)
     auto fontName = name.createCFString();
     CFTypeRef keys[] = { kCTFontNameAttribute, kCTFontEnabledAttribute };
     CFTypeRef values[] = { fontName.get(), kCFBooleanTrue };
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     auto newFont = adoptCF(CTFontCreateWithFontDescriptor(descriptor.get(), size, nullptr));
 }
@@ -1201,7 +1201,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
             CFStringRef newFamilyName = isFontWeightBold(fontWeight) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
             CFTypeRef keys[] = { kCTFontNameAttribute };
             CFTypeRef values[] = { newFamilyName };
-            auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             auto modification = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
             result = adoptCF(CTFontCreateCopyWithAttributes(result.get(), CTFontGetSize(result.get()), nullptr, modification.get()));
         }
@@ -1352,7 +1352,7 @@ RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts all
 {
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
         CFTypeRef mandatoryAttributesValues[] = { kCTFontFamilyNameAttribute, kCTFontPostScriptNameAttribute, kCTFontEnabledAttribute, kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
-        return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues, WTF_ARRAY_LENGTH(mandatoryAttributesValues), &kCFTypeSetCallBacks));
+        return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues, std::size(mandatoryAttributesValues), &kCFTypeSetCallBacks));
     }
     return nullptr;
 }

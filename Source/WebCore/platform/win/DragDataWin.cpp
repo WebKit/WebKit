@@ -146,7 +146,7 @@ Vector<String> DragData::asFilenames() const
 
         const unsigned numFiles = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
         for (unsigned i = 0; i < numFiles; i++) {
-            if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
+            if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
                 continue;
             result.append(filename);
         }

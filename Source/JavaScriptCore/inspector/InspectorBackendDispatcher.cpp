@@ -242,7 +242,7 @@ void BackendDispatcher::sendPendingErrors()
         errorCode = std::get<0>(data);
         errorMessage = std::get<1>(data);
 
-        ASSERT_ARG(errorCode, (unsigned)errorCode < WTF_ARRAY_LENGTH(errorCodes));
+        ASSERT_ARG(errorCode, (unsigned)errorCode < std::size(errorCodes));
         ASSERT_ARG(errorCode, errorCodes[errorCode]);
 
         Ref<JSON::Object> error = JSON::Object::create();

@@ -753,7 +753,7 @@ bool WebView::shouldInitializeTrackPointHack()
         L"Software\\Synaptics\\SynTPEnh\\UltraNavPS2"
     };
 
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(trackPointKeys); ++i) {
+    for (size_t i = 0; i < std::size(trackPointKeys); ++i) {
         HKEY trackPointKey;
         int readKeyResult = ::RegOpenKeyExW(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
         ::RegCloseKey(trackPointKey);

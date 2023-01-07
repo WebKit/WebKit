@@ -89,9 +89,9 @@ static inline AtomString convertPropertyNameToAttributeName(const StringImpl& na
     Vector<CharacterType, 32> buffer;
 
     unsigned length = name.length();
-    buffer.reserveInitialCapacity(WTF_ARRAY_LENGTH(dataPrefix) + length);
+    buffer.reserveInitialCapacity(std::size(dataPrefix) + length);
 
-    buffer.append(dataPrefix, WTF_ARRAY_LENGTH(dataPrefix));
+    buffer.append(dataPrefix, std::size(dataPrefix));
 
     const CharacterType* characters = name.characters<CharacterType>();
     for (unsigned i = 0; i < length; ++i) {
