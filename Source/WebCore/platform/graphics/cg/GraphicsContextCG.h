@@ -96,6 +96,7 @@ public:
 
     void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
     void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
+    bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) override;
 
     using GraphicsContext::scale;
     void scale(const FloatSize&) final;
