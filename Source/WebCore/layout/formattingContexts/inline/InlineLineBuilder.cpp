@@ -1055,7 +1055,14 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
 
     // Set static position first.
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
-    auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() };
+    auto floatBoxInitialTop = m_lineLogicalRect.top();
+    if (auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle())) {
+        // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
+        // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
+        floatBoxInitialTop += *initialLetterCapHeightOffset;
+    }
+
+    auto staticPosition = LayoutPoint { lineMarginBoxLeft, floatBoxInitialTop };
     staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
     boxGeometry.setLogicalTopLeft(staticPosition);
     // Float it.
