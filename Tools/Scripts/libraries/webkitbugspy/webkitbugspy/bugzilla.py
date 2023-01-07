@@ -55,13 +55,15 @@ class Tracker(GenericTracker):
                     result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
                 if obj.radar_importer:
                     result['radar_importer'] = User.Encoder().default(obj.radar_importer)
+                if obj.default_version:
+                    result['default_version'] = obj.default_version
                 return result
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
 
-    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None, radar_importer=None):
-        super(Tracker, self).__init__(users=users, redact=redact)
+    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None, radar_importer=None, default_version=None):
+        super(Tracker, self).__init__(users=users, redact=redact, default_version=default_version)
 
         self._logins_left = login_attempts + 1 if login_attempts else 1
         match = self.ROOT_RE.match(url)
@@ -434,13 +436,15 @@ class Tracker(GenericTracker):
         if component not in self.projects[project]['components']:
             raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
 
-        if not version:
-            # This is the default option, aligned to webkit-patch behavior.
-            # FIXME: We should make this class project agnostic by specifying this in trackers.json.
-            version = "WebKit Nightly Build"
-            if version not in self.projects[project]['versions']:
-                # If the default option does not exist on the list, we pick the last one from versions.
-                version = self.projects[project]['versions'][-1]
+        if not version and self.default_version:
+            version = self.default_version
+        elif not version and len(self.projects[project]['versions']) == 1:
+            version = self.projects[project]['versions'][0]
+        elif not version:
+            version = webkitcorepy.Terminal.choose(
+                "What version of '{}' should the bug be associated with?".format(project),
+                options=self.projects[project]['versions'], numbered=True,
+            )
         if version not in self.projects[project]['versions']:
             raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
 
