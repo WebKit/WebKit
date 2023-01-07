@@ -135,18 +135,19 @@ void PageRuntimeAgent::reportExecutionContextCreation()
         return;
 
     m_inspectedPage.forEachFrame([&](Frame& frame) {
-        if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
-            return;
-
         auto frameId = pageAgent->frameId(&frame);
 
         // Always send the main world first.
         auto& mainGlobalObject = mainWorldGlobalObject(frame);
-        notifyContextCreated(frameId, &mainGlobalObject, mainThreadNormalWorld());
+        if (frame.script().canExecuteScripts(mainThreadNormalWorld(), NotAboutToExecuteScript))
+            notifyContextCreated(frameId, &mainGlobalObject, mainThreadNormalWorld());
 
         for (auto& jsWindowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
             auto* globalObject = jsWindowProxy->window();
             if (globalObject == &mainGlobalObject)
+                continue;
+
+            if (!frame.script().canExecuteScripts(jsWindowProxy->world(), NotAboutToExecuteScript))
                 continue;
 
             auto& securityOrigin = downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();

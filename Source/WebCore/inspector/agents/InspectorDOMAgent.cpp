@@ -1992,9 +1992,11 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
         if (document) {
             handlerObject = scriptListener.ensureJSFunction(*document);
             if (auto frame = document->frame()) {
+                auto& world = scriptListener.isolatedWorld();
+
                 // FIXME: Why do we need the canExecuteScripts check here?
-                if (frame->script().canExecuteScripts(NotAboutToExecuteScript))
-                    globalObject = frame->script().globalObject(scriptListener.isolatedWorld());
+                if (frame->script().canExecuteScripts(world, NotAboutToExecuteScript))
+                    globalObject = frame->script().globalObject(world);
             }
         }
 

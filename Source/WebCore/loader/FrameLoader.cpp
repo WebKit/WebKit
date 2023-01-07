@@ -2379,7 +2379,7 @@ void FrameLoader::willRestoreFromCachedPage()
     closeURL();
     
     // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame.script().canExecuteScripts(NotAboutToExecuteScript)) {
+    if (m_frame.script().canExecuteScripts(mainThreadNormalWorld(), NotAboutToExecuteScript)) {
         DOMWindow* window = m_frame.document()->domWindow();
         window->setStatus(String());
         window->setDefaultStatus(String());
@@ -4116,18 +4116,17 @@ String FrameLoader::referrer() const
 
 void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
 {
-    if (!m_frame.script().canExecuteScripts(NotAboutToExecuteScript))
-        return;
-
     Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
-    for (auto& world : worlds)
-        dispatchDidClearWindowObjectInWorld(world);
+    for (auto& world : worlds) {
+        if (m_frame.script().canExecuteScripts(world, NotAboutToExecuteScript))
+            dispatchDidClearWindowObjectInWorld(world);
+    }
 }
 
 void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
-    if (!m_frame.script().canExecuteScripts(NotAboutToExecuteScript) || !m_frame.windowProxy().existingJSWindowProxy(world))
+    if (!m_frame.script().canExecuteScripts(world, NotAboutToExecuteScript) || !m_frame.windowProxy().existingJSWindowProxy(world))
         return;
 
     m_client->dispatchDidClearWindowObjectInWorld(world);

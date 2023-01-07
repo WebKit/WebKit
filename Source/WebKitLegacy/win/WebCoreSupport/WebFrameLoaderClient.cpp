@@ -995,7 +995,7 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);
 
-    if (!coreFrame->settings().isScriptEnabled())
+    if (!coreFrame->settings().isScriptEnabled() && world.type() != DOMWrapperWorld::Type::Internal)
         return;
 
     WebView* webView = m_webFrame->webView();

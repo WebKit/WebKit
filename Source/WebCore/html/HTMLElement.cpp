@@ -748,7 +748,7 @@ bool HTMLElement::rendererIsEverNeeded()
 {
     if (hasTagName(noscriptTag)) {
         RefPtr<Frame> frame = document().frame();
-        if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
+        if (frame && frame->script().canExecuteScripts(mainThreadNormalWorld(), NotAboutToExecuteScript))
             return false;
     } else if (hasTagName(noembedTag)) {
         RefPtr<Frame> frame = document().frame();

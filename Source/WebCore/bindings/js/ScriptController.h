@@ -134,7 +134,7 @@ public:
     void setWebAssemblyEnabled(bool, const String& errorMessage = String());
 
     static bool canAccessFromCurrentOrigin(Frame*, Document& accessingDocument);
-    WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
+    WEBCORE_EXPORT bool canExecuteScripts(DOMWrapperWorld&, ReasonForCallingCanExecuteScripts);
 
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }

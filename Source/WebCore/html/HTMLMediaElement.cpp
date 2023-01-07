@@ -4168,7 +4168,7 @@ bool HTMLMediaElement::controls() const
     RefPtr<Frame> frame = document().frame();
 
     // always show controls when scripting is disabled
-    if (frame && !frame->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (frame && !frame->script().canExecuteScripts(mainThreadNormalWorld(), NotAboutToExecuteScript))
         return true;
 
     return hasAttributeWithoutSynchronization(controlsAttr);

@@ -464,24 +464,28 @@ void ScriptController::updateDocument()
 
 Bindings::RootObject* ScriptController::cacheableBindingRootObject()
 {
-    if (!canExecuteScripts(NotAboutToExecuteScript))
+    auto& world = pluginWorld();
+
+    if (!canExecuteScripts(world, NotAboutToExecuteScript))
         return nullptr;
 
     if (!m_cacheableBindingRootObject) {
         JSLockHolder lock(commonVM());
-        m_cacheableBindingRootObject = Bindings::RootObject::create(nullptr, globalObject(pluginWorld()));
+        m_cacheableBindingRootObject = Bindings::RootObject::create(nullptr, globalObject(world));
     }
     return m_cacheableBindingRootObject.get();
 }
 
 Bindings::RootObject* ScriptController::bindingRootObject()
 {
-    if (!canExecuteScripts(NotAboutToExecuteScript))
+    auto& world = pluginWorld();
+
+    if (!canExecuteScripts(world, NotAboutToExecuteScript))
         return nullptr;
 
     if (!m_bindingRootObject) {
         JSLockHolder lock(commonVM());
-        m_bindingRootObject = Bindings::RootObject::create(nullptr, globalObject(pluginWorld()));
+        m_bindingRootObject = Bindings::RootObject::create(nullptr, globalObject(world));
     }
     return m_bindingRootObject.get();
 }
@@ -516,14 +520,16 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
 
 JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
 {
+    auto& world = pluginWorld();
+
     // Can't create JSObjects when JavaScript is disabled
-    if (!canExecuteScripts(NotAboutToExecuteScript))
+    if (!canExecuteScripts(world, NotAboutToExecuteScript))
         return nullptr;
 
     JSLockHolder lock(commonVM());
 
     // Create a JSObject bound to this element
-    auto* globalObj = globalObject(pluginWorld());
+    auto* globalObj = globalObject(world);
     // FIXME: is normal okay? - used for NP plugins?
     JSValue jsElementValue = toJS(globalObj, globalObj, plugin);
     if (!jsElementValue || !jsElementValue.isObject())
@@ -594,7 +600,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt, m_frame.document());
 
-    if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
+    if (!canExecuteScripts(world, AboutToExecuteScript) || isPaused())
         return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
 
     auto sourceURL = parameters.sourceURL;
@@ -771,10 +777,13 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     call(&globalObject, thenFunction, callData, result.value(), arguments);
 }
 
-bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
+bool ScriptController::canExecuteScripts(DOMWrapperWorld& world, ReasonForCallingCanExecuteScripts reason)
 {
     if (reason == AboutToExecuteScript)
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
+
+    if (world.type() == DOMWrapperWorld::Type::Internal)
+        return true;
 
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
