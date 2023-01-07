@@ -4420,8 +4420,11 @@ class ReRunAPITests(RunAPITests):
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
 
-class RunAPITestsWithoutChange(ReRunAPITests):
+class RunAPITestsWithoutChange(RunAPITests):
     name = 'run-api-tests-without-change'
+
+    def doOnFailure(self):
+        pass
 
 
 class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
