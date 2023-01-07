@@ -2697,6 +2697,9 @@ void WebViewImpl::selectionDidChange()
         requestCandidatesForSelectionIfNeeded();
 #endif
 
+    if (m_page->editorState().hasPostLayoutData())
+        updateCaretDecorationPlacement();
+
     NSWindow *window = [m_view window];
     if (window.firstResponder == m_view.get().get()) {
         NSInspectorBar *inspectorBar = window.inspectorBar;
@@ -5798,6 +5801,10 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 
 #if !USE(APPLE_INTERNAL_SDK)
 void WebViewImpl::setCaretDecorationVisibility(bool)
+{
+}
+
+void WebViewImpl::updateCaretDecorationPlacement()
 {
 }
 #endif
