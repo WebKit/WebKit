@@ -172,11 +172,6 @@ public:
     static void setArePDFImagesEnabled(bool isEnabled) { shared().m_arePDFImagesEnabled = isEnabled; }
     static bool arePDFImagesEnabled() { return shared().m_arePDFImagesEnabled; }
 
-#if HAVE(INCREMENTAL_PDF_APIS)
-    static void setIncrementalPDFLoadingEnabled(bool isEnabled) { shared().m_incrementalPDFLoadingEnabled = isEnabled; }
-    static bool incrementalPDFLoadingEnabled() { return shared().m_incrementalPDFLoadingEnabled; }
-#endif
-
 #if ENABLE(WEBM_FORMAT_READER)
     static void setWebMFormatReaderEnabled(bool isEnabled) { shared().m_webMFormatReaderEnabled = isEnabled; }
     static bool webMFormatReaderEnabled() { return shared().m_webMFormatReaderEnabled; }
@@ -307,10 +302,6 @@ private:
 #endif
 
     bool m_arePDFImagesEnabled { true };
-
-#if HAVE(INCREMENTAL_PDF_APIS)
-    bool m_incrementalPDFLoadingEnabled { false };
-#endif
 
 #if ENABLE(WEBM_FORMAT_READER)
     bool m_webMFormatReaderEnabled { false };

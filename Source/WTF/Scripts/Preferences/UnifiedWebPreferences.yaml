@@ -2594,12 +2594,14 @@ IncrementalPDFLoadingEnabled:
   type: bool
   status: embedder
   condition: HAVE(INCREMENTAL_PDF_APIS)
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       "PLATFORM(MAC)": true
       default: false
     WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+    WebCore:
       "PLATFORM(MAC)": true
       default: false
 
