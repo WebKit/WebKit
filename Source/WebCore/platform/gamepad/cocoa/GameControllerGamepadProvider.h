@@ -49,6 +49,8 @@ public:
     WEBCORE_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
+    void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
+    void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
 
     WEBCORE_EXPORT void stopMonitoringInput();
     WEBCORE_EXPORT void startMonitoringInput();

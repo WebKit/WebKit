@@ -198,6 +198,7 @@ public:
 
     bool hasPermission(const String& permission, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { });
     bool hasPermission(const URL&, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    bool hasPermissions(PermissionsSet, MatchPatternSet);
 
     PermissionState permissionState(const String& permission, _WKWebExtensionTab * = nil, OptionSet<PermissionStateOptions> = { });
     void setPermissionState(PermissionState, const String& permission, WallTime expirationDate = WallTime::infinity());
@@ -216,6 +217,9 @@ public:
 
     bool inTestingMode() const { return m_testingMode; }
     void setTestingMode(bool);
+
+    URL backgroundContentURL();
+    WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
 
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
     void didFinishNavigation(WKWebView *, WKNavigation *);
@@ -253,8 +257,6 @@ private:
 
     WKWebViewConfiguration *webViewConfiguration();
 
-    URL backgroundContentURL();
-
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebView();
     void unloadBackgroundWebView();
@@ -290,6 +292,13 @@ private:
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
     void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
+
+    // Permissions APIs
+    void permissionsGetAll(CompletionHandler<void(Vector<String> permissions, Vector<String> origins)>&&);
+    void permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler);
+    void permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler);
+    void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler);
+    void parseMatchPatterns(HashSet<String> origins, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

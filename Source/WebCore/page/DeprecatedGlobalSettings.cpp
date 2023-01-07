@@ -76,13 +76,6 @@ DeprecatedGlobalSettings& DeprecatedGlobalSettings::shared()
     return deprecatedGlobalSettings;
 }
 
-#if ENABLE(TOUCH_EVENTS)
-bool DeprecatedGlobalSettings::touchEventsEnabled()
-{
-    return shared().m_touchEventsEnabled.value_or(screenHasTouchDevice());
-}
-#endif
-
 #if ENABLE(VORBIS)
 void DeprecatedGlobalSettings::setVorbisDecoderEnabled(bool isEnabled)
 {

@@ -1,0 +1,29 @@
+
+Upgraded form-associated custom elements without an owner:
+PASS $("noowner-upgrade1").restoredState is "foo"
+PASS $("noowner-upgrade2").restoredState is "bar"
+PASS isFormDataEqual($("noowner-upgrade3").restoredState, __formData2) is true
+PASS isFormDataEqual($("noowner-upgrade4").restoredState, __formData1) is true
+
+Upgraded form-associated custom elements with a form owner:
+PASS isFormDataEqual($("upgrade1").restoredState, __formData2) is true
+PASS $("upgrade2").restoredState is "foo"
+PASS isFormDataEqual($("upgrade3").restoredState, __formData1) is true
+PASS $("upgrade4").restoredState is "bar"
+
+Predefined form-associated custom elements without an owner:
+PASS $("noowner-predefined1").restoredState is "foo"
+PASS $("noowner-predefined2").restoredState is "bar"
+PASS isFormDataEqual($("noowner-predefined3").restoredState, __formData1) is true
+PASS isFormDataEqual($("noowner-predefined4").restoredState, __formData2) is true
+
+Predefined form-associated custom elements with a form owner:
+PASS $("predefined1").restoredState is "foo"
+PASS isFormDataEqual($("predefined2").restoredState, __formData1) is true
+PASS $("predefined3").restoredState is "bar"
+PASS $("predefined4").restoredState is "foo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

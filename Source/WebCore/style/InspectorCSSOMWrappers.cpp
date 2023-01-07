@@ -81,6 +81,9 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
             break;
         case StyleRuleType::Style:
             m_styleRuleToCSSOMWrapperMap.add(&downcast<CSSStyleRule>(*cssRule).styleRule(), downcast<CSSStyleRule>(cssRule));
+
+            // Eagerly collect rules nested in this style rule.
+            collect(downcast<CSSStyleRule>(cssRule));
             break;
         default:
             break;

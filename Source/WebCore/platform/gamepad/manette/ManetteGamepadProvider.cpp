@@ -196,6 +196,18 @@ std::unique_ptr<ManetteGamepad> ManetteGamepadProvider::removeGamepadForDevice(M
     return result;
 }
 
+void ManetteGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    // Not supported by this provider.
+    completionHandler(false);
+}
+
+void ManetteGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+{
+    // Not supported by this provider.
+    completionHandler();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(GAMEPAD) && OS(LINUX)

@@ -1249,6 +1249,7 @@ html/EnterKeyHint.cpp
 html/FTPDirectoryDocument.cpp
 html/FeaturePolicy.cpp
 html/FileInputType.cpp
+html/FormAssociatedCustomElement.cpp
 html/FormController.cpp
 html/FormListedElement.cpp
 html/GenericCachedHTMLCollection.cpp
@@ -1278,7 +1279,7 @@ html/HTMLEmbedElement.cpp
 html/HTMLFieldSetElement.cpp
 html/HTMLFontElement.cpp
 html/HTMLFormControlElement.cpp
-html/HTMLFormControlElementWithState.cpp
+html/HTMLMaybeFormAssociatedCustomElement.cpp
 html/HTMLFormControlsCollection.cpp
 html/HTMLFormElement.cpp
 html/HTMLFrameElement.cpp
@@ -1395,6 +1396,7 @@ html/URLInputType.cpp
 html/URLRegistry.cpp
 html/URLSearchParams.cpp
 html/UserActivation.cpp
+html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
 html/WeekInputType.cpp
 html/canvas/ANGLEInstancedArrays.cpp
@@ -3458,6 +3460,7 @@ JSGainOptions.cpp
 JSGamepad.cpp
 JSGamepadEffectParameters.cpp
 JSGamepadHapticActuator.cpp
+JSGamepadHapticEffectType.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp
 JSGeolocation.cpp
@@ -4149,6 +4152,7 @@ JSVTTCue.cpp
 JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSValidityState.cpp
+JSValidityStateFlags.cpp
 JSVideoColorPrimaries.cpp
 JSVideoColorSpace.cpp
 JSVideoColorSpaceInit.cpp

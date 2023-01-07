@@ -750,6 +750,30 @@ TEST(KeyboardInputTests, TestWebViewAdditionalContextForStrongPasswordAssistance
     EXPECT_TRUE([actual[@"_automaticPasswordKeyboard"] boolValue]);
 }
 
+TEST(KeyboardInputTests, TestWebViewAdditionalContextForNonAutofillCredentialType)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [inputDelegate setFocusRequiresStrongPasswordAssistanceHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) {
+        return YES;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<input type='text' id='input' autocomplete='username webauthn'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('input').focus()"];
+
+    NSDictionary *actual = [[webView textInputContentView] _autofillContext];
+    EXPECT_TRUE([actual[@"_page_id"] boolValue]);
+    EXPECT_TRUE([actual[@"_frame_id"] boolValue]);
+    EXPECT_WK_STREQ("webauthn", actual[@"_credential_type"]);
+}
+
 TEST(KeyboardInputTests, TestWebViewAccessoryDoneDuringStrongPasswordAssistance)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

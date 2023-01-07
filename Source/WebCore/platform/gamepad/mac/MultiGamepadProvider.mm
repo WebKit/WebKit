@@ -76,6 +76,18 @@ void MultiGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     }
 }
 
+void MultiGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    // Not supported by this provider.
+    completionHandler(false);
+}
+
+void MultiGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+{
+    // Not supported by this provider.
+    completionHandler();
+}
+
 unsigned MultiGamepadProvider::indexForNewlyConnectedDevice()
 {
     unsigned index = 0;

@@ -32,6 +32,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/ElementContext.h>
 #include <WebCore/EnterKeyHint.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/IntRect.h>
@@ -118,6 +119,7 @@ struct FocusedElementInformation {
     bool isAutofillableUsernameField { false };
     URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
+    WebCore::NonAutofillCredentialType nonAutofillCredentialType { WebCore::NonAutofillCredentialType::None };
     String placeholder;
     String label;
     String ariaLabel;
@@ -139,6 +141,8 @@ struct FocusedElementInformation {
 
     FocusedElementInformationIdentifier identifier;
     WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
+
+    WebCore::FrameIdentifier frameID;
 };
 #endif
 

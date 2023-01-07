@@ -195,9 +195,9 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
 
     if (lineBox->isFirstAfterPageBreak()) {
         if (run->isHorizontal())
-            rect.shiftYEdgeTo(lineBox->top());
+            rect.shiftYEdgeTo(lineBox->logicalTop());
         else
-            rect.shiftXEdgeTo(lineBox->top());
+            rect.shiftXEdgeTo(lineBox->logicalTop());
     }
 
     // FIXME: Out-of-flow positioned line breaks do not follow normal containing block chain.

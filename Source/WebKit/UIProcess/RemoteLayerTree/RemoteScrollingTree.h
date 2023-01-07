@@ -30,6 +30,7 @@
 #include "RemoteScrollingCoordinator.h"
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingTree.h>
+#include <WebCore/WheelEventTestMonitor.h>
 
 namespace WebCore {
 class PlatformMouseEvent;
@@ -64,6 +65,10 @@ protected:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
 
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
+
+    void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase) override;
+    void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
+    void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
 
     RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
 };

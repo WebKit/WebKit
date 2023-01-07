@@ -44,6 +44,7 @@
 #include <WebCore/CSPViolationReportBody.h>
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
+#include <WebCore/ColorWellPart.h>
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/ControlPart.h>
 #include <WebCore/Credential.h>
@@ -1674,6 +1675,7 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     case WebCore::ControlPartType::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebCore::ControlPartType::ColorWell:
+        return WebCore::ColorWellPart::create();
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case WebCore::ControlPartType::ImageControlsButton:

@@ -196,6 +196,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
     m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
 
     readStateFromStorage();
+    writeStateToStorage();
 
     // FIXME: <https://webkit.org/b/248430> Move local storage (if base URL changed).
 
@@ -731,6 +732,29 @@ bool WebExtensionContext::hasPermission(const URL& url, _WKWebExtensionTab *tab,
     }
 }
 
+bool WebExtensionContext::hasPermissions(PermissionsSet permissions, MatchPatternSet matchPatterns)
+{
+    for (auto& permission : permissions) {
+        if (!m_grantedPermissions.contains(permission))
+            return false;
+    }
+
+    for (auto& pattern : matchPatterns) {
+        bool matchFound = false;
+        for (auto& grantedPattern : currentPermissionMatchPatterns()) {
+            if (pattern->matchesPattern(grantedPattern, { WebExtensionMatchPattern::Options::IgnorePaths })) {
+                matchFound = true;
+                break;
+            }
+        }
+
+        if (!matchFound)
+            return false;
+    }
+
+    return true;
+}
+
 WebExtensionContext::PermissionState WebExtensionContext::permissionState(const String& permission, _WKWebExtensionTab *tab, OptionSet<PermissionStateOptions> options)
 {
     ASSERT(!permission.isEmpty());
@@ -1138,8 +1162,9 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
 
 URL WebExtensionContext::backgroundContentURL()
 {
-    ASSERT(extension().hasBackgroundContent());
-    return URL { m_baseURL, extension().backgroundContentPath() };
+    if (!extension().hasBackgroundContent())
+        return { };
+    return { m_baseURL, extension().backgroundContentPath() };
 }
 
 void WebExtensionContext::loadBackgroundWebViewDuringLoad()
@@ -1246,17 +1271,6 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
     ASSERT(m_backgroundWebView);
 
     // FIXME: <https://webkit.org/b/246483> Don't unload the background page if there are open ports, pending website requests, or if an inspector window is open.
-
-    if (m_backgroundWebView.get()._isBeingInspected) {
-        RELEASE_LOG(Extensions, "Not unloading non-persistent background content for extension %{private}@ because it is being inspected.", static_cast<NSString*>(m_uniqueIdentifier));
-        scheduleBackgroundContentToUnload();
-    }
-
-    RELEASE_LOG(Extensions, "Unloading non-persistent background content for extension %{private}@.", static_cast<NSString*>(m_uniqueIdentifier));
-    NSTimeInterval backgroundPageLifetime = [NSDate.now timeIntervalSinceDate:static_cast<NSDate*>(m_lastBackgroundContentLoadDate)];
-    static constexpr NSTimeInterval fiveMinutesInSeconds = 60 * 5;
-    if (backgroundPageLifetime > fiveMinutesInSeconds)
-        unloadBackgroundWebView();
 }
 
 void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()

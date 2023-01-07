@@ -194,10 +194,6 @@ void EventSenderProxy::continuousMouseScrollBy(int, int, bool)
 {
 }
 
-void EventSenderProxy::monitorWheelEvents()
-{
-}
-
 void EventSenderProxy::leapForward(int milliseconds)
 {
     m_time += milliseconds / 1000.0;

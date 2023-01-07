@@ -24,7 +24,7 @@ function shouldDisallowFrameResize()
 
 function shouldDisallowFrameResizeAfterProcessingFrame(processFrameFunction)
 {
-    var expectedWidth = _testFrame.width;
+    var expectedWidth = _testFrame.getBoundingClientRect().width;
     processFrameFunction(_testFrame);
     resizeTestFrameBy(deltaWidth());
     checkTestFrameWidthEquals(expectedWidth);
@@ -32,7 +32,7 @@ function shouldDisallowFrameResizeAfterProcessingFrame(processFrameFunction)
 
 function shouldAllowFrameResizeAfterProcessingFrame(processFrameFunction)
 {
-    var expectedWidth = _testFrame.width + deltaWidth();
+    var expectedWidth = _testFrame.getBoundingClientRect().width + deltaWidth();
     processFrameFunction(_testFrame);
     resizeTestFrameBy(deltaWidth());
     checkTestFrameWidthEquals(expectedWidth);
@@ -40,10 +40,10 @@ function shouldAllowFrameResizeAfterProcessingFrame(processFrameFunction)
 
 function checkTestFrameWidthEquals(expectedWidth)
 {
-    if (_testFrame.width === expectedWidth)
-        log('PASS document.getElementById("' + _testFrameId + '").width is ' + expectedWidth);
+    if (_testFrame.getBoundingClientRect().width === expectedWidth)
+        log('PASS document.getElementById("' + _testFrameId + '").getBoundingClientRect().width is ' + expectedWidth);
     else
-        log('FAIL document.getElementById("' + _testFrameId + '").width should be ' + expectedWidth + '. Was ' + _testFrame.width + '.');
+        log('FAIL document.getElementById("' + _testFrameId + '").getBoundingClientRect().width should be ' + expectedWidth + '. Was ' + _testFrame.getBoundingClientRect().width + '.');
 }
 
 function resizeTestFrameBy(deltaWidthInPixels)

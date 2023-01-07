@@ -58,7 +58,7 @@ FormListedElement::FormListedElement(HTMLFormElement* form)
 
 FormListedElement::~FormListedElement() = default;
 
-void FormListedElement::didMoveToNewDocument(Document&)
+void FormListedElement::didMoveToNewDocument()
 {
     HTMLElement& element = asHTMLElement();
     if (element.hasAttributeWithoutSynchronization(formAttr) && element.isConnected())
@@ -165,20 +165,28 @@ void FormListedElement::formWillBeDestroyed()
 void FormListedElement::resetFormOwner()
 {
     RefPtr<HTMLFormElement> originalForm = form();
-    setForm(findAssociatedForm(&asHTMLElement(), originalForm.get()));
     HTMLElement& element = asHTMLElement();
+    setForm(findAssociatedForm(&element, originalForm.get()));
     auto* newForm = form();
     if (newForm && newForm != originalForm && newForm->isConnected())
         element.document().didAssociateFormControl(element);
 }
 
-void FormListedElement::formAttributeChanged()
+void FormListedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+{
+    if (name == formAttr)
+        parseFormAttribute(value);
+}
+
+void FormListedElement::parseFormAttribute(const AtomString& value)
 {
     HTMLElement& element = asHTMLElement();
-    if (!element.hasAttributeWithoutSynchronization(formAttr)) {
+    if (value.isNull()) {
         // The form attribute removed. We need to reset form owner here.
         RefPtr originalForm = form();
-        // FIXME: Why does this not pass originalForm to findClosestFormAncestor?
+        // Instead of calling setForm(findAssociatedForm(&element, originalForm.get())) here,
+        // we effectively perform setForm(findAssociatedForm(&element, nullptr)) because
+        // it's known that originalForm is obsolete and can't be used as a fallback.
         setForm(HTMLFormElement::findClosestFormAncestor(element));
         auto* newForm = form();
         if (newForm && newForm != originalForm && newForm->isConnected())
@@ -278,11 +286,6 @@ const AtomString& FormListedElement::name() const
 {
     const AtomString& name = asHTMLElement().getNameAttribute();
     return name.isNull() ? emptyAtom() : name;
-}
-
-bool FormListedElement::isFormControlElementWithState() const
-{
-    return false;
 }
 
 FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomString& id, FormListedElement& element)

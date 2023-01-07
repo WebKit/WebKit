@@ -32,6 +32,8 @@
 
     readonly attribute WebExtensionAPIRuntime runtime;
 
+    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
+
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
 
     [Dynamic] readonly attribute WebExtensionAPITest test;

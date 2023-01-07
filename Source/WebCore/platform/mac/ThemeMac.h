@@ -59,7 +59,6 @@ private:
 
     bool controlRequiresPreWhiteSpace(ControlPartType type) const final { return type == ControlPartType::PushButton; }
 
-    void paint(ControlPartType, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor) final;
     void inflateControlPaintRect(ControlPartType, const ControlStates&, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersReducedMotion() const final;

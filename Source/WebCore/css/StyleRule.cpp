@@ -65,6 +65,11 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSGroupingRule& parentRule) cons
     return createCSSOMWrapper(nullptr, &parentRule);
 }
 
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleRule& parentRule) const
+{
+    return createCSSOMWrapper(nullptr, &parentRule);
+}
+
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper() const
 {
     return createCSSOMWrapper(nullptr, nullptr);
@@ -141,7 +146,7 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     });
 }
 
-Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSGroupingRule* parentRule) const
+Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
     // FIXME: const_cast is required here because a wrapper for a style rule can be used to *modify* the style rule's selector; use of const in the style system is thus inaccurate.
     auto wrapper = const_cast<StyleRuleBase&>(*this).visitDerived(WTF::makeVisitor(
@@ -209,7 +214,7 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes() + sizeof(Vector<Ref<StyleRuleBase>>);
 }
 
-StyleRule::StyleRule(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRule>>&& nestedRules)
+StyleRule::StyleRule(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
     : StyleRuleBase(StyleRuleType::Style, hasDocumentSecurityOrigin)
     , m_properties(WTFMove(properties))
     , m_selectorList(WTFMove(selectors))
@@ -237,7 +242,7 @@ StyleRule::StyleRule(const StyleRule& o)
 
 StyleRule::~StyleRule() = default;
 
-Ref<StyleRule> StyleRule::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRule>>&& nestedRules)
+Ref<StyleRule> StyleRule::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
 {
     return adoptRef(*new StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors), WTFMove(nestedRules)));
 }

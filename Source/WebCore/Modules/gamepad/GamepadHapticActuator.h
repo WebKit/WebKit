@@ -27,31 +27,38 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadHapticEffectType.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class DeferredPromise;
+class Document;
+class Gamepad;
 struct GamepadEffectParameters;
 
 class GamepadHapticActuator : public RefCounted<GamepadHapticActuator> {
 public:
-    static Ref<GamepadHapticActuator> create();
+    static Ref<GamepadHapticActuator> create(Gamepad&);
+    ~GamepadHapticActuator();
 
+    using EffectType = GamepadHapticEffectType;
     enum class Type : uint8_t { Vibration, DualRumble };
-    enum class EffectType : uint8_t { DualRumble };
     enum class Result : uint8_t { Complete, Preempted };
 
     Type type() const { return m_type; }
     bool canPlayEffectType(EffectType) const;
-    void playEffect(EffectType, GamepadEffectParameters&&, Ref<DeferredPromise>&&);
-    void reset(Ref<DeferredPromise>&&);
+    void playEffect(Document&, EffectType, GamepadEffectParameters&&, Ref<DeferredPromise>&&);
+    void reset(Document&, Ref<DeferredPromise>&&);
 
 private:
-    GamepadHapticActuator();
+    explicit GamepadHapticActuator(Gamepad&);
 
     Type m_type;
+    WeakPtr<Gamepad> m_gamepad;
+    RefPtr<DeferredPromise> m_playingEffectPromise;
 };
 
 } // namespace WebCore

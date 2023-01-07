@@ -27,6 +27,10 @@ messages -> RemoteScrollingCoordinator {
     AnimatedScrollDidEndForNode(uint64_t nodeID);
     CurrentSnapPointIndicesChangedForNode(uint64_t nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
     ScrollingStateInUIProcessChanged(WebKit::RemoteScrollingUIState uiState);
+
+    ReceivedWheelEventWithPhases(enum:uint8_t WebCore::PlatformWheelEventPhase phase, enum:uint8_t WebCore::PlatformWheelEventPhase momentumPhase);
+    StartDeferringScrollingTestCompletionForNode(uint64_t nodeID, WebCore::WheelEventTestMonitor::DeferReason reason);
+    StopDeferringScrollingTestCompletionForNode(uint64_t nodeID, WebCore::WheelEventTestMonitor::DeferReason reason);
 }
 
 #endif // ENABLE(ASYNC_SCROLLING)

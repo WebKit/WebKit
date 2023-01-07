@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPINamespace.h"
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
 #include "WebExtensionAPITest.h"
 #include "WebExtensionAPIWebNavigation.h"
@@ -47,6 +48,7 @@ public:
     bool isPropertyAllowed(String propertyName, WebPage*);
 
     WebExtensionAPIExtension& extension();
+    WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
     WebExtensionAPITest& test();
     WebExtensionAPIWebNavigation& webNavigation();
@@ -54,6 +56,7 @@ public:
 
 private:
     RefPtr<WebExtensionAPIExtension> m_extension;
+    RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
     RefPtr<WebExtensionAPITest> m_test;
     RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;

@@ -116,6 +116,8 @@ void WheelEventTestMonitor::receivedWheelEventWithPhases(PlatformWheelEventPhase
 #if ENABLE(KINETIC_SCROLLING)
     Locker locker { m_lock };
 
+    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "      (=) WheelEventTestMonitor::receivedWheelEventWithPhases: phase=" << phase << " momentumPhase=" << momentumPhase);
+
     if (phase == PlatformWheelEventPhase::Ended || phase == PlatformWheelEventPhase::Cancelled)
         m_receivedWheelEndOrCancel = true;
 

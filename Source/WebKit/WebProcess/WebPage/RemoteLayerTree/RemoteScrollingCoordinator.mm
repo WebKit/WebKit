@@ -40,11 +40,12 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/Page.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeStickyNodeCocoa.h>
-
+#import <WebCore/WheelEventTestMonitor.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -144,6 +145,24 @@ void RemoteScrollingCoordinator::addNodeWithActiveRubberBanding(ScrollingNodeID 
 void RemoteScrollingCoordinator::removeNodeWithActiveRubberBanding(ScrollingNodeID nodeID)
 {
     m_nodesWithActiveRubberBanding.remove(nodeID);
+}
+
+void RemoteScrollingCoordinator::receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase)
+{
+    if (auto monitor = m_page->wheelEventTestMonitor())
+        monitor->receivedWheelEventWithPhases(phase, momentumPhase);
+}
+
+void RemoteScrollingCoordinator::startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, WebCore::WheelEventTestMonitor::DeferReason reason)
+{
+    if (auto monitor = m_page->wheelEventTestMonitor())
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+}
+
+void RemoteScrollingCoordinator::stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, WebCore::WheelEventTestMonitor::DeferReason reason)
+{
+    if (auto monitor = m_page->wheelEventTestMonitor())
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
 }
 
 } // namespace WebKit

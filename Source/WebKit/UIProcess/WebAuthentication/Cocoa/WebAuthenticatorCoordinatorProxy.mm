@@ -462,10 +462,8 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
     AuthenticatorAttachment attachment;
     if ([rawAttachment isEqualToString:@"platform"])
         attachment = AuthenticatorAttachment::Platform;
-    else {
-        ASSERT([rawAttachment isEqualToString:@"cross-platform"]);
+    else
         attachment = AuthenticatorAttachment::CrossPlatform;
-    }
 
     handler(response, attachment, exceptionData);
 }

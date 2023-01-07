@@ -36,6 +36,12 @@ messages -> WebExtensionContext {
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
     RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
+
+    // Permissions APIs
+    PermissionsGetAll() -> (Vector<String> permissions, Vector<String> origins);
+    PermissionsContains(HashSet<String> permissions, HashSet<String> origins) -> (bool containsPermissions);
+    PermissionsRequest(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
+    PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

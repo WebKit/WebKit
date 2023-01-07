@@ -33,7 +33,6 @@
 #include "RangeInputType.h"
 
 #include "Decimal.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
 #include "ElementChildIterator.h"
 #include "ElementRareData.h"
@@ -380,7 +379,7 @@ String RangeInputType::sanitizeValue(const String& proposedValue) const
 bool RangeInputType::shouldRespectListAttribute()
 {
 #if ENABLE(DATALIST_ELEMENT)
-    return DeprecatedGlobalSettings::dataListElementEnabled();
+    return element() && element()->document().settings().dataListElementEnabled();
 #else
     return InputType::themeSupportsDataListUI(this);
 #endif

@@ -466,6 +466,16 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     _webExtensionContext->setTestingMode(testingMode);
 }
 
+- (WKWebView *)_backgroundWebView
+{
+    return _webExtensionContext->backgroundWebView();
+}
+
+- (NSURL *)_backgroundContentURL
+{
+    return _webExtensionContext->backgroundContentURL();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -688,6 +698,16 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 
 - (void)_setTestingMode:(BOOL)testingMode
 {
+}
+
+- (WKWebView *)_backgroundWebView
+{
+    return nil;
+}
+
+- (NSURL *)_backgroundContentURL
+{
+    return nil;
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

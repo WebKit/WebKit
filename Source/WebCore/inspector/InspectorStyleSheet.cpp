@@ -40,6 +40,7 @@
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
+#include "CSSSelectorParser.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSSupportsRule.h"
@@ -79,7 +80,6 @@ using namespace Inspector;
 
 enum class RuleFlatteningStrategy {
     Ignore,
-    Commit,
     CommitSelfThenChildren,
 };
 
@@ -87,8 +87,6 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
 {
     switch (styleRuleType) {
     case StyleRuleType::Style:
-        return RuleFlatteningStrategy::Commit;
-
     case StyleRuleType::Media:
     case StyleRuleType::Supports:
     case StyleRuleType::LayerBlock:
@@ -127,7 +125,7 @@ static CSSParserContext parserContextForDocument(Document* document)
     return document ? CSSParserContext(*document) : strictCSSParserContext();
 }
 
-static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleRuleType, Document* document)
+static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleRuleType, Document* document, CSSSelectorParser::IsNestedContext isNestedContext)
 {
     auto isValidAtRuleHeaderText = [&] (const String& atRuleIdentifier) {
         if (headerText.isEmpty())
@@ -162,7 +160,7 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
     switch (styleRuleType) {
     case StyleRuleType::Style: {
         CSSParser parser(parserContextForDocument(document));
-        return !!parser.parseSelector(headerText);
+        return !!parser.parseSelector(headerText, nullptr, isNestedContext);
     }
     case StyleRuleType::Media:
         return isValidAtRuleHeaderText("@media"_s);
@@ -180,6 +178,8 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
 static std::optional<Protocol::CSS::Grouping::Type> protocolGroupingTypeForStyleRuleType(StyleRuleType styleRuleType)
 {
     switch (styleRuleType) {
+    case StyleRuleType::Style:
+        return Protocol::CSS::Grouping::Type::StyleRule;
     case StyleRuleType::Media:
         return Protocol::CSS::Grouping::Type::MediaRule;
     case StyleRuleType::Supports:
@@ -229,10 +229,6 @@ static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& 
 {
     for (auto& data : dataList) {
         switch (flatteningStrategyForStyleRuleType(data->type)) {
-        case RuleFlatteningStrategy::Commit:
-            target.append(data.copyRef());
-            break;
-
         case RuleFlatteningStrategy::CommitSelfThenChildren:
             target.append(data.copyRef());
             flattenSourceData(data->childRules, target);
@@ -537,6 +533,9 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (!rule)
         return nullptr;
 
+    if (auto* styleRule = dynamicDowncast<CSSStyleRule>(rule))
+        return &styleRule->cssRules();
+
     if (is<CSSMediaRule>(*rule))
         return &downcast<CSSMediaRule>(*rule).cssRules();
 
@@ -603,30 +602,35 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
     auto groupingsPayload = JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>::create();
 
     auto* parentRule = &rule;
-    while (parentRule) {
-        if (auto groupingRule = buildObjectForGrouping(parentRule))
-            groupingsPayload->addItem(groupingRule.releaseNonNull());
-        else if (auto* importRule = dynamicDowncast<CSSImportRule>(parentRule)) {
-            // FIXME: <webkit.org/b/246958> Show import rule as a single rule, instead of two rules for media and layer.
-            auto sourceURL = sourceURLForCSSRule(*importRule);
-            if (auto layerName = importRule->layerName(); !layerName.isNull()) {
-                auto layerRulePayload = Protocol::CSS::Grouping::create()
-                    .setType(Protocol::CSS::Grouping::Type::LayerImportRule)
-                    .release();
-                layerRulePayload->setText(layerName);
-                if (!sourceURL.isEmpty())
-                    layerRulePayload->setSourceURL(sourceURL);
-                groupingsPayload->addItem(WTFMove(layerRulePayload));
-            }
 
-            if (auto& media = importRule->media(); media.length() && media.mediaText() != "all"_s) {
-                auto mediaRulePayload = Protocol::CSS::Grouping::create()
-                    .setType(Protocol::CSS::Grouping::Type::MediaImportRule)
-                    .release();
-                mediaRulePayload->setText(media.mediaText());
-                if (!sourceURL.isEmpty())
-                    mediaRulePayload->setSourceURL(sourceURL);
-                groupingsPayload->addItem(WTFMove(mediaRulePayload));
+    while (parentRule) {
+        // The rule for which we are building groupings should not be included in the array of groupings, otherwise
+        // every CSSStyleRule will have itself as its first grouping.
+        if (parentRule != &rule) {
+            if (auto groupingRule = buildObjectForGrouping(parentRule))
+                groupingsPayload->addItem(groupingRule.releaseNonNull());
+            else if (auto* importRule = dynamicDowncast<CSSImportRule>(parentRule)) {
+                // FIXME: <webkit.org/b/246958> Show import rule as a single rule, instead of two rules for media and layer.
+                auto sourceURL = sourceURLForCSSRule(*importRule);
+                if (auto layerName = importRule->layerName(); !layerName.isNull()) {
+                    auto layerRulePayload = Protocol::CSS::Grouping::create()
+                        .setType(Protocol::CSS::Grouping::Type::LayerImportRule)
+                        .release();
+                    layerRulePayload->setText(layerName);
+                    if (!sourceURL.isEmpty())
+                        layerRulePayload->setSourceURL(sourceURL);
+                    groupingsPayload->addItem(WTFMove(layerRulePayload));
+                }
+
+                if (auto& media = importRule->media(); media.length() && media.mediaText() != "all"_s) {
+                    auto mediaRulePayload = Protocol::CSS::Grouping::create()
+                        .setType(Protocol::CSS::Grouping::Type::MediaImportRule)
+                        .release();
+                    mediaRulePayload->setText(media.mediaText());
+                    if (!sourceURL.isEmpty())
+                        mediaRulePayload->setSourceURL(sourceURL);
+                    groupingsPayload->addItem(WTFMove(mediaRulePayload));
+                }
             }
         }
 
@@ -1051,6 +1055,16 @@ ExceptionOr<String> InspectorStyleSheet::ruleHeaderText(const InspectorCSSId& id
     return sheetText.substring(sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length());
 }
 
+static CSSSelectorParser::IsNestedContext isNestedContext(CSSRule* rule)
+{
+    for (CSSRule *parentRule = rule->parentRule(); parentRule; parentRule = parentRule->parentRule()) {
+        if (is<CSSStyleRule>(parentRule))
+            return CSSSelectorParser::IsNestedContext::Yes;
+    }
+
+    return CSSSelectorParser::IsNestedContext::No;
+}
+
 ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& id, const String& newHeaderText)
 {
     if (!m_pageStyleSheet)
@@ -1060,7 +1074,7 @@ ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& i
     if (!rule)
         return Exception { NotFoundError };
 
-    if (!isValidRuleHeaderText(newHeaderText, rule->styleRuleType(), m_pageStyleSheet->ownerDocument()))
+    if (!isValidRuleHeaderText(newHeaderText, rule->styleRuleType(), m_pageStyleSheet->ownerDocument(), isNestedContext(rule)))
         return Exception { SyntaxError };
 
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
@@ -1112,7 +1126,7 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
     if (!m_pageStyleSheet)
         return Exception { NotSupportedError };
 
-    if (!isValidRuleHeaderText(selector, StyleRuleType::Style, m_pageStyleSheet->ownerDocument()))
+    if (!isValidRuleHeaderText(selector, StyleRuleType::Style, m_pageStyleSheet->ownerDocument(), CSSSelectorParser::IsNestedContext::No))
         return Exception { SyntaxError };
 
     auto text = this->text();
@@ -1240,6 +1254,10 @@ static Ref<Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String
     auto inspectorSelector = Protocol::CSS::CSSSelector::create()
         .setText(selectorText)
         .release();
+
+    // FIXME: <webkit.org/b/250141> Add support for resolving the specificity of a nested selector.
+    if (selector.hasExplicitNestingParent())
+        return inspectorSelector;
 
     auto specificity = selector.computeSpecificityTuple();
 
@@ -1705,10 +1723,6 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vecto
             continue;
 
         switch (flatteningStrategyForStyleRuleType(rule->styleRuleType())) {
-        case RuleFlatteningStrategy::Commit:
-            result->append(rule);
-            break;
-
         case RuleFlatteningStrategy::CommitSelfThenChildren: {
             result->append(rule);
 

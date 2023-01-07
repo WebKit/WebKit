@@ -26,7 +26,6 @@
 [
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,
-    NeedsPageWithCallbackHandler,
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIPermissions {
 

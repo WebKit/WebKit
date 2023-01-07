@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x66
+  RenderBlock {HTML} at (0,0) size 800x66
+    RenderBody {BODY} at (8,8) size 784x50
+      RenderFlexibleBox {FLEXBOX} at (0,0) size 50x50 [bgcolor=#808080]
+        RenderBlock {ITEM} at (0,0) size 50x0 [bgcolor=#008000]

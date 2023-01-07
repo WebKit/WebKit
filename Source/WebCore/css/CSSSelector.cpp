@@ -27,6 +27,7 @@
 #include "CSSSelector.h"
 
 #include "CSSMarkup.h"
+#include "CSSParserSelector.h"
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include "DeprecatedGlobalSettings.h"
@@ -1024,6 +1025,24 @@ void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
     };
 
     visitAllSimpleSelectors(replaceParentSelector);
+}
+
+void CSSSelector::replaceNestingParentByNotAll()
+{
+    auto replaceParentSelector = [] (CSSSelector& selector) {
+        if (selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent) {
+            // We replace by :not(*)
+            auto allSelector = makeUnique<CSSParserSelector>(CSSSelector(anyQName()));
+            Vector<std::unique_ptr<CSSParserSelector>> vector;
+            vector.append(WTFMove(allSelector));
+            auto selectorList = makeUnique<CSSSelectorList>(WTFMove(vector));
+            selector.setMatch(Match::PseudoClass);
+            selector.setPseudoClassType(PseudoClassType::PseudoClassNot);
+            selector.setSelectorList(WTFMove(selectorList));
+        }
+    };
+
+    visitAllSimpleSelectors(replaceParentSelector); 
 }
 
 bool CSSSelector::hasExplicitNestingParent() const

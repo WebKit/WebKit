@@ -98,7 +98,6 @@ public:
 
     virtual bool isLabelable() const { return false; }
     virtual FormAssociatedElement* asFormAssociatedElement();
-    virtual FormListedElement* asFormListedElement();
 
     virtual bool isInteractiveContent() const { return false; }
 

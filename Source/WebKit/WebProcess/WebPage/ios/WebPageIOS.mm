@@ -3491,6 +3491,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
+        information.nonAutofillCredentialType = element.autofillData().nonAutofillCredentialType;
+        information.frameID = CheckedRef(m_page->focusController())->focusedOrMainFrame().frameID();
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
         information.inputMode = element.canonicalInputMode();
         information.enterKeyHint = element.canonicalEnterKeyHint();
@@ -3560,6 +3562,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
+        information.nonAutofillCredentialType = element.autofillData().nonAutofillCredentialType;
+        information.frameID = CheckedRef(m_page->focusController())->focusedOrMainFrame().frameID();
     } else if (focusedElement->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
         if (is<HTMLElement>(*focusedElement)) {

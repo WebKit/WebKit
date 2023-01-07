@@ -90,8 +90,11 @@ inline void traverseRuleFeatures(Element& element, TraverseFunction&& function)
     traverseRuleFeaturesForSlotted(element, function);
 
     // Ensure that the containing tree resolver also exists so it doesn't get created in the middle of invalidation.
-    if (element.isInShadowTree() && element.containingShadowRoot())
-        Style::Scope::forNode(*element.containingShadowRoot()->host()).resolver();
+    if (element.isInShadowTree() && element.containingShadowRoot()) {
+        auto& host = *element.containingShadowRoot()->host();
+        if (host.isConnected())
+            Style::Scope::forNode(host).resolver();
+    }
 }
 
 }

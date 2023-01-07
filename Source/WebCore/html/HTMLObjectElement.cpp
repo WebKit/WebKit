@@ -105,9 +105,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomStri
     bool invalidateRenderer = false;
     bool needsWidgetUpdate = false;
 
-    if (name == formAttr)
-        formAttributeChanged();
-    else if (name == typeAttr) {
+    if (name == typeAttr) {
         m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
@@ -119,8 +117,10 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomStri
     } else if (name == classidAttr) {
         invalidateRenderer = true;
         needsWidgetUpdate = true;
-    } else
+    } else {
         HTMLPlugInImageElement::parseAttribute(name, value);
+        FormListedElement::parseAttribute(name, value);
+    }
 
     if (needsWidgetUpdate) {
         setNeedsWidgetUpdate(true);
@@ -461,7 +461,7 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 
 void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    FormListedElement::didMoveToNewDocument(oldDocument);
+    FormListedElement::didMoveToNewDocument();
     HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 

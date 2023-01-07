@@ -67,9 +67,6 @@ enum class PlatformWheelEventPhase : uint8_t {
 #endif
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, PlatformWheelEventPhase);
-
-
 #if PLATFORM(WIN)
 // How many pixels should we scroll per line? Gecko uses the height of the
 // current line, which means scroll distance changes as you go through the
@@ -283,5 +280,26 @@ inline FloatSize PlatformWheelEvent::swipeVelocity() const
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, EventHandling);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelScrollGestureState);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformWheelEventPhase);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlatformWheelEventPhase> {
+    using values = EnumValues<
+        WebCore::PlatformWheelEventPhase,
+        WebCore::PlatformWheelEventPhase::None
+#if ENABLE(KINETIC_SCROLLING)
+        ,
+        WebCore::PlatformWheelEventPhase::Began,
+        WebCore::PlatformWheelEventPhase::Stationary,
+        WebCore::PlatformWheelEventPhase::Changed,
+        WebCore::PlatformWheelEventPhase::Ended,
+        WebCore::PlatformWheelEventPhase::Cancelled,
+        WebCore::PlatformWheelEventPhase::MayBegin
+#endif
+    >;
+};
+
+} // namespace WTF

@@ -64,6 +64,7 @@ headers: "FocusedElementInformation.h" "WebCoreArgumentCoders.h"
     bool isAutofillableUsernameField;
     URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName;
+    WebCore::NonAutofillCredentialType nonAutofillCredentialType;
     String placeholder;
     String label;
     String ariaLabel;
@@ -85,5 +86,6 @@ headers: "FocusedElementInformation.h" "WebCoreArgumentCoders.h"
 
     WebKit::FocusedElementInformationIdentifier identifier;
     WebCore::ScrollingNodeID containerScrollingNodeID;
+    WebCore::FrameIdentifier frameID;
 }
 #endif

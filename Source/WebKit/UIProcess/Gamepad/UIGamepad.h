@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/GamepadHapticEffectType.h>
 #include <WebCore/SharedGamepadValue.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
@@ -58,6 +59,7 @@ private:
     Vector<WebCore::SharedGamepadValue> m_axisValues;
     Vector<WebCore::SharedGamepadValue> m_buttonValues;
     MonotonicTime m_lastUpdateTime;
+    WebCore::GamepadHapticEffectTypeSet m_supportedEffectTypes;
 };
 
 }

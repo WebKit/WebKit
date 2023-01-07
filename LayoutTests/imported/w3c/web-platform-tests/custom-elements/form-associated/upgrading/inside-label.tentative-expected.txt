@@ -1,0 +1,3 @@
+
+PASS Form-associated custom elements aren't considered labels' controls in precustomized state
+

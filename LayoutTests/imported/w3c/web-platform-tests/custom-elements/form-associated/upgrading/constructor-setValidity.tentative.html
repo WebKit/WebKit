@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>setValidity() works as expected in precustomized state</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<x-foo></x-foo>
+
+<script>
+test(() => {
+    customElements.define("x-foo", class extends HTMLElement {
+        static formAssociated = true;
+
+        constructor() {
+            super();
+
+            window.el = this;
+            window.internals = this.attachInternals();
+
+            internals.setValidity({customError: true}, "foo");
+
+            window.validInConstructor = internals.validity.valid;
+            window.validationMessageInConstructor = internals.validationMessage;
+
+            window.willValidateInConstructor = internals.willValidate;
+            window.matchesDisabledInConstructor = this.matches(":disabled");
+            window.matchesEnabledInConstructor = this.matches(":enabled");
+            window.matchesValidInConstructor = this.matches(":valid");
+            window.matchesInvalidInConstructor = this.matches(":invalid");
+        }
+    });
+
+    assert_false(validInConstructor);
+    assert_equals(validationMessageInConstructor, "foo");
+
+    assert_true(willValidateInConstructor);
+    assert_false(matchesDisabledInConstructor);
+    assert_false(matchesEnabledInConstructor);
+    assert_false(matchesValidInConstructor);
+    assert_false(matchesInvalidInConstructor);
+
+    assert_false(internals.validity.valid);
+    assert_equals(internals.validationMessage, "foo");
+
+    assert_true(internals.willValidate);
+    assert_false(el.matches(":disabled"));
+    assert_true(el.matches(":enabled"));
+    assert_false(el.matches(":valid"));
+    assert_true(el.matches(":invalid"));
+});
+</script>

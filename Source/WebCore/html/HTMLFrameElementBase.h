@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,9 +40,6 @@ public:
     void setLocation(JSC::JSGlobalObject&, const String&);
 
     ScrollbarMode scrollingMode() const final;
-
-    WEBCORE_EXPORT int width();
-    WEBCORE_EXPORT int height();
 
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document&);

@@ -179,6 +179,16 @@ bool defaultMediaSessionCoordinatorEnabled()
 }
 #endif
 
+bool defaultShouldTakeSuspendedAssertions()
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent);
+    return !newSDK;
+#else
+    return true;
+#endif
+}
+
 bool defaultShowModalDialogEnabled()
 {
 #if PLATFORM(COCOA)

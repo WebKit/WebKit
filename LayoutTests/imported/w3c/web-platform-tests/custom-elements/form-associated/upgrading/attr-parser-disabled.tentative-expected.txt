@@ -1,0 +1,3 @@
+
+PASS "disabled" attribute doesn't affect constraint validation in precustomized state
+

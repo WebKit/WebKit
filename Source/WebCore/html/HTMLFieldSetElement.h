@@ -28,9 +28,6 @@
 
 namespace WebCore {
 
-class FormListedElement;
-class HTMLFormControlsCollection;
-
 class HTMLFieldSetElement final : public HTMLFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFieldSetElement);
 public:
@@ -40,8 +37,8 @@ public:
 
     Ref<HTMLCollection> elements();
 
-    void addInvalidDescendant(const HTMLFormControlElement&);
-    void removeInvalidDescendant(const HTMLFormControlElement&);
+    void addInvalidDescendant(const HTMLElement&);
+    void removeInvalidDescendant(const HTMLElement&);
 
 private:
     HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
@@ -60,7 +57,7 @@ private:
     bool matchesValidPseudoClass() const final;
     bool matchesInvalidPseudoClass() const final;
 
-    WeakHashSet<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_invalidDescendants;
+    WeakHashSet<HTMLElement, WeakPtrImplWithEventTargetData> m_invalidDescendants;
     bool m_hasDisabledAttribute { false };
 };
 

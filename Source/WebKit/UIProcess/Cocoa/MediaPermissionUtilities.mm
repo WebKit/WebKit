@@ -289,10 +289,12 @@ void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&& c
 MediaPermissionResult checkSpeechRecognitionServiceAccess()
 {
     auto authorizationStatus = [PAL::getSFSpeechRecognizerClass() authorizationStatus];
+IGNORE_WARNINGS_BEGIN("deprecated-enum-compare")
     if (authorizationStatus == SFSpeechRecognizerAuthorizationStatusDenied || authorizationStatus == SFSpeechRecognizerAuthorizationStatusRestricted)
         return MediaPermissionResult::Denied;
     if (authorizationStatus == SFSpeechRecognizerAuthorizationStatusAuthorized)
         return MediaPermissionResult::Granted;
+IGNORE_WARNINGS_END
     return MediaPermissionResult::Unknown;
 }
 

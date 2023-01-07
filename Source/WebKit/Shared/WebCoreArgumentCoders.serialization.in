@@ -2465,3 +2465,17 @@ enum class WebCore::FocusDirection : uint8_t {
     Left,
     Right
 };
+
+#if ENABLE(GAMEPAD)
+struct WebCore::GamepadEffectParameters {
+    double duration;
+    double startDelay;
+    double strongMagnitude;
+    double weakMagnitude;
+};
+
+header: <WebCore/GamepadHapticEffectType.h>
+enum class WebCore::GamepadHapticEffectType : uint8_t {
+    DualRumble
+};
+#endif

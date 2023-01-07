@@ -231,14 +231,18 @@ void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float
         return;
     }
 
-    auto imageBufferRect = FloatRect { { 0, 0 }, rect.size() };
+    static constexpr float focusRingOutlineWidth = 3;
+    auto focusRingPadding = FloatSize { focusRingOutlineWidth, focusRingOutlineWidth };
 
-    auto imageBuffer = context.createImageBuffer(rect.size(), deviceScaleFactor);
+    auto cellDrawingRect = FloatRect { toFloatPoint(focusRingPadding), rect.size() };
+    auto imageBufferSize = cellDrawingRect.size() + 2 * focusRingPadding;
+
+    auto imageBuffer = context.createImageBuffer(imageBufferSize, deviceScaleFactor);
     if (!imageBuffer)
         return;
 
-    drawCellOrFocusRing(imageBuffer->context(), imageBufferRect, style, cell, view, drawCell);
-    context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location());
+    drawCellOrFocusRing(imageBuffer->context(), cellDrawingRect, style, cell, view, drawCell);
+    context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location() - focusRingPadding);
 }
 
 #if ENABLE(DATALIST_ELEMENT)

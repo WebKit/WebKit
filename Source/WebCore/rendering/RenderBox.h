@@ -393,6 +393,7 @@ public:
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
     void computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const;
+    LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, std::function<LayoutUnit()> computeInlineMargin) const;
 
     // Used to resolve margins in the containing block's block-flow direction.
     void computeBlockDirectionMargins(const RenderBlock& containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const;

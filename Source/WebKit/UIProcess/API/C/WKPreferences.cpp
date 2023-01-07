@@ -1777,16 +1777,6 @@ bool WKPreferencesGetStorageAccessAPIEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->storageAccessAPIEnabled();
 }
 
-void WKPreferencesSetAccessibilityObjectModelEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setAccessibilityObjectModelEnabled(flag);
-}
-
-bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->accessibilityObjectModelEnabled();
-}
-
 void WKPreferencesSetSyntheticEditingCommandsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSyntheticEditingCommandsEnabled(flag);

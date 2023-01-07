@@ -2908,6 +2908,16 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createIdentifierValue(CSSValueAuto);
         return currentColorOrValidColor(style, style.accentColor());
     }
+    case CSSPropertyAlignTracks:
+    case CSSPropertyJustifyTracks: {
+        auto list = CSSValueList::createCommaSeparated();
+        auto alignments = (propertyID == CSSPropertyAlignTracks) ? style.alignTracks() : style.justifyTracks();
+
+        for (auto alignment : alignments)
+            list->append(valueForContentPositionAndDistributionWithOverflowAlignment(alignment));
+
+        return list;
+    }
     case CSSPropertyBackgroundColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(style, style.backgroundColor());
     case CSSPropertyBackgroundImage:

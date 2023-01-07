@@ -325,6 +325,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/gamepad/GamepadEffectParameters.idl \
     $(WebCore)/Modules/gamepad/GamepadEvent.idl \
     $(WebCore)/Modules/gamepad/GamepadHapticActuator.idl \
+    $(WebCore)/Modules/gamepad/GamepadHapticEffectType.idl \
     $(WebCore)/Modules/gamepad/Navigator+Gamepad.idl \
     $(WebCore)/Modules/gamepad/WindowEventHandlers+Gamepad.idl \
     $(WebCore)/Modules/geolocation/Geolocation.idl \
@@ -1047,6 +1048,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \
+    $(WebCore)/dom/ValidityStateFlags.idl \
     $(WebCore)/dom/VisibilityState.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \

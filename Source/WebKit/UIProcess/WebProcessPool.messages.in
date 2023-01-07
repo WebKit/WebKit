@@ -25,8 +25,11 @@ messages -> WebProcessPool {
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous WantsConnection
 
 #if ENABLE(GAMEPAD)
+    // FIXME: Consider moving Gamepad messages to their own MessageListener.
     StartedUsingGamepads() WantsConnection
     StoppedUsingGamepads() -> () WantsConnection
+    PlayGamepadEffect(unsigned gamepadIndex, String gamepadID, enum:uint8_t WebCore::GamepadHapticEffectType type, struct WebCore::GamepadEffectParameters parameters) -> (bool success)
+    StopGamepadEffects(unsigned gamepadIndex, String gamepadID) -> ()
 #endif
 
     ReportWebContentCPUTime(Seconds cpuTime, uint64_t activityState)

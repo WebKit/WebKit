@@ -193,6 +193,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystemaccess/WorkerFileSystemStorageConnection.h
     Modules/filesystemaccess/WorkerFileSystemStorageConnectionCallbackIdentifier.h
 
+    Modules/gamepad/GamepadEffectParameters.h
+    Modules/gamepad/GamepadHapticEffectType.h
+
     Modules/geolocation/Geolocation.h
     Modules/geolocation/GeolocationClient.h
     Modules/geolocation/GeolocationController.h
@@ -653,8 +656,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h
     css/parser/CSSParserMode.h
+    css/parser/CSSParserSelector.h
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
+    css/parser/CSSSelectorParser.h
 
     css/query/GenericMediaQueryTypes.h
     css/query/MediaQuery.h
@@ -818,6 +823,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/UserActionElementSet.h
     dom/UserGestureIndicator.h
     dom/UserTypingGestureIndicator.h
+    dom/ValidityStateFlags.h
     dom/ViewportArguments.h
     dom/VisibilityChangeClient.h
     dom/VisibilityState.h
@@ -901,11 +907,15 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/CanvasBase.h
     html/CollectionTraversal.h
     html/CollectionType.h
+    html/CustomElementFormValue.h
+    html/DOMFormData.h
     html/DOMTokenList.h
     html/DataListSuggestionInformation.h
     html/EnterKeyHint.h
     html/FeaturePolicy.h
+    html/FormAssociatedCustomElement.h
     html/FormAssociatedElement.h
+    html/FormController.h
     html/FormListedElement.h
     html/HTMLAnchorElement.h
     html/HTMLAnchorElementInlines.h
@@ -928,8 +938,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLEmbedElement.h
     html/HTMLFieldSetElement.h
     html/HTMLFontElement.h
+    html/HTMLMaybeFormAssociatedCustomElement.h
     html/HTMLFormControlElement.h
-    html/HTMLFormControlElementWithState.h
     html/HTMLFormElement.h
     html/HTMLFrameElement.h
     html/HTMLFrameElementBase.h
@@ -1003,6 +1013,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/TypeAhead.h
     html/URLDecomposition.h
     html/URLRegistry.h
+    html/ValidatedFormListedElement.h
+    html/ValidationMessage.h
     html/ValidityState.h
     html/VideoFrameRequestCallback.h
     html/VoidCallback.h
@@ -1744,6 +1756,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/GraphicsContextGLANGLE.h
 
     platform/graphics/controls/ButtonPart.h
+    platform/graphics/controls/ColorWellPart.h
     platform/graphics/controls/ControlFactory.h
     platform/graphics/controls/ControlPart.h
     platform/graphics/controls/ControlPartType.h

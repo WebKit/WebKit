@@ -34,7 +34,7 @@ col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 command interfaceName=HTMLUnknownElement
 data
-datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT, deprecatedGlobalSettingsConditional=dataListElement
+datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT, settingsConditional=dataListElementEnabled
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 details
@@ -84,7 +84,7 @@ map
 mark interfaceName=HTMLElement
 marquee
 menu
-menuitem interfaceName=HTMLMenuItemElement, deprecatedGlobalSettingsConditional=menuItemElement
+menuitem interfaceName=HTMLMenuItemElement, settingsConditional=menuItemElementEnabled
 meta
 meter interfaceName=HTMLMeterElement
 model interfaceName=HTMLModelElement, conditional=MODEL_ELEMENT, settingsConditional=modelElementEnabled

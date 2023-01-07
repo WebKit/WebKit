@@ -44,6 +44,7 @@ WebGamepad::WebGamepad(const GamepadData& gamepadData)
     m_mapping = gamepadData.mapping();
     m_axisValues.resize(gamepadData.axisValues().size());
     m_buttonValues.resize(gamepadData.buttonValues().size());
+    m_supportedEffectTypes = gamepadData.supportedEffectTypes();
 
     updateValues(gamepadData);
 }

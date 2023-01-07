@@ -536,7 +536,10 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
                 if (options.multiline)
                     styleText += indentString.repeat(groupingsCount - i - 1);
 
-                styleText += groupings[i].prefix;
+                let prefix = groupings[i].prefix;
+                if (prefix)
+                    styleText += prefix;
+
                 if (groupings[i].text)
                     styleText += " " + groupings[i].text;
                 styleText += " {";

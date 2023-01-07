@@ -1268,7 +1268,7 @@ Ref<JSON::ArrayOf<Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMat
             continue;
 
         auto matchingSelectors = JSON::ArrayOf<int>::create();
-        const CSSSelectorList& selectorList = matchedRule->selectorList();
+        const CSSSelectorList& selectorList = matchedRule->resolvedSelectorList();
         int index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
             bool matched = selectorChecker.match(*selector, element, context);

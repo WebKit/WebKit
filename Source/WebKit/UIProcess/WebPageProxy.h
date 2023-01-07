@@ -1061,7 +1061,6 @@ public:
 
     bool isProcessingWheelEvents() const;
     void handleWheelEvent(const NativeWebWheelEvent&);
-    void startMonitoringWheelEventsForTesting();
 
     bool isProcessingKeyboardEvents() const;
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);

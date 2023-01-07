@@ -382,6 +382,9 @@ ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
 void ScrollingCoordinator::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
     ASSERT(isMainThread());
+    if (!m_page)
+        return;
+
     if (auto monitor = m_page->wheelEventTestMonitor())
         monitor->receivedWheelEventWithPhases(phase, momentumPhase);
 }
@@ -389,6 +392,9 @@ void ScrollingCoordinator::receivedWheelEventWithPhases(PlatformWheelEventPhase 
 void ScrollingCoordinator::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     ASSERT(isMainThread());
+    if (!m_page)
+        return;
+
     if (auto monitor = m_page->wheelEventTestMonitor())
         monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
 }
@@ -396,6 +402,9 @@ void ScrollingCoordinator::deferWheelEventTestCompletionForReason(ScrollingNodeI
 void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     ASSERT(isMainThread());
+    if (!m_page)
+        return;
+
     if (auto monitor = m_page->wheelEventTestMonitor())
         monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
 }

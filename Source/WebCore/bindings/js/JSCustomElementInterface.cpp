@@ -31,10 +31,13 @@
 #include "DOMWrapperWorld.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
+#include "HTMLFormElement.h"
+#include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLUnknownElement.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMFormData.h"
 #include "JSDOMWindow.h"
 #include "JSElement.h"
 #include "JSExecState.h"
@@ -87,6 +90,17 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     element->setIsFailedCustomElement();
 
     return element;
+}
+
+Ref<HTMLElement> JSCustomElementInterface::createElement(Document& document)
+{
+    if (m_isFormAssociated) {
+        auto element = HTMLMaybeFormAssociatedCustomElement::create(m_name, document);
+        element->setInterfaceIsFormAssociated();
+        return element;
+    }
+
+    return HTMLElement::create(m_name, document);
 }
 
 RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
@@ -224,6 +238,11 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     }
 
+    if (m_isFormAssociated) {
+        ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(element));
+        downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
+    }
+
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
     JSExecState::instrumentFunction(context, constructData);
@@ -244,7 +263,13 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, TypeError, "Custom element constructor returned a wrong element"_s));
         return;
     }
+
     element.setIsDefinedCustomElement(*this);
+
+    if (m_isFormAssociated) {
+        CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
+        downcast<HTMLMaybeFormAssociatedCustomElement>(element).didUpgradeFormAssociated();
+    }
 }
 
 void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const Function<void(JSGlobalObject*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
@@ -333,6 +358,42 @@ void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, 
         args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, oldValue));
         args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, newValue));
         args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, attributeName.namespaceURI()));
+    });
+}
+
+void JSCustomElementInterface::invokeFormAssociatedCallback(Element& element, HTMLFormElement* associatedForm)
+{
+    invokeCallback(element, m_formAssociatedCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
+        args.append(toJS(lexicalGlobalObject, globalObject, associatedForm));
+    });
+}
+
+void JSCustomElementInterface::invokeFormResetCallback(Element& element)
+{
+    invokeCallback(element, m_formResetCallback.get());
+}
+
+void JSCustomElementInterface::invokeFormDisabledCallback(Element& element, bool isDisabled)
+{
+    invokeCallback(element, m_formDisabledCallback.get(), [&](JSGlobalObject*, JSDOMGlobalObject*, MarkedArgumentBuffer& args) {
+        args.append(jsBoolean(isDisabled));
+    });
+}
+
+void JSCustomElementInterface::invokeFormStateRestoreCallback(Element& element, CustomElementFormValue restoredState)
+{
+    invokeCallback(element, m_formStateRestoreCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
+        auto& vm = lexicalGlobalObject->vm();
+
+        WTF::switchOn(restoredState, [&](RefPtr<DOMFormData> state) {
+            args.append(toJS(lexicalGlobalObject, globalObject, *state));
+        }, [&](const String& state) {
+            args.append(jsString(vm, state));
+        }, [&](RefPtr<File>) {
+            ASSERT_NOT_REACHED();
+        });
+
+        args.append(jsNontrivialString(vm, "restore"_s));
     });
 }
 

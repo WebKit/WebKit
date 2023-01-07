@@ -82,10 +82,11 @@ RefPtr<LabelableElement> HTMLLabelElement::control() const
 
 HTMLFormElement* HTMLLabelElement::form() const
 {
-    auto control = this->control();
-    if (!is<HTMLFormControlElement>(control))
-        return nullptr;
-    return downcast<HTMLFormControlElement>(control.get())->form();
+    if (auto element = control()) {
+        if (auto* listedElement = element->asValidatedFormListedElement())
+            return listedElement->form();
+    }
+    return nullptr;
 }
 
 void HTMLLabelElement::setActive(bool down, Style::InvalidationScope invalidationScope)

@@ -88,9 +88,6 @@ public:
     static void setPaintTimingEnabled(bool isEnabled) { shared().m_isPaintTimingEnabled = isEnabled; }
     static bool paintTimingEnabled() { return shared().m_isPaintTimingEnabled; }
 
-    static void setMenuItemElementEnabled(bool isEnabled) { shared().m_isMenuItemElementEnabled = isEnabled; }
-    static bool menuItemElementEnabled() { return shared().m_isMenuItemElementEnabled; }
-
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
@@ -105,9 +102,6 @@ public:
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
 
-    static void setAccessibilityObjectModelEnabled(bool isEnabled) { shared().m_accessibilityObjectModelEnabled = isEnabled; }
-    static bool accessibilityObjectModelEnabled() { return shared().m_accessibilityObjectModelEnabled; }
-
     static void setItpDebugModeEnabled(bool isEnabled) { shared().m_itpDebugMode = isEnabled; }
     static bool itpDebugModeEnabled() { return shared().m_itpDebugMode; }
 
@@ -119,9 +113,6 @@ public:
 
     static void setAttrStyleEnabled(bool isEnabled) { shared().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return shared().m_attrStyleEnabled; }
-
-    static void setLayoutFormattingContextEnabled(bool isEnabled) { shared().m_layoutFormattingContextEnabled = isEnabled; }
-    static bool layoutFormattingContextEnabled() { return shared().m_layoutFormattingContextEnabled; }
 
     static void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { shared().m_inlineFormattingContextIntegrationEnabled = isEnabled; }
     static bool inlineFormattingContextIntegrationEnabled() { return shared().m_inlineFormattingContextIntegrationEnabled; }
@@ -157,11 +148,6 @@ public:
     static bool webRTCAudioLatencyAdaptationEnabled() { return shared().m_isWebRTCAudioLatencyAdaptationEnabled; }
     static void setWebRTCAudioLatencyAdaptationEnabled(bool isEnabled) { shared().m_isWebRTCAudioLatencyAdaptationEnabled = isEnabled; }
 
-#if ENABLE(DATALIST_ELEMENT)
-    static bool dataListElementEnabled() { return shared().m_isDataListElementEnabled; }
-    static void setDataListElementEnabled(bool isEnabled) { shared().m_isDataListElementEnabled = isEnabled; }
-#endif
-
     static void setReadableByteStreamAPIEnabled(bool isEnabled) { shared().m_isReadableByteStreamAPIEnabled = isEnabled; }
     static bool readableByteStreamAPIEnabled() { return shared().m_isReadableByteStreamAPIEnabled; }
 
@@ -172,11 +158,6 @@ public:
     static void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { shared().m_privateClickMeasurementDebugModeEnabled = isEnabled; }
     static bool privateClickMeasurementFraudPreventionEnabled() { return shared().m_privateClickMeasurementFraudPreventionEnabled; }
     static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
-
-#if ENABLE(TOUCH_EVENTS)
-    static bool touchEventsEnabled();
-    static void setTouchEventsEnabled(bool isEnabled) { shared().m_touchEventsEnabled = isEnabled; }
-#endif
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
     static bool isNSURLSessionWebSocketEnabled() { return shared().m_isNSURLSessionWebSocketEnabled; }
@@ -270,14 +251,13 @@ private:
     String m_networkInterfaceName;
 
     bool m_isPaintTimingEnabled { false };
-    bool m_isMenuItemElementEnabled { false };
+
     bool m_isCustomPasteboardDataEnabled { false };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     bool m_isOffscreenCanvasInWorkersEnabled { false };
 #endif
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
-    bool m_accessibilityObjectModelEnabled { false };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
@@ -287,7 +267,6 @@ private:
     bool m_keygenElementEnabled { false };
     bool m_highlightAPIEnabled { false };
 
-    bool m_layoutFormattingContextEnabled { false };
     bool m_inlineFormattingContextIntegrationEnabled { true };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -306,10 +285,6 @@ private:
 #endif
     bool m_isWebRTCAudioLatencyAdaptationEnabled { true };
 
-#if ENABLE(DATALIST_ELEMENT)
-    bool m_isDataListElementEnabled { false };
-#endif
-
     bool m_isReadableByteStreamAPIEnabled { false };
 
     // False by default until https://bugs.webkit.org/show_bug.cgi?id=211351 /
@@ -321,10 +296,6 @@ private:
     bool m_privateClickMeasurementFraudPreventionEnabled { true };
 #else
     bool m_privateClickMeasurementFraudPreventionEnabled { false };
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-    std::optional<bool> m_touchEventsEnabled;
 #endif
 
 #if HAVE(NSURLSESSION_WEBSOCKET)

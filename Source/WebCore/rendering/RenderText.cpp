@@ -348,9 +348,9 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
 
         if (run->lineBox()->isFirstAfterPageBreak()) {
             if (run->isHorizontal())
-                rect.shiftYEdgeTo(run->lineBox()->top());
+                rect.shiftYEdgeTo(run->lineBox()->logicalTop());
             else
-                rect.shiftXEdgeTo(run->lineBox()->top());
+                rect.shiftXEdgeTo(run->lineBox()->logicalTop());
         }
 
         RenderBlock* containingBlock = this->containingBlock();

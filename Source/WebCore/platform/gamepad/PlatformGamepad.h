@@ -27,12 +27,16 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadHapticEffectType.h"
 #include "SharedGamepadValue.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+struct GamepadEffectParameters;
 
 class PlatformGamepad {
     WTF_MAKE_FAST_ALLOCATED;
@@ -44,9 +48,12 @@ public:
     unsigned index() const { return m_index; }
     virtual MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     MonotonicTime connectTime() const { return m_connectTime; }
+    const GamepadHapticEffectTypeSet& supportedEffectTypes() const { return m_supportedEffectTypes; }
     
     virtual const Vector<SharedGamepadValue>& axisValues() const = 0;
     virtual const Vector<SharedGamepadValue>& buttonValues() const = 0;
+    virtual void playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void stopEffects(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
     virtual const char* source() const { return "Unknown"_s; }
 
@@ -61,6 +68,7 @@ protected:
     unsigned m_index;
     MonotonicTime m_lastUpdateTime;
     MonotonicTime m_connectTime;
+    GamepadHapticEffectTypeSet m_supportedEffectTypes;
 };
 
 } // namespace WebCore

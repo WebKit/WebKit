@@ -10,9 +10,10 @@
                     if (success)
                         frame.document.write('<p>Success!</p>');
                     else {
+                        var rect = frame.frameElement.getBoundingClientRect();
                         frame.document.write('<p>Resize until ');
                         frame.document.write(isWidth ? 'width:' : 'height:');
-                        frame.document.write(isWidth ? frame.frameElement.width : frame.frameElement.height);
+                        frame.document.write(isWidth ? rect.width : rect.height);
                         frame.document.write(' = ' + size + '</p>');
                     }
                 }
@@ -50,8 +51,8 @@
             }
 
             function checkSuccess() {
-                log(One, One.frameElement.width == 100, true, 100)
-                log(Two, Two.frameElement.height == 80, false, 80)
+                log(One, One.frameElement.getBoundingClientRect().width == 100, true, 100)
+                log(Two, Two.frameElement.getBoundingClientRect().height == 80, false, 80)
             }
 
             window.onload = run;

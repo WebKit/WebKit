@@ -735,6 +735,7 @@ def headers_for_type(type):
         'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardWebContent': ['<WebCore/Pasteboard.h>'],
         'WebCore::PixelFormat': ['<WebCore/ImageBufferBackend.h>'],
+        'WebCore::PlatformWheelEventPhase': ['<WebCore/PlatformWheelEvent.h>'],
         'WebCore::PlatformTextTrackData': ['<WebCore/PlatformTextTrack.h>'],
         'WebCore::PlaybackSessionModel::PlaybackState': ['<WebCore/PlaybackSessionModel.h>'],
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],

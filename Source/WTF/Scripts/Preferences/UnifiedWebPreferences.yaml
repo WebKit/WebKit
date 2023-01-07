@@ -121,18 +121,6 @@ AccessHandleEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
-AccessibilityObjectModelEnabled:
-  type: bool
-  status: preview
-  humanReadableName: "Accessibility Object Model"
-  humanReadableDescription: "Accessibility Object Model support"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 AggressiveTileRetentionEnabled:
   type: bool
   status: embedder
@@ -405,7 +393,6 @@ AppBadgeEnabled:
       default: false
     WebCore:
       default: false
-
 
 AppHighlightsEnabled:
   type: bool
@@ -966,16 +953,16 @@ CSSMotionPathEnabled:
 
 CSSNestingEnabled:
   type: bool
-  status: testable
+  status: preview
   humanReadableName: "CSS Nesting"
   humanReadableDescription: "Enable support for CSS nesting https://www.w3.org/TR/css-nesting-1/"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSOMViewScrollingAPIEnabled:
   type: bool
@@ -1602,12 +1589,14 @@ DataListElementEnabled:
   status: embedder
   humanReadableName: "DataList Element"
   humanReadableDescription: "Enable datalist elements"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(DATALIST_ELEMENT)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebCore:
       "PLATFORM(WATCHOS)": false
       default: true
 
@@ -1654,16 +1643,16 @@ DateTimeInputsEditableComponentsEnabled:
 
 DeclarativeShadowDOMEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Declarative Shadow DOM"
   humanReadableDescription: "Enable Declarative Shadow DOM"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DefaultARIAForCustomElementsEnabled:
   type: bool
@@ -2245,16 +2234,16 @@ ForceWebGLUsesLowPower:
 
 FormAssociatedCustomElementsEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Form-associated custom elements"
   humanReadableDescription: "Support for form-associated custom elements"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This should be reconciled with 'FrameFlattening'.
 FrameFlatteningEnabled:
@@ -3160,11 +3149,12 @@ LayoutFormattingContextEnabled:
   status: unstable
   humanReadableName: "Full next-generation layout (LFC)"
   humanReadableDescription: "Enable full next-generation layout (LFC)"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 LayoutViewportHeightExpansionFactor:
@@ -3825,11 +3815,12 @@ MediaVideoCodecIDsAllowedInLockdownMode:
 MenuItemElementEnabled:
   type: bool
   status: embedder
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 MinimumFontSize:
@@ -4509,6 +4500,17 @@ PrivateClickMeasurementEnabled:
       default: true
     WebCore:
       default: true
+
+PrivateClickMeasurementFraudPreventionEnabled:
+   type: bool
+   status: developer
+   humanReadableName: "Private Click Measurement Fraud Prevention"
+   humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
+   webcoreBinding: DeprecatedGlobalSettings
+   defaultValue:
+     WebKit:
+       "HAVE(RSA_BSSA)": true
+       default: false
 
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
@@ -5194,7 +5196,6 @@ ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
     WebCore:
       default: true
 
-
 ShouldDisplayCaptions:
   type: bool
   status: embedder
@@ -5311,11 +5312,12 @@ ShouldTakeSuspendedAssertions:
   status: internal
   humanReadableName: "Take WebKit:Suspended assertions on background web content processes"
   humanReadableDescription: "Take WebKit:Suspended assertions on background web content processes"
+  exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
-      default: true
+      default: WebKit::defaultShouldTakeSuspendedAssertions()
     WebCore:
       default: true
 
@@ -5571,7 +5573,7 @@ StorageBlockingPolicy:
 
 StreamingDeclarativeShadowDOMEnabled:
   type: bool
-  status: unstable
+  status: stable
   humanReadableName: "Streaming for Declarative Shadow DOM"
   humanReadableDescription: "Enable Streaming for Declarative Shadow DOM"
   defaultValue:
@@ -5793,6 +5795,16 @@ TiledScrollingIndicatorVisible:
       default: false
     WebCore:
       default: false
+
+TouchEventsEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Touch Events"
+  humanReadableDescription: "Enable Touch Events"
+  condition: ENABLE(TOUCH_EVENTS)
+  defaultValue:
+    WebCore:
+      default: WebCore::screenHasTouchDevice()
 
 TrackConfigurationEnabled:
   type: bool

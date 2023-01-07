@@ -303,6 +303,7 @@ $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEffectParameters.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadHapticActuator.idl
+$(PROJECT_DIR)/Modules/gamepad/GamepadHapticEffectType.idl
 $(PROJECT_DIR)/Modules/gamepad/Navigator+Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/WindowEventHandlers+Gamepad.idl
 $(PROJECT_DIR)/Modules/geolocation/Coordinates.idl
@@ -1199,6 +1200,7 @@ $(PROJECT_DIR)/dom/TransitionEvent.idl
 $(PROJECT_DIR)/dom/TreeWalker.idl
 $(PROJECT_DIR)/dom/UIEvent.idl
 $(PROJECT_DIR)/dom/UIEventInit.idl
+$(PROJECT_DIR)/dom/ValidityStateFlags.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl

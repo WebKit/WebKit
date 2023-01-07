@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadHapticEffectType.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
@@ -34,6 +35,7 @@ namespace WebCore {
 
 class GamepadProviderClient;
 class PlatformGamepad;
+struct GamepadEffectParameters;
 
 class GamepadProvider {
 public:
@@ -46,6 +48,9 @@ public:
     virtual void stopMonitoringGamepads(GamepadProviderClient&) = 0;
     virtual const Vector<PlatformGamepad*>& platformGamepads() = 0;
     virtual bool isMockGamepadProvider() const { return false; }
+
+    virtual void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) = 0;
 
 protected:
     WEBCORE_EXPORT void dispatchPlatformGamepadInputActivity();

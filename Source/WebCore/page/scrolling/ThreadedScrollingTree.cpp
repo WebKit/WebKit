@@ -575,6 +575,9 @@ void ThreadedScrollingTree::receivedWheelEventWithPhases(PlatformWheelEventPhase
 
 void ThreadedScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
+    if (!isMonitoringWheelEvents())
+        return;
+
     auto scrollingCoordinator = m_scrollingCoordinator;
     if (!scrollingCoordinator)
         return;
@@ -586,6 +589,9 @@ void ThreadedScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNode
 
 void ThreadedScrollingTree::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
+    if (!isMonitoringWheelEvents())
+        return;
+
     auto scrollingCoordinator = m_scrollingCoordinator;
     if (!scrollingCoordinator)
         return;

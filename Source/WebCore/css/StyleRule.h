@@ -40,6 +40,7 @@ namespace WebCore {
 
 class CSSRule;
 class CSSGroupingRule;
+class CSSStyleRule;
 class CSSStyleSheet;
 class MutableStyleProperties;
 class StyleRuleKeyframe;
@@ -76,6 +77,7 @@ public:
 
     Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet& parentSheet) const;
     Ref<CSSRule> createCSSOMWrapper(CSSGroupingRule& parentRule) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSStyleRule& parentRule) const;
 
     // This is only needed to support getMatchedCSSRules.
     Ref<CSSRule> createCSSOMWrapper() const;
@@ -92,7 +94,7 @@ private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
 
-    Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSGroupingRule* parentRule) const;
+    Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
 
     unsigned m_type : 5; // StyleRuleType
 
@@ -105,7 +107,7 @@ class StyleRule final : public StyleRuleBase {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
 public:
     static Ref<StyleRule> create(bool hasDocumentSecurityOrigin, CSSSelectorList&&);
-    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRule>>&& nestedRules);
+    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
     Ref<StyleRule> copy() const;
     ~StyleRule();
 
@@ -138,13 +140,13 @@ public:
 
     static unsigned averageSizeInBytes();
     void setProperties(Ref<StyleProperties> properties) { m_properties = properties; }
-    void setNestedRules(Vector<Ref<StyleRule>> nestedRules) { m_nestedRules = nestedRules; }
+    void setNestedRules(Vector<Ref<StyleRuleBase>> nestedRules) { m_nestedRules = nestedRules; }
     void setResolvedSelectorList(CSSSelectorList&& resolvedSelectorList) const { m_resolvedSelectorList = WTFMove(resolvedSelectorList); }
-    const Vector<Ref<StyleRule>>& nestedRules() const { return m_nestedRules; }
-    void appendNestedRule(Ref<StyleRule> rule) { m_nestedRules.append(rule); }
+    const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
+    void appendNestedRule(Ref<StyleRuleBase> rule) { m_nestedRules.append(rule); }
 
 private:
-    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRule>>&&);
+    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
     StyleRule(bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     StyleRule(const StyleRule&);
 
@@ -152,8 +154,8 @@ private:
 
     mutable Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
-    mutable CSSSelectorList m_resolvedSelectorList { };
-    Vector<Ref<StyleRule>> m_nestedRules;
+    mutable CSSSelectorList m_resolvedSelectorList;
+    Vector<Ref<StyleRuleBase>> m_nestedRules;
 
 #if ENABLE(CSS_SELECTOR_JIT)
     mutable UniqueArray<CompiledSelector> m_compiledSelectors;
@@ -271,7 +273,7 @@ public:
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
-    
+
 protected:
     StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleGroup(const StyleRuleGroup&);

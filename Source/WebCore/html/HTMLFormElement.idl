@@ -43,7 +43,7 @@
 
     [ImplementedAs=submitFromJavaScript] undefined submit();
     [EnabledBySetting=RequestSubmitEnabled] undefined requestSubmit(optional HTMLElement? submitter);
-    [CEReactions=NotNeeded] undefined reset();
+    [CEReactions] undefined reset();
     boolean checkValidity();
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
 };

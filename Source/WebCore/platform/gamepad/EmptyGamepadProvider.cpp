@@ -28,6 +28,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -45,6 +46,16 @@ const Vector<PlatformGamepad*>& EmptyGamepadProvider::platformGamepads()
 {
     static NeverDestroyed<Vector<PlatformGamepad*>> emptyGamepads;
     return emptyGamepads;
+}
+
+void EmptyGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
+void EmptyGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 
 }

@@ -72,7 +72,7 @@ WK_EXPORT void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preference
 // Defaults to EditableLinkNeverLive.
 WK_EXPORT void WKPreferencesSetEditableLinkBehavior(WKPreferencesRef preferencesRef, WKEditableLinkBehavior);
 WK_EXPORT WKEditableLinkBehavior WKPreferencesGetEditableLinkBehavior(WKPreferencesRef preferencesRef);
-    
+
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetAcceleratedDrawingEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetAcceleratedDrawingEnabled(WKPreferencesRef);
@@ -495,10 +495,6 @@ WK_EXPORT WKStringRef WKPreferencesCopyMediaContentTypesRequiringHardwareSupport
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetStorageAccessAPIEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetStorageAccessAPIEnabled(WKPreferencesRef);
-
-// Defaults to false
-WK_EXPORT void WKPreferencesSetAccessibilityObjectModelEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef);
 
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetSyntheticEditingCommandsEnabled(WKPreferencesRef, bool);

@@ -286,9 +286,19 @@ void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(M
     m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), timestamp, reasons.toRaw());
 }
 
-void RemoteScrollingCoordinatorProxy::startMonitoringWheelEventsForTesting()
+void RemoteScrollingCoordinatorProxy::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
-    m_scrollingTree->setIsMonitoringWheelEvents(true);
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ReceivedWheelEventWithPhases(phase, momentumPhase));
+}
+
+void RemoteScrollingCoordinatorProxy::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::StartDeferringScrollingTestCompletionForNode(nodeID, reason));
+}
+
+void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::StopDeferringScrollingTestCompletionForNode(nodeID, reason));
 }
 
 } // namespace WebKit

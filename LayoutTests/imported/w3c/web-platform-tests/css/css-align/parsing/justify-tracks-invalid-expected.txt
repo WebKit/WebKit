@@ -1,0 +1,27 @@
+
+PASS e.style['justify-tracks'] = "auto" should not set the property value
+PASS e.style['justify-tracks'] = "baseline last" should not set the property value
+PASS e.style['justify-tracks'] = "baseline" should not set the property value
+PASS e.style['justify-tracks'] = "center baseline" should not set the property value
+PASS e.style['justify-tracks'] = "first baseline" should not set the property value
+PASS e.style['justify-tracks'] = "first" should not set the property value
+PASS e.style['justify-tracks'] = "flex-start flex-end" should not set the property value
+PASS e.style['justify-tracks'] = "last baseline" should not set the property value
+PASS e.style['justify-tracks'] = "last" should not set the property value
+PASS e.style['justify-tracks'] = "legacy center" should not set the property value
+PASS e.style['justify-tracks'] = "legacy left" should not set the property value
+PASS e.style['justify-tracks'] = "legacy" should not set the property value
+PASS e.style['justify-tracks'] = "normal baseline" should not set the property value
+PASS e.style['justify-tracks'] = "right legacy" should not set the property value
+PASS e.style['justify-tracks'] = "safe self-end" should not set the property value
+PASS e.style['justify-tracks'] = "safe" should not set the property value
+PASS e.style['justify-tracks'] = "self-end unsafe" should not set the property value
+PASS e.style['justify-tracks'] = "self-start" should not set the property value
+PASS e.style['justify-tracks'] = "start safe" should not set the property value
+PASS e.style['justify-tracks'] = "unsafe" should not set the property value
+PASS e.style['align-tracks'] = "auto, left" should not set the property value
+PASS e.style['align-tracks'] = "foo, auto" should not set the property value
+PASS e.style['align-tracks'] = "start, foo, end" should not set the property value
+PASS e.style['align-tracks'] = "first, start, end" should not set the property value
+PASS e.style['align-tracks'] = "start, end, unsafe" should not set the property value
+

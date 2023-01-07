@@ -39,6 +39,7 @@ UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     , m_id(platformGamepad.id())
     , m_mapping(platformGamepad.mapping())
     , m_lastUpdateTime(platformGamepad.lastUpdateTime())
+    , m_supportedEffectTypes(platformGamepad.supportedEffectTypes())
 {
     m_axisValues.resize(platformGamepad.axisValues().size());
     m_buttonValues.resize(platformGamepad.buttonValues().size());
@@ -59,9 +60,8 @@ void UIGamepad::updateFromPlatformGamepad(WebCore::PlatformGamepad& platformGame
 
 GamepadData UIGamepad::gamepadData() const
 {
-    return { m_index, m_id, m_mapping, m_axisValues, m_buttonValues, m_lastUpdateTime };
+    return { m_index, m_id, m_mapping, m_axisValues, m_buttonValues, m_lastUpdateTime, m_supportedEffectTypes };
 }
-
 
 }
 

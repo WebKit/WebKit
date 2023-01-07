@@ -36,7 +36,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMFormData.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
@@ -642,7 +641,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
 bool TextFieldInputType::shouldRespectListAttribute()
 {
 #if ENABLE(DATALIST_ELEMENT)
-    return DeprecatedGlobalSettings::dataListElementEnabled();
+    return element() && element()->document().settings().dataListElementEnabled();
 #else
     return InputType::themeSupportsDataListUI(this);
 #endif

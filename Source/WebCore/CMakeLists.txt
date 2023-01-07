@@ -1057,6 +1057,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl
+    dom/ValidityStateFlags.idl
     dom/VisibilityState.idl
     dom/WheelEvent.idl
     dom/XMLDocument.idl
@@ -1519,6 +1520,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/gamepad/GamepadEffectParameters.idl
     Modules/gamepad/GamepadEvent.idl
     Modules/gamepad/GamepadHapticActuator.idl
+    Modules/gamepad/GamepadHapticEffectType.idl
     Modules/gamepad/Navigator+Gamepad.idl
     Modules/gamepad/WindowEventHandlers+Gamepad.idl
 )

@@ -3068,16 +3068,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
 }
 
-- (BOOL)accessibilityObjectModelEnabled
-{
-    return [self _boolValueForKey:WebKitAccessibilityObjectModelEnabledPreferenceKey];
-}
-
-- (void)setAccessibilityObjectModelEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitAccessibilityObjectModelEnabledPreferenceKey];
-}
-
 - (BOOL)serverTimingEnabled
 {
     return [self _boolValueForKey:WebKitServerTimingEnabledPreferenceKey];

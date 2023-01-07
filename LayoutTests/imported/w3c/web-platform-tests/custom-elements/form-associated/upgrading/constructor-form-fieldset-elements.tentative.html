@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Form-associated custom elements don't get enumerated in form / fieldset collections in precustomized state</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<form id="theForm">
+    <fieldset id="theFieldset">
+        <x-foo></x-foo>
+    </fieldset>
+</form>
+
+<script>
+test(() => {
+    const callbackHistory = [];
+
+    customElements.define("x-foo", class extends HTMLElement {
+        static formAssociated = true;
+
+        constructor() {
+            super();
+
+            window.formElementsLengthInConstructor = theForm.elements.length;
+            window.formLengthInConstructor = theForm.length;
+            window.fieldsetElementsLengthInConstructor = theFieldset.elements.length;
+        }
+
+        formAssociatedCallback(form) {
+            callbackHistory.push(`formAssociatedCallback: ${form.id}`);
+        }
+    });
+
+    assert_equals(formElementsLengthInConstructor, 1);
+    assert_equals(formLengthInConstructor, 1);
+    assert_equals(fieldsetElementsLengthInConstructor, 0);
+
+    assert_equals(theForm.elements.length, 2);
+    assert_equals(theForm.length, 2);
+    assert_equals(theFieldset.elements.length, 1);
+
+    assert_array_equals(callbackHistory, ["formAssociatedCallback: theForm"]);
+});
+</script>

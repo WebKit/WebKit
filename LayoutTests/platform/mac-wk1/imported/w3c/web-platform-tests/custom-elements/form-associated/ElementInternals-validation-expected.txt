@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
+CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
+CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
+
+
+FAIL willValidate assert_false: false in DATALIST expected false got true
+FAIL willValidate after upgrade assert_false: in datalist expected false got true
+PASS willValidate after upgrade (document.createElement)
+PASS willValidate should throw NotSupportedError if the target element is not a form-associated custom element
+PASS validity and setValidity()
+PASS "anchor" argument of setValidity()
+PASS checkValidity() should throw NotSupportedError if the target element is not a form-associated custom element
+PASS checkValidity()
+PASS reportValidity() should throw NotSupportedError if the target element is not a form-associated custom element
+PASS reportValidity()
+PASS Custom control affects validation at the owner form
+PASS Custom control affects :valid :invalid for FORM and FIELDSET
+

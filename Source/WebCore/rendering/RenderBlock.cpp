@@ -983,9 +983,9 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     Length marginLeft = child.style().marginStartUsing(&style());
     Length marginRight = child.style().marginEndUsing(&style());
     LayoutUnit margin;
-    if (marginLeft.isFixed())
+    if (marginLeft.isFixed() && !shouldTrimChildMargin(MarginTrimType::InlineStart, child))
         margin += marginLeft.value();
-    if (marginRight.isFixed())
+    if (marginRight.isFixed() && !shouldTrimChildMargin(MarginTrimType::InlineEnd, child))
         margin += marginRight.value();
     return margin;
 }

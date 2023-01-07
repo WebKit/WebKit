@@ -5979,6 +5979,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebCore::AutofillFieldName::URL:
         return UITextContentTypeURL;
     case WebCore::AutofillFieldName::Username:
+    case WebCore::AutofillFieldName::WebAuthn:
         return UITextContentTypeUsername;
     case WebCore::AutofillFieldName::None:
     case WebCore::AutofillFieldName::NewPassword:
@@ -9208,6 +9209,11 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (platformURL)
         context.get()[@"_WebViewURL"] = platformURL;
 
+    if (_focusedElementInformation.nonAutofillCredentialType == WebCore::NonAutofillCredentialType::WebAuthn) {
+        context.get()[@"_page_id"] = [NSNumber numberWithUnsignedLong:_page->webPageID().toUInt64()];
+        context.get()[@"_frame_id"] = [NSNumber numberWithUnsignedLong:_focusedElementInformation.frameID.object().toUInt64()];
+        context.get()[@"_credential_type"] = WebCore::nonAutofillCredentialTypeString(_focusedElementInformation.nonAutofillCredentialType);
+    }
     return context.autorelease();
 }
 

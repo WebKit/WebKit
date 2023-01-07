@@ -27,7 +27,6 @@
 #include "FrameViewLayoutContext.h"
 
 #include "DebugPageOverlays.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
@@ -53,7 +52,7 @@ namespace WebCore {
 
 void FrameViewLayoutContext::layoutUsingFormattingContext()
 {
-    if (!DeprecatedGlobalSettings::layoutFormattingContextEnabled())
+    if (!frame().settings().layoutFormattingContextEnabled())
         return;
     // FrameView::setContentsSize temporary disables layout.
     if (m_disableSetNeedsLayoutCount)

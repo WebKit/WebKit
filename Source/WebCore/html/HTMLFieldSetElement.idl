@@ -20,7 +20,7 @@
 [
     Exposed=Window
 ] interface HTMLFieldSetElement : HTMLElement {
-    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
+    [CEReactions, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 

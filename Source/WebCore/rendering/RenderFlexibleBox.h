@@ -102,6 +102,7 @@ protected:
     bool shouldResetChildLogicalHeightBeforeLayout(const RenderBox&) const override { return m_shouldResetChildLogicalHeightBeforeLayout; }
 
 private:
+    friend class FlexLayoutAlgorithm;
     enum FlexSign {
         PositiveFlexibility,
         NegativeFlexibility,
@@ -179,6 +180,19 @@ private:
     void layoutFlexItems(bool relayoutChildren);
     LayoutUnit autoMarginOffsetInMainAxis(const Vector<FlexItem>&, LayoutUnit& availableFreeSpace);
     void updateAutoMarginsInMainAxis(RenderBox& child, LayoutUnit autoMarginOffset);
+    void initializeMarginTrimState(); 
+    // Start margin parallel with the cross axis
+    bool shouldTrimMainAxisMarginStart() const;
+    // End margin parallel with the cross axis
+    bool shouldTrimMainAxisMarginEnd() const;
+    // Margins parallel with the main axis
+    bool shouldTrimCrossAxisMarginStart() const;
+    bool shouldTrimCrossAxisMarginEnd() const;
+    void trimMainAxisMarginStart(const FlexItem&);
+    void trimMainAxisMarginEnd(const FlexItem&);
+    void trimCrossAxisMarginStart(const FlexItem&);
+    void trimCrossAxisMarginEnd(const FlexItem&);
+    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
     bool hasAutoMarginsInCrossAxis(const RenderBox& child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
     void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&, LayoutUnit gapBetweenLines);
@@ -234,6 +248,13 @@ private:
     mutable OrderIterator m_orderIterator { *this };
     std::optional<size_t> m_numberOfInFlowChildrenOnFirstLine { };
     std::optional<size_t> m_numberOfInFlowChildrenOnLastLine { };
+
+    struct MarginTrimItems {
+        HashSet<const RenderBox*> m_itemsAtFlexLineStart;
+        HashSet<const RenderBox*> m_itemsAtFlexLineEnd;
+        HashSet<const RenderBox*> m_itemsOnFirstFlexLine;
+        HashSet<const RenderBox*> m_itemsOnLastFlexLine;
+    } m_marginTrimItems;
 
     // This is SizeIsUnknown outside of layoutBlock()
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };

@@ -25,6 +25,7 @@
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
+#include "ColorWellPart.h"
 #include "ControlStates.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -599,8 +600,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         return TextFieldPart::create();
 
     case ControlPartType::CapsLockIndicator:
+        break;
+
 #if ENABLE(INPUT_TYPE_COLOR)
     case ControlPartType::ColorWell:
+        return ColorWellPart::create();
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case ControlPartType::ImageControlsButton:
@@ -1442,7 +1446,6 @@ String RenderTheme::colorInputStyleSheet(const Settings&) const
 
 String RenderTheme::dataListStyleSheet() const
 {
-    ASSERT(DeprecatedGlobalSettings::dataListElementEnabled());
     return "datalist { display: none; }"_s;
 }
 

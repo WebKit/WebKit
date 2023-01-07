@@ -28,6 +28,8 @@
 
 #include "AXObjectCache.h"
 #include "ElementRareData.h"
+#include "HTMLFormElement.h"
+#include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "ShadowRoot.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -48,6 +50,79 @@ ShadowRoot* ElementInternals::shadowRoot() const
     if (!shadowRoot->isAvailableToElementInternals())
         return nullptr;
     return shadowRoot;
+}
+
+ExceptionOr<RefPtr<HTMLFormElement>> ElementInternals::form() const
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->form();
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<void> ElementInternals::setFormValue(std::optional<CustomElementFormValue>&& value, std::optional<CustomElementFormValue>&& state)
+{
+    if (RefPtr element = elementAsFormAssociatedCustom()) {
+        element->setFormValue(WTFMove(value), WTFMove(state));
+        return { };
+    }
+
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<void> ElementInternals::setValidity(ValidityStateFlags validityStateFlags, String&& message, HTMLElement* validationAnchor)
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->setValidity(validityStateFlags, WTFMove(message), validationAnchor);
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<bool> ElementInternals::willValidate() const
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->willValidate();
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<RefPtr<ValidityState>> ElementInternals::validity()
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->validity();
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<String> ElementInternals::validationMessage() const
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->validationMessage();
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<bool> ElementInternals::reportValidity()
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->reportValidity();
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<bool> ElementInternals::checkValidity()
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return element->checkValidity();
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<RefPtr<NodeList>> ElementInternals::labels()
+{
+    if (RefPtr element = elementAsFormAssociatedCustom())
+        return downcast<LabelableElement>(element->asHTMLElement()).labels();
+    return Exception { NotSupportedError };
+}
+
+FormAssociatedCustomElement* ElementInternals::elementAsFormAssociatedCustom() const
+{
+    if (RefPtr element = dynamicDowncast<HTMLMaybeFormAssociatedCustomElement>(m_element.get()))
+        return element->formAssociatedCustomElementForElementInternals();
+    return nullptr;
 }
 
 static const AtomString& computeValueForAttribute(Element& element, const QualifiedName& name)

@@ -218,7 +218,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
 #if ENABLE(SCROLLING_THREAD)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ReasonsForSynchronousScrolling, synchronousScrollingReasons)
 #endif
-    // We don't encode isMonitoringWheelEvents; this needs to be a sync message to the UI process.
+    SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::IsMonitoringWheelEvents, isMonitoringWheelEvents)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ScrollableAreaParams, scrollableAreaParameters)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::RequestedScrollPosition, requestedScrollData)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::KeyboardScrollData, keyboardScrollData)
@@ -317,6 +317,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
 #if ENABLE(SCROLLING_THREAD)
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ReasonsForSynchronousScrolling, OptionSet<SynchronousScrollingReason>, setSynchronousScrollingReasons)
 #endif
+    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::IsMonitoringWheelEvents, bool, setIsMonitoringWheelEvents);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::RequestedScrollPosition, RequestedScrollData, setRequestedScrollData);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::KeyboardScrollData, RequestedKeyboardScrollData, setKeyboardScrollData);
@@ -769,6 +770,9 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ReasonsForSynchronousScrolling))
         ts.dumpProperty("synchronous scrolling reasons", node.synchronousScrollingReasons());
 #endif
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))
+        ts.dumpProperty("is monitoring wheel events", node.isMonitoringWheelEvents());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::KeyboardScrollData)) {
         const auto& keyboardScrollData = node.keyboardScrollData();

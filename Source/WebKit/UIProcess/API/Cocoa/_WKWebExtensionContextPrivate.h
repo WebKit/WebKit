@@ -35,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, getter=_inTestingMode, setter=_setTestingMode:) BOOL _testingMode;
 
+/*! @abstract The extension background view used for the extension, or `nil` if the extension does not have background content or it is currently unloaded. */
+@property (nonatomic, nullable, readonly) WKWebView *_backgroundWebView;
+
+/*! @abstract The extension background content URL for the extension, or `nil` if the extension does not have background content. */
+@property (nonatomic, nullable, readonly) NSURL *_backgroundContentURL;
+
 @end
 
 NS_ASSUME_NONNULL_END

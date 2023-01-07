@@ -27,9 +27,11 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "GamepadHapticEffectType.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,7 +40,7 @@ class GamepadButton;
 class GamepadHapticActuator;
 class PlatformGamepad;
 
-class Gamepad: public RefCounted<Gamepad> {
+class Gamepad: public RefCounted<Gamepad>, public CanMakeWeakPtr<Gamepad> {
 public:
     static Ref<Gamepad> create(const PlatformGamepad& platformGamepad)
     {
@@ -54,6 +56,7 @@ public:
     double timestamp() const { return m_timestamp.secondsSinceEpoch().seconds(); }
     const Vector<double>& axes() const;
     const Vector<Ref<GamepadButton>>& buttons() const;
+    const GamepadHapticEffectTypeSet& supportedEffectTypes() const { return m_supportedEffectTypes; }
 
     void updateFromPlatformGamepad(const PlatformGamepad&);
     void setConnected(bool connected) { m_connected = connected; }
@@ -67,11 +70,12 @@ private:
     bool m_connected;
     MonotonicTime m_timestamp;
     String m_mapping;
+    GamepadHapticEffectTypeSet m_supportedEffectTypes;
 
     Vector<double> m_axes;
     Vector<Ref<GamepadButton>> m_buttons;
 
-    Ref<GamepadHapticActuator> m_vibrationActuator;
+    RefPtr<GamepadHapticActuator> m_vibrationActuator;
 };
 
 } // namespace WebCore
