@@ -129,13 +129,6 @@ class GitHub(object):
         return 'https://api.{}/repos/{}'.format(host, path)
 
     @classmethod
-    def commit_status_url(cls, sha, repository_url=None):
-        api_url = cls.api_url(repository_url)
-        if not sha or not api_url:
-            return ''
-        return '{}/statuses/{}'.format(api_url, sha)
-
-    @classmethod
     def credentials(cls, user=None):
         prefix = f"GITHUB_COM_{user.upper().replace('-', '_')}_" if user else 'GITHUB_COM_'
 
