@@ -58,7 +58,6 @@ class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Format {
-        BGRX,
         BGRA,
         YUV422,
 #if HAVE(IOSURFACE_RGB10)
@@ -141,11 +140,11 @@ public:
 
     WEBCORE_EXPORT SetNonVolatileResult setVolatile(bool);
 
-    Format format() const { return m_format; }
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
 
     WEBCORE_EXPORT DestinationColorSpace colorSpace();
+    WEBCORE_EXPORT Format format() const;
     WEBCORE_EXPORT IOSurfaceID surfaceID() const;
     WEBCORE_EXPORT size_t bytesPerRow() const;
 
@@ -182,7 +181,6 @@ private:
 
     BitmapConfiguration bitmapConfiguration() const;
 
-    Format m_format;
     std::optional<DestinationColorSpace> m_colorSpace;
     IntSize m_size;
     size_t m_totalBytes;

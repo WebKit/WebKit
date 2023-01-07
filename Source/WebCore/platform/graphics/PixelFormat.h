@@ -32,7 +32,6 @@ namespace WebCore {
 
 enum class PixelFormat : uint8_t {
     RGBA8,
-    BGRX8,
     BGRA8,
     RGB10,
     RGB10A8,
