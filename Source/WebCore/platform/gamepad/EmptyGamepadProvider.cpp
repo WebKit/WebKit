@@ -28,6 +28,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
