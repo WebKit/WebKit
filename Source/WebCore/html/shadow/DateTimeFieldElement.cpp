@@ -63,19 +63,16 @@ void DateTimeFieldElement::initialize(const AtomString& pseudo)
     setPseudo(pseudo);
 }
 
-std::optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
+std::optional<Style::ResolvedStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(resolutionContext);
-    if (!elementStyle.renderStyle)
-        return std::nullopt;
 
-    auto& style = *elementStyle.renderStyle;
-    adjustMinInlineSize(style);
+    adjustMinInlineSize(*elementStyle.style);
 
     if (!hasValue() && shadowHostStyle) {
         auto textColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
         auto backgroundColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-        style.setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
+        elementStyle.style->setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
     }
 
     return elementStyle;

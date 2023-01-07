@@ -85,7 +85,7 @@ protected:
     virtual void handleBlurEvent(Event&);
 
 private:
-    std::optional<Style::ElementStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
+    std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
 
     bool supportsFocus() const override;
 

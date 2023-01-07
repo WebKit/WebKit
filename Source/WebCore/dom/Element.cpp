@@ -2316,7 +2316,7 @@ Style::Resolver& Element::styleResolver()
     return document().styleScope().resolver();
 }
 
-Style::ElementStyle Element::resolveStyle(const Style::ResolutionContext& resolutionContext)
+Style::ResolvedStyle Element::resolveStyle(const Style::ResolutionContext& resolutionContext)
 {
     return styleResolver().styleForElement(*this, resolutionContext);
 }
@@ -4810,7 +4810,7 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-std::optional<Style::ElementStyle> Element::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*)
+std::optional<Style::ResolvedStyle> Element::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
     return std::nullopt;

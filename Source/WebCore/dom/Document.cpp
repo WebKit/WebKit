@@ -2321,8 +2321,12 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     SetForScope change(m_ignorePendingStylesheets, true);
     auto& resolver = element.styleResolver();
 
-    if (pseudoElementSpecifier != PseudoId::None)
-        return resolver.pseudoStyleForElement(element, { pseudoElementSpecifier }, { parentStyle });
+    if (pseudoElementSpecifier != PseudoId::None) {
+        auto style = resolver.styleForPseudoElement(element, { pseudoElementSpecifier }, { parentStyle });
+        if (!style)
+            return nullptr;
+        return WTFMove(style->style);
+    }
 
     auto elementStyle = resolver.styleForElement(element, { parentStyle });
     if (elementStyle.relations) {
@@ -2330,7 +2334,7 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
         Style::commitRelations(WTFMove(elementStyle.relations), emptyUpdate);
     }
 
-    return WTFMove(elementStyle.renderStyle);
+    return WTFMove(elementStyle.style);
 }
 
 bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsCheck dimensionsCheck)

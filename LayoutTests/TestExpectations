@@ -3149,7 +3149,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-002.html [ Pass I
 imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-properties-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-properties-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-explicit-default-002.html [ ImageOnlyFailure ]
