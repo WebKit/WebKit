@@ -2396,6 +2396,14 @@
    },
    {
       "emails" : [
+         "eddy_wong@apple.com",
+         "eddydas@gmail.com"
+      ],
+      "github" : "eddydas",
+      "name" : "Eddy Wong"
+   },
+   {
+      "emails" : [
          "efidler@rim.com",
          "efidler@blackberry.com"
       ],
