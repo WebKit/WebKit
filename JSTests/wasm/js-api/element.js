@@ -65,7 +65,7 @@ import * as assert from '../assert.js';
         .End();
 
     const module = new WebAssembly.Module(builder.WebAssembly().get());
-    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.LinkError, "Element is trying to set an out of bounds table index");
+    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.RuntimeError, "Element is trying to set an out of bounds table index");
 }
 
 {
@@ -89,7 +89,7 @@ import * as assert from '../assert.js';
         .End();
 
     const module = new WebAssembly.Module(builder.WebAssembly().get());
-    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.LinkError, "Element is trying to set an out of bounds table index");
+    assert.throws(() => new WebAssembly.Instance(module), WebAssembly.RuntimeError, "Element is trying to set an out of bounds table index");
 }
 
 {
@@ -143,7 +143,7 @@ import * as assert from '../assert.js';
 
     for (let i = 19; i < 19 + 5; i++) {
         const table = new WebAssembly.Table({element: "funcref", initial: i});
-        badInstantiation(table, WebAssembly.LinkError, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, {imp: {table: actualTable}})')");
+        badInstantiation(table, WebAssembly.RuntimeError, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, {imp: {table: actualTable}})')");
     }
 }
 

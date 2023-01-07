@@ -75,7 +75,7 @@ const assertMemoryAllZero = memory => {
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.LinkError, `Invalid data segment initialization: segment of 65537 bytes memory of 65536 bytes, at offset 0, segment is too big (evaluating 'new WebAssembly.Instance(module, { imp: { memory: memory } })')`);
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.RuntimeError, `Invalid data segment initialization: segment of 65537 bytes memory of 65536 bytes, at offset 0, segment is too big (evaluating 'new WebAssembly.Instance(module, { imp: { memory: memory } })')`);
     assertMemoryAllZero(memory);
 })();
 
@@ -89,7 +89,7 @@ const assertMemoryAllZero = memory => {
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.LinkError, `Invalid data segment initialization: segment of 1 bytes memory of 65536 bytes, at offset 65536, segment writes outside of memory (evaluating 'new WebAssembly.Instance(module, { imp: { memory: memory } })')`);
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.RuntimeError, `Invalid data segment initialization: segment of 1 bytes memory of 65536 bytes, at offset 65536, segment writes outside of memory (evaluating 'new WebAssembly.Instance(module, { imp: { memory: memory } })')`);
     assertMemoryAllZero(memory);
 })();
 
@@ -103,7 +103,7 @@ const assertMemoryAllZero = memory => {
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.LinkError, `Invalid data segment initialization: segment of 2 bytes memory of 65536 bytes, at offset 65535, segment writes outside of memory (evaluating 'new WebAssembly.Instance(module, { imp: { memory: memory } })')`);
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.RuntimeError, `Invalid data segment initialization: segment of 2 bytes memory of 65536 bytes, at offset 65535, segment writes outside of memory (evaluating 'new WebAssembly.Instance(module, { imp: { memory: memory } })')`);
     assertMemoryAllZero(memory);
 })();
 
@@ -131,7 +131,7 @@ const assertMemoryAllZero = memory => {
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(emptyMemory);
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.LinkError, `Invalid data segment initialization: segment of 0 bytes memory of 0 bytes, at offset 65536, segment writes outside of memory`);
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), WebAssembly.RuntimeError, `Invalid data segment initialization: segment of 0 bytes memory of 0 bytes, at offset 65536, segment writes outside of memory`);
     assert.eq(memory.buffer.byteLength, 0);
 })();
 
