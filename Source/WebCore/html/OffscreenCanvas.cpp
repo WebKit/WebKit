@@ -31,7 +31,6 @@
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
@@ -95,7 +94,7 @@ bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     if (context.isWorkerGlobalScope())
-        return DeprecatedGlobalSettings::offscreenCanvasInWorkersEnabled();
+        return context.settingsValues().offscreenCanvasInWorkersEnabled;
 #endif
 
     ASSERT(context.isDocument());

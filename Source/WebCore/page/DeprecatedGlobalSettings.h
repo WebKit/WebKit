@@ -91,11 +91,6 @@ public:
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
-#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    static void setOffscreenCanvasInWorkersEnabled(bool isEnabled) { shared().m_isOffscreenCanvasInWorkersEnabled = isEnabled; }
-    static bool offscreenCanvasInWorkersEnabled() { return shared().m_isOffscreenCanvasInWorkersEnabled; }
-#endif
-
     static void setWebSocketEnabled(bool isEnabled) { shared().m_isWebSocketEnabled = isEnabled; }
     static bool webSocketEnabled() { return shared().m_isWebSocketEnabled; }
 
@@ -246,9 +241,6 @@ private:
     bool m_isPaintTimingEnabled { false };
 
     bool m_isCustomPasteboardDataEnabled { false };
-#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    bool m_isOffscreenCanvasInWorkersEnabled { false };
-#endif
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_itpDebugMode { false };

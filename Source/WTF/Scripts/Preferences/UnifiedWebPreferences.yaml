@@ -4123,10 +4123,9 @@ OffscreenCanvasEnabled:
 
 OffscreenCanvasInWorkersEnabled:
   type: bool
-  status: unstable
+  status: testable
   humanReadableName: "OffscreenCanvas in Workers"
   humanReadableDescription: "Support for the OffscreenCanvas APIs in Workers"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
   defaultValue:
     WebKitLegacy:
@@ -4135,6 +4134,9 @@ OffscreenCanvasInWorkersEnabled:
     WebKit:
       "PLATFORM(COCOA)": true
       "ENABLE(EXPERIMENTAL_FEATURES)": true
+      default: false
+    WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 OpusDecoderEnabled:

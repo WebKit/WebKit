@@ -117,8 +117,6 @@ const TestFeatures& TestOptions::defaults()
             { "NeedsSiteSpecificQuirks", false },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
-            { "OffscreenCanvasEnabled", true },
-            { "OffscreenCanvasInWorkersEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PdfJSViewerEnabled", false },
             { "PluginsEnabled", true },
