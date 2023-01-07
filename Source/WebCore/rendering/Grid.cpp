@@ -186,6 +186,22 @@ GridSpan Grid::gridItemSpan(const RenderBox& gridItem, GridTrackSizingDirection 
     return direction == ForColumns ? area.columns : area.rows;
 }
 
+GridSpan Grid::gridItemSpanIgnoringCollapsedTracks(const RenderBox& gridItem, GridTrackSizingDirection direction) const
+{
+    auto span = gridItemSpan(gridItem, direction);
+    if (!span.startLine() || !hasAutoRepeatEmptyTracks(direction))
+        return span;
+    unsigned currentLine = span.startLine() - 1;
+
+    while (currentLine && isEmptyAutoRepeatTrack(direction, currentLine))
+        currentLine--; 
+    if (currentLine)
+        return GridSpan::translatedDefiniteGridSpan(currentLine + 1, span.integerSpan());
+
+    // Still need to check if the first track is empty
+    return isEmptyAutoRepeatTrack(direction, currentLine) ? GridSpan::translatedDefiniteGridSpan(currentLine, span.integerSpan()) : GridSpan::translatedDefiniteGridSpan(currentLine + 1, span.integerSpan());
+}
+
 void Grid::setupGridForMasonryLayout()
 {
     // FIXME(248472): See if we can resize grid instead of clearing it here: https://bugs.webkit.org/show_bug.cgi?id=248472
