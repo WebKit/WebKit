@@ -262,9 +262,7 @@ private:
 
     bool m_isReadableByteStreamAPIEnabled { false };
 
-    // False by default until https://bugs.webkit.org/show_bug.cgi?id=211351 /
-    // https://github.com/w3c/csswg-drafts/issues/3257 have been sorted out.
-    bool m_lineHeightUnitsEnabled { false };
+    bool m_lineHeightUnitsEnabled { true };
 
     bool m_privateClickMeasurementDebugModeEnabled { false };
 #if HAVE(RSA_BSSA)
