@@ -927,16 +927,16 @@ CSSLeadingTrimEnabled:
 
 CSSMarginTrimEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "CSS margin-trim property"
   humanReadableDescription: "Enable margin-trim CSS property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSMotionPathEnabled:
   type: bool
