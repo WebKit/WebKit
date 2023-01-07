@@ -240,8 +240,7 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
 
 void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
 {
-    WebExtensionContext::EventListenerTypeSet listenerTypes;
-    listenerTypes.add(WebExtensionEventListenerType::WebNavigationOnBeforeNavigate);
+    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { WebExtensionEventListenerType::WebNavigationOnBeforeNavigate };
 
     for (auto& context : m_extensionContexts) {
         // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
@@ -250,6 +249,52 @@ void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentif
 
         context->fireEvents(listenerTypes, [context, pageID, frameID, targetURL] {
             context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnBeforeNavigate, Messages::WebExtensionContextProxy::DispatchWebNavigationOnBeforeNavigateEvent(pageID, frameID, targetURL));
+        });
+    }
+}
+
+void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+{
+    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { WebExtensionEventListenerType::WebNavigationOnCommitted, WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded };
+
+    for (auto& context : m_extensionContexts) {
+        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
+        if (!context->hasPermission(frameURL))
+            continue;
+
+        context->fireEvents(listenerTypes, [context, pageID, frameID, frameURL] {
+            context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnCommitted, Messages::WebExtensionContextProxy::DispatchWebNavigationOnCommittedEvent(pageID, frameID, frameURL));
+            context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded, Messages::WebExtensionContextProxy::DispatchWebNavigationOnDOMContentLoadedEvent(pageID, frameID, frameURL));
+        });
+    }
+}
+
+void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+{
+    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { WebExtensionEventListenerType::WebNavigationOnCompleted };
+
+    for (auto& context : m_extensionContexts) {
+        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
+        if (!context->hasPermission(frameURL))
+            continue;
+
+        context->fireEvents(listenerTypes, [context, pageID, frameID, frameURL] {
+            context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnCompleted, Messages::WebExtensionContextProxy::DispatchWebNavigationOnCompletedEvent(pageID, frameID, frameURL));
+        });
+    }
+}
+
+void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL frameURL)
+{
+    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { WebExtensionEventListenerType::WebNavigationOnErrorOccurred };
+
+    for (auto& context : m_extensionContexts) {
+        // FIXME: We need to turn pageID into a _WKWebExtensionTab and pass that here.
+        if (!context->hasPermission(frameURL))
+            continue;
+
+        context->fireEvents(listenerTypes, [context, pageID, frameID, frameURL] {
+            context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnErrorOccurred, Messages::WebExtensionContextProxy::DispatchWebNavigationOnErrorOccurredEvent(pageID, frameID, frameURL));
         });
     }
 }

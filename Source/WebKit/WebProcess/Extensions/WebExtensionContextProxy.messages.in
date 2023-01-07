@@ -29,6 +29,10 @@ messages -> WebExtensionContextProxy {
 
     // webNavigation support
     DispatchWebNavigationOnBeforeNavigateEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DispatchWebNavigationOnCommittedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DispatchWebNavigationOnDOMContentLoadedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DispatchWebNavigationOnCompletedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DispatchWebNavigationOnErrorOccurredEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
 
 }
 

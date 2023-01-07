@@ -29,6 +29,9 @@ messages -> WebExtensionController {
 
     // webNavigation support.
     DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
 
 }
 
