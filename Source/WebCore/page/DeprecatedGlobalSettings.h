@@ -132,8 +132,6 @@ public:
     static void setUserGesturePromisePropagationEnabled(bool isEnabled) { shared().m_userGesturePromisePropagationEnabled = isEnabled; }
 
 #if ENABLE(WEB_RTC)
-    static bool webRTCDTMFEnabled() { return shared().m_isWebRTCDTMFEnabled; }
-    static void setWebRTCDTMFEnabled(bool isEnabled) { shared().m_isWebRTCDTMFEnabled = isEnabled; }
     static bool webRTCH264LowLatencyEncoderEnabled() { return shared().m_isWebRTCH264LowLatencyEncoderEnabled; }
     static void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { shared().m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
     static bool webRTCMDNSICECandidatesEnabled() { return shared().m_isWebRTCMDNSICECandidatesEnabled; }
@@ -271,7 +269,6 @@ private:
     bool m_userGesturePromisePropagationEnabled { true };
 
 #if ENABLE(WEB_RTC)
-    bool m_isWebRTCDTMFEnabled { true };
     bool m_isWebRTCH264SimulcastEnabled { true };
     bool m_isWebRTCMDNSICECandidatesEnabled { false };
     bool m_isWebRTCH264LowLatencyEncoderEnabled { false };

@@ -6629,12 +6629,13 @@ WebRTCDTMFEnabled:
   status: internal
   humanReadableName: "WebRTC DTMF"
   humanReadableDescription: "Enable WebRTC DTMF"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 WebRTCEncodedTransformEnabled:
