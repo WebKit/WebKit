@@ -31,11 +31,12 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include <wtf/Assertions.h>
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
-enum class AutofillCategory : uint8_t { Off, Automatic, Normal, Contact };
+enum class AutofillCategory : uint8_t { Off, Automatic, Normal, Contact, Credential };
 
 struct AutofillFieldNameMapping {
     AutofillFieldName name;
@@ -98,6 +99,7 @@ static constexpr std::pair<ComparableLettersLiteral, AutofillFieldNameMapping> f
     { "transaction-currency", { AutofillFieldName::TransactionCurrency, AutofillCategory::Normal } },
     { "url", { AutofillFieldName::URL, AutofillCategory::Normal } },
     { "username", { AutofillFieldName::Username, AutofillCategory::Normal } },
+    { "webauthn", { AutofillFieldName::WebAuthn, AutofillCategory::Credential } },
 };
 static constexpr SortedArrayMap fieldNameMap { fieldNameMappings };
 
@@ -105,6 +107,18 @@ AutofillFieldName toAutofillFieldName(const AtomString& value)
 {
     return fieldNameMap.get(value).name;
 }
+
+String nonAutofillCredentialTypeString(NonAutofillCredentialType credentialType)
+{
+    switch (credentialType) {
+    case NonAutofillCredentialType::None:
+        return "none"_s;
+    case NonAutofillCredentialType::WebAuthn:
+        return "webauthn"_s;
+    }
+    return "none"_s;
+}
+
 
 static inline bool isContactToken(const AtomString& token)
 {
@@ -129,6 +143,9 @@ static unsigned maxTokensForAutofillFieldCategory(AutofillCategory category)
 
     case AutofillCategory::Contact:
         return 4;
+
+    case AutofillCategory::Credential:
+        return 5;
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -144,12 +161,12 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 29. If form is not null and form's autocomplete attribute is in the off state, then let the element's autofill field name be "off". Otherwise, let the element's autofill field name be "on".
     auto defaultLabel = [&] () -> AutofillData {
         if (element.autofillMantle() == AutofillMantle::Anchor)
-            return { emptyAtom(), emptyString() };
+            return { emptyAtom(), emptyString(), NonAutofillCredentialType::None };
         
         auto form = element.form();
         if (form && form->autocomplete() == offAtom())
-            return { offAtom(), emptyString() };
-        return { onAtom(), emptyString() };
+            return { offAtom(), emptyString(), NonAutofillCredentialType::None };
+        return { onAtom(), emptyString(), NonAutofillCredentialType::None };
     };
 
 
@@ -197,13 +214,13 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // autofill hint set be empty, and let its IDL-exposed autofill value be the string "off".
     // Then, abort these steps.
     if (category == AutofillCategory::Off)
-        return { offAtom(), offAtom().string() };
+        return { offAtom(), offAtom().string(), NonAutofillCredentialType::None };
 
     // 8. If category is Automatic, let the element's autofill field name be the string "on",
     // let its autofill hint set be empty, and let its IDL-exposed autofill value be the string
     // "on". Then, abort these steps.
     if (category == AutofillCategory::Automatic)
-        return { onAtom(), onAtom().string() };
+        return { onAtom(), onAtom().string(), NonAutofillCredentialType::None };
 
     // 9. Let scope tokens be an empty list.
     // 10. Let hint tokens be an empty set.
@@ -213,9 +230,32 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 11. Let IDL value have the same value as field.
     String idlValue = field;
 
+    // If category is Credential and the indexth token in tokens is an ASCII case-insensitive match for "webauthn", then run the substeps that follow:
+    NonAutofillCredentialType credentialType { NonAutofillCredentialType::None };
+    if (category == AutofillCategory::Credential && field == "webauthn"_s) {
+        // 1. Set credential type to "webauthn".
+        credentialType = NonAutofillCredentialType::WebAuthn;
+        // 2. If the indexth token in tokens is the first entry, then skip to the step labeled done.
+        if (!index)
+            return { field, idlValue, credentialType };
+        // 3. Decrement index by one.
+        index--;
+        // 4. Set the category, maximum tokens pair to the result of determining a field's category given the indexth token in tokens.
+        auto mapEntry = fieldNameMap.tryGet(tokens[index]);
+        if (!mapEntry)
+            return defaultLabel();
+
+        category = mapEntry->category;
+        if (category != AutofillCategory::Normal && category != AutofillCategory::Contact)
+            return defaultLabel();
+        if (tokens.size() > maxTokensForAutofillFieldCategory(category))
+            return defaultLabel();
+        idlValue = makeString(tokens[index], " ", idlValue);
+    }
+
     // 12, If the indexth token in tokens is the first entry, then skip to the step labeled done.
     if (index == 0)
-        return { field, idlValue };
+        return { field, idlValue, credentialType };
 
     // 13. Decrement index by one
     index--;
@@ -238,7 +278,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
 
         // 5. If the indexth entry in tokens is the first entry, then skip to the step labeled done.
         if (index == 0)
-            return { field, idlValue };
+            return { field, idlValue, credentialType };
 
         // 6. Decrement index by one.
         index--;
@@ -263,7 +303,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
 
         // 5. If the indexth entry in tokens is the first entry, then skip to the step labeled done.
         if (index == 0)
-            return { field, idlValue };
+            return { field, idlValue, credentialType };
 
         // 6. Decrement index by one.
         index--;
@@ -290,7 +330,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // value of IDL value.
     idlValue = makeString(section, " ", idlValue);
 
-    return { field, idlValue };
+    return { field, idlValue, credentialType };
 }
 
 } // namespace WebCore

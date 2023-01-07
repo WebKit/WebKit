@@ -36,6 +36,11 @@ enum class AutofillMantle {
     Anchor
 };
 
+enum class NonAutofillCredentialType {
+    None,
+    WebAuthn
+};
+
 enum class AutofillFieldName {
     None,
     Name,
@@ -90,10 +95,12 @@ enum class AutofillFieldName {
     TelLocalSuffix,
     TelExtension,
     Email,
-    Impp
+    Impp,
+    WebAuthn
 };
 
 WEBCORE_EXPORT AutofillFieldName toAutofillFieldName(const AtomString&);
+WEBCORE_EXPORT String nonAutofillCredentialTypeString(NonAutofillCredentialType);
 
 class HTMLFormControlElement;
 
@@ -101,9 +108,10 @@ class AutofillData {
 public:
     static AutofillData createFromHTMLFormControlElement(const HTMLFormControlElement&);
 
-    AutofillData(const AtomString& fieldName, const String& idlExposedValue)
+    AutofillData(const AtomString& fieldName, const String& idlExposedValue, NonAutofillCredentialType nonAutofillCredentialType)
         : fieldName(fieldName)
         , idlExposedValue(idlExposedValue)
+        , nonAutofillCredentialType(nonAutofillCredentialType)
     {
     }
 
@@ -111,6 +119,7 @@ public:
 
     AtomString fieldName;
     String idlExposedValue;
+    NonAutofillCredentialType nonAutofillCredentialType;
 };
 
 } // namespace WebCore
@@ -173,7 +182,16 @@ template<> struct EnumTraits<WebCore::AutofillFieldName> {
         WebCore::AutofillFieldName::TelLocalSuffix,
         WebCore::AutofillFieldName::TelExtension,
         WebCore::AutofillFieldName::Email,
-        WebCore::AutofillFieldName::Impp
+        WebCore::AutofillFieldName::Impp,
+        WebCore::AutofillFieldName::WebAuthn
+    >;
+};
+
+template<> struct EnumTraits<WebCore::NonAutofillCredentialType> {
+    using values = EnumValues<
+        WebCore::NonAutofillCredentialType,
+        WebCore::NonAutofillCredentialType::None,
+        WebCore::NonAutofillCredentialType::WebAuthn
     >;
 };
 

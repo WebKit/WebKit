@@ -59,13 +59,13 @@ PASS tel-local-suffix is an allowed autocomplete field name
 PASS tel-extension is an allowed autocomplete field name
 PASS email is an allowed autocomplete field name
 PASS impp is an allowed autocomplete field name
-FAIL webauthn is an allowed autocomplete field name assert_equals: expected "webauthn" but got ""
+PASS webauthn is an allowed autocomplete field name
 PASS Test whitespace-only attribute value
 PASS Test maximum number of tokens
 PASS Unknown field
 PASS Test 'wearing the autofill anchor mantle' with off/on
 PASS Serialize combinations of section, mode, contact, and field
-FAIL Serialize combinations of section, mode, contact, field, and credential assert_equals: expected "username webauthn" but got ""
+FAIL Serialize combinations of section, mode, contact, field, and credential assert_equals: expected "section-login shipping work tel webauthn" but got ""
 
 
 
