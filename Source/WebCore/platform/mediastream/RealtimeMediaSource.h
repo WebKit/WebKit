@@ -242,6 +242,8 @@ public:
     const CaptureDevice& captureDevice() const { return m_device; }
     bool isEphemeral() const { return m_device.isEphemeral(); }
 
+    virtual double facingModeFitnessDistanceAdjustment() const { return 0; }
+
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
 

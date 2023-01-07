@@ -73,6 +73,10 @@ static NSMutableArray<NSString*>* cameraCaptureDeviceTypes()
     ];
     if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
         [deviceTypes addObject:AVCaptureDeviceTypeDeskViewCamera];
+    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
+        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
+    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera())
+        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
 
     return deviceTypes;
 }
