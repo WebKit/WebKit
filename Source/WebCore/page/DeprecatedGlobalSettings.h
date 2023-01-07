@@ -159,11 +159,6 @@ public:
     static bool privateClickMeasurementFraudPreventionEnabled() { return shared().m_privateClickMeasurementFraudPreventionEnabled; }
     static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
 
-#if ENABLE(TOUCH_EVENTS)
-    static bool touchEventsEnabled();
-    static void setTouchEventsEnabled(bool isEnabled) { shared().m_touchEventsEnabled = isEnabled; }
-#endif
-
 #if HAVE(NSURLSESSION_WEBSOCKET)
     static bool isNSURLSessionWebSocketEnabled() { return shared().m_isNSURLSessionWebSocketEnabled; }
     static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
@@ -301,10 +296,6 @@ private:
     bool m_privateClickMeasurementFraudPreventionEnabled { true };
 #else
     bool m_privateClickMeasurementFraudPreventionEnabled { false };
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-    std::optional<bool> m_touchEventsEnabled;
 #endif
 
 #if HAVE(NSURLSESSION_WEBSOCKET)

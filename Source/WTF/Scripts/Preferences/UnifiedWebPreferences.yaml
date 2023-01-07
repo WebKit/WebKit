@@ -5796,6 +5796,16 @@ TiledScrollingIndicatorVisible:
     WebCore:
       default: false
 
+TouchEventsEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Touch Events"
+  humanReadableDescription: "Enable Touch Events"
+  condition: ENABLE(TOUCH_EVENTS)
+  defaultValue:
+    WebCore:
+      default: WebCore::screenHasTouchDevice()
+
 TrackConfigurationEnabled:
   type: bool
   status: testable
