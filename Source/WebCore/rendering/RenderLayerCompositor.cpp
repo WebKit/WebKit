@@ -2674,8 +2674,11 @@ static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& lay
         return FullScreenDescendant::NotApplicable;
 
     auto* fullScreenRenderer = dynamicDowncast<RenderLayerModelObject>(fullScreenElement->renderer());
+    if (!fullScreenRenderer)
+        return FullScreenDescendant::NotApplicable;
+
     auto* fullScreenLayer = fullScreenRenderer->layer();
-    if (!fullScreenRenderer || !fullScreenLayer)
+    if (!fullScreenLayer)
         return FullScreenDescendant::NotApplicable;
 
     auto backdropRenderer = fullScreenRenderer->backdropRenderer();
