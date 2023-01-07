@@ -4507,15 +4507,17 @@ PrivateClickMeasurementEnabled:
       default: true
 
 PrivateClickMeasurementFraudPreventionEnabled:
-   type: bool
-   status: developer
-   humanReadableName: "Private Click Measurement Fraud Prevention"
-   humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
-   webcoreBinding: DeprecatedGlobalSettings
-   defaultValue:
-     WebKit:
-       "HAVE(RSA_BSSA)": true
-       default: false
+  type: bool
+  status: developer
+  humanReadableName: "Private Click Measurement Fraud Prevention"
+  humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
+  defaultValue:
+    WebKit:
+      "HAVE(RSA_BSSA)": true
+      default: false
+    WebCore:
+      "HAVE(RSA_BSSA)": true
+      default: false
 
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool

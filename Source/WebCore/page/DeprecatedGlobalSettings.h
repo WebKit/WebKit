@@ -146,8 +146,6 @@ public:
 
     static bool privateClickMeasurementDebugModeEnabled() { return shared().m_privateClickMeasurementDebugModeEnabled; }
     static void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { shared().m_privateClickMeasurementDebugModeEnabled = isEnabled; }
-    static bool privateClickMeasurementFraudPreventionEnabled() { return shared().m_privateClickMeasurementFraudPreventionEnabled; }
-    static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
@@ -265,11 +263,6 @@ private:
     bool m_lineHeightUnitsEnabled { true };
 
     bool m_privateClickMeasurementDebugModeEnabled { false };
-#if HAVE(RSA_BSSA)
-    bool m_privateClickMeasurementFraudPreventionEnabled { true };
-#else
-    bool m_privateClickMeasurementFraudPreventionEnabled { false };
-#endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
