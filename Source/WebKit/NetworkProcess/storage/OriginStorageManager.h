@@ -32,6 +32,7 @@
 
 namespace WebCore {
 struct ClientOrigin;
+struct StorageEstimate;
 }
 
 namespace WebKit {
@@ -59,6 +60,7 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     bool persisted() const { return m_persisted; }
     void setPersisted(bool value);
+    WebCore::StorageEstimate estimate();
     const String& path() const { return m_path; }
     QuotaManager& quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);

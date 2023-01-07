@@ -5551,6 +5551,19 @@ StorageAPIEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+StorageAPIEstimateEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "Storage API Estimate"
+  humanReadableDescription: "Enable Storage API Estimate"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 StorageAccessAPIEnabled:
   type: bool
   status: developer

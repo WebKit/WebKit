@@ -1,5 +1,5 @@
 
-FAIL estimate() method returns a Promise navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)
-FAIL estimate() resolves to dictionary with members navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)
-FAIL estimate() shows usage increase after 1MB IndexedDB record is stored promise_test: Unhandled rejection with value: object "TypeError: navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)"
+PASS estimate() method returns a Promise
+PASS estimate() resolves to dictionary with members
+PASS estimate() shows usage increase after 1MB IndexedDB record is stored
 

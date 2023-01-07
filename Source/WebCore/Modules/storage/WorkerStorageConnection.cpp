@@ -27,6 +27,7 @@
 #include "WorkerStorageConnection.h"
 
 #include "ClientOrigin.h"
+#include "StorageEstimate.h"
 #include "WorkerFileSystemStorageConnection.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
@@ -83,6 +84,33 @@ void WorkerStorageConnection::didGetPersisted(uint64_t callbackIdentifier, bool 
 {
     if (auto callback = m_getPersistedCallbacks.take(callbackIdentifier))
         callback(persisted);
+}
+
+void WorkerStorageConnection::getEstimate(ClientOrigin&& origin, StorageConnection::GetEstimateCallback&& completionHandler)
+{
+    ASSERT(m_scope);
+
+    auto callbackIdentifier = ++m_lastCallbackIdentifier;
+    m_getEstimateCallbacks.add(callbackIdentifier, WTFMove(completionHandler));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = WTFMove(origin).isolatedCopy()]() mutable {
+        auto mainThreadConnection = workerThread->workerLoaderProxy().storageConnection();
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).storageConnection().didGetEstimate(callbackIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+        if (!mainThreadConnection)
+            return mainThreadCallback(Exception { InvalidStateError });
+
+        mainThreadConnection->getEstimate(WTFMove(origin), WTFMove(mainThreadCallback));
+    });
+}
+
+void WorkerStorageConnection::didGetEstimate(uint64_t callbackIdentifier, ExceptionOr<StorageEstimate>&& result)
+{
+    if (auto callback = m_getEstimateCallbacks.take(callbackIdentifier))
+        callback(WTFMove(result));
 }
 
 void WorkerStorageConnection::fileSystemGetDirectory(ClientOrigin&& origin, StorageConnection::GetDirectoryCallback&& completionHandler)

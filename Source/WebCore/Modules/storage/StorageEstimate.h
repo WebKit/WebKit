@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,17 @@
 
 #pragma once
 
-#include <WebCore/StorageConnection.h>
-
-namespace IPC {
-class Connection;
-}
+#include "IDLTypes.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
-template<typename> class ExceptionOr;
-class FileSystemDirectoryHandle;
-}
 
-namespace WebKit {
+struct StorageEstimate {
+    uint64_t usage { 0 };
+    uint64_t quota { 0 };
 
-class WebStorageConnection final : public WebCore::StorageConnection {
-public:
-    static Ref<WebStorageConnection> create();
-
-private:
-    void getPersisted(WebCore::ClientOrigin&&, StorageConnection::PersistCallback&&) final;
-    void persist(const WebCore::ClientOrigin&, StorageConnection::PersistCallback&&) final;
-    void getEstimate(WebCore::ClientOrigin&&, StorageConnection::GetEstimateCallback&&) final;
-    void fileSystemGetDirectory(WebCore::ClientOrigin&&, StorageConnection::GetDirectoryCallback&&) final;
-
-    IPC::Connection& connection();
+    StorageEstimate isolatedCopy() const { return *this; }
 };
 
-} // namespace WebKit
+} // namespace WebCore

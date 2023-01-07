@@ -1,3 +1,3 @@
 
-FAIL estimate() shows usage increase after app is cached promise_test: Unhandled rejection with value: object "TypeError: navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)"
+FAIL estimate() shows usage increase after app is cached promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'estimate.usageDetails.applicationCache')"
 

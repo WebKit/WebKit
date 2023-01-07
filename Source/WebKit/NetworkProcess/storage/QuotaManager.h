@@ -38,7 +38,8 @@ public:
     using GetUsageFunction = Function<uint64_t()>;
     using IncreaseQuotaFunction = Function<void(QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease)>;
     static Ref<QuotaManager> create(uint64_t quota, GetUsageFunction&&, IncreaseQuotaFunction&&);
-
+    uint64_t quota() const { return m_quota; }
+    uint64_t usage();
     enum class Decision : bool { Deny, Grant };
     using RequestCallback = CompletionHandler<void(Decision)>;
     void requestSpace(uint64_t spaceRequested, RequestCallback&&);

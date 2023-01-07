@@ -44,6 +44,11 @@ QuotaManager::QuotaManager(uint64_t quota, GetUsageFunction&& getUsageFunction, 
     ASSERT(m_quota);
 }
 
+uint64_t QuotaManager::usage()
+{
+    return m_getUsageFunction();
+}
+
 void QuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
 {
     m_requests.append(QuotaManager::Request { spaceRequested, WTFMove(callback), QuotaIncreaseRequestIdentifier { } });

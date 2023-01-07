@@ -33,6 +33,7 @@
 #include "FileSystemStorageConnection.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
+#include "JSStorageManager.h"
 #include "NavigatorBase.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
@@ -107,6 +108,18 @@ void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
     connectionInfo.connection.persist(connectionInfo.origin, [promise = WTFMove(promise)](bool persisted) mutable {
         promise.resolve(persisted);
+    });
+}
+
+void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>&& promise)
+{
+    auto connectionInfoOrException = connectionInfo(m_navigator.get());
+    if (connectionInfoOrException.hasException())
+        return promise.reject(connectionInfoOrException.releaseException());
+
+    auto connectionInfo = connectionInfoOrException.releaseReturnValue();
+    connectionInfo.connection.getEstimate(WTFMove(connectionInfo.origin), [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.settle(WTFMove(result));
     });
 }
 
