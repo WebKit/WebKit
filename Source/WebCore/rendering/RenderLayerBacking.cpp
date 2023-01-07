@@ -542,6 +542,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     }
 #endif    
     auto& style = renderer().style();
+    updatePaintingPhases();
     updateOpacity(style);
     updateTransform(style);
     updateFilters(style);
@@ -2730,21 +2731,63 @@ void RenderLayerBacking::updateRootLayerConfiguration()
 void RenderLayerBacking::updatePaintingPhases()
 {
     // Phases for m_maskLayer are set elsewhere.
-    OptionSet<GraphicsLayerPaintingPhase> primaryLayerPhases = { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::Foreground };
-    
-    if (m_foregroundLayer) {
-        OptionSet<GraphicsLayerPaintingPhase> foregroundLayerPhases { GraphicsLayerPaintingPhase::Foreground };
-        
-        if (m_scrolledContentsLayer)
-            foregroundLayerPhases.add(GraphicsLayerPaintingPhase::OverflowContents);
+    OptionSet<GraphicsLayerPaintingPhase> primaryLayerPhases = { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::Foreground, GraphicsLayerPaintingPhase::Outline, GraphicsLayerPaintingPhase::NegativeZDescendants };
 
-        m_foregroundLayer->setPaintingPhase(foregroundLayerPhases);
+#if 1
+    // These phases have to be set correctly for the following configurations:
+    // 1. Single compositing layer
+    // 2. Composited layer with foreground/background layers, triggered by composited descendant with negative z-index.
+    // 3. Composited layer with foreground/background layers and non-visible overflow, triggered by composited descendant with negative z-index on stacking context layer with non-visible overflow.
+    // 4. Composited layer with foreground/background and scrolled content layers, triggered by composited descendant with negative z-index on composited scroller (which also implies non-visible overflow).
+
+    OptionSet<GraphicsLayerPaintingPhase> foregroundLayerPhases { GraphicsLayerPaintingPhase::Foreground };
+    OptionSet<GraphicsLayerPaintingPhase> backgroundLayerPhases { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::NegativeZDescendants };
+
+    if (m_scrolledContentsLayer) {
+        OptionSet<GraphicsLayerPaintingPhase> scrolledContentLayerPhases = { GraphicsLayerPaintingPhase::OverflowContents, GraphicsLayerPaintingPhase::CompositedScroll };
+
+        if (!m_foregroundLayer)
+            scrolledContentLayerPhases.add(GraphicsLayerPaintingPhase::Foreground);
+
+        foregroundLayerPhases.add({ GraphicsLayerPaintingPhase::CompositedScroll, GraphicsLayerPaintingPhase::OverflowContents });
+        backgroundLayerPhases.add({ GraphicsLayerPaintingPhase::CompositedScroll, GraphicsLayerPaintingPhase::Outline });
+
+        primaryLayerPhases.add(GraphicsLayerPaintingPhase::CompositedScroll);
         primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Foreground);
+
+        m_scrolledContentsLayer->setPaintingPhase(scrolledContentLayerPhases);
+    }
+
+    // FIXME: Should outline ever go in here?
+    if (m_foregroundLayer) {
+        primaryLayerPhases.remove(foregroundLayerPhases);
+        m_foregroundLayer->setPaintingPhase(foregroundLayerPhases);
     }
 
     if (m_backgroundLayer) {
-        m_backgroundLayer->setPaintingPhase(GraphicsLayerPaintingPhase::Background);
-        primaryLayerPhases.remove(GraphicsLayerPaintingPhase::Background);
+        primaryLayerPhases.remove(backgroundLayerPhases);
+        m_backgroundLayer->setPaintingPhase(backgroundLayerPhases);
+    }
+
+
+    m_graphicsLayer->setPaintingPhase(primaryLayerPhases);
+
+#else
+
+    if (m_foregroundLayer) {
+        OptionSet<GraphicsLayerPaintingPhase> foregroundLayerPhases { GraphicsLayerPaintingPhase::Foreground, GraphicsLayerPaintingPhase::Outline };
+        
+        if (m_scrolledContentsLayer)
+            foregroundLayerPhases.add({ GraphicsLayerPaintingPhase::OverflowContents, GraphicsLayerPaintingPhase::CompositedScroll });
+
+        m_foregroundLayer->setPaintingPhase(foregroundLayerPhases);
+        primaryLayerPhases.remove(foregroundLayerPhases);
+    }
+
+    if (m_backgroundLayer) {
+        OptionSet<GraphicsLayerPaintingPhase> backgroundLayerPhases { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::NegativeZDescendants };
+        m_backgroundLayer->setPaintingPhase(backgroundLayerPhases);
+        primaryLayerPhases.remove(backgroundLayerPhases);
     }
 
     if (m_scrolledContentsLayer) {
@@ -2758,6 +2801,7 @@ void RenderLayerBacking::updatePaintingPhases()
     }
 
     m_graphicsLayer->setPaintingPhase(primaryLayerPhases);
+#endif
 }
 
 static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObject& renderer)
@@ -3411,7 +3455,10 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     if (graphicsLayer == destinationForSharingLayers) {
         OptionSet<RenderLayer::PaintLayerFlag> sharingLayerPaintFlags = {
             RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase,
-            RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase };
+            RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase,
+            RenderLayer::PaintLayerFlag::PaintingCompositingOutlinePhase,
+            RenderLayer::PaintLayerFlag::PaintingCompositingNegativeZDescendantsPhase,
+        };
 
         if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
@@ -3440,6 +3487,10 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::Foreground))
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::Outline))
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingOutlinePhase);
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::NegativeZDescendants))
+        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingNegativeZDescendantsPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::Mask))
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingMaskPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::ClipPath))

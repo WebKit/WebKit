@@ -979,6 +979,8 @@ TextStream& operator<<(TextStream& ts, GraphicsLayerPaintingPhase phase)
     switch (phase) {
     case GraphicsLayerPaintingPhase::Background: ts << "background"; break;
     case GraphicsLayerPaintingPhase::Foreground: ts << "foreground"; break;
+    case GraphicsLayerPaintingPhase::Outline: ts << "outline"; break;
+    case GraphicsLayerPaintingPhase::NegativeZDescendants: ts << "negative-z descendants"; break;
     case GraphicsLayerPaintingPhase::Mask: ts << "mask"; break;
     case GraphicsLayerPaintingPhase::ClipPath: ts << "clip-path"; break;
     case GraphicsLayerPaintingPhase::OverflowContents: ts << "overflow-contents"; break;
