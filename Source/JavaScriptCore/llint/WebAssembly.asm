@@ -388,7 +388,9 @@ if not JSVALUE64
 end
 
     loadp Callee[cfr], ws0
+if JSVALUE64
     andp ~(constexpr JSValue::WasmTag), ws0
+end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
@@ -486,7 +488,9 @@ if not JSVALUE64
 end
 
     loadp Callee[cfr], ws0
+if JSVALUE64
     andp ~(constexpr JSValue::WasmTag), ws0
+end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0

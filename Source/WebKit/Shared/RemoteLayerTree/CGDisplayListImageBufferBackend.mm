@@ -84,6 +84,8 @@ public:
 
     bool canUseShadowBlur() const final { return false; }
 
+    bool needsCachedNativeImageInvalidationWorkaround(WebCore::RenderingMode) override { return true; }
+
 protected:
     void setCGShadow(WebCore::RenderingMode renderingMode, const WebCore::FloatSize& offset, float blur, const WebCore::Color& color, bool shadowsIgnoreTransforms) override
     {

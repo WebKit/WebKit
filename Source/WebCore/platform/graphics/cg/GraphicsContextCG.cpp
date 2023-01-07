@@ -374,6 +374,18 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImage " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
 }
 
+bool GraphicsContextCG::needsCachedNativeImageInvalidationWorkaround(RenderingMode imageRenderingMode)
+{
+    // Only accelerated images cache CGImageRefs underneath us (when returned by
+    // IOSurface::createImage), and thus need the workaround.
+    if (imageRenderingMode == RenderingMode::Unaccelerated)
+        return false;
+
+    // Accelerated destinations have "live" CGImageRefs, so we only need
+    // the workaround when painting into an unaccelerated context.
+    return renderingMode() == RenderingMode::Unaccelerated;
+}
+
 static void drawPatternCallback(void* info, CGContextRef context)
 {
     CGImageRef image = (CGImageRef)info;

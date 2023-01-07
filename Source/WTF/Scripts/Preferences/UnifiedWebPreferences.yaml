@@ -927,16 +927,16 @@ CSSLeadingTrimEnabled:
 
 CSSMarginTrimEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "CSS margin-trim property"
   humanReadableDescription: "Enable margin-trim CSS property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSMotionPathEnabled:
   type: bool
@@ -2594,12 +2594,14 @@ IncrementalPDFLoadingEnabled:
   type: bool
   status: embedder
   condition: HAVE(INCREMENTAL_PDF_APIS)
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       "PLATFORM(MAC)": true
       default: false
     WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+    WebCore:
       "PLATFORM(MAC)": true
       default: false
 

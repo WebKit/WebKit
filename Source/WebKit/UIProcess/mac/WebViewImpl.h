@@ -377,6 +377,7 @@ public:
     void setEditableElementIsFocused(bool);
 
     void setCaretDecorationVisibility(bool);
+    void updateCaretDecorationPlacement();
 
     void startSpeaking();
     void stopSpeaking(id);

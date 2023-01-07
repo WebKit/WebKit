@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStoreConfiguration.h"
 
+#include "UnifiedOriginStorageLevel.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebsiteDataStore.h"
 
@@ -33,7 +34,7 @@ namespace WebKit {
 
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent, ShouldInitializePaths shouldInitializePaths)
     : m_isPersistent(isPersistent)
-    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
+    , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
 {
     if (isPersistent == IsPersistent::Yes && shouldInitializePaths == ShouldInitializePaths::Yes) {
@@ -56,7 +57,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
 
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identifier)
     : m_isPersistent(IsPersistent::Yes)
-    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
+    , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
     , m_identifier(identifier)
     , m_baseCacheDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
     , m_baseDataDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
@@ -75,7 +76,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identif
 #if !PLATFORM(COCOA)
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory)
     : m_isPersistent(IsPersistent::Yes)
-    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
+    , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
     , m_baseCacheDirectory(baseCacheDirectory)
     , m_baseDataDirectory(baseDataDirectory)
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
@@ -124,7 +125,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_staleWhileRevalidateEnabled = this->m_staleWhileRevalidateEnabled;
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
     copy->m_generalStorageDirectory = this->m_generalStorageDirectory;
-    copy->m_shouldUseCustomStoragePaths = this->m_shouldUseCustomStoragePaths;
+    copy->m_unifiedOriginStorageLevel = this->m_unifiedOriginStorageLevel;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;

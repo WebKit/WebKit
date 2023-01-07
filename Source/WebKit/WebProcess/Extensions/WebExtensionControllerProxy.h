@@ -66,6 +66,10 @@ public:
 
     // webNavigation support.
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, const URL&);
+    void didCommitLoadForFrame(WebPage&, WebFrame&, const URL&);
+    void didFinishLoadForFrame(WebPage&, WebFrame&, const URL&);
+    // FIXME: Include the error here.
+    void didFailLoadForFrame(WebPage&, WebFrame&, const URL&);
 #endif
 
 private:

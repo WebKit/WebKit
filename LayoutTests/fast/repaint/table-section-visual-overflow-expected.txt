@@ -1,0 +1,5 @@
+(repaint rects
+  (rect 143 -2 120 120)
+  (rect -2 -2 120 120)
+)
+

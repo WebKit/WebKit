@@ -250,10 +250,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceType
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTelephotoCamera, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInUltraWideCamera, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInDualCamera, NSString *, PAL_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInDualWideCamera, NSString *, PAL_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTripleCamera, NSString *, PAL_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTrueDepthCamera, NSString *, PAL_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInLiDARDepthCamera, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInDualWideCamera, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTripleCamera, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceTypeDeskViewCamera, NSString *, PAL_EXPORT)
 #endif
 

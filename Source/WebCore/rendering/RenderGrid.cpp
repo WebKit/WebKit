@@ -1507,6 +1507,25 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
     }
 }
 
+bool RenderGrid::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+{
+    if (!style().marginTrim().contains(marginTrimType))
+        return false;
+    auto isTrimmingBlockDirection = marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::BlockEnd;
+    auto itemGridSpan = isTrimmingBlockDirection ? currentGrid().gridItemSpanIgnoringCollapsedTracks(child, ForRows) : currentGrid().gridItemSpanIgnoringCollapsedTracks(child, ForColumns);
+    switch (marginTrimType) {
+    case MarginTrimType::BlockStart:
+    case MarginTrimType::InlineStart:
+        return !itemGridSpan.startLine();
+    case MarginTrimType::BlockEnd:
+        return itemGridSpan.endLine() == currentGrid().numTracks(ForRows);
+    case MarginTrimType::InlineEnd:
+        return itemGridSpan.endLine() == currentGrid().numTracks(ForColumns);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child) const
 {
     return isBaselineAlignmentForChild(child, GridRowAxis) || isBaselineAlignmentForChild(child, GridColumnAxis);

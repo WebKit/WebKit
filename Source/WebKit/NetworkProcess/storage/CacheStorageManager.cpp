@@ -40,6 +40,7 @@ namespace WebKit {
 static constexpr auto cachesListFileName = "cacheslist"_s;
 static constexpr auto sizeFileName = "estimatedsize"_s;
 static constexpr auto originFileName = "origin"_s;
+static constexpr auto originSaltFileName = "salt"_s;
 
 static uint64_t nextUpdateNumber()
 {
@@ -155,30 +156,28 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
     return FileSystem::overwriteEntireFile(sizeFilePath, Span { reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length() }) != -1;
 }
 
-FileSystem::Salt CacheStorageManager::cacheStorageSalt(const String& rootDirectory)
-{
-    if (rootDirectory.isEmpty())
-        return { };
-
-    String saltPath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
-    auto optionalSalt = FileSystem::readOrMakeSalt(saltPath);
-    if (optionalSalt) {
-        StringBuilder sb;
-        for (auto number : *optionalSalt) {
-            sb.append(number);
-            sb.append(',');
-        }
-    }
-    return valueOrDefault(optionalSalt);
-}
-
-String CacheStorageManager::cacheStorageOriginDirectory(const String& rootDirectory, FileSystem::Salt salt, const WebCore::ClientOrigin& origin)
+String CacheStorageManager::cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
 {
     if (rootDirectory.isEmpty())
         return emptyString();
 
+    auto saltFilePath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
+    auto salt = valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath));
     NetworkCache::Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, salt);
     return FileSystem::pathByAppendingComponent(rootDirectory, key.hashAsString());
+}
+
+void CacheStorageManager::copySaltFileToOriginDirectory(const String& rootDirectory, const String& originDirectory)
+{
+    if (!FileSystem::fileExists(originDirectory))
+        return;
+
+    auto targetFilePath = FileSystem::pathByAppendingComponent(originDirectory, "salt"_s);
+    if (FileSystem::fileExists(targetFilePath))
+        return;
+
+    auto sourceFilePath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
+    FileSystem::hardLinkOrCopyFile(sourceFilePath, targetFilePath);
 }
 
 HashSet<WebCore::ClientOrigin> CacheStorageManager::originsOfCacheStorageData(const String& rootDirectory)
@@ -233,18 +232,24 @@ void CacheStorageManager::makeDirty()
     m_updateCounter = nextUpdateNumber();
 }
 
-CacheStorageManager::CacheStorageManager(const String& path, FileSystem::Salt salt, CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
+String CacheStorageManager::saltFilePath() const
+{
+    return FileSystem::pathByAppendingComponent(m_path, originSaltFileName);
+}
+
+CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
     : m_updateCounter(nextUpdateNumber())
     , m_path(path)
-    , m_salt(salt)
+    , m_salt(valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath())))
     , m_registry(registry)
     , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
     , m_queue(WTFMove(queue))
 {
-    if (!m_path.isEmpty()) {
-        auto originFile = FileSystem::pathByAppendingComponent(m_path, originFileName);
-        writeOriginToFile(originFile, origin);
-    }
+    if (m_path.isEmpty() || !origin)
+        return;
+
+    auto originFile = FileSystem::pathByAppendingComponent(m_path, originFileName);
+    writeOriginToFile(originFile, *origin);
 }
 
 CacheStorageManager::~CacheStorageManager()
