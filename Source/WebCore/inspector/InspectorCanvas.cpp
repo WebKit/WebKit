@@ -749,26 +749,6 @@ static bool shouldSnapshotBitmapRendererAction(const String& name)
     return name == "transferFromImageBitmap"_s;
 }
 
-#if ENABLE(WEBGL)
-static bool shouldSnapshotWebGLAction(const String& name)
-{
-    return name == "clear"_s
-        || name == "drawArrays"_s
-        || name == "drawElements"_s;
-}
-#endif
-
-#if ENABLE(WEBGL2)
-static bool shouldSnapshotWebGL2Action(const String& name)
-{
-    return name == "clear"_s
-        || name == "drawArrays"_s
-        || name == "drawArraysInstanced"_s
-        || name == "drawElements"_s
-        || name == "drawElementsInstanced"_s;
-}
-#endif
-
 void InspectorCanvas::recordAction(String&& name, InspectorCanvasCallTracer::ProcessedArguments&& arguments)
 {
     if (!m_initialState) {
@@ -803,14 +783,6 @@ void InspectorCanvas::recordAction(String&& name, InspectorCanvasCallTracer::Pro
 
     if (is<ImageBitmapRenderingContext>(context) && shouldSnapshotBitmapRendererAction(name))
         m_contentChanged = true;
-#if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContext>(context) && shouldSnapshotWebGLAction(name))
-        m_contentChanged = true;
-#endif
-#if ENABLE(WEBGL2)
-    else if (is<WebGL2RenderingContext>(context) && shouldSnapshotWebGL2Action(name))
-        m_contentChanged = true;
-#endif
 
     m_lastRecordedAction = buildAction(WTFMove(name), WTFMove(arguments));
     m_bufferUsed += m_lastRecordedAction->memoryCost();

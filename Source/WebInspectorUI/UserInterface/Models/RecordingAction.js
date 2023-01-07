@@ -713,18 +713,6 @@ WI.RecordingAction._visualNames = {
     [WI.Recording.Type.CanvasBitmapRenderer]: new Set([
         "transferFromImageBitmap",
     ]),
-    [WI.Recording.Type.CanvasWebGL]: new Set([
-        "clear",
-        "drawArrays",
-        "drawElements",
-    ]),
-    [WI.Recording.Type.CanvasWebGL2]: new Set([
-        "clear",
-        "drawArrays",
-        "drawArraysInstanced",
-        "drawElements",
-        "drawElementsInstanced",
-    ]),
 };
 
 WI.RecordingAction._stateModifiers = {
