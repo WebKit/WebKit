@@ -91,9 +91,6 @@ public:
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
-    static void setWebSocketEnabled(bool isEnabled) { shared().m_isWebSocketEnabled = isEnabled; }
-    static bool webSocketEnabled() { return shared().m_isWebSocketEnabled; }
-
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
 
@@ -151,11 +148,6 @@ public:
     static void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { shared().m_privateClickMeasurementDebugModeEnabled = isEnabled; }
     static bool privateClickMeasurementFraudPreventionEnabled() { return shared().m_privateClickMeasurementFraudPreventionEnabled; }
     static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
-
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    static bool isNSURLSessionWebSocketEnabled() { return shared().m_isNSURLSessionWebSocketEnabled; }
-    static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
-#endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
@@ -241,7 +233,6 @@ private:
     bool m_isPaintTimingEnabled { false };
 
     bool m_isCustomPasteboardDataEnabled { false };
-    bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
@@ -280,10 +271,6 @@ private:
     bool m_privateClickMeasurementFraudPreventionEnabled { true };
 #else
     bool m_privateClickMeasurementFraudPreventionEnabled { false };
-#endif
-
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool m_isNSURLSessionWebSocketEnabled { false };
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

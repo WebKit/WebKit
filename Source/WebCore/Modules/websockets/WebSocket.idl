@@ -34,7 +34,7 @@
 [
     ActiveDOMObject,
     Exposed=(Window,Worker),
-    EnabledByDeprecatedGlobalSetting=WebSocketEnabled
+    EnabledBySetting=WebSocketEnabled
 ] interface WebSocket : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional sequence<DOMString> protocols = []);
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, DOMString protocol);

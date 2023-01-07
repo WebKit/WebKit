@@ -2994,12 +2994,13 @@ IsNSURLSessionWebSocketEnabled:
   status: developer
   humanReadableName: "NSURLSession WebSocket"
   humanReadableDescription: "Use NSURLSession WebSocket API"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: HAVE(NSURLSESSION_WEBSOCKET)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
@@ -6887,6 +6888,20 @@ WebShareFileAPIEnabled:
       default: false
     WebCore:
       default: false
+
+WebSocketEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebKit:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebCore:
+      "PLATFORM(WATCHOS)": false
+      default: true
 
 WebXRAugmentedRealityModuleEnabled:
   type: bool

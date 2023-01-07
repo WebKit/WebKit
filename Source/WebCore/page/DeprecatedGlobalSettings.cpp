@@ -42,9 +42,6 @@ namespace WebCore {
 
 DeprecatedGlobalSettings::DeprecatedGlobalSettings()
 {
-#if PLATFORM(WATCHOS)
-    m_isWebSocketEnabled = false;
-#endif
 #if USE(AVFOUNDATION)
     m_AVFoundationEnabled = true;
 #endif
