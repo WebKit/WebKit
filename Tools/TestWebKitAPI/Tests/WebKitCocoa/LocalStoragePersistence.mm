@@ -515,7 +515,7 @@ TEST(WKWebView, LocalStorageNoSizeOverflow)
 TEST(WKWebView, LocalStorageDirectoryExcludedFromBackup)
 {
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelNone;
     RetainPtr<NSURL> webStorageDirectory = [websiteDataStoreConfiguration _webStorageDirectory];
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     

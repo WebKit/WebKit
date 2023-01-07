@@ -96,6 +96,7 @@ class WebProcessPool;
 class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
 enum class CacheModel : uint8_t;
+enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
@@ -372,7 +373,7 @@ public:
     static String defaultJavaScriptConfigurationDirectory(const String& baseDataDirectory = nullString());
 
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
-    static bool defaultShouldUseCustomStoragePaths();
+    static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
 
     void resetQuota(CompletionHandler<void()>&&);
     void clearStorage(CompletionHandler<void()>&&);

@@ -30,6 +30,7 @@
 #import "DefaultWebBrowserChecks.h"
 #import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
+#import "UnifiedOriginStorageLevel.h"
 #import "WebFramePolicyListenerProxy.h"
 #import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesKeys.h"
@@ -86,16 +87,6 @@ static WorkQueue& managedDomainQueue()
 static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
 #endif
-
-// FIXME: we should not read the values from NSUserDefaults; we should let clients who set the values to pass them via configuration.
-static bool internalFeatureEnabled(const String& key, bool defaultValue = false)
-{
-    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", static_cast<NSString *>(key)]);
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
-        return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
-
-    return defaultValue;
-}
 
 static bool experimentalFeatureEnabled(const String& key, bool defaultValue = false)
 {
@@ -826,9 +817,18 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement);
 }
 
-bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
+UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 {
-    return !internalFeatureEnabled(WebPreferencesKey::useGeneralDirectoryForStorageKey(), true);
+    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Basic;
+    NSString* unifiedOriginStorageLevelKey = @"WebKitDebugUnifiedOriginStorageLevel";
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:unifiedOriginStorageLevelKey] == nil)
+        return defaultUnifiedOriginStorageLevelValue;
+
+    auto level = convertToUnifiedOriginStorageLevel([[NSUserDefaults standardUserDefaults] integerForKey:unifiedOriginStorageLevelKey]);
+    if (!level)
+        return defaultUnifiedOriginStorageLevelValue;
+
+    return *level;
 }
 
 #if PLATFORM(IOS_FAMILY)

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ResourceLoadStatisticsParameters.h"
+#include "UnifiedOriginStorageLevel.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
@@ -115,7 +116,7 @@ struct NetworkSessionCreationParameters {
     bool shouldAcceptInsecureCertificatesForWebSockets { false };
 #endif
 
-    bool shouldUseCustomStoragePaths { false };
+    UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Basic };
     uint64_t perOriginStorageQuota;
     uint64_t perThirdPartyOriginStorageQuota;
     String localStorageDirectory;

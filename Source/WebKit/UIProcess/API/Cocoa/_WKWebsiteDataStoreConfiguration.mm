@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 
+#import "UnifiedOriginStorageLevel.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
@@ -413,14 +414,38 @@ static void checkURLArgument(NSURL *url)
     _configuration->setGeneralStorageDirectory(url.path);
 }
 
-- (BOOL)shouldUseCustomStoragePaths
+static _WKUnifiedOriginStorageLevel toWKUnifiedOriginStorageLevel(WebKit::UnifiedOriginStorageLevel level)
 {
-    return _configuration->shouldUseCustomStoragePaths();
+    switch (level) {
+    case WebKit::UnifiedOriginStorageLevel::None:
+        return _WKUnifiedOriginStorageLevelNone;
+    case WebKit::UnifiedOriginStorageLevel::Basic:
+        return _WKUnifiedOriginStorageLevelBasic;
+    case WebKit::UnifiedOriginStorageLevel::Standard:
+        return _WKUnifiedOriginStorageLevelStandard;
+    }
 }
 
-- (void)setShouldUseCustomStoragePaths:(BOOL)use
+static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedOriginStorageLevel wkLevel)
 {
-    _configuration->setShouldUseCustomStoragePaths(use);
+    switch (wkLevel) {
+    case _WKUnifiedOriginStorageLevelNone:
+        return WebKit::UnifiedOriginStorageLevel::None;
+    case _WKUnifiedOriginStorageLevelBasic:
+        return WebKit::UnifiedOriginStorageLevel::Basic;
+    case _WKUnifiedOriginStorageLevelStandard:
+        return WebKit::UnifiedOriginStorageLevel::Standard;
+    }
+}
+
+- (_WKUnifiedOriginStorageLevel)unifiedOriginStorageLevel
+{
+    return toWKUnifiedOriginStorageLevel(_configuration->unifiedOriginStorageLevel());
+}
+
+- (void)setUnifiedOriginStorageLevel:(_WKUnifiedOriginStorageLevel)level
+{
+    _configuration->setUnifiedOriginStorageLevel(toUnifiedOriginStorageLevel(level));
 }
 
 - (NSString *)webPushPartitionString

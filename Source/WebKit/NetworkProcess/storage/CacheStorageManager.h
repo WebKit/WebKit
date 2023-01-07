@@ -44,14 +44,14 @@ struct CacheStorageRecordInformation;
 class CacheStorageManager : public CanMakeWeakPtr<CacheStorageManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static FileSystem::Salt cacheStorageSalt(const String& rootDirectory);
-    static String cacheStorageOriginDirectory(const String& rootDirectory, FileSystem::Salt, const WebCore::ClientOrigin&);
+    static String cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin&);
+    static void copySaltFileToOriginDirectory(const String& rootDirectory, const String& originDirectory);
     static HashSet<WebCore::ClientOrigin> originsOfCacheStorageData(const String& rootDirectory);
     static uint64_t cacheStorageSize(const String& originDirectory);
     static bool hasCacheList(const String& cacheListDirectory);
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    CacheStorageManager(const String& path, FileSystem::Salt, CacheStorageRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
+    CacheStorageManager(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
     ~CacheStorageManager();
     void openCache(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void removeCache(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
@@ -69,6 +69,7 @@ public:
     void sizeDecreased(uint64_t amount);
 
 private:
+    String saltFilePath() const;
     void makeDirty();
     bool initializeCaches();
     void removeUnusedCache(WebCore::DOMCacheIdentifier);

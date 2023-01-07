@@ -415,7 +415,7 @@ TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbDirectory;
     websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
-    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     [configuration setWebsiteDataStore:websiteDataStore.get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

@@ -98,7 +98,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldAcceptInsecureCertificatesForWebSockets;
 #endif
 
-    encoder << shouldUseCustomStoragePaths;
+    encoder << unifiedOriginStorageLevel;
     encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota;
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
     encoder << indexedDBDirectory << indexedDBDirectoryExtensionHandle;
@@ -356,9 +356,9 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         return std::nullopt;
 #endif
 
-    std::optional<bool> shouldUseCustomStoragePaths;
-    decoder >> shouldUseCustomStoragePaths;
-    if (!shouldUseCustomStoragePaths)
+    std::optional<UnifiedOriginStorageLevel> unifiedOriginStorageLevel;
+    decoder >> unifiedOriginStorageLevel;
+    if (!unifiedOriginStorageLevel)
         return std::nullopt;
 
     std::optional<uint64_t> perOriginStorageQuota;
@@ -491,7 +491,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
 #if !HAVE(NSURLSESSION_WEBSOCKET)
         , WTFMove(*shouldAcceptInsecureCertificatesForWebSockets)
 #endif
-        , *shouldUseCustomStoragePaths
+        , *unifiedOriginStorageLevel
         , WTFMove(*perOriginStorageQuota)
         , WTFMove(*perThirdPartyOriginStorageQuota)
         , WTFMove(*localStorageDirectory)
