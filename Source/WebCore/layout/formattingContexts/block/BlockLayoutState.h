@@ -45,7 +45,7 @@ public:
         End   = 1 << 1
     };
     using LeadingTrim = OptionSet<LeadingTrimSide>;
-    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, LeadingTrim = { });
+    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, LeadingTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { });
 
     FloatingState& floatingState() { return m_floatingState; }
     const FloatingState& floatingState() const { return m_floatingState; }
@@ -53,16 +53,20 @@ public:
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     LeadingTrim leadingTrim() const { return m_leadingTrim; }
 
+    std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
+
 private:
     FloatingState& m_floatingState;
     std::optional<LineClamp> m_lineClamp;
     LeadingTrim m_leadingTrim;
+    std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
 };
 
-inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, LeadingTrim leadingTrim)
+inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, LeadingTrim leadingTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom)
     : m_floatingState(floatingState)
     , m_lineClamp(lineClamp)
     , m_leadingTrim(leadingTrim)
+    , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
 {
 }
 

@@ -2522,10 +2522,12 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
     bool isInitialLetter = childBox.style().styleType() == PseudoId::FirstLetter && childBox.style().initialLetterDrop() > 0;
     
     if (isInitialLetter) {
-        int letterClearance = lowestInitialLetterLogicalBottom() - logicalTopOffset;
-        if (letterClearance > 0) {
-            logicalTopOffset += letterClearance;
-            setLogicalHeight(logicalHeight() + letterClearance);
+        if (auto lowestInitialLetterLogicalBottom = this->lowestInitialLetterLogicalBottom()) {
+            auto letterClearance =  *lowestInitialLetterLogicalBottom - logicalTopOffset;
+            if (letterClearance > 0) {
+                logicalTopOffset += letterClearance;
+                setLogicalHeight(logicalHeight() + letterClearance);
+            }
         }
     }
 
@@ -2782,17 +2784,17 @@ LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatT
     return lowestFloatBottom;
 }
 
-LayoutUnit RenderBlockFlow::lowestInitialLetterLogicalBottom() const
+std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() const
 {
     if (!m_floatingObjects)
-        return 0;
-    LayoutUnit lowestFloatBottom;
-    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        return { };
+    auto lowestFloatBottom = std::optional<LayoutUnit> { };
+    auto& floatingObjectSet = m_floatingObjects->set();
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         const auto& floatingObject = *it->get();
         if (floatingObject.isPlaced() && floatingObject.renderer().style().styleType() == PseudoId::FirstLetter && floatingObject.renderer().style().initialLetterDrop() > 0)
-            lowestFloatBottom = std::max(lowestFloatBottom, logicalBottomForFloat(floatingObject));
+            lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), logicalBottomForFloat(floatingObject));
     }
     return lowestFloatBottom;
 }

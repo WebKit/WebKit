@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BlockLayoutState.h"
 #include "FloatingContext.h"
 #include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
@@ -38,7 +39,7 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
     struct InlineItemRange {
@@ -169,8 +170,9 @@ private:
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
-    FloatingState* floatingState() { return m_floatingState; }
-    const FloatingState* floatingState() const { return m_floatingState; }
+    const BlockLayoutState* blockLayoutState() const { return m_blockLayoutState; }
+    FloatingState* floatingState() { return m_blockLayoutState ? &m_blockLayoutState->floatingState() : nullptr; }
+    const FloatingState* floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
     const LayoutState& layoutState() const;
     const RenderStyle& rootStyle() const;
@@ -180,7 +182,7 @@ private:
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
-    FloatingState* m_floatingState { nullptr };
+    BlockLayoutState* m_blockLayoutState { nullptr };
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;

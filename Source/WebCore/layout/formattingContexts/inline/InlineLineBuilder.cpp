@@ -324,11 +324,11 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, BlockLayoutState& blockLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
     : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineFormattingState(&inlineFormattingContext.formattingState())
-    , m_floatingState(&floatingState)
+    , m_blockLayoutState(&blockLayoutState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -1060,6 +1060,10 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
         // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
         // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
         floatBoxInitialTop += *initialLetterCapHeightOffset;
+        if (auto intrusiveBottom = blockLayoutState()->intrusiveInitialLetterLogicalBottom(); intrusiveBottom && *initialLetterCapHeightOffset) {
+            // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
+            floatBoxInitialTop += *intrusiveBottom;
+        }
     }
 
     auto staticPosition = LayoutPoint { lineMarginBoxLeft, floatBoxInitialTop };
