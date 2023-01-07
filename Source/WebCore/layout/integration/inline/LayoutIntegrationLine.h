@@ -41,10 +41,11 @@ public:
         FloatRect visualRect;
         bool isLeftPositioned { true };
     };
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
+        , m_lineBoxLogicalRect(lineBoxLogicalRect)
         , m_enclosingContentTop(enclosingContentTop)
         , m_enclosingContentBottom(enclosingContentBottom)
         , m_scrollableOverflow(scrollableOverflow)
@@ -68,6 +69,8 @@ public:
     float lineBoxRight() const { return m_lineBoxRect.maxX(); }
     float lineBoxHeight() const { return m_lineBoxRect.height(); }
     float lineBoxWidth() const { return m_lineBoxRect.width(); }
+
+    FloatRect lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
 
     float enclosingContentTop() const { return m_enclosingContentTop; }
     float enclosingContentBottom() const { return m_enclosingContentBottom; }
@@ -95,6 +98,7 @@ private:
     size_t m_boxCount { 0 };
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
     FloatRect m_lineBoxRect;
+    FloatRect m_lineBoxLogicalRect;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.

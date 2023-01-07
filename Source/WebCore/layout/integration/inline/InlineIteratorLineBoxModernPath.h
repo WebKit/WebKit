@@ -49,9 +49,9 @@ public:
 
     float contentLogicalTop() const { return line().enclosingContentTop(); }
     float contentLogicalBottom() const { return line().enclosingContentBottom(); }
-    float logicalTop() const { return line().lineBoxTop(); }
-    float logicalBottom() const { return line().lineBoxBottom(); }
-    float logicalWidth() const { return line().lineBoxWidth(); }
+    float logicalTop() const { return line().lineBoxLogicalRect().y(); }
+    float logicalBottom() const { return line().lineBoxLogicalRect().maxY(); }
+    float logicalWidth() const { return line().lineBoxLogicalRect().width(); }
     float inkOverflowTop() const { return line().inkOverflow().y(); }
     float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
 
