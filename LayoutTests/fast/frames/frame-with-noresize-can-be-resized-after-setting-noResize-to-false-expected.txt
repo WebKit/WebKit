@@ -10,5 +10,5 @@ Frame: 'results'
 --------
 This tests that a frame with a source code-specified noresize attribute can be resized after setting frame.noResize to false.
 
-PASS document.getElementById("testFrame").width is 210
+PASS document.getElementById("testFrame").getBoundingClientRect().width is 210
 

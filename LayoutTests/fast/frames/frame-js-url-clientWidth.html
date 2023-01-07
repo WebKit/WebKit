@@ -35,9 +35,9 @@ function shouldBe(a, b)
                 'when executing a javascript: load. If the test passes, you\'ll see a series of ' +
                 '\'PASS\' messages below.\n'
                 );
-        top.shouldBe('frame.frameElement.width', 250);
+        top.shouldBe('frame.frameElement.getBoundingClientRect().width', 250);
         top.shouldBe('frame.frameElement.clientWidth', 250);
-        top.shouldBe('frame.frameElement.height', 250);
+        top.shouldBe('frame.frameElement.getBoundingClientRect().height', 250);
         top.shouldBe('frame.frameElement.clientHeight', 250);
     "
 >

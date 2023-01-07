@@ -250,7 +250,7 @@ webkit_dom_html_frame_element_get_content_window(WebKitDOMHTMLFrameElement* self
  * webkit_dom_html_frame_element_get_width:
  * @self: A #WebKitDOMHTMLFrameElement
  *
- * Returns: A #glong
+ * Returns: 0
  *
  * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
@@ -261,7 +261,7 @@ webkit_dom_html_frame_element_get_width(WebKitDOMHTMLFrameElement* self);
  * webkit_dom_html_frame_element_get_height:
  * @self: A #WebKitDOMHTMLFrameElement
  *
- * Returns: A #glong
+ * Returns: 0
  *
  * Deprecated: 2.22: Use JavaScriptCore API instead
 **/

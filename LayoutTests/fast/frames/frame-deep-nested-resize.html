@@ -12,9 +12,10 @@
                 if (success)
                     frame.document.write('<p>Success!</p>');
                 else {
+                    var rect = frame.frameElement.getBoundingClientRect();
                     frame.document.write('<p>Resize until ');
                     frame.document.write(isWidth ? 'width:' : 'height:');
-                    frame.document.write(isWidth ? frame.frameElement.width : frame.frameElement.height);
+                    frame.document.write(isWidth ? rect.width : rect.height);
                     frame.document.write(' = ' + size + '</p>');
                 }
               }
@@ -75,14 +76,14 @@
                 }
             }
             function checkSuccess() {
-                    log(One, One.frameElement.width == 100, true, 100)
-                    log(Two, Two.frameElement.height == 80, false, 80)
-                    log(Three, Three.frameElement.height == 50, false, 50)
-                    log(Four, Four.frameElement.height == 143, false, 143)
-                    log(Five, Five.frameElement.height == 111, false, 111)
-                    log(Six, Six.frameElement.height == 192, false, 192)
-                    log(Seven, Seven.frameElement.width == 100, true, 100)
-                    log(Eight, Eight.frameElement.width == 100, true, 100)
+                    log(One, One.frameElement.getBoundingClientRect().width == 100, true, 100)
+                    log(Two, Two.frameElement.getBoundingClientRect().height == 80, false, 80)
+                    log(Three, Three.frameElement.getBoundingClientRect().height == 50, false, 50)
+                    log(Four, Four.frameElement.getBoundingClientRect().height == 143, false, 143)
+                    log(Five, Five.frameElement.getBoundingClientRect().height == 111, false, 111)
+                    log(Six, Six.frameElement.getBoundingClientRect().height == 192, false, 192)
+                    log(Seven, Seven.frameElement.getBoundingClientRect().width == 100, true, 100)
+                    log(Eight, Eight.frameElement.getBoundingClientRect().width == 100, true, 100)
             }
 
             window.onload = init;

@@ -185,10 +185,8 @@ static void webkit_dom_html_frame_element_get_property(GObject* object, guint pr
         g_value_set_object(value, webkit_dom_html_frame_element_get_content_window(self));
         break;
     case DOM_HTML_FRAME_ELEMENT_PROP_WIDTH:
-        g_value_set_long(value, webkit_dom_html_frame_element_get_width(self));
         break;
     case DOM_HTML_FRAME_ELEMENT_PROP_HEIGHT:
-        g_value_set_long(value, webkit_dom_html_frame_element_get_height(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -491,20 +489,14 @@ WebKitDOMDOMWindow* webkit_dom_html_frame_element_get_content_window(WebKitDOMHT
 
 glong webkit_dom_html_frame_element_get_width(WebKitDOMHTMLFrameElement* self)
 {
-    WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self), 0);
-    WebCore::HTMLFrameElement* item = WebKit::core(self);
-    glong result = item->width();
-    return result;
+    return 0;
 }
 
 glong webkit_dom_html_frame_element_get_height(WebKitDOMHTMLFrameElement* self)
 {
-    WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self), 0);
-    WebCore::HTMLFrameElement* item = WebKit::core(self);
-    glong result = item->height();
-    return result;
+    return 0;
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

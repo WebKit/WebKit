@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://html.spec.whatwg.org/#htmlframeelement
+
 [
     Exposed=Window
 ] interface HTMLFrameElement : HTMLElement {
@@ -34,9 +36,6 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString marginWidth;
 
     [CheckSecurityForNode] Document getSVGDocument();
-
-    [CEReactions=NotNeeded] readonly attribute long width;
-    [CEReactions=NotNeeded] readonly attribute long height;
 
     // FIXME: No other browser has this attribute.
     [SetterCallWith=CurrentGlobalObject] attribute DOMString? location;
