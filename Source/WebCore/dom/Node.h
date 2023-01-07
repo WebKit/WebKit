@@ -838,6 +838,22 @@ ALWAYS_INLINE unsigned Node::refCount() const
     return m_refCountAndParentBit / s_refCountIncrement;
 }
 
+ALWAYS_INLINE void EventTarget::ref()
+{
+    if (isNode())
+        static_cast<Node*>(this)->ref();
+    else
+        refEventTarget();
+}
+
+ALWAYS_INLINE void EventTarget::deref()
+{
+    if (isNode())
+        static_cast<Node*>(this)->deref();
+    else
+        derefEventTarget();
+}
+
 // Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()
 inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)
 {

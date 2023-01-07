@@ -29,6 +29,8 @@
 
 #include "TouchList.h"
 
+#include "Node.h"
+
 namespace WebCore {
 
 Touch* TouchList::item(unsigned index)
