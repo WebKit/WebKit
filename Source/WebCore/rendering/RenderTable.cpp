@@ -422,6 +422,7 @@ void RenderTable::simplifiedNormalFlowLayout()
         section->layoutIfNeeded();
         section->layoutRows();
         section->computeOverflowFromCells();
+        section->addVisualEffectOverflow();
     }
 }
 
@@ -561,6 +562,8 @@ void RenderTable::layout()
             section->setLogicalLocation(LayoutPoint(sectionLogicalLeft, logicalHeight()));
 
             setLogicalHeight(logicalHeight() + section->logicalHeight());
+            section->addVisualEffectOverflow();
+            
             section = sectionBelow(section);
         }
 
