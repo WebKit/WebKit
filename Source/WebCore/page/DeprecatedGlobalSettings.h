@@ -102,9 +102,6 @@ public:
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
 
-    static void setAccessibilityObjectModelEnabled(bool isEnabled) { shared().m_accessibilityObjectModelEnabled = isEnabled; }
-    static bool accessibilityObjectModelEnabled() { return shared().m_accessibilityObjectModelEnabled; }
-
     static void setItpDebugModeEnabled(bool isEnabled) { shared().m_itpDebugMode = isEnabled; }
     static bool itpDebugModeEnabled() { return shared().m_itpDebugMode; }
 
@@ -266,7 +263,6 @@ private:
 #endif
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
-    bool m_accessibilityObjectModelEnabled { false };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };

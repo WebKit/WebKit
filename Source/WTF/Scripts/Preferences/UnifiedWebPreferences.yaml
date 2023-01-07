@@ -121,18 +121,6 @@ AccessHandleEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
-AccessibilityObjectModelEnabled:
-  type: bool
-  status: preview
-  humanReadableName: "Accessibility Object Model"
-  humanReadableDescription: "Accessibility Object Model support"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 AggressiveTileRetentionEnabled:
   type: bool
   status: embedder
