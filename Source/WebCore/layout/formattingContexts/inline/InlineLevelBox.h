@@ -268,7 +268,7 @@ inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& lay
 inline bool InlineLevelBox::lineBoxContain() const
 {
     if (isRootInlineBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     if (isAtomicInlineLevelBox())
         return m_style.lineBoxContain.contains(LineBoxContain::Replaced);

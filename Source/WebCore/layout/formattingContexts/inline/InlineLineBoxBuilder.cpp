@@ -548,6 +548,13 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
         }
     }
 
+    if (lineBoxContain.contains(LineBoxContain::InitialLetter)) {
+        // initial letter contain is based on the font metrics cap geometry.
+        auto& rootInlineBox = lineBox.rootInlineBox();
+        InlineLayoutUnit initialLetterAscent = rootInlineBox.primarymetricsOfPrimaryFont().capHeight();
+        inlineBoxBoundsMap.set(&rootInlineBox, TextUtil::EnclosingAscentDescent { initialLetterAscent, 0.f });
+    }
+
     for (auto entry : inlineBoxBoundsMap) {
         auto* inlineBox = entry.key;
         auto enclosingAscentDescentForInlineBox = entry.value;
