@@ -1,4 +1,4 @@
-Check stepUp() and stepDown() bahevior for number type.
+Check stepUp() and stepDown() behavior for number type.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -144,12 +144,12 @@ PASS stepDown("1", "1", "0") is "0"
 PASS stepDown("0", "1", "0") is "0"
 PASS stepDown("1", "1", "0", 2) is "0"
 PASS input.value is "0"
-PASS stepDown("1", "3.40282346e+38", "", 2) is "-3.40282346e+38"
+PASS stepDown("1", "1.797693134862315e+308", "", 2) is "-1.797693134862315e+308"
 PASS stepUp("-1", "1", "0") is "0"
 PASS stepUp("0", "1", "0") is "0"
 PASS stepUp("-1", "1", "0", 2) is "0"
 PASS input.value is "0"
-PASS stepUp("1", "3.40282346e+38", "", 2) is "3.40282346e+38"
+PASS stepUp("1", "1.797693134862315e+308", "", 2) is "1.797693134862315e+308"
 
 stepDown()/stepUp() for stepMismatch values
 PASS stepUp("1", "2", "") is "3"
@@ -159,8 +159,8 @@ PASS stepDown("19", "10", "0") is "9"
 PASS stepUp("89", "10", "99") is "99"
 
 Huge value and small step
-PASS input.min = ""; stepUp("1e+38", "1", "", 999999) is "1e+38"
-PASS input.max = ""; stepDown("1e+38", "1", "", 999999) is "1e+38"
+PASS input.min = ""; stepUp("1e+308", "1", "", 999999) is "1e+308"
+PASS input.max = ""; stepDown("1e+308", "1", "", 999999) is "1e+308"
 
 Fractional numbers
 PASS input.min = ""; stepUp("0", "0.33333333333333333", "", 3) is "1"

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,7 +99,7 @@ String serializeForNumberType(double number)
 
 Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackValue)
 {
-    // See HTML5 2.5.4.3 `Real numbers.' and parseToDoubleForNumberType
+    // https://html.spec.whatwg.org/#floating-point-numbers and parseToDoubleForNumberType
     if (string.isEmpty())
         return fallbackValue;
 
@@ -111,11 +112,9 @@ Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackVa
     if (!value.isFinite())
         return fallbackValue;
 
-    // Numbers are considered finite IEEE 754 single-precision floating point values.
-    // See HTML5 2.5.4.3 `Real numbers.'
-    // FIXME: We should use numeric_limits<double>::max for number input type.
-    const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());
-    if (value < -floatMax || value > floatMax)
+    // Numbers are considered finite IEEE 754 Double-precision floating point values.
+    const Decimal doubleMax = Decimal::fromDouble(std::numeric_limits<double>::max());
+    if (value < -doubleMax || value > doubleMax)
         return fallbackValue;
 
     // We return +0 for -0 case.
@@ -129,7 +128,7 @@ Decimal parseToDecimalForNumberType(StringView string)
 
 double parseToDoubleForNumberType(StringView string, double fallbackValue)
 {
-    // See HTML5 2.5.4.3 `Real numbers.'
+    // https://html.spec.whatwg.org/#floating-point-numbers
     if (string.isEmpty())
         return fallbackValue;
 
@@ -156,10 +155,8 @@ double parseToDoubleForNumberType(StringView string, double fallbackValue)
     if (!std::isfinite(value))
         return fallbackValue;
 
-    // Numbers are considered finite IEEE 754 single-precision floating point values.
-    // See HTML5 2.5.4.3 `Real numbers.'
-    if (-std::numeric_limits<float>::max() > value || value > std::numeric_limits<float>::max())
-        return fallbackValue;
+    // Numbers are considered finite IEEE 754 Double-precision floating point values.
+    ASSERT(-std::numeric_limits<double>::max() <= value || value < std::numeric_limits<double>::max());
 
     // The following expression converts -0 to +0.
     return value ? value : 0;
