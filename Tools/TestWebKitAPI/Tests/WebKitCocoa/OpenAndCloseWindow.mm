@@ -28,11 +28,13 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWindowFeaturesPrivate.h>
+#import <WebKit/_WKUserInitiatedAction.h>
 #import <wtf/RetainPtr.h>
 
 @class OpenAndCloseWindowUIDelegate;
@@ -206,6 +208,36 @@ TEST(WebKit, OpenAsyncWithNil)
 //    EXPECT_EQ(caughtException, true);
 //}
 
+
+@interface CheckActionConsumedUIDelegate : NSObject <WKUIDelegate>
+
+@end
+
+@implementation CheckActionConsumedUIDelegate
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    EXPECT_TRUE(navigationAction._userInitiatedAction.consumed);
+    return nil;
+}
+
+@end
+
+TEST(WebKit, CheckActionConsumed)
+{
+    resetToConsistentState();
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto delegate = adoptNS([[CheckActionConsumedUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    [webView evaluateJavaScript:@"window.open(\"about:blank\");window.open(\"about:blank\")" completionHandler:^(id contents, NSError *error) {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
 
 @interface CheckWindowFeaturesUIDelegate : NSObject <WKUIDelegate>
 
