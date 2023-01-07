@@ -31,34 +31,17 @@
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 namespace IPC {
-namespace {
-// FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
-class DedicatedConnectionClient final : public Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
-public:
-    DedicatedConnectionClient() = default;
-    // Connection::Client.
-    void didReceiveMessage(Connection& connection, Decoder& decoder) final { ASSERT_NOT_REACHED(); }
-    bool didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder) final { ASSERT_NOT_REACHED(); return false; }
-    void didClose(Connection&) final { } // Client is expected to listen to Connection::didClose() from the connection it sent to the dedicated connection to.
-    void didReceiveInvalidMessage(Connection&, MessageName) final { ASSERT_NOT_REACHED(); } // The sender is expected to be trusted, so all invalid messages are programming errors.
-private:
-};
 
-}
-
-Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle, StreamConnectionWorkQueue& workQueue)
+Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle)
 {
     auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
     auto buffer = StreamConnectionBuffer::map(WTFMove(handle.buffer));
     RELEASE_ASSERT(buffer); // FIXME: make callers call this outside constructor.
-    return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer), workQueue));
+    return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer)));
 }
 
-StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
+StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamConnectionBuffer&& stream)
     : m_connection(WTFMove(connection))
-    , m_workQueue(workQueue)
     , m_buffer(WTFMove(stream))
 {
 }
@@ -68,22 +51,23 @@ StreamServerConnection::~StreamServerConnection()
     ASSERT(!m_connection->isValid());
 }
 
-void StreamServerConnection::open()
+void StreamServerConnection::open(StreamConnectionWorkQueue& workQueue)
 {
-    static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        s_dedicatedConnectionClient.construct();
-    });
+    m_workQueue = &workQueue;
     // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
     m_connection->addMessageReceiveQueue(*this, { });
-    m_connection->open(s_dedicatedConnectionClient.get());
+    m_connection->open(*this, *m_workQueue);
 }
 
 void StreamServerConnection::invalidate()
 {
+    if (!m_workQueue)
+        return;
     m_connection->removeMessageReceiveQueue({ });
     m_connection->invalidate();
+    m_workQueue = nullptr;
+    Locker locker { m_outOfStreamMessagesLock };
+        if (m_outOfStreamMessages.isEmpty())
 }
 
 void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, UInt128 destinationID)
@@ -94,12 +78,14 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
         ASSERT(!m_receivers.contains(key));
         m_receivers.add(key, receiver);
     }
-    m_workQueue.addStreamConnection(*this);
+    ASSERT(m_workQueue); // FIXME: this will be moved to open().
+    m_workQueue->addStreamConnection(*this);
 }
 
 void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, UInt128 destinationID)
 {
-    m_workQueue.removeStreamConnection(*this);
+    ASSERT(m_workQueue); // FIXME: this will be moved to open().
+    m_workQueue->removeStreamConnection(*this);
 
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
     Locker locker { m_receiversLock };
@@ -113,7 +99,31 @@ void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder
         Locker locker { m_outOfStreamMessagesLock };
         m_outOfStreamMessages.append(WTFMove(message));
     }
-    m_workQueue.wakeUp();
+    ASSERT(m_workQueue);
+    m_workQueue->wakeUp();
+}
+
+void StreamServerConnection::didReceiveMessage(Connection&, Decoder&)
+{
+    // All messages go to message queue.
+    ASSERT_NOT_REACHED();
+}
+bool StreamServerConnection::didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
+{
+    // All messages go to message queue.
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void StreamServerConnection::didClose(Connection&)
+{
+    // Client is expected to listen to didClose from the main connection.
+}
+
+void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName)
+{
+    // The sender is expected to be trusted, so all invalid messages are programming errors.
+    ASSERT_NOT_REACHED();
 }
 
 std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire()

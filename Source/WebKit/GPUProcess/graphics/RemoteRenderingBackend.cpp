@@ -91,7 +91,7 @@ Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebPro
 
 RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("RemoteRenderingBackend work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), m_workQueue.get()))
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle)))
     , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
@@ -107,34 +107,37 @@ RemoteRenderingBackend::~RemoteRenderingBackend() = default;
 
 void RemoteRenderingBackend::startListeningForIPC()
 {
-    {
-        Locker locker { m_remoteDisplayListsLock };
-        m_canRegisterRemoteDisplayLists = true;
-    }
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
-    m_streamConnection->open();
-    send(Messages::RemoteRenderingBackendProxy::DidInitialize(m_workQueue->wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_renderingBackendIdentifier);
+    m_workQueue->dispatch([this] {
+        workQueueInitialize();
+    });
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
-    m_streamConnection->invalidate();
-
-    // This item is dispatched to the WorkQueue such that it will process it last, after any existing work.
-    m_workQueue->stopAndWaitForCompletion([&] {
-        // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
-        m_remoteResourceCache = { m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    m_workQueue->dispatch([this] {
+        workQueueUninitialize();
     });
+    m_workQueue->stopAndWaitForCompletion();
+}
 
+void RemoteRenderingBackend::workQueueInitialize()
+{
+    assertIsCurrent(workQueue());
+    m_streamConnection->open(m_workQueue.get());
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
+    send(Messages::RemoteRenderingBackendProxy::DidInitialize(m_workQueue->wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackend::workQueueUninitialize()
+{
+    assertIsCurrent(workQueue());
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
-
-    {
-        Locker locker { m_remoteDisplayListsLock };
-        m_canRegisterRemoteDisplayLists = false;
-        for (auto& remoteContext : std::exchange(m_remoteDisplayLists, { }))
-            remoteContext.value->stopListeningForIPC();
-    }
+    for (auto& remoteContext : std::exchange(m_remoteDisplayLists, { }))
+        remoteContext.value->stopListeningForIPC();
+    m_streamConnection->invalidate();
+    // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
+    m_remoteResourceCache = { m_gpuConnectionToWebProcess->webProcessIdentifier() };
 }
 
 void RemoteRenderingBackend::dispatch(Function<void()>&& task)
@@ -154,12 +157,9 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
 
 void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandle handle, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, RemoteDisplayListRecorder& remoteDisplayList)
 {
-    {
-        Locker locker { m_remoteDisplayListsLock };
-        if (m_canRegisterRemoteDisplayLists)
-            m_remoteDisplayLists.add(renderingResourceIdentifier, remoteDisplayList);
-    }
+    assertIsCurrent(workQueue());
     MESSAGE_CHECK(renderingResourceIdentifier.processIdentifier() == m_gpuConnectionToWebProcess->webProcessIdentifier(), "Sending didCreateImageBufferBackend() message to the wrong web process.");
+    m_remoteDisplayLists.add(renderingResourceIdentifier, remoteDisplayList);
     send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
 }
 
@@ -390,12 +390,9 @@ void RemoteRenderingBackend::releaseResource(RenderingResourceIdentifier renderi
 
 void RemoteRenderingBackend::releaseResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
-    ASSERT(!RunLoop::isMain());
-    {
-        Locker locker { m_remoteDisplayListsLock };
-        if (auto remoteDisplayList = m_remoteDisplayLists.take(renderingResourceIdentifier))
-            remoteDisplayList->clearImageBufferReference();
-    }
+    assertIsCurrent(workQueue());
+    if (auto remoteDisplayList = m_remoteDisplayLists.take(renderingResourceIdentifier))
+        remoteDisplayList->clearImageBufferReference();
     auto success = m_remoteResourceCache.releaseResource(renderingResourceIdentifier);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }

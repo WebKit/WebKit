@@ -51,7 +51,7 @@ class StreamConnectionWorkQueue;
 //   void didReceiveStreamMessage(StreamServerConnection&, Decoder&);
 //
 // The StreamServerConnection does not trust the StreamClientConnection.
-class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue {
+class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
     using AsyncReplyID = Connection::AsyncReplyID;
@@ -61,7 +61,7 @@ public:
         void encode(Encoder&) const;
         static std::optional<Handle> decode(Decoder&);
     };
-    static Ref<StreamServerConnection> create(Handle&&, StreamConnectionWorkQueue&);
+    static Ref<StreamServerConnection> create(Handle&&);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, UInt128 destinationID);
@@ -76,7 +76,7 @@ public:
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
 
-    void open();
+    void open(StreamConnectionWorkQueue&);
     void invalidate();
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID);
 
@@ -89,10 +89,16 @@ public:
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
 private:
-    StreamServerConnection(Ref<Connection>, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
+    StreamServerConnection(Ref<Connection>, StreamConnectionBuffer&&);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
+
+    // Connection::Client
+    void didReceiveMessage(Connection&, Decoder&) final;
+    bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+    void didClose(Connection&) final;
+    void didReceiveInvalidMessage(Connection&, MessageName) final;
 
     struct Span {
         uint8_t* data;
@@ -122,7 +128,7 @@ private:
 
     Ref<IPC::Connection> m_connection;
     Semaphore m_clientWaitSemaphore;
-    StreamConnectionWorkQueue& m_workQueue;
+    RefPtr<StreamConnectionWorkQueue> m_workQueue;
 
     size_t m_serverOffset { 0 };
     StreamConnectionBuffer m_buffer;
