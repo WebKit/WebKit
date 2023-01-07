@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004, 2006, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -308,7 +309,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
         if (theme().shouldSnapBackToDragOrigin(*this, evt))
-            m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, m_dragOrigin);
+            m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, m_dragOrigin + m_scrollableArea.minimumScrollPosition());
         else {
             moveThumb(m_orientation == ScrollbarOrientation::Horizontal ?
                       convertFromContainingWindow(evt.position()).x() :

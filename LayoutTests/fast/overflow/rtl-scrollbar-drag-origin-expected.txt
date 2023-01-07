@@ -1,0 +1,7 @@
+PASS container.scrollLeft is 0
+PASS container.scrollLeft is 350
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test verifies scroll position restores correctly when a thumb drag has been cancelled in RTL mode.
+

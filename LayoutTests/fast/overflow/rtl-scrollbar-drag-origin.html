@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<style>
+#container {
+	position: absolute;
+	left: 100px;
+	top: 0;
+	width: 300px;
+	height: 200px;
+	direction: rtl;
+	overflow: scroll;
+}
+
+#content {
+	width: 1000px;
+	height: 1px;
+}
+</style>
+<div id="container">
+    <div id="content"></div>
+</div>
+This test verifies scroll position restores correctly when a thumb drag has been cancelled in RTL mode.<br/>
+<script src="../../resources/js-test.js"></script>
+<script>
+    var container = document.getElementById("container");
+    container.scrollLeft = 350;
+
+    if (window.eventSender) {
+        eventSender.dragMode = false;
+        eventSender.mouseMoveTo(250, 195);
+        eventSender.mouseDown();
+
+        eventSender.mouseMoveTo(100, 195);
+        shouldBe("container.scrollLeft" , "0");
+
+        eventSender.mouseMoveTo(0, 195);
+        shouldBe("container.scrollLeft" , "350");
+    }
+</script>
