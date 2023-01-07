@@ -31,7 +31,6 @@
 #import "AXIsolatedObject.h"
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
-#import "DeprecatedGlobalSettings.h"
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -674,7 +673,7 @@ bool AXObjectCache::isIsolatedTreeEnabled()
         ASSERT(_AXUIElementRequestServicedBySecondaryAXThread());
         enabled = true;
     } else {
-        enabled = DeprecatedGlobalSettings::isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
+        enabled = document().settings().isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
             && _AXSIsolatedTreeModeFunctionIsAvailable()
             && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
             && clientSupportsIsolatedTree();

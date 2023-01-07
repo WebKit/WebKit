@@ -129,7 +129,6 @@ public:
 
     void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
     void setSerialLoadingEnabled(bool);
-    void setAccessibilityIsolatedTreeEnabled(bool);
     void dispatchPendingLoadRequests();
 
 #if PLATFORM(COCOA)

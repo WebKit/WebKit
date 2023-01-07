@@ -412,7 +412,7 @@ public:
     std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
+    bool isIsolatedTreeEnabled();
     WEBCORE_EXPORT static bool usedOnAXThread();
 private:
     static bool clientSupportsIsolatedTree();

@@ -164,11 +164,6 @@ public:
     static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
 #endif
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
-    static bool isAccessibilityIsolatedTreeEnabled() { return shared().m_accessibilityIsolatedTree; }
-#endif
-
     static void setArePDFImagesEnabled(bool isEnabled) { shared().m_arePDFImagesEnabled = isEnabled; }
     static bool arePDFImagesEnabled() { return shared().m_arePDFImagesEnabled; }
 
@@ -300,10 +295,6 @@ private:
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
     bool m_isNSURLSessionWebSocketEnabled { false };
-#endif
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    bool m_accessibilityIsolatedTree { false };
 #endif
 
     bool m_arePDFImagesEnabled { true };

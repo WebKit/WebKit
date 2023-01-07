@@ -361,11 +361,4 @@ void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
     page->corePage()->setTabKeyCyclesThroughElements(enabled);
 }
 
-void InjectedBundle::setAccessibilityIsolatedTreeEnabled(bool enabled)
-{
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    DeprecatedGlobalSettings::setIsAccessibilityIsolatedTreeEnabled(enabled);
-#endif
-}
-
 } // namespace WebKit
