@@ -195,9 +195,7 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 
 void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& destinationContext)
 {
-    // Accelerated to unaccelerated image buffers need complex caching. We trust that
-    // this is a one-off draw, and as such we clear the caches of the source image after each draw.
-    if (destinationContext.renderingMode() == RenderingMode::Unaccelerated)
+    if (destinationContext.needsCachedNativeImageInvalidationWorkaround(ImageBufferIOSurfaceBackend::renderingMode))
         invalidateCachedNativeImage();
 }
 
