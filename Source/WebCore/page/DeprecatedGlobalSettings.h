@@ -91,14 +91,6 @@ public:
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
-#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    static void setOffscreenCanvasInWorkersEnabled(bool isEnabled) { shared().m_isOffscreenCanvasInWorkersEnabled = isEnabled; }
-    static bool offscreenCanvasInWorkersEnabled() { return shared().m_isOffscreenCanvasInWorkersEnabled; }
-#endif
-
-    static void setWebSocketEnabled(bool isEnabled) { shared().m_isWebSocketEnabled = isEnabled; }
-    static bool webSocketEnabled() { return shared().m_isWebSocketEnabled; }
-
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
 
@@ -128,16 +120,9 @@ public:
     static bool attachmentElementEnabled() { return shared().m_isAttachmentElementEnabled; }
 #endif
 
-    static bool userGesturePromisePropagationEnabled() { return shared().m_userGesturePromisePropagationEnabled; }
-    static void setUserGesturePromisePropagationEnabled(bool isEnabled) { shared().m_userGesturePromisePropagationEnabled = isEnabled; }
-
 #if ENABLE(WEB_RTC)
-    static bool webRTCDTMFEnabled() { return shared().m_isWebRTCDTMFEnabled; }
-    static void setWebRTCDTMFEnabled(bool isEnabled) { shared().m_isWebRTCDTMFEnabled = isEnabled; }
     static bool webRTCH264LowLatencyEncoderEnabled() { return shared().m_isWebRTCH264LowLatencyEncoderEnabled; }
     static void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { shared().m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
-    static bool webRTCMDNSICECandidatesEnabled() { return shared().m_isWebRTCMDNSICECandidatesEnabled; }
-    static void setWebRTCMDNSICECandidatesEnabled(bool isEnabled) { shared().m_isWebRTCMDNSICECandidatesEnabled = isEnabled; }
     static bool webRTCH264SimulcastEnabled() { return shared().m_isWebRTCH264SimulcastEnabled; }
     static void setWebRTCH264SimulcastEnabled(bool isEnabled) { shared().m_isWebRTCH264SimulcastEnabled = isEnabled; }
     static bool webRTCPlatformTCPSocketsEnabled() { return shared().m_isWebRTCPlatformTCPSocketsEnabled; }
@@ -156,13 +141,6 @@ public:
 
     static bool privateClickMeasurementDebugModeEnabled() { return shared().m_privateClickMeasurementDebugModeEnabled; }
     static void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { shared().m_privateClickMeasurementDebugModeEnabled = isEnabled; }
-    static bool privateClickMeasurementFraudPreventionEnabled() { return shared().m_privateClickMeasurementFraudPreventionEnabled; }
-    static void setPrivateClickMeasurementFraudPreventionEnabled(bool isEnabled) { shared().m_privateClickMeasurementFraudPreventionEnabled = isEnabled; }
-
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    static bool isNSURLSessionWebSocketEnabled() { return shared().m_isNSURLSessionWebSocketEnabled; }
-    static void setIsNSURLSessionWebSocketEnabled(bool isEnabled) { shared().m_isNSURLSessionWebSocketEnabled = isEnabled; }
-#endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
@@ -248,10 +226,6 @@ private:
     bool m_isPaintTimingEnabled { false };
 
     bool m_isCustomPasteboardDataEnabled { false };
-#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    bool m_isOffscreenCanvasInWorkersEnabled { false };
-#endif
-    bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
@@ -268,12 +242,8 @@ private:
     bool m_isAttachmentElementEnabled { false };
 #endif
 
-    bool m_userGesturePromisePropagationEnabled { true };
-
 #if ENABLE(WEB_RTC)
-    bool m_isWebRTCDTMFEnabled { true };
     bool m_isWebRTCH264SimulcastEnabled { true };
-    bool m_isWebRTCMDNSICECandidatesEnabled { false };
     bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
     bool m_isWebRTCPlatformTCPSocketsEnabled { false };
     bool m_isWebRTCPlatformUDPSocketsEnabled { false };
@@ -282,20 +252,9 @@ private:
 
     bool m_isReadableByteStreamAPIEnabled { false };
 
-    // False by default until https://bugs.webkit.org/show_bug.cgi?id=211351 /
-    // https://github.com/w3c/csswg-drafts/issues/3257 have been sorted out.
-    bool m_lineHeightUnitsEnabled { false };
+    bool m_lineHeightUnitsEnabled { true };
 
     bool m_privateClickMeasurementDebugModeEnabled { false };
-#if HAVE(RSA_BSSA)
-    bool m_privateClickMeasurementFraudPreventionEnabled { true };
-#else
-    bool m_privateClickMeasurementFraudPreventionEnabled { false };
-#endif
-
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool m_isNSURLSessionWebSocketEnabled { false };
-#endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };

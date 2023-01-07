@@ -106,12 +106,14 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         ? rootInlineBoxRect.left()
         : lineBoxLogicalWidth - lineContent.contentLogicalRightIncludingNegativeMargin; // Note that with hanging content lineContent.contentLogicalRight is not the same as rootLineBoxRect.right().
 
-    auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineBox.hasContent() ? lineContent.lineLogicalWidth : 0.f, lineBox.logicalRect().height() };
-    auto enclosingLineGeometry = collectEnclosingLineGeometry(lineContent, lineBox, lineBoxRect);
+    auto lineBoxLogicalRect = InlineRect { lineContent.lineLogicalTopLeft, lineBox.hasContent() ? lineContent.lineLogicalWidth : 0.f, lineBox.logicalRect().height() };
+    auto lineBoxVisualRectInInlineDirection = InlineRect { lineBoxLogicalRect.top(), lineBoxVisualLeft, lineBoxLogicalRect.width(), lineBoxLogicalRect.height() };
+    auto enclosingLineGeometry = collectEnclosingLineGeometry(lineContent, lineBox, lineBoxVisualRectInInlineDirection);
 
     // FIXME: Figure out if properties like enclosingLineGeometry top and bottom needs to be flipped as well.
     auto writingMode = root().style().writingMode();
-    return InlineDisplay::Line { flipLogicalLineRectToVisualForWritingMode(lineBoxRect, writingMode)
+    return InlineDisplay::Line { lineBoxLogicalRect
+        , flipLogicalLineRectToVisualForWritingMode(lineBoxVisualRectInInlineDirection, writingMode)
         , flipLogicalLineRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.ascent()
@@ -119,7 +121,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , contentVisualOffsetInInlineDirection
         , rootInlineBox.logicalWidth()
         , lineBox.isHorizontal()
-        , trailingEllipsisRect(lineContent, lineBox, lineBoxRect)
+        , trailingEllipsisRect(lineContent, lineBox, lineBoxVisualRectInInlineDirection)
     };
 }
 

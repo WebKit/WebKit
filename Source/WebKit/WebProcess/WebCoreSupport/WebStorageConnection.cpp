@@ -33,6 +33,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/StorageEstimate.h>
 
 namespace WebKit {
 
@@ -49,6 +50,16 @@ void WebStorageConnection::getPersisted(WebCore::ClientOrigin&& origin, StorageC
 void WebStorageConnection::persist(const WebCore::ClientOrigin& origin, StorageConnection::PersistCallback&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persist(origin), WTFMove(completionHandler));
+}
+
+void WebStorageConnection::getEstimate(WebCore::ClientOrigin&& origin, StorageConnection::GetEstimateCallback&& completionHandler)
+{
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::Estimate(origin), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler(WebCore::Exception { WebCore::TypeError });
+
+        return completionHandler(WTFMove(*result));
+    });
 }
 
 void WebStorageConnection::fileSystemGetDirectory(WebCore::ClientOrigin&& origin, StorageConnection::GetDirectoryCallback&& completionHandler)

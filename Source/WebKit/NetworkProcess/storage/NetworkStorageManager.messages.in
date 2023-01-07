@@ -26,6 +26,7 @@
  messages -> NetworkStorageManager {
     Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted)
     Persist(struct WebCore::ClientOrigin origin) -> (bool persisted)
+    Estimate(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::StorageEstimate> result);
     FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
     CloseHandle(WebCore::FileSystemHandleIdentifier identifier)
     IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result)

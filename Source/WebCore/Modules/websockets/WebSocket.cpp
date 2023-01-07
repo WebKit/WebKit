@@ -36,7 +36,6 @@
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -355,7 +354,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
     }
     // FIXME: WebSocketChannel also has a m_bufferedAmount. Remove that one. This one is the correct one accessed by JS.
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else
@@ -380,7 +379,7 @@ ExceptionOr<void> WebSocket::send(ArrayBuffer& binaryData)
         return { };
     }
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else
@@ -406,7 +405,7 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
         return { };
     }
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else
@@ -431,7 +430,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
         return { };
     }
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else

@@ -338,6 +338,13 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
     completionHandler(true);
 }
 
+void NetworkStorageManager::estimate(const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    completionHandler(originStorageManager(origin).estimate());
+}
+
 void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

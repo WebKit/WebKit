@@ -2994,12 +2994,13 @@ IsNSURLSessionWebSocketEnabled:
   status: developer
   humanReadableName: "NSURLSession WebSocket"
   humanReadableDescription: "Use NSURLSession WebSocket API"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: HAVE(NSURLSESSION_WEBSOCKET)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
@@ -4123,10 +4124,9 @@ OffscreenCanvasEnabled:
 
 OffscreenCanvasInWorkersEnabled:
   type: bool
-  status: unstable
+  status: testable
   humanReadableName: "OffscreenCanvas in Workers"
   humanReadableDescription: "Support for the OffscreenCanvas APIs in Workers"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
   defaultValue:
     WebKitLegacy:
@@ -4135,6 +4135,9 @@ OffscreenCanvasInWorkersEnabled:
     WebKit:
       "PLATFORM(COCOA)": true
       "ENABLE(EXPERIMENTAL_FEATURES)": true
+      default: false
+    WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 OpusDecoderEnabled:
@@ -4504,15 +4507,17 @@ PrivateClickMeasurementEnabled:
       default: true
 
 PrivateClickMeasurementFraudPreventionEnabled:
-   type: bool
-   status: developer
-   humanReadableName: "Private Click Measurement Fraud Prevention"
-   humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
-   webcoreBinding: DeprecatedGlobalSettings
-   defaultValue:
-     WebKit:
-       "HAVE(RSA_BSSA)": true
-       default: false
+  type: bool
+  status: developer
+  humanReadableName: "Private Click Measurement Fraud Prevention"
+  humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
+  defaultValue:
+    WebKit:
+      "HAVE(RSA_BSSA)": true
+      default: false
+    WebCore:
+      "HAVE(RSA_BSSA)": true
+      default: false
 
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
@@ -5546,6 +5551,19 @@ StorageAPIEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+StorageAPIEstimateEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "Storage API Estimate"
+  humanReadableDescription: "Enable Storage API Estimate"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 StorageAccessAPIEnabled:
   type: bool
   status: developer
@@ -6092,11 +6110,12 @@ UserGesturePromisePropagationEnabled:
   status: internal
   humanReadableName: "UserGesture Promise Propagation"
   humanReadableDescription: "UserGesture Promise Propagation"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.
@@ -6537,7 +6556,7 @@ WebGLUsingMetal:
 
 WebGPU:
   type: bool
-  status: preview
+  status: unstable
   humanReadableName: "WebGPU"
   humanReadableDescription: "Enable WebGPU"
   defaultValue:
@@ -6629,12 +6648,13 @@ WebRTCDTMFEnabled:
   status: internal
   humanReadableName: "WebRTC DTMF"
   humanReadableDescription: "Enable WebRTC DTMF"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 WebRTCEncodedTransformEnabled:
@@ -6715,13 +6735,14 @@ WebRTCMDNSICECandidatesEnabled:
   status: internal
   humanReadableName: "WebRTC mDNS ICE candidates"
   humanReadableDescription: "Enable WebRTC mDNS ICE candidates"
-  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: true
+    WebCore:
+      default: false
 
 # FIXME: This is not relevant for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 WebRTCPlatformCodecsInGPUProcessEnabled:
@@ -6884,6 +6905,20 @@ WebShareFileAPIEnabled:
       default: false
     WebCore:
       default: false
+
+WebSocketEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebKit:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebCore:
+      "PLATFORM(WATCHOS)": false
+      default: true
 
 WebXRAugmentedRealityModuleEnabled:
   type: bool

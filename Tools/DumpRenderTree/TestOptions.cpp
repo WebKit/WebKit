@@ -149,7 +149,6 @@ const TestFeatures& TestOptions::defaults()
             { "JavaScriptEnabled", true },
             { "KeygenElementEnabled", false },
             { "LayoutFormattingContextIntegrationEnabled", true },
-            { "LineHeightUnitsEnabled", false },
             { "LoadsImagesAutomatically", true },
             { "MainContentUserGestureOverrideEnabled", false },
             { "MenuItemElementEnabled", false },

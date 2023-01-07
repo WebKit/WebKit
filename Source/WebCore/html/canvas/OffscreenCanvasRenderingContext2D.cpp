@@ -38,7 +38,6 @@
 #include "CSSFontSelector.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
-#include "DeprecatedGlobalSettings.h"
 #include "RenderStyle.h"
 #include "ScriptExecutionContext.h"
 #include "StyleResolveForFontRaw.h"
@@ -54,7 +53,7 @@ bool OffscreenCanvasRenderingContext2D::enabledForContext(ScriptExecutionContext
     UNUSED_PARAM(context);
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     if (context.isWorkerGlobalScope())
-        return DeprecatedGlobalSettings::offscreenCanvasInWorkersEnabled();
+        return context.settingsValues().offscreenCanvasInWorkersEnabled;
 #endif
 
     ASSERT(context.isDocument());

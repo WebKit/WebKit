@@ -5013,7 +5013,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->menuItemElementEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    DeprecatedGlobalSettings::setMenuItemElementEnabled(!!enabled);
+    settings.setMenuItemElementEnabled(!!enabled);
 
     hr = prefsPrivate->webAnimationsCompositeOperationsEnabled(&enabled);
     if (FAILED(hr))

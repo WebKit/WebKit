@@ -32,6 +32,12 @@
 ] interface StorageManager {
     Promise<boolean> persisted();
     [Exposed=Window] Promise<boolean> persist();
+    [EnabledBySetting=StorageAPIEstimateEnabled] Promise<StorageEstimate> estimate();
+};
 
-    // FIXME: add Promise<StorageEstimate> estimate();
+[
+    JSGenerateToJSObject
+] dictionary StorageEstimate {
+    unsigned long long usage;
+    unsigned long long quota;
 };

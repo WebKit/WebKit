@@ -44,5 +44,5 @@
     undefined setStreams(MediaStream... streams);
     Promise<RTCStatsReport> getStats();
 
-    [Conditional=WEB_RTC, EnabledByDeprecatedGlobalSetting=WebRTCDTMFEnabled] readonly attribute RTCDTMFSender? dtmf;
+    [Conditional=WEB_RTC, EnabledBySetting=WebRTCDTMFEnabled] readonly attribute RTCDTMFSender? dtmf;
 };

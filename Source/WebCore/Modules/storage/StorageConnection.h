@@ -34,6 +34,7 @@ namespace WebCore {
 class FileSystemStorageConnection;
 template<typename> class ExceptionOr;
 struct ClientOrigin;
+struct StorageEstimate;
 
 class StorageConnection : public ThreadSafeRefCounted<StorageConnection> {
 public:
@@ -44,6 +45,8 @@ public:
     using DirectoryInfo = std::pair<FileSystemHandleIdentifier, RefPtr<FileSystemStorageConnection>>;
     using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<DirectoryInfo>&&)>;
     virtual void fileSystemGetDirectory(ClientOrigin&&, GetDirectoryCallback&&) = 0;
+    using GetEstimateCallback = CompletionHandler<void(ExceptionOr<StorageEstimate>&&)>;
+    virtual void getEstimate(ClientOrigin&&, GetEstimateCallback&&) = 0;
 };
 
 } // namespace WebCore

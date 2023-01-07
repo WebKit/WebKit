@@ -375,6 +375,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/storage/DummyStorageProvider.h
     Modules/storage/StorageConnection.h
+    Modules/storage/StorageEstimate.h
     Modules/storage/StorageManager.h
     Modules/storage/StorageProvider.h
     Modules/storage/WorkerStorageConnection.h

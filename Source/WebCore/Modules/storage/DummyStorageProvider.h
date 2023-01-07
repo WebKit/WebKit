@@ -27,6 +27,7 @@
 
 #include "FileSystemStorageConnection.h"
 #include "StorageConnection.h"
+#include "StorageEstimate.h"
 #include "StorageProvider.h"
 
 namespace WebCore {
@@ -55,6 +56,11 @@ private:
         }
 
         void fileSystemGetDirectory(ClientOrigin&&, StorageConnection::GetDirectoryCallback&& completionHandler) final
+        {
+            completionHandler(Exception { NotSupportedError });
+        }
+
+        void getEstimate(ClientOrigin&&, GetEstimateCallback&& completionHandler) final
         {
             completionHandler(Exception { NotSupportedError });
         }

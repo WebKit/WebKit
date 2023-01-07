@@ -702,7 +702,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 template <typename Scope, typename M, typename N, typename ...Args>
 NEVER_INLINE static JSValue dataSegmentFail(JSGlobalObject* globalObject, VM& vm, Scope& scope, M memorySize, N segmentSize, N offset, Args... args)
 {
-    return throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, makeString("Invalid data segment initialization: segment of "_s, String::number(segmentSize), " bytes memory of "_s, String::number(memorySize), " bytes, at offset "_s, String::number(offset), args...)));
+    return throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, makeString("Invalid data segment initialization: segment of "_s, String::number(segmentSize), " bytes memory of "_s, String::number(memorySize), " bytes, at offset "_s, String::number(offset), args...)));
 }
 
 JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
@@ -763,7 +763,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     forEachActiveElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
         int64_t lastWrittenIndex = static_cast<int64_t>(elementIndex) + static_cast<int64_t>(element.functionIndices.size()) - 1;
         if (UNLIKELY(lastWrittenIndex >= m_instance->table(tableIndex)->length()))
-            exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
+            exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
     });
 
     if (UNLIKELY(exception))

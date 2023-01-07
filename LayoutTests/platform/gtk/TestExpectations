@@ -1885,47 +1885,12 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 # fails even with specific expectation.
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html [ Pass Failure ]
 
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-01.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-02.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-stretch-auto-variable.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-stretch-default-variable.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-metrics.html [ ImageOnlyFailure ]
-
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ar.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ja-vs-zh.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ja.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-mixed.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ur-vs-ar.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-ur.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui-zh.html [ ImageOnlyFailure ]
-webkit.org/b/178624 imported/w3c/web-platform-tests/css/css-fonts/system-ui.html [ ImageOnlyFailure ]
-
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]
 
 webkit.org/b/245900 [ Debug ] fast/inline/inline-box-adjust-position-crash2.html [ Skip ]
 
 # http version of this test fails, but https passes. May be a PingLoad issue in GTK
 webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.http.sub.html [ Failure ]
-
-# font-variant-alternates https://bugs.webkit.org/show_bug.cgi?id=246952
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/alternates-order.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-03.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-04.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-05.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-06.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-07.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-08.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-09.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-10.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-11.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-12.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-15.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-16.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-17.html [ ImageOnlyFailure ]
-webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-18.html [ ImageOnlyFailure ]
 
 # vertical form controls
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]

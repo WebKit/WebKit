@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDLTypes.h"
+#include "StorageEstimate.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,6 +43,8 @@ public:
     static Ref<StorageManager> create(NavigatorBase&);
     void persisted(DOMPromiseDeferred<IDLBoolean>&&);
     void persist(DOMPromiseDeferred<IDLBoolean>&&);
+    using Estimate = StorageEstimate;
+    void estimate(DOMPromiseDeferred<IDLDictionary<Estimate>>&&);
     void fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
 
 private:

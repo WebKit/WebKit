@@ -417,13 +417,6 @@ PreventKeyboardDOMEventDispatch:
     WebCore:
       default: false
 
-PrivateClickMeasurementFraudPreventionEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      "HAVE(RSA_BSSA)": true
-      default: false
-
 RepaintOutsideLayoutEnabled:
   type: bool
   defaultValue:

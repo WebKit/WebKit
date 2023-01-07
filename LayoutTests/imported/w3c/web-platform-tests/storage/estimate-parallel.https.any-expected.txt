@@ -1,3 +1,3 @@
 
-FAIL Multiple estimate() calls in parallel should complete promise_test: Unhandled rejection with value: object "TypeError: navigator.storage.estimate is not a function. (In 'navigator.storage.estimate()', 'navigator.storage.estimate' is undefined)"
+PASS Multiple estimate() calls in parallel should complete
 

@@ -37,7 +37,7 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
             table: table,
         }
     };
-    assert.throws(() => new WebAssembly.Instance(module, imports), WebAssembly.LinkError, `Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, imports)')`);
+    assert.throws(() => new WebAssembly.Instance(module, imports), WebAssembly.RuntimeError, `Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, imports)')`);
     // On Element failure, the Data section shouldn't have executed.
     const buffer = new Uint8Array(memory.buffer);
     for (let idx = 0; idx < memSizeInPages * pageSizeInBytes; ++idx) {

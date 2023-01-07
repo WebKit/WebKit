@@ -23,12 +23,12 @@ PASS StorageManager interface: existence and properties of interface prototype o
 PASS StorageManager interface: existence and properties of interface prototype object's @@unscopables property
 PASS StorageManager interface: operation persisted()
 PASS StorageManager interface: member persist
-FAIL StorageManager interface: operation estimate() assert_own_property: interface prototype object missing non-static operation expected property "estimate" missing
+PASS StorageManager interface: operation estimate()
 PASS StorageManager must be primary interface of navigator.storage
 PASS Stringification of navigator.storage
 PASS StorageManager interface: navigator.storage must inherit property "persisted()" with the proper type
 PASS StorageManager interface: navigator.storage must not have property "persist"
-FAIL StorageManager interface: navigator.storage must inherit property "estimate()" with the proper type assert_inherits: property "estimate" not found in prototype chain
+PASS StorageManager interface: navigator.storage must inherit property "estimate()" with the proper type
 PASS WorkerNavigator interface: attribute storage
 PASS WorkerNavigator interface: navigator must inherit property "storage" with the proper type
 

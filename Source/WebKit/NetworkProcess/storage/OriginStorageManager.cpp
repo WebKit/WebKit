@@ -697,6 +697,13 @@ void OriginStorageManager::setPersisted(bool value)
     defaultBucket().setMode(value ? StorageBucketMode::Persistent : StorageBucketMode::BestEffort);
 }
 
+WebCore::StorageEstimate OriginStorageManager::estimate()
+{
+    ASSERT(!RunLoop::isMain());
+
+    return WebCore::StorageEstimate { quotaManager().usage(), quotaManager().quota() };
+}
+
 OriginStorageManager::DataTypeSizeMap OriginStorageManager::fetchDataTypesInList(OptionSet<WebsiteDataType> types, bool shouldComputeSize)
 {
     ASSERT(!RunLoop::isMain());

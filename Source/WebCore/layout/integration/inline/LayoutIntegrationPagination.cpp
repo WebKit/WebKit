@@ -131,6 +131,7 @@ static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& i
         return Line {
             line.firstBoxIndex(),
             line.boxCount(),
+            moveVertically(line.lineBoxLogicalRect(), offset),
             moveVertically({ FloatPoint { line.lineBoxLeft(), line.lineBoxTop() }, FloatPoint { line.lineBoxRight(), line.lineBoxBottom() } }, offset),
             line.enclosingContentTop() + offset,
             line.enclosingContentBottom() + offset,
