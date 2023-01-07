@@ -60,12 +60,14 @@ struct CSSCounterStyleDescriptors {
     struct Pad {
         unsigned m_padMinimumLength = 0;
         Symbol m_padSymbol = "-"_s;
-        bool operator==(const Pad& other) const = default;
+        bool operator==(const Pad& other) const { return m_padMinimumLength == other.m_padMinimumLength && m_padSymbol == other.m_padSymbol; }
+        bool operator!=(const Pad& other) const { return !(*this == other); }
     };
     struct NegativeSymbols {
         Symbol m_prefix = "-"_s;
         Symbol m_suffix;
-        bool operator==(const NegativeSymbols& other) const = default;
+        bool operator==(const NegativeSymbols& other) const { return m_prefix == other.m_prefix && m_suffix == other.m_suffix; }
+        bool operator!=(const NegativeSymbols& other) const { return !(*this == other); }
     };
     enum class ExplicitlySetDescriptors: uint16_t {
         System = 1 << 0,
@@ -82,7 +84,24 @@ struct CSSCounterStyleDescriptors {
 
     // create() is prefered here rather than a custom constructor, so that the Struct still classifies as an aggregate.
     static CSSCounterStyleDescriptors create(AtomString name, const StyleProperties&);
-    bool operator==(const CSSCounterStyleDescriptors& other) const = default;
+    bool operator==(const CSSCounterStyleDescriptors& other) const
+    {
+        return m_name == other.m_name
+            && m_system == other.m_system
+            && m_negativeSymbols == other.m_negativeSymbols
+            && m_prefix == other.m_prefix
+            && m_suffix == other.m_suffix
+            && m_ranges == other.m_ranges
+            && m_pad == other.m_pad
+            && m_fallbackName == other.m_fallbackName
+            && m_symbols == other.m_symbols
+            && m_additiveSymbols == other.m_additiveSymbols
+            && m_speakAs == other.m_speakAs
+            && m_extendsName == other.m_extendsName
+            && m_fixedSystemFirstSymbolValue == other.m_fixedSystemFirstSymbolValue
+            && m_explicitlySetDescriptors == other.m_explicitlySetDescriptors;
+    }
+    bool operator!=(const CSSCounterStyleDescriptors& other) const { return !(*this == other); }
     void setExplicitlySetDescriptors(const StyleProperties&);
 
     Name m_name;
