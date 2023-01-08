@@ -25,32 +25,32 @@
 		1C4FAF5B28FC862F00FFE212 /* scale.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1B28FC84D200FFE212 /* scale.c */; };
 		1C4FAF5D28FC862F00FFE212 /* alpha.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2128FC84D200FFE212 /* alpha.c */; };
 		1C4FAF5E28FC862F00FFE212 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1C28FC84D200FFE212 /* utils.c */; };
-		1CD366BF28FC892C000123EA /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CD366AF28FC8890000123EA /* libdav1d.a */; };
+		1CB33732296A841C00EC4A12 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2D0E02296A455C00BE33A3 /* libdav1d.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1C9CD59028FC8BF2005A2EAF /* PBXContainerItemProxy */ = {
+		1C122B1C296A4B7200814381 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 1C4FACD428FC70C000FFE212;
 			remoteInfo = dav1d;
 		};
-		1CD366AE28FC8890000123EA /* PBXContainerItemProxy */ = {
+		1C2D0E01296A455C00BE33A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1CD366A328FC888F000123EA;
+			remoteGlobalIDString = 1C4FACD528FC70C000FFE212;
 			remoteInfo = dav1d;
 		};
-		1CD366BB28FC892C000123EA /* PBXContainerItemProxy */ = {
+		1C2D0E03296A455C00BE33A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 1C4FAE5428FC7CEC00FFE212;
 			remoteInfo = bitdepth_8;
 		};
-		1CD366BD28FC892C000123EA /* PBXContainerItemProxy */ = {
+		1C2D0E05296A455C00BE33A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
 			proxyType = 2;
@@ -201,17 +201,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CD366BF28FC892C000123EA /* libdav1d.a in Frameworks */,
+				1CB33732296A841C00EC4A12 /* libdav1d.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C4FAE8628FC83DC00FFE212 = {
+		1C2D0DF9296A450100BE33A3 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
 				1CD366AA28FC888F000123EA /* dav1d.xcodeproj */,
+			);
+			path = ThirdParty;
+			sourceTree = "<group>";
+		};
+		1C2D0DFC296A455C00BE33A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C2D0E02296A455C00BE33A3 /* libdav1d.a */,
+				1C2D0E06296A455C00BE33A3 /* libdav1d_bitdepth_16.a */,
+				1C2D0E04296A455C00BE33A3 /* libdav1d_bitdepth_8.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C4FAE8628FC83DC00FFE212 = {
+			isa = PBXGroup;
+			children = (
+				1C2D0DF9296A450100BE33A3 /* ThirdParty */,
 				1C4FAF4128FC852800FFE212 /* Configurations */,
 				1C4FAF2528FC84EB00FFE212 /* android_jni */,
 				1C4FAED128FC845C00FFE212 /* apps */,
@@ -605,16 +623,6 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
-		1CD366AB28FC888F000123EA /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1CD366AF28FC8890000123EA /* libdav1d.a */,
-				1CD366BE28FC892C000123EA /* libdav1d_bitdepth_16.a */,
-				1CD366BC28FC892C000123EA /* libdav1d_bitdepth_8.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		1CD366B728FC892C000123EA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -646,7 +654,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				1C9CD59128FC8BF2005A2EAF /* PBXTargetDependency */,
+				1C122B1D296A4B7200814381 /* PBXTargetDependency */,
 			);
 			name = libavif;
 			productName = libavif;
@@ -680,7 +688,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 1CD366AB28FC888F000123EA /* Products */;
+					ProductGroup = 1C2D0DFC296A455C00BE33A3 /* Products */;
 					ProjectRef = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
 				},
 			);
@@ -692,25 +700,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1CD366AF28FC8890000123EA /* libdav1d.a */ = {
+		1C2D0E02296A455C00BE33A3 /* libdav1d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libdav1d.a;
-			remoteRef = 1CD366AE28FC8890000123EA /* PBXContainerItemProxy */;
+			remoteRef = 1C2D0E01296A455C00BE33A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1CD366BC28FC892C000123EA /* libdav1d_bitdepth_8.a */ = {
+		1C2D0E04296A455C00BE33A3 /* libdav1d_bitdepth_8.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libdav1d_bitdepth_8.a;
-			remoteRef = 1CD366BB28FC892C000123EA /* PBXContainerItemProxy */;
+			remoteRef = 1C2D0E03296A455C00BE33A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1CD366BE28FC892C000123EA /* libdav1d_bitdepth_16.a */ = {
+		1C2D0E06296A455C00BE33A3 /* libdav1d_bitdepth_16.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libdav1d_bitdepth_16.a;
-			remoteRef = 1CD366BD28FC892C000123EA /* PBXContainerItemProxy */;
+			remoteRef = 1C2D0E05296A455C00BE33A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -744,10 +752,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1C9CD59128FC8BF2005A2EAF /* PBXTargetDependency */ = {
+		1C122B1D296A4B7200814381 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = dav1d;
-			targetProxy = 1C9CD59028FC8BF2005A2EAF /* PBXContainerItemProxy */;
+			targetProxy = 1C122B1C296A4B7200814381 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

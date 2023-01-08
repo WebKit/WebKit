@@ -422,7 +422,6 @@
 				1C4FADD728FC71C600FFE212 /* NEWS */,
 				1C4FAD0228FC719800FFE212 /* package */,
 				1C4FAD0B28FC71A500FFE212 /* README.md */,
-				1C4FADE228FC720600FFE212 /* setup */,
 				1C4FAD0C28FC71B900FFE212 /* src */,
 				1C4FADE328FC721A00FFE212 /* tests */,
 				1C4FADD828FC71D900FFE212 /* THANKS.md */,
@@ -828,13 +827,6 @@
 				1C4FADDE28FC71F900FFE212 /* meson.build */,
 			);
 			path = examples;
-			sourceTree = "<group>";
-		};
-		1C4FADE228FC720600FFE212 /* setup */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = setup;
 			sourceTree = "<group>";
 		};
 		1C4FADE328FC721A00FFE212 /* tests */ = {
