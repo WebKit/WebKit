@@ -1242,6 +1242,7 @@ bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSe
         || m_visualData->textDecorationLine != other.m_visualData->textDecorationLine
         || m_rareNonInheritedData->textDecorationStyle != other.m_rareNonInheritedData->textDecorationStyle
         || m_rareNonInheritedData->textDecorationColor != other.m_rareNonInheritedData->textDecorationColor
+        || m_rareNonInheritedData->textDecorationThickness != other.m_rareNonInheritedData->textDecorationThickness
         || m_rareInheritedData->textDecorationSkipInk != other.m_rareInheritedData->textDecorationSkipInk
         || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
         || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
