@@ -136,11 +136,9 @@ bool Styleable::computeAnimationExtent(LayoutRect& bounds) const
 
     KeyframeEffect* matchingEffect = nullptr;
     for (const auto& animation : *animations) {
-        auto* effect = animation->effect();
-        if (is<KeyframeEffect>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
+        if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation->effect())) {
             if (keyframeEffect->animatedProperties().contains(CSSPropertyTransform))
-                matchingEffect = downcast<KeyframeEffect>(effect);
+                matchingEffect = keyframeEffect;
         }
     }
 

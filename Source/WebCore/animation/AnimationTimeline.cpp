@@ -70,10 +70,10 @@ void AnimationTimeline::removeAnimation(WebAnimation& animation)
 {
     ASSERT(!animation.timeline() || animation.timeline() == this);
     m_animations.remove(animation);
-    if (is<KeyframeEffect>(animation.effect())) {
-        if (auto styleable = downcast<KeyframeEffect>(animation.effect())->targetStyleable()) {
+    if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation.effect())) {
+        if (auto styleable = keyframeEffect->targetStyleable()) {
             styleable->animationWasRemoved(animation);
-            styleable->ensureKeyframeEffectStack().removeEffect(*downcast<KeyframeEffect>(animation.effect()));
+            styleable->ensureKeyframeEffectStack().removeEffect(*keyframeEffect);
         }
     }
 }

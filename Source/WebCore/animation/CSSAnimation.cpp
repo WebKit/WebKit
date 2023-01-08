@@ -111,8 +111,8 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
         animationEffect->setIterationDuration(Seconds(animation.duration()));
 
     if (!m_overriddenProperties.contains(Property::CompositeOperation)) {
-        if (is<KeyframeEffect>(animationEffect))
-            downcast<KeyframeEffect>(*animationEffect).setComposite(animation.compositeOperation());
+        if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animationEffect))
+            keyframeEffect->setComposite(animation.compositeOperation());
     }
 
     animationEffect->updateStaticTimingProperties();

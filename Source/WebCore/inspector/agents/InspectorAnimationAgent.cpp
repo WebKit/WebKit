@@ -217,8 +217,8 @@ static Ref<Protocol::Animation::Effect> buildObjectForEffect(AnimationEffect& ef
     if (auto fillMode = protocolValueForFillMode(effect.fill()))
         effectPayload->setFillMode(fillMode.value());
 
-    if (is<KeyframeEffect>(effect))
-        effectPayload->setKeyframes(buildObjectForKeyframes(downcast<KeyframeEffect>(effect)));
+    if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect))
+        effectPayload->setKeyframes(buildObjectForKeyframes(*keyframeEffect));
 
     return effectPayload;
 }
