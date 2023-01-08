@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "DeprecatedGlobalSettings.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "WebCoreThreadRun.h"

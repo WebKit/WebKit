@@ -40,7 +40,6 @@
 #import "ColorSpaceCG.h"
 #import "ContentTypeUtilities.h"
 #import "Cookie.h"
-#import "DeprecatedGlobalSettings.h"
 #import "FloatConversion.h"
 #import "FourCC.h"
 #import "GraphicsContext.h"

@@ -28,7 +28,6 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Settings.h"
 #include "StyledElement.h"

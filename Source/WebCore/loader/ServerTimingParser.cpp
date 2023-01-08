@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ServerTimingParser.h"
 
-#include "DeprecatedGlobalSettings.h"
 #include "HeaderFieldTokenizer.h"
 #include "ServerTiming.h"
 
