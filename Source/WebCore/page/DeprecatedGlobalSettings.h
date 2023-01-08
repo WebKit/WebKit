@@ -39,23 +39,23 @@ public:
 #endif
 
 #if USE(AVFOUNDATION)
-    WEBCORE_EXPORT static void setAVFoundationEnabled(bool flag);
+    WEBCORE_EXPORT static void setAVFoundationEnabled(bool);
     static bool isAVFoundationEnabled() { return shared().m_AVFoundationEnabled; }
 #endif
 
 #if USE(GSTREAMER)
-    WEBCORE_EXPORT static void setGStreamerEnabled(bool flag);
+    WEBCORE_EXPORT static void setGStreamerEnabled(bool);
     static bool isGStreamerEnabled() { return shared().m_GStreamerEnabled; }
 #endif
 
-    WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool flag);
-    WEBCORE_EXPORT static bool mockScrollbarsEnabled();
+    WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool);
+    static bool mockScrollbarsEnabled() { return shared().m_mockScrollbarsEnabled; }
 
-    WEBCORE_EXPORT static void setUsesOverlayScrollbars(bool flag);
-    static bool usesOverlayScrollbars();
+    WEBCORE_EXPORT static void setUsesOverlayScrollbars(bool);
+    static bool usesOverlayScrollbars() { return shared().m_usesOverlayScrollbars; }
 
     static bool lowPowerVideoAudioBufferSizeEnabled() { return shared().m_lowPowerVideoAudioBufferSizeEnabled; }
-    WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
+    static void setLowPowerVideoAudioBufferSizeEnabled(bool flag) { shared().m_lowPowerVideoAudioBufferSizeEnabled = flag; }
 
     static bool trackingPreventionEnabled() { return shared().m_trackingPreventionEnabled; }
     WEBCORE_EXPORT static void setTrackingPreventionEnabled(bool);
@@ -65,10 +65,10 @@ public:
     static unsigned audioSessionCategoryOverride();
 
     WEBCORE_EXPORT static void setNetworkDataUsageTrackingEnabled(bool);
-    static bool networkDataUsageTrackingEnabled();
+    static bool networkDataUsageTrackingEnabled() { return shared().m_networkDataUsageTrackingEnabled; }
 
     WEBCORE_EXPORT static void setNetworkInterfaceName(const String&);
-    static const String& networkInterfaceName();
+    static const String& networkInterfaceName() { return shared().m_networkInterfaceName; }
 
     static void setDisableScreenSizeOverride(bool flag) { shared().m_disableScreenSizeOverride = flag; }
     static bool disableScreenSizeOverride() { return shared().m_disableScreenSizeOverride; }
@@ -78,7 +78,7 @@ public:
 #endif
 
 #if USE(AUDIO_SESSION)
-    WEBCORE_EXPORT static void setShouldManageAudioSessionCategory(bool flag);
+    WEBCORE_EXPORT static void setShouldManageAudioSessionCategory(bool);
     WEBCORE_EXPORT static bool shouldManageAudioSessionCategory();
 #endif
 
@@ -161,12 +161,12 @@ public:
 #endif
 
 #if ENABLE(VORBIS)
-    WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool isEnabled);
+    WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool);
     static bool vorbisDecoderEnabled() { return shared().m_vorbisDecoderEnabled; }
 #endif
 
 #if ENABLE(OPUS)
-    WEBCORE_EXPORT static void setOpusDecoderEnabled(bool isEnabled);
+    WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
     static bool opusDecoderEnabled() { return shared().m_opusDecoderEnabled; }
 #endif
 
@@ -176,7 +176,7 @@ public:
 #endif
 
 #if HAVE(AVCONTENTKEYSPECIFIER)
-    WEBCORE_EXPORT static void setSampleBufferContentKeySessionSupportEnabled(bool);
+    static void setSampleBufferContentKeySessionSupportEnabled(bool);
     static bool sampleBufferContentKeySessionSupportEnabled() { return shared().m_sampleBufferContentKeySessionSupportEnabled; }
 #endif
 
@@ -193,35 +193,33 @@ public:
 
 private:
     WEBCORE_EXPORT static DeprecatedGlobalSettings& shared();
-    DeprecatedGlobalSettings();
-    ~DeprecatedGlobalSettings();
+    DeprecatedGlobalSettings() = default;
+    ~DeprecatedGlobalSettings() = default;
 
 #if USE(AVFOUNDATION)
-    bool m_AVFoundationEnabled;
+    bool m_AVFoundationEnabled { true };
 #endif
 
 #if USE(GSTREAMER)
-    bool m_GStreamerEnabled;
+    bool m_GStreamerEnabled { true };
 #endif
 
-    bool m_mockScrollbarsEnabled;
-    bool m_usesOverlayScrollbars;
+    bool m_mockScrollbarsEnabled { false };
+    bool m_usesOverlayScrollbars { false };
 
 #if PLATFORM(WIN)
-    bool m_shouldUseHighResolutionTimers;
+    bool m_shouldUseHighResolutionTimers { true };
 #endif
 #if PLATFORM(IOS_FAMILY)
-    bool m_networkDataUsageTrackingEnabled;
-    bool m_shouldOptOutOfNetworkStateObservation;
-    bool m_disableScreenSizeOverride;
-#endif
-    bool m_manageAudioSession;
-
-    bool m_lowPowerVideoAudioBufferSizeEnabled;
-    bool m_trackingPreventionEnabled;
-    bool m_allowsAnySSLCertificate;
-
+    bool m_networkDataUsageTrackingEnabled { false };
     String m_networkInterfaceName;
+    bool m_shouldOptOutOfNetworkStateObservation { false };
+    bool m_disableScreenSizeOverride { false };
+#endif
+
+    bool m_lowPowerVideoAudioBufferSizeEnabled { false };
+    bool m_trackingPreventionEnabled { false };
+    bool m_allowsAnySSLCertificate { false };
 
     bool m_isPaintTimingEnabled { false };
 
@@ -231,9 +229,7 @@ private:
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };
-    bool m_syntheticEditingCommandsEnabled { true };
     bool m_webSQLEnabled { false };
-    bool m_keygenElementEnabled { false };
     bool m_highlightAPIEnabled { false };
 
     bool m_inlineFormattingContextIntegrationEnabled { true };
