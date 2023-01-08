@@ -733,7 +733,8 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                 ? static_cast<uint32_t>(m_instance->instance().loadI32Global(offset.globalImportIndex()))
                 : offset.constValue();
 
-            fn(element, *element.tableIndexIfActive, elementIndex);
+            if (fn(element, *element.tableIndexIfActive, elementIndex) == IterationStatus::Done)
+                break;
 
             if (exception)
                 break;
@@ -752,7 +753,8 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                 ? static_cast<uint32_t>(m_instance->instance().loadI32Global(segment->offsetIfActive->globalImportIndex()))
                 : segment->offsetIfActive->constValue();
 
-            fn(memory, sizeInBytes, segment, offset);
+            if (fn(memory, sizeInBytes, segment, offset) == IterationStatus::Done)
+                break;
 
             if (exception)
                 break;
@@ -760,39 +762,41 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     };
 
     // Validation of all element ranges comes before all Table and Memory initialization.
-    forEachActiveElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
+    forEachActiveElement([&](const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
         int64_t lastWrittenIndex = static_cast<int64_t>(elementIndex) + static_cast<int64_t>(element.functionIndices.size()) - 1;
-        if (UNLIKELY(lastWrittenIndex >= m_instance->table(tableIndex)->length()))
+        if (UNLIKELY(lastWrittenIndex >= m_instance->table(tableIndex)->length())) {
             exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
+            return IterationStatus::Done;
+        }
+
+        m_instance->instance().initElementSegment(tableIndex, element, elementIndex, 0U, element.length());
+        return IterationStatus::Continue;
     });
 
     if (UNLIKELY(exception))
         return exception.value();
 
     // Validation of all segment ranges comes before all Table and Memory initialization.
-    forEachActiveDataSegment([&] (uint8_t*, uint64_t sizeInBytes, const Wasm::Segment::Ptr& segment, uint32_t offset) {
-        if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
+    forEachActiveDataSegment([&](uint8_t* memory, uint64_t sizeInBytes, const Wasm::Segment::Ptr& segment, uint32_t offset) {
+        if (UNLIKELY(sizeInBytes < segment->sizeInBytes)) {
             exception = dataSegmentFail(globalObject, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ", segment is too big"_s);
-        else if (UNLIKELY(offset > sizeInBytes - segment->sizeInBytes))
+            return IterationStatus::Done;
+        }
+        if (UNLIKELY(offset > sizeInBytes - segment->sizeInBytes)) {
             exception = dataSegmentFail(globalObject, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ", segment writes outside of memory"_s);
-    });
+            return IterationStatus::Done;
+        }
 
-    if (UNLIKELY(exception))
-        return exception.value();
-
-    forEachActiveElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t startElementIndex) {
-        m_instance->instance().initElementSegment(tableIndex, element, startElementIndex, 0U, element.length());
-    });
-
-    ASSERT(!exception);
-
-    forEachActiveDataSegment([&] (uint8_t* memory, uint64_t, const Wasm::Segment::Ptr& segment, uint32_t offset) {
         // Empty segments are valid, but only if memory isn't present, which would be undefined behavior in memcpy.
         if (segment->sizeInBytes) {
             RELEASE_ASSERT(memory);
             memcpy(memory + offset, &segment->byte(0), segment->sizeInBytes);
         }
+        return IterationStatus::Continue;
     });
+
+    if (UNLIKELY(exception))
+        return exception.value();
 
     ASSERT(!exception);
 
