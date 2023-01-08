@@ -1020,6 +1020,30 @@ std::tuple<InlineRect, bool> LineBuilder::lineBoxForCandidateInlineContent(const
     return { adjustedLineRect, lineConstraints.left || lineConstraints.right };
 }
 
+LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatBox)
+{
+    auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && floatBox.style().initialLetterDrop();
+    if (!isInitialLetter)
+        return { };
+    // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
+    // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
+    auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle());
+    // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
+    auto intrusiveBottom = blockLayoutState()->intrusiveInitialLetterLogicalBottom();
+    if (!initialLetterCapHeightOffset && !intrusiveBottom)
+        return { };
+
+    if (intrusiveBottom) {
+        // When intrusive initial letter is cleared, we introduce a clear gap. This is (with proper floats) normally computed before starting
+        // line layout but intrusive initial letters are cleared only when another initial letter shows up. Regular inline content
+        // does not need clearance.
+        m_lineLogicalRect.setLeft(m_lineInitialLogicalLeft);
+        m_lineLogicalRect.moveVertically(*intrusiveBottom);
+        formattingState()->setClearGapBeforeFirstLine(*intrusiveBottom);
+    }
+    return initialLetterCapHeightOffset.value_or(0_lu);
+}
+
 bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstraintApplies lineBoxConstraintApplies)
 {
     if (isInIntrinsicWidthMode()) {
@@ -1056,20 +1080,10 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
         return false;
     }
 
+    auto additionalOffset = adjustGeometryForInitialLetterIfNeeded(floatBox);
     // Set static position first.
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
-    auto floatBoxInitialTop = m_lineLogicalRect.top();
-    if (auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle())) {
-        // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
-        // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
-        floatBoxInitialTop += *initialLetterCapHeightOffset;
-        if (auto intrusiveBottom = blockLayoutState()->intrusiveInitialLetterLogicalBottom(); intrusiveBottom && *initialLetterCapHeightOffset) {
-            // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
-            floatBoxInitialTop += *intrusiveBottom;
-        }
-    }
-
-    auto staticPosition = LayoutPoint { lineMarginBoxLeft, floatBoxInitialTop };
+    auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() + additionalOffset };
     staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
     boxGeometry.setLogicalTopLeft(staticPosition);
     // Float it.

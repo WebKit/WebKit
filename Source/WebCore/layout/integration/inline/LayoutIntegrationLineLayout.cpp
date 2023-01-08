@@ -543,6 +543,7 @@ void LineLayout::constructContent()
     if (!m_inlineFormattingState.lines().isEmpty()) {
         InlineContentBuilder { flow(), m_boxTree }.build(m_inlineFormattingState, ensureInlineContent());
         ASSERT(m_inlineContent);
+        m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
         m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
         m_inlineContent->shrinkToFit();
     }
@@ -710,7 +711,7 @@ LayoutUnit LineLayout::contentLogicalHeight() const
     auto flippedContentHeightForWritingMode = rootLayoutBox().style().isHorizontalWritingMode()
         ? lines.last().lineBoxBottom() - lines.first().lineBoxTop()
         : lines.last().lineBoxRight() - lines.first().lineBoxLeft();
-    return LayoutUnit { flippedContentHeightForWritingMode + m_inlineContent->clearGapAfterLastLine };
+    return LayoutUnit { m_inlineContent->clearGapBeforeFirstLine + flippedContentHeightForWritingMode + m_inlineContent->clearGapAfterLastLine };
 }
 
 size_t LineLayout::lineCount() const

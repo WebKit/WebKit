@@ -65,6 +65,9 @@ public:
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
 
+    void setClearGapBeforeFirstLine(InlineLayoutUnit verticalGap) { m_clearGapBeforeFirstLine = verticalGap; }
+    InlineLayoutUnit clearGapBeforeFirstLine() const { return m_clearGapBeforeFirstLine; }
+
     void clearInlineItems() { m_inlineItems.clear(); }
     void clearLineAndBoxes();
     void shrinkToFit();
@@ -81,6 +84,7 @@ private:
     DisplayBoxes m_displayBoxes;
     // FIXME: This should be part of a non-persistent formatting state.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffset;
+    InlineLayoutUnit m_clearGapBeforeFirstLine { 0 };
     InlineLayoutUnit m_clearGapAfterLastLine { 0 };
 };
 
@@ -95,6 +99,7 @@ inline void InlineFormattingState::clearLineAndBoxes()
     m_lineBoxes.clear();
     m_displayBoxes.clear();
     m_displayLines.clear();
+    m_clearGapBeforeFirstLine = { };
     m_clearGapAfterLastLine = { };
 }
 
