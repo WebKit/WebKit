@@ -448,11 +448,6 @@
         "ReturnValue": {
             "contextsAllowed": ["argument"]
         },
-        "EnabledConditionallyReadWriteByDeprecatedGlobalSetting": {
-            "contextsAllowed": ["attribute"],
-            "values": ["*"],
-            "supportsConjunction": true
-        },
         "SameObject": {
             "contextsAllowed": ["attribute"],
             "standard": {
