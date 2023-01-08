@@ -1,0 +1,6 @@
+PASS rectWidth is > 100
+PASS 200 is >= rectWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
