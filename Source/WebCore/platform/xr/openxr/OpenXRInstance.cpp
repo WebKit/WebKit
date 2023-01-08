@@ -70,7 +70,7 @@ Instance::Impl::Impl()
         createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
         createInfo.applicationInfo.applicationVersion = s_applicationVersion;
         createInfo.enabledApiLayerCount = 0;
-        createInfo.enabledExtensionCount = WTF_ARRAY_LENGTH(enabledExtensions);
+        createInfo.enabledExtensionCount = std::size(enabledExtensions);
         createInfo.enabledExtensionNames = enabledExtensions;
 
         XrResult result = xrCreateInstance(&createInfo, &m_instance);

@@ -44,7 +44,7 @@ static bool checkDecodedBytes(const uint8_t* original, size_t originalSize, cons
 TEST(KeyedCoding, SetAndGetBytes)
 {
     const uint8_t data[] = { 0x00, 0x01, 0x02, 0x03, 0xde, 0xad, 0xbe, 0xef };
-    const size_t dataLength = WTF_ARRAY_LENGTH(data);
+    const size_t dataLength = std::size(data);
     const size_t dataLengthOne = 1;
     const size_t dataLengthZero = 0;
 

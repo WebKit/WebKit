@@ -72,8 +72,8 @@ namespace Style {
 
 struct SelectorMatchingState;
 
-struct ElementStyle {
-    std::unique_ptr<RenderStyle> renderStyle;
+struct ResolvedStyle {
+    std::unique_ptr<RenderStyle> style;
     std::unique_ptr<Relations> relations { };
     std::unique_ptr<MatchResult> matchResult { };
 };
@@ -92,11 +92,11 @@ public:
     static Ref<Resolver> create(Document&);
     ~Resolver();
 
-    ElementStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
+    ResolvedStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
     void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&, bool& containsCSSVariableReferences);
 
-    WEBCORE_EXPORT std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
+    WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
 
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
     std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);

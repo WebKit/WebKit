@@ -384,7 +384,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
             "Lucida Sans Unicode"_str,
             "Arial"_str
         };
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
+        for (size_t i = 0; i < std::size(fallbackFonts); ++i) {
             if (fontForFamily(fontDescription, fallbackFonts[i])) {
                 fallbackFontName.get() = fallbackFonts[i];
                 return;

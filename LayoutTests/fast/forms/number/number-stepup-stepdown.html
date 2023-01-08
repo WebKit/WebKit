@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
-description('Check stepUp() and stepDown() bahevior for number type.');
+description('Check stepUp() and stepDown() behavior for number type.');
 
 var input = document.createElement('input');
 
@@ -223,12 +223,12 @@ shouldBe('stepDown("1", "1", "0")', '"0"');
 shouldBe('stepDown("0", "1", "0")', '"0"');
 shouldBe('stepDown("1", "1", "0", 2)', '"0"');
 shouldBe('input.value', '"0"');
-shouldBe('stepDown("1", "3.40282346e+38", "", 2)', '"-3.40282346e+38"'); 
+shouldBeEqualToString('stepDown("1", "1.797693134862315e+308", "", 2)', '-1.797693134862315e+308');
 shouldBe('stepUp("-1", "1", "0")', '"0"');
 shouldBe('stepUp("0", "1", "0")', '"0"');
 shouldBe('stepUp("-1", "1", "0", 2)', '"0"');
 shouldBe('input.value', '"0"');
-shouldBe('stepUp("1", "3.40282346e+38", "", 2)', '"3.40282346e+38"');
+shouldBeEqualToString('stepUp("1", "1.797693134862315e+308", "", 2)', '1.797693134862315e+308');
 
 debug('');
 debug('stepDown()/stepUp() for stepMismatch values');
@@ -240,8 +240,8 @@ shouldBe('stepUp("89", "10", "99")', '"99"');
 
 debug('');
 debug('Huge value and small step');
-shouldBe('input.min = ""; stepUp("1e+38", "1", "", 999999)', '"1e+38"');
-shouldBe('input.max = ""; stepDown("1e+38", "1", "", 999999)', '"1e+38"');
+shouldBe('input.min = ""; stepUp("1e+308", "1", "", 999999)', '"1e+308"');
+shouldBe('input.max = ""; stepDown("1e+308", "1", "", 999999)', '"1e+308"');
 
 debug('');
 debug('Fractional numbers');
@@ -262,6 +262,5 @@ shouldBe('stepUpExplicitBounds("4", "9", "0.005", "5.005", 12)', '"5.065"');
 
 debug('');
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

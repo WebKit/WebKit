@@ -98,7 +98,7 @@ static const CSSPropertyID editingProperties[] = {
     CSSPropertyTextDecorationLine,
 };
 
-const unsigned numAllEditingProperties = WTF_ARRAY_LENGTH(editingProperties);
+const unsigned numAllEditingProperties = std::size(editingProperties);
 const unsigned numInheritableEditingProperties = numAllEditingProperties - 2;
 
 enum EditingPropertiesToInclude { OnlyInheritableEditingProperties, AllEditingProperties };
@@ -820,7 +820,7 @@ TriState EditingStyle::triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyPr
     auto difference = getPropertiesNotIn(*m_mutableStyle, styleToCompare);
 
     if (shouldIgnoreTextOnlyProperties == IgnoreTextOnlyProperties)
-        difference->removePropertiesInSet(textOnlyProperties, WTF_ARRAY_LENGTH(textOnlyProperties));
+        difference->removePropertiesInSet(textOnlyProperties, std::size(textOnlyProperties));
 
     if (difference->isEmpty())
         return TriState::True;

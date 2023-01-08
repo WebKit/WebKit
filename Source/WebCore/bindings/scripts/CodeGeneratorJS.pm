@@ -2388,7 +2388,7 @@ sub GenerateEnumerationImplementationContent
         $result .= "    static_assert(static_cast<size_t>(${className}::$enumerationValueName) == $index, \"${className}::$enumerationValueName is not $index as expected\");\n";
         $index++;
     }
-    $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
+    $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));\n";
     $result .= "    return values[static_cast<size_t>(enumerationValue)];\n";
     $result .= "}\n\n";
 

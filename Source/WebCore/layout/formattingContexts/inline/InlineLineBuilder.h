@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BlockLayoutState.h"
 #include "FloatingContext.h"
 #include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
@@ -38,7 +39,7 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
     struct InlineItemRange {
@@ -82,7 +83,7 @@ public:
         FloatList placedFloats;
         FloatList overflowingFloats;
         bool hasIntrusiveFloat { false };
-        InlineLayoutUnit lineInitialLogicalLeft { 0.f };
+        InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
         InlineLayoutUnit lineLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalLeft { 0.f };
@@ -147,7 +148,7 @@ private:
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
-    void initialize(const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
+    void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
     struct CommittedContent {
         size_t itemCount { 0 };
         size_t partialTrailingContentLength { 0 };
@@ -169,8 +170,9 @@ private:
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
-    FloatingState* floatingState() { return m_floatingState; }
-    const FloatingState* floatingState() const { return m_floatingState; }
+    const BlockLayoutState* blockLayoutState() const { return m_blockLayoutState; }
+    FloatingState* floatingState() { return m_blockLayoutState ? &m_blockLayoutState->floatingState() : nullptr; }
+    const FloatingState* floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
     const LayoutState& layoutState() const;
     const RenderStyle& rootStyle() const;
@@ -180,13 +182,14 @@ private:
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
-    FloatingState* m_floatingState { nullptr };
+    BlockLayoutState* m_blockLayoutState { nullptr };
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_lineInitialLogicalLeft { 0.f };
+    InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     const InlineItems& m_inlineItems;
     FloatList m_placedFloats;
     FloatList m_overflowingFloats;

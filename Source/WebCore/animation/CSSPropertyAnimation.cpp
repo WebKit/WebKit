@@ -3603,7 +3603,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerMid, &SVGRenderStyle::markerMidResource, &SVGRenderStyle::setMarkerMidResource),
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerStart, &SVGRenderStyle::markerStartResource, &SVGRenderStyle::setMarkerStartResource)
     };
-    const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
+    const unsigned animatableLonghandPropertiesCount = std::size(animatableLonghandPropertyWrappers);
 
     static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyAll,
@@ -3640,7 +3640,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyFontSynthesis,
         CSSPropertyContainIntrinsicSize
     };
-    const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
+    const unsigned animatableShorthandPropertiesCount = std::size(animatableShorthandProperties);
 
     // Make sure unused slots have a value
     for (int i = 0; i < numCSSProperties; ++i)

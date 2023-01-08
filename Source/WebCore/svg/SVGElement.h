@@ -114,7 +114,7 @@ public:
 
     void setCorrespondingElement(SVGElement*);
 
-    std::optional<Style::ElementStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
+    std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 
     static QualifiedName animatableAttributeForName(const AtomString&);
 #ifndef NDEBUG

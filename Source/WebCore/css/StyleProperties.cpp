@@ -1601,7 +1601,7 @@ void MutableStyleProperties::clear()
     m_propertyVector.clear();
 }
 
-const unsigned numBlockProperties = WTF_ARRAY_LENGTH(blockProperties);
+const unsigned numBlockProperties = std::size(blockProperties);
 
 Ref<MutableStyleProperties> StyleProperties::copyBlockProperties() const
 {

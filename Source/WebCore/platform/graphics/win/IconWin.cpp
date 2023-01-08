@@ -60,7 +60,7 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     }
 
     WCHAR buffer[MAX_PATH];
-    UINT length = ::GetSystemDirectoryW(buffer, WTF_ARRAY_LENGTH(buffer));
+    UINT length = ::GetSystemDirectoryW(buffer, std::size(buffer));
     if (!length)
         return nullptr;
 

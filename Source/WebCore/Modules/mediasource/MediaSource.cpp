@@ -69,7 +69,7 @@ String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue
     static_assert(static_cast<size_t>(MediaSourcePrivate::AddStatus::Ok) == 0, "MediaSourcePrivate::AddStatus::Ok is not 0 as expected");
     static_assert(static_cast<size_t>(MediaSourcePrivate::AddStatus::NotSupported) == 1, "MediaSourcePrivate::AddStatus::NotSupported is not 1 as expected");
     static_assert(static_cast<size_t>(MediaSourcePrivate::AddStatus::ReachedIdLimit) == 2, "MediaSourcePrivate::AddStatus::ReachedIdLimit is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -83,7 +83,7 @@ String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerat
     static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosNoError) == 0, "MediaSourcePrivate::EndOfStreamStatus::EosNoError is not 0 as expected");
     static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosNetworkError) == 1, "MediaSourcePrivate::EndOfStreamStatus::EosNetworkError is not 1 as expected");
     static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosDecodeError) == 2, "MediaSourcePrivate::EndOfStreamStatus::EosDecodeError is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

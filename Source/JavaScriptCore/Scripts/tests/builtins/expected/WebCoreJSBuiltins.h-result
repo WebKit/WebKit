@@ -341,7 +341,7 @@ SUPPRESS_ASAN void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& glo
 #undef DECLARE_GLOBAL_STATIC
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
     };
-    globalObject.addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+    globalObject.addStaticGlobals(staticGlobals, std::size(staticGlobals));
     UNUSED_PARAM(clientData);
 }
 

@@ -142,7 +142,7 @@ UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatSt
 {
     const UChar gmtTimezone[3] = {'G', 'M', 'T'};
     UErrorCode status = U_ZERO_ERROR;
-    return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
+    return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone, std::size(gmtTimezone), 0, -1, &status);
 }
 
 static String getDateFormatPattern(const UDateFormat* dateFormat)
@@ -280,7 +280,7 @@ String LocaleICU::monthFormat()
     // Gets a format for "MMMM" because Windows API always provides formats for
     // "MMMM" in some locales.
     const UChar skeleton[] = { 'y', 'y', 'y', 'y', 'M', 'M', 'M', 'M' };
-    m_monthFormat = getFormatForSkeleton(m_locale.data(), skeleton, WTF_ARRAY_LENGTH(skeleton));
+    m_monthFormat = getFormatForSkeleton(m_locale.data(), skeleton, std::size(skeleton));
     return m_monthFormat;
 }
 
@@ -289,7 +289,7 @@ String LocaleICU::shortMonthFormat()
     if (!m_shortMonthFormat.isNull())
         return m_shortMonthFormat;
     const UChar skeleton[] = { 'y', 'y', 'y', 'y', 'M', 'M', 'M' };
-    m_shortMonthFormat = getFormatForSkeleton(m_locale.data(), skeleton, WTF_ARRAY_LENGTH(skeleton));
+    m_shortMonthFormat = getFormatForSkeleton(m_locale.data(), skeleton, std::size(skeleton));
     return m_shortMonthFormat;
 }
 
@@ -327,8 +327,8 @@ const Vector<String>& LocaleICU::shortMonthLabels()
             return m_shortMonthLabels;
         }
     }
-    m_shortMonthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthName));
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthName); ++i)
+    m_shortMonthLabels.reserveCapacity(std::size(WTF::monthName));
+    for (unsigned i = 0; i < std::size(WTF::monthName); ++i)
         m_shortMonthLabels.append(WTF::monthName[i]);
     return m_shortMonthLabels;
 }

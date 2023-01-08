@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -120,12 +120,6 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
     ASSERT(element());
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
     const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum);
-
-    const AtomString& precisionValue = element()->attributeWithoutSynchronization(precisionAttr);
-    if (!precisionValue.isNull()) {
-        const Decimal step = equalLettersIgnoringASCIICase(precisionValue, "float"_s) ? Decimal::nan() : 1;
-        return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
-    }
 
     const Decimal step = StepRange::parseStep(anyStepHandling, rangeStepDescription, element()->attributeWithoutSynchronization(stepAttr));
     return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
@@ -335,7 +329,6 @@ bool RangeInputType::accessKeyAction(bool sendMouseEvents)
 
 void RangeInputType::attributeChanged(const QualifiedName& name)
 {
-    // FIXME: Don't we need to do this work for precisionAttr too?
     if (name == maxAttr || name == minAttr || name == valueAttr) {
         // Sanitize the value.
         if (auto* element = this->element()) {

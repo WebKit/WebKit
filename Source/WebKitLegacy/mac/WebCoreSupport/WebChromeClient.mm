@@ -61,7 +61,6 @@
 #import <WebCore/CookieConsentDecisionResult.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DataListSuggestionPicker.h>
-#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>

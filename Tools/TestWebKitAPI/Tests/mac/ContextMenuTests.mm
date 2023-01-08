@@ -37,6 +37,7 @@
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKContextMenuElementInfo.h>
 #import <wtf/BlockPtr.h>
 
 @interface PopoverNotificationListener : NSObject
@@ -245,6 +246,26 @@ TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
 }
 
 #endif // HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsHitTestResult)
+{
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        EXPECT_NOT_NULL(elementInfo.hitTestResult);
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView setUIDelegate:delegate.get()];
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView mouseDownAtPoint:NSMakePoint(10, 10) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&gotProposedMenu);
+}
 
 } // namespace TestWebKitAPI
 

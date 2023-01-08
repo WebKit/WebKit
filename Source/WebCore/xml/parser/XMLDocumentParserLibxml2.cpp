@@ -1207,7 +1207,7 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
     if (!numberOfCodeUnits)
         return 0;
 
-    constexpr size_t kSharedXhtmlEntityResultLength = WTF_ARRAY_LENGTH(sharedXHTMLEntityResult);
+    constexpr size_t kSharedXhtmlEntityResultLength = std::size(sharedXHTMLEntityResult);
     size_t entityLengthInUTF8;
     // Unlike HTML parser, XML parser parses the content of named
     // entities. So we need to escape '&' and '<'.

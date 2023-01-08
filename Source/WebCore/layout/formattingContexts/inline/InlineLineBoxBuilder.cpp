@@ -548,6 +548,13 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
         }
     }
 
+    if (lineBoxContain.contains(LineBoxContain::InitialLetter)) {
+        // initial letter contain is based on the font metrics cap geometry.
+        auto& rootInlineBox = lineBox.rootInlineBox();
+        InlineLayoutUnit initialLetterAscent = rootInlineBox.primarymetricsOfPrimaryFont().capHeight();
+        inlineBoxBoundsMap.set(&rootInlineBox, TextUtil::EnclosingAscentDescent { initialLetterAscent, 0.f });
+    }
+
     for (auto entry : inlineBoxBoundsMap) {
         auto* inlineBox = entry.key;
         auto enclosingAscentDescentForInlineBox = entry.value;
@@ -699,13 +706,13 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
     auto lineBoxRect = lineBox.logicalRect();
     auto floatConstraints = floatingContext.constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
 
-    auto lineBoxOffset = lineBoxRect.left() - lineContent().lineInitialLogicalLeft;
+    auto lineBoxOffset = lineBoxRect.left() - lineContent().lineInitialLogicalLeftIncludingIntrusiveFloats;
     auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
-    auto rootInlineBoxOffsetFromContentBox =  lineBoxOffset + rootInlineBoxLogicalLeft;
+    auto rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat = lineBoxOffset + rootInlineBoxLogicalLeft;
     for (auto* listMarkerBox : m_outsideListMarkers) {
         auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxForLayoutBox(*listMarkerBox);
         // Move it to the logical left of the line box (from the logical left of the root inline box).
-        auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBox;
+        auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;
         auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
         auto nestedListMarkerMarginStart = [&] {
             auto nestedOffset = formattingState.nestedListMarkerOffset(*listMarkerBox);
@@ -723,7 +730,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
             // FIXME: We may need to do this in a post-process task after the line box geometry is computed.
             return floatConstraints.left ? std::min(0_lu, std::max(floatConstraints.left->x, nestedOffset)) : nestedOffset;
         }();
-        formattingGeometry.adjustMarginStartForListMarker(*listMarkerBox, nestedListMarkerMarginStart, rootInlineBoxOffsetFromContentBox);
+        formattingGeometry.adjustMarginStartForListMarker(*listMarkerBox, nestedListMarkerMarginStart, rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat);
         logicalLeft += nestedListMarkerMarginStart;
         listMarkerInlineLevelBox.setLogicalLeft(logicalLeft);
     }

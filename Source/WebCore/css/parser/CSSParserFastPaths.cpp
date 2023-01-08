@@ -40,7 +40,6 @@
 #include "CSSTransformListValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "DeprecatedGlobalSettings.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
 #include "StyleColor.h"

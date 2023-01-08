@@ -236,7 +236,7 @@ std::optional<WebDriverService::HTTPMethod> WebDriverService::toCommandHTTPMetho
 
 bool WebDriverService::findCommand(HTTPMethod method, const String& path, CommandHandler* handler, HashMap<String, String>& parameters)
 {
-    size_t length = WTF_ARRAY_LENGTH(s_commands);
+    size_t length = std::size(s_commands);
     for (size_t i = 0; i < length; ++i) {
         if (s_commands[i].method != method)
             continue;

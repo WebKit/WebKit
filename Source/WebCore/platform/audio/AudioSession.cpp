@@ -265,7 +265,7 @@ String convertEnumerationToString(RouteSharingPolicy enumerationValue)
     static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormAudio) == 1, "RouteSharingPolicy::LongFormAudio is not 1 as expected");
     static_assert(static_cast<size_t>(RouteSharingPolicy::Independent) == 2, "RouteSharingPolicy::Independent is not 2 as expected");
     static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormVideo) == 3, "RouteSharingPolicy::LongFormVideo is not 3 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -287,7 +287,7 @@ String convertEnumerationToString(AudioSession::CategoryType enumerationValue)
     static_assert(static_cast<size_t>(AudioSession::CategoryType::RecordAudio) == 4, "AudioSession::CategoryType::RecordAudio is not 4 as expected");
     static_assert(static_cast<size_t>(AudioSession::CategoryType::PlayAndRecord) == 5, "AudioSession::CategoryType::PlayAndRecord is not 5 as expected");
     static_assert(static_cast<size_t>(AudioSession::CategoryType::AudioProcessing) == 6, "AudioSession::CategoryType::AudioProcessing is not 6 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -301,7 +301,7 @@ String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingA
     static_assert(!static_cast<size_t>(AudioSessionRoutingArbitrationClient::RoutingArbitrationError::None), "AudioSessionRoutingArbitrationClient::RoutingArbitrationError::None is not 0 as expected");
     static_assert(static_cast<size_t>(AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Failed), "AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Failed is not 1 as expected");
     static_assert(static_cast<size_t>(AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Cancelled), "AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Cancelled is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -313,7 +313,7 @@ String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultR
     };
     static_assert(!static_cast<bool>(AudioSessionRoutingArbitrationClient::DefaultRouteChanged::No), "AudioSessionRoutingArbitrationClient::DefaultRouteChanged::No is not false as expected");
     static_assert(static_cast<bool>(AudioSessionRoutingArbitrationClient::DefaultRouteChanged::Yes), "AudioSessionRoutingArbitrationClient::DefaultRouteChanged::Yes is not true as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

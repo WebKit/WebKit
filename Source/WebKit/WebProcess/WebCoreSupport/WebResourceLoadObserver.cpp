@@ -34,7 +34,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>

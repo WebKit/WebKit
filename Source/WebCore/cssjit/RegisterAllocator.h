@@ -94,8 +94,8 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
 #else
 #error RegisterAllocator has no defined registers for the architecture.
 #endif
-static const unsigned calleeSavedRegisterCount = WTF_ARRAY_LENGTH(calleeSavedRegisters);
-static const unsigned maximumRegisterCount = calleeSavedRegisterCount + WTF_ARRAY_LENGTH(callerSavedRegisters);
+static const unsigned calleeSavedRegisterCount = std::size(calleeSavedRegisters);
+static const unsigned maximumRegisterCount = calleeSavedRegisterCount + std::size(callerSavedRegisters);
 
 typedef Vector<JSC::MacroAssembler::RegisterID, maximumRegisterCount> RegisterVector;
 
@@ -157,9 +157,9 @@ public:
     {
 #ifdef NDEBUG
         UNUSED_PARAM(count);
-        unsigned numberToAllocate = WTF_ARRAY_LENGTH(callerSavedRegisters);
+        unsigned numberToAllocate = std::size(callerSavedRegisters);
 #else
-        unsigned numberToAllocate = std::min<unsigned>(WTF_ARRAY_LENGTH(callerSavedRegisters), count);
+        unsigned numberToAllocate = std::min<unsigned>(std::size(callerSavedRegisters), count);
 #endif
         for (unsigned i = 0; i < numberToAllocate; ++i)
             m_registers.append(callerSavedRegisters[i]);
@@ -168,7 +168,7 @@ public:
 
     const Vector<JSC::MacroAssembler::RegisterID, calleeSavedRegisterCount>& reserveCalleeSavedRegisters(unsigned count)
     {
-        RELEASE_ASSERT(count <= WTF_ARRAY_LENGTH(calleeSavedRegisters));
+        RELEASE_ASSERT(count <= std::size(calleeSavedRegisters));
         RELEASE_ASSERT(!m_reservedCalleeSavedRegisters.size());
         for (unsigned i = 0; i < count; ++i) {
             JSC::MacroAssembler::RegisterID registerId = calleeSavedRegisters[i];

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1082,13 +1083,15 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
 
     if (elapsed < m_intervalBegin) {
         ASSERT(m_activeState != Active);
-        if (m_activeState == Frozen) {
+        bool isFrozen = (m_activeState == Frozen);
+        if (isFrozen) {
             if (this == &firstAnimation)
                 startAnimation();
             updateAnimation(m_lastPercent, m_lastRepeat);
         }
         m_nextProgressTime = m_intervalBegin;
-        return false;
+        // If the animation is frozen, it's still contributing.
+        return isFrozen;
     }
 
     m_previousIntervalBegin = m_intervalBegin;

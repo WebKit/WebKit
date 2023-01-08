@@ -38,7 +38,6 @@
 #import "WebProcess.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/Color.h>
-#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FrameView.h>

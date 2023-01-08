@@ -106,7 +106,7 @@ FEComponentTransferSoftwareApplier::LookupTable FEComponentTransferSoftwareAppli
         computeGammaTable       // FECOMPONENTTRANSFER_TYPE_GAMMA
     };
 
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(function.type) < WTF_ARRAY_LENGTH(callEffect));
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(function.type) < std::size(callEffect));
     callEffect[function.type](table, function);
 
     return table;

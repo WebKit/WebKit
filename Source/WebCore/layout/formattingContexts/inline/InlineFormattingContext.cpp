@@ -224,8 +224,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     auto& formattingState = this->formattingState();
     formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
 
-    auto& floatingState = blockLayoutState.floatingState();
-    auto floatingContext = FloatingContext { *this, floatingState };
+    auto floatingContext = FloatingContext { *this, blockLayoutState.floatingState() };
     auto& rootStyle = root().style();
 
     auto maximumNumberOfLines = [&] () -> std::optional<size_t> {
@@ -245,7 +244,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     auto previousLineLastInlineItemIndex = std::optional<size_t> { };
     auto firstInlineItemNeedsLayout = needsLayoutRange.start;
 
-    auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
+    auto lineBuilder = LineBuilder { *this, blockLayoutState, constraints.horizontal(), inlineItems };
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };

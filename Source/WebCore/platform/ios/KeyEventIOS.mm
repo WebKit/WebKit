@@ -194,7 +194,7 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
         return VK_APPS;
     }
     // Otherwise check all other known keys.
-    if (keyCode < WTF_ARRAY_LENGTH(windowsKeyCode))
+    if (keyCode < std::size(windowsKeyCode))
         return windowsKeyCode[keyCode];
     return 0; // Unknown key
 }

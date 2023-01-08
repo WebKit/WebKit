@@ -70,7 +70,7 @@ void ProcessLauncher::launchProcess()
         return;
 
     WCHAR pathStr[MAX_PATH];
-    if (!::GetModuleFileName(webKitModule, pathStr, WTF_ARRAY_LENGTH(pathStr)))
+    if (!::GetModuleFileName(webKitModule, pathStr, std::size(pathStr)))
         return;
 
     ::PathRemoveFileSpec(pathStr);

@@ -455,23 +455,23 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
         switch (mathvariant) {
         case MathMLElement::MathVariant::Initial:
             mapTable = arabicInitialMapTable;
-            tableLength = WTF_ARRAY_LENGTH(arabicInitialMapTable);
+            tableLength = std::size(arabicInitialMapTable);
             break;
         case MathMLElement::MathVariant::Tailed:
             mapTable = arabicTailedMapTable;
-            tableLength = WTF_ARRAY_LENGTH(arabicTailedMapTable);
+            tableLength = std::size(arabicTailedMapTable);
             break;
         case MathMLElement::MathVariant::Stretched:
             mapTable = arabicStretchedMapTable;
-            tableLength = WTF_ARRAY_LENGTH(arabicStretchedMapTable);
+            tableLength = std::size(arabicStretchedMapTable);
             break;
         case MathMLElement::MathVariant::Looped:
             mapTable = arabicLoopedMapTable;
-            tableLength = WTF_ARRAY_LENGTH(arabicLoopedMapTable);
+            tableLength = std::size(arabicLoopedMapTable);
             break;
         case MathMLElement::MathVariant::DoubleStruck:
             mapTable = arabicDoubleMapTable;
-            tableLength = WTF_ARRAY_LENGTH(arabicDoubleMapTable);
+            tableLength = std::size(arabicDoubleMapTable);
             break;
         default:
             return codePoint; // No valid transformations exist.
@@ -486,7 +486,7 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
         // See the Number case for an explanation of the following calculation
         tempChar = baseChar + mathBoldUpperA + multiplier * (mathItalicUpperA - mathBoldUpperA);
         // There are roughly twenty characters that are located outside of the mathematical block, so the spaces where they ought to be are used as keys for a lookup table containing the correct character mappings.
-        newChar = MathVariantMappingSearch(tempChar, latinExceptionMapTable, WTF_ARRAY_LENGTH(latinExceptionMapTable));
+        newChar = MathVariantMappingSearch(tempChar, latinExceptionMapTable, std::size(latinExceptionMapTable));
     }
 
     if (newChar)

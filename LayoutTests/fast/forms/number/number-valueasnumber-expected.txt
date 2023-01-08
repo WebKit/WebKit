@@ -13,7 +13,7 @@ PASS valueAsNumberFor("-1.2") is -1.2
 PASS valueAsNumberFor("1.2E10") is 1.2E10
 PASS valueAsNumberFor("1.2E-10") is 1.2E-10
 PASS valueAsNumberFor("1.2E+10") is 1.2E10
-PASS valueAsNumberFor("123456789012345678901234567890123456789") is 1.2345678901234568E+38
+PASS valueAsNumberFor("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789") is 1.2345678901234568E+308
 PASS valueAsNumberFor("0.12345678901234567890123456789012345678901234567890") is 0.123456789012345678
 valueAsNumber for invalid string values:
 PASS isNaN(valueAsNumberFor("")) is true
@@ -40,11 +40,11 @@ PASS setValueAsNumberAndGetValue(-0) is "0"
 PASS setValueAsNumberAndGetValue(-1.2) is "-1.2"
 PASS setValueAsNumberAndGetValue(1.2e10) is "12000000000"
 PASS setValueAsNumberAndGetValue(1.2e-10) is "1.2e-10"
-PASS setValueAsNumberAndGetValue(1.2345678901234567e+38) is "1.2345678901234567e+38"
-PASS setValueAsNumberAndGetValue("-3.40282346e+38") is "-3.40282346e+38"
-PASS setValueAsNumberAndGetValue("-3.40282348e+38") threw exception InvalidStateError: The object is in an invalid state..
-PASS setValueAsNumberAndGetValue("3.40282346e+38") is "3.40282346e+38"
-PASS setValueAsNumberAndGetValue("3.40282348e+38") threw exception InvalidStateError: The object is in an invalid state..
+PASS setValueAsNumberAndGetValue(1.2345678901234567e+308) is "1.2345678901234567e+308"
+PASS setValueAsNumberAndGetValue("-1.797693134862315e+308") is "-1.797693134862315e+308"
+PASS setValueAsNumberAndGetValue("-1.797693134862316e+308") threw exception NotSupportedError: The operation is not supported..
+PASS setValueAsNumberAndGetValue("1.797693134862315e+308") is "1.797693134862315e+308"
+PASS setValueAsNumberAndGetValue("1.797693134862316e+308") threw exception NotSupportedError: The operation is not supported..
 Tests to set invalid values to valueAsNumber:
 PASS setValueAsNumberAndGetValue(null) is "0"
 PASS setValueAsNumberAndGetValue("foo") threw exception NotSupportedError: The operation is not supported..

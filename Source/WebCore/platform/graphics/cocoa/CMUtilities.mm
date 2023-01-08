@@ -163,7 +163,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     ASSERT(videoInfo.codecName == 'vp09' || videoInfo.codecName == 'vp08');
     CFTypeRef configurationKeys[] = { CFSTR("vpcC") };
     CFTypeRef configurationValues[] = { data.get() };
-    auto configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, WTF_ARRAY_LENGTH(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, std::size(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     Vector<CFTypeRef> extensionsKeys { PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
     Vector<CFTypeRef> extensionsValues = { configurationDict.get() };

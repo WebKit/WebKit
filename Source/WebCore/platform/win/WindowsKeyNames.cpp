@@ -505,13 +505,13 @@ void WindowsKeyNames::updateLayout()
         for (unsigned virtualKey = 0; virtualKey <= 0xFF; ++virtualKey) {
             wchar_t translatedChars[5];
             int rv = ToUnicodeEx(virtualKey, 0, keyboardState, translatedChars,
-                WTF_ARRAY_LENGTH(translatedChars), 0, m_keyboardLayout);
+                std::size(translatedChars), 0, m_keyboardLayout);
 
             if (rv == -1) {
                 // Dead key, injecting VK_SPACE to get character representation.
                 BYTE emptyState[256] = { };
                 rv = ToUnicodeEx(VK_SPACE, 0, emptyState, translatedChars,
-                    WTF_ARRAY_LENGTH(translatedChars), 0, m_keyboardLayout);
+                    std::size(translatedChars), 0, m_keyboardLayout);
                 // Expecting a dead key character (not followed by a space).
                 if (rv == 1)
                     m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), "Dead"_s);

@@ -2864,7 +2864,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
-    JSObjectCallAsFunction(m_context, m_callback, m_callback, WTF_ARRAY_LENGTH(arguments), arguments, nullptr);
+    JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
 }
 
 JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)

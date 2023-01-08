@@ -80,7 +80,7 @@ std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionC
 static Uint8Array* initDataPrefix()
 {
     const unsigned char prefixData[] = { 'm', 'o', 'c', 'k' };
-    static Uint8Array& prefix { Uint8Array::create(prefixData, WTF_ARRAY_LENGTH(prefixData)).leakRef() };
+    static Uint8Array& prefix { Uint8Array::create(prefixData, std::size(prefixData)).leakRef() };
 
     return &prefix;
 }
@@ -88,7 +88,7 @@ static Uint8Array* initDataPrefix()
 static Uint8Array* keyPrefix()
 {
     static const unsigned char prefixData[] = {'k', 'e', 'y'};
-    static Uint8Array& prefix { Uint8Array::create(prefixData, WTF_ARRAY_LENGTH(prefixData)).leakRef() };
+    static Uint8Array& prefix { Uint8Array::create(prefixData, std::size(prefixData)).leakRef() };
 
     return &prefix;
 }
@@ -96,7 +96,7 @@ static Uint8Array* keyPrefix()
 static Uint8Array* keyRequest()
 {
     static const unsigned char requestData[] = {'r', 'e', 'q', 'u', 'e', 's', 't'};
-    static Uint8Array& request { Uint8Array::create(requestData, WTF_ARRAY_LENGTH(requestData)).leakRef() };
+    static Uint8Array& request { Uint8Array::create(requestData, std::size(requestData)).leakRef() };
 
     return &request;
 }

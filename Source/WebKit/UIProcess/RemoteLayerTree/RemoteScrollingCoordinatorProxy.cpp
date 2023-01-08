@@ -100,7 +100,8 @@ WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const
         return WheelEventHandlingResult::unhandled();
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(wheelEvent);
-    if (processingSteps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }))
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::handleWheelEvent " << wheelEvent << " - steps " << processingSteps);
+    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
         return WheelEventHandlingResult::unhandled(processingSteps);
 
     if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
@@ -109,7 +110,7 @@ WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const
     m_scrollingTree->willProcessWheelEvent();
 
     auto filteredEvent = filteredWheelEvent(wheelEvent);
-    auto result = m_scrollingTree->handleWheelEvent(filteredEvent);
+    auto result = m_scrollingTree->handleWheelEvent(filteredEvent, processingSteps);
     didReceiveWheelEvent(result.wasHandled);
     return result;
 }

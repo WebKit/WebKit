@@ -159,7 +159,7 @@ Resolver::Resolver(Document& document)
         m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { };
 
     if (auto* documentElement = m_document.documentElement()) {
-        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
+        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).style;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
@@ -219,7 +219,7 @@ BuilderContext Resolver::builderContext(const State& state)
     };
 }
 
-ElementStyle Resolver::styleForElement(const Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
+ResolvedStyle Resolver::styleForElement(const Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
 {
     auto state = State(element, context.parentStyle, context.documentElementStyle);
 
@@ -440,7 +440,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
     }
 }
 
-std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
+std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
     auto state = State(element, context.parentStyle, context.documentElementStyle);
 
@@ -465,7 +465,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
     ASSERT(!collector.matchedPseudoElementIds());
 
     if (collector.matchResult().isEmpty())
-        return nullptr;
+        return { };
 
     state.style()->setStyleType(pseudoElementRequest.pseudoId);
 
@@ -477,7 +477,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
     if (state.style()->usesViewportUnits())
         document().setHasStyleWithViewportUnits();
 
-    return state.takeStyle();
+    return ResolvedStyle { state.takeStyle(), nullptr, collector.releaseMatchResult() };
 }
 
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)

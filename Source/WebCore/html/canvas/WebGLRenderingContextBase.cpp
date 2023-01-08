@@ -356,7 +356,7 @@ private:
 };
 
 #define ADD_VALUES_TO_SET(set, arr) \
-    set.add(arr, arr + WTF_ARRAY_LENGTH(arr))
+    set.add(arr, arr + std::size(arr))
 
 InspectorScopedShaderProgramHighlight::InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase& context, WebGLProgram* program)
     : m_context(context)

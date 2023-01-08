@@ -121,6 +121,21 @@ bool InlineFormattingQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlin
     return false;
 }
 
+std::optional<LayoutUnit> InlineFormattingQuirks::initialLetterAlignmentOffset(const Box& floatBox, const RenderStyle& lineBoxStyle) const
+{
+    ASSERT(floatBox.isFloatingPositioned());
+    if (!floatBox.style().lineBoxContain().contains(LineBoxContain::InitialLetter))
+        return { };
+    auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
+    auto lineHeight = [&]() -> InlineLayoutUnit {
+        if (lineBoxStyle.lineHeight().isNegative())
+            return primaryFontMetrics.ascent() + primaryFontMetrics.descent();
+        return lineBoxStyle.computedLineHeight();
+    };
+    auto& floatBoxGeometry = formattingContext().geometryForBox(floatBox);
+    return LayoutUnit { primaryFontMetrics.ascent() + (lineHeight() - primaryFontMetrics.height()) / 2 - primaryFontMetrics.capHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
+}
+
 }
 }
 

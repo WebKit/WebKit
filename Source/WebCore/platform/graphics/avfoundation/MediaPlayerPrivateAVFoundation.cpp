@@ -29,7 +29,6 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 
-#include "DeprecatedGlobalSettings.h"
 #include "DocumentLoader.h"
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
@@ -1154,7 +1153,7 @@ String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRendering
     static_assert(static_cast<size_t>(MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingNone) == 0, "MediaRenderingMode::MediaRenderingNone is not 0 as expected");
     static_assert(static_cast<size_t>(MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToContext) == 1, "MediaRenderingMode::MediaRenderingToContext is not 1 as expected");
     static_assert(static_cast<size_t>(MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToLayer) == 2, "MediaRenderingMode::MediaRenderingToLayer is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

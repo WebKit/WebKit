@@ -442,7 +442,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
     auto gradientInterpolatesPremultipliedOptionsDictionary = [] () -> CFDictionaryRef {
         static CFTypeRef keys[] = { kCGGradientInterpolatesPremultiplied };
         static CFTypeRef values[] = { kCFBooleanTrue };
-        static CFDictionaryRef options = CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        static CFDictionaryRef options = CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
         return options;
     };

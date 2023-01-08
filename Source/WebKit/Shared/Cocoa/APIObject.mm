@@ -73,6 +73,7 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
+#import "_WKContextMenuElementInfoInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKDataTaskInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
@@ -360,6 +361,12 @@ void* Object::newObject(size_t size, Type type)
 #if PLATFORM(IOS_FAMILY)
     case Type::ContextMenuElementInfo:
         wrapper = [WKContextMenuElementInfo alloc];
+        break;
+#endif
+
+#if PLATFORM(MAC)
+    case Type::ContextMenuElementInfoMac:
+        wrapper = [_WKContextMenuElementInfo alloc];
         break;
 #endif
 

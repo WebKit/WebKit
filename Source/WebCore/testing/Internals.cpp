@@ -6357,11 +6357,11 @@ String Internals::highlightPseudoElementColor(const AtomString& highlightName, E
     if (!parentStyle)
         return { };
 
-    auto style = styleResolver.pseudoStyleForElement(element, { PseudoId::Highlight, highlightName }, { parentStyle });
-    if (!style)
+    auto resolvedStyle = styleResolver.styleForPseudoElement(element, { PseudoId::Highlight, highlightName }, { parentStyle });
+    if (!resolvedStyle)
         return { };
 
-    return serializationForCSS(style->color());
+    return serializationForCSS(resolvedStyle->style->color());
 }
     
 Internals::TextIndicatorInfo::TextIndicatorInfo()

@@ -156,7 +156,7 @@ static HashMap<AtomString, Vector<String>>& availableLocales()
     static HashMap<AtomString, Vector<String>> availableLocales;
 
     if (!scannedLocales) {
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(gDictionaryDirectories); i++)
+        for (size_t i = 0; i < std::size(gDictionaryDirectories); i++)
             scanDirectoryForDictionaries(gDictionaryDirectories[i], availableLocales);
 
 #if ENABLE(DEVELOPER_MODE)

@@ -301,7 +301,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
         zeroWidthNoBreakSpace
     };
     bool found = false;
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(codePointOrder); ++i) {
+    for (size_t i = 0; i < std::size(codePointOrder); ++i) {
         if (codePointOrder[i] == codePoint) {
             ASSERT(i == result);
             found = true;

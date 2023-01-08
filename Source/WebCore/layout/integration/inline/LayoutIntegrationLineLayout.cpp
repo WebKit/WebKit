@@ -525,7 +525,12 @@ void LineLayout::layout()
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
     clearInlineContent();
     ASSERT(m_inlineContentConstraints);
-    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()) };
+    auto intrusiveInitialLetterBottom = [&]() -> std::optional<LayoutUnit> {
+        if (auto lowestInitialLetterLogicalBottom = flow().lowestInitialLetterLogicalBottom())
+            return { *lowestInitialLetterLogicalBottom - m_inlineContentConstraints->logicalTop() };
+        return { };
+    };
+    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
     Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, blockLayoutState);
 
     constructContent();

@@ -377,7 +377,7 @@ bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
     struct kinfo_proc info;
     int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processIdentifier() };
     size_t size = sizeof(info);
-    if (sysctl(mib, WTF_ARRAY_LENGTH(mib), &info, &size, nullptr, 0) == -1)
+    if (sysctl(mib, std::size(mib), &info, &size, nullptr, 0) == -1)
         return false;
 
     return info.kp_proc.p_flag & P_TRACED;

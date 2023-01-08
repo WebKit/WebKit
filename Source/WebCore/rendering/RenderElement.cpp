@@ -1526,12 +1526,13 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
 
     auto& styleResolver = element()->styleResolver();
 
-    std::unique_ptr<RenderStyle> style = styleResolver.pseudoStyleForElement(*element(), pseudoElementRequest, { parentStyle });
+    auto resolvedStyle = styleResolver.styleForPseudoElement(*element(), pseudoElementRequest, { parentStyle });
+    if (!resolvedStyle)
+        return nullptr;
 
-    if (style)
-        Style::loadPendingResources(*style, document(), element());
+    Style::loadPendingResources(*resolvedStyle->style, document(), element());
 
-    return style;
+    return WTFMove(resolvedStyle->style);
 }
 
 Color RenderElement::selectionColor(CSSPropertyID colorProperty) const

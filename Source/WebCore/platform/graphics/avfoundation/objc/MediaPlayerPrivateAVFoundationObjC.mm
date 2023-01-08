@@ -40,7 +40,6 @@
 #import "ColorSpaceCG.h"
 #import "ContentTypeUtilities.h"
 #import "Cookie.h"
-#import "DeprecatedGlobalSettings.h"
 #import "FloatConversion.h"
 #import "FourCC.h"
 #import "GraphicsContext.h"
@@ -221,7 +220,7 @@ static String convertEnumerationToString(AVPlayerTimeControlStatus enumerationVa
     static_assert(!static_cast<size_t>(AVPlayerTimeControlStatusPaused), "AVPlayerTimeControlStatusPaused is not 0 as expected");
     static_assert(static_cast<size_t>(AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate) == 1, "AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate is not 1 as expected");
     static_assert(static_cast<size_t>(AVPlayerTimeControlStatusPlaying) == 2, "AVPlayerTimeControlStatusPlaying is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 }

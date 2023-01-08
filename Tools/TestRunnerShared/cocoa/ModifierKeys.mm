@@ -220,7 +220,7 @@ struct KeyMappingEntry {
         { 0x1C, 0x5B, '8', nil },
         { 0x19, 0x5C, '9', nil },
     };
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i) {
+    for (unsigned i = 0; i < std::size(table); ++i) {
         NSString* currentCharacterString = [NSString stringWithCharacters:&table[i].character length:1];
         if ([character isEqualToString:currentCharacterString] || [character isEqualToString:table[i].characterName]) {
             if (keyLocation == 0x03 /*DOM_KEY_LOCATION_NUMPAD*/)

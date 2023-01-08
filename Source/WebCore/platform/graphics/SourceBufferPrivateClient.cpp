@@ -45,7 +45,7 @@ String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult enume
     static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::ClientDisconnected) == 2, "ReceiveResult::ClientDisconnected is not 2 as expected");
     static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::BufferRemoved) == 3, "ReceiveResult::BufferRemoved is not 3 as expected");
     static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::IPCError) == 4, "ReceiveResult::IPCError is not 4 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

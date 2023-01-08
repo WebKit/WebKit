@@ -74,12 +74,12 @@ constexpr double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;
 static const CSSValueID displayWritingModeMap[] = {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr
 };
-static_assert(WTF_ARRAY_LENGTH(displayWritingModeMap) == VTTCue::NumberOfWritingDirections, "displayWritingModeMap has wrong size");
+static_assert(std::size(displayWritingModeMap) == VTTCue::NumberOfWritingDirections, "displayWritingModeMap has wrong size");
 
 static const CSSValueID displayAlignmentMap[] = {
     CSSValueStart, CSSValueCenter, CSSValueEnd, CSSValueLeft, CSSValueRight
 };
-static_assert(WTF_ARRAY_LENGTH(displayAlignmentMap) == VTTCue::NumberOfAlignments, "displayAlignmentMap has wrong size");
+static_assert(std::size(displayAlignmentMap) == VTTCue::NumberOfAlignments, "displayAlignmentMap has wrong size");
 
 static const String& startKeyword()
 {

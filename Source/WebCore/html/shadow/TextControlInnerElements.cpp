@@ -84,13 +84,13 @@ static inline bool isStrongPasswordTextField(const Element* element)
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element)->hasAutoFillStrongPasswordButton();
 }
 
-std::optional<Style::ElementStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
+std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
 {
     auto elementStyle = resolveStyle(resolutionContext);
     if (isStrongPasswordTextField(shadowHost())) {
-        elementStyle.renderStyle->setFlexWrap(FlexWrap::Wrap);
-        elementStyle.renderStyle->setOverflowX(Overflow::Hidden);
-        elementStyle.renderStyle->setOverflowY(Overflow::Hidden);
+        elementStyle.style->setFlexWrap(FlexWrap::Wrap);
+        elementStyle.style->setOverflowX(Overflow::Hidden);
+        elementStyle.style->setOverflowY(Overflow::Hidden);
     }
     return elementStyle;
 }
@@ -106,7 +106,7 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
     return adoptRef(*new TextControlInnerElement(document));
 }
 
-std::optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
+std::optional<Style::ResolvedStyle> TextControlInnerElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
 {
     auto newStyle = RenderStyle::createPtr();
     newStyle->inheritFrom(*shadowHostStyle);
@@ -137,7 +137,7 @@ std::optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(c
         newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
     }
 
-    return Style::ElementStyle { WTFMove(newStyle) };
+    return Style::ResolvedStyle { WTFMove(newStyle) };
 }
 
 // MARK: TextControlInnerTextElement
@@ -195,10 +195,10 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
     return downcast<RenderTextControlInnerBlock>(HTMLDivElement::renderer());
 }
 
-std::optional<Style::ElementStyle> TextControlInnerTextElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
+std::optional<Style::ResolvedStyle> TextControlInnerTextElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
 {
     auto style = downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
-    return Style::ElementStyle { makeUnique<RenderStyle>(WTFMove(style)) };
+    return Style::ResolvedStyle { makeUnique<RenderStyle>(WTFMove(style)) };
 }
 
 // MARK: TextControlPlaceholderElement
@@ -217,18 +217,18 @@ Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Documen
     return element;
 }
 
-std::optional<Style::ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
+std::optional<Style::ResolvedStyle> TextControlPlaceholderElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto style = resolveStyle(resolutionContext);
 
     auto& controlElement = downcast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
-    style.renderStyle->setDisplay(controlElement.isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
+    style.style->setDisplay(controlElement.isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
 
     if (is<HTMLInputElement>(controlElement)) {
         auto& inputElement = downcast<HTMLInputElement>(controlElement);
-        style.renderStyle->setTextOverflow(inputElement.shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
-        style.renderStyle->setPaddingTop(Length { 0, LengthType::Fixed });
-        style.renderStyle->setPaddingBottom(Length { 0, LengthType::Fixed });
+        style.style->setTextOverflow(inputElement.shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
+        style.style->setPaddingTop(Length { 0, LengthType::Fixed });
+        style.style->setPaddingBottom(Length { 0, LengthType::Fixed });
     }
     return style;
 }
@@ -249,7 +249,7 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
     return adoptRef(*new SearchFieldResultsButtonElement(document));
 }
 
-std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
+std::optional<Style::ResolvedStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     RefPtr input = downcast<HTMLInputElement>(shadowHost());
     if (input && input->maxResults() >= 0)
@@ -261,7 +261,7 @@ std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCusto
     auto appearance = shadowHostStyle->effectiveAppearance();
     if (appearance == ControlPartType::TextField) {
         auto elementStyle = resolveStyle(resolutionContext);
-        elementStyle.renderStyle->setDisplay(DisplayType::None);
+        elementStyle.style->setDisplay(DisplayType::None);
         return elementStyle;
     }
     if (appearance != ControlPartType::SearchField) {
@@ -325,14 +325,14 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
     return element;
 }
 
-std::optional<Style::ElementStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
+std::optional<Style::ResolvedStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(resolutionContext);
     auto& inputElement = downcast<HTMLInputElement>(*shadowHost());
-    elementStyle.renderStyle->setVisibility(elementStyle.renderStyle->visibility() == Visibility::Hidden || inputElement.value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
+    elementStyle.style->setVisibility(elementStyle.style->visibility() == Visibility::Hidden || inputElement.value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
 
     if (shadowHostStyle && shadowHostStyle->effectiveAppearance() == ControlPartType::TextField)
-        elementStyle.renderStyle->setDisplay(DisplayType::None);
+        elementStyle.style->setDisplay(DisplayType::None);
 
     return elementStyle;
 }

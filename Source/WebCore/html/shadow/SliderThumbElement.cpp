@@ -554,7 +554,7 @@ RefPtr<HTMLInputElement> SliderThumbElement::hostInput() const
     return downcast<HTMLInputElement>(shadowHost());
 }
 
-std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
+std::optional<Style::ResolvedStyle> SliderThumbElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
 {
     if (!hostStyle)
         return std::nullopt;
@@ -562,10 +562,10 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
     auto elementStyle = resolveStyle(resolutionContext);
     switch (hostStyle->effectiveAppearance()) {
     case ControlPartType::SliderVertical:
-        elementStyle.renderStyle->setEffectiveAppearance(ControlPartType::SliderThumbVertical);
+        elementStyle.style->setEffectiveAppearance(ControlPartType::SliderThumbVertical);
         break;
     case ControlPartType::SliderHorizontal:
-        elementStyle.renderStyle->setEffectiveAppearance(ControlPartType::SliderThumbHorizontal);
+        elementStyle.style->setEffectiveAppearance(ControlPartType::SliderThumbHorizontal);
         break;
     default:
         break;

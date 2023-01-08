@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "_WKContextMenuElementInfo.h"
 
-#import "APIHitTestResult.h"
-#import "_WKContextMenuElementInfoInternal.h"
-#import "_WKHitTestResultInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/RetainPtr.h>
+#if !TARGET_OS_IPHONE
 
-#if !PLATFORM(IOS_FAMILY)
+#import "APIContextMenuElementInfoMac.h"
+#import "WKObject.h"
 
-@implementation _WKContextMenuElementInfo
+namespace WebKit {
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
+template<> struct WrapperTraits<API::ContextMenuElementInfoMac> {
+    using WrapperClass = _WKContextMenuElementInfo;
+};
+
 }
 
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKContextMenuElementInfo.class, self))
-        return;
-    _contextMenuElementInfoMac->API::ContextMenuElementInfoMac::~ContextMenuElementInfoMac();
-    [super dealloc];
+@interface _WKContextMenuElementInfo () <WKObject> {
+@package
+    API::ObjectStorage<API::ContextMenuElementInfoMac> _contextMenuElementInfoMac;
 }
-
-- (_WKHitTestResult *)hitTestResult
-{
-    auto& hitTestResultData = _contextMenuElementInfoMac->hitTestResultData();
-    auto apiHitTestResult = API::HitTestResult::create(hitTestResultData);
-    return retainPtr(wrapper(apiHitTestResult)).autorelease();
-}
-
-// MARK: WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_contextMenuElementInfoMac;
-}
-
 @end
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // !TARGET_OS_IPHONE

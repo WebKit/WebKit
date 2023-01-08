@@ -37,7 +37,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
-#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LibWebRTCDav1dDecoder.h>
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/PlatformMediaSessionManager.h>

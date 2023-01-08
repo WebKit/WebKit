@@ -141,11 +141,11 @@ Overflow/underflow
 PASS stepDown("1", "1", "0") is "0"
 PASS stepDown("0", "1", "0") is "0"
 PASS stepDown("1", "1", "0", 2) is "0"
-PASS stepDown("1", "3.40282346e+38", "", 2) is "-3.40282346e+38"
+PASS stepDown("1", "1.797693134862315e+308", "", 2) is "-1.797693134862315e+308"
 PASS stepUp("-1", "1", "0") is "0"
 PASS stepUp("0", "1", "0") is "0"
 PASS stepUp("-1", "1", "0", 2) is "0"
-PASS stepUp("1", "3.40282346e+38", "", 2) is "3.40282346e+38"
+PASS stepUp("1", "1.797693134862315e+308", "", 2) is "1.797693134862315e+308"
 
 stepDown()/stepUp() for stepMismatch values
 PASS stepUp("1", "2", "") is "2"
@@ -158,8 +158,8 @@ PASS stepDown("7", "300", "") is "0"
 PASS stepDown("-7", "300", "") is "-300"
 
 Huge value and small step
-PASS input.min = ""; stepUp("1e+38", "1", "", 999) is "1e+38"
-PASS input.max = ""; stepDown("1e+38", "1", "", 999) is "1e+38"
+PASS input.min = ""; stepUp("1e+308", "1", "", 999) is "1e+308"
+PASS input.max = ""; stepDown("1e+308", "1", "", 999) is "1e+308"
 
 Fractional numbers
 PASS input.min = ""; stepUp("0", "0.33333333333333333", "", 3) is "1"

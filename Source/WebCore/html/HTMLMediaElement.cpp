@@ -245,7 +245,7 @@ String convertEnumerationToString(HTMLMediaElement::ReadyState enumerationValue)
     static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_CURRENT_DATA) == 2, "HTMLMediaElementEnums::HAVE_CURRENT_DATA is not 2 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_FUTURE_DATA) == 3, "HTMLMediaElementEnums::HAVE_FUTURE_DATA is not 3 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_ENOUGH_DATA) == 4, "HTMLMediaElementEnums::HAVE_ENOUGH_DATA is not 4 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -261,7 +261,7 @@ String convertEnumerationToString(HTMLMediaElement::NetworkState enumerationValu
     static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_IDLE) == 1, "HTMLMediaElementEnums::NETWORK_IDLE is not 1 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_LOADING) == 2, "HTMLMediaElementEnums::NETWORK_LOADING is not 2 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_NO_SOURCE) == 3, "HTMLMediaElementEnums::NETWORK_NO_SOURCE is not 3 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -277,7 +277,7 @@ String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState e
     static_assert(static_cast<size_t>(HTMLMediaElement::AutoplayEventPlaybackState::PreventedAutoplay) == 1, "AutoplayEventPlaybackState::PreventedAutoplay is not 1 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::AutoplayEventPlaybackState::StartedWithUserGesture) == 2, "AutoplayEventPlaybackState::StartedWithUserGesture is not 2 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::AutoplayEventPlaybackState::StartedWithoutUserGesture) == 3, "AutoplayEventPlaybackState::StartedWithoutUserGesture is not 3 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -289,7 +289,7 @@ String convertEnumerationToString(HTMLMediaElement::TextTrackVisibilityCheckType
     };
     static_assert(static_cast<size_t>(HTMLMediaElement::TextTrackVisibilityCheckType::CheckTextTrackVisibility) == 0, "TextTrackVisibilityCheckType::CheckTextTrackVisibility is not 0 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::TextTrackVisibilityCheckType::AssumeTextTrackVisibilityChanged) == 1, "TextTrackVisibilityCheckType::AssumeTextTrackVisibilityChanged is not 1 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -305,7 +305,7 @@ String convertEnumerationToString(HTMLMediaElement::SpeechSynthesisState enumera
     static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::Speaking) == 1, "SpeechSynthesisState::Speaking is not 1 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::CompletingExtendedDescription) == 2, "SpeechSynthesisState::CompletingExtendedDescription is not 2 as expected");
     static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::Paused) == 3, "SpeechSynthesisState::Paused is not 3 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 

@@ -367,7 +367,7 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
         checkNumberOfDistinctQuoteCharacters(quotationMark);
         checkNumberOfDistinctQuoteCharacters(apostrophe);
 
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(quoteTable); ++i) {
+        for (unsigned i = 0; i < std::size(quoteTable); ++i) {
             if (i)
                 ASSERT(strcmp(quoteTable[i - 1].language, quoteTable[i].language) < 0);
 
@@ -398,7 +398,7 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
     QuotesForLanguage languageKey = { languageKeyBuffer.data(), 0, 0, 0, 0, 0 };
 
     return static_cast<const QuotesForLanguage*>(bsearch(&languageKey,
-        quoteTable, WTF_ARRAY_LENGTH(quoteTable), sizeof(quoteTable[0]), quoteTableLanguageComparisonFunction));
+        quoteTable, std::size(quoteTable), sizeof(quoteTable[0]), quoteTableLanguageComparisonFunction));
 }
 
 static StringImpl* stringForQuoteCharacter(UChar character)

@@ -167,7 +167,7 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
         /* 0x7D */ VK_DOWN, // Down Arrow
         /* 0x7E */ VK_UP, // Up Arrow
     };
-    if (keyCode < WTF_ARRAY_LENGTH(windowsKeyCode))
+    if (keyCode < std::size(windowsKeyCode))
         return windowsKeyCode[keyCode];
     return 0;
 }

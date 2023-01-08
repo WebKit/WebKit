@@ -704,16 +704,16 @@ void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
     propertyAnimatorFactory().animatorWillBeDeleted(attributeName);
 }
 
-std::optional<Style::ElementStyle> SVGElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
+std::optional<Style::ResolvedStyle> SVGElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (RefPtr styleElement = this->correspondingElement()) {
         auto styleElementResolutionContext = resolutionContext;
         // Can't use the state since we are going to another part of the tree.
         styleElementResolutionContext.selectorMatchingState = nullptr;
-        auto style = styleElement->resolveStyle(styleElementResolutionContext);
-        Style::Adjuster::adjustSVGElementStyle(*style.renderStyle, *this);
-        return style;
+        auto resolvedStyle = styleElement->resolveStyle(styleElementResolutionContext);
+        Style::Adjuster::adjustSVGElementStyle(*resolvedStyle.style, *this);
+        return resolvedStyle;
     }
 
     return resolveStyle(resolutionContext);

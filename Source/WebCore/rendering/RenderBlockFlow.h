@@ -398,6 +398,8 @@ public:
 
     LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
 
+    std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
+
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 
@@ -450,7 +452,7 @@ protected:
     virtual void computeColumnCountAndWidth();
 
     virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) {};
-    
+
 protected:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
@@ -487,8 +489,6 @@ private:
 
     LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const;
     LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const;
-
-    LayoutUnit lowestInitialLetterLogicalBottom() const;
     
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
     LayoutUnit nextFloatLogicalBottomBelowForBlock(LayoutUnit) const;

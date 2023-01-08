@@ -72,13 +72,13 @@ static bool getWebLocData(IDataObject* dataObject, String& url, String* title)
     if (!hdrop)
         return false;
 
-    if (!DragQueryFileW(hdrop, 0, filename, WTF_ARRAY_LENGTH(filename)))
+    if (!DragQueryFileW(hdrop, 0, filename, std::size(filename)))
         goto exit;
 
     if (_wcsicmp(PathFindExtensionW(filename), L".url"))
         goto exit;    
     
-    if (!GetPrivateProfileStringW(L"InternetShortcut", L"url", 0, urlBuffer, WTF_ARRAY_LENGTH(urlBuffer), filename))
+    if (!GetPrivateProfileStringW(L"InternetShortcut", L"url", 0, urlBuffer, std::size(urlBuffer), filename))
         goto exit;
     
     if (title) {
@@ -108,7 +108,7 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
     if (_wcsicmp(PathFindExtensionW(filename), L".url"))
         return false;    
 
-    if (!GetPrivateProfileStringW(L"InternetShortcut", L"url", 0, urlBuffer, WTF_ARRAY_LENGTH(urlBuffer), filename))
+    if (!GetPrivateProfileStringW(L"InternetShortcut", L"url", 0, urlBuffer, std::size(urlBuffer), filename))
         return false;
 
     if (title) {
@@ -417,7 +417,7 @@ void setFileDescriptorData(IDataObject* dataObject, int size, const String& pass
     fgd->fgd[0].dwFlags = FD_FILESIZE;
     fgd->fgd[0].nFileSizeLow = size;
 
-    int maxSize = std::min<int>(pathname.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
+    int maxSize = std::min<int>(pathname.length(), std::size(fgd->fgd[0].cFileName));
     CopyMemory(fgd->fgd[0].cFileName, pathname.charactersWithNullTermination().data(), maxSize * sizeof(UChar));
     GlobalUnlock(medium.hGlobal);
 
@@ -718,7 +718,7 @@ void getHDropData(IDataObject* data, FORMATETC* format, Vector<String>& dataStri
     WCHAR filename[MAX_PATH];
     UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
     for (UINT i = 0; i < fileCount; i++) {
-        if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
+        if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
             continue;
         dataStrings.append(filename);
     }

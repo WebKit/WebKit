@@ -2352,6 +2352,7 @@
 		DF462E1223F338BE00EFF35F /* WKContentWorldPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF462E1123F338AD00EFF35F /* WKContentWorldPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF7A231C291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DF7A231B291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */; };
+		DFEAFFC629664BB200038490 /* _WKContextMenuElementInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DFEAFFC529664BB200038490 /* _WKContextMenuElementInfoInternal.h */; };
 		E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E105FE5318D7B9DE008F57A8 /* EditingRange.h */; };
 		E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
 		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
@@ -7448,8 +7449,10 @@
 		DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebWheelEventMac.mm; sourceTree = "<group>"; };
 		DF74275C24F4955000F8ABE9 /* PDFPluginIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPluginIdentifier.h; sourceTree = "<group>"; };
 		DF7A231B291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfigurationPrivate.h; sourceTree = "<group>"; };
+		DF7B8A232968A41000647721 /* APIContextMenuElementInfoMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuElementInfoMac.h; sourceTree = "<group>"; };
 		DF84CEE2249AA21F009096F6 /* WKPDFHUDView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFHUDView.mm; path = PDF/WKPDFHUDView.mm; sourceTree = "<group>"; };
 		DF84CEE3249AA21F009096F6 /* WKPDFHUDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFHUDView.h; path = PDF/WKPDFHUDView.h; sourceTree = "<group>"; };
+		DFEAFFC529664BB200038490 /* _WKContextMenuElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKContextMenuElementInfoInternal.h; sourceTree = "<group>"; };
 		E105FE5318D7B9DE008F57A8 /* EditingRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingRange.h; sourceTree = "<group>"; };
 		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = Resources/WebKit.icns; sourceTree = "<group>"; };
 		E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessPlatformStrategies.cpp; sourceTree = "<group>"; };
@@ -10195,6 +10198,7 @@
 				5C4609E422430E4D009943C2 /* _WKContentRuleListActionInternal.h */,
 				1A5704F61BE01FF400874AF1 /* _WKContextMenuElementInfo.h */,
 				1A5704F51BE01FF400874AF1 /* _WKContextMenuElementInfo.mm */,
+				DFEAFFC529664BB200038490 /* _WKContextMenuElementInfoInternal.h */,
 				5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */,
 				5C5D2388227A1892000B9BDA /* _WKCustomHeaderFields.mm */,
 				5C5D2387227A1891000B9BDA /* _WKCustomHeaderFieldsInternal.h */,
@@ -12660,6 +12664,7 @@
 				076E884D1A13CADF005E90FC /* APIContextMenuClient.h */,
 				5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */,
 				5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */,
+				DF7B8A232968A41000647721 /* APIContextMenuElementInfoMac.h */,
 				5C5D238A227A1D9B000B9BDA /* APICustomHeaderFields.h */,
 				7A821F4F1E2F7A5C00604577 /* APICustomProtocolManagerClient.h */,
 				5C2C6F9F27C9523500CCDA9E /* APIDataTask.cpp */,
@@ -14555,6 +14560,7 @@
 				5C4609E7224317B4009943C2 /* _WKContentRuleListAction.h in Headers */,
 				5C4609E8224317BB009943C2 /* _WKContentRuleListActionInternal.h in Headers */,
 				1A5704F81BE01FF400874AF1 /* _WKContextMenuElementInfo.h in Headers */,
+				DFEAFFC629664BB200038490 /* _WKContextMenuElementInfoInternal.h in Headers */,
 				5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */,
 				5C2C6FA927C9E5E200CCDA9E /* _WKDataTask.h in Headers */,
 				5C2C6FAA27C9E5EB00CCDA9E /* _WKDataTaskDelegate.h in Headers */,

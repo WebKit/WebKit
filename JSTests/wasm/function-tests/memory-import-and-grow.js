@@ -121,8 +121,8 @@ test({ initial: 2, maximum: 2 }, { initial: 2, maximum: 4 }, u, 1, 2);
 test({ initial: 2, maximum: 4 }, { initial: 2 }, 0, u, 2);
 
 // Disallowed: imported initial is lesser than declared.
-assert.throws(() => test({ initial: 1, maximum: 4 }, { initial: 2, maximum: 4 }, u, u, 2), WebAssembly.LinkError, `Memory import imp:memory provided an 'initial' that is smaller than the module's declared 'initial' import memory size`);
-assert.throws(() => test({ initial: 0, maximum: 4 }, { initial: 2, maximum: 4 }, u, u, 2), WebAssembly.LinkError, `Memory import imp:memory provided an 'initial' that is smaller than the module's declared 'initial' import memory size`);
+assert.throws(() => test({ initial: 1, maximum: 4 }, { initial: 2, maximum: 4 }, u, u, 2), WebAssembly.LinkError, `Memory import imp:memory provided a 'size' that is smaller than the module's declared 'initial' import memory size`);
+assert.throws(() => test({ initial: 0, maximum: 4 }, { initial: 2, maximum: 4 }, u, u, 2), WebAssembly.LinkError, `Memory import imp:memory provided a 'size' that is smaller than the module's declared 'initial' import memory size`);
 
 // Disallowed: imported maximum is greater than declared.
 assert.throws(() => test({ initial: 2, maximum: 5 }, { initial: 2, maximum: 4 }, u, u, 2), WebAssembly.LinkError, `Memory import imp:memory provided a 'maximum' that is larger than the module's declared 'maximum' import memory size`);
