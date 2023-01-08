@@ -45,7 +45,7 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 {
     auto manager = std::unique_ptr<MediaSessionManageriOS>(new MediaSessionManageriOS);
     MediaSessionHelper::sharedHelper().addClient(*manager);
-    return WTFMove(manager);
+    return manager;
 }
 
 MediaSessionManageriOS::MediaSessionManageriOS()
