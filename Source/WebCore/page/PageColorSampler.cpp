@@ -89,8 +89,6 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
             return false;
         if (auto* animations = styleable.animations()) {
             for (auto& animation : *animations) {
-                if (!animation)
-                    continue;
                 if (animation->playState() == WebAnimation::PlayState::Running)
                     return false;
             }

@@ -47,7 +47,7 @@ void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     updateGlobalPosition(animation);
 
-    if (m_animations.add(&animation)) {
+    if (m_animations.add(animation)) {
         m_allAnimations.append(animation);
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
@@ -69,11 +69,11 @@ void AnimationTimeline::updateGlobalPosition(WebAnimation& animation)
 void AnimationTimeline::removeAnimation(WebAnimation& animation)
 {
     ASSERT(!animation.timeline() || animation.timeline() == this);
-    m_animations.remove(&animation);
-    if (is<KeyframeEffect>(animation.effect())) {
-        if (auto styleable = downcast<KeyframeEffect>(animation.effect())->targetStyleable()) {
+    m_animations.remove(animation);
+    if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation.effect())) {
+        if (auto styleable = keyframeEffect->targetStyleable()) {
             styleable->animationWasRemoved(animation);
-            styleable->ensureKeyframeEffectStack().removeEffect(*downcast<KeyframeEffect>(animation.effect()));
+            styleable->ensureKeyframeEffectStack().removeEffect(*keyframeEffect);
         }
     }
 }

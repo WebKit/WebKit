@@ -61,6 +61,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     Boxes boxes;
     Lines lines;
 
+    float clearGapBeforeFirstLine { 0 };
     float clearGapAfterLastLine { 0 };
     bool hasMultilinePaintOverlap { false };
 

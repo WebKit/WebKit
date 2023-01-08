@@ -23,7 +23,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
@@ -67,14 +66,6 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_conditionalAndCond
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute);
 #endif
 #endif
-static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttribute);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttribute);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributeUnforgeable);
@@ -120,12 +111,8 @@ using JSTestConditionallyReadWriteDOMConstructor = JSDOMConstructorNotConstructa
 
 /* Hash table */
 
-static const struct CompactHashIndex JSTestConditionallyReadWriteTableIndex[8] = {
-    { -1, -1 },
+static const struct CompactHashIndex JSTestConditionallyReadWriteTableIndex[4] = {
     { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -134,11 +121,10 @@ static const struct CompactHashIndex JSTestConditionallyReadWriteTableIndex[8] =
 
 static const HashTableValue JSTestConditionallyReadWriteTableValues[] =
 {
-    { "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable, setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable } },
     { "enabledConditionallyReadWriteBySettingAttributeUnforgeable"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributeUnforgeable, setJSTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributeUnforgeable } },
 };
 
-static const HashTable JSTestConditionallyReadWriteTable = { 2, 7, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWriteTableValues, JSTestConditionallyReadWriteTableIndex };
+static const HashTable JSTestConditionallyReadWriteTable = { 1, 3, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWriteTableValues, JSTestConditionallyReadWriteTableIndex };
 template<> const ClassInfo JSTestConditionallyReadWriteDOMConstructor::s_info = { "TestConditionallyReadWrite"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWriteDOMConstructor) };
 
 template<> JSValue JSTestConditionallyReadWriteDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -175,8 +161,6 @@ static const HashTableValue JSTestConditionallyReadWritePrototypeTableValues[] =
 #else
     { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute, setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute } },
-    { "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise, setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise } },
     { "enabledConditionallyReadWriteBySettingAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttribute, setJSTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttribute } },
     { "enabledConditionallyReadWriteBySettingAttributePromise"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributePromise, setJSTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributePromise } },
 };
@@ -188,20 +172,6 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWritePrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
-    if (!DeprecatedGlobalSettings::testFeatureEnabled()) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute"_s);
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (!DeprecatedGlobalSettings::testFeatureEnabled()) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise"_s);
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "enabledConditionallyReadWriteBySettingAttribute"_s);
@@ -216,12 +186,6 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    // Adding back attribute, but as readonly, after removing the read-write variant above. 
-    if (!DeprecatedGlobalSettings::testFeatureEnabled())
-        putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
-    // Adding back attribute, but as readonly, after removing the read-write variant above. 
-    if (!DeprecatedGlobalSettings::testFeatureEnabled())
-        putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
         putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteBySettingAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
@@ -247,7 +211,6 @@ void JSTestConditionallyReadWrite::finishCreation(VM& vm)
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestConditionallyReadWrite>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
-    putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
     putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteBySettingAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
 }
 
@@ -357,134 +320,6 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_conditionalAndCondition
 #endif
 
 #endif
-
-static inline JSValue jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute())));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    UNUSED_PARAM(vm);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite", "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute", "Node"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute(*nativeValue);
-    });
-    return true;
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
-}
-
-static inline JSValue jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeableGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable())));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeableGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeableSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    UNUSED_PARAM(vm);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite", "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable", "Node"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable(*nativeValue);
-    });
-    return true;
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeableSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
-}
-
-static inline JSValue jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivateGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate())));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivateGetter>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivateSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    UNUSED_PARAM(vm);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestConditionallyReadWrite", "enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate", "Node"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate(*nativeValue);
-    });
-    return true;
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivateSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
-}
-
-static inline JSValue jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, [&]() -> decltype(auto) { return impl.enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise(); })));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::get<jsTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromiseSetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    UNUSED_PARAM(vm);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLPromise<IDLDouble>>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setEnabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise(nativeValue.releaseNonNull());
-    });
-    return true;
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromiseSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
-}
 
 static inline JSValue jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestConditionallyReadWrite& thisObject)
 {

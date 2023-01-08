@@ -136,11 +136,9 @@ bool Styleable::computeAnimationExtent(LayoutRect& bounds) const
 
     KeyframeEffect* matchingEffect = nullptr;
     for (const auto& animation : *animations) {
-        auto* effect = animation->effect();
-        if (is<KeyframeEffect>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
+        if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation->effect())) {
             if (keyframeEffect->animatedProperties().contains(CSSPropertyTransform))
-                matchingEffect = downcast<KeyframeEffect>(effect);
+                matchingEffect = keyframeEffect;
         }
     }
 
@@ -204,13 +202,13 @@ bool Styleable::runningAnimationsAreAllAccelerated() const
 
 void Styleable::animationWasAdded(WebAnimation& animation) const
 {
-    ensureAnimations().add(&animation);
+    ensureAnimations().add(animation);
 }
 
 static inline bool removeCSSTransitionFromMap(CSSTransition& transition, AnimatablePropertyToTransitionMap& cssTransitionsByProperty)
 {
     auto transitionIterator = cssTransitionsByProperty.find(transition.property());
-    if (transitionIterator == cssTransitionsByProperty.end() || transitionIterator->value != &transition)
+    if (transitionIterator == cssTransitionsByProperty.end() || transitionIterator->value.ptr() != &transition)
         return false;
 
     cssTransitionsByProperty.remove(transitionIterator);
@@ -221,16 +219,15 @@ void Styleable::removeDeclarativeAnimationFromListsForOwningElement(WebAnimation
 {
     ASSERT(is<DeclarativeAnimation>(animation));
 
-    if (is<CSSTransition>(animation)) {
-        auto& transition = downcast<CSSTransition>(animation);
-        if (!removeCSSTransitionFromMap(transition, ensureRunningTransitionsByProperty()))
-            removeCSSTransitionFromMap(transition, ensureCompletedTransitionsByProperty());
+    if (auto* transition = dynamicDowncast<CSSTransition>(animation)) {
+        if (!removeCSSTransitionFromMap(*transition, ensureRunningTransitionsByProperty()))
+            removeCSSTransitionFromMap(*transition, ensureCompletedTransitionsByProperty());
     }
 }
 
 void Styleable::animationWasRemoved(WebAnimation& animation) const
 {
-    ensureAnimations().remove(&animation);
+    ensureAnimations().remove(animation);
 
     // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByAnimatableProperty map.
     // We don't need to do this for CSS Animations because their timing can be set via CSS to end, which would cause this
@@ -257,8 +254,8 @@ void Styleable::cancelDeclarativeAnimations() const
 {
     if (auto* animations = this->animations()) {
         for (auto& animation : *animations) {
-            if (is<DeclarativeAnimation>(animation))
-                downcast<DeclarativeAnimation>(*animation).cancelFromStyle();
+            if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation.get()))
+                declarativeAnimation->cancelFromStyle();
         }
     }
 
@@ -467,8 +464,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
 
     bool isDeclarative = false;
-    if (is<DeclarativeAnimation>(animation)) {
-        if (auto owningElement = downcast<DeclarativeAnimation>(*animation).owningElement())
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation)) {
+        if (auto owningElement = declarativeAnimation->owningElement())
             isDeclarative = *owningElement == styleable;
     }
 

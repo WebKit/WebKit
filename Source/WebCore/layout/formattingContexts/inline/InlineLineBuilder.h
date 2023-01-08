@@ -141,6 +141,7 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
+    LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox);
     enum LineBoxConstraintApplies : uint8_t { Yes, No };
     bool tryPlacingFloatBox(const InlineItem&, LineBoxConstraintApplies);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);

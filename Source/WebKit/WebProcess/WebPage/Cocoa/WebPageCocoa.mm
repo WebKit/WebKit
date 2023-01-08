@@ -36,6 +36,7 @@
 #import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
 #import "WebRemoteObjectRegistry.h"
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/Editing.h>

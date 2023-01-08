@@ -40,6 +40,7 @@
 #include "CSSParserImpl.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
 #include "Document.h"
@@ -583,7 +584,7 @@ RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange& range, CSSValue
 {
     if (range.peek().id() == CSSValueNormal)
         return CSSPropertyParserHelpers::consumeIdentWorkerSafe(range, pool);
-    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeFeatureTagValue);
+    return CSSPropertyParserHelpers::consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeFeatureTagValue);
 }
 
 RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange& range, CSSValuePool& pool)
@@ -601,7 +602,7 @@ RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange& range)
     if (!tag)
         return nullptr;
     
-    auto tagValue = consumeNumberRaw(range);
+    auto tagValue = CSSPropertyParserHelpers::consumeNumberRaw(range);
     if (!tagValue)
         return nullptr;
     

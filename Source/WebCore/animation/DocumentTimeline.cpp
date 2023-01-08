@@ -235,8 +235,8 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
     if (!is<KeyframeEffect>(effect))
         return false;
 
-    auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-    auto target = keyframeEffect->targetStyleable();
+    auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
+    auto target = keyframeEffect.targetStyleable();
     if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
@@ -253,7 +253,7 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
     };
 
     HashSet<AnimatableProperty> propertiesToMatch;
-    for (auto property : keyframeEffect->animatedProperties())
+    for (auto property : keyframeEffect.animatedProperties())
         propertiesToMatch.add(resolvedProperty(property));
 
     auto protectedAnimations = [&]() -> Vector<RefPtr<WebAnimation>> {
@@ -270,9 +270,7 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
             break;
 
         if (animationWithHigherCompositeOrder && animationWithHigherCompositeOrder->isReplaceable()) {
-            auto* effectWithHigherCompositeOrder = animationWithHigherCompositeOrder->effect();
-            if (is<KeyframeEffect>(effectWithHigherCompositeOrder)) {
-                auto* keyframeEffectWithHigherCompositeOrder = downcast<KeyframeEffect>(effectWithHigherCompositeOrder);
+            if (auto* keyframeEffectWithHigherCompositeOrder = dynamicDowncast<KeyframeEffect>(animationWithHigherCompositeOrder->effect())) {
                 for (auto property : keyframeEffectWithHigherCompositeOrder->animatedProperties()) {
                     if (propertiesToMatch.remove(resolvedProperty(property)) && propertiesToMatch.isEmpty())
                         break;
@@ -323,15 +321,14 @@ void DocumentTimeline::removeReplacedAnimations()
     }
 }
 
-void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
+void DocumentTimeline::transitionDidComplete(Ref<CSSTransition>&& transition)
 {
-    ASSERT(transition);
-    removeAnimation(*transition);
-    if (is<KeyframeEffect>(transition->effect())) {
-        if (auto styleable = downcast<KeyframeEffect>(transition->effect())->targetStyleable()) {
+    removeAnimation(transition.get());
+    if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(transition->effect())) {
+        if (auto styleable = keyframeEffect->targetStyleable()) {
             auto property = transition->property();
             if (styleable->hasRunningTransitionForProperty(property))
-                styleable->ensureCompletedTransitionsByProperty().set(property, transition);
+                styleable->ensureCompletedTransitionsByProperty().set(property, WTFMove(transition));
         }
     }
 }
@@ -414,14 +411,11 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
 
     bool hasForcedLayout = false;
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
-        auto* effect = animation->effect();
-        if (!is<KeyframeEffect>(effect))
-            continue;
-
-        auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
-        if (!hasForcedLayout)
-            hasForcedLayout |= keyframeEffect.forceLayoutIfNeeded();
-        keyframeEffect.applyPendingAcceleratedActions();
+        if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation->effect())) {
+            if (!hasForcedLayout)
+                hasForcedLayout |= keyframeEffect->forceLayoutIfNeeded();
+            keyframeEffect->applyPendingAcceleratedActions();
+        }
     }
 }
 

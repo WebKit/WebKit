@@ -112,6 +112,10 @@ bool AccessibilityTable::isDataTable() const
     if (!m_renderer)
         return false;
 
+    auto* objectCache = axObjectCache();
+    if (!objectCache)
+        return false;
+
     // Do not consider it a data table if it has a non-table ARIA role.
     if (hasNonTableARIARole())
         return false;
@@ -131,7 +135,10 @@ bool AccessibilityTable::isDataTable() const
     // between a "layout" table and a "data" table.
     if (HTMLTableElement* tableElement = this->tableElement()) {
         // If there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table.
-        if (!tableElement->summary().isEmpty() || tableElement->tHead() || tableElement->tFoot() || tableElement->caption())
+        if (!tableElement->summary().isEmpty()
+            || (tableElement->tHead() && tableElement->tHead()->renderer())
+            || (tableElement->tFoot() && tableElement->tFoot()->renderer())
+            || tableElement->caption())
             return true;
         
         // If someone used "rules" attribute than the table should appear.
@@ -166,7 +173,14 @@ bool AccessibilityTable::isDataTable() const
     RenderTableSection* firstBody = table.firstBody();
     if (!firstBody)
         return false;
-    
+
+    // If the tbody has any non-group role, then don't make this a data table. The author probably wants to use the role inside the <tbody>.
+    if (auto* topSection = objectCache->getOrCreate(table.topSection())) {
+        auto role = topSection->roleValue();
+        if (!topSection->isGroup() && role != AccessibilityRole::Unknown && role != AccessibilityRole::Ignored)
+            return false;
+    }
+
     int numCols = firstBody->numColumns();
     int numRows = firstBody->numRows();
     

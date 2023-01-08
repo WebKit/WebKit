@@ -117,9 +117,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
     const auto& blendingKeyframes = keyframeEffect.blendingKeyframes();
     const auto& parsedKeyframes = keyframeEffect.parsedKeyframes();
 
-    if (is<DeclarativeAnimation>(keyframeEffect.animation())) {
-        auto& declarativeAnimation = downcast<DeclarativeAnimation>(*keyframeEffect.animation());
-
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(keyframeEffect.animation())) {
         auto* target = keyframeEffect.target();
         auto* renderer = keyframeEffect.renderer();
 
@@ -142,7 +140,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
             if (!timingFunction)
                 timingFunction = blendingKeyframe.timingFunction();
             if (!timingFunction)
-                timingFunction = declarativeAnimation.backingAnimation().timingFunction();
+                timingFunction = declarativeAnimation->backingAnimation().timingFunction();
             if (timingFunction)
                 keyframePayload->setEasing(timingFunction->cssText());
 
@@ -219,8 +217,8 @@ static Ref<Protocol::Animation::Effect> buildObjectForEffect(AnimationEffect& ef
     if (auto fillMode = protocolValueForFillMode(effect.fill()))
         effectPayload->setFillMode(fillMode.value());
 
-    if (is<KeyframeEffect>(effect))
-        effectPayload->setKeyframes(buildObjectForKeyframes(downcast<KeyframeEffect>(effect)));
+    if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect))
+        effectPayload->setKeyframes(buildObjectForKeyframes(*keyframeEffect));
 
     return effectPayload;
 }
@@ -433,10 +431,10 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
                 event->setNodeId(nodeId);
         }
 
-        if (is<CSSAnimation>(animation))
-            event->setAnimationName(downcast<CSSAnimation>(*animation).animationName());
-        else if (is<CSSTransition>(animation))
-            event->setTransitionProperty(downcast<CSSTransition>(*animation).transitionProperty());
+        if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation))
+            event->setAnimationName(cssAnimation->animationName());
+        else if (auto* cssTransition = dynamicDowncast<CSSTransition>(animation))
+            event->setTransitionProperty(cssTransition->transitionProperty());
         else
             ASSERT_NOT_REACHED();
     }
@@ -456,8 +454,8 @@ void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
 
 void InspectorAnimationAgent::didSetWebAnimationEffect(WebAnimation& animation)
 {
-    if (is<DeclarativeAnimation>(animation))
-        stopTrackingDeclarativeAnimation(downcast<DeclarativeAnimation>(animation));
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation))
+        stopTrackingDeclarativeAnimation(*declarativeAnimation);
 
     didChangeWebAnimationEffectTiming(animation);
     didChangeWebAnimationEffectTarget(animation);
@@ -498,8 +496,8 @@ void InspectorAnimationAgent::didCreateWebAnimation(WebAnimation& animation)
 
 void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
 {
-    if (is<DeclarativeAnimation>(animation))
-        stopTrackingDeclarativeAnimation(downcast<DeclarativeAnimation>(animation));
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation))
+        stopTrackingDeclarativeAnimation(*declarativeAnimation);
 
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
@@ -555,10 +553,10 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, bool captur
     if (!name.isEmpty())
         animationPayload->setName(name);
 
-    if (is<CSSAnimation>(animation))
-        animationPayload->setCssAnimationName(downcast<CSSAnimation>(animation).animationName());
-    else if (is<CSSTransition>(animation))
-        animationPayload->setCssTransitionProperty(downcast<CSSTransition>(animation).transitionProperty());
+    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation))
+        animationPayload->setCssAnimationName(cssAnimation->animationName());
+    else if (auto* cssTransition = dynamicDowncast<CSSTransition>(animation))
+        animationPayload->setCssTransitionProperty(cssTransition->transitionProperty());
 
     if (auto* effect = animation.effect())
         animationPayload->setEffect(buildObjectForEffect(*effect));

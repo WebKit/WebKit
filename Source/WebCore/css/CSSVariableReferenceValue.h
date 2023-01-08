@@ -31,9 +31,11 @@
 
 #include "CSSParserContext.h"
 #include "CSSValue.h"
+#include "CSSValueKeywords.h"
 
 namespace WebCore {
 
+class CSSParserToken;
 class CSSParserTokenRange;
 class CSSVariableData;
 

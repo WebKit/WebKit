@@ -29,11 +29,6 @@
     [ConditionallyReadWrite=CONDITION] attribute Node conditionallyReadWriteAttribute;
     [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
 
-    [EnabledConditionallyReadWriteByDeprecatedGlobalSetting=TestFeatureEnabled] attribute Node enabledConditionallyReadWriteByDeprecatedGlobalSettingAttribute;
-    [EnabledConditionallyReadWriteByDeprecatedGlobalSetting=TestFeatureEnabled, LegacyUnforgeable] attribute Node enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeable;
-    [EnabledConditionallyReadWriteByDeprecatedGlobalSetting=TestFeatureEnabled, PrivateIdentifier, LegacyUnforgeable] attribute Node enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributeUnforgeablePrivate;
-    [EnabledConditionallyReadWriteByDeprecatedGlobalSetting=TestFeatureEnabled] attribute Promise<double> enabledConditionallyReadWriteByDeprecatedGlobalSettingAttributePromise;
-
     [EnabledConditionallyReadWriteBySetting=TestFeatureEnabled] attribute Node enabledConditionallyReadWriteBySettingAttribute;
     [EnabledConditionallyReadWriteBySetting=TestFeatureEnabled, LegacyUnforgeable] attribute Node enabledConditionallyReadWriteBySettingAttributeUnforgeable;
     [EnabledConditionallyReadWriteBySetting=TestFeatureEnabled, PrivateIdentifier, LegacyUnforgeable] attribute Node enabledConditionallyReadWriteBySettingAttributeUnforgeablePrivate;

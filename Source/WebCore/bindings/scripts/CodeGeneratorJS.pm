@@ -2012,9 +2012,8 @@ sub NeedsRuntimeCheck
 sub NeedsRuntimeReadWriteCheck
 {
     my ($interface, $context) = @_;
-    
-    return $context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting}
-        || $context->extendedAttributes->{EnabledConditionallyReadWriteBySetting}
+
+    return $context->extendedAttributes->{EnabledConditionallyReadWriteBySetting}
 }
 
 # https://webidl.spec.whatwg.org/#es-operations
@@ -4150,17 +4149,6 @@ sub GenerateRuntimeEnableConditionalString
         AddToImplIncludes("DeprecatedGlobalSettings.h");
 
         my @flags = split(/&/, $context->extendedAttributes->{EnabledByDeprecatedGlobalSetting});
-        foreach my $flag (@flags) {
-            push(@conjuncts, "DeprecatedGlobalSettings::" . ToMethodName($flag) . "()");
-        }
-    }
-
-    if ($context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting}) {
-        assert("Must specify value for EnabledConditionallyReadWriteByDeprecatedGlobalSetting.") if $context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting} eq "VALUE_IS_MISSING";
-
-        AddToImplIncludes("DeprecatedGlobalSettings.h");
-
-        my @flags = split(/&/, $context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting});
         foreach my $flag (@flags) {
             push(@conjuncts, "DeprecatedGlobalSettings::" . ToMethodName($flag) . "()");
         }
