@@ -221,10 +221,9 @@ void Styleable::removeDeclarativeAnimationFromListsForOwningElement(WebAnimation
 {
     ASSERT(is<DeclarativeAnimation>(animation));
 
-    if (is<CSSTransition>(animation)) {
-        auto& transition = downcast<CSSTransition>(animation);
-        if (!removeCSSTransitionFromMap(transition, ensureRunningTransitionsByProperty()))
-            removeCSSTransitionFromMap(transition, ensureCompletedTransitionsByProperty());
+    if (auto* transition = dynamicDowncast<CSSTransition>(animation)) {
+        if (!removeCSSTransitionFromMap(*transition, ensureRunningTransitionsByProperty()))
+            removeCSSTransitionFromMap(*transition, ensureCompletedTransitionsByProperty());
     }
 }
 
@@ -467,8 +466,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
 
     bool isDeclarative = false;
-    if (is<DeclarativeAnimation>(animation)) {
-        if (auto owningElement = downcast<DeclarativeAnimation>(*animation).owningElement())
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation)) {
+        if (auto owningElement = declarativeAnimation->owningElement())
             isDeclarative = *owningElement == styleable;
     }
 

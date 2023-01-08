@@ -1034,8 +1034,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     ASSERT(is<CSSAnimation>(animation()));
     ASSERT(document());
 
-    auto cssAnimation = downcast<CSSAnimation>(animation());
-    auto& backingAnimation = cssAnimation->backingAnimation();
+    auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
 
     KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
@@ -1592,16 +1591,15 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
 
 TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const KeyframeValue& keyframe) const
 {
-    auto effectAnimation = animation();
-    if (is<DeclarativeAnimation>(effectAnimation)) {
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation())) {
         // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself.
-        if (is<CSSAnimation>(effectAnimation)) {
+        if (is<CSSAnimation>(declarativeAnimation)) {
             if (auto* timingFunction = keyframe.timingFunction())
                 return timingFunction;
         }
 
         // Failing that, or for a CSS Transition, the timing function is inherited from the backing Animation object.
-        return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation().timingFunction();
+        return declarativeAnimation->backingAnimation().timingFunction();
     }
 
     return keyframe.timingFunction();
@@ -1929,8 +1927,8 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
     // In the case of CSS Animations, we must set the default timing function for keyframes to match
     // the current value set for animation-timing-function on the target element which affects only
     // keyframes and not the animation-wide timing.
-    if (is<CSSAnimation>(effectAnimation))
-        animation->setDefaultTimingFunctionForKeyframes(downcast<CSSAnimation>(effectAnimation)->backingAnimation().timingFunction());
+    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(effectAnimation))
+        animation->setDefaultTimingFunctionForKeyframes(cssAnimation->backingAnimation().timingFunction());
 
     return animation;
 }
@@ -2121,8 +2119,8 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
         // This will be a linear timing function unless we're dealing with a CSS Animation which might have
         // the default timing function for its keyframes defined on its backing Animation object.
         if (!i) {
-            if (is<CSSAnimation>(animation()))
-                return progressUntilNextStepInInterval(0, intervalEndProgress, downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction());
+            if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+                return progressUntilNextStepInInterval(0, intervalEndProgress, cssAnimation->backingAnimation().timingFunction());
             return std::nullopt;
         }
 
@@ -2133,8 +2131,8 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
     // This will be a linear timing function unless we're dealing with a CSS Animation which might have
     // the default timing function for its keyframes defined on its backing Animation object.
     auto& lastExplicitKeyframe = m_blendingKeyframes[m_blendingKeyframes.size() - 1];
-    if (is<CSSAnimation>(animation()))
-        return progressUntilNextStepInInterval(lastExplicitKeyframe.key(), 1, downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction());
+    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+        return progressUntilNextStepInInterval(lastExplicitKeyframe.key(), 1, cssAnimation->backingAnimation().timingFunction());
 
     // In any other case, we are not dealing with an interval with a steps() timing function.
     return std::nullopt;
@@ -2187,16 +2185,16 @@ void KeyframeEffect::setComposite(CompositeOperation compositeOperation)
 
 CompositeOperation KeyframeEffect::bindingsComposite() const
 {
-    if (is<DeclarativeAnimation>(animation()))
-        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
+    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation()))
+        declarativeAnimation->flushPendingStyleChanges();
     return composite();
 }
 
 void KeyframeEffect::setBindingsComposite(CompositeOperation compositeOperation)
 {
     setComposite(compositeOperation);
-    if (is<CSSAnimation>(animation()))
-        downcast<CSSAnimation>(*animation()).effectCompositeOperationWasSetUsingBindings();
+    if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
+        cssAnimation->effectCompositeOperationWasSetUsingBindings();
 }
 
 void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
