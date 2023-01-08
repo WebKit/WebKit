@@ -405,9 +405,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "is not an instance of WebAssembly.Memory")));
 
             PageCount declaredInitial = moduleInformation.memory.initial();
-            PageCount importedInitial = memory->memory().initial();
-            if (importedInitial < declaredInitial)
-                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided an 'initial' that is smaller than the module's declared 'initial' import memory size")));
+            size_t importedSize = memory->memory().size();
+            if (importedSize < declaredInitial.bytes())
+                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import", "provided a 'size' that is smaller than the module's declared 'initial' import memory size")));
 
             if (PageCount declaredMaximum = moduleInformation.memory.maximum()) {
                 PageCount importedMaximum = memory->memory().maximum();

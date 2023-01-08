@@ -323,7 +323,7 @@ test(function() {
     assert.throws(() => new WebAssembly.Instance(module, {imp: { } }), WebAssembly.LinkError, `Memory import imp:memory is not an instance of WebAssembly.Memory`);
     assert.throws(() => new WebAssembly.Instance(module, {imp: { memory: 20 } }), WebAssembly.LinkError, `Memory import imp:memory is not an instance of WebAssembly.Memory`);
     assert.throws(() => new WebAssembly.Instance(module, {imp: { memory: [] } }), WebAssembly.LinkError, `Memory import imp:memory is not an instance of WebAssembly.Memory`);
-    assert.throws(() => new WebAssembly.Instance(module, {imp: { memory: new WebAssembly.Memory({initial: 19, maximum: 25}) } }), WebAssembly.LinkError, `Memory import imp:memory provided an 'initial' that is smaller than the module's declared 'initial' import memory size`);
+    assert.throws(() => new WebAssembly.Instance(module, {imp: { memory: new WebAssembly.Memory({initial: 19, maximum: 25}) } }), WebAssembly.LinkError, `Memory import imp:memory provided a 'size' that is smaller than the module's declared 'initial' import memory size`);
     assert.throws(() => new WebAssembly.Instance(module, {imp: { memory: new WebAssembly.Memory({initial: 20}) } }), WebAssembly.LinkError, `Memory import imp:memory did not have a 'maximum' but the module requires that it does`);
     assert.throws(() => new WebAssembly.Instance(module, {imp: { memory: new WebAssembly.Memory({initial: 20, maximum: 26}) } }), WebAssembly.LinkError, `Memory import imp:memory provided a 'maximum' that is larger than the module's declared 'maximum' import memory size`);
 });
@@ -355,8 +355,8 @@ test(function() {
         assert.throws(() => new WebAssembly.Instance(module, instanceObj), WebAssembly.LinkError, expectedError);
     }
 
-    testMemImportError({imp: { memory: new WebAssembly.Memory({initial: 19, maximum: 25}) } }, `Memory import imp:memory provided an 'initial' that is smaller than the module's declared 'initial' import memory size`);
-    testMemImportError({imp: { memory: new WebAssembly.Memory({initial: 19}) } }, `Memory import imp:memory provided an 'initial' that is smaller than the module's declared 'initial' import memory size`);
+    testMemImportError({imp: { memory: new WebAssembly.Memory({initial: 19, maximum: 25}) } }, `Memory import imp:memory provided a 'size' that is smaller than the module's declared 'initial' import memory size`);
+    testMemImportError({imp: { memory: new WebAssembly.Memory({initial: 19}) } }, `Memory import imp:memory provided a 'size' that is smaller than the module's declared 'initial' import memory size`);
 
     // This should not throw.
     new WebAssembly.Instance(module, {imp: {memory: new WebAssembly.Memory({initial:20})}});
