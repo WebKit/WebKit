@@ -53,6 +53,10 @@
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION) && USE(GLIB)
+#include "MediaSessionManagerGLib.h"
+#endif
+
 namespace WebCore {
 
 static void invalidateAfterGenericFamilyChange(Page* page)
@@ -435,6 +439,19 @@ void SettingsBase::layerBasedSVGEngineEnabledChanged()
     }
 }
 
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+void SettingsBase::mediaSessionEnabledChanged()
+{
+#if USE(GLIB)
+    bool enabled = false;
+    if (m_page)
+        enabled = m_page->settings().mediaSessionEnabled();
+    auto& sessionManager = reinterpret_cast<MediaSessionManagerGLib&>(PlatformMediaSessionManager::sharedManager());
+    sessionManager.setDBusNotificationsEnabled(enabled);
+#endif
+}
 #endif
 
 void SettingsBase::userStyleSheetLocationChanged()

@@ -3723,6 +3723,7 @@ MediaSessionCoordinatorEnabled:
 MediaSessionEnabled:
   type: bool
   status: stable
+  webcoreOnChange: mediaSessionEnabledChanged
   humanReadableName: "Media Session API"
   humanReadableDescription: "Media Session API"
   condition: ENABLE(MEDIA_SESSION)

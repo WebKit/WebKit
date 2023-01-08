@@ -176,6 +176,7 @@ enum {
     PROP_ENABLE_MEDIA,
     PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT,
     PROP_ENABLE_WEBRTC,
+    PROP_ENABLE_MEDIA_SESSION,
     N_PROPERTIES,
 };
 
@@ -197,13 +198,6 @@ static void webKitSettingsConstructed(GObject* object)
 #if ENABLE(MEDIA_STREAM)
     prefs->setMediaDevicesEnabled(true);
     prefs->setMediaStreamEnabled(true);
-#endif
-
-    // FIXME: Expose API for this when this feature is officially non-experimental.
-#if ENABLE(MEDIA_SESSION)
-    prefs->setMediaSessionEnabled(true);
-    prefs->setMediaSessionCoordinatorEnabled(true);
-    prefs->setMediaSessionPlaylistEnabled(true);
 #endif
 }
 
@@ -407,6 +401,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_WEBRTC:
         webkit_settings_set_enable_webrtc(settings, g_value_get_boolean(value));
         break;
+    case PROP_ENABLE_MEDIA_SESSION:
+        webkit_settings_set_enable_media_session(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -609,6 +606,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_WEBRTC:
         g_value_set_boolean(value, webkit_settings_get_enable_webrtc(settings));
+        break;
+    case PROP_ENABLE_MEDIA_SESSION:
+        g_value_set_boolean(value, webkit_settings_get_enable_media_session(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1594,6 +1594,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         "enable-webrtc",
         _("Enable WebRTC"),
         _("Whether WebRTC content should be handled"),
+        FALSE,
+        readWriteConstructParamFlags);
+
+    /**
+     * WebKitSettings:enable-media-session:
+     *
+     * Enable MediaSession support for loaded pages.
+     *
+     * Enabling this setting makes the WebView expose its media elements (&lt;audio&gt; and
+     * &lt;video&gt;) as MPRIS MediaPlayers over DBus.
+     *
+     * See also https://www.w3.org/TR/mediasession/
+     *
+     * Since: 2.40
+     */
+    sObjProperties[PROP_ENABLE_MEDIA_SESSION] = g_param_spec_boolean(
+        "enable-media-session",
+        _("Enable MediaSession"),
+        _("Whether MediaSession should be handled"),
         FALSE,
         readWriteConstructParamFlags);
 
@@ -3963,4 +3982,47 @@ void webkit_settings_set_media_content_types_requiring_hardware_support(WebKitSe
     priv->preferences->setMediaContentTypesRequiringHardwareSupport(mediaContentTypesRequiringHardwareSupportString);
     priv->mediaContentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupportString.utf8();
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT]);
+}
+
+/**
+ * webkit_settings_get_enable_media_session:
+ * @settings: a #WebKitSettings
+ *
+ * Get the [property@Settings:enable-media-session] property.
+ *
+ * Returns: %TRUE If MediaSession support is enabled or %FALSE otherwise.
+ *
+ * Since: 2.40
+ */
+gboolean webkit_settings_get_enable_media_session(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->mediaSessionEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_media_session:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the [property@Settings:enable-media-session] property.
+ *
+ * Since: 2.40
+ */
+void webkit_settings_set_enable_media_session(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->mediaSessionEnabled();
+    if (currentValue == enabled)
+        return;
+
+#if ENABLE(MEDIA_SESSION)
+    priv->preferences->setMediaSessionEnabled(enabled);
+    priv->preferences->setMediaSessionCoordinatorEnabled(enabled);
+    priv->preferences->setMediaSessionPlaylistEnabled(enabled);
+#endif
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_MEDIA_SESSION]);
 }

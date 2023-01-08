@@ -166,6 +166,9 @@ protected:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     void layerBasedSVGEngineEnabledChanged();
 #endif
+#if ENABLE(MEDIA_SESSION)
+    void mediaSessionEnabledChanged();
+#endif
 
     Page* m_page;
 

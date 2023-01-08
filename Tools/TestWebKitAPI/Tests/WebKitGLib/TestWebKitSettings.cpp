@@ -281,6 +281,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_webrtc(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_webrtc(settings));
 
+    // By default, MediaSession is disabled
+    g_assert_false(webkit_settings_get_enable_media_session(settings));
+    webkit_settings_set_enable_media_session(settings, TRUE);
+    g_assert_true(webkit_settings_get_enable_media_session(settings));
+
     // By default, SpatialNavigation is disabled
     g_assert_false(webkit_settings_get_enable_spatial_navigation(settings));
     webkit_settings_set_enable_spatial_navigation(settings, TRUE);
