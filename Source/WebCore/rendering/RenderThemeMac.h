@@ -103,6 +103,7 @@ private:
     bool canPaint(const PaintInfo&, const Settings&, ControlPartType) const final;
     bool canCreateControlPartForRenderer(const RenderObject&) const final;
     bool canCreateControlPartForBorderOnly(const RenderObject&) const final;
+    bool canCreateControlPartForDecorations(const RenderObject&) const final;
 
     bool useFormSemanticContext() const final;
     bool supportsLargeFormControls() const final;
@@ -113,7 +114,6 @@ private:
 
     void adjustMenuListStyle(RenderStyle&, const Element*) const final;
 
-    void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
 
     void adjustProgressBarStyle(RenderStyle&, const Element*) const final;
@@ -176,7 +176,6 @@ private:
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
     const int* popupButtonPadding(NSControlSize, bool isRTL) const;
-    void paintMenuListButtonGradients(const RenderObject&, const PaintInfo&, const IntRect&);
     const IntSize* menuListSizes() const;
 
     const IntSize* searchFieldSizes() const;

@@ -71,6 +71,7 @@ public:
 
     virtual bool canCreateControlPartForRenderer(const RenderObject&) const { return false; }
     virtual bool canCreateControlPartForBorderOnly(const RenderObject&) const { return false; }
+    virtual bool canCreateControlPartForDecorations(const RenderObject&) const { return false; }
     RefPtr<ControlPart> createControlPart(const RenderObject&) const;
 
     OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;

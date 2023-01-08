@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@ class ButtonPart;
 class ColorWellPart;
 class InnerSpinButtonPart;
 class MeterPart;
+class MenuListButtonPart;
 class MenuListPart;
 class PlatformControl;
 class ProgressBarPart;
@@ -51,11 +52,12 @@ public:
     static ControlFactory& sharedControlFactory();
 
     virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) = 0;
-    virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) = 0;
 #endif
+    virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformMenuListButton(MenuListButtonPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) = 0;

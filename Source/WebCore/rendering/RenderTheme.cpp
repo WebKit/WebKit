@@ -47,6 +47,7 @@
 #include "HTMLTextAreaElement.h"
 #include "InnerSpinButtonPart.h"
 #include "LocalizedStrings.h"
+#include "MenuListButtonPart.h"
 #include "MenuListPart.h"
 #include "MeterPart.h"
 #include "Page.h"
@@ -568,7 +569,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         return MenuListPart::create();
 
     case ControlPartType::MenulistButton:
-        break;
+        return MenuListButtonPart::create();
 
     case ControlPartType::Meter:
         return createMeterPartForRenderer(renderer);
@@ -704,7 +705,8 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) c
         renderer->style().computedFontPixelSize(),
         renderer->style().effectiveZoom(),
         renderer->style().effectiveAccentColor(),
-        renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor)
+        renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor),
+        renderer->style().borderWidth()
     };
 }
 

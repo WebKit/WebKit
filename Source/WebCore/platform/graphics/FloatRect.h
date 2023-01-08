@@ -114,6 +114,11 @@ public:
     }
     void expand(float dw, float dh) { m_size.expand(dw, dh); }
     void contract(const FloatSize& size) { m_size -= size; }
+    void contract(const FloatBoxExtent& box)
+    {
+        m_location.move(box.left(), box.top());
+        m_size.expand(-(box.left() + box.right()), -(box.top() + box.bottom()));
+    }
     void contract(float dw, float dh) { m_size.expand(-dw, -dh); }
 
     void shiftXEdgeTo(float edge)
