@@ -1022,7 +1022,8 @@ std::tuple<InlineRect, bool> LineBuilder::lineBoxForCandidateInlineContent(const
 
 LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatBox)
 {
-    auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && floatBox.style().initialLetterDrop();
+    auto drop = floatBox.style().initialLetterDrop();
+    auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && drop;
     if (!isInitialLetter)
         return { };
     // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
@@ -1033,14 +1034,27 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     if (!initialLetterCapHeightOffset && !intrusiveBottom)
         return { };
 
+    auto clearGapBeforeFirstLine = InlineLayoutUnit { };
     if (intrusiveBottom) {
         // When intrusive initial letter is cleared, we introduce a clear gap. This is (with proper floats) normally computed before starting
         // line layout but intrusive initial letters are cleared only when another initial letter shows up. Regular inline content
         // does not need clearance.
         m_lineLogicalRect.setLeft(m_lineInitialLogicalLeft);
-        m_lineLogicalRect.moveVertically(*intrusiveBottom);
-        formattingState()->setClearGapBeforeFirstLine(*intrusiveBottom);
+        clearGapBeforeFirstLine = *intrusiveBottom;
     }
+
+    auto letterHeight = floatBox.style().initialLetterHeight();
+    if (drop < letterHeight) {
+        // Sunken/raised initial letter pushes contents of the first line down.
+        auto numberOfSunkenLines = letterHeight - drop;
+        auto verticalGapForInlineContent = numberOfSunkenLines * rootStyle().computedLineHeight();
+        clearGapBeforeFirstLine += verticalGapForInlineContent;
+        // And we pull the initial letter up.
+        initialLetterCapHeightOffset = -verticalGapForInlineContent + initialLetterCapHeightOffset.value_or(0_lu);
+    }
+
+    m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
+    formattingState()->setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
     return initialLetterCapHeightOffset.value_or(0_lu);
 }
 
