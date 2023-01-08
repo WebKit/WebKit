@@ -527,18 +527,18 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		1C4FAEA028FC83DC00FFE212 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1C4FAE8F28FC83DC00FFE212;
-			remoteInfo = libavif;
-		};
-		1C9CD59828FC8D37005A2EAF /* PBXContainerItemProxy */ = {
+		1C122B19296A4B6900814381 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 1C4FAE8E28FC83DC00FFE212;
+			remoteInfo = libavif;
+		};
+		1C2D0DF7296A44CC00BE33A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE8F28FC83DC00FFE212;
 			remoteInfo = libavif;
 		};
 /* End PBXContainerItemProxy section */
@@ -1250,7 +1250,7 @@
 		1C09D0341E31C32800725F18 = {
 			isa = PBXGroup;
 			children = (
-				1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */,
+				1C2D0DF2296A448200BE33A3 /* ThirdParty */,
 				1C09D05C1E31C73300725F18 /* Configurations */,
 				DDE99321278D103900F60D26 /* Frameworks */,
 				1C09D03F1E31C32800725F18 /* pal */,
@@ -1386,6 +1386,22 @@
 			path = Impl;
 			sourceTree = "<group>";
 		};
+		1C2D0DF2296A448200BE33A3 /* ThirdParty */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */,
+			);
+			path = ThirdParty;
+			sourceTree = "<group>";
+		};
+		1C2D0DF4296A44CC00BE33A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C2D0DF8296A44CC00BE33A3 /* libavif.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		1C4876DE1F8D831300CCEEBD /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -1423,14 +1439,6 @@
 				F46B8C4C26740918007A6554 /* VisionKitCoreSoftLink.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		1C4FAE9728FC83DC00FFE212 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1C4FAEA128FC83DC00FFE212 /* libavif.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		1C5C57E527573105003B540D /* ios */ = {
@@ -2129,7 +2137,7 @@
 				DD20DD0627BC7F290093D175 /* PBXBuildRule */,
 			);
 			dependencies = (
-				1C9CD59928FC8D37005A2EAF /* PBXTargetDependency */,
+				1C122B1A296A4B6900814381 /* PBXTargetDependency */,
 			);
 			name = PAL;
 			productName = PAL;
@@ -2169,7 +2177,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 1C4FAE9728FC83DC00FFE212 /* Products */;
+					ProductGroup = 1C2D0DF4296A44CC00BE33A3 /* Products */;
 					ProjectRef = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
 				},
 			);
@@ -2181,11 +2189,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1C4FAEA128FC83DC00FFE212 /* libavif.a */ = {
+		1C2D0DF8296A44CC00BE33A3 /* libavif.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libavif.a;
-			remoteRef = 1C4FAEA028FC83DC00FFE212 /* PBXContainerItemProxy */;
+			remoteRef = 1C2D0DF7296A44CC00BE33A3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2319,10 +2327,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1C9CD59928FC8D37005A2EAF /* PBXTargetDependency */ = {
+		1C122B1A296A4B6900814381 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libavif;
-			targetProxy = 1C9CD59828FC8D37005A2EAF /* PBXContainerItemProxy */;
+			targetProxy = 1C122B19296A4B6900814381 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
