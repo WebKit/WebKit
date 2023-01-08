@@ -346,7 +346,7 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    initialize(initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
+    initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
     auto committedRange = close(lineInput.needsLayoutRange, lineInput.ellipsisPolicy, committedContent);
@@ -362,7 +362,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
         , m_lineIsConstrainedByFloat
-        , m_lineInitialLogicalLeft
+        , m_lineInitialLogicalLeft + m_initialIntrusiveFloatsWidth
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , contentLogicalLeft
@@ -383,8 +383,9 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     ASSERT(isInIntrinsicWidthMode());
     auto lineLogicalWidth = *intrinsicWidthMode() == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    auto lineConstraints = initialConstraintsForLine({ 0, 0, lineLogicalWidth, 0 }, previousLineEndsWithLineBreak);
-    initialize(lineConstraints, needsLayoutRange, previousLine);
+    auto initialRect = InlineRect { 0, 0, lineLogicalWidth, 0 };
+    auto lineConstraints = initialConstraintsForLine(initialRect, previousLineEndsWithLineBreak);
+    initialize(initialRect, lineConstraints, needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, LineInput::LineEndingEllipsisPolicy::No, committedContent);
@@ -395,7 +396,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     return { committedRange, lineWidth, overflow, WTFMove(m_placedFloats) };
 }
 
-void LineBuilder::initialize(const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
+void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
 {
     ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->overflowingFloats.isEmpty()));
 
@@ -442,9 +443,11 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, const Inlin
     createLineSpanningInlineBoxes();
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLine());
 
+    m_lineInitialLogicalLeft = initialLineLogicalRect.left();
     m_lineMarginStart = lineConstraints.marginStart;
     m_lineLogicalRect = lineConstraints.logicalRect;
-    m_lineInitialLogicalLeft = m_lineLogicalRect.left();
+    // This is by how much intrusive floats (coming from parent/sibling FCs) initially offset the line.
+    m_initialIntrusiveFloatsWidth = m_lineLogicalRect.left() - initialLineLogicalRect.left();
     m_lineLogicalRect.moveHorizontally(m_lineMarginStart);
     // While negative margins normally don't expand the available space, preferred width computation gets confused by negative text-indent
     // (shrink the space needed for the content) which we have to balance it here.

@@ -83,7 +83,7 @@ public:
         FloatList placedFloats;
         FloatList overflowingFloats;
         bool hasIntrusiveFloat { false };
-        InlineLayoutUnit lineInitialLogicalLeft { 0.f };
+        InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
         InlineLayoutUnit lineLogicalWidth { 0.f };
         InlineLayoutUnit contentLogicalLeft { 0.f };
@@ -148,7 +148,7 @@ private:
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
-    void initialize(const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
+    void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
     struct CommittedContent {
         size_t itemCount { 0 };
         size_t partialTrailingContentLength { 0 };
@@ -189,6 +189,7 @@ private:
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_lineInitialLogicalLeft { 0.f };
+    InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     const InlineItems& m_inlineItems;
     FloatList m_placedFloats;
     FloatList m_overflowingFloats;
