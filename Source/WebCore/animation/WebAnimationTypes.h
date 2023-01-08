@@ -62,12 +62,12 @@ enum class UseAcceleratedAction : uint8_t { Yes, No };
 
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
-using AnimationCollection = ListHashSet<RefPtr<WebAnimation>>;
+using AnimationCollection = ListHashSet<Ref<WebAnimation>>;
 using AnimationEvents = Vector<Ref<AnimationEventBase>>;
-using CSSAnimationCollection = ListHashSet<RefPtr<CSSAnimation>>;
+using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;
 
 using AnimatableProperty = std::variant<CSSPropertyID, AtomString>;
-using AnimatablePropertyToTransitionMap = HashMap<AnimatableProperty, RefPtr<CSSTransition>>;
+using AnimatablePropertyToTransitionMap = HashMap<AnimatableProperty, Ref<CSSTransition>>;
 
 } // namespace WebCore
 

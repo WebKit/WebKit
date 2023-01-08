@@ -323,15 +323,14 @@ void DocumentTimeline::removeReplacedAnimations()
     }
 }
 
-void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
+void DocumentTimeline::transitionDidComplete(Ref<CSSTransition>&& transition)
 {
-    ASSERT(transition);
-    removeAnimation(*transition);
+    removeAnimation(transition.get());
     if (is<KeyframeEffect>(transition->effect())) {
         if (auto styleable = downcast<KeyframeEffect>(transition->effect())->targetStyleable()) {
             auto property = transition->property();
             if (styleable->hasRunningTransitionForProperty(property))
-                styleable->ensureCompletedTransitionsByProperty().set(property, transition);
+                styleable->ensureCompletedTransitionsByProperty().set(property, WTFMove(transition));
         }
     }
 }

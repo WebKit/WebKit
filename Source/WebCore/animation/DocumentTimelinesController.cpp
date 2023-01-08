@@ -147,12 +147,11 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
             animation->tick();
 
             if (!animation->isRelevant() && !animation->needsTick())
-                animationsToRemove.append(*animation);
+                animationsToRemove.append(animation);
 
-            if (is<CSSTransition>(*animation)) {
-                auto& transition = downcast<CSSTransition>(*animation);
-                if (!transition.needsTick() && transition.playState() == WebAnimation::PlayState::Finished && transition.owningElement())
-                    completedTransitions.append(transition);
+            if (auto* transition = dynamicDowncast<CSSTransition>(animation.get())) {
+                if (!transition->needsTick() && transition->playState() == WebAnimation::PlayState::Finished && transition->owningElement())
+                    completedTransitions.append(*transition);
             }
         }
     }
@@ -213,8 +212,8 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     // This needs to happen after dealing with the list of animations to remove as the animation may have been
     // removed from the list of completed transitions otherwise.
     for (auto& completedTransition : completedTransitions) {
-        if (auto timeline = completedTransition->timeline())
-            downcast<DocumentTimeline>(*timeline).transitionDidComplete(WTFMove(completedTransition));
+        if (auto documentTimeline = dynamicDowncast<DocumentTimeline>(completedTransition->timeline()))
+            documentTimeline->transitionDidComplete(WTFMove(completedTransition));
     }
 
     for (auto& timeline : timelinesToUpdate)

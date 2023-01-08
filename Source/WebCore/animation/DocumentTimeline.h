@@ -58,7 +58,7 @@ public:
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;
-    void transitionDidComplete(RefPtr<CSSTransition>);
+    void transitionDidComplete(Ref<CSSTransition>&&);
 
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
     void detachFromDocument();
