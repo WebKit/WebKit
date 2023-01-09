@@ -109,30 +109,32 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
         return { };
 
     // FIXME (bug 227459): This logic does not account for writing-mode.
-    auto granularity = [&] {
-        switch (key.value()) {
-        case KeyboardScrollingKey::LeftArrow:
-        case KeyboardScrollingKey::RightArrow:
-            return event.altKey() ? ScrollGranularity::Page : ScrollGranularity::Line;
-        case KeyboardScrollingKey::UpArrow:
-        case KeyboardScrollingKey::DownArrow:
-            if (event.metaKey())
-                return ScrollGranularity::Document;
-            if (event.altKey())
-                return ScrollGranularity::Page;
-            return ScrollGranularity::Line;
-        case KeyboardScrollingKey::Space:
-        case KeyboardScrollingKey::PageUp:
-        case KeyboardScrollingKey::PageDown:
+    switch (key.value()) {
+    case KeyboardScrollingKey::LeftArrow:
+    case KeyboardScrollingKey::RightArrow:
+        if (event.shiftKey() || event.metaKey())
+            return { };
+        if (event.altKey())
             return ScrollGranularity::Page;
-        case KeyboardScrollingKey::Home:
-        case KeyboardScrollingKey::End:
+        return ScrollGranularity::Line;
+    case KeyboardScrollingKey::UpArrow:
+    case KeyboardScrollingKey::DownArrow:
+        if (event.metaKey())
             return ScrollGranularity::Document;
-        };
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
+        if (event.altKey())
+            return ScrollGranularity::Page;
+        return ScrollGranularity::Line;
+    case KeyboardScrollingKey::Space:
+    case KeyboardScrollingKey::PageUp:
+    case KeyboardScrollingKey::PageDown:
+        return ScrollGranularity::Page;
+    case KeyboardScrollingKey::Home:
+    case KeyboardScrollingKey::End:
+        return ScrollGranularity::Document;
+    };
 
-    return granularity;
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
 }
 
 float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, ScrollGranularity granularity) const
