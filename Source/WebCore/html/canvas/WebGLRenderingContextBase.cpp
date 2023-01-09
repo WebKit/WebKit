@@ -3722,15 +3722,19 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             return { };
         }
 
-        // FIXME: Implement remote video frame optimization.
-        auto internalFrame = frame->internalFrame();
-        IntSize frameSize { static_cast<int>(frame->displayWidth()), static_cast<int>(frame->displayHeight()) };
-        auto imageBuffer = m_generatedImageCache.imageBuffer(frameSize, DestinationColorSpace::SRGB());
-        if (!imageBuffer)
+        auto texture = validateTexImageBinding(functionName, functionID, target);
+        if (!texture)
             return { };
 
-        imageBuffer->context().paintVideoFrame(*internalFrame, { { }, frameSize }, true);
-        auto image = imageBuffer->copyImage(DontCopyBackingStore);
+        auto internalFrame = frame->internalFrame();
+        bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, static_cast<int>(internalFrame->presentationSize().width()), static_cast<int>(internalFrame->presentationSize().height()));
+        if (functionID == TexImageFunctionID::TexImage2D && texture && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
+            if (m_context->copyTextureFromVideoFrame(*internalFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
+                return { };
+        }
+
+        // Fallback pure SW path.
+        auto image = m_context->videoFrameToImage(*internalFrame);
         if (!image)
             return { };
 

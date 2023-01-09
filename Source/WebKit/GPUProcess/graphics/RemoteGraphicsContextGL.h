@@ -33,6 +33,7 @@
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
+#include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/NotImplemented.h>
@@ -127,8 +128,10 @@ protected:
 #if ENABLE(MEDIA_STREAM)
     void paintCompositedResultsToVideoFrame(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif
-#if ENABLE(VIDEO)
-    void copyTextureFromVideoFrame(RemoteVideoFrameReadReference, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    void copyTextureFromVideoFrame(SharedVideoFrame&&, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
+    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(const SharedMemory::Handle&);
 #endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
     void readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&&);
@@ -163,6 +166,9 @@ protected:
     Ref<RemoteRenderingBackend> m_renderingBackend;
 #if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
+#if PLATFORM(COCOA)
+    SharedVideoFrameReader m_sharedVideoFrameReader;
+#endif
 #endif
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     WebCore::ProcessIdentifier m_webProcessIdentifier;

@@ -31,6 +31,8 @@
 #include "ImageOrientation.h"
 #include <memory>
 
+typedef struct __CVBuffer* CVPixelBufferRef;
+
 namespace WebCore {
 class GraphicsContextGLCocoa;
 
@@ -49,6 +51,7 @@ public:
 private:
     GraphicsContextGLCVCocoa(GraphicsContextGLCocoa&);
 
+    RetainPtr<CVPixelBufferRef> convertPixelBuffer(CVPixelBufferRef);
 
     GraphicsContextGLCocoa& m_owner;
     GCGLDisplay m_display { nullptr };

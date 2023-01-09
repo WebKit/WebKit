@@ -79,6 +79,9 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_renderingBackend(renderingBackend)
 #if ENABLE(VIDEO)
     , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
+#if PLATFORM(COCOA)
+    , m_sharedVideoFrameReader(m_videoFrameObjectHeap.ptr(), gpuConnectionToWebProcess.webProcessIdentity())
+#endif
 #endif
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
     , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
@@ -278,15 +281,6 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(RefPtr<WebCore::Pixe
     });
     completionHandler();
 }
-
-#if ENABLE(VIDEO) && !USE(AVFOUNDATION)
-void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference read, uint32_t, uint32_t, int32_t, uint32_t, uint32_t, uint32_t, bool, bool , CompletionHandler<void(bool)>&& completionHandler)
-{
-    notImplemented();
-    m_videoFrameObjectHeap->get(WTFMove(read));
-    completionHandler(false);
-}
-#endif
 
 void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
 {

@@ -31,10 +31,12 @@
 #if ENABLE(WEBGL)
 
 #include "FormatConverter.h"
+#include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "Image.h"
 #include "ImageObserver.h"
 #include "PixelBuffer.h"
+#include "VideoFrame.h"
 
 namespace WebCore {
 
@@ -652,6 +654,19 @@ void GraphicsContextGL::dispatchContextChangedNotification()
     if (m_client)
         m_client->dispatchContextChangedNotification();
 }
+
+#if ENABLE(VIDEO)
+RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
+{
+    IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
+    auto imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return { };
+
+    imageBuffer->context().paintVideoFrame(frame, { { }, size }, true);
+    return imageBuffer->copyImage(DontCopyBackingStore);
+}
+#endif
 
 } // namespace WebCore
 
