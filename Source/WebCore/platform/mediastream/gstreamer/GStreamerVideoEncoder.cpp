@@ -305,22 +305,48 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
     webrtcVideoEncoderSetBitrate(self, priv->bitrate);
 }
 
-bool webrtcVideoEncoderSetFormat(WebKitWebrtcVideoEncoder* self, GRefPtr<GstCaps>&& caps)
+EncoderId webrtcVideoEncoderFindForFormat(WebKitWebrtcVideoEncoder* self, const GRefPtr<GstCaps>& caps)
 {
     if (!caps)
-        return false;
+        return None;
 
+    Vector<std::pair<EncoderId, const EncoderDefinition*>> candidates;
     GST_DEBUG_OBJECT(self, "Looking for an encoder matching caps %" GST_PTR_FORMAT, caps.get());
     for (const auto& [id, encoder] : Encoders::singleton()) {
         if (gst_element_factory_can_src_any_caps(encoder.factory.get(), caps.get())) {
-            GST_DEBUG_OBJECT(self, "Setting encoder to %s", encoder.name);
-            webrtcVideoEncoderSetEncoder(self, id, WTFMove(caps));
-            return true;
+            GST_DEBUG_OBJECT(self, "Compatible encoder found: %s", encoder.name);
+            candidates.append(std::make_pair(id, &encoder));
         }
     }
 
-    GST_ERROR_OBJECT(self, "No encoder found for format %" GST_PTR_FORMAT, caps.get());
-    return false;
+    if (candidates.isEmpty())
+        return None;
+
+    std::sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b) {
+        auto rankA = gst_plugin_feature_get_rank(GST_PLUGIN_FEATURE_CAST(a.second->factory.get()));
+        auto rankB = gst_plugin_feature_get_rank(GST_PLUGIN_FEATURE_CAST(b.second->factory.get()));
+        return rankA > rankB;
+    });
+
+    GST_DEBUG_OBJECT(self, "The highest ranked encoder is %s", candidates[0].second->name);
+    return candidates[0].first;
+}
+
+bool webrtcVideoEncoderSupportsFormat(WebKitWebrtcVideoEncoder* self, const GRefPtr<GstCaps>& caps)
+{
+    return webrtcVideoEncoderFindForFormat(self, caps) != None;
+}
+
+bool webrtcVideoEncoderSetFormat(WebKitWebrtcVideoEncoder* self, GRefPtr<GstCaps>&& caps)
+{
+    auto encoderId = webrtcVideoEncoderFindForFormat(self, caps);
+    if (encoderId == None) {
+        GST_ERROR_OBJECT(self, "No encoder found for format %" GST_PTR_FORMAT, caps.get());
+        return false;
+    }
+
+    webrtcVideoEncoderSetEncoder(self, encoderId, WTFMove(caps));
+    return true;
 }
 
 static void webrtcVideoEncoderSetProperty(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
