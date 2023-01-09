@@ -132,7 +132,6 @@ const TestFeatures& TestOptions::defaults()
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
             { "WebRTCRemoteVideoFrameEnabled", true },
-            { "WebRTCMDNSICECandidatesEnabled", false },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
