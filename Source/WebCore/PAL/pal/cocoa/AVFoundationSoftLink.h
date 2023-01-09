@@ -350,7 +350,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInTrueD
 #define AVCaptureDeviceTypeBuiltInTrueDepthCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInTrueDepthCamera()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBuiltInLiDARDepthCamera, NSString *)
 #define AVCaptureDeviceTypeBuiltInLiDARDepthCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInLiDARDepthCamera()
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeDeskViewCamera, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeDeskViewCamera, NSString *)
 #define AVCaptureDeviceTypeDeskViewCamera PAL::get_AVFoundation_AVCaptureDeviceTypeDeskViewCamera()
 #endif
 
