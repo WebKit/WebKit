@@ -946,7 +946,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
-        [_scrollView setContentOffset:CGPointMake([_scrollView contentOffset].x, contentOffsetY)];
+        changeContentOffsetBoundedInValidRange(_scrollView.get(), CGPointMake([_scrollView contentOffset].x, contentOffsetY));
     }
 }
 
