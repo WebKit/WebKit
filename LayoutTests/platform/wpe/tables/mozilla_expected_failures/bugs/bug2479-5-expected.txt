@@ -167,7 +167,6 @@ layer at (8,8) size 769x1309
                     RenderText at (0,0) size 45x17
                       text run at (0,0) width 45: "Submit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderBlock {HR} at (21,1089) size 564x2 [border: (1px dotted #FFFF00)]
             RenderBlock {P} at (21,1107) size 564x20 [border: (1px dotted #FFFF00)]
               RenderInline {A} at (0,0) size 161x17 [color=#0000EE]
                 RenderText {#text} at (1,1) size 161x17
@@ -192,3 +191,5 @@ layer at (8,8) size 769x1309
                 text run at (1,1) width 170: "Last updated in June 1999."
 layer at (250,1098) size 167x18
   RenderBlock {DIV} at (3,3) size 167x18
+layer at (176,1154) size 564x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (21,1089) size 564x2 [border: (1px dotted #FFFF00)]

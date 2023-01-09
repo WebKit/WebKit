@@ -23,7 +23,6 @@ layer at (0,0) size 800x600
             text run at (231,0) width 9: "P"
         RenderText {#text} at (240,0) size 209x17
           text run at (240,0) width 209: "ASS\x{201D}, with nothing before the P."
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,104) size 784x18
         RenderInline (generated) at (0,0) size 9x17 [color=#0000FF]
           RenderText at (0,0) size 9x17
@@ -42,3 +41,5 @@ layer at (0,0) size 800x600
             text run at (0,0) width 9: "P"
         RenderText {#text} at (9,0) size 30x17
           text run at (9,0) width 30: "ASS"
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]

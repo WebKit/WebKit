@@ -20,7 +20,6 @@ layer at (0,0) size 785x1005
           text run at (392,60) width 0: " "
           text run at (0,75) width 408: ".five {margin-left: -10px; background-color: aqua;}"
           text run at (408,75) width 0: " "
-      RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "This element has a class of zero."
@@ -118,3 +117,5 @@ layer at (0,0) size 785x1005
                   text run at (146,18) width 386: "In all other respects, however, the element should be normal. "
                   text run at (532,18) width 205: "No styles have been applied to it"
                   text run at (0,36) width 367: "besides the negative left margin and the background color."
+layer at (8,145) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]

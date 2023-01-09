@@ -28,7 +28,6 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 96: "foo foo foo foo"
       RenderBlock (anonymous) at (0,74) size 784x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,100) size 402x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,110) size 784x18
         RenderText {#text} at (0,0) size 365x17
           text run at (0,0) width 365: "fixed table - fixed cells are increased based on fixed width"
@@ -90,3 +89,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 34x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
+layer at (8,108) size 402x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,100) size 402x2 [border: (1px inset #000000)]

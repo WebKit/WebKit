@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
           text run at (0,30) width 248: ".three, I {font-style: normal;}"
           text run at (248,30) width 0: " "
           text run at (0,45) width 0: " "
-      RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x18
         RenderText {#text} at (0,0) size 501x17
           text run at (0,0) width 501: "This paragraph should be in italics, but the last word of the sentence should be "
@@ -60,3 +59,5 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 212x17
                     text run at (0,0) width 212: "This paragraph should be normal."
                 RenderText {#text} at (0,0) size 0x0
+layer at (8,115) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]

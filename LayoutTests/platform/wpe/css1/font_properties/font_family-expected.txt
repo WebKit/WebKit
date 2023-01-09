@@ -26,7 +26,6 @@ layer at (0,0) size 785x1257
           text run at (312,105) width 0: " "
           text run at (0,120) width 304: ".seven {font-family: monospace,serif;}"
           text run at (304,120) width 0: " "
-      RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,200) size 769x185
         RenderBlock {P} at (0,0) size 769x18
           RenderText {#text} at (0,0) size 638x17
@@ -46,14 +45,12 @@ layer at (0,0) size 785x1257
         RenderBlock {P} at (0,170) size 769x15
           RenderText {#text} at (0,0) size 352x15
             text run at (0,0) width 352: "This sentence should be in a monospace font."
-      RenderBlock {HR} at (0,398) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,416) size 769x18
         RenderText {#text} at (0,0) size 396x17
           text run at (0,0) width 396: "This sentence should be in a sans-serif font, not cursive."
       RenderBlock {P} at (0,450) size 769x18
         RenderText {#text} at (0,0) size 550x18
           text run at (0,0) width 550: "This sentence should be in a monospace font, not serif."
-      RenderBlock {HR} at (0,484) size 769x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,499) size 769x197
         RenderBlock {P} at (0,0) size 769x30
           RenderText {#text} at (0,0) size 768x30
@@ -105,14 +102,12 @@ layer at (0,0) size 785x1257
                 RenderBlock {P} at (0,170) size 747x15
                   RenderText {#text} at (0,0) size 352x15
                     text run at (0,0) width 352: "This sentence should be in a monospace font."
-              RenderBlock {HR} at (4,202) size 747x2 [border: (1px inset #000000)]
               RenderBlock {P} at (4,220) size 747x18
                 RenderText {#text} at (0,0) size 396x17
                   text run at (0,0) width 396: "This sentence should be in a sans-serif font, not cursive."
               RenderBlock {P} at (4,254) size 747x18
                 RenderText {#text} at (0,0) size 550x18
                   text run at (0,0) width 550: "This sentence should be in a monospace font, not serif."
-              RenderBlock {HR} at (4,288) size 747x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (4,303) size 747x197
                 RenderBlock {P} at (0,0) size 747x30
                   RenderText {#text} at (0,0) size 728x30
@@ -133,3 +128,13 @@ layer at (0,0) size 785x1257
                 RenderBlock {P} at (0,182) size 747x15
                   RenderText {#text} at (0,0) size 352x15
                     text run at (0,0) width 352: "This sentence should be in a monospace font."
+layer at (8,190) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
+layer at (8,406) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,398) size 769x2 [border: (1px inset #000000)]
+layer at (8,492) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,484) size 769x2 [border: (1px inset #000000)]
+layer at (25,946) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,202) size 747x2 [border: (1px inset #000000)]
+layer at (25,1032) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,288) size 747x2 [border: (1px inset #000000)]

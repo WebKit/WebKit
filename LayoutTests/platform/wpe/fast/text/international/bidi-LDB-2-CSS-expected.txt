@@ -567,7 +567,6 @@ layer at (0,0) size 800x573
               text run at (129,1) width 39: " GHI "
               text run at (168,1) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,428) size 784x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,446) size 784x20
         RenderText {#text} at (0,1) size 71x17
           text run at (0,1) width 71: "(Back to "
@@ -595,3 +594,5 @@ layer at (0,0) size 800x573
       RenderBlock {P} at (0,516) size 784x20
         RenderText {#text} at (0,1) size 383x17
           text run at (0,1) width 383: "Modified and used with the author\x{2019}s permission."
+layer at (8,450) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,428) size 784x3 [border: (1px inset #000000)]

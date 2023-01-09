@@ -3,7 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,18) size 784x18
         RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
@@ -16,7 +15,6 @@ layer at (0,0) size 800x600
             text run at (405,0) width 317: "Resize corner does not track the mouse accurately"
         RenderText {#text} at (722,0) size 4x17
           text run at (722,0) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,187) size 784x374
         RenderText {#text} at (173,111) size 4x17
           text run at (173,111) width 4: " "
@@ -25,6 +23,10 @@ layer at (0,0) size 800x600
           text run at (203,181) width 4: " "
         RenderBR {BR} at (207,181) size 0x17
         RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 173x125 clip at (10,72) size 169x121
   RenderBlock {DIV} at (0,62) size 173x125 [border: (2px solid #0000FF)]
 layer at (8,195) size 173x125 clip at (10,197) size 169x121

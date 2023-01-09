@@ -44,5 +44,7 @@ layer at (0,0) size 800x224
             RenderTableCell {TD} at (685,26) size 12x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 4x17
                 text run at (2,2) width 4: " "
-      RenderBlock {HR} at (0,196) size 182x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,206) size 520x2 [border: (1px inset #000000)]
+layer at (8,204) size 182x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,196) size 182x2 [border: (1px inset #000000)]
+layer at (8,214) size 520x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,206) size 520x2 [border: (1px inset #000000)]

@@ -17,7 +17,6 @@ layer at (0,0) size 800x600
           text run at (0,45) width 224: ".four {text-align: justify;}"
           text run at (224,45) width 0: " "
           text run at (0,60) width 0: " "
-      RenderBlock {HR} at (0,122) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,140) size 784x18
         RenderText {#text} at (0,0) size 234x17
           text run at (0,0) width 234: "This sentence should be left-justified."
@@ -58,3 +57,5 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 762: "This sentence should be fully justified, which means that the right and left margins of this paragraph should line up, no"
                   text run at (0,18) width 762: "matter how long the paragraph becomes; the exception, of course, is the last line, which should be left-justified in"
                   text run at (0,36) width 123: "Western languages."
+layer at (8,130) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,122) size 784x2 [border: (1px inset #000000)]

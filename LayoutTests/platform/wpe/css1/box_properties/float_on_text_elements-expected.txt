@@ -16,7 +16,6 @@ layer at (0,0) size 785x2714
           text run at (0,72) width 36: "other."
       RenderBlock (anonymous) at (0,90) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,116) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (0,126) size 769x72 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 769x71
           text run at (0,0) width 769: "This paragraph is of class \"two\". Since the width has been set to 100%, it should automatically be as wide as its parent"
@@ -28,7 +27,6 @@ layer at (0,0) size 785x2714
         RenderText {#text} at (15,73) size 4x17
           text run at (15,73) width 4: " "
         RenderBR {BR} at (19,73) size 0x17
-      RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (0,235) size 385x108 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 385x107
           text run at (0,0) width 385: "This paragraph is floated to the left and the orange square"
@@ -42,7 +40,6 @@ layer at (0,0) size 785x2714
         RenderText {#text} at (399,1) size 5x17
           text run at (399,1) width 5: " "
         RenderBR {BR} at (403,1) size 1x17
-      RenderBlock {HR} at (0,351) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (384,361) size 385x108 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 385x107
           text run at (0,0) width 385: "This paragraph is floated to the right (using a STYLE"
@@ -56,7 +53,6 @@ layer at (0,0) size 785x2714
         RenderText {#text} at (15,1) size 4x17
           text run at (15,1) width 4: " "
         RenderBR {BR} at (19,1) size 0x17
-      RenderBlock {HR} at (0,477) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,487) size 769x54
         RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 21x36
@@ -68,7 +64,6 @@ layer at (0,0) size 785x2714
           text run at (48,36) width 675: "be vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
       RenderBlock (anonymous) at (0,541) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,567) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (423,587) size 336x196 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
         RenderText {#text} at (8,8) size 320x179
           text run at (8,8) width 320: "This paragraph should be floated to the right, sort"
@@ -100,7 +95,6 @@ layer at (0,0) size 785x2714
           text run at (0,180) width 319: "due to the margin styles set for the floated element."
       RenderBlock (anonymous) at (0,775) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,801) size 769x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,811) size 769x26 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
         RenderBlock (floating) {DIV} at (425,14) size 330x226 [bgcolor=#FFFF00]
           RenderBlock {P} at (5,5) size 320x216
@@ -122,7 +116,6 @@ layer at (0,0) size 785x2714
             text run at (0,0) width 268: "See description in the box on the right side"
       RenderBlock (anonymous) at (0,837) size 769x224
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {HR} at (0,1069) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,1079) size 193x72 [bgcolor=#66CCFF]
         RenderBlock {P} at (0,0) size 193x72
           RenderText {#text} at (0,0) size 193x71
@@ -144,7 +137,6 @@ layer at (0,0) size 785x2714
           text run at (221,18) width 200: "and a yellow box (on the right)."
       RenderBlock (anonymous) at (0,1115) size 769x36
         RenderBR {BR} at (192,0) size 1x17
-      RenderBlock {HR} at (0,1159) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,1169) size 577x126 [bgcolor=#66CCFF]
         RenderBlock (floating) {DIV} at (422,0) size 145x36 [bgcolor=#FFFF00]
           RenderBlock {P} at (0,0) size 145x36
@@ -168,7 +160,6 @@ layer at (0,0) size 785x2714
             text run at (31,108) width 138: "stripe on its right side."
       RenderBlock (anonymous) at (0,1169) size 769x126
         RenderBR {BR} at (576,0) size 1x17
-      RenderBlock {HR} at (0,1303) size 769x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,1313) size 769x1385 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x1383
           RenderTableRow {TR} at (0,0) size 767x26
@@ -194,7 +185,6 @@ layer at (0,0) size 785x2714
                   text run at (0,72) width 69: "each other."
               RenderBlock (anonymous) at (4,94) size 747x18
                 RenderBR {BR} at (0,0) size 0x17
-              RenderBlock {HR} at (4,120) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (4,130) size 747x72 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 747x71
                   text run at (0,0) width 747: "This paragraph is of class \"two\". Since the width has been set to 100%, it should automatically be as wide as its parent"
@@ -206,7 +196,6 @@ layer at (0,0) size 785x2714
                 RenderText {#text} at (15,73) size 4x17
                   text run at (15,73) width 4: " "
                 RenderBR {BR} at (19,73) size 0x17
-              RenderBlock {HR} at (4,229) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (4,239) size 374x108 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x107
                   text run at (0,0) width 374: "This paragraph is floated to the left and the orange square"
@@ -220,7 +209,6 @@ layer at (0,0) size 785x2714
                 RenderText {#text} at (388,1) size 5x17
                   text run at (388,1) width 5: " "
                 RenderBR {BR} at (392,1) size 1x17
-              RenderBlock {HR} at (4,355) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (377,365) size 374x108 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x107
                   text run at (0,0) width 374: "This paragraph is floated to the right (using a STYLE"
@@ -234,7 +222,6 @@ layer at (0,0) size 785x2714
                 RenderText {#text} at (15,1) size 4x17
                   text run at (15,1) width 4: " "
                 RenderBR {BR} at (19,1) size 0x17
-              RenderBlock {HR} at (4,481) size 747x2 [border: (1px inset #000000)]
               RenderBlock {P} at (4,491) size 747x72
                 RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,0) size 21x36
@@ -247,7 +234,6 @@ layer at (0,0) size 785x2714
                   text run at (0,54) width 33: "cap\"."
               RenderBlock (anonymous) at (4,563) size 747x18
                 RenderBR {BR} at (0,0) size 0x17
-              RenderBlock {HR} at (4,589) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (405,609) size 336x196 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
                 RenderText {#text} at (8,8) size 320x179
                   text run at (8,8) width 320: "This paragraph should be floated to the right, sort"
@@ -280,7 +266,6 @@ layer at (0,0) size 785x2714
                   text run at (0,198) width 166: "set for the floated element."
               RenderBlock (anonymous) at (4,815) size 747x18
                 RenderBR {BR} at (0,0) size 0x17
-              RenderBlock {HR} at (4,841) size 747x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (4,851) size 747x26 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
                 RenderBlock (floating) {DIV} at (403,14) size 330x226 [bgcolor=#FFFF00]
                   RenderBlock {P} at (5,5) size 320x216
@@ -302,7 +287,6 @@ layer at (0,0) size 785x2714
                     text run at (0,0) width 268: "See description in the box on the right side"
               RenderBlock (anonymous) at (4,877) size 747x224
                 RenderBR {BR} at (0,0) size 0x17
-              RenderBlock {HR} at (4,1109) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {DIV} at (4,1119) size 187x72 [bgcolor=#66CCFF]
                 RenderBlock {P} at (0,0) size 187x72
                   RenderText {#text} at (0,0) size 187x71
@@ -325,7 +309,6 @@ layer at (0,0) size 785x2714
                   text run at (215,18) width 200: "and a yellow box (on the right)."
               RenderBlock (anonymous) at (4,1155) size 747x36
                 RenderBR {BR} at (186,0) size 1x17
-              RenderBlock {HR} at (4,1199) size 747x2 [border: (1px inset #000000)]
               RenderBlock (floating) {DIV} at (4,1209) size 561x126 [bgcolor=#66CCFF]
                 RenderBlock (floating) {DIV} at (410,0) size 141x36 [bgcolor=#FFFF00]
                   RenderBlock {P} at (0,0) size 141x36
@@ -350,4 +333,39 @@ layer at (0,0) size 785x2714
                     text run at (112,108) width 138: "stripe on its right side."
               RenderBlock (anonymous) at (4,1209) size 747x126
                 RenderBR {BR} at (560,0) size 1x17
-              RenderBlock {HR} at (4,1343) size 747x2 [border: (1px inset #000000)]
+layer at (8,124) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,116) size 769x2 [border: (1px inset #000000)]
+layer at (8,233) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
+layer at (8,359) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,351) size 769x2 [border: (1px inset #000000)]
+layer at (8,485) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,477) size 769x2 [border: (1px inset #000000)]
+layer at (8,575) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,567) size 769x2 [border: (1px inset #000000)]
+layer at (8,809) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,801) size 769x2 [border: (1px inset #000000)]
+layer at (8,1077) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1069) size 769x2 [border: (1px inset #000000)]
+layer at (8,1167) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1159) size 769x2 [border: (1px inset #000000)]
+layer at (8,1311) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,1303) size 769x2 [border: (1px inset #000000)]
+layer at (25,1468) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,120) size 747x2 [border: (1px inset #000000)]
+layer at (25,1577) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,229) size 747x2 [border: (1px inset #000000)]
+layer at (25,1703) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,355) size 747x2 [border: (1px inset #000000)]
+layer at (25,1829) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,481) size 747x2 [border: (1px inset #000000)]
+layer at (25,1937) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,589) size 747x2 [border: (1px inset #000000)]
+layer at (25,2189) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,841) size 747x2 [border: (1px inset #000000)]
+layer at (25,2457) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,1109) size 747x2 [border: (1px inset #000000)]
+layer at (25,2547) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,1199) size 747x2 [border: (1px inset #000000)]
+layer at (25,2691) size 747x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (4,1343) size 747x2 [border: (1px inset #000000)]

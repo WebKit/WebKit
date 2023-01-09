@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 60x17
                 text run at (2,2) width 60: "Kibology"
-      RenderBlock {HR} at (0,96) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,106) size 70x52 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 68x26
           RenderTableRow {TR} at (0,2) size 68x22
@@ -30,7 +29,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 60x17
                 text run at (2,2) width 60: "Kibology"
-      RenderBlock {HR} at (0,166) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,176) size 70x88 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 70x36 [color=#008000] [bgcolor=#FFFFE0]
           RenderText {#text} at (1,0) size 68x35
@@ -61,7 +59,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 60x17
                 text run at (2,2) width 60: "Kibology"
-      RenderBlock {HR} at (0,360) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,370) size 70x52 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 68x26
           RenderTableRow {TR} at (0,2) size 68x22
@@ -73,7 +70,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 60x17
                 text run at (2,2) width 60: "Kibology"
-      RenderBlock {HR} at (0,430) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,440) size 70x88 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,37) size 68x26
           RenderTableRow {TR} at (0,2) size 68x22
@@ -89,3 +85,11 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 60x17
                 text run at (2,2) width 60: "Kibology"
+layer at (8,104) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,96) size 784x2 [border: (1px inset #000000)]
+layer at (8,174) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,166) size 784x2 [border: (1px inset #000000)]
+layer at (8,368) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,360) size 784x2 [border: (1px inset #000000)]
+layer at (8,438) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,430) size 784x2 [border: (1px inset #000000)]

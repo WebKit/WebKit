@@ -23,29 +23,30 @@ layer at (0,0) size 800x391
         RenderInline (generated) at (0,0) size 138x17
           RenderText at (82,0) size 138x17
             text run at (82,0) width 138: "and generated content"
-      RenderBlock {hr} at (0,26) size 784x174 [border: (1px inset #000000)]
-        RenderBlock {p} at (1,17) size 782x36
-          RenderText {#text} at (0,0) size 53x17
-            text run at (0,0) width 53: "Test for "
-          RenderInline {i} at (0,0) size 763x35
-            RenderInline {a} at (0,0) size 348x17 [color=#0000EE]
-              RenderText {#text} at (53,0) size 348x17
-                text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6431"
-            RenderText {#text} at (401,0) size 763x35
-              text run at (401,0) width 4: " "
-              text run at (405,0) width 358: "REGRESSION: style change where :hover changes only"
-              text run at (0,18) width 170: "an :after style doesn't work"
-          RenderText {#text} at (170,18) size 4x17
-            text run at (170,18) width 4: "."
-        RenderBlock {p} at (1,69) size 782x36
-          RenderText {#text} at (0,0) size 741x35
-            text run at (0,0) width 507: "The line at the top of the page should read \x{201C}This is a test and generated content\x{201D} "
-            text run at (507,0) width 234: "or \x{201C}This is a test and generated hover"
-            text run at (0,18) width 228: "content\x{201D} depending on whether it is "
-            text run at (228,18) width 55: "hovered."
-        RenderBlock {p} at (1,121) size 782x36
-          RenderText {#text} at (0,0) size 755x35
-            text run at (0,0) width 755: "To reproduce the bug outside of DumpRenderTree, mouse over the div several times, and the style change won't update"
-            text run at (0,18) width 70: "every time "
-            text run at (70,18) width 85: "like it should."
+layer at (8,209) size 784x174 clip at (9,210) size 782x172
+  RenderBlock {hr} at (0,26) size 784x174 [border: (1px inset #000000)]
+    RenderBlock {p} at (1,17) size 782x36
+      RenderText {#text} at (0,0) size 53x17
+        text run at (0,0) width 53: "Test for "
+      RenderInline {i} at (0,0) size 763x35
+        RenderInline {a} at (0,0) size 348x17 [color=#0000EE]
+          RenderText {#text} at (53,0) size 348x17
+            text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6431"
+        RenderText {#text} at (401,0) size 763x35
+          text run at (401,0) width 4: " "
+          text run at (405,0) width 358: "REGRESSION: style change where :hover changes only"
+          text run at (0,18) width 170: "an :after style doesn't work"
+      RenderText {#text} at (170,18) size 4x17
+        text run at (170,18) width 4: "."
+    RenderBlock {p} at (1,69) size 782x36
+      RenderText {#text} at (0,0) size 741x35
+        text run at (0,0) width 507: "The line at the top of the page should read \x{201C}This is a test and generated content\x{201D} "
+        text run at (507,0) width 234: "or \x{201C}This is a test and generated hover"
+        text run at (0,18) width 228: "content\x{201D} depending on whether it is "
+        text run at (228,18) width 55: "hovered."
+    RenderBlock {p} at (1,121) size 782x36
+      RenderText {#text} at (0,0) size 755x35
+        text run at (0,0) width 755: "To reproduce the bug outside of DumpRenderTree, mouse over the div several times, and the style change won't update"
+        text run at (0,18) width 70: "every time "
+        text run at (70,18) width 85: "like it should."
 caret: position 0 of child 0 {#text} of child 0 {h3} of child 0 {parsererror} of child 1 {html} of document

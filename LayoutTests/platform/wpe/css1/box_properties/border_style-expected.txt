@@ -32,7 +32,6 @@ layer at (0,0) size 785x1301
           text run at (368,150) width 0: " "
           text run at (0,165) width 552: ".eleven {border-style: none; border-color: red; border-width: thick;}"
           text run at (552,165) width 0: " "
-      RenderBlock {HR} at (0,227) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,245) size 769x28 [border: (5px dotted #000000)]
         RenderText {#text} at (5,5) size 472x17
           text run at (5,5) width 472: "This paragraph should have a thick black dotted border all the way around."
@@ -119,3 +118,5 @@ layer at (0,0) size 785x1301
               RenderBlock {P} at (4,480) size 747x18
                 RenderText {#text} at (0,0) size 278x17
                   text run at (0,0) width 278: "This paragraph should have no border at all."
+layer at (8,235) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,227) size 769x2 [border: (1px inset #000000)]

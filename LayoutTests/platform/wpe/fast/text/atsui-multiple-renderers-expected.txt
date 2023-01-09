@@ -12,7 +12,6 @@ layer at (0,0) size 800x600
             text run at (0,18) width 403: "synthetic bold and oblique and correct metrics for fallback fonts"
         RenderText {#text} at (403,18) size 4x17
           text run at (403,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 600x17
           text run at (0,0) width 600: "The two columns should be identical except for the accent over the e and the umlaut over the u."
@@ -85,7 +84,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (119,104) size 119x26 [border: (1px solid #008000)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x22
                 text run at (2,2) width 100: "Lorem ipsum"
-      RenderBlock {HR} at (0,243) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,261) size 784x18
         RenderText {#text} at (0,0) size 277x17
           text run at (0,0) width 277: "The following two lines should be identical."
@@ -99,3 +97,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (1,1) size 308x20
             text run at (1,1) width 308: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,251) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,243) size 784x2 [border: (1px inset #000000)]

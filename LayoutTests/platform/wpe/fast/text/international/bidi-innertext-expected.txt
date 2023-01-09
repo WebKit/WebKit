@@ -8,7 +8,6 @@ layer at (0,0) size 800x600
           text run at (0,1) width 579: "The following tests text iteration over RTL text embedded with LTR text. "
           text run at (579,1) width 179: "TextIterators are used"
           text run at (0,20) width 277: "for find, spellcheck, and .innerText"
-      RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,56) size 784x19
         RenderText {#text} at (0,1) size 169x17
           text run at (0,1) width 169: "Embedded Numbers:"
@@ -84,3 +83,5 @@ layer at (0,0) size 800x600
           text run at (69,1) width 39 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
           text run at (108,1) width 44: "hello)"
       RenderBlock {OL} at (0,376) size 784x0
+layer at (8,54) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]

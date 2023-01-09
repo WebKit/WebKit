@@ -1029,6 +1029,9 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Timeout Pass ]
 
 webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
 
+# Push subscription tests fail without platform-specific PushCrypto implementations.
+http/tests/push-api [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,6 @@ layer at (0,0) size 1012x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock {HR} at (0,0) size 1004x4 [border: (2px solid #000000)]
       RenderBlock (anonymous) at (0,12) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,30) size 642x217
@@ -22,3 +21,5 @@ layer at (0,0) size 800x585
               RenderBR {BR} at (252,158) size 0x17
               RenderText {#text} at (0,172) size 74x17
                 text run at (0,172) width 74: "Click Here!"
+layer at (8,8) size 1004x4 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 1004x4 [border: (2px solid #000000)]
