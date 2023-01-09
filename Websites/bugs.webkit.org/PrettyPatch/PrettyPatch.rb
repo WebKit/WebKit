@@ -644,10 +644,10 @@ EOF
             for i in 0...lines.length
                 case lines[i]
                 when /^--- /
-                    @from = PrettyPatch.revisionOrDescription(lines[i])
+                    @from = PrettyPatch.revisionOrDescription(CGI.escapeHTML(lines[i]))
                 when /^\+\+\+ /
                     @filename = PrettyPatch.filename_from_diff_header(lines[i].chomp) if @filename.nil?
-                    @to = PrettyPatch.revisionOrDescription(lines[i])
+                    @to = PrettyPatch.revisionOrDescription(CGI.escapeHTML(lines[i]))
                     startOfSections = i + 1
 
                     # Check for 'property' patch, then image data, since svn 1.7 creates a fake patch for property changes.
@@ -746,11 +746,11 @@ EOF
         def to_html
             str = "<div class='FileDiff'>\n"
             if @renameFrom
-                str += "<h1>#{@filename}</h1>"
+                str += "<h1>#{CGI.escapeHTML(@filename)}</h1>"
                 str += "was renamed from"
-                str += "<h1>#{PrettyPatch.linkifyFilename(@renameFrom.to_s)}</h1>"
+                str += "<h1>#{PrettyPatch.linkifyFilename(CGI.escapeHTML(@renameFrom.to_s))}</h1>"
             else
-                str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
+                str += "<h1>#{PrettyPatch.linkifyFilename(CGI.escapeHTML(@filename))}</h1>\n"
             end
             if @image then
                 str += self.image_to_html
@@ -774,7 +774,7 @@ EOF
                         str += "<br>"
 
                         if image_url
-                            str += "<img class='image' src='" + image_url + "' />"
+                            str += "<img class='image' src='" + CGI.escapeHTML(image_url) + "' />"
                         else
                             str += ["</p>Added", "</p>Removed"][i]
                         end
