@@ -369,13 +369,13 @@ public:
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription&, size_t) final
     {
-        if (!m_parent)
+        if (!m_parent || !m_isObserving)
             return;
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
         auto sample = data.getSample();
         if (m_trackEnabled.load()) {
-            GST_TRACE_OBJECT(m_parent, "Pushing audio sample from enabled track");
+            GST_TRACE_OBJECT(m_src.get(), "Pushing audio sample from enabled track");
             pushSample(sample.get());
             return;
         }
@@ -392,7 +392,7 @@ public:
             m_silentSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         }
 
-        GST_TRACE_OBJECT(m_parent, "Pushing audio silence from disabled track");
+        GST_TRACE_OBJECT(m_src.get(), "Pushing audio silence from disabled track");
         pushSample(m_silentSample.get());
     }
 

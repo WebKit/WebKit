@@ -26,9 +26,7 @@
 #include "RealtimeMediaSourceCenter.h"
 
 #include "GStreamerAudioCaptureSource.h"
-#include "GStreamerCaptureDevice.h"
 #include "GStreamerVideoCaptureSource.h"
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
