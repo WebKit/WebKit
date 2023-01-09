@@ -1899,6 +1899,7 @@ op :struct_new,
     args: {
         dst: VirtualRegister,
         typeIndex: unsigned,
+        useDefault: bool,
         firstValue: VirtualRegister,
     }
 

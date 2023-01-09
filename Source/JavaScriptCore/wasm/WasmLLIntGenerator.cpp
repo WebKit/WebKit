@@ -318,6 +318,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
@@ -1939,7 +1940,7 @@ auto LLIntGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
 auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, value, index, false /* useDefault */);
+    WasmArrayNew::emit(this, result, size, value, index, static_cast<bool>(UseDefaultValue::No));
 
     return { };
 }
@@ -1947,7 +1948,7 @@ auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, Expression
 auto LLIntGenerator::addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, ExpressionType(), index, true /* useDefault */);
+    WasmArrayNew::emit(this, result, size, ExpressionType(), index, static_cast<bool>(UseDefaultValue::Yes));
 
     return { };
 }
@@ -1989,9 +1990,17 @@ auto LLIntGenerator::addStructNew(uint32_t index, Vector<ExpressionType>& args, 
         arg = argLoc;
     }
 
-    WasmStructNew::emit(this, result, index, args.isEmpty() ? VirtualRegister() : args[0]);
+    WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::No), args.isEmpty() ? VirtualRegister() : args[0]);
 
     m_stackSize -= args.size();
+    return { };
+}
+
+auto LLIntGenerator::addStructNewDefault(uint32_t index, ExpressionType& result) -> PartialResult
+{
+    result = push();
+    WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::Yes), { });
+
     return { };
 }
 

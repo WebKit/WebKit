@@ -37,6 +37,8 @@
     await Promise.all(document.getAnimations().map(animation => animation.ready));
     await UIHelper.ensurePresentationUpdate();
     await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
 
     if (window.testRunner)
         testRunner.notifyDone();

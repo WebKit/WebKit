@@ -37,7 +37,7 @@ STEP: console.log('console.log')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.warn('console.warn')
@@ -60,7 +60,7 @@ STEP: console.warn('console.warn')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.error('console.error')
@@ -83,7 +83,7 @@ STEP: console.error('console.error')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.debug('console.debug')
@@ -106,7 +106,7 @@ STEP: console.debug('console.debug')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.info('console.info')
@@ -129,7 +129,7 @@ STEP: console.info('console.info')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.assert(false, 'assertion message')
@@ -152,7 +152,7 @@ STEP: console.assert(false, 'assertion message')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.trace()
@@ -167,7 +167,7 @@ STEP: console.trace()
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.log('string message', string)
@@ -196,7 +196,7 @@ STEP: console.log('string message', string)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.log('message', object, object)
@@ -259,7 +259,7 @@ STEP: console.log('message', object, object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.error('message', object)
@@ -302,7 +302,7 @@ STEP: console.error('message', object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.warn('message', object)
@@ -345,7 +345,7 @@ STEP: console.warn('message', object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.debug('message', object)
@@ -388,7 +388,7 @@ STEP: console.debug('message', object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.info('message', object)
@@ -431,7 +431,7 @@ STEP: console.info('message', object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.dir(object)
@@ -468,7 +468,7 @@ STEP: console.dir(object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.dirxml(object)
@@ -505,7 +505,7 @@ STEP: console.dirxml(object)
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.group('groupName')
@@ -528,7 +528,7 @@ STEP: console.group('groupName')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.groupEnd('groupName')
@@ -551,7 +551,7 @@ STEP: console.groupEnd('groupName')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.groupCollapsed('collapsedGroupName')
@@ -574,7 +574,7 @@ STEP: console.groupCollapsed('collapsedGroupName')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.groupEnd('collapsedGroupName')
@@ -597,7 +597,7 @@ STEP: console.groupEnd('collapsedGroupName')
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count()
@@ -612,7 +612,7 @@ STEP: console.count()
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count()
@@ -627,7 +627,7 @@ STEP: console.count()
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count("default")
@@ -642,7 +642,7 @@ STEP: console.count("default")
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count('')
@@ -657,7 +657,7 @@ STEP: console.count('')
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count('    ')
@@ -672,7 +672,7 @@ STEP: console.count('    ')
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count('')
@@ -687,7 +687,7 @@ STEP: console.count('')
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count('    ')
@@ -702,7 +702,7 @@ STEP: console.count('    ')
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(string)
@@ -717,7 +717,7 @@ STEP: console.count(string)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(string)
@@ -732,7 +732,7 @@ STEP: console.count(string)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(object)
@@ -747,7 +747,7 @@ STEP: console.count(object)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(object)
@@ -762,7 +762,7 @@ STEP: console.count(object)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(otherObject)
@@ -777,7 +777,7 @@ STEP: console.count(otherObject)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(otherObject)
@@ -792,7 +792,7 @@ STEP: console.count(otherObject)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(number)
@@ -807,7 +807,7 @@ STEP: console.count(number)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.count(number)
@@ -822,6 +822,6 @@ STEP: console.count(number)
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 

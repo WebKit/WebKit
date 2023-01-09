@@ -344,13 +344,6 @@ void PageClientImpl::derefView()
 {
 }
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&)
-{
-    return false;
-}
-#endif
-
 void PageClientImpl::didRestoreScrollPosition()
 {
 }

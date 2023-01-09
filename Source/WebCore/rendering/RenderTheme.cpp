@@ -47,6 +47,7 @@
 #include "HTMLTextAreaElement.h"
 #include "InnerSpinButtonPart.h"
 #include "LocalizedStrings.h"
+#include "MenuListButtonPart.h"
 #include "MenuListPart.h"
 #include "MeterPart.h"
 #include "Page.h"
@@ -506,18 +507,21 @@ static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& 
     if (type != ControlPartType::SliderHorizontal && type != ControlPartType::SliderVertical)
         return nullptr;
 
-    auto& input = downcast<HTMLInputElement>(*renderer.node());
-    if (!input.isRangeControl())
+    auto* input = dynamicDowncast<HTMLInputElement>(*renderer.node());
+    if (!input)
+        return nullptr;
+
+    if (!input->isRangeControl())
         return nullptr;
 
     IntSize thumbSize;
-    if (const auto* thumbRenderer = input.sliderThumbElement()->renderer()) {
+    if (const auto* thumbRenderer = input->sliderThumbElement()->renderer()) {
         const auto& thumbStyle = thumbRenderer->style();
         thumbSize = IntSize { thumbStyle.width().intValue(), thumbStyle.height().intValue() };
     }
 
     IntRect trackBounds;
-    if (const auto* trackRenderer = input.sliderTrackElement()->renderer()) {
+    if (const auto* trackRenderer = input->sliderTrackElement()->renderer()) {
         trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
         
         // We can ignoring transforms because transform is handled by the graphics context.
@@ -529,12 +533,12 @@ static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& 
 
     Vector<double> tickRatios;
 #if ENABLE(DATALIST_ELEMENT)
-    if (auto dataList = input.dataList()) {
-        double minimum = input.minimum();
-        double maximum = input.maximum();
+    if (auto dataList = input->dataList()) {
+        double minimum = input->minimum();
+        double maximum = input->maximum();
 
         for (auto& optionElement : dataList->suggestions()) {
-            auto optionValue = input.listOptionValueAsDouble(optionElement);
+            auto optionValue = input->listOptionValueAsDouble(optionElement);
             if (!optionValue)
                 continue;
             double tickRatio = (*optionValue - minimum) / (maximum - minimum);
@@ -568,7 +572,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         return MenuListPart::create();
 
     case ControlPartType::MenulistButton:
-        break;
+        return MenuListButtonPart::create();
 
     case ControlPartType::Meter:
         return createMeterPartForRenderer(renderer);
@@ -704,7 +708,8 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) c
         renderer->style().computedFontPixelSize(),
         renderer->style().effectiveZoom(),
         renderer->style().effectiveAccentColor(),
-        renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor)
+        renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor),
+        renderer->style().borderWidth()
     };
 }
 

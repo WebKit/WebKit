@@ -45,6 +45,7 @@ private:
 #endif
     std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformMenuListButton(MenuListButtonPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMeter(MeterPart&) final;
     std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) final;

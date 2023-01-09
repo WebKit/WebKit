@@ -1029,6 +1029,9 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Timeout Pass ]
 
 webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
 
+# Push subscription tests fail without platform-specific PushCrypto implementations.
+http/tests/push-api [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1690,6 +1693,9 @@ webkit.org/b/224074 webrtc/concurrentVideoPlayback2.html [ Timeout Pass ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
+
+webkit.org/b/250315 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Failure ]
+webkit.org/b/250315 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

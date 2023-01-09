@@ -559,6 +559,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
@@ -657,7 +658,7 @@ private:
     Value* emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
     Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
 
-    void emitStructSet(Value*, uint32_t, const StructType&, ExpressionType&);
+    void emitStructSet(Value*, uint32_t, const StructType&, Value*);
     ExpressionType WARN_UNUSED_RETURN pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size);
 
     void unify(Value* phi, const ExpressionType source);
@@ -2286,7 +2287,7 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
     return sanitizeAtomicResult(op, valueType, phi);
 }
 
-void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const StructType& structType, ExpressionType& argument)
+void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const StructType& structType, Value* argument)
 {
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), structValue, JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
@@ -2308,7 +2309,7 @@ void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const
             Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
             emitWriteBarrier(structValue, instance);
         }
-        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), get(argument), payloadBase, fieldOffset);
+        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), argument, payloadBase, fieldOffset);
         break;
     }
     default:
@@ -2810,7 +2811,33 @@ auto B3IRGenerator::addStructNew(uint32_t typeIndex, Vector<ExpressionType>& arg
 
     const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
     for (uint32_t i = 0; i < args.size(); ++i)
-        emitStructSet(structValue, i, structType, args[i]);
+        emitStructSet(structValue, i, structType, get(args[i]));
+
+    result = push(structValue);
+
+    return { };
+}
+
+auto B3IRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& result) -> PartialResult
+{
+    const auto type = Type { TypeKind::Ref, m_info.typeSignatures[typeIndex]->index() };
+
+    // FIXME: inline the allocation.
+    // https://bugs.webkit.org/show_bug.cgi?id=244388
+    Value* structValue = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(type), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmStructNewEmpty)),
+        instanceValue(),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex));
+
+    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
+        Value* initValue;
+        if (Wasm::isRefType(structType.field(i).type))
+            initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
+        else
+            initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
+        emitStructSet(structValue, i, structType, initValue);
+    }
 
     result = push(structValue);
 
@@ -2852,7 +2879,7 @@ auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructTyp
 
 auto B3IRGenerator::addStructSet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType value) -> PartialResult
 {
-    emitStructSet(get(structReference), fieldIndex, structType, value);
+    emitStructSet(get(structReference), fieldIndex, structType, get(value));
     return { };
 }
 

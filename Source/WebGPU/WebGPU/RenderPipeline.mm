@@ -488,6 +488,32 @@ RenderPipeline::RenderPipeline(Device& device)
 
 RenderPipeline::~RenderPipeline() = default;
 
+#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
+static WGPUBindGroupLayoutEntry createEntryFromStructMember(MTLStructMember *structMember, uint32_t& currentBindingIndex, WGPUShaderStage shaderStage)
+{
+    WGPUBindGroupLayoutEntry entry = { };
+    entry.binding = currentBindingIndex++;
+    entry.visibility = shaderStage;
+    switch (structMember.dataType) {
+    case MTLDataTypeTexture:
+        entry.texture.sampleType = WGPUTextureSampleType_Float;
+        entry.texture.viewDimension = WGPUTextureViewDimension_2D;
+        break;
+    case MTLDataTypeSampler:
+        entry.sampler.type = WGPUSamplerBindingType_Filtering;
+        break;
+    case MTLDataTypePointer:
+        entry.buffer.type = WGPUBufferBindingType_Uniform;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return entry;
+}
+#endif // HAVE(METAL_BUFFER_BINDING_REFLECTION)
+
 BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     if (m_pipelineLayout)
@@ -499,16 +525,14 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
     uint32_t bindingIndex = 0;
-    HashMap<uint32_t, WGPUShaderStageFlags> stageMapTable;
+    Vector<WGPUBindGroupLayoutEntry> entries;
     for (id<MTLBufferBinding> binding in m_reflection.vertexBindings) {
         if (binding.index != groupIndex + m_vertexShaderInputBufferCount)
             continue;
 
         ASSERT(binding.type == MTLBindingTypeBuffer);
-        for (MTLStructMember *structMember in binding.bufferStructType.members) {
-            UNUSED_PARAM(structMember);
-            stageMapTable.add(++bindingIndex, WGPUShaderStage_Vertex);
-        }
+        for (MTLStructMember *structMember in binding.bufferStructType.members)
+            entries.append(createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Vertex));
     }
 
     for (id<MTLBufferBinding> binding in m_reflection.fragmentBindings) {
@@ -516,13 +540,15 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
             continue;
 
         ASSERT(binding.type == MTLBindingTypeBuffer);
-        for (MTLStructMember *structMember in binding.bufferStructType.members) {
-            UNUSED_PARAM(structMember);
-            stageMapTable.add(++bindingIndex, WGPUShaderStage_Fragment);
-        }
+        for (MTLStructMember *structMember in binding.bufferStructType.members)
+            entries.append(createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Fragment));
     }
 
-    auto bindGroupLayout = BindGroupLayout::create(WTFMove(stageMapTable));
+    WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };
+    bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
+    bindGroupLayoutDescriptor.entryCount = entries.size();
+    bindGroupLayoutDescriptor.entries = &entries[0];
+    auto bindGroupLayout = m_device->createBindGroupLayout(bindGroupLayoutDescriptor);
     m_cachedBindGroupLayouts.add(groupIndex + 1, bindGroupLayout);
 
     return bindGroupLayout.ptr();

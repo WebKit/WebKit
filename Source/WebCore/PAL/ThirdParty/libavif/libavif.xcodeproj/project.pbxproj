@@ -1,0 +1,831 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C4FAF4A28FC862F00FFE212 /* avif.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF0F28FC84D200FFE212 /* avif.c */; };
+		1C4FAF4B28FC862F00FFE212 /* colr.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2028FC84D200FFE212 /* colr.c */; };
+		1C4FAF4C28FC862F00FFE212 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1228FC84D200FFE212 /* mem.c */; };
+		1C4FAF4D28FC862F00FFE212 /* obu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1A28FC84D200FFE212 /* obu.c */; };
+		1C4FAF4E28FC862F00FFE212 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2328FC84D200FFE212 /* stream.c */; };
+		1C4FAF4F28FC862F00FFE212 /* reformat.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1D28FC84D200FFE212 /* reformat.c */; };
+		1C4FAF5128FC862F00FFE212 /* io.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1028FC84D200FFE212 /* io.c */; };
+		1C4FAF5228FC862F00FFE212 /* reformat_libsharpyuv.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1E28FC84D200FFE212 /* reformat_libsharpyuv.c */; };
+		1C4FAF5328FC862F00FFE212 /* reformat_libyuv.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1828FC84D200FFE212 /* reformat_libyuv.c */; };
+		1C4FAF5428FC862F00FFE212 /* write.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2228FC84D200FFE212 /* write.c */; };
+		1C4FAF5528FC862F00FFE212 /* read.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1928FC84D200FFE212 /* read.c */; };
+		1C4FAF5628FC862F00FFE212 /* diag.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1128FC84D200FFE212 /* diag.c */; };
+		1C4FAF5828FC862F00FFE212 /* codec_dav1d.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF0E28FC84D200FFE212 /* codec_dav1d.c */; };
+		1C4FAF5928FC862F00FFE212 /* exif.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1728FC84D200FFE212 /* exif.c */; };
+		1C4FAF5A28FC862F00FFE212 /* rawdata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1328FC84D200FFE212 /* rawdata.c */; };
+		1C4FAF5B28FC862F00FFE212 /* scale.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1B28FC84D200FFE212 /* scale.c */; };
+		1C4FAF5D28FC862F00FFE212 /* alpha.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2128FC84D200FFE212 /* alpha.c */; };
+		1C4FAF5E28FC862F00FFE212 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1C28FC84D200FFE212 /* utils.c */; };
+		1CB33732296A841C00EC4A12 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2D0E02296A455C00BE33A3 /* libdav1d.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1C122B1C296A4B7200814381 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C4FACD428FC70C000FFE212;
+			remoteInfo = dav1d;
+		};
+		1C2D0E01296A455C00BE33A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FACD528FC70C000FFE212;
+			remoteInfo = dav1d;
+		};
+		1C2D0E03296A455C00BE33A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE5428FC7CEC00FFE212;
+			remoteInfo = bitdepth_8;
+		};
+		1C2D0E05296A455C00BE33A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE5D28FC7CF500FFE212;
+			remoteInfo = bitdepth_16;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1C4FAE8F28FC83DC00FFE212 /* libavif.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libavif.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C4FAEA228FC841D00FFE212 /* libavif.pc.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = libavif.pc.cmake; sourceTree = "<group>"; };
+		1C4FAEA328FC843100FFE212 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		1C4FAEA428FC843C00FFE212 /* appveyor.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = appveyor.yml; sourceTree = "<group>"; };
+		1C4FAEA728FC844D00FFE212 /* Dockerfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Dockerfile; sourceTree = "<group>"; };
+		1C4FAEA828FC844D00FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAEA928FC844D00FFE212 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		1C4FAEAA28FC844D00FFE212 /* docker-compose.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "docker-compose.yml"; sourceTree = "<group>"; };
+		1C4FAEAB28FC844D00FFE212 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		1C4FAEAD28FC844D00FFE212 /* avifallocationtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifallocationtest.cc; sourceTree = "<group>"; };
+		1C4FAEAE28FC844D00FFE212 /* are_images_equal.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = are_images_equal.cc; sourceTree = "<group>"; };
+		1C4FAEAF28FC844D00FFE212 /* avifgridapitest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifgridapitest.cc; sourceTree = "<group>"; };
+		1C4FAEB028FC844D00FFE212 /* aviftilingtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aviftilingtest.cc; sourceTree = "<group>"; };
+		1C4FAEB128FC844D00FFE212 /* aviftest_helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aviftest_helpers.h; sourceTree = "<group>"; };
+		1C4FAEB228FC844D00FFE212 /* avifmetadatatest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifmetadatatest.cc; sourceTree = "<group>"; };
+		1C4FAEB328FC844D00FFE212 /* avifchangesettingtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifchangesettingtest.cc; sourceTree = "<group>"; };
+		1C4FAEB428FC844D00FFE212 /* avify4mtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avify4mtest.cc; sourceTree = "<group>"; };
+		1C4FAEB528FC844D00FFE212 /* avifincrtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifincrtest.cc; sourceTree = "<group>"; };
+		1C4FAEB628FC844D00FFE212 /* avifincrtest_helpers.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifincrtest_helpers.cc; sourceTree = "<group>"; };
+		1C4FAEB728FC844D00FFE212 /* .clang-format */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".clang-format"; sourceTree = "<group>"; };
+		1C4FAEB828FC844D00FFE212 /* avifincrtest_helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = avifincrtest_helpers.h; sourceTree = "<group>"; };
+		1C4FAEB928FC844D00FFE212 /* avifrgbtoyuvtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avifrgbtoyuvtest.cc; sourceTree = "<group>"; };
+		1C4FAEBA28FC844D00FFE212 /* aviftest_helpers.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aviftest_helpers.cc; sourceTree = "<group>"; };
+		1C4FAEBB28FC844D00FFE212 /* aviftest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aviftest.c; sourceTree = "<group>"; };
+		1C4FAEBC28FC844D00FFE212 /* avifyuv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avifyuv.c; sourceTree = "<group>"; };
+		1C4FAEBE28FC844D00FFE212 /* paris_icc_exif_xmp.avif */ = {isa = PBXFileReference; lastKnownFileType = file; path = paris_icc_exif_xmp.avif; sourceTree = "<group>"; };
+		1C4FAEBF28FC844D00FFE212 /* paris_icc_exif_xmp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paris_icc_exif_xmp.png; sourceTree = "<group>"; };
+		1C4FAEC028FC844D00FFE212 /* paris_icc_exif_xmp_at_end.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paris_icc_exif_xmp_at_end.png; sourceTree = "<group>"; };
+		1C4FAEC128FC844D00FFE212 /* kodim03_yuv420_8bpc.y4m */ = {isa = PBXFileReference; lastKnownFileType = text; path = kodim03_yuv420_8bpc.y4m; sourceTree = "<group>"; };
+		1C4FAEC228FC844D00FFE212 /* paris_extended_xmp.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = paris_extended_xmp.jpg; sourceTree = "<group>"; };
+		1C4FAEC428FC844D00FFE212 /* kodim03_yuv420_8bpc.avif */ = {isa = PBXFileReference; lastKnownFileType = file; path = kodim03_yuv420_8bpc.avif; sourceTree = "<group>"; };
+		1C4FAEC528FC844D00FFE212 /* cosmos1650_yuv444_10bpc_p3pq.avif */ = {isa = PBXFileReference; lastKnownFileType = file; path = cosmos1650_yuv444_10bpc_p3pq.avif; sourceTree = "<group>"; };
+		1C4FAEC628FC844D00FFE212 /* kodim23_yuv420_8bpc.avif */ = {isa = PBXFileReference; lastKnownFileType = file; path = kodim23_yuv420_8bpc.avif; sourceTree = "<group>"; };
+		1C4FAEC728FC844D00FFE212 /* sofa_grid1x5_420.avif */ = {isa = PBXFileReference; lastKnownFileType = file; path = sofa_grid1x5_420.avif; sourceTree = "<group>"; };
+		1C4FAEC828FC844D00FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAEC928FC844D00FFE212 /* dog_exif_extended_xmp_icc.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dog_exif_extended_xmp_icc.jpg; sourceTree = "<group>"; };
+		1C4FAECA28FC844D00FFE212 /* cosmos1650_yuv444_10bpc_p3pq.y4m */ = {isa = PBXFileReference; lastKnownFileType = file; path = cosmos1650_yuv444_10bpc_p3pq.y4m; sourceTree = "<group>"; };
+		1C4FAECB28FC844D00FFE212 /* paris_exif_xmp_icc.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = paris_exif_xmp_icc.jpg; sourceTree = "<group>"; };
+		1C4FAECC28FC844D00FFE212 /* kodim23_yuv420_8bpc.y4m */ = {isa = PBXFileReference; lastKnownFileType = text; path = kodim23_yuv420_8bpc.y4m; sourceTree = "<group>"; };
+		1C4FAECD28FC844D00FFE212 /* paris_exif_orientation_5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = paris_exif_orientation_5.jpg; sourceTree = "<group>"; };
+		1C4FAECE28FC844D00FFE212 /* test_cmd.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = test_cmd.sh; sourceTree = "<group>"; };
+		1C4FAED028FC844D00FFE212 /* avif_decode_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = avif_decode_fuzzer.cc; sourceTree = "<group>"; };
+		1C4FAED328FC845C00FFE212 /* y4m.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = y4m.h; sourceTree = "<group>"; };
+		1C4FAED428FC845C00FFE212 /* avifpng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = avifpng.h; sourceTree = "<group>"; };
+		1C4FAED528FC845C00FFE212 /* iccjpeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iccjpeg.h; sourceTree = "<group>"; };
+		1C4FAED628FC845C00FFE212 /* avifutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avifutil.c; sourceTree = "<group>"; };
+		1C4FAED728FC845C00FFE212 /* avifjpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avifjpeg.c; sourceTree = "<group>"; };
+		1C4FAED828FC845C00FFE212 /* iccjpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = iccjpeg.c; sourceTree = "<group>"; };
+		1C4FAED928FC845C00FFE212 /* avifpng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avifpng.c; sourceTree = "<group>"; };
+		1C4FAEDA28FC845C00FFE212 /* y4m.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = y4m.c; sourceTree = "<group>"; };
+		1C4FAEDB28FC845C00FFE212 /* avifutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = avifutil.h; sourceTree = "<group>"; };
+		1C4FAEDC28FC845C00FFE212 /* avifjpeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = avifjpeg.h; sourceTree = "<group>"; };
+		1C4FAEDD28FC845C00FFE212 /* avifenc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avifenc.c; sourceTree = "<group>"; };
+		1C4FAEDE28FC845C00FFE212 /* avifdec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avifdec.c; sourceTree = "<group>"; };
+		1C4FAEE128FC846600FFE212 /* Findrav1e.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Findrav1e.cmake; sourceTree = "<group>"; };
+		1C4FAEE228FC846600FFE212 /* Findaom.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Findaom.cmake; sourceTree = "<group>"; };
+		1C4FAEE328FC846600FFE212 /* Findsvt.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Findsvt.cmake; sourceTree = "<group>"; };
+		1C4FAEE428FC846600FFE212 /* Findlibgav1.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Findlibgav1.cmake; sourceTree = "<group>"; };
+		1C4FAEE528FC846600FFE212 /* Finddav1d.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Finddav1d.cmake; sourceTree = "<group>"; };
+		1C4FAEE628FC846600FFE212 /* Findlibyuv.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Findlibyuv.cmake; sourceTree = "<group>"; };
+		1C4FAEE728FC846600FFE212 /* Findlibsharpyuv.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Findlibsharpyuv.cmake; sourceTree = "<group>"; };
+		1C4FAEE928FC847600FFE212 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		1C4FAEEB28FC847600FFE212 /* loader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loader.c; sourceTree = "<group>"; };
+		1C4FAEEC28FC847600FFE212 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		1C4FAEED28FC847600FFE212 /* avif.thumbnailer.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = avif.thumbnailer.in; sourceTree = "<group>"; };
+		1C4FAEEE28FC847600FFE212 /* irefmerge.coffee */ = {isa = PBXFileReference; lastKnownFileType = text; path = irefmerge.coffee; sourceTree = "<group>"; };
+		1C4FAEEF28FC847600FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAEF028FC848500FFE212 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		1C4FAEF128FC848F00FFE212 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		1C4FAEF328FC849F00FFE212 /* googletest.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = googletest.cmd; sourceTree = "<group>"; };
+		1C4FAEF428FC849F00FFE212 /* libgav1_android.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = libgav1_android.sh; sourceTree = "<group>"; };
+		1C4FAEF528FC849F00FFE212 /* svt.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = svt.sh; sourceTree = "<group>"; };
+		1C4FAEF628FC849F00FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAEF728FC849F00FFE212 /* dav1d.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = dav1d.cmd; sourceTree = "<group>"; };
+		1C4FAEF828FC849F00FFE212 /* libsharpyuv.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = libsharpyuv.cmd; sourceTree = "<group>"; };
+		1C4FAEF928FC849F00FFE212 /* zlibpng.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = zlibpng.cmd; sourceTree = "<group>"; };
+		1C4FAEFA28FC849F00FFE212 /* svt.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = svt.cmd; sourceTree = "<group>"; };
+		1C4FAEFB28FC849F00FFE212 /* libyuv.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = libyuv.cmd; sourceTree = "<group>"; };
+		1C4FAEFC28FC849F00FFE212 /* aom.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = aom.cmd; sourceTree = "<group>"; };
+		1C4FAEFD28FC849F00FFE212 /* rav1e.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = rav1e.cmd; sourceTree = "<group>"; };
+		1C4FAEFE28FC849F00FFE212 /* libgav1.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = libgav1.cmd; sourceTree = "<group>"; };
+		1C4FAEFF28FC849F00FFE212 /* libjpeg.cmd */ = {isa = PBXFileReference; lastKnownFileType = text; path = libjpeg.cmd; sourceTree = "<group>"; };
+		1C4FAF0128FC84AE00FFE212 /* avif_example_decode_streaming.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avif_example_decode_streaming.c; sourceTree = "<group>"; };
+		1C4FAF0228FC84AE00FFE212 /* avif_example_decode_memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avif_example_decode_memory.c; sourceTree = "<group>"; };
+		1C4FAF0328FC84AE00FFE212 /* avif_example_decode_file.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avif_example_decode_file.c; sourceTree = "<group>"; };
+		1C4FAF0428FC84AE00FFE212 /* avif_example_encode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avif_example_encode.c; sourceTree = "<group>"; };
+		1C4FAF0728FC84B800FFE212 /* internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		1C4FAF0828FC84B800FFE212 /* avif.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = avif.h; sourceTree = "<group>"; };
+		1C4FAF0A28FC84C300FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAF0B28FC84C300FFE212 /* avifenc.1.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = avifenc.1.md; sourceTree = "<group>"; };
+		1C4FAF0C28FC84C300FFE212 /* avifdec.1.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = avifdec.1.md; sourceTree = "<group>"; };
+		1C4FAF0E28FC84D200FFE212 /* codec_dav1d.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = codec_dav1d.c; sourceTree = "<group>"; };
+		1C4FAF0F28FC84D200FFE212 /* avif.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avif.c; sourceTree = "<group>"; };
+		1C4FAF1028FC84D200FFE212 /* io.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = io.c; sourceTree = "<group>"; };
+		1C4FAF1128FC84D200FFE212 /* diag.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = diag.c; sourceTree = "<group>"; };
+		1C4FAF1228FC84D200FFE212 /* mem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mem.c; sourceTree = "<group>"; };
+		1C4FAF1328FC84D200FFE212 /* rawdata.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rawdata.c; sourceTree = "<group>"; };
+		1C4FAF1428FC84D200FFE212 /* codec_libgav1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = codec_libgav1.c; sourceTree = "<group>"; };
+		1C4FAF1528FC84D200FFE212 /* codec_svt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = codec_svt.c; sourceTree = "<group>"; };
+		1C4FAF1628FC84D200FFE212 /* codec_rav1e.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = codec_rav1e.c; sourceTree = "<group>"; };
+		1C4FAF1728FC84D200FFE212 /* exif.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = exif.c; sourceTree = "<group>"; };
+		1C4FAF1828FC84D200FFE212 /* reformat_libyuv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reformat_libyuv.c; sourceTree = "<group>"; };
+		1C4FAF1928FC84D200FFE212 /* read.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = read.c; sourceTree = "<group>"; };
+		1C4FAF1A28FC84D200FFE212 /* obu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = obu.c; sourceTree = "<group>"; };
+		1C4FAF1B28FC84D200FFE212 /* scale.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scale.c; sourceTree = "<group>"; };
+		1C4FAF1C28FC84D200FFE212 /* utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		1C4FAF1D28FC84D200FFE212 /* reformat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reformat.c; sourceTree = "<group>"; };
+		1C4FAF1E28FC84D200FFE212 /* reformat_libsharpyuv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reformat_libsharpyuv.c; sourceTree = "<group>"; };
+		1C4FAF1F28FC84D200FFE212 /* codec_aom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = codec_aom.c; sourceTree = "<group>"; };
+		1C4FAF2028FC84D200FFE212 /* colr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = colr.c; sourceTree = "<group>"; };
+		1C4FAF2128FC84D200FFE212 /* alpha.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = alpha.c; sourceTree = "<group>"; };
+		1C4FAF2228FC84D200FFE212 /* write.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = write.c; sourceTree = "<group>"; };
+		1C4FAF2328FC84D200FFE212 /* stream.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
+		1C4FAF2428FC84E000FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAF2628FC84EB00FFE212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1C4FAF2928FC84EB00FFE212 /* gradle-wrapper.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = "gradle-wrapper.jar"; sourceTree = "<group>"; };
+		1C4FAF2A28FC84EB00FFE212 /* gradle-wrapper.properties */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gradle-wrapper.properties"; sourceTree = "<group>"; };
+		1C4FAF2B28FC84EB00FFE212 /* gradlew */ = {isa = PBXFileReference; lastKnownFileType = text; path = gradlew; sourceTree = "<group>"; };
+		1C4FAF2C28FC84EB00FFE212 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		1C4FAF2D28FC84EB00FFE212 /* build.gradle */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.gradle; sourceTree = "<group>"; };
+		1C4FAF2E28FC84EB00FFE212 /* gradle.properties */ = {isa = PBXFileReference; lastKnownFileType = text; path = gradle.properties; sourceTree = "<group>"; };
+		1C4FAF2F28FC84EB00FFE212 /* gradlew.bat */ = {isa = PBXFileReference; lastKnownFileType = text; path = gradlew.bat; sourceTree = "<group>"; };
+		1C4FAF3028FC84EB00FFE212 /* settings.gradle */ = {isa = PBXFileReference; lastKnownFileType = text; path = settings.gradle; sourceTree = "<group>"; };
+		1C4FAF3228FC84EB00FFE212 /* proguard-rules.pro */ = {isa = PBXFileReference; lastKnownFileType = text; path = "proguard-rules.pro"; sourceTree = "<group>"; };
+		1C4FAF3328FC84EB00FFE212 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		1C4FAF3428FC84EB00FFE212 /* build.gradle */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.gradle; sourceTree = "<group>"; };
+		1C4FAF3728FC84EB00FFE212 /* AndroidManifest.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AndroidManifest.xml; sourceTree = "<group>"; };
+		1C4FAF3D28FC84EB00FFE212 /* AvifDecoder.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = AvifDecoder.java; sourceTree = "<group>"; };
+		1C4FAF3F28FC84EB00FFE212 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		1C4FAF4028FC84EB00FFE212 /* libavif_jni.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libavif_jni.cc; sourceTree = "<group>"; };
+		1C4FAF4228FC854300FFE212 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libavif.xcconfig; sourceTree = "<group>"; };
+		1C4FAF4428FC855100FFE212 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		1CD366AA28FC888F000123EA /* dav1d.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dav1d.xcodeproj; path = dav1d/dav1d.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1C4FAE8D28FC83DC00FFE212 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CB33732296A841C00EC4A12 /* libdav1d.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C2D0DF9296A450100BE33A3 /* ThirdParty */ = {
+			isa = PBXGroup;
+			children = (
+				1CD366AA28FC888F000123EA /* dav1d.xcodeproj */,
+			);
+			path = ThirdParty;
+			sourceTree = "<group>";
+		};
+		1C2D0DFC296A455C00BE33A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C2D0E02296A455C00BE33A3 /* libdav1d.a */,
+				1C2D0E06296A455C00BE33A3 /* libdav1d_bitdepth_16.a */,
+				1C2D0E04296A455C00BE33A3 /* libdav1d_bitdepth_8.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C4FAE8628FC83DC00FFE212 = {
+			isa = PBXGroup;
+			children = (
+				1C2D0DF9296A450100BE33A3 /* ThirdParty */,
+				1C4FAF4128FC852800FFE212 /* Configurations */,
+				1C4FAF2528FC84EB00FFE212 /* android_jni */,
+				1C4FAED128FC845C00FFE212 /* apps */,
+				1C4FAEA428FC843C00FFE212 /* appveyor.yml */,
+				1C4FAEF028FC848500FFE212 /* CHANGELOG.md */,
+				1C4FAEDF28FC846600FFE212 /* cmake */,
+				1C4FAEA328FC843100FFE212 /* CMakeLists.txt */,
+				1C4FAEE828FC847600FFE212 /* contrib */,
+				1C4FAF0928FC84C300FFE212 /* doc */,
+				1C4FAF0028FC84AE00FFE212 /* examples */,
+				1C4FAEF228FC849F00FFE212 /* ext */,
+				1C4FAF0528FC84B800FFE212 /* include */,
+				1C4FAEA228FC841D00FFE212 /* libavif.pc.cmake */,
+				1C4FAEF128FC848F00FFE212 /* LICENSE */,
+				1C4FAF2428FC84E000FFE212 /* README.md */,
+				1C4FAF0D28FC84D200FFE212 /* src */,
+				1C4FAEA528FC844D00FFE212 /* tests */,
+				1C4FAE9028FC83DC00FFE212 /* Products */,
+				1CD366B728FC892C000123EA /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1C4FAE9028FC83DC00FFE212 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAE8F28FC83DC00FFE212 /* libavif.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C4FAEA528FC844D00FFE212 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEBD28FC844D00FFE212 /* data */,
+				1C4FAEA628FC844D00FFE212 /* docker */,
+				1C4FAEAC28FC844D00FFE212 /* gtest */,
+				1C4FAECF28FC844D00FFE212 /* oss-fuzz */,
+				1C4FAEBB28FC844D00FFE212 /* aviftest.c */,
+				1C4FAEBC28FC844D00FFE212 /* avifyuv.c */,
+				1C4FAEAB28FC844D00FFE212 /* CMakeLists.txt */,
+				1C4FAECE28FC844D00FFE212 /* test_cmd.sh */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		1C4FAEA628FC844D00FFE212 /* docker */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEA728FC844D00FFE212 /* Dockerfile */,
+				1C4FAEA928FC844D00FFE212 /* build.sh */,
+				1C4FAEAA28FC844D00FFE212 /* docker-compose.yml */,
+				1C4FAEA828FC844D00FFE212 /* README.md */,
+			);
+			path = docker;
+			sourceTree = "<group>";
+		};
+		1C4FAEAC28FC844D00FFE212 /* gtest */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEB728FC844D00FFE212 /* .clang-format */,
+				1C4FAEAE28FC844D00FFE212 /* are_images_equal.cc */,
+				1C4FAEAD28FC844D00FFE212 /* avifallocationtest.cc */,
+				1C4FAEB328FC844D00FFE212 /* avifchangesettingtest.cc */,
+				1C4FAEAF28FC844D00FFE212 /* avifgridapitest.cc */,
+				1C4FAEB528FC844D00FFE212 /* avifincrtest.cc */,
+				1C4FAEB628FC844D00FFE212 /* avifincrtest_helpers.cc */,
+				1C4FAEB828FC844D00FFE212 /* avifincrtest_helpers.h */,
+				1C4FAEB228FC844D00FFE212 /* avifmetadatatest.cc */,
+				1C4FAEB928FC844D00FFE212 /* avifrgbtoyuvtest.cc */,
+				1C4FAEBA28FC844D00FFE212 /* aviftest_helpers.cc */,
+				1C4FAEB128FC844D00FFE212 /* aviftest_helpers.h */,
+				1C4FAEB028FC844D00FFE212 /* aviftilingtest.cc */,
+				1C4FAEB428FC844D00FFE212 /* avify4mtest.cc */,
+			);
+			path = gtest;
+			sourceTree = "<group>";
+		};
+		1C4FAEBD28FC844D00FFE212 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEC328FC844D00FFE212 /* io */,
+				1C4FAECA28FC844D00FFE212 /* cosmos1650_yuv444_10bpc_p3pq.y4m */,
+				1C4FAEC928FC844D00FFE212 /* dog_exif_extended_xmp_icc.jpg */,
+				1C4FAEC128FC844D00FFE212 /* kodim03_yuv420_8bpc.y4m */,
+				1C4FAECC28FC844D00FFE212 /* kodim23_yuv420_8bpc.y4m */,
+				1C4FAECD28FC844D00FFE212 /* paris_exif_orientation_5.jpg */,
+				1C4FAECB28FC844D00FFE212 /* paris_exif_xmp_icc.jpg */,
+				1C4FAEC228FC844D00FFE212 /* paris_extended_xmp.jpg */,
+				1C4FAEBE28FC844D00FFE212 /* paris_icc_exif_xmp.avif */,
+				1C4FAEBF28FC844D00FFE212 /* paris_icc_exif_xmp.png */,
+				1C4FAEC028FC844D00FFE212 /* paris_icc_exif_xmp_at_end.png */,
+				1C4FAEC828FC844D00FFE212 /* README.md */,
+				1C4FAEC728FC844D00FFE212 /* sofa_grid1x5_420.avif */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		1C4FAEC328FC844D00FFE212 /* io */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEC528FC844D00FFE212 /* cosmos1650_yuv444_10bpc_p3pq.avif */,
+				1C4FAEC428FC844D00FFE212 /* kodim03_yuv420_8bpc.avif */,
+				1C4FAEC628FC844D00FFE212 /* kodim23_yuv420_8bpc.avif */,
+			);
+			path = io;
+			sourceTree = "<group>";
+		};
+		1C4FAECF28FC844D00FFE212 /* oss-fuzz */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAED028FC844D00FFE212 /* avif_decode_fuzzer.cc */,
+			);
+			path = "oss-fuzz";
+			sourceTree = "<group>";
+		};
+		1C4FAED128FC845C00FFE212 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAED228FC845C00FFE212 /* shared */,
+				1C4FAEDE28FC845C00FFE212 /* avifdec.c */,
+				1C4FAEDD28FC845C00FFE212 /* avifenc.c */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		1C4FAED228FC845C00FFE212 /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAED728FC845C00FFE212 /* avifjpeg.c */,
+				1C4FAEDC28FC845C00FFE212 /* avifjpeg.h */,
+				1C4FAED928FC845C00FFE212 /* avifpng.c */,
+				1C4FAED428FC845C00FFE212 /* avifpng.h */,
+				1C4FAED628FC845C00FFE212 /* avifutil.c */,
+				1C4FAEDB28FC845C00FFE212 /* avifutil.h */,
+				1C4FAED828FC845C00FFE212 /* iccjpeg.c */,
+				1C4FAED528FC845C00FFE212 /* iccjpeg.h */,
+				1C4FAEDA28FC845C00FFE212 /* y4m.c */,
+				1C4FAED328FC845C00FFE212 /* y4m.h */,
+			);
+			path = shared;
+			sourceTree = "<group>";
+		};
+		1C4FAEDF28FC846600FFE212 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEE028FC846600FFE212 /* Modules */,
+			);
+			path = cmake;
+			sourceTree = "<group>";
+		};
+		1C4FAEE028FC846600FFE212 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEE228FC846600FFE212 /* Findaom.cmake */,
+				1C4FAEE528FC846600FFE212 /* Finddav1d.cmake */,
+				1C4FAEE428FC846600FFE212 /* Findlibgav1.cmake */,
+				1C4FAEE728FC846600FFE212 /* Findlibsharpyuv.cmake */,
+				1C4FAEE628FC846600FFE212 /* Findlibyuv.cmake */,
+				1C4FAEE128FC846600FFE212 /* Findrav1e.cmake */,
+				1C4FAEE328FC846600FFE212 /* Findsvt.cmake */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		1C4FAEE828FC847600FFE212 /* contrib */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEEA28FC847600FFE212 /* gdk-pixbuf */,
+				1C4FAEE928FC847600FFE212 /* CMakeLists.txt */,
+				1C4FAEEE28FC847600FFE212 /* irefmerge.coffee */,
+				1C4FAEEF28FC847600FFE212 /* README.md */,
+			);
+			path = contrib;
+			sourceTree = "<group>";
+		};
+		1C4FAEEA28FC847600FFE212 /* gdk-pixbuf */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEED28FC847600FFE212 /* avif.thumbnailer.in */,
+				1C4FAEEC28FC847600FFE212 /* CMakeLists.txt */,
+				1C4FAEEB28FC847600FFE212 /* loader.c */,
+			);
+			path = "gdk-pixbuf";
+			sourceTree = "<group>";
+		};
+		1C4FAEF228FC849F00FFE212 /* ext */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAEFC28FC849F00FFE212 /* aom.cmd */,
+				1C4FAEF728FC849F00FFE212 /* dav1d.cmd */,
+				1C4FAEF328FC849F00FFE212 /* googletest.cmd */,
+				1C4FAEFE28FC849F00FFE212 /* libgav1.cmd */,
+				1C4FAEF428FC849F00FFE212 /* libgav1_android.sh */,
+				1C4FAEFF28FC849F00FFE212 /* libjpeg.cmd */,
+				1C4FAEF828FC849F00FFE212 /* libsharpyuv.cmd */,
+				1C4FAEFB28FC849F00FFE212 /* libyuv.cmd */,
+				1C4FAEFD28FC849F00FFE212 /* rav1e.cmd */,
+				1C4FAEF628FC849F00FFE212 /* README.md */,
+				1C4FAEFA28FC849F00FFE212 /* svt.cmd */,
+				1C4FAEF528FC849F00FFE212 /* svt.sh */,
+				1C4FAEF928FC849F00FFE212 /* zlibpng.cmd */,
+			);
+			path = ext;
+			sourceTree = "<group>";
+		};
+		1C4FAF0028FC84AE00FFE212 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF0328FC84AE00FFE212 /* avif_example_decode_file.c */,
+				1C4FAF0228FC84AE00FFE212 /* avif_example_decode_memory.c */,
+				1C4FAF0128FC84AE00FFE212 /* avif_example_decode_streaming.c */,
+				1C4FAF0428FC84AE00FFE212 /* avif_example_encode.c */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		1C4FAF0528FC84B800FFE212 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF0628FC84B800FFE212 /* avif */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		1C4FAF0628FC84B800FFE212 /* avif */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF0828FC84B800FFE212 /* avif.h */,
+				1C4FAF0728FC84B800FFE212 /* internal.h */,
+			);
+			path = avif;
+			sourceTree = "<group>";
+		};
+		1C4FAF0928FC84C300FFE212 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF0C28FC84C300FFE212 /* avifdec.1.md */,
+				1C4FAF0B28FC84C300FFE212 /* avifenc.1.md */,
+				1C4FAF0A28FC84C300FFE212 /* README.md */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		1C4FAF0D28FC84D200FFE212 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF2128FC84D200FFE212 /* alpha.c */,
+				1C4FAF0F28FC84D200FFE212 /* avif.c */,
+				1C4FAF1F28FC84D200FFE212 /* codec_aom.c */,
+				1C4FAF0E28FC84D200FFE212 /* codec_dav1d.c */,
+				1C4FAF1428FC84D200FFE212 /* codec_libgav1.c */,
+				1C4FAF1628FC84D200FFE212 /* codec_rav1e.c */,
+				1C4FAF1528FC84D200FFE212 /* codec_svt.c */,
+				1C4FAF2028FC84D200FFE212 /* colr.c */,
+				1C4FAF1128FC84D200FFE212 /* diag.c */,
+				1C4FAF1728FC84D200FFE212 /* exif.c */,
+				1C4FAF1028FC84D200FFE212 /* io.c */,
+				1C4FAF1228FC84D200FFE212 /* mem.c */,
+				1C4FAF1A28FC84D200FFE212 /* obu.c */,
+				1C4FAF1328FC84D200FFE212 /* rawdata.c */,
+				1C4FAF1928FC84D200FFE212 /* read.c */,
+				1C4FAF1D28FC84D200FFE212 /* reformat.c */,
+				1C4FAF1E28FC84D200FFE212 /* reformat_libsharpyuv.c */,
+				1C4FAF1828FC84D200FFE212 /* reformat_libyuv.c */,
+				1C4FAF1B28FC84D200FFE212 /* scale.c */,
+				1C4FAF2328FC84D200FFE212 /* stream.c */,
+				1C4FAF1C28FC84D200FFE212 /* utils.c */,
+				1C4FAF2228FC84D200FFE212 /* write.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		1C4FAF2528FC84EB00FFE212 /* android_jni */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3128FC84EB00FFE212 /* avifandroidjni */,
+				1C4FAF2728FC84EB00FFE212 /* gradle */,
+				1C4FAF2B28FC84EB00FFE212 /* gradlew */,
+				1C4FAF2C28FC84EB00FFE212 /* .gitignore */,
+				1C4FAF2D28FC84EB00FFE212 /* build.gradle */,
+				1C4FAF2E28FC84EB00FFE212 /* gradle.properties */,
+				1C4FAF2F28FC84EB00FFE212 /* gradlew.bat */,
+				1C4FAF2628FC84EB00FFE212 /* README.md */,
+				1C4FAF3028FC84EB00FFE212 /* settings.gradle */,
+			);
+			path = android_jni;
+			sourceTree = "<group>";
+		};
+		1C4FAF2728FC84EB00FFE212 /* gradle */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF2828FC84EB00FFE212 /* wrapper */,
+			);
+			path = gradle;
+			sourceTree = "<group>";
+		};
+		1C4FAF2828FC84EB00FFE212 /* wrapper */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF2928FC84EB00FFE212 /* gradle-wrapper.jar */,
+				1C4FAF2A28FC84EB00FFE212 /* gradle-wrapper.properties */,
+			);
+			path = wrapper;
+			sourceTree = "<group>";
+		};
+		1C4FAF3128FC84EB00FFE212 /* avifandroidjni */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3528FC84EB00FFE212 /* src */,
+				1C4FAF3328FC84EB00FFE212 /* .gitignore */,
+				1C4FAF3428FC84EB00FFE212 /* build.gradle */,
+				1C4FAF3228FC84EB00FFE212 /* proguard-rules.pro */,
+			);
+			path = avifandroidjni;
+			sourceTree = "<group>";
+		};
+		1C4FAF3528FC84EB00FFE212 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3628FC84EB00FFE212 /* main */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		1C4FAF3628FC84EB00FFE212 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3828FC84EB00FFE212 /* java */,
+				1C4FAF3E28FC84EB00FFE212 /* jni */,
+				1C4FAF3728FC84EB00FFE212 /* AndroidManifest.xml */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		1C4FAF3828FC84EB00FFE212 /* java */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3928FC84EB00FFE212 /* org */,
+			);
+			path = java;
+			sourceTree = "<group>";
+		};
+		1C4FAF3928FC84EB00FFE212 /* org */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3A28FC84EB00FFE212 /* aomedia */,
+			);
+			path = org;
+			sourceTree = "<group>";
+		};
+		1C4FAF3A28FC84EB00FFE212 /* aomedia */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3B28FC84EB00FFE212 /* avif */,
+			);
+			path = aomedia;
+			sourceTree = "<group>";
+		};
+		1C4FAF3B28FC84EB00FFE212 /* avif */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3C28FC84EB00FFE212 /* android */,
+			);
+			path = avif;
+			sourceTree = "<group>";
+		};
+		1C4FAF3C28FC84EB00FFE212 /* android */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3D28FC84EB00FFE212 /* AvifDecoder.java */,
+			);
+			path = android;
+			sourceTree = "<group>";
+		};
+		1C4FAF3E28FC84EB00FFE212 /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF3F28FC84EB00FFE212 /* CMakeLists.txt */,
+				1C4FAF4028FC84EB00FFE212 /* libavif_jni.cc */,
+			);
+			path = jni;
+			sourceTree = "<group>";
+		};
+		1C4FAF4128FC852800FFE212 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				1C4FAF4228FC854300FFE212 /* Base.xcconfig */,
+				1C4FAF4428FC855100FFE212 /* DebugRelease.xcconfig */,
+				1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		1CD366B728FC892C000123EA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1C4FAE8B28FC83DC00FFE212 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1C4FAE8E28FC83DC00FFE212 /* libavif */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C4FAE9328FC83DC00FFE212 /* Build configuration list for PBXNativeTarget "libavif" */;
+			buildPhases = (
+				1C4FAE8B28FC83DC00FFE212 /* Headers */,
+				1C4FAE8C28FC83DC00FFE212 /* Sources */,
+				1C4FAE8D28FC83DC00FFE212 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1C122B1D296A4B7200814381 /* PBXTargetDependency */,
+			);
+			name = libavif;
+			productName = libavif;
+			productReference = 1C4FAE8F28FC83DC00FFE212 /* libavif.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1C4FAE8728FC83DC00FFE212 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = NO;
+				LastUpgradeCheck = 1400;
+				TargetAttributes = {
+					1C4FAE8E28FC83DC00FFE212 = {
+						CreatedOnToolsVersion = 14.0;
+					};
+				};
+			};
+			buildConfigurationList = 1C4FAE8A28FC83DC00FFE212 /* Build configuration list for PBXProject "libavif" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1C4FAE8628FC83DC00FFE212;
+			productRefGroup = 1C4FAE9028FC83DC00FFE212 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 1C2D0DFC296A455C00BE33A3 /* Products */;
+					ProjectRef = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				1C4FAE8E28FC83DC00FFE212 /* libavif */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		1C2D0E02296A455C00BE33A3 /* libdav1d.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d.a;
+			remoteRef = 1C2D0E01296A455C00BE33A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1C2D0E04296A455C00BE33A3 /* libdav1d_bitdepth_8.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d_bitdepth_8.a;
+			remoteRef = 1C2D0E03296A455C00BE33A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1C2D0E06296A455C00BE33A3 /* libdav1d_bitdepth_16.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d_bitdepth_16.a;
+			remoteRef = 1C2D0E05296A455C00BE33A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1C4FAE8C28FC83DC00FFE212 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C4FAF5D28FC862F00FFE212 /* alpha.c in Sources */,
+				1C4FAF4A28FC862F00FFE212 /* avif.c in Sources */,
+				1C4FAF5828FC862F00FFE212 /* codec_dav1d.c in Sources */,
+				1C4FAF4B28FC862F00FFE212 /* colr.c in Sources */,
+				1C4FAF5628FC862F00FFE212 /* diag.c in Sources */,
+				1C4FAF5928FC862F00FFE212 /* exif.c in Sources */,
+				1C4FAF5128FC862F00FFE212 /* io.c in Sources */,
+				1C4FAF4C28FC862F00FFE212 /* mem.c in Sources */,
+				1C4FAF4D28FC862F00FFE212 /* obu.c in Sources */,
+				1C4FAF5A28FC862F00FFE212 /* rawdata.c in Sources */,
+				1C4FAF5528FC862F00FFE212 /* read.c in Sources */,
+				1C4FAF4F28FC862F00FFE212 /* reformat.c in Sources */,
+				1C4FAF5228FC862F00FFE212 /* reformat_libsharpyuv.c in Sources */,
+				1C4FAF5328FC862F00FFE212 /* reformat_libyuv.c in Sources */,
+				1C4FAF5B28FC862F00FFE212 /* scale.c in Sources */,
+				1C4FAF4E28FC862F00FFE212 /* stream.c in Sources */,
+				1C4FAF5E28FC862F00FFE212 /* utils.c in Sources */,
+				1C4FAF5428FC862F00FFE212 /* write.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1C122B1D296A4B7200814381 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dav1d;
+			targetProxy = 1C122B1C296A4B7200814381 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1C4FAE9128FC83DC00FFE212 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C4FAF4428FC855100FFE212 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1C4FAE9228FC83DC00FFE212 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C4FAF4428FC855100FFE212 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1C4FAE9428FC83DC00FFE212 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1C4FAE9528FC83DC00FFE212 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1C4FAF4528FC859F00FFE212 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C4FAF4228FC854300FFE212 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		1C4FAF4628FC859F00FFE212 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1C4FAE8A28FC83DC00FFE212 /* Build configuration list for PBXProject "libavif" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C4FAE9128FC83DC00FFE212 /* Debug */,
+				1C4FAE9228FC83DC00FFE212 /* Release */,
+				1C4FAF4528FC859F00FFE212 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		1C4FAE9328FC83DC00FFE212 /* Build configuration list for PBXNativeTarget "libavif" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C4FAE9428FC83DC00FFE212 /* Debug */,
+				1C4FAE9528FC83DC00FFE212 /* Release */,
+				1C4FAF4628FC859F00FFE212 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1C4FAE8728FC83DC00FFE212 /* Project object */;
+}

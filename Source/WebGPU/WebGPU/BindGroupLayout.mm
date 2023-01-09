@@ -74,7 +74,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     UNUSED_PARAM(sampler);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
-    // FIXME: Implement this.
+    descriptor.access = MTLArgumentAccessReadOnly;
     return descriptor;
 }
 
@@ -92,7 +92,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     UNUSED_PARAM(texture);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
-    // FIXME: Implement this.
+    descriptor.access = MTLArgumentAccessReadOnly;
     return descriptor;
 }
 
@@ -115,132 +115,74 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureB
     return descriptor;
 }
 
+static void addDescriptor(NSMutableArray<MTLArgumentDescriptor *> *arguments, MTLArgumentDescriptor *descriptor)
+{
+    MTLArgumentDescriptor *stageDescriptor = [descriptor copy];
+    stageDescriptor.index = arguments.count;
+    [arguments addObject:stageDescriptor];
+}
+
+static bool containsStage(WGPUShaderStageFlags stageBitfield, auto stage)
+{
+    static_assert(1 == WGPUShaderStage_Vertex && 2 == WGPUShaderStage_Fragment && 4 == WGPUShaderStage_Compute, "Expect WGPUShaderStage to be a bitfield");
+    return stageBitfield & (1 << static_cast<uint32_t>(stage));
+}
+
 Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !descriptor.entryCount)
         return BindGroupLayout::createInvalid(*this);
 
-#if HAVE(TIER2_ARGUMENT_BUFFERS)
-    if ([m_device argumentBuffersSupport] != MTLArgumentBuffersTier1) {
-        HashMap<uint32_t, WGPUShaderStageFlags> shaderStageForBinding;
-
-        for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
-            const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
-            if (entry.nextInChain)
-                return BindGroupLayout::createInvalid(*this);
-
-            shaderStageForBinding.add(entry.binding + 1, entry.visibility);
-        }
-
-        return BindGroupLayout::create(WTFMove(shaderStageForBinding));
-    }
-#endif // HAVE(TIER2_ARGUMENT_BUFFERS)
-
-    NSMutableArray<MTLArgumentDescriptor *> *vertexArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
-    NSMutableArray<MTLArgumentDescriptor *> *fragmentArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
-    NSMutableArray<MTLArgumentDescriptor *> *computeArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
-    if (!vertexArguments || !fragmentArguments || !computeArguments)
-        return BindGroupLayout::createInvalid(*this);
+    HashMap<uint32_t, WGPUShaderStageFlags> shaderStageForBinding;
+    constexpr size_t stageCount = 3;
+    static_assert(stageCount == 3, "vertex, fragment, and compute stages supported");
+    NSMutableArray<MTLArgumentDescriptor *> *arguments[stageCount];
+    for (size_t i = 0; i < stageCount; ++i)
+        arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
 
     for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
         const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
         if (entry.nextInChain)
             return BindGroupLayout::createInvalid(*this);
 
-        // https://gpuweb.github.io/gpuweb/#dictdef-gpubindgrouplayoutentry
-        // "Only one [of buffer, sampler, texture, storageTexture, or externalTexture] may be defined for any given GPUBindGroupLayoutEntry."
-
-        ASSERT(i == vertexArguments.count);
-        ASSERT(vertexArguments.count == fragmentArguments.count);
-        ASSERT(fragmentArguments.count == computeArguments.count);
-
-        const WGPUBufferBindingLayout& buffer = entry.buffer;
-        const WGPUSamplerBindingLayout& sampler = entry.sampler;
-        const WGPUTextureBindingLayout& texture = entry.texture;
-        const WGPUStorageTextureBindingLayout& storageTexture = entry.storageTexture;
-
+        shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         MTLArgumentDescriptor *descriptor = nil;
 
-        if (isPresent(buffer)) {
-            if (i != vertexArguments.count)
-                return BindGroupLayout::createInvalid(*this);
+        if (isPresent(entry.buffer))
+            descriptor = createArgumentDescriptor(entry.buffer);
+        else if (isPresent(entry.sampler))
+            descriptor = createArgumentDescriptor(entry.sampler);
+        else if (isPresent(entry.texture))
+            descriptor = createArgumentDescriptor(entry.texture);
+        else if (isPresent(entry.storageTexture))
+            descriptor = createArgumentDescriptor(entry.storageTexture);
 
-            descriptor = createArgumentDescriptor(buffer);
-            if (!descriptor)
-                return BindGroupLayout::createInvalid(*this);
-        }
-
-        if (isPresent(sampler)) {
-            if (i != vertexArguments.count)
-                return BindGroupLayout::createInvalid(*this);
-
-            descriptor = createArgumentDescriptor(sampler);
-            if (!descriptor)
-                return BindGroupLayout::createInvalid(*this);
-        }
-
-        if (isPresent(texture)) {
-            if (i != vertexArguments.count)
-                return BindGroupLayout::createInvalid(*this);
-
-            descriptor = createArgumentDescriptor(texture);
-            if (!descriptor)
-                return BindGroupLayout::createInvalid(*this);
-        }
-
-        if (isPresent(storageTexture)) {
-            if (i != vertexArguments.count)
-                return BindGroupLayout::createInvalid(*this);
-
-            descriptor = createArgumentDescriptor(storageTexture);
-            if (!descriptor)
-                return BindGroupLayout::createInvalid(*this);
-        }
-
-        // FIXME: This needs coordination with the shader compiler.
-        descriptor.index = i;
-
-        MTLArgumentDescriptor *vertexDescriptor = descriptor;
-        MTLArgumentDescriptor *fragmentDescriptor = [descriptor copy];
-        MTLArgumentDescriptor *computeDescriptor = [descriptor copy];
-        if (!fragmentDescriptor || !computeDescriptor)
+        if (!descriptor)
             return BindGroupLayout::createInvalid(*this);
 
-        if (!(entry.visibility & WGPUShaderStage_Vertex))
-            vertexDescriptor.access = MTLArgumentAccessReadOnly;
-        if (!(entry.visibility & WGPUShaderStage_Fragment))
-            fragmentDescriptor.access = MTLArgumentAccessReadOnly;
-        if (!(entry.visibility & WGPUShaderStage_Compute))
-            computeDescriptor.access = MTLArgumentAccessReadOnly;
-
-        [vertexArguments addObject:vertexDescriptor];
-        [fragmentArguments addObject:fragmentDescriptor];
-        [computeArguments addObject:computeDescriptor];
+        for (size_t stage = 0; stage < stageCount; ++stage) {
+            if (containsStage(entry.visibility, stage))
+                addDescriptor(arguments[stage], descriptor);
+        }
     }
 
-    id<MTLArgumentEncoder> vertexArgumentEncoder = [m_device newArgumentEncoderWithArguments:vertexArguments];
-    id<MTLArgumentEncoder> fragmentArgumentEncoder = [m_device newArgumentEncoderWithArguments:fragmentArguments];
-    id<MTLArgumentEncoder> computeArgumentEncoder = [m_device newArgumentEncoderWithArguments:computeArguments];
-    if (!vertexArgumentEncoder || !fragmentArgumentEncoder || !computeArgumentEncoder)
-        return BindGroupLayout::createInvalid(*this);
-
     auto label = fromAPI(descriptor.label);
-    vertexArgumentEncoder.label = label;
-    fragmentArgumentEncoder.label = label;
-    computeArgumentEncoder.label = label;
+    id<MTLArgumentEncoder> argumentEncoders[stageCount];
+    for (size_t stage = 0; stage < stageCount; ++stage) {
+        argumentEncoders[stage] = arguments[stage].count ? [m_device newArgumentEncoderWithArguments:arguments[stage]] : nil;
+        argumentEncoders[stage].label = label;
+        if (arguments[stage].count && !argumentEncoders[stage])
+            return BindGroupLayout::createInvalid(*this);
+    }
 
-    return BindGroupLayout::create(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder);
+    return BindGroupLayout::create(WTFMove(shaderStageForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2]);
 }
 
-BindGroupLayout::BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
-    : m_vertexArgumentEncoder(vertexArgumentEncoder)
+BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
+    : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
+    , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)
-{
-}
-
-BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding)
-    : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
 {
 }
 
@@ -258,18 +200,22 @@ void BindGroupLayout::setLabel(String&& label)
     m_computeArgumentEncoder.label = labelString;
 }
 
-NSUInteger BindGroupLayout::encodedLength() const
+NSUInteger BindGroupLayout::encodedLength(ShaderStage shaderStage) const
 {
-    auto result = m_vertexArgumentEncoder.encodedLength;
-    ASSERT(result == m_fragmentArgumentEncoder.encodedLength);
-    ASSERT(result == m_computeArgumentEncoder.encodedLength);
-    return result;
+    switch (shaderStage) {
+    case ShaderStage::Vertex:
+        return m_vertexArgumentEncoder.encodedLength;
+    case ShaderStage::Fragment:
+        return m_fragmentArgumentEncoder.encodedLength;
+    case ShaderStage::Compute:
+        return m_computeArgumentEncoder.encodedLength;
+    }
 }
 
-uint32_t BindGroupLayout::stagesForBinding(uint32_t binding) const
+bool BindGroupLayout::bindingContainsStage(uint32_t bindingIndex, ShaderStage shaderStage) const
 {
-    ASSERT(m_shaderStageForBinding.contains(binding + 1));
-    return m_shaderStageForBinding.find(binding + 1)->value;
+    ASSERT(m_shaderStageForBinding.contains(bindingIndex + 1));
+    return containsStage(m_shaderStageForBinding.find(bindingIndex + 1)->value, shaderStage);
 }
 
 } // namespace WebGPU

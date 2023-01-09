@@ -589,6 +589,7 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
 
 bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& videoFrame, PlatformGLObject outputTexture, GLint level, GLenum internalFormat, GLenum format, GLenum type, FlipY unpackFlipY)
 {
+    RetainPtr<CVPixelBufferRef> convertedImage;
     auto image = videoFrame.pixelBuffer();
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
@@ -599,8 +600,14 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
         && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange
 #endif
         ) {
-        LOG(WebGL, "GraphicsContextGLCVCocoa::copyVideoTextureToPlatformTexture(%p) - Asked to copy an unsupported pixel format ('%s').", this, FourCC(pixelFormat).string().data());
-        return false;
+        convertedImage = convertPixelBuffer(image);
+        if (!convertedImage) {
+            LOG(WebGL, "GraphicsContextGLCVCocoa::copyVideoTextureToPlatformTexture(%p) - failed converting an image with pixel format ('%s').", this, FourCC(pixelFormat).string().data());
+            return false;
+        }
+        image = convertedImage.get();
+        pixelFormat = CVPixelBufferGetPixelFormatType(image);
+        ASSERT(pixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
     }
     IOSurfaceRef surface = CVPixelBufferGetIOSurface(image);
     if (!surface)

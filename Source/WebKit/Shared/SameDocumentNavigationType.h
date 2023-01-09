@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SameDocumentNavigationType_h
-#define SameDocumentNavigationType_h
+#pragma once
 
 namespace WebKit {
 
-enum SameDocumentNavigationType {
-    SameDocumentNavigationAnchorNavigation,
-    SameDocumentNavigationSessionStatePush,
-    SameDocumentNavigationSessionStateReplace,
-    SameDocumentNavigationSessionStatePop
+enum class SameDocumentNavigationType : uint8_t {
+    AnchorNavigation,
+    SessionStatePush,
+    SessionStateReplace,
+    SessionStatePop
 };
 
 } // namespace WebKit
-
-#endif // SameDocumentNavigationType_h

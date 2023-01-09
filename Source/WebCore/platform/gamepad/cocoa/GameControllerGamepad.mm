@@ -27,8 +27,8 @@
 
 #if ENABLE(GAMEPAD)
 #import "GameControllerGamepadProvider.h"
+#import "GameControllerHapticEngines.h"
 #import "GamepadConstants.h"
-#import "NotImplemented.h"
 #import <GameController/GCControllerElement.h>
 #import <GameController/GameController.h>
 
@@ -70,12 +70,14 @@ void GameControllerGamepad::setupElements()
 
     m_id = makeString(String(m_gcController.get().vendorName), m_gcController.get().extendedGamepad ? " Extended Gamepad"_s : " Gamepad"_s);
 
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     if (auto *haptics = [m_gcController haptics]) {
         if (canLoad_GameController_GCHapticsLocalityLeftHandle() && canLoad_GameController_GCHapticsLocalityRightHandle()) {
             if ([haptics.supportedLocalities containsObject:get_GameController_GCHapticsLocalityLeftHandle()] && [haptics.supportedLocalities containsObject:get_GameController_GCHapticsLocalityRightHandle()])
                 m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
         }
     }
+#endif
 
     if (m_gcController.get().extendedGamepad)
         m_mapping = standardGamepadMappingString();
@@ -158,18 +160,42 @@ void GameControllerGamepad::setupElements()
     };
 }
 
-void GameControllerGamepad::playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+GameControllerHapticEngines& GameControllerGamepad::ensureHapticEngines()
 {
-    // FIXME(webkit.org/b/250217): Implement support.
-    notImplemented();
+    if (!m_hapticEngines)
+        m_hapticEngines = GameControllerHapticEngines::create(m_gcController.get());
+    return *m_hapticEngines;
+}
+#endif
+
+void GameControllerGamepad::playEffect(GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    ensureHapticEngines().playEffect(type, parameters, WTFMove(completionHandler));
+#else
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(parameters);
     completionHandler(false);
+#endif
 }
 
 void GameControllerGamepad::stopEffects(CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME(webkit.org/b/250217): Implement support.
-    notImplemented();
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    if (m_hapticEngines)
+        m_hapticEngines->stopEffects();
+#endif
     completionHandler();
+}
+
+void GameControllerGamepad::noLongerHasAnyClient()
+{
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    // Stop the haptics engine if it is running.
+    if (m_hapticEngines)
+        m_hapticEngines->stop([] { });
+#endif
 }
 
 } // namespace WebCore

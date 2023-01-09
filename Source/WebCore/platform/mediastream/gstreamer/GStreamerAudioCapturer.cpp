@@ -37,14 +37,27 @@ static constexpr size_t s_audioCaptureSampleRate = LibWebRTCAudioFormat::sampleR
 static constexpr size_t s_audioCaptureSampleRate = 48000;
 #endif
 
+GST_DEBUG_CATEGORY(webkit_audio_capturer_debug);
+#define GST_CAT_DEFAULT webkit_audio_capturer_debug
+
+static void initializeDebugCategory()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_audio_capturer_debug, "webkitaudiocapturer", 0, "WebKit Audio Capturer");
+    });
+}
+
 GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice device)
     : GStreamerCapturer(device, adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)))
 {
+    initializeDebugCategory();
 }
 
 GStreamerAudioCapturer::GStreamerAudioCapturer()
     : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)), CaptureDevice::DeviceType::Microphone)
 {
+    initializeDebugCategory();
 }
 
 GstElement* GStreamerAudioCapturer::createConverter()
@@ -57,7 +70,7 @@ GstElement* GStreamerAudioCapturer::createConverter()
 
 #if USE(GSTREAMER_WEBRTC)
     if (auto* webrtcdsp = makeGStreamerElement("webrtcdsp", nullptr)) {
-        g_object_set(webrtcdsp, "echo-cancel", false, "voice-detection", true, nullptr);
+        g_object_set(webrtcdsp, "echo-cancel", FALSE, "voice-detection", TRUE, nullptr);
         gst_bin_add(GST_BIN_CAST(bin), webrtcdsp);
         gst_element_link(webrtcdsp, audioconvert);
     }
@@ -73,21 +86,18 @@ GstElement* GStreamerAudioCapturer::createConverter()
 
 bool GStreamerAudioCapturer::setSampleRate(int sampleRate)
 {
-
     if (sampleRate <= 0) {
         GST_INFO_OBJECT(m_pipeline.get(), "Not forcing sample rate");
-
         return false;
     }
 
     GST_INFO_OBJECT(m_pipeline.get(), "Setting SampleRate %d", sampleRate);
     m_caps = adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, sampleRate, nullptr));
 
-    if (!m_capsfilter.get())
+    if (!m_capsfilter)
         return false;
 
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);
-
     return true;
 }
 

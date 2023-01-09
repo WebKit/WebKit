@@ -545,8 +545,10 @@ public:
     bool pushContentsClip(PaintInfo&, const LayoutPoint& accumulatedOffset);
     void popContentsClip(PaintInfo&, PaintPhase originalPhase, const LayoutPoint& accumulatedOffset);
 
+    ControlPart* ensureControlPart();
     ControlPart* ensureControlPartForRenderer();
     ControlPart* ensureControlPartForBorderOnly();
+    ControlPart* ensureControlPartForDecorations();
 
     virtual void paintObject(PaintInfo&, const LayoutPoint&) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);

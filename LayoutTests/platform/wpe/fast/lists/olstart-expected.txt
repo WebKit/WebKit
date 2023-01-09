@@ -15,7 +15,6 @@ layer at (0,0) size 785x782
           RenderListMarker at (-20,0) size 16x17: "4"
           RenderText {#text} at (0,0) size 76x17
             text run at (0,0) width 76: "Should be 4"
-      RenderBlock {HR} at (0,86) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,96) size 769x18
         RenderText {#text} at (0,0) size 289x17
           text run at (0,0) width 289: "2. Test that the inner start value gets inherited:"
@@ -29,7 +28,6 @@ layer at (0,0) size 785x782
             RenderListMarker at (-20,0) size 16x17: "3"
             RenderText {#text} at (0,0) size 76x17
               text run at (0,0) width 76: "Should be 3"
-      RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,192) size 769x18
         RenderText {#text} at (0,0) size 383x17
           text run at (0,0) width 383: "3. Test that extra tags before the li don't block the inheritance"
@@ -41,7 +39,6 @@ layer at (0,0) size 785x782
           RenderListMarker at (-20,0) size 16x17: "3"
           RenderText {#text} at (0,0) size 76x17
             text run at (0,0) width 76: "Should be 3"
-      RenderBlock {HR} at (0,294) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,304) size 769x18
         RenderText {#text} at (0,0) size 270x17
           text run at (0,0) width 270: "4. Test for inheritance through many levels"
@@ -56,7 +53,6 @@ layer at (0,0) size 785x782
         RenderBlock (anonymous) at (40,18) size 729x0
           RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,372) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,382) size 769x18
         RenderText {#text} at (0,0) size 416x17
           text run at (0,0) width 416: "5. Test for properly chaining from the previous li when it is nested"
@@ -79,7 +75,6 @@ layer at (0,0) size 785x782
           RenderListMarker at (-20,0) size 16x17: "5"
           RenderText {#text} at (0,0) size 76x17
             text run at (0,0) width 76: "Should be 5"
-      RenderBlock {HR} at (0,486) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,496) size 769x18
         RenderText {#text} at (0,0) size 452x17
           text run at (0,0) width 452: "6. Test for properly chaining from the previous li when current is nested"
@@ -98,7 +93,6 @@ layer at (0,0) size 785x782
         RenderBlock (anonymous) at (40,36) size 729x0
           RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,582) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,592) size 769x18
         RenderText {#text} at (0,0) size 445x17
           text run at (0,0) width 445: "7. Test for properly chaining from the previous li when both are nested"
@@ -122,7 +116,6 @@ layer at (0,0) size 785x782
         RenderBlock (anonymous) at (40,36) size 729x0
           RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,678) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,688) size 769x18
         RenderText {#text} at (0,0) size 352x17
           text run at (0,0) width 352: "8. Test for not inheriting improperly from an another list"
@@ -136,3 +129,17 @@ layer at (0,0) size 785x782
           RenderListMarker at (-20,0) size 16x17: "5"
           RenderText {#text} at (0,0) size 76x17
             text run at (0,0) width 76: "Should be 5"
+layer at (8,94) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 769x2 [border: (1px inset #000000)]
+layer at (8,190) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
+layer at (8,302) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,294) size 769x2 [border: (1px inset #000000)]
+layer at (8,380) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,372) size 769x2 [border: (1px inset #000000)]
+layer at (8,494) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,486) size 769x2 [border: (1px inset #000000)]
+layer at (8,590) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,582) size 769x2 [border: (1px inset #000000)]
+layer at (8,686) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,678) size 769x2 [border: (1px inset #000000)]

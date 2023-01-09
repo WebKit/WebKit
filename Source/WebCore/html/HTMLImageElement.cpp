@@ -101,6 +101,10 @@ HTMLImageElement::~HTMLImageElement()
 {
     document().removeDynamicMediaQueryDependentImage(*this);
     setForm(nullptr);
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (auto* page = document().page())
+        page->removeIndividuallyPlayingAnimationElement(*this);
+#endif
 }
 
 void HTMLImageElement::resetFormOwner()
@@ -800,8 +804,18 @@ void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
     if (!document().settings().imageAnimationControlEnabled())
         return;
 
-    if (auto* image = this->image())
+    if (auto* image = this->image()) {
         image->setAllowsAnimation(allowsAnimation);
+        if (auto* renderer = this->renderer())
+            renderer->repaint();
+
+        if (auto* page = document().page()) {
+            if (allowsAnimation)
+                page->addIndividuallyPlayingAnimationElement(*this);
+            else
+                page->removeIndividuallyPlayingAnimationElement(*this);
+        }
+    }
 }
 #endif
 

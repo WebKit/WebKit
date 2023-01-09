@@ -8,7 +8,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 249x17
             text run at (0,0) width 249: "This should not turn red when hovered."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,44) size 784x36
         RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
@@ -25,4 +24,6 @@ layer at (0,0) size 800x600
             text run at (699,3) width 56: "*:hover"
         RenderText {#text} at (0,18) size 256x17
           text run at (0,18) width 256: "does not match anything in quirks mode."
+layer at (8,34) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

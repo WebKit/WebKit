@@ -16,7 +16,6 @@ layer at (0,0) size 800x156
             text run at (0,18) width 138: "highlight stays behind"
         RenderText {#text} at (138,18) size 4x17
           text run at (138,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 784x70
         RenderImage {IMG} at (0,0) size 0x30
         RenderBR {BR} at (0,16) size 0x17
@@ -27,5 +26,7 @@ layer at (0,0) size 800x156
         RenderText {#text} at (309,52) size 4x17
           text run at (309,52) width 4: " "
         RenderBR {BR} at (313,52) size 0x17
+layer at (8,68) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 0 {#text} of child 6 {SPAN} of child 5 {DIV} of body
 selection end:   position 51 of child 0 {#text} of child 6 {SPAN} of child 5 {DIV} of body

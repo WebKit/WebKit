@@ -88,7 +88,7 @@ JSC_DECLARE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance*, unsi
 JSC_DECLARE_JIT_OPERATION(operationWasmMemoryInit, size_t, (Instance*, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length));
 JSC_DECLARE_JIT_OPERATION(operationWasmDataDrop, void, (Instance*, unsigned dataSegmentIndex));
 
-JSC_DECLARE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance*, uint32_t, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance*, uint32_t, bool, uint64_t*));
 JSC_DECLARE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance*, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmStructSet, void, (Instance*, EncodedJSValue, uint32_t, EncodedJSValue));

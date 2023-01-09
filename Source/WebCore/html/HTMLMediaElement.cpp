@@ -7833,16 +7833,6 @@ bool HTMLMediaElement::mediaPlayerPrefersSandboxedParsing() const
     return document().settings().preferSandboxedMediaParsing();
 }
 
-#if USE(GSTREAMER)
-void HTMLMediaElement::requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback)
-{
-    if (!document().page())
-        return;
-
-    document().page()->chrome().client().requestInstallMissingMediaPlugins(details, description, callback);
-}
-#endif
-
 void HTMLMediaElement::removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::BehaviorRestrictions mask)
 {
     MediaElementSession::BehaviorRestrictions restrictionsToRemove = mask &

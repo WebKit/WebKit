@@ -350,10 +350,6 @@
 #include <WebCore/DataDetectionResultsStorage.h>
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-#include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
-#endif
-
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #endif
@@ -1605,13 +1601,6 @@ void WebPage::close()
 
 #if PLATFORM(GTK)
     m_printOperation = nullptr;
-#endif
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    if (m_installMediaPluginsCallback) {
-        m_installMediaPluginsCallback->invalidate();
-        m_installMediaPluginsCallback = nullptr;
-    }
 #endif
 
     m_sandboxExtensionTracker.invalidate();
@@ -7922,6 +7911,15 @@ void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+void WebPage::isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanPlay)
+{
+    if (!m_page->settings().imageAnimationControlEnabled())
+        return;
+    send(Messages::WebPageProxy::IsAnyAnimationAllowedToPlayDidChange(anyAnimationCanPlay));
+}
+#endif
+
 void WebPage::isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags state)
 {
     send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
@@ -8372,7 +8370,19 @@ void WebPage::updateImageAnimationEnabled()
 {
     corePage()->setImageAnimationEnabled(WebProcess::singleton().imageAnimationEnabled());
 }
-#endif
+
+void WebPage::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)
+{
+    corePage()->setImageAnimationEnabled(false);
+    completionHandler();
+}
+
+void WebPage::playAllAnimations(CompletionHandler<void()>&& completionHandler)
+{
+    corePage()->setImageAnimationEnabled(true);
+    completionHandler();
+}
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 bool WebPage::isUsingUISideCompositing() const
 {

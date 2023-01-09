@@ -122,10 +122,6 @@ class SecurityOrigin;
 class ViewportConstraints;
 class Widget;
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-class MediaPlayerRequestInstallMissingPluginsCallback;
-#endif
-
 #if ENABLE(WEBGL)
 class GraphicsContextGL;
 struct GraphicsContextGLAttributes;
@@ -524,6 +520,9 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    virtual void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) { };
+#endif
     virtual void isPlayingMediaDidChange(MediaProducerMediaStateFlags) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
@@ -566,10 +565,6 @@ public:
 #endif
 
     virtual void imageOrMediaDocumentSizeChanged(const IntSize&) { }
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { }
-#endif
 
     virtual void didInvalidateDocumentMarkerRects() { }
 

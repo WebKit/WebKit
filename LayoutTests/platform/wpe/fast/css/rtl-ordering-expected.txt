@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
             text run at (0,18) width 371: "type=\"button\"> text is reversed on \"visual Hebrew\" pages"
         RenderText {#text} at (371,18) size 4x17
           text run at (371,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 303x17
           text run at (0,0) width 303: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
@@ -32,7 +31,6 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 42x17
               text run at (0,0) width 42 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,166) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,184) size 784x18
         RenderText {#text} at (0,0) size 249x17
           text run at (0,0) width 249: "The following lines should be identical:"
@@ -43,3 +41,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,252) size 784x18
         RenderText {#text} at (0,0) size 76x17
           text run at (0,0) width 76: "21-\x{5D4} \x{5D4}\x{5D0}\x{5DE}\x{5D4}"
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,174) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,166) size 784x2 [border: (1px inset #000000)]

@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
             text run at (405,0) width 333: "TFOOT borders are copied to THEAD and TBODY"
         RenderText {#text} at (738,0) size 4x17
           text run at (738,0) width 4: "."
-      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,44) size 418x208
         RenderTableSection {TBODY} at (0,0) size 418x208
           RenderTableRow {TR} at (0,2) size 418x204
@@ -275,3 +274,5 @@ layer at (0,0) size 800x600
                     RenderTableCell {TH} at (0,0) size 22x53 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 17x50
                         text run at (2,2) width 50: "Header"
+layer at (8,42) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]

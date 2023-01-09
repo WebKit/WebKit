@@ -41,7 +41,6 @@ layer at (0,0) size 800x561
                     text run at (0,0) width 25: "Foo"
                 RenderTableCell {dd} at (25,0) size 173x24 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {input} at (0,0) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {hr} at (0,40) size 784x2 [border: (1px inset #000000)]
           RenderBlock {p} at (0,58) size 784x36
             RenderText {#text} at (0,0) size 781x35
               text run at (0,0) width 781: "And here's more. There should not be a difference in distance between the labels, nor any difference in distance between the"
@@ -93,6 +92,8 @@ layer at (0,0) size 800x561
                     RenderBR {br} at (0,0) size 0x17
 layer at (36,276) size 167x18
   RenderBlock {div} at (3,3) size 167x18
+layer at (8,313) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {hr} at (0,40) size 784x2 [border: (1px inset #000000)]
 layer at (36,386) size 167x18
   RenderBlock {div} at (3,3) size 167x18
 layer at (36,410) size 167x18

@@ -1,0 +1,3 @@
+
+FAIL checking serialized value of font-variant assert_equals: expected "tabular-nums" but got ""
+

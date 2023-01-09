@@ -28,8 +28,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AirArg.h"
+#include "WasmOpcodeCounter.h"
 #include "WasmParser.h"
-#include "WasmSIMDOpcodes.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/ListDump.h>
@@ -341,6 +341,9 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
 
         m_currentOpcode = static_cast<OpType>(op);
+
+        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+            WasmOpcodeCounter::singleton().increment(m_currentOpcode);
 
         if (verbose) {
             dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawHex(op), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawHex(m_offset));
@@ -1913,6 +1916,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
             return { };
         }
+        case GCOpType::StructNewDefault:
+        case GCOpType::StructNewCanonDefault: {
+            uint32_t typeIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new_default"));
+
+            const auto& typeDefinition = m_info.typeSignatures[typeIndex];
+            const auto* structType = typeDefinition->template as<StructType>();
+
+            for (StructFieldCount i = 0; i < structType->fieldCount(); i++)
+                WASM_PARSER_FAIL_IF(!isDefaultableType(structType->field(i).type), "struct.new_default ", typeIndex, " requires all fields to be defaultable, but field ", i, " has type ", structType->field(i).type);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addStructNewDefault(typeIndex, result));
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
+            return { };
+        }
         case GCOpType::StructGet: {
             StructFieldManipulation structGetInput;
             WASM_PARSER_FAIL_IF(!parseStructFieldManipulation(structGetInput, "struct.get"));
@@ -1951,6 +1970,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse atomic extended opcode");
 
         ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
+
+        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+            WasmOpcodeCounter::singleton().increment(op);
+
         switch (op) {
 #define CREATE_CASE(name, id, b3op, inc, memoryType) case ExtAtomicOpType::name: return atomicLoad(op, Types::memoryType);
         FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_CASE)
@@ -2597,6 +2620,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         constexpr bool isReachable = true;
 
         ExtSIMDOpType op = static_cast<ExtSIMDOpType>(simdOp);
+
+        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+            WasmOpcodeCounter::singleton().increment(op);
+
         switch (op) {
         #define CREATE_SIMD_CASE(name, _, laneOp, lane, signMode) case ExtSIMDOpType::name: return simd<isReachable>(SIMDLaneOperation::laneOp, lane, signMode);
         FOR_EACH_WASM_EXT_SIMD_GENERAL_OP(CREATE_SIMD_CASE)
@@ -2923,7 +2950,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint8_t extOp;
         WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse extended GC opcode");
 
-        switch (static_cast<GCOpType>(extOp)) {
+        GCOpType op = static_cast<GCOpType>(extOp);
+
+        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+            WasmOpcodeCounter::singleton().increment(op);
+
+        switch (op) {
         case GCOpType::I31New:
         case GCOpType::I31GetS:
         case GCOpType::I31GetU:
@@ -2964,6 +2996,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case GCOpType::StructNewCanon: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new"));
+            return { };
+        }
+        case GCOpType::StructNewDefault:
+        case GCOpType::StructNewCanonDefault: {
+            uint32_t unused;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new_default"));
             return { };
         }
         case GCOpType::StructGet: {

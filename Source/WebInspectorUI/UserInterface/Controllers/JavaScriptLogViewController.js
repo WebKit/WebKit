@@ -60,8 +60,13 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         this._promptFindNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
         this._promptFindPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
 
+        WI.settings.showConsoleMessageTimestamps.addEventListener(WI.Setting.Event.Changed, this._handleShowConsoleMessageTimestampsSettingChanged, this);
+
         this._pendingMessagesForSessionOrGroup = new Map;
         this._scheduledRenderIdentifier = 0;
+
+        this._consoleMessageViews = [];
+        this._showTimestamps = WI.settings.showConsoleMessageTimestamps.value;
 
         this.startNewSession();
     }
@@ -148,7 +153,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         return consoleMessageView;
     }
 
-    updatePreviousMessageRepeatCount(count)
+    updatePreviousMessageRepeatCount(count, timestamp)
     {
         console.assert(this._previousMessageView);
         if (!this._previousMessageView)
@@ -156,6 +161,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         var previousIgnoredCount = this._previousMessageView[WI.JavaScriptLogViewController.IgnoredRepeatCount] || 0;
         var previousVisibleCount = this._previousMessageView.repeatCount;
+        this._previousMessageView.timestamp = timestamp;
 
         if (!this._repeatCountWasInterrupted) {
             this._previousMessageView.repeatCount = count - previousIgnoredCount;
@@ -276,6 +282,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             this._pendingMessagesForSessionOrGroup.set(this._currentSessionOrGroup, pendingMessagesForSession);
         }
         pendingMessagesForSession.push(messageView);
+        this._consoleMessageViews.push(messageView);
 
         this._cleared = false;
         this._repeatCountWasInterrupted = repeatCountWasInterrupted || false;
@@ -330,6 +337,8 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         this._currentSessionOrGroup = savedCurrentConsoleGroup;
 
+        this._currentSessionOrGroup.element.classList.toggle("timestamps-visible", this._showTimestamps);
+
         if (wasScrolledToBottom || lastMessageView instanceof WI.ConsoleCommandView || lastMessageView.message.type === WI.ConsoleMessage.MessageType.Result || lastMessageView.message.type === WI.ConsoleMessage.MessageType.Image)
             this.scrollToBottom();
 
@@ -366,6 +375,18 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")
             this.delegate.didAppendConsoleMessageView(messageView);
+    }
+
+    _handleShowConsoleMessageTimestampsSettingChanged()
+    {
+        this._showTimestamps = WI.settings.showConsoleMessageTimestamps.value;
+        this._currentSessionOrGroup.element.classList.toggle("timestamps-visible", this._showTimestamps);
+        if (this._showTimestamps) {
+            for (let consoleMessageView of this._consoleMessageViews) {
+                if (consoleMessageView instanceof WI.ConsoleMessageView)
+                    consoleMessageView.renderTimestamp();
+            }
+        }
     }
 };
 

@@ -16,7 +16,8 @@ layer at (0,0) size 800x600
             text run at (0,18) width 53: "live.com"
         RenderText {#text} at (53,18) size 4x17
           text run at (53,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,60) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
 layer at (8,70) size 100x100

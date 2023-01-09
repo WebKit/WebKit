@@ -549,10 +549,28 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
     }
 
     if (lineBoxContain.contains(LineBoxContain::InitialLetter)) {
-        // initial letter contain is based on the font metrics cap geometry.
+        // Initial letter contain is based on the font metrics cap geometry and we hug descent.
         auto& rootInlineBox = lineBox.rootInlineBox();
-        InlineLayoutUnit initialLetterAscent = rootInlineBox.primarymetricsOfPrimaryFont().capHeight();
-        inlineBoxBoundsMap.set(&rootInlineBox, TextUtil::EnclosingAscentDescent { initialLetterAscent, 0.f });
+        auto& fontMetrics = rootInlineBox.primarymetricsOfPrimaryFont();
+        InlineLayoutUnit initialLetterAscent = fontMetrics.capHeight();
+        auto initialLetterDescent = InlineLayoutUnit { };
+
+        for (auto run : lineContent().runs) {
+            // We really should only have one text run for initial letter.
+            if (!run.isText())
+                continue;
+
+            auto& textBox = downcast<InlineTextBox>(run.layoutBox());
+            auto textContent = run.textContent();
+            auto& style = isFirstLine() ? textBox.firstLineStyle() : textBox.style();
+            auto ascentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent->start, textContent->length), style);
+
+            initialLetterDescent = ascentAndDescent.descent;
+            if (lineBox.baselineType() != AlphabeticBaseline)
+                initialLetterAscent = -ascentAndDescent.ascent;
+            break;
+        }
+        inlineBoxBoundsMap.set(&rootInlineBox, TextUtil::EnclosingAscentDescent { initialLetterAscent, initialLetterDescent });
     }
 
     for (auto entry : inlineBoxBoundsMap) {

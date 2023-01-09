@@ -59,6 +59,163 @@ enum class ExtSIMDOpType : uint8_t {
 };
 #undef CREATE_ENUM_VALUE
 
+constexpr std::pair<size_t, size_t> countNumberOfWasmExtendedSIMDOpcodes()
+{
+    uint8_t numberOfOpcodes = 0;
+    uint8_t mapSize = 0;
+#define COUNT_EXT_SIMD_OPERATION(name, id, ...) \
+    numberOfOpcodes++; \
+    mapSize = std::max<size_t>(mapSize, (size_t)id);
+    FOR_EACH_WASM_EXT_SIMD_OP(COUNT_EXT_SIMD_OPERATION)
+#undef COUNT_EXT_SIMD_OPERATION
+    return { numberOfOpcodes, mapSize + 1 };
+}
+
+constexpr bool isRegisteredWasmExtendedSIMDOpcode(ExtSIMDOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case ExtSIMDOpType::name:
+    FOR_EACH_WASM_EXT_SIMD_OP(CREATE_CASE)
+#undef CREATE_CASE
+        return true;
+    default:
+        return false;
+    }
+}
+
+constexpr void dumpExtSIMDOpType(PrintStream& out, ExtSIMDOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case ExtSIMDOpType::name: out.print(#name); break;
+    FOR_EACH_WASM_EXT_SIMD_OP(CREATE_CASE)
+#undef CREATE_CASE
+    default:
+        return;
+    }
+}
+
+MAKE_PRINT_ADAPTOR(ExtSIMDOpTypeDump, ExtSIMDOpType, dumpExtSIMDOpType);
+
+constexpr std::pair<size_t, size_t> countNumberOfWasmExtendedAtomicOpcodes()
+{
+    uint8_t numberOfOpcodes = 0;
+    uint8_t mapSize = 0;
+#define COUNT_WASM_EXT_ATOMIC_OP(name, id, ...) \
+    numberOfOpcodes++;                      \
+    mapSize = std::max<size_t>(mapSize, (size_t)id);
+    FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(COUNT_WASM_EXT_ATOMIC_OP);
+    FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(COUNT_WASM_EXT_ATOMIC_OP);
+    FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(COUNT_WASM_EXT_ATOMIC_OP);
+    FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(COUNT_WASM_EXT_ATOMIC_OP);
+#undef COUNT_WASM_EXT_ATOMIC_OP
+    return { numberOfOpcodes, mapSize + 1 };
+}
+
+constexpr bool isRegisteredExtenedAtomicOpcode(ExtAtomicOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case ExtAtomicOpType::name:
+    FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(CREATE_CASE)
+#undef CREATE_CASE
+        return true;
+    default:
+        return false;
+    }
+}
+
+constexpr void dumpExtAtomicOpType(PrintStream& out, ExtAtomicOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case ExtAtomicOpType::name: out.print(#name); break;
+    FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(CREATE_CASE)
+#undef CREATE_CASE
+    default:
+        return;
+    }
+}
+
+MAKE_PRINT_ADAPTOR(ExtAtomicOpTypeDump, ExtAtomicOpType, dumpExtAtomicOpType);
+
+constexpr std::pair<size_t, size_t> countNumberOfWasmGCOpcodes()
+{
+    uint8_t numberOfOpcodes = 0;
+    uint8_t mapSize = 0;
+#define COUNT_WASM_GC_OP(name, id, ...) \
+    numberOfOpcodes++;                  \
+    mapSize = std::max<size_t>(mapSize, (size_t)id);
+    FOR_EACH_WASM_GC_OP(COUNT_WASM_GC_OP);
+#undef COUNT_WASM_GC_OP
+    return { numberOfOpcodes, mapSize + 1 };
+}
+
+constexpr bool isRegisteredGCOpcode(GCOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case GCOpType::name:
+    FOR_EACH_WASM_GC_OP(CREATE_CASE)
+#undef CREATE_CASE
+        return true;
+    default:
+        return false;
+    }
+}
+
+constexpr void dumpGCOpType(PrintStream& out, GCOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case GCOpType::name: out.print(#name); break;
+    FOR_EACH_WASM_GC_OP(CREATE_CASE)
+#undef CREATE_CASE
+    default:
+        return;
+    }
+}
+
+MAKE_PRINT_ADAPTOR(GCOpTypeDump, GCOpType, dumpGCOpType);
+
+constexpr std::pair<size_t, size_t> countNumberOfWasmBaseOpcodes()
+{
+    uint8_t numberOfOpcodes = 0;
+    uint8_t mapSize = 0;
+#define COUNT_WASM_OP(name, id, ...) \
+    numberOfOpcodes++;               \
+    mapSize = std::max<size_t>(mapSize, (size_t)id);
+    FOR_EACH_WASM_OP(COUNT_WASM_OP);
+#undef COUNT_WASM_OP
+    return { numberOfOpcodes, mapSize + 1 };
+}
+
+constexpr bool isRegisteredBaseOpcode(OpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case OpType::name:
+    FOR_EACH_WASM_OP(CREATE_CASE)
+#undef CREATE_CASE
+        return true;
+    default:
+        return false;
+    }
+}
+
+constexpr void dumpOpType(PrintStream& out, OpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, ...) case OpType::name: out.print(#name); break;
+    FOR_EACH_WASM_OP(CREATE_CASE)
+#undef CREATE_CASE
+    default:
+        return;
+    }
+}
+
+MAKE_PRINT_ADAPTOR(OpTypeDump, OpType, dumpOpType);
+
 constexpr Type simdScalarType(SIMDLane lane)
 {
     switch (lane) {

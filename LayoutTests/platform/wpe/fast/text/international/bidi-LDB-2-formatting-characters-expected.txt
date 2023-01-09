@@ -529,7 +529,6 @@ layer at (0,0) size 785x654
         RenderText {#text} at (0,1) size 452x17
           text run at (0,1) width 48: "Note: "
           text run at (48,1) width 404: "This test does not test RLM or LRM, but it ought to."
-      RenderBlock {HR} at (0,509) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,527) size 769x20
         RenderText {#text} at (0,1) size 71x17
           text run at (0,1) width 71: "(Back to "
@@ -557,3 +556,5 @@ layer at (0,0) size 785x654
       RenderBlock {P} at (0,597) size 769x20
         RenderText {#text} at (0,1) size 383x17
           text run at (0,1) width 383: "Modified and used with the author\x{2019}s permission."
+layer at (8,531) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,509) size 769x3 [border: (1px inset #000000)]

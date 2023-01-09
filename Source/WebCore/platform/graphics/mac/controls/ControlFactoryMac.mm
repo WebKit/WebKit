@@ -31,6 +31,7 @@
 #import "ButtonMac.h"
 #import "ColorWellMac.h"
 #import "InnerSpinButtonMac.h"
+#import "MenuListButtonMac.h"
 #import "MenuListMac.h"
 #import "MeterMac.h"
 #import "ProgressBarMac.h"
@@ -200,6 +201,13 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonP
     return makeUnique<ButtonMac>(part, *this, part.type() == ControlPartType::DefaultButton ? defaultButtonCell() : buttonCell());
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ColorWellPart& part)
+{
+    return makeUnique<ColorWellMac>(part, *this, buttonCell());
+}
+#endif
+
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformInnerSpinButton(InnerSpinButtonPart& part)
 {
     return makeUnique<InnerSpinButtonMac>(part, *this);
@@ -210,12 +218,10 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuList(MenuL
     return makeUnique<MenuListMac>(part, *this, popUpButtonCell());
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ColorWellPart& part)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMenuListButton(MenuListButtonPart& part)
 {
-    return makeUnique<ColorWellMac>(part, *this, buttonCell());
+    return makeUnique<MenuListButtonMac>(part, *this);
 }
-#endif
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformMeter(MeterPart& part)
 {

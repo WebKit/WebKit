@@ -252,12 +252,12 @@ body[dir=rtl] .details-section > .header::before {
     margin-inline-start: 5px;
 }
 
-.details-section > .content > .group > .row:has(.warning) {
+.details-section > .content > .group > .row:is(.simple, .font-variation):has(.warning) {
     background-color: var(--warning-background-color-secondary);
     position: relative;
 }
 
-.details-section > .content > .group > .row > .warning {
+.details-section > .content > .group > .row:is(.simple, .font-variation) > .warning {
     position: absolute;
     right: 0;
     align-self: center;

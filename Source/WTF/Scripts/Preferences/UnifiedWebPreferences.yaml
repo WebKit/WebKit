@@ -2302,11 +2302,12 @@ GamepadVibrationActuatorEnabled:
   status: testable
   humanReadableName: "Gamepad.vibrationActuator support"
   humanReadableDescription: "Support for Gamepad.vibrationActuator"
+  condition: ENABLE(GAMEPAD)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: defaultGamepadVibrationActuatorEnabled()
     WebCore:
       default: false
 
@@ -3037,11 +3038,12 @@ ItpDebugModeEnabled:
   status: developer
   humanReadableName: "ITP Debug Mode"
   humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 JavaScriptCanAccessClipboard:
@@ -4486,11 +4488,12 @@ PrivateClickMeasurementDebugModeEnabled:
   status: developer
   humanReadableName: "Private Click Measurement Debug Mode"
   humanReadableDescription: "Enable Private Click Measurement Debug Mode"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 PrivateClickMeasurementEnabled:
@@ -4545,7 +4548,7 @@ PunchOutWhiteBackgroundsInDarkMode:
 
 PushAPIEnabled:
   type: bool
-  status: stable
+  status: testable
   condition: ENABLE(SERVICE_WORKER)
   humanReadableName: "Push API"
   humanReadableDescription: "Enable Push API"
@@ -6726,21 +6729,6 @@ WebRTCH265CodecEnabled:
       default: false
     WebKit:
       default: false
-    WebCore:
-      default: false
-
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebRTCMDNSICECandidatesEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "WebRTC mDNS ICE candidates"
-  humanReadableDescription: "Enable WebRTC mDNS ICE candidates"
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
     WebCore:
       default: false
 

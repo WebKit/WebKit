@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +185,13 @@ LayoutUnit RenderMultiColumnFlow::initialLogicalWidth() const
 
 void RenderMultiColumnFlow::setPageBreak(const RenderBlock* block, LayoutUnit offset, LayoutUnit spaceShortage)
 {
+    // Only positive values are interesting (and allowed) here. Zero space shortage may be reported
+    // when we're at the top of a column and the element has zero height. Ignore this, and also
+    // ignore any negative values, which may occur when we set an early break in order to honor
+    // widows in the next column.
+    if (spaceShortage <= 0)
+        return;
+
     if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset)))
         multicolSet->recordSpaceShortage(spaceShortage);
 }

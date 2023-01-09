@@ -22,7 +22,6 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
-#include "GStreamerAudioCaptureSource.h"
 #include "GStreamerRegistryScanner.h"
 #include "MediaStreamTrack.h"
 

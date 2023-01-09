@@ -1164,7 +1164,7 @@ struct WebCore::ExceptionDetails {
 };
 
 header: <WebCore/RectEdges.h>
-[Alias=RectEdges<float>, CustomHeader] alias WebCore::FloatBoxExtent {
+[Alias=RectEdges<float>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::FloatBoxExtent {
     float top()
     float right()
     float bottom()
@@ -1582,6 +1582,7 @@ enum class WebCore::AlphaPremultiplication : uint8_t {
 
 enum class WebCore::PixelFormat : uint8_t {
     RGBA8,
+    BGRX8,
     BGRA8,
     RGB10,
     RGB10A8,
@@ -2366,6 +2367,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     float zoomFactor;
     WebCore::Color accentColor;
     WebCore::Color textColor;
+    WebCore::FloatBoxExtent borderWidth;
 };
 
 enum class WebCore::ControlPartType : uint8_t {
@@ -2475,7 +2477,8 @@ struct WebCore::GamepadEffectParameters {
 
 header: <WebCore/GamepadHapticEffectType.h>
 enum class WebCore::GamepadHapticEffectType : uint8_t {
-    DualRumble
+    DualRumble,
+    TriggerRumble
 };
 #endif
 

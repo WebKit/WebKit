@@ -26,9 +26,9 @@ PASS Check that src: url("foo.ttf") format("embedded-opentype"), url("bar.html")
 PASS Check that src: url("foo.ttf") format(embedded-opentype), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format("svg"), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format(svg), url("bar.html") is valid
-PASS Check that src: url("foo.ttf") format(xyzz 200px), url("bar.html") is invalid
-PASS Check that src: url("foo.ttf") format(xyzz), url("bar.html") is invalid
-PASS Check that src: url("foo.ttf") dummy(xyzzy), url("bar.html") is invalid
-PASS Check that src: url("foo.ttf") format(), url("bar.html") is invalid
-PASS Check that src: url("foo.ttf") format(none), url("bar.html") is invalid
+FAIL Check that src: url("foo.ttf") format(xyzz 200px), url("bar.html") is valid assert_equals: expected true but got false
+FAIL Check that src: url("foo.ttf") format(xyzz), url("bar.html") is valid assert_equals: expected true but got false
+FAIL Check that src: url("foo.ttf") dummy(xyzzy), url("bar.html") is valid assert_equals: expected true but got false
+FAIL Check that src: url("foo.ttf") format(), url("bar.html") is valid assert_equals: expected true but got false
+FAIL Check that src: url("foo.ttf") format(none), url("bar.html") is valid assert_equals: expected true but got false
 

@@ -97,6 +97,7 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/BinarySemaphore.h>
 #include <wtf/threads/Signals.h>
@@ -274,6 +275,9 @@ private:
     Deque<String> m_reports;
 };
 
+
+static JSC_DECLARE_HOST_FUNCTION(functionAtob);
+static JSC_DECLARE_HOST_FUNCTION(functionBtoa);
 
 static JSC_DECLARE_HOST_FUNCTION(functionCreateGlobalObject);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateHeapBigInt);
@@ -536,6 +540,8 @@ private:
         Base::finishCreation(vm);
         JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 
+        addFunction(vm, "atob"_s, functionAtob, 1);
+        addFunction(vm, "btoa"_s, functionBtoa, 1);
         addFunction(vm, "debug"_s, functionDebug, 1);
         addFunction(vm, "describe"_s, functionDescribe, 1);
         addFunction(vm, "describeArray"_s, functionDescribeArray, 1);
@@ -1377,6 +1383,39 @@ JSC_DEFINE_HOST_FUNCTION(functionPrintStdErr, (JSGlobalObject* globalObject, Cal
 JSC_DEFINE_HOST_FUNCTION(functionPrettyPrint, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return printInternal(globalObject, callFrame, stdout, true);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* string = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto decodedData = base64Decode(string->value(globalObject), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
+    if (!decodedData)
+        throwException(globalObject, scope, createError(globalObject, "Invalid argument for atob."_s));
+
+    return JSValue::encode(jsString(vm, String(decodedData->data(), decodedData->size())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* string = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    String stringToEncode = string->value(globalObject);
+
+    if (stringToEncode.isNull())
+        return JSValue::encode(jsEmptyString(vm));
+
+    if (!stringToEncode.isAllLatin1())
+        throwException(globalObject, scope, createError(globalObject, "Invalid argument for btoa."_s));
+
+    String encodedString = base64EncodeToString(stringToEncode.latin1());
+    return JSValue::encode(jsString(vm, encodedString));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDebug, (JSGlobalObject* globalObject, CallFrame* callFrame))

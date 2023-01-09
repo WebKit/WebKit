@@ -34,6 +34,7 @@
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
+#include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContextGL.h>
@@ -43,6 +44,8 @@
 
 namespace WebKit {
 
+class RemoteVideoFrameObjectHeapProxy;
+
 // Web process side implementation of GraphicsContextGL interface. The implementation
 // converts the interface to a sequence of IPC messages and sends the messages to
 // RemoteGraphicsContextGL in GPU process.
@@ -51,7 +54,7 @@ class RemoteGraphicsContextGLProxy
     : private IPC::Connection::Client
     , public WebCore::GraphicsContextGL {
 public:
-    static RefPtr<RemoteGraphicsContextGLProxy> create(IPC::Connection&, const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&);
+    static RefPtr<RemoteGraphicsContextGLProxy> create(IPC::Connection&, const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
     ~RemoteGraphicsContextGLProxy();
 
     // IPC::Connection::Client overrides.
@@ -76,7 +79,10 @@ public:
     GCGLenum getError() final;
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(WebCore::MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject /* texture */, GCGLenum /* target */, GCGLint /* level */, GCGLenum /* internalFormat */, GCGLenum /* format */, GCGLenum /* type */, bool /* premultiplyAlpha */, bool /* flipY */) final;
+    RefPtr<WebCore::Image> videoFrameToImage(WebCore::VideoFrame&) final;
 #endif
+
     void simulateEventForTesting(SimulatedEventForTesting) final;
     void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data) final;
     void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
@@ -342,7 +348,7 @@ public:
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
 protected:
-    RemoteGraphicsContextGLProxy(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
+    RemoteGraphicsContextGLProxy(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier, Ref<RemoteVideoFrameObjectHeapProxy>&&);
 
     bool isContextLost() const { return !m_connection; }
     void markContextLost();
@@ -379,6 +385,10 @@ private:
 
     HashSet<String> m_enabledExtensions;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
+#if PLATFORM(COCOA)
+    SharedVideoFrameWriter m_sharedVideoFrameWriter;
+#endif
+    Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

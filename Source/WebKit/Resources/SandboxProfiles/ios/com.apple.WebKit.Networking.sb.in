@@ -782,7 +782,7 @@
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
-(allow syscall-mach (with telemetry))
+(deny syscall-mach (with telemetry))
 (allow syscall-mach
     (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap
@@ -814,10 +814,9 @@
         MSC_mk_timer_create
         MSC_mk_timer_destroy
         MSC_semaphore_signal_trap
+        MSC_semaphore_timedwait_trap
         MSC_semaphore_wait_trap
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
         MSC_swtch_pri
-#endif
         MSC_syscall_thread_switch
         MSC_task_self_trap
         MSC_thread_get_special_reply_port))
@@ -825,23 +824,42 @@
 (when (defined? 'MSC_mach_msg2_trap)
     (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
 
+(define (kernel-mig-routine-in-use-watchos)
+    (kernel-mig-routine
+        mach_make_memory_entry
+        mach_make_memory_entry_64
+        vm_copy))
+        
 (allow mach-kernel-endpoint
     (apply-message-filter
-        (allow mach-message-send (with report) (with telemetry))
+        (deny mach-message-send (with telemetry))
+#if PLATFORM(WATCHOS)
+        (allow mach-message-send
+            (kernel-mig-routine-in-use-watchos))
+#endif
         (allow mach-message-send
             (kernel-mig-routine
                 _mach_make_memory_entry
                 host_get_clock_service
+                host_get_io_master
                 host_get_special_port
                 host_info
                 host_request_notification
+                io_connect_method
+                io_registry_entry_from_path
+                io_registry_entry_get_property_bin_buf
+                io_server_version
+                io_service_open_extended
+                mach_exception_raise
                 mach_port_extract_right
+                mach_port_get_context_from_user
                 mach_port_get_refs
                 mach_port_is_connection_for_service
                 mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
+                mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
                 task_get_special_port_from_user

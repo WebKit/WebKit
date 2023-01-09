@@ -531,6 +531,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/LayerTreeContext.serialization.in
     Shared/Model.serialization.in
     Shared/Pasteboard.serialization.in
+    Shared/SameDocumentNavigationType.serialization.in
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
     Shared/TextFlags.serialization.in

@@ -540,6 +540,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \
     v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
+    v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \

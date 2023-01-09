@@ -115,7 +115,7 @@ void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool
 void WebPreferences::enableAllExperimentalFeatures()
 {
     UpdateBatch batch(*this);
-<%- for @pref in @exposedPreferences.select(&:experimental?) do -%>
+<%- for @pref in @exposedPreferences.select(&:testable?) do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>

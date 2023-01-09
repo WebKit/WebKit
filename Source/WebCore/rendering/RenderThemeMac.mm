@@ -231,6 +231,7 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Contr
     case ControlPartType::InnerSpinButton:
     case ControlPartType::Listbox:
     case ControlPartType::Menulist:
+    case ControlPartType::MenulistButton:
     case ControlPartType::Meter:
     case ControlPartType::ProgressBar:
     case ControlPartType::Radio:
@@ -286,6 +287,12 @@ bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& rende
     return type == ControlPartType::Listbox
         || type == ControlPartType::TextArea
         || type == ControlPartType::TextField;
+}
+
+bool RenderThemeMac::canCreateControlPartForDecorations(const RenderObject& renderer) const
+{
+    ControlPartType type = renderer.style().effectiveAppearance();
+    return type == ControlPartType::MenulistButton;
 }
 
 bool RenderThemeMac::useFormSemanticContext() const
@@ -1204,9 +1211,7 @@ void RenderThemeMac::adjustProgressBarStyle(RenderStyle&, const Element*) const
 }
 
 const float baseFontSize = 11.0f;
-const float baseArrowHeight = 4.0f;
 const float baseArrowWidth = 5.0f;
-const float baseSpaceBetweenArrows = 2.0f;
 const int arrowPaddingBefore = 6;
 const int arrowPaddingAfter = 6;
 const int paddingBeforeSeparator = 4;
@@ -1214,172 +1219,6 @@ const int baseBorderRadius = 5;
 const int styledPopupPaddingLeft = 8;
 const int styledPopupPaddingTop = 1;
 const int styledPopupPaddingBottom = 2;
-
-static void TopGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
-{
-    static const float dark[4] = { 1.0f, 1.0f, 1.0f, 0.4f };
-    static const float light[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
-}
-
-static void BottomGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
-{
-    static const float dark[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
-    static const float light[4] = { 1.0f, 1.0f, 1.0f, 0.3f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
-}
-
-static void MainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
-{
-    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
-    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
-}
-
-void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    if (r.isEmpty())
-        return;
-
-    ContextContainer cgContextContainer(paintInfo.context());
-    CGContextRef context = cgContextContainer.context();
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    FloatRoundedRect border = FloatRoundedRect(o.style().getRoundedBorderFor(r));
-    int radius = border.radii().topLeft().width();
-
-    CGColorSpaceRef cspace = sRGBColorSpaceRef();
-
-    FloatRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0f);
-    struct CGFunctionCallbacks topCallbacks = { 0, TopGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> topFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &topCallbacks));
-    RetainPtr<CGShadingRef> topShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(topGradient.x(), topGradient.y()), CGPointMake(topGradient.x(), topGradient.maxY()), topFunction.get(), false, false));
-
-    FloatRect bottomGradient(r.x() + radius, r.y() + r.height() / 2.0f, r.width() - 2.0f * radius, r.height() / 2.0f);
-    struct CGFunctionCallbacks bottomCallbacks = { 0, BottomGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> bottomFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &bottomCallbacks));
-    RetainPtr<CGShadingRef> bottomShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), CGPointMake(bottomGradient.x(), bottomGradient.maxY()), bottomFunction.get(), false, false));
-
-    struct CGFunctionCallbacks mainCallbacks = { 0, MainGradientInterpolate, NULL };
-    RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
-    RetainPtr<CGShadingRef> mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x(), r.maxY()), mainFunction.get(), false, false));
-
-    RetainPtr<CGShadingRef> leftShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.x(),  r.y()), CGPointMake(r.x() + radius, r.y()), mainFunction.get(), false, false));
-
-    RetainPtr<CGShadingRef> rightShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(r.maxX(),  r.y()), CGPointMake(r.maxX() - radius, r.y()), mainFunction.get(), false, false));
-
-    {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        CGContextClipToRect(context, r);
-        paintInfo.context().clipRoundedRect(border);
-        context = cgContextContainer.context();
-        CGContextDrawShading(context, mainShading.get());
-    }
-
-    {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        CGContextClipToRect(context, topGradient);
-        paintInfo.context().clipRoundedRect(FloatRoundedRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
-        context = cgContextContainer.context();
-        CGContextDrawShading(context, topShading.get());
-    }
-
-    if (!bottomGradient.isEmpty()) {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        CGContextClipToRect(context, bottomGradient);
-        paintInfo.context().clipRoundedRect(FloatRoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
-        context = cgContextContainer.context();
-        CGContextDrawShading(context, bottomShading.get());
-    }
-
-    {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        CGContextClipToRect(context, r);
-        paintInfo.context().clipRoundedRect(border);
-        context = cgContextContainer.context();
-        CGContextDrawShading(context, leftShading.get());
-        CGContextDrawShading(context, rightShading.get());
-    }
-}
-
-void RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    bool isRTL = renderer.style().direction() == TextDirection::RTL;
-    IntRect bounds = IntRect(rect.x() + renderer.style().borderLeftWidth(),
-        rect.y() + renderer.style().borderTopWidth(),
-        rect.width() - renderer.style().borderLeftWidth() - renderer.style().borderRightWidth(),
-        rect.height() - renderer.style().borderTopWidth() - renderer.style().borderBottomWidth());
-    // Draw the gradients to give the styled popup menu a button appearance
-    paintMenuListButtonGradients(renderer, paintInfo, bounds);
-
-    // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
-    float fontScale = std::min(renderer.style().computedFontPixelSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
-    float centerY = bounds.y() + bounds.height() / 2.0f;
-    float arrowHeight = baseArrowHeight * fontScale;
-    float arrowWidth = baseArrowWidth * fontScale;
-    float leftEdge;
-    if (isRTL)
-        leftEdge = bounds.x() + arrowPaddingAfter * renderer.style().effectiveZoom();
-    else
-        leftEdge = bounds.maxX() - arrowPaddingAfter * renderer.style().effectiveZoom() - arrowWidth;
-    float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
-
-    if (bounds.width() < arrowWidth + arrowPaddingBefore * renderer.style().effectiveZoom())
-        return;
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    paintInfo.context().setFillColor(renderer.style().visitedDependentColor(CSSPropertyColor));
-    paintInfo.context().setStrokeStyle(NoStroke);
-
-    // Draw the top arrow
-    Vector<FloatPoint> arrow1 = {
-        { leftEdge, centerY - spaceBetweenArrows / 2.0f },
-        { leftEdge + arrowWidth, centerY - spaceBetweenArrows / 2.0f },
-        { leftEdge + arrowWidth / 2.0f, centerY - spaceBetweenArrows / 2.0f - arrowHeight }
-    };
-    paintInfo.context().fillPath(Path::polygonPathFromPoints(arrow1));
-
-    // Draw the bottom arrow
-    Vector<FloatPoint> arrow2 = {
-        { leftEdge, centerY + spaceBetweenArrows / 2.0f },
-        { leftEdge + arrowWidth, centerY + spaceBetweenArrows / 2.0f },
-        { leftEdge + arrowWidth / 2.0f, centerY + spaceBetweenArrows / 2.0f + arrowHeight }
-    };
-    paintInfo.context().fillPath(Path::polygonPathFromPoints(arrow2));
-
-    constexpr auto leftSeparatorColor = Color::black.colorWithAlphaByte(40);
-    constexpr auto rightSeparatorColor = Color::white.colorWithAlphaByte(40);
-
-    // FIXME: Should the separator thickness and space be scaled up by fontScale?
-    int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
-    int leftEdgeOfSeparator;
-    if (isRTL)
-        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge + arrowWidth + arrowPaddingBefore * renderer.style().effectiveZoom()));
-    else
-        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge - arrowPaddingBefore * renderer.style().effectiveZoom()));
-
-    // Draw the separator to the left of the arrows
-    paintInfo.context().setStrokeThickness(1); // Deliberately ignores zoom since it looks nicer if it stays thin.
-    paintInfo.context().setStrokeStyle(SolidStroke);
-    paintInfo.context().setStrokeColor(leftSeparatorColor);
-    paintInfo.context().drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
-        IntPoint(leftEdgeOfSeparator, bounds.maxY()));
-
-    paintInfo.context().setStrokeColor(rightSeparatorColor);
-    paintInfo.context().drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
-        IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.maxY()));
-}
 
 static const IntSize* menuListButtonSizes()
 {

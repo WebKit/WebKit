@@ -3,13 +3,11 @@ layer at (0,0) size 800x600
 layer at (276,0) size 524x600
   RenderBlock {HTML} at (0,0) size 524x600
     RenderBody {BODY} at (8,8) size 484x584
-      RenderBlock {HR} at (0,0) size 2x584 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (10,0) size 37x584
         RenderInline {SPAN} at (0,0) size 36x435
           RenderText {#text} at (0,0) size 36x435
             text run at (0,0) width 435: "OFF=\x{897F}\x{66A6}2010\x{5E74}1\x{6708}20\x{65E5}365\x{56DE}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (55,0) size 2x584 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (65,0) size 37x584
         RenderInline {SPAN} at (0,0) size 36x376
           RenderInline {SPAN} at (0,0) size 36x32
@@ -38,7 +36,6 @@ layer at (276,0) size 524x600
           RenderText {#text} at (0,343) size 36x33
             text run at (0,343) width 33: "\x{56DE}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (110,0) size 2x584 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (120,0) size 37x584
         RenderInline {SPAN} at (0,0) size 36x376
           RenderInline {SPAN} at (0,0) size 36x32
@@ -67,7 +64,6 @@ layer at (276,0) size 524x600
           RenderText {#text} at (0,343) size 36x33
             text run at (0,343) width 33: "\x{56DE}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (165,0) size 2x584 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (175,0) size 74x584
         RenderInline {SPAN} at (0,0) size 36x226
           RenderText {#text} at (0,0) size 36x226
@@ -96,7 +92,6 @@ layer at (276,0) size 524x600
               text run at (37,178) width 32: "\x{FFFC}"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (265,0) size 219x584
-        RenderBlock {HR} at (0,0) size 2x584 [border: (1px inset #000000)]
         RenderBlock {P} at (34,0) size 185x584
           RenderBlock (floating) {SPAN} at (0,333) size 29x251 [border: (1px solid #FF0000)]
             RenderText {#text} at (1,1) size 26x105
@@ -126,3 +121,13 @@ layer at (276,0) size 524x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (516,0) size 0x584
         RenderInline {SPAN} at (0,0) size 0x0
+layer at (790,8) size 2x584 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x584 [border: (1px inset #000000)]
+layer at (735,8) size 2x584 clip at (0,0) size 0x0
+  RenderBlock {HR} at (55,0) size 2x584 [border: (1px inset #000000)]
+layer at (680,8) size 2x584 clip at (0,0) size 0x0
+  RenderBlock {HR} at (110,0) size 2x584 [border: (1px inset #000000)]
+layer at (625,8) size 2x584 clip at (0,0) size 0x0
+  RenderBlock {HR} at (165,0) size 2x584 [border: (1px inset #000000)]
+layer at (525,8) size 2x584 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 2x584 [border: (1px inset #000000)]

@@ -20,150 +20,59 @@
 #include "config.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequest.h"
 
-#include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
+#if !ENABLE(2022_GLIB_API)
+
 #include "WebKitPermissionRequest.h"
-#include "WebPageProxy.h"
 #include <wtf/glib/WTFGType.h>
-
-#if ENABLE(VIDEO)
-#include <WebCore/PlatformDisplay.h>
-#if PLATFORM(X11) && !USE(GTK4)
-#include <gdk/gdkx.h>
-#include <gtk/gtk.h>
-#endif
-#endif
-
-using namespace WebKit;
-using namespace WebCore;
 
 /**
  * WebKitInstallMissingMediaPluginsPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
  *
- * A permission request for installing missing media plugins.
+ * Previously, a permission request for installing missing media plugins.
  *
- * WebKitInstallMissingMediaPluginsPermissionRequest represents a request for
- * permission to decide whether WebKit should try to start a helper application to
- * install missing media plugins when the media backend couldn't play a media because
- * the required plugins were not available.
- *
- * When a WebKitInstallMissingMediaPluginsPermissionRequest is not handled by the user,
- * it is allowed by default.
+ * WebKitInstallMissingMediaPluginsPermissionRequest will no longer ever be created, so
+ * you can remove any code that attempts to handle it.
  *
  * Since: 2.10
+ *
+ * Deprecated: 2.40
  */
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
 
 struct _WebKitInstallMissingMediaPluginsPermissionRequestPrivate {
-#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
-    RefPtr<InstallMissingMediaPluginsPermissionRequest> request;
-#endif
-    CString description;
-    bool madeDecision;
 };
 
 WEBKIT_DEFINE_TYPE_WITH_CODE(
     WebKitInstallMissingMediaPluginsPermissionRequest, webkit_install_missing_media_plugins_permission_request, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 
-#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
-static GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext(WebPageProxy& page)
-{
-#if PLATFORM(X11) && !USE(GTK4)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
-        GUniquePtr<GstInstallPluginsContext> context(gst_install_plugins_context_new());
-        gst_install_plugins_context_set_xid(context.get(), GDK_WINDOW_XID(gtk_widget_get_window(page.viewWidget())));
-        return context;
-    }
-#endif
-
-    return nullptr;
-}
-#endif
-
-static void webkitInstallMissingMediaPluginsPermissionRequestAllow(WebKitPermissionRequest* request)
-{
-    ASSERT(WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request));
-
-    WebKitInstallMissingMediaPluginsPermissionRequestPrivate* priv = WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)->priv;
-
-    // Only one decision at a time.
-    if (priv->madeDecision)
-        return;
-#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
-    priv->request->allow(createGstInstallPluginsContext(priv->request->page()));
-#endif
-    priv->madeDecision = true;
-}
-
-static void webkitInstallMissingMediaPluginsPermissionRequestDeny(WebKitPermissionRequest* request)
-{
-    ASSERT(WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request));
-
-    WebKitInstallMissingMediaPluginsPermissionRequestPrivate* priv = WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)->priv;
-
-    // Only one decision at a time.
-    if (priv->madeDecision)
-        return;
-
-#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
-    priv->request->deny();
-#endif
-    priv->madeDecision = true;
-}
-
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
 {
-    iface->allow = webkitInstallMissingMediaPluginsPermissionRequestAllow;
-    iface->deny = webkitInstallMissingMediaPluginsPermissionRequestDeny;
+    iface->allow = [](auto*) { };
+    iface->deny = [](auto*) { };
 }
 
-static void webkitInstallMissingMediaPluginsPermissionRequestDispose(GObject* object)
+static void webkit_install_missing_media_plugins_permission_request_class_init(WebKitInstallMissingMediaPluginsPermissionRequestClass*)
 {
-    // Default behaviour when no decision has been made is allowing the request for backwards compatibility.
-    webkitInstallMissingMediaPluginsPermissionRequestDeny(WEBKIT_PERMISSION_REQUEST(object));
-    G_OBJECT_CLASS(webkit_install_missing_media_plugins_permission_request_parent_class)->dispose(object);
 }
-
-static void webkit_install_missing_media_plugins_permission_request_class_init(WebKitInstallMissingMediaPluginsPermissionRequestClass* klass)
-{
-    GObjectClass* objectClass = G_OBJECT_CLASS(klass);
-    objectClass->dispose = webkitInstallMissingMediaPluginsPermissionRequestDispose;
-}
-
-#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
-WebKitInstallMissingMediaPluginsPermissionRequest* webkitInstallMissingMediaPluginsPermissionRequestCreate(InstallMissingMediaPluginsPermissionRequest& request)
-{
-    WebKitInstallMissingMediaPluginsPermissionRequest* permissionRequest = WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST, nullptr));
-    permissionRequest->priv->request = &request;
-    return permissionRequest;
-}
-#endif
 
 /**
  * webkit_install_missing_media_plugins_permission_request_get_description:
  * @request: a #WebKitInstallMissingMediaPluginsPermissionRequest
  *
- * Gets the description about the missing plugins.
+ * This function returns an empty string.
  *
- * Gets the description about the missing plugins provided by the media backend when a media couldn't be played.
- *
- * Returns: a string with the description provided by the media backend.
+ * Returns: an empty string
  *
  * Since: 2.10
+ *
+ * Deprecated: 2.40
  */
-const char* webkit_install_missing_media_plugins_permission_request_get_description(WebKitInstallMissingMediaPluginsPermissionRequest* request)
+const char* webkit_install_missing_media_plugins_permission_request_get_description(WebKitInstallMissingMediaPluginsPermissionRequest*)
 {
-    g_return_val_if_fail(WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request), nullptr);
-
-#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
-    if (!request->priv->description.isNull())
-        return request->priv->description.data();
-
-    const auto& description = request->priv->request->description();
-    ASSERT(!description.isEmpty());
-    request->priv->description = description.utf8();
-#endif
-    return request->priv->description.data();
+    return "";
 }
+
+#endif // !ENABLE(2022_GLIB_API)

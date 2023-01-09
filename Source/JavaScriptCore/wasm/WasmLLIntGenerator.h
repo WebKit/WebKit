@@ -36,6 +36,8 @@ class FunctionCodeBlockGenerator;
 class TypeDefinition;
 struct ModuleInformation;
 
+enum class UseDefaultValue : bool { No, Yes };
+
 Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t*, size_t, const TypeDefinition&, ModuleInformation&, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm

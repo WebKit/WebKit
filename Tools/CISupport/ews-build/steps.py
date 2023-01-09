@@ -4375,11 +4375,12 @@ class RunAPITests(TestWithFailureCount):
 
         rc = yield super(RunAPITests, self).run()
 
-        if rc == SUCCESS:
+        if rc in [SUCCESS, WARNINGS]:
             message = 'Passed API tests'
             self.descriptionDone = message
-            self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
+            if self.name != RunAPITestsWithoutChange.name:
+                self.build.results = SUCCESS
+                self.build.buildFinished([message], SUCCESS)
         else:
             self.doOnFailure()
 

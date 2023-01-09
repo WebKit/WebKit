@@ -15,7 +15,6 @@ layer at (0,0) size 800x600
                 text run at (21,37) width 74: "loremipsum"
               RenderImage {IMG} at (95,1) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,96) size 784x18
         RenderText {#text} at (0,0) size 86x17
           text run at (0,0) width 86: "No line break"
@@ -27,7 +26,6 @@ layer at (0,0) size 800x600
                 text run at (1,37) width 74: "loremipsum"
               RenderImage {IMG} at (75,1) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,182) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,192) size 784x18
         RenderText {#text} at (0,0) size 152x17
           text run at (0,0) width 152: "Line break after the \"a\"."
@@ -39,7 +37,6 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 85: "a loremipsum"
               RenderImage {IMG} at (1,19) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,292) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,302) size 784x18
         RenderText {#text} at (0,0) size 152x17
           text run at (0,0) width 152: "Line break after the \"a\"."
@@ -54,7 +51,6 @@ layer at (0,0) size 800x600
                 text run at (32,37) width 74: "loremipsum"
               RenderImage {IMG} at (1,55) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,438) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,448) size 784x18
         RenderText {#text} at (0,0) size 186x17
           text run at (0,0) width 186: "Line break after \"wideword\"."
@@ -69,3 +65,11 @@ layer at (0,0) size 800x600
                 text run at (1,91) width 74: "loremipsum"
               RenderImage {IMG} at (75,55) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
+layer at (8,94) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+layer at (8,190) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,182) size 784x2 [border: (1px inset #000000)]
+layer at (8,300) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,292) size 784x2 [border: (1px inset #000000)]
+layer at (8,446) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,438) size 784x2 [border: (1px inset #000000)]

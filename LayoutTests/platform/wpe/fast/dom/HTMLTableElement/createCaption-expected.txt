@@ -29,7 +29,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (735,0) size 779x35
           text run at (735,0) width 44: ". Upon"
           text run at (0,18) width 584: "failure, the first table will have no caption, and the second table will have the caption Things."
-      RenderBlock {HR} at (0,156) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,166) size 111x94 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 111x18
           RenderInline {B} at (0,0) size 43x17
@@ -86,3 +85,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (75,50) size 51x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 39x17
                 text run at (2,2) width 39: "Green"
+layer at (8,164) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,156) size 784x2 [border: (1px inset #000000)]

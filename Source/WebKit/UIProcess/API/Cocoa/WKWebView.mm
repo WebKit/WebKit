@@ -2460,6 +2460,53 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+- (void)_pauseAllAnimationsWithCompletionHandler:(void(^)(void))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    if (!completionHandler) {
+        _page->pauseAllAnimations([] { });
+        return;
+    }
+
+    _page->pauseAllAnimations(makeBlockPtr(completionHandler));
+}
+
+- (void)_playAllAnimationsWithCompletionHandler:(void(^)(void))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    if (!completionHandler) {
+        _page->playAllAnimations([] { });
+        return;
+    }
+
+    _page->playAllAnimations(makeBlockPtr(completionHandler));
+}
+
+- (BOOL)_allowsAnyAnimationToPlay
+{
+    THROW_IF_SUSPENDED;
+    return _page->allowsAnyAnimationToPlay();
+}
+#else // !ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+- (void)_pauseAllAnimationsWithCompletionHandler:(void(^)(void))completionHandler
+{
+    if (completionHandler)
+        completionHandler();
+}
+
+- (void)_playAllAnimationsWithCompletionHandler:(void(^)(void))completionHandler
+{
+    if (completionHandler)
+        completionHandler();
+}
+
+- (BOOL)_allowsAnyAnimationToPlay
+{
+    return YES;
+}
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
 - (_WKMediaMutedState)_mediaMutedState
 {
     return WebKit::toWKMediaMutedState(_page->mutedStateFlags());

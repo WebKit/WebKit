@@ -127,7 +127,8 @@
             "name": "messageRepeatCountUpdated",
             "description": "Issued when subsequent message(s) are equal to the previous one(s).",
             "parameters": [
-                { "name": "count", "type": "integer", "description": "New repeat count value." }
+                { "name": "count", "type": "integer", "description": "New repeat count value." },
+                { "name": "timestamp", "type": "number", "optional": true, "description": "Timestamp of the latest message." }
             ]
         },
         {

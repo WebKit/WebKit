@@ -34,6 +34,6 @@ FAIL Check that src: url("foo.ttf") tech(features-graphite), url("bar.html") is 
 PASS Check that src: url("foo.ttf") dummy("opentype") tech(variations) is invalid
 PASS Check that src: url("foo.ttf") dummy("opentype") dummy(variations) is invalid
 PASS Check that src: url("foo.ttf") format(opentype) tech(features-opentype) dummy(something) is invalid
-PASS Check that src: url("foo.ttf") format(dummy), url("foo.ttf") tech(variations) is invalid
-PASS Check that src: url("foo.ttf") tech(color, url("bar.html") is invalid
+FAIL Check that src: url("foo.ttf") format(dummy), url("foo.ttf") tech(variations) is valid assert_equals: expected true but got false
+FAIL Check that src: url("foo.ttf") tech(color), url("bar.html") is valid assert_equals: expected true but got false
 

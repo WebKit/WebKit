@@ -14,7 +14,7 @@ function test()
     function consoleMessageJSONFilter(key, value) {
         if (key === "_target" || key === "_hasChildren" || key === "_listeners")
             return undefined;
-        if (key === "_objectId" || key === "_stackTrace" || key === "_sourceCodeLocation")
+        if (key === "_objectId" || key === "_stackTrace" || key === "_sourceCodeLocation" || key === "_timestamp")
             return "<filtered>";
         if (key === "_url")
             return sanitizeURL(value);

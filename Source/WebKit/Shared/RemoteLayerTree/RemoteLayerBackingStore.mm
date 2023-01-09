@@ -201,13 +201,14 @@ PixelFormat RemoteLayerBackingStore::pixelFormat() const
     if (usesDeepColorBackingStore())
         return m_parameters.isOpaque ? PixelFormat::RGB10 : PixelFormat::RGB10A8;
 
-    return PixelFormat::BGRA8;
+    return m_parameters.isOpaque ? PixelFormat::BGRX8 : PixelFormat::BGRA8;
 }
 
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
 {
     switch (pixelFormat()) {
     case PixelFormat::RGBA8: return 4;
+    case PixelFormat::BGRX8: return 4;
     case PixelFormat::BGRA8: return 4;
     case PixelFormat::RGB10: return 4;
     case PixelFormat::RGB10A8: return 5;

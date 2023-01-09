@@ -106,7 +106,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/GRefPtrGStreamer.h
         platform/graphics/gstreamer/GStreamerCommon.h
         platform/graphics/gstreamer/GUniquePtrGStreamer.h
-        platform/graphics/gstreamer/MediaPlayerRequestInstallMissingPluginsCallback.h
 
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.h
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.h

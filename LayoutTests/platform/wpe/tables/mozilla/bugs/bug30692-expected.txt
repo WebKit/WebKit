@@ -16,19 +16,16 @@ layer at (0,0) size 800x600
           RenderListMarker at (-1,0) size 7x17: bullet
           RenderText {#text} at (14,0) size 181x17
             text run at (14,0) width 181: "\"width:x%\" works correctly."
-        RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,36) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
               RenderTableCell {TD} at (2,11) size 780x78 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,154) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
               RenderTableCell {TD} at (2,9) size 780x82 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,262) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,272) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
@@ -36,7 +33,6 @@ layer at (0,0) size 800x600
                 RenderBlock {P} at (1,1) size 623x76 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 229x17
                     text run at (0,0) width 229: "BUG: the height of the P is not 80%"
-        RenderBlock {HR} at (0,380) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,390) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
@@ -44,13 +40,21 @@ layer at (0,0) size 800x600
                 RenderBlock {P} at (1,1) size 623x80 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 222x17
                     text run at (0,0) width 222: "OK: the height of the P is 80 pixels"
+layer at (8,70) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
 layer at (11,93) size 622x75 clip at (12,94) size 620x73
   RenderTextControl {TEXTAREA} at (1,1) size 623x76 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 617x18
       RenderText {#text} at (0,0) size 269x17
         text run at (0,0) width 269: "BUG: the height of the textarea is not 80%"
+layer at (8,188) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
 layer at (11,208) size 622x80 clip at (12,209) size 620x78
   RenderTextControl {TEXTAREA} at (1,1) size 623x80 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 617x18
       RenderText {#text} at (0,0) size 262x17
         text run at (0,0) width 262: "OK: the height of the textarea is 80 pixels"
+layer at (8,306) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,262) size 784x2 [border: (1px inset #000000)]
+layer at (8,424) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,380) size 784x2 [border: (1px inset #000000)]

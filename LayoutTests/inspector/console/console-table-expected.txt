@@ -39,7 +39,7 @@ STEP: console.table([])
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table(['apple', 'orange', 'banana'])
@@ -90,7 +90,7 @@ STEP: console.table(['apple', 'orange', 'banana'])
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table({firstName: 'John', lastName: 'Smith'})
@@ -132,7 +132,7 @@ STEP: console.table({firstName: 'John', lastName: 'Smith'})
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table({f: function(){}, x: 10})
@@ -181,7 +181,7 @@ STEP: console.table({f: function(){}, x: 10})
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
@@ -295,7 +295,7 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table([john, jane, emily])
@@ -400,7 +400,7 @@ STEP: console.table([john, jane, emily])
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table([john, jane, emily], ['firstName'])
@@ -529,7 +529,7 @@ STEP: console.table([john, jane, emily], ['firstName'])
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 
 STEP: console.table([manyProperties, manyProperties], ['five', 'six'])
@@ -680,6 +680,6 @@ STEP: console.table([manyProperties, manyProperties], ['five', 'six'])
   ],
   "_stackTrace": "<filtered>",
   "_request": null,
-  "_timestamp": null
+  "_timestamp": "<filtered>"
 }
 

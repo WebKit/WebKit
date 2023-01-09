@@ -23,7 +23,6 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerRegistryScanner.h"
-#include "GStreamerVideoCaptureSource.h"
 #include "GStreamerVideoEncoder.h"
 #include <wtf/glib/WTFGType.h>
 
@@ -121,6 +120,9 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         if (!profile)
             profile = "baseline";
         gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
+    } else if (encoding == "h265"_s) {
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
+        // FIXME: profile tier level?
     } else {
         GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encodingName);
         return false;

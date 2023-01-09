@@ -24,7 +24,6 @@
  */
 
 #import "PDFPluginIdentifier.h"
-#import "SameDocumentNavigationType.h"
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>

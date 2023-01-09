@@ -408,6 +408,7 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
 
@@ -2606,6 +2607,33 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructNew(uint32_t typeInde
         if (!status)
             return status;
     }
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addStructNewDefault(uint32_t typeIndex, ExpressionType& result) -> PartialResult
+{
+    ASSERT(typeIndex < m_info.typeCount());
+    result = self().tmpForType(Type { TypeKind::Ref, m_info.typeSignatures[typeIndex]->index() });
+    // FIXME: inline the allocation.
+    // https://bugs.webkit.org/show_bug.cgi?id=244388
+    self().emitCCall(&operationWasmStructNewEmpty, result, instanceValue(), self().addConstant(Types::I32, typeIndex));
+
+    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
+        ExpressionType tmpForValue;
+        if (Wasm::isRefType(structType.field(i).type))
+            tmpForValue = self().addConstant(structType.field(i).type.template as<Type>(), JSValue::encode(jsNull()));
+        else {
+            tmpForValue = self().g64();
+            self().emitZeroInitialize(tmpForValue);
+        }
+
+        auto status = self().addStructSet(result, structType, i, tmpForValue);
+        if (!status)
+            return status;
+    }
+
     return { };
 }
 

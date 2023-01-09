@@ -1579,28 +1579,32 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     return BackgroundBleedUseTransparencyLayer;
 }
 
-ControlPart* RenderBox::ensureControlPartForRenderer()
+ControlPart* RenderBox::ensureControlPart()
 {
-    if (!theme().canCreateControlPartForRenderer(*this))
-        return nullptr;
-
     auto& rareData = ensureRareData();
-    if (!rareData.controlPart)
+    auto type = style().effectiveAppearance();
+
+    // Some form-controls may change because of zooming without recreating
+    // a new renderer (e.g Menulist <-> MenulistButton).
+    if (!rareData.controlPart || type != rareData.controlPart->type())
         rareData.controlPart = theme().createControlPart(*this);
 
     return rareData.controlPart.get();
 }
 
+ControlPart* RenderBox::ensureControlPartForRenderer()
+{
+    return theme().canCreateControlPartForRenderer(*this) ? ensureControlPart() : nullptr;
+}
+
 ControlPart* RenderBox::ensureControlPartForBorderOnly()
 {
-    if (!theme().canCreateControlPartForBorderOnly(*this))
-        return nullptr;
+    return theme().canCreateControlPartForBorderOnly(*this) ? ensureControlPart() : nullptr;
+}
 
-    auto& rareData = ensureRareData();
-    if (!rareData.controlPart)
-        rareData.controlPart = theme().createControlPart(*this);
-
-    return rareData.controlPart.get();
+ControlPart* RenderBox::ensureControlPartForDecorations()
+{
+    return theme().canCreateControlPartForDecorations(*this) ? ensureControlPart() : nullptr;
 }
 
 void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -1654,9 +1658,14 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
         backgroundPainter.paintBackground(paintRect, bleedAvoidance);
 
-        if (style().hasEffectiveAppearance())
-            theme().paintDecorations(*this, paintInfo, paintRect);
+        if (style().hasEffectiveAppearance()) {
+            if (auto* control = ensureControlPartForDecorations())
+                theme().paint(*this, *control, paintInfo, paintRect);
+            else
+                theme().paintDecorations(*this, paintInfo, paintRect);
+        }
     }
+
     backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Inset);
 
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder) {

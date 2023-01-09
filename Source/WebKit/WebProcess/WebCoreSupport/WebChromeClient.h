@@ -360,6 +360,9 @@ private:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const final;
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) final;
+#endif
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags) final;
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
@@ -408,10 +411,6 @@ private:
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
 
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&) final;
-#endif
 
     void didInvalidateDocumentMarkerRects() final;
 

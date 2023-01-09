@@ -30,8 +30,6 @@
 #include "HTMLMediaElement.h"
 #include "MediaPlayer.h"
 #include "PlatformMediaSessionManager.h"
-#include "PlatformScreen.h"
-#include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(COCOA)
@@ -39,33 +37,6 @@
 #endif
 
 namespace WebCore {
-
-DeprecatedGlobalSettings::DeprecatedGlobalSettings()
-{
-#if USE(AVFOUNDATION)
-    m_AVFoundationEnabled = true;
-#endif
-
-#if USE(GSTREAMER)
-    m_GStreamerEnabled = true;
-#endif
-#if PLATFORM(WIN)
-    m_shouldUseHighResolutionTimers = true;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    m_networkDataUsageTrackingEnabled = false;
-    m_shouldOptOutOfNetworkStateObservation = false;
-    m_disableScreenSizeOverride = false;
-#endif
-
-    m_mockScrollbarsEnabled = false;
-    m_usesOverlayScrollbars = false;
-    m_lowPowerVideoAudioBufferSizeEnabled = false;
-    m_trackingPreventionEnabled = false;
-    m_allowsAnySSLCertificate = false;
-}
-
-DeprecatedGlobalSettings::~DeprecatedGlobalSettings() = default;
 
 DeprecatedGlobalSettings& DeprecatedGlobalSettings::shared()
 {
@@ -106,7 +77,6 @@ void DeprecatedGlobalSettings::setSampleBufferContentKeySessionSupportEnabled(bo
     MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
 }
 #endif
-
 
 #if PLATFORM(WIN)
 void DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
@@ -150,25 +120,10 @@ void DeprecatedGlobalSettings::setMockScrollbarsEnabled(bool flag)
     // FIXME: This should update scroll bars in existing pages.
 }
 
-bool DeprecatedGlobalSettings::mockScrollbarsEnabled()
-{
-    return shared().m_mockScrollbarsEnabled;
-}
-
 void DeprecatedGlobalSettings::setUsesOverlayScrollbars(bool flag)
 {
     shared().m_usesOverlayScrollbars = flag;
     // FIXME: This should update scroll bars in existing pages.
-}
-
-bool DeprecatedGlobalSettings::usesOverlayScrollbars()
-{
-    return shared().m_usesOverlayScrollbars;
-}
-
-void DeprecatedGlobalSettings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
-{
-    shared().m_lowPowerVideoAudioBufferSizeEnabled = flag;
 }
 
 void DeprecatedGlobalSettings::setTrackingPreventionEnabled(bool flag)
@@ -192,19 +147,9 @@ void DeprecatedGlobalSettings::setNetworkDataUsageTrackingEnabled(bool trackingE
     shared().m_networkDataUsageTrackingEnabled = trackingEnabled;
 }
 
-bool DeprecatedGlobalSettings::networkDataUsageTrackingEnabled()
-{
-    return shared().m_networkDataUsageTrackingEnabled;
-}
-
 void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInterfaceName)
 {
     shared().m_networkInterfaceName = networkInterfaceName;
-}
-
-const String& DeprecatedGlobalSettings::networkInterfaceName()
-{
-    return shared().m_networkInterfaceName;
 }
 #endif
 

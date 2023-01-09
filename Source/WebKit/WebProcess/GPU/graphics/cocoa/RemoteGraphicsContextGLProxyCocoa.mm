@@ -101,8 +101,8 @@ public:
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
 #endif
 private:
-    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-        : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend)
+    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+        : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend, WTFMove(videoFrameObjectHeapProxy))
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
     {
     }
@@ -131,9 +131,9 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
 {
-    return adoptRef(new RemoteGraphicsContextGLProxyCocoa(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated()));
+    return adoptRef(new RemoteGraphicsContextGLProxyCocoa(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated(), WTFMove(videoFrameObjectHeapProxy)));
 }
 
 }

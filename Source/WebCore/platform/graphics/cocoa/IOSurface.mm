@@ -180,7 +180,8 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 }
 
 IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Format format, bool& success)
-    : m_colorSpace(colorSpace)
+    : m_format(format)
+    , m_colorSpace(colorSpace)
     , m_size(size)
 {
     ASSERT(!success);
@@ -189,6 +190,7 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Form
     NSDictionary *options;
 
     switch (format) {
+    case Format::BGRX:
     case Format::BGRA:
         options = optionsFor32BitSurface(size, 'BGRA');
         break;
@@ -213,8 +215,29 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Form
         RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
+static std::optional<IOSurface::Format> formatFromSurface(IOSurfaceRef surface)
+{
+    unsigned pixelFormat = IOSurfaceGetPixelFormat(surface);
+    if (pixelFormat == 'BGRA')
+        return IOSurface::Format::BGRA;
+
+#if HAVE(IOSURFACE_RGB10)
+    if (pixelFormat == 'w30r')
+        return IOSurface::Format::RGB10;
+
+    if (pixelFormat == 'b3a8')
+        return IOSurface::Format::RGB10A8;
+#endif
+
+    if (pixelFormat == '422f')
+        return IOSurface::Format::YUV422;
+
+    return { };
+}
+
 IOSurface::IOSurface(IOSurfaceRef surface, std::optional<DestinationColorSpace>&& colorSpace)
-    : m_colorSpace(WTFMove(colorSpace))
+    : m_format(formatFromSurface(surface))
+    , m_colorSpace(WTFMove(colorSpace))
     , m_surface(surface)
 {
     m_size = IntSize(IOSurfaceGetWidth(surface), IOSurfaceGetHeight(surface));
@@ -329,8 +352,13 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
     auto bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
 
     size_t bitsPerComponent = 8;
-    
-    switch (format()) {
+
+    ASSERT(m_format);
+
+    switch (m_format.value_or(Format::BGRA)) {
+    case Format::BGRX:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaNoneSkipFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
+        break;
     case Format::BGRA:
         break;
 #if HAVE(IOSURFACE_RGB10)
@@ -439,27 +467,6 @@ DestinationColorSpace IOSurface::colorSpace()
     return *m_colorSpace;
 }
 
-IOSurface::Format IOSurface::format() const
-{
-    unsigned pixelFormat = IOSurfaceGetPixelFormat(m_surface.get());
-    if (pixelFormat == 'BGRA')
-        return Format::BGRA;
-
-#if HAVE(IOSURFACE_RGB10)
-    if (pixelFormat == 'w30r')
-        return Format::RGB10;
-
-    if (pixelFormat == 'b3a8')
-        return Format::RGB10A8;
-#endif
-
-    if (pixelFormat == '422f')
-        return Format::YUV422;
-
-    ASSERT_NOT_REACHED();
-    return Format::BGRA;
-}
-
 IOSurfaceID IOSurface::surfaceID() const
 {
 // FIXME: Should be able to do this even without the Apple internal SDK.
@@ -514,7 +521,7 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopDefaultMode);
     }
 
-    if (inSurface->format() == format) {
+    if (inSurface->hasFormat(format)) {
         callback(WTFMove(inSurface));
         return;
     }
@@ -605,6 +612,8 @@ IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)
     case PixelFormat::RGBA8:
         RELEASE_ASSERT_NOT_REACHED();
         return IOSurface::Format::BGRA;
+    case PixelFormat::BGRX8:
+        return IOSurface::Format::BGRX;
     case PixelFormat::BGRA8:
         return IOSurface::Format::BGRA;
 #if HAVE(IOSURFACE_RGB10)
@@ -627,6 +636,9 @@ IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)
 TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {
+    case IOSurface::Format::BGRX:
+        ts << "BGRX";
+        break;
     case IOSurface::Format::BGRA:
         ts << "BGRA";
         break;
@@ -660,7 +672,7 @@ static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
 
 TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 {
-    return ts << "IOSurface " << surface.surfaceID() << " size " << surface.size() << " format " << surface.format() << " state " << surface.state();
+    return ts << "IOSurface " << surface.surfaceID() << " size " << surface.size() << " format " << surface.m_format << " state " << surface.state();
 }
 
 } // namespace WebCore

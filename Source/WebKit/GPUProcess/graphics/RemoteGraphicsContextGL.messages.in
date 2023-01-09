@@ -44,8 +44,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetError() -> (uint32_t returnValue) Synchronous
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
     void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
-#if ENABLE(VIDEO)
-    void CopyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference videoFrame, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    void CopyTextureFromVideoFrame(struct WebKit::SharedVideoFrame frame, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous NotStreamEncodable
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
+    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
 #if ENABLE(MEDIA_STREAM)
     void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous

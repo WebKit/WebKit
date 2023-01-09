@@ -196,11 +196,11 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         }
     }
 
-    messageRepeatCountUpdated(count)
+    messageRepeatCountUpdated(count, timestamp)
     {
         this._incrementMessageLevelCount(this._lastMessageLevel, 1);
 
-        this.dispatchEventToListeners(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, {count});
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, {count, timestamp});
     }
 
     requestClearMessages()

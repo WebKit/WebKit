@@ -4,7 +4,6 @@ layer at (0,0) size 785x904
   RenderBlock {HTML} at (0,0) size 785x904
     RenderBody {BODY} at (8,8) size 769x888
       RenderBlock {DIV} at (0,0) size 769x170
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,18) size 769x18
           RenderInline {B} at (0,0) size 331x17
             RenderText {#text} at (219,0) size 331x17
@@ -321,3 +320,5 @@ layer at (0,0) size 785x904
                 text run at (2,2) width 223: "blue (colspan=3) --- spans correctly"
       RenderBlock (anonymous) at (0,870) size 769x18
         RenderBR {BR} at (0,0) size 0x17
+layer at (8,8) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]

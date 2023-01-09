@@ -7,9 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 750x17
           text run at (0,0) width 445: "This tests that the graphics context is restored after painting solid color "
           text run at (445,0) width 305: "images. The highlight color should be light blue."
-      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,44) size 784x18
         RenderText {#text} at (0,0) size 21x17
           text run at (0,0) width 21: "foo"
+layer at (8,42) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
 selection start: position 9 of child 0 {#text} of child 5 {DIV} of body
 selection end:   position 12 of child 0 {#text} of child 5 {DIV} of body

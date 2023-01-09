@@ -28,9 +28,92 @@
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "StreamConnectionEncoder.h"
 #include "Test.h"
 
 namespace TestWebKitAPI {
+
+// ArgumentCoderEncoderDecoderTest internally constructs the encoder object specified
+// as the template parameter, into which each test can encode the desired objects.
+// It then uses that Encoder's internal buffer to create a Decoder object, intended for
+// the test to decode those objects.
+
+struct EncoderDecoderTest {
+    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
+};
+
+struct EncoderTypeNames {
+    template<typename T>
+    static std::string GetName(int)
+    {
+        if (std::is_same_v<T, IPC::Encoder>)
+            return "Encoder";
+        if (std::is_same_v<T, IPC::StreamConnectionEncoder>)
+            return "StreamConnectionEncoder";
+        return "<unknown>";
+    }
+};
+
+using EncoderTypes = ::testing::Types<IPC::Encoder, IPC::StreamConnectionEncoder>;
+
+template<typename T> class ArgumentCoderEncoderDecoderTest;
+
+template<>
+class ArgumentCoderEncoderDecoderTest<IPC::Encoder> : public ::testing::Test {
+public:
+    void SetUp() override
+    {
+        m_encoder = makeUnique<IPC::Encoder>(EncoderDecoderTest::name(), 0);
+        ASSERT_EQ(m_encoder->bufferSize(), headerSize());
+    }
+
+    IPC::Encoder& encoder() const { return *m_encoder; }
+    size_t headerSize() const { return 24; }
+    size_t encoderSize() const { return m_encoder->bufferSize(); }
+
+    std::unique_ptr<IPC::Decoder> createDecoder() const
+    {
+        return IPC::Decoder::create(m_encoder->buffer(), m_encoder->bufferSize(), { });
+    }
+
+private:
+    std::unique_ptr<IPC::Encoder> m_encoder;
+};
+
+template<>
+class ArgumentCoderEncoderDecoderTest<IPC::StreamConnectionEncoder> : public ::testing::Test {
+public:
+    void SetUp() override
+    {
+        m_impl = makeUnique<Impl>();
+        ASSERT_EQ(m_impl->encoder.size(), headerSize());
+    }
+
+    IPC::StreamConnectionEncoder& encoder() const { return m_impl->encoder; }
+    size_t headerSize() const { return 2; }
+    size_t encoderSize() const { return m_impl->encoder.size(); }
+
+    std::unique_ptr<IPC::Decoder> createDecoder() const
+    {
+        auto decoder = makeUnique<IPC::Decoder>(m_impl->buffer.data(), m_impl->buffer.size(), 0);
+        return decoder;
+    }
+
+private:
+    struct Impl {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        Impl()
+            : buffer(1024, static_cast<uint8_t>(0))
+            , encoder(EncoderDecoderTest::name(), buffer.data(), buffer.size())
+        { }
+
+        Vector<uint8_t> buffer;
+        IPC::StreamConnectionEncoder encoder;
+    };
+    std::unique_ptr<Impl> m_impl;
+};
+
 
 struct EncodingCounter {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -56,12 +139,12 @@ struct EncodingCounter {
     { }
 
     void encode(IPC::Encoder& encoder) const & {
-        encoder << uint32_t(0);
+        encoder << static_cast<uint32_t>(0);
         ++m_counterValues.encodingLValue;
     }
 
     void encode(IPC::Encoder& encoder) && {
-        encoder << uint32_t(0);
+        encoder << static_cast<uint32_t>(0);
         ++m_counterValues.encodingRValue;
     }
 
@@ -222,6 +305,10 @@ INSTANTIATE_TEST_SUITE_P(ArgumentCoderTest,
     testing::Values(EncodingCounterTestType::LValue, EncodingCounterTestType::RValue, EncodingCounterTestType::MovedRValue),
     TestParametersToStringFormatter());
 
+
+template<typename T> class ArgumentCoderDecodingMoveCounterTest : public ArgumentCoderEncoderDecoderTest<T> { };
+TYPED_TEST_SUITE_P(ArgumentCoderDecodingMoveCounterTest);
+
 // DecodingMoveCounter is a move-only class whose move constructor and
 // move assignment operator increase the moved-in object's move counter.
 
@@ -244,14 +331,16 @@ struct DecodingMoveCounter {
         return *this;
     }
 
-    void encode(IPC::Encoder& encoder)
+    template<typename Encoder>
+    void encode(Encoder& encoder)
     {
-        encoder << uint64_t(42);
+        encoder << static_cast<uint64_t>(42);
     }
 
-    static std::optional<DecodingMoveCounter> decode(IPC::Decoder& decoder)
+    template<typename Decoder>
+    static std::optional<DecodingMoveCounter> decode(Decoder& decoder)
     {
-        auto value = decoder.decode<uint64_t>();
+        auto value = decoder.template decode<uint64_t>();
         if (!value || *value != 42)
             return std::nullopt;
         return std::make_optional<DecodingMoveCounter>();
@@ -260,48 +349,21 @@ struct DecodingMoveCounter {
     unsigned moveCounter { 0 };
 };
 
-struct DecodingMoveCounterTest {
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
-};
-
-// ArgumentCoderDecodingMoveCounterTest internally constructs an Encoder object
-// into which each test can encode the desired objects. It then uses that Encoder's
-// internal buffer to create a Decoder object, intended for the test to decode those
-// objects and check the amount of exhibited moves.
-
-class ArgumentCoderDecodingMoveCounterTest : public ::testing::Test {
-public:
-    void SetUp() override
-    {
-        m_encoder = makeUnique<IPC::Encoder>(DecodingMoveCounterTest::name(), 0);
-    }
-
-    IPC::Encoder& encoder() const { return *m_encoder; }
-
-    std::unique_ptr<IPC::Decoder> createDecoder() const
-    {
-        return IPC::Decoder::create(m_encoder->buffer(), m_encoder->bufferSize(), { });
-    }
-
-private:
-    std::unique_ptr<IPC::Encoder> m_encoder;
-};
-
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeDirectly)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeDirectly)
 {
-    encoder() << DecodingMoveCounter { };
+    TestFixture::encoder() << DecodingMoveCounter { };
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     auto counter = DecodingMoveCounter::decode(*decoder);
     ASSERT_TRUE(!!counter);
     ASSERT_EQ(counter->moveCounter, 0u);
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeValue)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeValue)
 {
-    encoder() << DecodingMoveCounter { } << DecodingMoveCounter { };
+    TestFixture::encoder() << DecodingMoveCounter { } << DecodingMoveCounter { };
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<DecodingMoveCounter> counter;
         *decoder >> counter;
@@ -309,18 +371,18 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeValue)
         ASSERT_EQ(counter->moveCounter, 1u);
     }
     {
-        auto counter = decoder->decode<DecodingMoveCounter>();
+        auto counter = decoder->template decode<DecodingMoveCounter>();
         ASSERT_TRUE(!!counter);
         ASSERT_EQ(counter->moveCounter, 0u);
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeOptional)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeOptional)
 {
-    encoder() << std::make_optional<DecodingMoveCounter>();
-    encoder() << std::make_optional<DecodingMoveCounter>();
+    TestFixture::encoder() << std::make_optional<DecodingMoveCounter>();
+    TestFixture::encoder() << std::make_optional<DecodingMoveCounter>();
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<std::optional<DecodingMoveCounter>> optional;
         *decoder >> optional;
@@ -331,7 +393,7 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeOptional)
         ASSERT_EQ(counter->moveCounter, 2u);
     }
     {
-        auto optional = decoder->decode<std::optional<DecodingMoveCounter>>();
+        auto optional = decoder->template decode<std::optional<DecodingMoveCounter>>();
         ASSERT_TRUE(!!optional);
 
         auto& counter = *optional;
@@ -340,12 +402,12 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeOptional)
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodePair)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodePair)
 {
-    encoder() << std::pair { uint64_t(0), DecodingMoveCounter { } };
-    encoder() << std::pair { uint64_t(0), DecodingMoveCounter { } };
+    TestFixture::encoder() << std::pair { static_cast<uint64_t>(0), DecodingMoveCounter { } };
+    TestFixture::encoder() << std::pair { static_cast<uint64_t>(0), DecodingMoveCounter { } };
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<std::pair<uint64_t, DecodingMoveCounter>> pair;
         *decoder >> pair;
@@ -353,19 +415,19 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodePair)
         ASSERT_EQ(pair->second.moveCounter, 2u);
     }
     {
-        auto pair = decoder->decode<std::pair<uint64_t, DecodingMoveCounter>>();
+        auto pair = decoder->template decode<std::pair<uint64_t, DecodingMoveCounter>>();
         ASSERT_TRUE(!!pair);
         ASSERT_EQ(pair->second.moveCounter, 1u);
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeTuple)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeTuple)
 {
     using TupleType = std::tuple<DecodingMoveCounter, uint64_t, DecodingMoveCounter>;
-    encoder() << TupleType { DecodingMoveCounter { }, 42, DecodingMoveCounter { } };
-    encoder() << TupleType { DecodingMoveCounter { }, 42, DecodingMoveCounter { } };
+    TestFixture::encoder() << TupleType { DecodingMoveCounter { }, 42, DecodingMoveCounter { } };
+    TestFixture::encoder() << TupleType { DecodingMoveCounter { }, 42, DecodingMoveCounter { } };
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<TupleType> tuple;
         *decoder >> tuple;
@@ -374,19 +436,19 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeTuple)
         ASSERT_EQ(std::get<2>(*tuple).moveCounter, 2u);
     }
     {
-        auto tuple = decoder->decode<TupleType>();
+        auto tuple = decoder->template decode<TupleType>();
         ASSERT_TRUE(!!tuple);
         ASSERT_EQ(std::get<0>(*tuple).moveCounter, 1u);
         ASSERT_EQ(std::get<2>(*tuple).moveCounter, 1u);
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeArray)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeArray)
 {
-    encoder() << std::array<DecodingMoveCounter, 2> { DecodingMoveCounter { }, DecodingMoveCounter { } };
-    encoder() << std::array<DecodingMoveCounter, 2> { DecodingMoveCounter { }, DecodingMoveCounter { } };
+    TestFixture::encoder() << std::array<DecodingMoveCounter, 2> { DecodingMoveCounter { }, DecodingMoveCounter { } };
+    TestFixture::encoder() << std::array<DecodingMoveCounter, 2> { DecodingMoveCounter { }, DecodingMoveCounter { } };
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<std::array<DecodingMoveCounter, 2>> array;
         *decoder >> array;
@@ -395,19 +457,19 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeArray)
             ASSERT_EQ(entry.moveCounter, 3u);
     }
     {
-        auto array = decoder->decode<std::array<DecodingMoveCounter, 2>>();
+        auto array = decoder->template decode<std::array<DecodingMoveCounter, 2>>();
         ASSERT_TRUE(!!array);
         for (auto&& entry : *array)
             ASSERT_EQ(entry.moveCounter, 2u);
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVector)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeVector)
 {
-    encoder() << Vector<DecodingMoveCounter>::from(DecodingMoveCounter { }, DecodingMoveCounter { });
-    encoder() << Vector<DecodingMoveCounter>::from(DecodingMoveCounter { }, DecodingMoveCounter { });
+    TestFixture::encoder() << Vector<DecodingMoveCounter>::from(DecodingMoveCounter { }, DecodingMoveCounter { });
+    TestFixture::encoder() << Vector<DecodingMoveCounter>::from(DecodingMoveCounter { }, DecodingMoveCounter { });
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<Vector<DecodingMoveCounter>> vector;
         *decoder >> vector;
@@ -417,7 +479,7 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVector)
             ASSERT_EQ(entry.moveCounter, 1u);
     }
     {
-        auto vector = decoder->decode<Vector<DecodingMoveCounter>>();
+        auto vector = decoder->template decode<Vector<DecodingMoveCounter>>();
         ASSERT_TRUE(!!vector);
         ASSERT_EQ(vector->size(), 2u);
         for (auto&& entry : *vector)
@@ -425,13 +487,13 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVector)
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVariant)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeVariant)
 {
     using VariantType = std::variant<DecodingMoveCounter, uint64_t>;
-    encoder() << VariantType { DecodingMoveCounter { } };
-    encoder() << VariantType { DecodingMoveCounter { } };
+    TestFixture::encoder() << VariantType { DecodingMoveCounter { } };
+    TestFixture::encoder() << VariantType { DecodingMoveCounter { } };
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<VariantType> variant;
         *decoder >> variant;
@@ -440,18 +502,18 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeVariant)
         ASSERT_EQ(std::get<0>(*variant).moveCounter, 2u);
     }
     {
-        auto variant = decoder->decode<VariantType>();
+        auto variant = decoder->template decode<VariantType>();
         ASSERT_TRUE(!!variant);
         ASSERT_EQ(variant->index(), 0u);
         ASSERT_EQ(std::get<0>(*variant).moveCounter, 1u);
     }
 }
 
-TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeUniquePtr)
+TYPED_TEST_P(ArgumentCoderDecodingMoveCounterTest, DecodeUniquePtr)
 {
-    encoder() << makeUnique<DecodingMoveCounter>() << makeUnique<DecodingMoveCounter>();
+    TestFixture::encoder() << makeUnique<DecodingMoveCounter>() << makeUnique<DecodingMoveCounter>();
 
-    auto decoder = createDecoder();
+    auto decoder = TestFixture::createDecoder();
     {
         std::optional<std::unique_ptr<DecodingMoveCounter>> pointer;
         *decoder >> pointer;
@@ -462,7 +524,7 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeUniquePtr)
         ASSERT_EQ(counter->moveCounter, 1u);
     }
     {
-        auto pointer = decoder->decode<std::unique_ptr<DecodingMoveCounter>>();
+        auto pointer = decoder->template decode<std::unique_ptr<DecodingMoveCounter>>();
         ASSERT_TRUE(!!pointer);
 
         auto& counter = *pointer;
@@ -470,5 +532,10 @@ TEST_F(ArgumentCoderDecodingMoveCounterTest, DecodeUniquePtr)
         ASSERT_EQ(counter->moveCounter, 1u);
     }
 }
+
+REGISTER_TYPED_TEST_SUITE_P(ArgumentCoderDecodingMoveCounterTest,
+    DecodeDirectly, DecodeValue, DecodeOptional, DecodePair, DecodeTuple,
+    DecodeArray, DecodeVector, DecodeVariant, DecodeUniquePtr);
+INSTANTIATE_TYPED_TEST_SUITE_P(ArgumentCoderTest, ArgumentCoderDecodingMoveCounterTest, EncoderTypes, EncoderTypeNames);
 
 } // namespace TestWebKitAPI

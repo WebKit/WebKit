@@ -242,7 +242,7 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
     if (!cancelledOutstandingEvent)
         return;
 
-    if (type != SameDocumentNavigationSessionStateReplace && type != SameDocumentNavigationSessionStatePop)
+    if (type != SameDocumentNavigationType::SessionStateReplace && type != SameDocumentNavigationType::SessionStatePop)
         return;
 
     checkForActiveLoads();

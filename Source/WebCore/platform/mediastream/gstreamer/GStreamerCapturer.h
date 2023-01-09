@@ -56,7 +56,7 @@ public:
     void play();
     void stop();
     GstCaps* caps();
-    void addSink(GstElement *newSink);
+
     GstElement* makeElement(const char* factoryName);
     virtual GstElement* createSource();
     GstElement* source() { return m_src.get();  }
@@ -77,7 +77,6 @@ protected:
     GRefPtr<GstElement> m_sink;
     GRefPtr<GstElement> m_src;
     GRefPtr<GstElement> m_valve;
-    GRefPtr<GstElement> m_tee;
     GRefPtr<GstElement> m_capsfilter;
     GRefPtr<GstDevice> m_device;
     GRefPtr<GstCaps> m_caps;
