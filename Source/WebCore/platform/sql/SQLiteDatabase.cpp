@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -661,11 +661,13 @@ bool SQLiteDatabase::isAutoCommitOn() const
 
 bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
 {
-    auto statement = prepareStatement("PRAGMA auto_vacuum"_s);
-    if (!statement)
-        return false;
-
-    int autoVacuumMode = statement->columnInt(0);
+    int autoVacuumMode = AutoVacuumNone;
+    {
+        auto statement = prepareStatement("PRAGMA auto_vacuum"_s);
+        if (!statement)
+            return false;
+        autoVacuumMode = statement->columnInt(0);
+    }
 
     // Check if we got an error while trying to get the value of the auto_vacuum flag.
     // If we got a SQLITE_BUSY error, then there's probably another transaction in
