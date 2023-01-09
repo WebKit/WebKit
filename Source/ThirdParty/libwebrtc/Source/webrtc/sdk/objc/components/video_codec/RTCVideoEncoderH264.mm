@@ -148,7 +148,14 @@ bool CopyVideoFrameToNV12PixelBuffer(id<RTCI420Buffer> frameBuffer, CVPixelBuffe
   return true;
 }
 
-CVPixelBufferRef CreatePixelBuffer(CVPixelBufferPoolRef pixel_buffer_pool) {
+CVPixelBufferRef CreatePixelBuffer(VTCompressionSessionRef compression_session) {
+  if (!compression_session) {
+    RTC_LOG(LS_ERROR) << "Failed to get compression session.";
+    return nullptr;
+  }
+  CVPixelBufferPoolRef pixel_buffer_pool =
+      VTCompressionSessionGetPixelBufferPool(compression_session);
+
   if (!pixel_buffer_pool) {
     RTC_LOG(LS_ERROR) << "Failed to get pixel buffer pool.";
     return nullptr;
@@ -351,7 +358,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
   bool _useBaseline;
   VTCompressionSessionRef _vtCompressionSession;
   VCPCompressionSessionRef _vcpCompressionSession;
-  CVPixelBufferPoolRef _pixelBufferPool;
   RTCVideoCodecMode _mode;
 
   webrtc::H264BitstreamParser _h264BitstreamParser;
@@ -491,7 +497,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
       CVBufferRetain(pixelBuffer);
     } else {
       // Cropping required, we need to crop and scale to a new pixel buffer.
-      pixelBuffer = CreatePixelBuffer(_pixelBufferPool);
+      pixelBuffer = CreatePixelBuffer(_vtCompressionSession);
       if (!pixelBuffer) {
         return WEBRTC_VIDEO_CODEC_ERROR;
       }
@@ -514,7 +520,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
 
   if (!pixelBuffer) {
     // We did not have a native frame buffer
-    pixelBuffer = CreatePixelBuffer(_pixelBufferPool);
+    pixelBuffer = CreatePixelBuffer(_vtCompressionSession);
     if (!pixelBuffer) {
       return WEBRTC_VIDEO_CODEC_ERROR;
     }
@@ -653,15 +659,16 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
   OSType framePixelFormat = [self pixelFormatOfFrame:frame];
 
   if ([self hasCompressionSession]) {
-#if defined(WEBRTC_WEBKIT_BUILD)
-    if (!_pixelBufferPool) {
+    CVPixelBufferPoolRef pixelBufferPool =
+      VTCompressionSessionGetPixelBufferPool(_vtCompressionSession);
+    if (!pixelBufferPool) {
       return NO;
     }
-#endif
+
     // The pool attribute `kCVPixelBufferPixelFormatTypeKey` can contain either an array of pixel
     // formats or a single pixel format.
     NSDictionary *poolAttributes =
-        (__bridge NSDictionary *)CVPixelBufferPoolGetPixelBufferAttributes(_pixelBufferPool);
+        (__bridge NSDictionary *)CVPixelBufferPoolGetPixelBufferAttributes(pixelBufferPool);
     id pixelFormats =
         [poolAttributes objectForKey:(__bridge NSString *)kCVPixelBufferPixelFormatTypeKey];
     NSArray<NSNumber *> *compressionSessionPixelFormats = nil;
@@ -829,16 +836,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
   }
   [self configureCompressionSession];
 
-#if !defined(WEBRTC_WEBKIT_BUILD)
-  // The pixel buffer pool is dependent on the compression session so if the session is reset, the
-  // pool should be reset as well.
-  if (_vtCompressionSession)
-    _pixelBufferPool = VTCompressionSessionGetPixelBufferPool(_vtCompressionSession);
-#if ENABLE_VCP_ENCODER
-  else
-    _pixelBufferPool = webrtc::VCPCompressionSessionGetPixelBufferPool(_vtCompressionSession);
-#endif
-#endif
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -885,7 +882,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
     _vcpCompressionSession = nullptr;
   }
 #endif
-  _pixelBufferPool = nullptr;
 }
 
 - (NSString *)implementationName {
