@@ -862,8 +862,12 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
         }
     }
 
-    // FIXME: Probe for video/H265 capabilies.
-    // FIXME: Probe for video/AV1 capabilies.
+    if (factories.hasElementForMediaType(codecElement, "video/x-h265") && factories.hasElementForMediaType(rtpElement, "video/x-h265")) {
+        // FIXME: Probe for video/H265 encoder capabilities.
+        capabilities.codecs.append({ .mimeType = "video/H265"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = { } });
+    }
+
+    // FIXME: Probe for video/AV1 capabilities.
 
     if (factories.hasElementForMediaType(codecElement, "video/x-vp8") && factories.hasElementForMediaType(rtpElement, "video/x-vp8"))
         capabilities.codecs.append({ .mimeType = "video/VP8"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = { } });
