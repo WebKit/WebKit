@@ -576,7 +576,7 @@ void GStreamerMediaEndpoint::processSDPMessage(const GstSDPMessage* message, Fun
 void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceGStreamer& source)
 {
     if (!source.pad()) {
-        source.setSinkPad(requestPad(m_requestPadCounter, source.allowedCaps()));
+        source.setSinkPad(requestPad(m_requestPadCounter, source.allowedCaps(), source.mediaStreamID()));
         m_requestPadCounter++;
     }
 
@@ -598,7 +598,7 @@ void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceG
 #endif
 }
 
-GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(unsigned mlineIndex, const GRefPtr<GstCaps>& allowedCaps)
+GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(unsigned mlineIndex, const GRefPtr<GstCaps>& allowedCaps, const String& mediaStreamID)
 {
     auto padId = makeString("sink_", mlineIndex);
     auto caps = adoptGRef(gst_caps_copy(allowedCaps.get()));
@@ -616,6 +616,9 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(unsigned mlineIndex, const GR
         auto* padTemplate = gst_element_get_pad_template(m_webrtcBin.get(), "sink_%u");
         sinkPad = adoptGRef(gst_element_request_pad(m_webrtcBin.get(), padTemplate, padId.utf8().data(), caps.get()));
     }
+
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(sinkPad.get()), "msid"))
+        g_object_set(sinkPad.get(), "msid", mediaStreamID.ascii().data(), nullptr);
 
     GRefPtr<GstWebRTCRTPTransceiver> transceiver;
     g_object_get(sinkPad.get(), "transceiver", &transceiver.outPtr(), nullptr);
@@ -779,7 +782,12 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     const auto* media = gst_sdp_message_get_media(description->sdp, mLineIndex);
     GUniquePtr<gchar> name(gst_pad_get_name(pad));
     auto mediaStreamId = String::fromLatin1(name.get());
-    if (const char* msidAttribute = gst_sdp_media_get_attribute_val(media, "msid")) {
+
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(pad), "msid")) {
+        GUniqueOutPtr<char> msid;
+        g_object_get(pad, "msid", &msid.outPtr(), nullptr);
+        mediaStreamId = String::fromLatin1(msid.get());
+    } else if (const char* msidAttribute = gst_sdp_media_get_attribute_val(media, "msid")) {
         auto components = makeString(msidAttribute).split(' ');
         if (components.size() == 2)
             mediaStreamId = components[0];

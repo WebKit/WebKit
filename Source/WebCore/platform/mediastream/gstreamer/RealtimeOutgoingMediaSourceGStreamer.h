@@ -40,6 +40,7 @@ public:
     void setSource(Ref<MediaStreamTrackPrivate>&&);
     MediaStreamTrackPrivate& source() const { return m_source->get(); }
 
+    const String& mediaStreamID() const { return m_mediaStreamId; }
     const GRefPtr<GstCaps>& allowedCaps() const;
 
     void link();
