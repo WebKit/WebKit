@@ -32,6 +32,7 @@
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_WEBRTC)
+#include "GStreamerVideoEncoder.h"
 #include <gst/rtp/rtp.h>
 #endif
 
@@ -232,6 +233,7 @@ GStreamerRegistryScanner::GStreamerRegistryScanner(bool isMediaSource)
     }
 
     GST_DEBUG_CATEGORY_INIT(webkit_media_gst_registry_scanner_debug, "webkitregistryscanner", 0, "WebKit GStreamer registry scanner");
+    registerWebKitGStreamerElements();
 
     ElementFactories factories(OptionSet<ElementFactories::Type>::fromRaw(static_cast<unsigned>(ElementFactories::Type::All)));
     initializeDecoders(factories);
@@ -822,26 +824,42 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
     }
 
     auto factories = ElementFactories({ codecElement, rtpElement });
+    auto codecLookupResult = factories.hasElementForMediaType(codecElement, "video/x-h264");
+    if (codecLookupResult && factories.hasElementForMediaType(rtpElement, "video/x-h264")) {
+        GRefPtr<GstElement> element;
+        if (configuration == Configuration::Decoding)
+            element = gst_element_factory_create(codecLookupResult.factory.get(), nullptr);
+        else
+            element = gst_element_factory_make("webrtcvideoencoder", nullptr);
 
-    if (factories.hasElementForMediaType(codecElement, "video/x-h264") && factories.hasElementForMediaType(rtpElement, "video/x-h264")) {
-        // FIXME: Profile levels are hardcoded here for the time being. It might be a good idea to
-        // actually probe those on the selected encoder.
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640c1f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=640c1f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=4d001f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
-            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=4d001f"_s });
+        if (element) {
+            Vector<String> profiles = {
+                "42e01f"_s,
+                "640c1f"_s,
+                "42001f"_s,
+                "4d001f"_s,
+            };
+
+            for (auto& profileLevelId : profiles) {
+                auto spsAsInteger = parseInteger<uint64_t>(profileLevelId, 16).value_or(0);
+                uint8_t sps[3];
+                sps[0] = spsAsInteger >> 16;
+                sps[1] = (spsAsInteger >> 8) & 0xff;
+                sps[2] = spsAsInteger & 0xff;
+
+                auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
+                gst_codec_utils_h264_caps_set_level_and_profile(caps.get(), sps, 3);
+
+                if (WEBKIT_IS_WEBRTC_VIDEO_ENCODER(element.get())) {
+                    if (!webrtcVideoEncoderSupportsFormat(WEBKIT_WEBRTC_VIDEO_ENCODER(element.get()), caps))
+                        continue;
+                } else if (!gst_element_factory_can_sink_any_caps(gst_element_get_factory(element.get()), caps.get()))
+                    continue;
+
+                capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = makeString("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id="_s, profileLevelId) });
+                capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = makeString("level-asymmetry-allowed=1;packetization-mode=0;profile-level-id="_s, profileLevelId) });
+            }
+        }
     }
 
     // FIXME: Probe for video/H265 capabilies.

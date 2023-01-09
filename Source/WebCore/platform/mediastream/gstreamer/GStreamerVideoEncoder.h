@@ -44,4 +44,5 @@ struct _WebKitWebrtcVideoEncoderClass {
 
 GType webkit_webrtc_video_encoder_get_type(void);
 
+bool webrtcVideoEncoderSupportsFormat(WebKitWebrtcVideoEncoder*, const GRefPtr<GstCaps>&);
 bool webrtcVideoEncoderSetFormat(WebKitWebrtcVideoEncoder*, GRefPtr<GstCaps>&&);
