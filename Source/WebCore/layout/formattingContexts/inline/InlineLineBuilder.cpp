@@ -1039,7 +1039,9 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
         // When intrusive initial letter is cleared, we introduce a clear gap. This is (with proper floats) normally computed before starting
         // line layout but intrusive initial letters are cleared only when another initial letter shows up. Regular inline content
         // does not need clearance.
+        auto intrusiveInitialLetterWidth = std::max(0.f, m_lineLogicalRect.left() - m_lineInitialLogicalLeft);
         m_lineLogicalRect.setLeft(m_lineInitialLogicalLeft);
+        m_lineLogicalRect.expandHorizontally(intrusiveInitialLetterWidth);
         clearGapBeforeFirstLine = *intrusiveBottom;
     }
 
