@@ -158,6 +158,16 @@ bool GStreamerMediaEndpoint::initializePipeline()
         endPoint->onDataChannel(channel);
     }), this);
 
+#ifndef GST_DISABLE_GST_DEBUG
+    g_signal_connect(m_webrtcBin.get(), "notify::connection-state", G_CALLBACK(+[](GstElement* webrtcBin, GParamSpec*, GStreamerMediaEndpoint* endPoint) {
+        GstWebRTCPeerConnectionState state;
+        g_object_get(webrtcBin, "connection-state", &state, nullptr);
+        GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_PEER_CONNECTION_STATE, state));
+        auto dotFilename = makeString(GST_ELEMENT_NAME(endPoint->pipeline()), '-', desc.get());
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(endPoint->pipeline()), GST_DEBUG_GRAPH_SHOW_ALL, dotFilename.ascii().data());
+    }), this);
+#endif
+
     gst_bin_add(GST_BIN_CAST(m_pipeline.get()), m_webrtcBin.get());
     return true;
 }
@@ -1049,9 +1059,14 @@ GRefPtr<GstElement> GStreamerMediaEndpoint::requestAuxiliarySender(GstWebRTCDTLS
         return nullptr;
     }
 
-    auto estimator = adoptGRef(makeGStreamerElement("rtpgccbwe", nullptr));
+    // Don't use makeGStreamerElement() here because it would be called mutiple times and emit an
+    // error every single time if the element is not found.
+    GRefPtr<GstElement> estimator(gst_element_factory_make("rtpgccbwe", nullptr));
     if (!estimator) {
-        GST_WARNING_OBJECT(m_pipeline.get(), "gst-plugins-rs is not installed, RTP bandwidth estimation now disabled");
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            WTFLogAlways("gst-plugins-rs is not installed, RTP bandwidth estimation now disabled");
+        });
         return nullptr;
     }
 
