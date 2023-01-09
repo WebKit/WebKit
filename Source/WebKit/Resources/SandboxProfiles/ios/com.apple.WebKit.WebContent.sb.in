@@ -1289,7 +1289,6 @@
 (define (syscall-mach-only-in-use-during-launch)
     (machtrap-number
         MSC_mach_timebase_info_trap
-        MSC_swtch_pri
         MSC_task_self_trap))
 
 (define (syscall-mach-in-use-after-launch)
@@ -1313,6 +1312,7 @@
         MSC__kernelrpc_mach_vm_purgable_control_trap
         MSC_host_create_mach_voucher_trap
         MSC_host_self_trap
+        MSC_iokit_user_client_trap
         MSC_mach_generate_activity_id
         MSC_mach_reply_port
         MSC_mk_timer_arm
@@ -1320,6 +1320,7 @@
         MSC_mk_timer_create
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
+        MSC_swtch_pri
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
         MSC_thread_get_special_reply_port))
@@ -1337,7 +1338,7 @@
 (deny syscall-mach
     (machtrap-number MSC_mach_wait_until))
 
-(allow syscall-mach (with telemetry))
+(deny syscall-mach (with telemetry))
 (allow syscall-mach
     (syscall-mach-blocked-in-lockdown-mode)
     (syscall-mach-only-in-use-during-launch)
@@ -1351,7 +1352,7 @@
     (allow syscall-mach
         (syscall-mach-only-in-use-during-launch)))
 (with-filter (state-flag "WebContentProcessLaunched")
-    (allow syscall-mach
+    (deny syscall-mach
         (with telemetry)
         (with message "Mach syscall used after launch")
         (syscall-mach-only-in-use-during-launch)))
@@ -1385,9 +1386,11 @@
         io_registry_entry_from_path
         io_registry_entry_get_property_bin_buf
         io_service_get_matching_service_bin
+        mach_memory_entry_ownership
         mach_port_extract_right
         mach_port_get_context_from_user
         mach_port_get_refs
+        mach_port_request_notification
         mach_port_set_attributes
         mach_vm_copy
         mach_vm_map_external
@@ -1421,14 +1424,12 @@
         io_service_close
         io_service_open_extended
         mach_exception_raise
-        mach_port_request_notification
         mach_vm_region
         mach_vm_region_recurse
         task_threads_from_user))
 
 (define (kernel-mig-routine-rarely-used)
     (kernel-mig-routine
-        mach_memory_entry_ownership
         task_set_exc_guard_behavior
         thread_info
         thread_policy
@@ -1436,7 +1437,7 @@
     
 (allow mach-kernel-endpoint
     (apply-message-filter
-        (allow mach-message-send (with telemetry))
+        (deny mach-message-send (with telemetry))
         (allow mach-message-send (with telemetry-backtrace)
             (kernel-mig-routine-rarely-used-need-backtrace))
 
@@ -1458,7 +1459,7 @@
             (allow mach-message-send
                 (kernel-mig-routine-only-in-use-during-launch)))
         (with-filter (state-flag "WebContentProcessLaunched")
-            (allow mach-message-send
+            (deny mach-message-send
                 (with telemetry)
                 (with message "kernel mig routine used after launch")
                 (kernel-mig-routine-only-in-use-during-launch)))

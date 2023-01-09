@@ -842,7 +842,7 @@
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
-(allow syscall-mach (with telemetry))
+(deny syscall-mach (with telemetry))
 (allow syscall-mach
     (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap
@@ -862,9 +862,7 @@
         MSC__kernelrpc_mach_vm_deallocate_trap
         MSC__kernelrpc_mach_vm_map_trap
         MSC__kernelrpc_mach_vm_protect_trap
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
         MSC__kernelrpc_mach_vm_purgable_control_trap
-#endif
         MSC_host_create_mach_voucher_trap
         MSC_host_self_trap
         MSC_mach_generate_activity_id
@@ -875,6 +873,7 @@
         MSC_mk_timer_arm
         MSC_mk_timer_cancel
         MSC_mk_timer_create
+        MSC_mk_timer_destroy
         MSC_pid_for_task
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
