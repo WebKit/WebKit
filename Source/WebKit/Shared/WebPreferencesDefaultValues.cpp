@@ -199,4 +199,15 @@ bool defaultShowModalDialogEnabled()
 #endif
 }
 
+#if ENABLE(GAMEPAD)
+bool defaultGamepadVibrationActuatorEnabled()
+{
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 } // namespace WebKit
