@@ -52,6 +52,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(GSTREAMER)
+#include "GUniquePtrGStreamer.h"
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GstEvent GstEvent;
@@ -116,7 +117,7 @@ public:
         virtual void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) = 0;
 
 #if USE(GSTREAMER_WEBRTC)
-        virtual std::optional<uint64_t> queryDecodedVideoFramesCount() { return std::nullopt; }
+        virtual GUniquePtr<GstStructure> queryAdditionalStats() { return nullptr; }
 #endif
     };
 
