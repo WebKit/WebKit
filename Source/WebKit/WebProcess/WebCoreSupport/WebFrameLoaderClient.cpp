@@ -432,10 +432,10 @@ void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()
     auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader()).navigationID();
 
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationAnchorNavigation, userData);
+    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationType::AnchorNavigation, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationAnchorNavigation, m_frame->coreFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationType::AnchorNavigation, m_frame->coreFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::dispatchDidChangeMainDocument()
@@ -474,7 +474,7 @@ void WebFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(Same
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationSessionStatePush, userData);
+    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationType::SessionStatePush, userData);
 
     NavigationActionData navigationActionData;
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(UserGestureIndicator::currentUserGesture());
@@ -488,17 +488,17 @@ void WebFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(Same
 
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
 {
-    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationSessionStatePush);
+    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType::SessionStatePush);
 }
 
 void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
 {
-    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationSessionStateReplace);
+    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType::SessionStateReplace);
 }
 
 void WebFrameLoaderClient::dispatchDidPopStateWithinPage()
 {
-    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationSessionStatePop);
+    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType::SessionStatePop);
 }
 
 void WebFrameLoaderClient::dispatchWillClose()

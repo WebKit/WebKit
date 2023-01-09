@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,13 @@ namespace WebKit {
 static _WKSameDocumentNavigationType toWKSameDocumentNavigationType(SameDocumentNavigationType navigationType)
 {
     switch (navigationType) {
-    case SameDocumentNavigationAnchorNavigation:
+    case SameDocumentNavigationType::AnchorNavigation:
         return _WKSameDocumentNavigationTypeAnchorNavigation;
-    case SameDocumentNavigationSessionStatePush:
+    case SameDocumentNavigationType::SessionStatePush:
         return _WKSameDocumentNavigationTypeSessionStatePush;
-    case SameDocumentNavigationSessionStateReplace:
+    case SameDocumentNavigationType::SessionStateReplace:
         return _WKSameDocumentNavigationTypeSessionStateReplace;
-    case SameDocumentNavigationSessionStatePop:
+    case SameDocumentNavigationType::SessionStatePop:
         return _WKSameDocumentNavigationTypeSessionStatePop;
     }
 

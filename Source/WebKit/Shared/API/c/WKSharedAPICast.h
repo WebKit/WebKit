@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -826,112 +826,88 @@ inline OptionSet<FindOptions> toFindOptions(WKFindOptions wkFindOptions)
 
 inline WKFrameNavigationType toAPI(WebCore::NavigationType type)
 {
-    WKFrameNavigationType wkType = kWKFrameNavigationTypeOther;
-
     switch (type) {
     case WebCore::NavigationType::LinkClicked:
-        wkType = kWKFrameNavigationTypeLinkClicked;
-        break;
+        return kWKFrameNavigationTypeLinkClicked;
     case WebCore::NavigationType::FormSubmitted:
-        wkType = kWKFrameNavigationTypeFormSubmitted;
-        break;
+        return kWKFrameNavigationTypeFormSubmitted;
     case WebCore::NavigationType::BackForward:
-        wkType = kWKFrameNavigationTypeBackForward;
-        break;
+        return kWKFrameNavigationTypeBackForward;
     case WebCore::NavigationType::Reload:
-        wkType = kWKFrameNavigationTypeReload;
-        break;
+        return kWKFrameNavigationTypeReload;
     case WebCore::NavigationType::FormResubmitted:
-        wkType = kWKFrameNavigationTypeFormResubmitted;
-        break;
+        return kWKFrameNavigationTypeFormResubmitted;
     case WebCore::NavigationType::Other:
-        wkType = kWKFrameNavigationTypeOther;
-        break;
+        return kWKFrameNavigationTypeOther;
     }
-    
-    return wkType;
+
+    ASSERT_NOT_REACHED();
+    return kWKFrameNavigationTypeOther;
+
 }
 
 inline WKSameDocumentNavigationType toAPI(SameDocumentNavigationType type)
 {
-    WKFrameNavigationType wkType = kWKSameDocumentNavigationAnchorNavigation;
-
     switch (type) {
-    case SameDocumentNavigationAnchorNavigation:
-        wkType = kWKSameDocumentNavigationAnchorNavigation;
-        break;
-    case SameDocumentNavigationSessionStatePush:
-        wkType = kWKSameDocumentNavigationSessionStatePush;
-        break;
-    case SameDocumentNavigationSessionStateReplace:
-        wkType = kWKSameDocumentNavigationSessionStateReplace;
-        break;
-    case SameDocumentNavigationSessionStatePop:
-        wkType = kWKSameDocumentNavigationSessionStatePop;
-        break;
+    case SameDocumentNavigationType::AnchorNavigation:
+        return kWKSameDocumentNavigationAnchorNavigation;
+    case SameDocumentNavigationType::SessionStatePush:
+        return kWKSameDocumentNavigationSessionStatePush;
+    case SameDocumentNavigationType::SessionStateReplace:
+        return kWKSameDocumentNavigationSessionStateReplace;
+    case SameDocumentNavigationType::SessionStatePop:
+        return kWKSameDocumentNavigationSessionStatePop;
     }
-    
-    return wkType;
+
+    ASSERT_NOT_REACHED();
+    return kWKSameDocumentNavigationAnchorNavigation;
 }
 
 inline SameDocumentNavigationType toSameDocumentNavigationType(WKSameDocumentNavigationType wkType)
 {
-    SameDocumentNavigationType type = SameDocumentNavigationAnchorNavigation;
-
     switch (wkType) {
     case kWKSameDocumentNavigationAnchorNavigation:
-        type = SameDocumentNavigationAnchorNavigation;
-        break;
+        return SameDocumentNavigationType::AnchorNavigation;
     case kWKSameDocumentNavigationSessionStatePush:
-        type = SameDocumentNavigationSessionStatePush;
-        break;
+        return SameDocumentNavigationType::SessionStatePush;
     case kWKSameDocumentNavigationSessionStateReplace:
-        type = SameDocumentNavigationSessionStateReplace;
-        break;
+        return SameDocumentNavigationType::SessionStateReplace;
     case kWKSameDocumentNavigationSessionStatePop:
-        type = SameDocumentNavigationSessionStatePop;
-        break;
+        return SameDocumentNavigationType::SessionStatePop;
     }
     
-    return type;
+    ASSERT_NOT_REACHED();
+    return SameDocumentNavigationType::AnchorNavigation;
 }
 
 inline WKDiagnosticLoggingResultType toAPI(WebCore::DiagnosticLoggingResultType type)
 {
-    WKDiagnosticLoggingResultType wkType { };
-
     switch (type) {
     case WebCore::DiagnosticLoggingResultPass:
-        wkType = kWKDiagnosticLoggingResultPass;
-        break;
+        return kWKDiagnosticLoggingResultPass;
     case WebCore::DiagnosticLoggingResultFail:
-        wkType = kWKDiagnosticLoggingResultFail;
-        break;
+        return kWKDiagnosticLoggingResultFail;
     case WebCore::DiagnosticLoggingResultNoop:
-        wkType = kWKDiagnosticLoggingResultNoop;
-        break;
+        return kWKDiagnosticLoggingResultNoop;
     }
 
-    return wkType;
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 inline WebCore::DiagnosticLoggingResultType toDiagnosticLoggingResultType(WKDiagnosticLoggingResultType wkType)
 {
-    WebCore::DiagnosticLoggingResultType type { };
-
     switch (wkType) {
     case kWKDiagnosticLoggingResultPass:
-        type = WebCore::DiagnosticLoggingResultPass;
-        break;
+        return WebCore::DiagnosticLoggingResultPass;
     case kWKDiagnosticLoggingResultFail:
-        type = WebCore::DiagnosticLoggingResultFail;
-        break;
+        return WebCore::DiagnosticLoggingResultFail;
     case kWKDiagnosticLoggingResultNoop:
-        type = WebCore::DiagnosticLoggingResultNoop;
-        break;
+        return WebCore::DiagnosticLoggingResultNoop;
     }
 
-    return type;
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 inline WKLayoutMilestones toWKLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)

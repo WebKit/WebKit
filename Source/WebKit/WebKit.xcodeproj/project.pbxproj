@@ -4848,6 +4848,7 @@
 		41FFD2DA275A560B00501BBF /* ServiceWorkerDownloadTask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDownloadTask.cpp; sourceTree = "<group>"; };
 		41FFD2DB275A560C00501BBF /* ServiceWorkerDownloadTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDownloadTask.h; sourceTree = "<group>"; };
 		41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerDownloadTask.messages.in; sourceTree = "<group>"; };
+		44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SameDocumentNavigationType.serialization.in; sourceTree = "<group>"; };
 		4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheStoragePolicy.h; sourceTree = "<group>"; };
 		441379602964F0C2003C34C6 /* CacheStoragePolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStoragePolicy.serialization.in; sourceTree = "<group>"; };
 		442E7BE827B4572B00C69AC1 /* RevealItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RevealItem.mm; sourceTree = "<group>"; };
@@ -8427,6 +8428,7 @@
 				41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */,
 				41B8D85628C9B8D100E5FA37 /* RTCWebKitEncodedFrameInfo.h */,
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
+				44122266296A89820057E1A5 /* SameDocumentNavigationType.serialization.in */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
 				2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */,
