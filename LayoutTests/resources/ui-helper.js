@@ -73,7 +73,7 @@ window.UIHelper = class UIHelper {
     static async startMonitoringWheelEvents(...args)
     {
         eventSender.monitorWheelEvents(args);
-        await UIHelper.renderingUpdate();
+        await UIHelper.ensurePresentationUpdate();
     }
 
     static async mouseWheelScrollAt(x, y, beginX, beginY, deltaX, deltaY)
@@ -446,10 +446,8 @@ window.UIHelper = class UIHelper {
 
     static ensurePresentationUpdate()
     {
-        if (!this.isWebKit2()) {
-            testRunner.display();
-            return Promise.resolve();
-        }
+        if (!this.isWebKit2())
+            return UIHelper.renderingUpdate();
 
         return new Promise(resolve => {
             testRunner.runUIScript(`
@@ -461,10 +459,8 @@ window.UIHelper = class UIHelper {
 
     static ensureStablePresentationUpdate()
     {
-        if (!this.isWebKit2()) {
-            testRunner.display();
-            return Promise.resolve();
-        }
+        if (!this.isWebKit2())
+            return UIHelper.renderingUpdate();
 
         return new Promise(resolve => {
             testRunner.runUIScript(`
