@@ -3037,11 +3037,12 @@ ItpDebugModeEnabled:
   status: developer
   humanReadableName: "ITP Debug Mode"
   humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 JavaScriptCanAccessClipboard:
@@ -4486,11 +4487,12 @@ PrivateClickMeasurementDebugModeEnabled:
   status: developer
   humanReadableName: "Private Click Measurement Debug Mode"
   humanReadableDescription: "Enable Private Click Measurement Debug Mode"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 PrivateClickMeasurementEnabled:

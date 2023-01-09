@@ -94,9 +94,6 @@ public:
     static bool fetchAPIKeepAliveEnabled() { return shared().m_fetchAPIKeepAliveEnabled; }
     static void setFetchAPIKeepAliveEnabled(bool isEnabled) { shared().m_fetchAPIKeepAliveEnabled = isEnabled; }
 
-    static void setItpDebugModeEnabled(bool isEnabled) { shared().m_itpDebugMode = isEnabled; }
-    static bool itpDebugModeEnabled() { return shared().m_itpDebugMode; }
-
     static void setRestrictedHTTPResponseAccess(bool isEnabled) { shared().m_isRestrictedHTTPResponseAccess = isEnabled; }
     static bool restrictedHTTPResponseAccess() { return shared().m_isRestrictedHTTPResponseAccess; }
 
@@ -138,9 +135,6 @@ public:
 
     static void setLineHeightUnitsEnabled(bool isEnabled) { shared().m_lineHeightUnitsEnabled = isEnabled; }
     static bool lineHeightUnitsEnabled() { return shared().m_lineHeightUnitsEnabled; }
-
-    static bool privateClickMeasurementDebugModeEnabled() { return shared().m_privateClickMeasurementDebugModeEnabled; }
-    static void setPrivateClickMeasurementDebugModeEnabled(bool isEnabled) { shared().m_privateClickMeasurementDebugModeEnabled = isEnabled; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
@@ -225,7 +219,6 @@ private:
 
     bool m_isCustomPasteboardDataEnabled { false };
     bool m_fetchAPIKeepAliveEnabled { false };
-    bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };
@@ -249,8 +242,6 @@ private:
     bool m_isReadableByteStreamAPIEnabled { false };
 
     bool m_lineHeightUnitsEnabled { true };
-
-    bool m_privateClickMeasurementDebugModeEnabled { false };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
