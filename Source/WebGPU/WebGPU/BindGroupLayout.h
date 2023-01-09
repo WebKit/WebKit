@@ -35,19 +35,21 @@ struct WGPUBindGroupLayoutImpl {
 
 namespace WebGPU {
 
+enum class ShaderStage {
+    Vertex = 0,
+    Fragment = 1,
+    Compute = 2
+};
+
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpubindgrouplayout
 class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayout> create(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
+    static Ref<BindGroupLayout> create(HashMap<uint32_t, WGPUShaderStageFlags>&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
     {
-        return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder));
-    }
-    static Ref<BindGroupLayout> create(HashMap<uint32_t, WGPUShaderStageFlags>&& stageMapTable)
-    {
-        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable)));
+        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder));
     }
     static Ref<BindGroupLayout> createInvalid(Device&)
     {
@@ -58,26 +60,25 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_shaderStageForBinding.size() || m_vertexArgumentEncoder || m_fragmentArgumentEncoder || m_computeArgumentEncoder; }
+    bool isValid() const { return m_shaderStageForBinding.size(); }
 
-    NSUInteger encodedLength() const;
+    NSUInteger encodedLength(ShaderStage) const;
 
     id<MTLArgumentEncoder> vertexArgumentEncoder() const { return m_vertexArgumentEncoder; }
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
-    uint32_t stagesForBinding(uint32_t binding) const;
+    bool bindingContainsStage(uint32_t bindingIndex, ShaderStage renderStage) const;
 
 private:
-    BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder);
-    BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&);
+    BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>);
     BindGroupLayout();
+
+    const HashMap<uint32_t, WGPUShaderStageFlags> m_shaderStageForBinding;
 
     const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
-
-    const HashMap<uint32_t, WGPUShaderStageFlags> m_shaderStageForBinding;
 };
 
 } // namespace WebGPU
