@@ -1136,6 +1136,7 @@ wasm/WasmOperations.cpp
 wasm/WasmPlan.cpp
 wasm/WasmSectionParser.cpp
 wasm/WasmTypeDefinition.cpp
+wasm/WasmOpcodeCounter.cpp
 wasm/WasmSlowPaths.cpp
 wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
