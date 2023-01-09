@@ -208,6 +208,11 @@ class Preference
   def internal?
     %w{ unstable internal }.include? @status
   end
+  
+  # Features which should be enabled while running tests
+  def testable?
+    %w{ testable preview stable }.include? @status
+  end
 end
 
 class Preferences
