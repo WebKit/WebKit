@@ -1,0 +1,6 @@
+
+FAIL e.style['font-variant-emoji'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['font-variant-emoji'] = "text" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['font-variant-emoji'] = "emoji" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['font-variant-emoji'] = "unicode" should set the property value assert_not_equals: property should be set got disallowed value ""
+
