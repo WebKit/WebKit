@@ -40,6 +40,7 @@
 #include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmInstance.h"
 #include "WasmLLIntBuiltin.h"
+#include "WasmLLIntGenerator.h"
 #include "WasmModuleInformation.h"
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryPlan.h"
@@ -397,14 +398,14 @@ WASM_SLOW_PATH_DECL(array_new)
 {
     auto instruction = pc->as<WasmArrayNew>();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
-    bool useDefault = instruction.m_useDefault;
+    Wasm::UseDefaultValue useDefault = static_cast<Wasm::UseDefaultValue>(instruction.m_useDefault);
 
     Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
     ASSERT(arraySignature.is<Wasm::ArrayType>());
     Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 
     EncodedJSValue value = 0;
-    if (useDefault) {
+    if (useDefault == Wasm::UseDefaultValue::Yes) {
         if (Wasm::isRefType(elementType))
             value = JSValue::encode(jsNull());
     } else
@@ -464,7 +465,7 @@ WASM_SLOW_PATH_DECL(struct_new)
     ASSERT(instruction.m_typeIndex < instance->module().moduleInformation().typeCount());
 
     ASSERT(!instruction.m_firstValue.isConstant());
-    WASM_RETURN(Wasm::operationWasmStructNew(instance, instruction.m_typeIndex, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue))));
+    WASM_RETURN(Wasm::operationWasmStructNew(instance, instruction.m_typeIndex, instruction.m_useDefault, instruction.m_useDefault ? nullptr : reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue))));
 }
 
 WASM_SLOW_PATH_DECL(struct_get)

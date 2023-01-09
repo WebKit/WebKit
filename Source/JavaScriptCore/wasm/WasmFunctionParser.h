@@ -1916,6 +1916,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
             return { };
         }
+        case GCOpType::StructNewDefault:
+        case GCOpType::StructNewCanonDefault: {
+            uint32_t typeIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new_default"));
+
+            const auto& typeDefinition = m_info.typeSignatures[typeIndex];
+            const auto* structType = typeDefinition->template as<StructType>();
+
+            for (StructFieldCount i = 0; i < structType->fieldCount(); i++)
+                WASM_PARSER_FAIL_IF(!isDefaultableType(structType->field(i).type), "struct.new_default ", typeIndex, " requires all fields to be defaultable, but field ", i, " has type ", structType->field(i).type);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addStructNewDefault(typeIndex, result));
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
+            return { };
+        }
         case GCOpType::StructGet: {
             StructFieldManipulation structGetInput;
             WASM_PARSER_FAIL_IF(!parseStructFieldManipulation(structGetInput, "struct.get"));
@@ -2980,6 +2996,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case GCOpType::StructNewCanon: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new"));
+            return { };
+        }
+        case GCOpType::StructNewDefault:
+        case GCOpType::StructNewCanonDefault: {
+            uint32_t unused;
+            WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new_default"));
             return { };
         }
         case GCOpType::StructGet: {

@@ -49,6 +49,7 @@
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include "WasmInstance.h"
+#include "WasmLLIntGenerator.h"
 #include "WasmMemory.h"
 #include "WasmModuleInformation.h"
 #include "WasmOMGPlan.h"
@@ -872,7 +873,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instan
     return JSValue::encode(value);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint64_t* arguments))
+JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, bool useDefault, uint64_t* arguments))
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
@@ -880,10 +881,25 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance* inst
     const StructType& structType = *structTypeDefinition->as<StructType>();
 
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
-    for (unsigned i = 0; i < structType.fieldCount(); ++i) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-        ASSERT(structType.field(i).type.is<Type>());
-        structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type.as<Type>(), arguments[i]));
+    RELEASE_ASSERT(structValue);
+    if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
+        for (unsigned i = 0; i < structType.fieldCount(); ++i) {
+            JSValue value = JSValue(0);
+            if (Wasm::isRefType(structType.field(i).type))
+                value = jsNull();
+            else if (structType.field(i).type.as<Type>().kind == Wasm::TypeKind::I64) {
+                // This will convert to the appropriate I64 via ToBigInt() in set().
+                value = jsBoolean(false);
+            }
+            structValue->set(globalObject, i, value);
+        }
+    } else {
+        ASSERT(arguments);
+        for (unsigned i = 0; i < structType.fieldCount(); ++i) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
+            ASSERT(structType.field(i).type.is<Type>());
+            structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type.as<Type>(), arguments[i]));
+        }
     }
     return JSValue::encode(structValue);
 }
