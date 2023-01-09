@@ -187,6 +187,8 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
             String name = String::fromUTF8(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factories->data)));
             if (disallowedList->contains(name))
                 continue;
+
+            selectedFactory = GST_ELEMENT_FACTORY_CAST(factories->data);
             hasValidCandidate = true;
             break;
         }
@@ -314,8 +316,8 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
 
     bool matroskaSupported = factories.hasElementForMediaType(ElementFactories::Type::Demuxer, "video/x-matroska");
     if (matroskaSupported) {
-        auto vp8DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-vp8", ElementFactories::CheckHardwareClassifier::Yes);
-        auto vp9DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-vp9", ElementFactories::CheckHardwareClassifier::Yes);
+        auto vp8DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-vp8", ElementFactories::CheckHardwareClassifier::Yes, { { "vp8alphadecodebin"_s } });
+        auto vp9DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-vp9", ElementFactories::CheckHardwareClassifier::Yes, { { "vp9alphadecodebin"_s } });
 
         if (vp8DecoderAvailable || vp9DecoderAvailable)
             m_decoderMimeTypeSet.add(AtomString("video/webm"_s));
