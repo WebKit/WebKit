@@ -165,4 +165,16 @@ void StyleFilterImage::imageChanged(CachedImage*, const IntRect*)
         client->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
+void StyleFilterImage::didAddClient(RenderElement& renderer)
+{
+    if (m_image)
+        m_image->addClient(renderer);
+}
+
+void StyleFilterImage::didRemoveClient(RenderElement& renderer)
+{
+    if (m_image)
+        m_image->removeClient(renderer);
+}
+
 } // namespace WebCore
