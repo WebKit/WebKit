@@ -55,13 +55,18 @@ public:
 
 private:
     void setupElements();
+
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     GameControllerHapticEngines& ensureHapticEngines();
+#endif
 
     RetainPtr<GCController> m_gcController;
 
     Vector<SharedGamepadValue> m_axisValues;
     Vector<SharedGamepadValue> m_buttonValues;
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     std::unique_ptr<GameControllerHapticEngines> m_hapticEngines;
+#endif
 };
 
 

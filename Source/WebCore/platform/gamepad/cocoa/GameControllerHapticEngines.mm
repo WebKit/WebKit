@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && HAVE(WIDE_GAMECONTROLLER_SUPPORT)
 #import "GameControllerHapticEngines.h"
 
 #import "GameControllerHapticEffect.h"
@@ -140,4 +140,4 @@ void GameControllerHapticEngines::stop(CompletionHandler<void()>&& completionHan
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && HAVE(WIDE_GAMECONTROLLER_SUPPORT)
