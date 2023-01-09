@@ -4548,7 +4548,7 @@ PunchOutWhiteBackgroundsInDarkMode:
 
 PushAPIEnabled:
   type: bool
-  status: stable
+  status: testable
   condition: ENABLE(SERVICE_WORKER)
   humanReadableName: "Push API"
   humanReadableDescription: "Enable Push API"
