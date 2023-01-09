@@ -1694,6 +1694,9 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 
+webkit.org/b/250315 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Failure ]
+webkit.org/b/250315 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
