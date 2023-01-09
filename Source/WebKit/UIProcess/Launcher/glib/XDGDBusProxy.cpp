@@ -69,9 +69,7 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
 
     m_args.appendVector(Vector<CString> {
         CString(dbusAddress), m_dbusSessionProxyPath,
-        "--filter",
-        // GStreamers plugin install helper.
-        "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
+        "--filter"
     });
 
 #if ENABLE(MEDIA_SESSION)

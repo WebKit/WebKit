@@ -805,10 +805,6 @@ private:
 
     bool mediaPlayerShouldDisableHDR() const final { return shouldDisableHDR(); }
 
-#if USE(GSTREAMER)
-    void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback&) final;
-#endif
-
     void pendingActionTimerFired();
     void progressEventTimerFired();
     void playbackProgressTimerFired();

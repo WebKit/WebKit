@@ -95,9 +95,6 @@
     },
     "TestWebExtensions": {
         "subtests": {
-            "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": ["webkit.org/b/147822", "webkit.org/b/210635"]}}
-            },
             "/webkit/WebKitWebExtension/document-loaded-signal": {
                 "expected": {
                     "wpe@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/219980"}

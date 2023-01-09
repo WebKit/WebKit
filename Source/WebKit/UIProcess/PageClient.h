@@ -602,10 +602,6 @@ public:
     virtual void refView() = 0;
     virtual void derefView() = 0;
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) = 0;
-#endif
-
     virtual void pageDidScroll(const WebCore::IntPoint&) { }
 
     virtual void didRestoreScrollPosition() = 0;

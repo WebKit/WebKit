@@ -499,10 +499,6 @@ messages -> WebPageProxy {
     UseFixedLayoutDidChange(bool useFixedLayout)
     FixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize)
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    RequestInstallMissingMediaPlugins(String details, String description)
-#endif
-
     DidRestoreScrollPosition()
     
     RequestScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)

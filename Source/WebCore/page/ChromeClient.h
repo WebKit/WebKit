@@ -122,10 +122,6 @@ class SecurityOrigin;
 class ViewportConstraints;
 class Widget;
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-class MediaPlayerRequestInstallMissingPluginsCallback;
-#endif
-
 #if ENABLE(WEBGL)
 class GraphicsContextGL;
 struct GraphicsContextGLAttributes;
@@ -566,10 +562,6 @@ public:
 #endif
 
     virtual void imageOrMediaDocumentSizeChanged(const IntSize&) { }
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { }
-#endif
 
     virtual void didInvalidateDocumentMarkerRects() { }
 

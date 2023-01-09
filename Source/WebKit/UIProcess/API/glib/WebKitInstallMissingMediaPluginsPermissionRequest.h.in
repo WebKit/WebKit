@@ -27,6 +27,8 @@
 
 G_BEGIN_DECLS
 
+#if !ENABLE(2022_GLIB_API)
+
 #define WEBKIT_TYPE_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST            (webkit_install_missing_media_plugins_permission_request_get_type())
 #define WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST, WebKitInstallMissingMediaPluginsPermissionRequest))
 #define WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST))
@@ -60,6 +62,8 @@ webkit_install_missing_media_plugins_permission_request_get_type        (void);
 
 WEBKIT_API const gchar *
 webkit_install_missing_media_plugins_permission_request_get_description (WebKitInstallMissingMediaPluginsPermissionRequest *request);
+
+#endif // ENABLE(2022_GLIB_API)
 
 G_END_DECLS
 

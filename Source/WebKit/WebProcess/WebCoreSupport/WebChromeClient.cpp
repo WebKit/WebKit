@@ -1424,15 +1424,6 @@ void WebChromeClient::imageOrMediaDocumentSizeChanged(const IntSize& newSize)
     m_page.imageOrMediaDocumentSizeChanged(newSize);
 }
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-
-void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback)
-{
-    m_page.requestInstallMissingMediaPlugins(details, description, callback);
-}
-
-#endif
-
 void WebChromeClient::didInvalidateDocumentMarkerRects()
 {
     m_page.findController().didInvalidateDocumentMarkerRects();

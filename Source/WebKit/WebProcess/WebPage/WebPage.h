@@ -215,7 +215,6 @@ class IgnoreSelectionChangeForScope;
 class IntPoint;
 class KeyboardEvent;
 class MediaPlaybackTargetContext;
-class MediaPlayerRequestInstallMissingPluginsCallback;
 class MediaSessionCoordinator;
 class Page;
 class PrintContext;
@@ -1281,9 +1280,6 @@ public:
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&);
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    void requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&);
-#endif
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
     void setOrientationForMediaCapture(uint64_t rotation);
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
@@ -2010,10 +2006,6 @@ private:
 
     void pageStoppedScrolling();
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    void didEndRequestInstallMissingMediaPlugins(uint32_t result);
-#endif
-
     void setUserInterfaceLayoutDirection(uint32_t);
 
     bool canPluginHandleResponse(const WebCore::ResourceResponse&);
@@ -2460,10 +2452,6 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<InputMethodState> m_inputMethodState;
-#endif
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    RefPtr<WebCore::MediaPlayerRequestInstallMissingPluginsCallback> m_installMediaPluginsCallback;
 #endif
 
 #if USE(OS_STATE)

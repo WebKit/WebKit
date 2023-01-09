@@ -103,7 +103,6 @@ class AudioSourceProviderGStreamer;
 class AudioTrackPrivateGStreamer;
 class InbandMetadataTextTrackPrivateGStreamer;
 class InbandTextTrackPrivateGStreamer;
-class MediaPlayerRequestInstallMissingPluginsCallback;
 class VideoTrackPrivateGStreamer;
 
 #if USE(TEXTURE_MAPPER_DMABUF)
@@ -565,7 +564,6 @@ private:
     std::unique_ptr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif
     GRefPtr<GstElement> m_downloadBuffer;
-    Vector<RefPtr<MediaPlayerRequestInstallMissingPluginsCallback>> m_missingPluginCallbacks;
 
     HashMap<AtomString, Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
     HashMap<AtomString, Ref<VideoTrackPrivateGStreamer>> m_videoTracks;

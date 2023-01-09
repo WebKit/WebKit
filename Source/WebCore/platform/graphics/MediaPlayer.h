@@ -80,7 +80,6 @@ class MediaPlaybackTarget;
 class MediaPlayer;
 class MediaPlayerFactory;
 class MediaPlayerPrivateInterface;
-class MediaPlayerRequestInstallMissingPluginsCallback;
 class MediaSourcePrivateClient;
 class MediaStreamPrivate;
 class NativeImage;
@@ -265,10 +264,6 @@ public:
     virtual MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const { return MediaPlayerEnums::VideoFullscreenModeNone; }
     virtual bool mediaPlayerIsVideoFullscreenStandby() const { return false; }
     virtual Vector<String> mediaPlayerPreferredAudioCharacteristics() const { return Vector<String>(); }
-
-#if USE(GSTREAMER)
-    virtual void requestInstallMissingPlugins(const String&, const String&, MediaPlayerRequestInstallMissingPluginsCallback&) { };
-#endif
 
     virtual bool mediaPlayerShouldDisableSleep() const { return false; }
     virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const = 0;
@@ -687,10 +682,6 @@ public:
 
     void remoteEngineFailedToLoad();
     SecurityOriginData documentSecurityOrigin() const;
-
-#if USE(GSTREAMER)
-    void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }
-#endif
 
     const MediaPlayerPrivateInterface* playerPrivate() const;
     MediaPlayerPrivateInterface* playerPrivate();

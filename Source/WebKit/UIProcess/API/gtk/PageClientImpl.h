@@ -163,10 +163,6 @@ private:
 
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
-#endif
-
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
     bool effectiveAppearanceIsDark() const override;

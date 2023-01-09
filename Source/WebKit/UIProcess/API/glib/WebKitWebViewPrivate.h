@@ -28,7 +28,6 @@
 
 #include "APIPageConfiguration.h"
 #include "EditingRange.h"
-#include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "UserMessage.h"
 #include "WebContextMenuItemData.h"
 #include "WebEvent.h"
@@ -97,7 +96,6 @@ void webkitWebViewWebProcessTerminated(WebKitWebView*, WebKitWebProcessTerminati
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewMediaCaptureStateDidChange(WebKitWebView*, WebCore::MediaProducer::MediaStateFlags);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
-void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
 void webkitWebViewPermissionStateQuery(WebKitWebView*, WebKitPermissionStateQuery*);
 

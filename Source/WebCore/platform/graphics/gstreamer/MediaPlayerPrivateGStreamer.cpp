@@ -39,7 +39,6 @@
 #include "IntRect.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
-#include "MediaPlayerRequestInstallMissingPluginsCallback.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
@@ -227,11 +226,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         m_fillTimer.stop();
 
     m_readyTimerHandler.stop();
-    for (auto& missingPluginCallback : m_missingPluginCallbacks) {
-        if (missingPluginCallback)
-            missingPluginCallback->invalidate();
-    }
-    m_missingPluginCallbacks.clear();
 
     if (m_videoSink) {
         GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
@@ -1740,7 +1734,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         GST_ERROR_OBJECT(pipeline(), "%s (url=%s) (code=%d)", err->message, m_url.string().utf8().data(), err->code);
 
-        if (m_shouldResetPipeline || !m_missingPluginCallbacks.isEmpty() || m_didErrorOccur)
+        if (m_shouldResetPipeline || m_didErrorOccur)
             break;
 
         m_errorMessage = String::fromLatin1(err->message);
@@ -1881,38 +1875,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_bin_recalculate_latency(GST_BIN(m_pipeline.get()));
         break;
     case GST_MESSAGE_ELEMENT:
-        if (gst_is_missing_plugin_message(message)) {
-#if !USE(GSTREAMER_FULL)
-            if (gst_install_plugins_supported()) {
-                auto missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = WeakPtr { *this }](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
-                    if (!weakThis) {
-                        GST_INFO("got missing pluging installation callback in destroyed player with result %u", result);
-                        return;
-                    }
-
-                    GST_DEBUG("got missing plugin installation callback with result %u", result);
-                    RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> protectedMissingPluginCallback = &missingPluginCallback;
-                    weakThis->m_missingPluginCallbacks.removeFirst(protectedMissingPluginCallback);
-                    if (result != GST_INSTALL_PLUGINS_SUCCESS)
-                        return;
-
-                    weakThis->changePipelineState(GST_STATE_READY);
-                    weakThis->changePipelineState(GST_STATE_PAUSED);
-                });
-                m_missingPluginCallbacks.append(missingPluginCallback.copyRef());
-                GUniquePtr<char> detail(gst_missing_plugin_message_get_installer_detail(message));
-                GUniquePtr<char> description(gst_missing_plugin_message_get_description(message));
-                m_player->requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), missingPluginCallback.get());
-            }
-#endif
-        }
 #if USE(GSTREAMER_MPEGTS)
-        else if (GstMpegtsSection* section = gst_message_parse_mpegts_section(message)) {
+        if (GstMpegtsSection* section = gst_message_parse_mpegts_section(message)) {
             processMpegTsSection(section);
             gst_mpegts_section_unref(section);
-        }
+        } else
 #endif
-        else if (gst_structure_has_name(structure, "http-headers")) {
+        if (gst_structure_has_name(structure, "http-headers")) {
             GST_DEBUG_OBJECT(pipeline(), "Processing HTTP headers: %" GST_PTR_FORMAT, structure);
             if (const char* uri = gst_structure_get_string(structure, "uri")) {
                 URL url { String::fromLatin1(uri) };

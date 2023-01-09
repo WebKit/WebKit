@@ -350,10 +350,6 @@
 #include <WebCore/DataDetectionResultsStorage.h>
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-#include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
-#endif
-
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #endif
@@ -1605,13 +1601,6 @@ void WebPage::close()
 
 #if PLATFORM(GTK)
     m_printOperation = nullptr;
-#endif
-
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    if (m_installMediaPluginsCallback) {
-        m_installMediaPluginsCallback->invalidate();
-        m_installMediaPluginsCallback = nullptr;
-    }
 #endif
 
     m_sandboxExtensionTracker.invalidate();

@@ -232,9 +232,6 @@ UIProcess/Notifications/glib/NotificationService.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
-UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
-UIProcess/gstreamer/WebPageProxyGStreamer.cpp
-
 UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
 
 UIProcess/linux/MemoryPressureMonitor.cpp
@@ -273,8 +270,6 @@ WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
 WebProcess/WebPage/glib/WebPageGLib.cpp
-
-WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
 WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
 
