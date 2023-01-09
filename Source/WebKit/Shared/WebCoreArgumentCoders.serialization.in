@@ -2475,6 +2475,7 @@ struct WebCore::GamepadEffectParameters {
 
 header: <WebCore/GamepadHapticEffectType.h>
 enum class WebCore::GamepadHapticEffectType : uint8_t {
-    DualRumble
+    DualRumble,
+    TriggerRumble
 };
 #endif

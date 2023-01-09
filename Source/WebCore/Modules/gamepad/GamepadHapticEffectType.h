@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-enum class GamepadHapticEffectType : uint8_t { DualRumble };
+enum class GamepadHapticEffectType : uint8_t { DualRumble, TriggerRumble };
 
 using GamepadHapticEffectTypeSet = HashSet<GamepadHapticEffectType, IntHash<GamepadHapticEffectType>, WTF::StrongEnumHashTraits<GamepadHapticEffectType>>;
 

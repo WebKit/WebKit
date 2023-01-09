@@ -37,6 +37,8 @@ OBJC_CLASS GCControllerElement;
 
 namespace WebCore {
 
+class GameControllerHapticEngines;
+
 class GameControllerGamepad : public PlatformGamepad {
     WTF_MAKE_NONCOPYABLE(GameControllerGamepad);
 public:
@@ -49,13 +51,17 @@ public:
 
     const char* source() const final { return "GameController"_s; }
 
+    void noLongerHasAnyClient();
+
 private:
     void setupElements();
+    GameControllerHapticEngines& ensureHapticEngines();
 
     RetainPtr<GCController> m_gcController;
 
     Vector<SharedGamepadValue> m_axisValues;
     Vector<SharedGamepadValue> m_buttonValues;
+    std::unique_ptr<GameControllerHapticEngines> m_hapticEngines;
 };
 
 

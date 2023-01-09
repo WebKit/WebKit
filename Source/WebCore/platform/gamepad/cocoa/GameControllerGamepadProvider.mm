@@ -225,6 +225,9 @@ void GameControllerGamepadProvider::stopMonitoringGamepads(GamepadProviderClient
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_connectObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_disconnectObserver.get()];
+
+    for (auto& gamepad : m_gamepadMap.values())
+        gamepad->noLongerHasAnyClient();
 }
 
 unsigned GameControllerGamepadProvider::indexForNewlyConnectedDevice()
