@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY(webrtc_venc_debug);
 #define KBIT_TO_BIT 1024
 
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9"));
+static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9;video/x-h265"));
 
 using SetBitrateFunc = Function<void(GObject* encoder, const char* propertyName, int bitrate)>;
 using SetupFunc = Function<void(WebKitWebrtcVideoEncoder*)>;
@@ -60,6 +60,8 @@ enum EncoderId {
     X264,
     OpenH264,
     OmxH264,
+    VaapiH264,
+    VaapiH265,
     Vp8,
     Vp9
 };
@@ -126,7 +128,7 @@ struct _WebKitWebrtcVideoEncoderPrivate {
     GRefPtr<GstElement> inputCapsFilter;
     GRefPtr<GstElement> outputCapsFilter;
     GRefPtr<GstElement> videoConvert;
-    GRefPtr<GstElement> videoRate;
+    GRefPtr<GstElement> videoScale;
     GRefPtr<GstCaps> encodedCaps;
     unsigned bitrate;
 };
@@ -246,9 +248,9 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
         gst_bin_add(GST_BIN_CAST(self), priv->inputCapsFilter.get());
     }
 
-    if (!priv->videoRate) {
-        priv->videoRate = makeGStreamerElement("videorate", nullptr);
-        gst_bin_add(GST_BIN_CAST(self), priv->videoRate.get());
+    if (!priv->videoScale) {
+        priv->videoScale = makeGStreamerElement("videoscale", nullptr);
+        gst_bin_add(GST_BIN_CAST(self), priv->videoScale.get());
     }
 
     if (!priv->videoConvert) {
@@ -275,7 +277,7 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
 
     encoderDefinition->setupEncoder(self);
 
-    gst_element_link_many(priv->videoConvert.get(), priv->videoRate.get(), priv->inputCapsFilter.get(), nullptr);
+    gst_element_link_many(priv->videoConvert.get(), priv->videoScale.get(), priv->inputCapsFilter.get(), nullptr);
     if (shouldLinkEncoder)
         gst_element_link(priv->inputCapsFilter.get(), priv->encoder.get());
 
@@ -485,6 +487,23 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
             }
             g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
         }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist");
+
+    Encoders::registerEncoder(VaapiH264, "vah264lpenc", "h264parse", "video/x-h264", nullptr,
+        [](WebKitWebrtcVideoEncoder* self) {
+            g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
+
+    Encoders::registerEncoder(VaapiH264, "vah264enc", "h264parse", "video/x-h264", nullptr,
+        [](WebKitWebrtcVideoEncoder* self) {
+            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "rate-control", "cbr");
+            g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
+
+    Encoders::registerEncoder(VaapiH265, "vah265enc", "h265parse", "video/x-h265", nullptr,
+        [](WebKitWebrtcVideoEncoder* self) {
+            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "rate-control", "cbr");
+            g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
 
     auto srcPadTemplateCaps = createSrcPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));
