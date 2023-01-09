@@ -53,7 +53,7 @@ function test()
     {
         if (key === "_target" || key === "_listeners")
             return undefined;
-        if (key === "_objectId" || key === "_stackTrace")
+        if (key === "_objectId" || key === "_stackTrace" || key === "_timestamp")
             return "<filtered>";
         return value;
     }

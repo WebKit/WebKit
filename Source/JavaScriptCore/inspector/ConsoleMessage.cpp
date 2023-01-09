@@ -49,8 +49,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_message(message)
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-    , m_timestamp(timestamp)
 {
+    m_timestamp = timestamp ? timestamp : Seconds(MonotonicTime::now().secondsSinceEpoch());
 }
 
 ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, Seconds timestamp)
@@ -62,8 +62,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_line(line)
     , m_column(column)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-    , m_timestamp(timestamp)
 {
+    m_timestamp = timestamp ? timestamp : Seconds(MonotonicTime::now().secondsSinceEpoch());
     autogenerateMetadata(globalObject);
 }
 
@@ -75,8 +75,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_callStack(WTFMove(callStack))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-    , m_timestamp(timestamp)
 {
+    m_timestamp = timestamp ? timestamp : Seconds(MonotonicTime::now().secondsSinceEpoch());
     const ScriptCallFrame* frame = m_callStack ? m_callStack->firstNonNativeCallFrame() : nullptr;
     if (frame) {
         m_url = frame->sourceURL();
@@ -94,8 +94,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_callStack(WTFMove(callStack))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-    , m_timestamp(timestamp)
 {
+    m_timestamp = timestamp ? timestamp : Seconds(MonotonicTime::now().secondsSinceEpoch());
     const ScriptCallFrame* frame = m_callStack ? m_callStack->firstNonNativeCallFrame() : nullptr;
     if (frame) {
         m_url = frame->sourceURL();
@@ -112,8 +112,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_arguments(WTFMove(arguments))
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-    , m_timestamp(timestamp)
 {
+    m_timestamp = timestamp ? timestamp : Seconds(MonotonicTime::now().secondsSinceEpoch());
     autogenerateMetadata(globalObject);
 }
 
@@ -123,8 +123,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_level(level)
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-    , m_timestamp(timestamp)
 {
+    m_timestamp = timestamp ? timestamp : Seconds(MonotonicTime::now().secondsSinceEpoch());
     if (globalObject)
         m_globalObject = { globalObject->vm(), globalObject };
 
@@ -333,7 +333,8 @@ String ConsoleMessage::toString() const
 
 void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& consoleFrontendDispatcher)
 {
-    consoleFrontendDispatcher.messageRepeatCountUpdated(m_repeatCount);
+    Seconds timestamp = MonotonicTime::now().secondsSinceEpoch();
+    consoleFrontendDispatcher.messageRepeatCountUpdated(m_repeatCount, timestamp.seconds());
 }
 
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const

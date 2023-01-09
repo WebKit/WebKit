@@ -1683,6 +1683,7 @@ localizedStrings["Timer Fired"] = "Timer Fired";
 localizedStrings["Timer Installed"] = "Timer Installed";
 localizedStrings["Timer Removed"] = "Timer Removed";
 localizedStrings["Timers:"] = "Timers:";
+localizedStrings["Timestamps"] = "Timestamps";
 localizedStrings["Timestamp \u2014 %s"] = "Timestamp \u2014 %s";
 localizedStrings["Timing"] = "Timing";
 /* Property value for `font-variant-capitals: titling-caps`. */

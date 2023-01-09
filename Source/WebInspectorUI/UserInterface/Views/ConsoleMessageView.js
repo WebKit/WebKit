@@ -39,10 +39,13 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         this._message = message;
         this._expandable = false;
         this._repeatCount = message._repeatCount || 0;
+        this._timestamp = message._timestamp || null;
 
         // These are the parameters unused by the messages's optional format string.
         // Any extra parameters will be displayed as children of this message.
         this._extraParameters = message.parameters;
+
+        this._timestampElement = null;
     }
 
     // Public
@@ -90,7 +93,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         // FIXME: The location link should include stack trace information.
         this._appendLocationLink();
 
-        this._messageBodyElement = this._element.appendChild(document.createElement("span"));
+        this._messageBodyElement = this._element.appendChild(document.createElement("div"));
         this._messageBodyElement.classList.add("console-top-level-message", "console-message-body");
         this._appendMessageTextAndArguments(this._messageBodyElement);
         this._appendSavedResultIndex();
@@ -99,6 +102,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         this._appendStackTrace();
 
         this._renderRepeatCount();
+        this.renderTimestamp();            
 
         if (this._message.type === WI.ConsoleMessage.MessageType.Dir)
             this.expand();
@@ -157,6 +161,38 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         }
 
         this._repeatCountElement.textContent = Number.abbreviate(count);
+    }
+
+    get timestamp()
+    {
+        return this._timestamp;
+    }
+
+    set timestamp(timestamp)
+    {
+        this._timestamp = timestamp;
+        if (this._element) {
+            this.renderTimestamp();
+        }
+    }
+
+    renderTimestamp()
+    {
+        if (!this._timestamp) {
+            this._timestampElement?.remove();
+            this._timestampElement = null;
+            return;
+        }
+
+        if (!this._timestampElement) {
+            this._timestampElement = document.createElement("div");
+            this._timestampElement.classList.add("timestamp");
+            this._messageBodyElement.insertBefore(this._timestampElement, this._messageBodyElement.firstChild);
+        }
+    
+        let date = new Date(this._timestamp * 1000);
+        let timeFormat = new Intl.DateTimeFormat("default", { hour: "2-digit", minute: "2-digit", second: "2-digit", fractionalSecondDigits: 3, hour12: false });
+        this._timestampElement.textContent = timeFormat.format(date);
     }
 
     get expandable()
@@ -531,7 +567,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         for (let i = 0; i < parameters.length; ++i)
             parameters[i] = this._createRemoteObjectIfNeeded(parameters[i]);
 
-        let builderElement = element.appendChild(document.createElement("span"));
+        let builderElement = element.appendChild(document.createElement("div"));
         let shouldFormatWithStringSubstitution = parameters[0].type === "string" && this._message.type !== WI.ConsoleMessage.MessageType.Result;
 
         // Single object (e.g. console result or logging a non-string object).
