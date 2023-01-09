@@ -23,7 +23,6 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GStreamerRegistryScanner.h"
-#include "GStreamerVideoCaptureSource.h"
 #include "GStreamerVideoEncoder.h"
 #include <wtf/glib/WTFGType.h>
 
