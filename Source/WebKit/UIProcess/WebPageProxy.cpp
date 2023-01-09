@@ -11902,6 +11902,28 @@ void WebPageProxy::updateLookalikeCharacterStringsIfNeeded()
 
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::PauseAllAnimations(), WTFMove(completionHandler));
+}
+
+void WebPageProxy::playAllAnimations(CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::PlayAllAnimations(), WTFMove(completionHandler));
+}
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG
