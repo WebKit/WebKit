@@ -2302,11 +2302,12 @@ GamepadVibrationActuatorEnabled:
   status: testable
   humanReadableName: "Gamepad.vibrationActuator support"
   humanReadableDescription: "Support for Gamepad.vibrationActuator"
+  condition: ENABLE(GAMEPAD)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: defaultGamepadVibrationActuatorEnabled()
     WebCore:
       default: false
 

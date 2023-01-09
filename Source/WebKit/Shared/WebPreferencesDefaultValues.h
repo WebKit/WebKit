@@ -85,6 +85,10 @@ bool defaultVisualTranslationEnabled();
 bool defaultRemoveBackgroundEnabled();
 #endif
 
+#if ENABLE(GAMEPAD)
+bool defaultGamepadVibrationActuatorEnabled();
+#endif
+
 bool defaultShouldTakeSuspendedAssertions();
 bool defaultShowModalDialogEnabled();
 
