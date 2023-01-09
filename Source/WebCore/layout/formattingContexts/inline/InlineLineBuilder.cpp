@@ -1051,6 +1051,12 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
         clearGapBeforeFirstLine += verticalGapForInlineContent;
         // And we pull the initial letter up.
         initialLetterCapHeightOffset = -verticalGapForInlineContent + initialLetterCapHeightOffset.value_or(0_lu);
+    } else if (drop > letterHeight) {
+        // Initial letter is sunken below the first line.
+        auto numberOfLinesAboveInitialLetter = drop - letterHeight;
+        auto additialMarginBefore = numberOfLinesAboveInitialLetter * rootStyle().computedLineHeight();
+        auto& floatBoxGeometry = formattingState()->boxGeometry(floatBox);
+        floatBoxGeometry.setVerticalMargin({ floatBoxGeometry.marginBefore() + additialMarginBefore, floatBoxGeometry.marginAfter() });
     }
 
     m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
