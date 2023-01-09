@@ -75,7 +75,7 @@ Ref<IOSurfacePool> IOSurfacePool::create()
 
 static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, const DestinationColorSpace& colorSpace, IOSurface::Format format)
 {
-    if (format != surface.format())
+    if (!surface.hasFormat(format))
         return false;
     if (colorSpace != surface.colorSpace())
         return false;
