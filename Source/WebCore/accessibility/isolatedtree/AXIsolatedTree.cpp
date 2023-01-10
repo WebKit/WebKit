@@ -777,7 +777,6 @@ void AXIsolatedTree::applyPendingChanges()
         // We don't need to bother clearing out any other non-cycle-causing member variables as they
         // will be cleaned up automatically when the tree is destroyed.
 
-        Locker locker { s_storeLock };
 #ifndef NDEBUG
         ASSERT(AXTreeStore::contains(treeID()));
         if (auto tree = AXTreeStore::treeForID(treeID())) {
