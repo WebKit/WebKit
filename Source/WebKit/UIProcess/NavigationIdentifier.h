@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,38 +21,15 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
-#include "config.h"
-#include "WebDocumentLoader.h"
+#pragma once
 
-#include "WebFrame.h"
-
-#include <WebCore/FrameDestructionObserverInlines.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
-    : DocumentLoader(request, substituteData)
-{
+enum NavigationIdentifierType { };
+using NavigationIdentifier = ObjectIdentifier<NavigationIdentifierType>;
+
 }
-
-void WebDocumentLoader::detachFromFrame()
-{
-    if (m_navigationID)
-        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(m_navigationID);
-
-    m_navigationID = { };
-
-    DocumentLoader::detachFromFrame();
-}
-
-void WebDocumentLoader::setNavigationID(NavigationIdentifier navigationID)
-{
-    ASSERT(navigationID);
-
-    m_navigationID = navigationID;
-}
-
-} // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef WebDocumentLoader_h
 #define WebDocumentLoader_h
 
+#include "NavigationIdentifier.h"
 #include <WebCore/DocumentLoader.h>
 
 namespace WebKit {
@@ -37,15 +38,15 @@ public:
         return adoptRef(*new WebDocumentLoader(request, data));
     }
 
-    uint64_t navigationID() const { return m_navigationID; }
-    void setNavigationID(uint64_t);
+    NavigationIdentifier navigationID() const { return m_navigationID; }
+    void setNavigationID(NavigationIdentifier);
 
 private:
     WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     void detachFromFrame() override;
 
-    uint64_t m_navigationID;
+    NavigationIdentifier m_navigationID;
 };
 
 } // namespace WebKit

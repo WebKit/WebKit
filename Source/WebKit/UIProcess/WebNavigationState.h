@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NavigationIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 
@@ -56,22 +57,21 @@ public:
     Ref<API::Navigation> createLoadDataNavigation(std::unique_ptr<API::SubstituteData>&&);
     Ref<API::Navigation> createSimulatedLoadWithDataNavigation(WebCore::ResourceRequest&&, std::unique_ptr<API::SubstituteData>&&, WebBackForwardListItem* currentItem);
 
-    bool hasNavigation(uint64_t navigationID) const { return m_navigations.contains(navigationID); }
-    API::Navigation* navigation(uint64_t navigationID);
-    RefPtr<API::Navigation> takeNavigation(uint64_t navigationID);
-    void didDestroyNavigation(uint64_t navigationID);
+    bool hasNavigation(NavigationIdentifier navigationID) const { return m_navigations.contains(navigationID); }
+    API::Navigation* navigation(NavigationIdentifier);
+    RefPtr<API::Navigation> takeNavigation(NavigationIdentifier);
+    void didDestroyNavigation(NavigationIdentifier);
     void clearAllNavigations();
 
-    uint64_t generateNavigationID()
+    NavigationIdentifier generateNavigationID()
     {
-        return ++m_navigationID;
+        return NavigationIdentifier::generate();
     }
 
-    using NavigationMap = HashMap<uint64_t, RefPtr<API::Navigation>>;
+    using NavigationMap = HashMap<NavigationIdentifier, RefPtr<API::Navigation>>;
 
 private:
     NavigationMap m_navigations;
-    uint64_t m_navigationID { 0 };
 };
 
 } // namespace WebKit

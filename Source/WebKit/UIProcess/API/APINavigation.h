@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include "FrameInfoData.h"
 #include "NavigationActionData.h"
+#include "NavigationIdentifier.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebContentMode.h"
@@ -103,7 +104,7 @@ public:
 
     virtual ~Navigation();
 
-    uint64_t navigationID() const { return m_navigationID; }
+    WebKit::NavigationIdentifier navigationID() const { return m_navigationID; }
 
     const WebCore::ResourceRequest& originalRequest() const { return m_originalRequest; }
     void setCurrentRequest(WebCore::ResourceRequest&&, WebCore::ProcessIdentifier);
@@ -183,7 +184,7 @@ private:
     Navigation(WebKit::WebNavigationState&, std::unique_ptr<SubstituteData>&&);
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, std::unique_ptr<SubstituteData>&&, WebKit::WebBackForwardListItem* fromItem);
 
-    uint64_t m_navigationID;
+    WebKit::NavigationIdentifier m_navigationID;
     WebCore::ResourceRequest m_originalRequest;
     WebCore::ResourceRequest m_currentRequest;
     std::optional<WebCore::ProcessIdentifier> m_currentRequestProcessIdentifier;

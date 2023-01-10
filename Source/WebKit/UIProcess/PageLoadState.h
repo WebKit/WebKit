@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NavigationIdentifier.h"
 #include <WebCore/CertificateInfo.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
@@ -118,7 +119,7 @@ public:
     };
 
     struct PendingAPIRequest {
-        uint64_t navigationID { 0 };
+        NavigationIdentifier navigationID;
         String url;
     };
 

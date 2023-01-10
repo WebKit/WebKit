@@ -27,6 +27,7 @@
 
 #include "DownloadID.h"
 #include "NavigatingToAppBoundDomain.h"
+#include "NavigationIdentifier.h"
 #include "SandboxExtension.h"
 #include "WebsitePoliciesData.h"
 #include <wtf/Forward.h>
@@ -37,7 +38,7 @@ struct PolicyDecision {
     WebCore::PolicyCheckIdentifier identifier { };
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { std::nullopt };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
-    uint64_t navigationID { 0 };
+    NavigationIdentifier navigationID { };
     std::optional<DownloadID> downloadID { std::nullopt };
     std::optional<WebsitePoliciesData> websitePoliciesData { std::nullopt };
     std::optional<SandboxExtension::Handle> sandboxExtensionHandle { std::nullopt };
@@ -72,7 +73,7 @@ struct PolicyDecision {
         if (!decodedPolicyAction)
             return std::nullopt;
 
-        std::optional<uint64_t> decodedNavigationID;
+        std::optional<NavigationIdentifier> decodedNavigationID;
         decoder >> decodedNavigationID;
         if (!decodedNavigationID)
             return std::nullopt;

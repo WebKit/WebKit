@@ -368,7 +368,7 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
         return std::nullopt;
     result.sourceCrossOriginOpenerPolicy = WTFMove(*sourceCrossOriginOpenerPolicy);
 
-    std::optional<uint64_t> navigationID;
+    std::optional<NavigationIdentifier> navigationID;
     decoder >> navigationID;
     if (!navigationID)
         return std::nullopt;

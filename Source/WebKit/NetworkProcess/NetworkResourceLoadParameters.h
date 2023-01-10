@@ -78,7 +78,7 @@ public:
     WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
     URL openerURL;
     WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
-    uint64_t navigationID { 0 };
+    NavigationIdentifier navigationID;
     std::optional<WebCore::NavigationRequester> navigationRequester;
 
 #if ENABLE(SERVICE_WORKER)

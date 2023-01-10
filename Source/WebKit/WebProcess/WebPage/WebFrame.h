@@ -175,7 +175,7 @@ public:
 
     void setTextDirection(const String&);
 
-    void documentLoaderDetached(uint64_t navigationID);
+    void documentLoaderDetached(NavigationIdentifier);
 
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener : public CanMakeWeakPtr<LoadListener> {

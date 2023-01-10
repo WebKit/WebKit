@@ -41,6 +41,7 @@
 #include "MDNSRegisterIdentifier.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MediaRecorderIdentifier.h"
+#include "NavigationIdentifier.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PDFPluginIdentifier.h"
 #include "PlaybackSessionContextIdentifier.h"
@@ -425,6 +426,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MDNSRegisterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MarkSurfacesAsVolatileRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MediaRecorderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::NavigationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::NetworkResourceLoadIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::PDFPluginIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::PageGroupIdentifier));
@@ -505,6 +507,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::MDNSRegisterIdentifier"_s,
         "WebKit::MarkSurfacesAsVolatileRequestIdentifier"_s,
         "WebKit::MediaRecorderIdentifier"_s,
+        "WebKit::NavigationIdentifier"_s,
         "WebKit::NetworkResourceLoadIdentifier"_s,
         "WebKit::PDFPluginIdentifier"_s,
         "WebKit::PageGroupIdentifier"_s,

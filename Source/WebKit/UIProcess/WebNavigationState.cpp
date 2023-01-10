@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,7 @@ Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(W
     return navigation;
 }
 
-API::Navigation* WebNavigationState::navigation(uint64_t navigationID)
+API::Navigation* WebNavigationState::navigation(NavigationIdentifier navigationID)
 {
     ASSERT(navigationID);
     ASSERT(m_navigations.contains(navigationID));
@@ -94,7 +94,7 @@ API::Navigation* WebNavigationState::navigation(uint64_t navigationID)
     return m_navigations.get(navigationID);
 }
 
-RefPtr<API::Navigation> WebNavigationState::takeNavigation(uint64_t navigationID)
+RefPtr<API::Navigation> WebNavigationState::takeNavigation(NavigationIdentifier navigationID)
 {
     ASSERT(navigationID);
     ASSERT(m_navigations.contains(navigationID));
@@ -102,7 +102,7 @@ RefPtr<API::Navigation> WebNavigationState::takeNavigation(uint64_t navigationID
     return m_navigations.take(navigationID);
 }
 
-void WebNavigationState::didDestroyNavigation(uint64_t navigationID)
+void WebNavigationState::didDestroyNavigation(NavigationIdentifier navigationID)
 {
     ASSERT(navigationID);
 
