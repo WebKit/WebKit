@@ -117,6 +117,11 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
         fi
 
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 140000 ))
+        then
+            plistbuddy add :com.apple.private.disable.screencapturekit.alert bool YES
+        fi
+
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitGPUSandbox bool YES
