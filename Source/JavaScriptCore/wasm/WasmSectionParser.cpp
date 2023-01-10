@@ -460,8 +460,8 @@ auto SectionParser::parseElement() -> PartialResult
     WASM_PARSER_FAIL_IF(elementCount > maxTableEntries, "Element section's count is too big ", elementCount, " maximum ", maxTableEntries);
     WASM_PARSER_FAIL_IF(!m_info->elements.tryReserveCapacity(elementCount), "can't allocate memory for ", elementCount, " Elements");
     for (unsigned elementNum = 0; elementNum < elementCount; ++elementNum) {
-        uint8_t elementFlags;
-        WASM_PARSER_FAIL_IF(!parseUInt8(elementFlags), "can't get ", elementNum, "th Element reserved byte, which should be element flags");
+        uint32_t elementFlags;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(elementFlags), "can't get ", elementNum, "th Element reserved byte, which should be element flags");
 
         switch (elementFlags) {
         case 0x00: {
