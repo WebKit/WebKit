@@ -789,13 +789,12 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     autoRepeatRows = clampAutoRepeatTracks(ForRows, autoRepeatRows);
     autoRepeatColumns = clampAutoRepeatTracks(ForColumns, autoRepeatColumns);
 
-    if (autoRepeatColumns != currentGrid().autoRepeatTracks(ForColumns) || autoRepeatRows != currentGrid().autoRepeatTracks(ForRows)) {
+    if (autoRepeatColumns != currentGrid().autoRepeatTracks(ForColumns) 
+        || autoRepeatRows != currentGrid().autoRepeatTracks(ForRows)
+        || isMasonry()) {
         currentGrid().setNeedsItemsPlacement(true);
         currentGrid().setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
     }
-
-    if (areMasonryRows() || areMasonryColumns())
-        currentGrid().setNeedsItemsPlacement(true);
 
     if (!currentGrid().needsItemsPlacement())
         return;
