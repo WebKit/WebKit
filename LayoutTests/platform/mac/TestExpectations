@@ -1337,6 +1337,10 @@ fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
 # we should delete the test.
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 
+# These tests fail which are related to browser support of slnt and ital axes in variable fonts and failing due to underlying bug
+webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable.html [ Failure ]
+webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-backslant-variable.html [ Failure ]
+
 # <rdar://problem/33731086>
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -192,7 +192,7 @@ constexpr bool operator>=(FontSelectionValue a, FontSelectionValue b)
 
 constexpr FontSelectionValue italicThreshold()
 {
-    return FontSelectionValue { 20 };
+    return FontSelectionValue { 14 };
 }
 
 constexpr bool isItalic(std::optional<FontSelectionValue> fontWeight)
@@ -207,7 +207,7 @@ constexpr FontSelectionValue normalItalicValue()
 
 constexpr FontSelectionValue italicValue()
 {
-    return FontSelectionValue { 20 };
+    return FontSelectionValue { 14 };
 }
 
 constexpr FontSelectionValue boldThreshold()

@@ -50,7 +50,7 @@ FAIL Matching font-style: 'normal' should prefer 'oblique 0deg' over 'oblique 10
 PASS Matching font-style: 'normal' should prefer 'oblique 10deg 40deg' over 'oblique 20deg 30deg'
 FAIL Matching font-style: 'normal' should prefer 'oblique 20deg 30deg' over 'oblique -50deg -20deg' assert_equals: Unexpected font on test element expected 488 but got 533
 PASS Matching font-style: 'normal' should prefer 'oblique -50deg -20deg' over 'oblique -40deg -30deg'
-FAIL Matching font-style: 'italic' should prefer 'italic' over 'oblique 20deg' assert_equals: Unexpected font on test element expected 488 but got 533
+PASS Matching font-style: 'italic' should prefer 'italic' over 'oblique 20deg'
 PASS Matching font-style: 'italic' should prefer 'oblique 20deg' over 'oblique 30deg 60deg'
 FAIL Matching font-style: 'italic' should prefer 'oblique 30deg 60deg' over 'oblique 40deg 50deg' assert_equals: Unexpected font on test element expected 488 but got 533
 PASS Matching font-style: 'italic' should prefer 'oblique 40deg 50deg' over 'oblique 5deg 10deg'
