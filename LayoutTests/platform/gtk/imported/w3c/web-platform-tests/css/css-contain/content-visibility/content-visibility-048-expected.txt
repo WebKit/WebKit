@@ -1,4 +1,0 @@
-
-FAIL Fragment navigation with content-visibility; single text assert_equals: expected "text" but got "undefined"
-FAIL Fragment navigation with content-visibility; range across blocks assert_equals: expected "text2and3ancestor" but got "unknown"
-

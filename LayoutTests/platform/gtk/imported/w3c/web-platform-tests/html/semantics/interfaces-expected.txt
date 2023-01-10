@@ -1,295 +1,428 @@
 
-PASS Interfaces for a
-PASS Interfaces for A
-PASS Interfaces for abbr
-PASS Interfaces for ABBR
-PASS Interfaces for acronym
-PASS Interfaces for ACRONYM
-PASS Interfaces for address
-PASS Interfaces for ADDRESS
-PASS Interfaces for applet
-PASS Interfaces for APPLET
-PASS Interfaces for area
-PASS Interfaces for AREA
-PASS Interfaces for article
-PASS Interfaces for ARTICLE
-PASS Interfaces for aside
-PASS Interfaces for ASIDE
-PASS Interfaces for audio
-PASS Interfaces for AUDIO
-PASS Interfaces for b
-PASS Interfaces for B
-PASS Interfaces for base
-PASS Interfaces for BASE
-PASS Interfaces for basefont
-PASS Interfaces for BASEFONT
-PASS Interfaces for bdi
-PASS Interfaces for BDI
-PASS Interfaces for bdo
-PASS Interfaces for BDO
-PASS Interfaces for bgsound
-PASS Interfaces for BGSOUND
-PASS Interfaces for big
-PASS Interfaces for BIG
-PASS Interfaces for blink
-PASS Interfaces for BLINK
-PASS Interfaces for blockquote
-PASS Interfaces for BLOCKQUOTE
-PASS Interfaces for body
-PASS Interfaces for BODY
-PASS Interfaces for br
-PASS Interfaces for BR
-PASS Interfaces for button
-PASS Interfaces for BUTTON
-PASS Interfaces for canvas
-PASS Interfaces for CANVAS
-PASS Interfaces for caption
-PASS Interfaces for CAPTION
-PASS Interfaces for center
-PASS Interfaces for CENTER
-PASS Interfaces for cite
-PASS Interfaces for CITE
-PASS Interfaces for code
-PASS Interfaces for CODE
-PASS Interfaces for col
-PASS Interfaces for COL
-PASS Interfaces for colgroup
-PASS Interfaces for COLGROUP
-PASS Interfaces for command
-PASS Interfaces for COMMAND
-PASS Interfaces for data
-PASS Interfaces for DATA
-PASS Interfaces for datalist
-PASS Interfaces for DATALIST
-PASS Interfaces for dd
-PASS Interfaces for DD
-PASS Interfaces for del
-PASS Interfaces for DEL
-PASS Interfaces for details
-PASS Interfaces for DETAILS
-PASS Interfaces for dfn
-PASS Interfaces for DFN
-PASS Interfaces for dialog
-PASS Interfaces for DIALOG
-PASS Interfaces for dir
-PASS Interfaces for DIR
-PASS Interfaces for directory
-PASS Interfaces for DIRECTORY
-PASS Interfaces for div
-PASS Interfaces for DIV
-PASS Interfaces for dl
-PASS Interfaces for DL
-PASS Interfaces for dt
-PASS Interfaces for DT
-PASS Interfaces for em
-PASS Interfaces for EM
-PASS Interfaces for embed
-PASS Interfaces for EMBED
-PASS Interfaces for fieldset
-PASS Interfaces for FIELDSET
-PASS Interfaces for figcaption
-PASS Interfaces for FIGCAPTION
-PASS Interfaces for figure
-PASS Interfaces for FIGURE
-PASS Interfaces for font
-PASS Interfaces for FONT
-PASS Interfaces for foo-BAR
-PASS Interfaces for foo-bar
-PASS Interfaces for FOO-BAR
-PASS Interfaces for foo
-PASS Interfaces for FOO
-PASS Interfaces for footer
-PASS Interfaces for FOOTER
-PASS Interfaces for form
-PASS Interfaces for FORM
-PASS Interfaces for frame
-PASS Interfaces for FRAME
-PASS Interfaces for frameset
-PASS Interfaces for FRAMESET
-PASS Interfaces for h1
-PASS Interfaces for H1
-PASS Interfaces for h2
-PASS Interfaces for H2
-PASS Interfaces for h3
-PASS Interfaces for H3
-PASS Interfaces for h4
-PASS Interfaces for H4
-PASS Interfaces for h5
-PASS Interfaces for H5
-PASS Interfaces for h6
-PASS Interfaces for H6
-PASS Interfaces for head
-PASS Interfaces for HEAD
-PASS Interfaces for header
-PASS Interfaces for HEADER
-PASS Interfaces for hgroup
-PASS Interfaces for HGROUP
-PASS Interfaces for hr
-PASS Interfaces for HR
-PASS Interfaces for html
-PASS Interfaces for HTML
-PASS Interfaces for i
-PASS Interfaces for I
-PASS Interfaces for iframe
-PASS Interfaces for IFRAME
-PASS Interfaces for image
-PASS Interfaces for IMAGE
-PASS Interfaces for img
-PASS Interfaces for IMG
-PASS Interfaces for input
-PASS Interfaces for INPUT
-PASS Interfaces for ins
-PASS Interfaces for INS
-PASS Interfaces for isindex
-PASS Interfaces for ISINDEX
-PASS Interfaces for kbd
-PASS Interfaces for KBD
-PASS Interfaces for keygen
-PASS Interfaces for KEYGEN
-PASS Interfaces for label
-PASS Interfaces for LABEL
-PASS Interfaces for legend
-PASS Interfaces for LEGEND
-PASS Interfaces for li
-PASS Interfaces for LI
-PASS Interfaces for link
-PASS Interfaces for LINK
-PASS Interfaces for listing
-PASS Interfaces for LISTING
-PASS Interfaces for main
-PASS Interfaces for MAIN
-PASS Interfaces for map
-PASS Interfaces for MAP
-PASS Interfaces for mark
-PASS Interfaces for MARK
-PASS Interfaces for marquee
-PASS Interfaces for MARQUEE
-PASS Interfaces for menu
-PASS Interfaces for MENU
-PASS Interfaces for meta
-PASS Interfaces for META
-PASS Interfaces for meter
-PASS Interfaces for METER
-PASS Interfaces for mod
-PASS Interfaces for MOD
-PASS Interfaces for multicol
-PASS Interfaces for MULTICOL
-PASS Interfaces for nav
-PASS Interfaces for NAV
-PASS Interfaces for nextid
-PASS Interfaces for NEXTID
-PASS Interfaces for nobr
-PASS Interfaces for NOBR
-PASS Interfaces for noembed
-PASS Interfaces for NOEMBED
-PASS Interfaces for noframes
-PASS Interfaces for NOFRAMES
-PASS Interfaces for noscript
-PASS Interfaces for NOSCRIPT
-PASS Interfaces for object
-PASS Interfaces for OBJECT
-PASS Interfaces for ol
-PASS Interfaces for OL
-PASS Interfaces for optgroup
-PASS Interfaces for OPTGROUP
-PASS Interfaces for option
-PASS Interfaces for OPTION
-PASS Interfaces for output
-PASS Interfaces for OUTPUT
-PASS Interfaces for p
-PASS Interfaces for P
-PASS Interfaces for param
-PASS Interfaces for PARAM
-PASS Interfaces for picture
-PASS Interfaces for PICTURE
-PASS Interfaces for plaintext
-PASS Interfaces for PLAINTEXT
-PASS Interfaces for pre
-PASS Interfaces for PRE
-PASS Interfaces for progress
-PASS Interfaces for PROGRESS
-PASS Interfaces for q
-PASS Interfaces for Q
-PASS Interfaces for quasit
-PASS Interfaces for QUASIT
-PASS Interfaces for rb
-PASS Interfaces for RB
-PASS Interfaces for rp
-PASS Interfaces for RP
-PASS Interfaces for rt
-PASS Interfaces for RT
-PASS Interfaces for rtc
-PASS Interfaces for RTC
-PASS Interfaces for ruby
-PASS Interfaces for RUBY
-PASS Interfaces for s
-PASS Interfaces for S
-PASS Interfaces for samp
-PASS Interfaces for SAMP
-PASS Interfaces for script
-PASS Interfaces for SCRIPT
-PASS Interfaces for section
-PASS Interfaces for SECTION
-PASS Interfaces for select
-PASS Interfaces for SELECT
-PASS Interfaces for slot
-PASS Interfaces for SLOT
-PASS Interfaces for small
-PASS Interfaces for SMALL
-PASS Interfaces for source
-PASS Interfaces for SOURCE
-PASS Interfaces for spacer
-PASS Interfaces for SPACER
-PASS Interfaces for span
-PASS Interfaces for SPAN
-PASS Interfaces for strike
-PASS Interfaces for STRIKE
-PASS Interfaces for strong
-PASS Interfaces for STRONG
-PASS Interfaces for style
-PASS Interfaces for STYLE
-PASS Interfaces for sub
-PASS Interfaces for SUB
-PASS Interfaces for summary
-PASS Interfaces for SUMMARY
-PASS Interfaces for sup
-PASS Interfaces for SUP
-PASS Interfaces for table
-PASS Interfaces for TABLE
-PASS Interfaces for tbody
-PASS Interfaces for TBODY
-PASS Interfaces for td
-PASS Interfaces for TD
-PASS Interfaces for textarea
-PASS Interfaces for TEXTAREA
-PASS Interfaces for tfoot
-PASS Interfaces for TFOOT
-PASS Interfaces for th
-PASS Interfaces for TH
-PASS Interfaces for thead
-PASS Interfaces for THEAD
-PASS Interfaces for time
-PASS Interfaces for TIME
-PASS Interfaces for title
-PASS Interfaces for TITLE
-PASS Interfaces for tr
-PASS Interfaces for TR
-PASS Interfaces for track
-PASS Interfaces for TRACK
-PASS Interfaces for tt
-PASS Interfaces for TT
-PASS Interfaces for u
-PASS Interfaces for U
-PASS Interfaces for ul
-PASS Interfaces for UL
-PASS Interfaces for var
-PASS Interfaces for VAR
-PASS Interfaces for video
-PASS Interfaces for VIDEO
-PASS Interfaces for wbr
-PASS Interfaces for WBR
-PASS Interfaces for xmp
-PASS Interfaces for XMP
-PASS Interfaces for å-bar
-PASS Interfaces for Å-BAR
+PASS Interfaces for a: useNS
+PASS Interfaces for a: useParser
+PASS Interfaces for A: createElement
+PASS Interfaces for abbr: useNS
+PASS Interfaces for abbr: useParser
+PASS Interfaces for ABBR: createElement
+PASS Interfaces for acronym: useNS
+PASS Interfaces for acronym: useParser
+PASS Interfaces for ACRONYM: createElement
+PASS Interfaces for address: useNS
+PASS Interfaces for address: useParser
+PASS Interfaces for ADDRESS: createElement
+PASS Interfaces for applet: useNS
+PASS Interfaces for applet: useParser
+PASS Interfaces for APPLET: createElement
+PASS Interfaces for area: useNS
+PASS Interfaces for area: useParser
+PASS Interfaces for AREA: createElement
+PASS Interfaces for article: useNS
+PASS Interfaces for article: useParser
+PASS Interfaces for ARTICLE: createElement
+PASS Interfaces for aside: useNS
+PASS Interfaces for aside: useParser
+PASS Interfaces for ASIDE: createElement
+PASS Interfaces for audio: useNS
+PASS Interfaces for audio: useParser
+PASS Interfaces for AUDIO: createElement
+PASS Interfaces for b: useNS
+PASS Interfaces for b: useParser
+PASS Interfaces for B: createElement
+PASS Interfaces for base: useNS
+PASS Interfaces for base: useParser
+PASS Interfaces for BASE: createElement
+PASS Interfaces for basefont: useNS
+PASS Interfaces for basefont: useParser
+PASS Interfaces for BASEFONT: createElement
+PASS Interfaces for bdi: useNS
+PASS Interfaces for bdi: useParser
+PASS Interfaces for BDI: createElement
+PASS Interfaces for bdo: useNS
+PASS Interfaces for bdo: useParser
+PASS Interfaces for BDO: createElement
+PASS Interfaces for bgsound: useNS
+PASS Interfaces for bgsound: useParser
+PASS Interfaces for BGSOUND: createElement
+PASS Interfaces for big: useNS
+PASS Interfaces for big: useParser
+PASS Interfaces for BIG: createElement
+PASS Interfaces for blink: useNS
+PASS Interfaces for blink: useParser
+PASS Interfaces for BLINK: createElement
+PASS Interfaces for blockquote: useNS
+PASS Interfaces for blockquote: useParser
+PASS Interfaces for BLOCKQUOTE: createElement
+PASS Interfaces for body: useNS
+PASS Interfaces for body: useParser
+PASS Interfaces for BODY: createElement
+PASS Interfaces for br: useNS
+PASS Interfaces for br: useParser
+PASS Interfaces for BR: createElement
+PASS Interfaces for button: useNS
+PASS Interfaces for button: useParser
+PASS Interfaces for BUTTON: createElement
+PASS Interfaces for canvas: useNS
+PASS Interfaces for canvas: useParser
+PASS Interfaces for CANVAS: createElement
+PASS Interfaces for caption: useNS
+PASS Interfaces for CAPTION: createElement
+PASS Interfaces for center: useNS
+PASS Interfaces for center: useParser
+PASS Interfaces for CENTER: createElement
+PASS Interfaces for cite: useNS
+PASS Interfaces for cite: useParser
+PASS Interfaces for CITE: createElement
+PASS Interfaces for code: useNS
+PASS Interfaces for code: useParser
+PASS Interfaces for CODE: createElement
+PASS Interfaces for col: useNS
+PASS Interfaces for COL: createElement
+PASS Interfaces for colgroup: useNS
+PASS Interfaces for COLGROUP: createElement
+PASS Interfaces for command: useNS
+PASS Interfaces for command: useParser
+PASS Interfaces for COMMAND: createElement
+PASS Interfaces for data: useNS
+PASS Interfaces for data: useParser
+PASS Interfaces for DATA: createElement
+PASS Interfaces for datalist: useNS
+PASS Interfaces for datalist: useParser
+PASS Interfaces for DATALIST: createElement
+PASS Interfaces for dd: useNS
+PASS Interfaces for dd: useParser
+PASS Interfaces for DD: createElement
+PASS Interfaces for del: useNS
+PASS Interfaces for del: useParser
+PASS Interfaces for DEL: createElement
+PASS Interfaces for details: useNS
+PASS Interfaces for details: useParser
+PASS Interfaces for DETAILS: createElement
+PASS Interfaces for dfn: useNS
+PASS Interfaces for dfn: useParser
+PASS Interfaces for DFN: createElement
+PASS Interfaces for dialog: useNS
+PASS Interfaces for dialog: useParser
+PASS Interfaces for DIALOG: createElement
+PASS Interfaces for dir: useNS
+PASS Interfaces for dir: useParser
+PASS Interfaces for DIR: createElement
+PASS Interfaces for directory: useNS
+PASS Interfaces for directory: useParser
+PASS Interfaces for DIRECTORY: createElement
+PASS Interfaces for div: useNS
+PASS Interfaces for div: useParser
+PASS Interfaces for DIV: createElement
+PASS Interfaces for dl: useNS
+PASS Interfaces for dl: useParser
+PASS Interfaces for DL: createElement
+PASS Interfaces for dt: useNS
+PASS Interfaces for dt: useParser
+PASS Interfaces for DT: createElement
+PASS Interfaces for em: useNS
+PASS Interfaces for em: useParser
+PASS Interfaces for EM: createElement
+PASS Interfaces for embed: useNS
+PASS Interfaces for embed: useParser
+PASS Interfaces for EMBED: createElement
+PASS Interfaces for fieldset: useNS
+PASS Interfaces for fieldset: useParser
+PASS Interfaces for FIELDSET: createElement
+PASS Interfaces for figcaption: useNS
+PASS Interfaces for figcaption: useParser
+PASS Interfaces for FIGCAPTION: createElement
+PASS Interfaces for figure: useNS
+PASS Interfaces for figure: useParser
+PASS Interfaces for FIGURE: createElement
+PASS Interfaces for font: useNS
+PASS Interfaces for font: useParser
+PASS Interfaces for FONT: createElement
+PASS Interfaces for foo-BAR: useNS
+PASS Interfaces for foo-bar: useNS
+PASS Interfaces for foo-bar: useParser
+PASS Interfaces for FOO-BAR: createElement
+PASS Interfaces for foo: useNS
+PASS Interfaces for foo: useParser
+PASS Interfaces for FOO: createElement
+PASS Interfaces for footer: useNS
+PASS Interfaces for footer: useParser
+PASS Interfaces for FOOTER: createElement
+PASS Interfaces for form: useNS
+PASS Interfaces for form: useParser
+PASS Interfaces for FORM: createElement
+PASS Interfaces for frame: useNS
+PASS Interfaces for FRAME: createElement
+PASS Interfaces for frameset: useNS
+PASS Interfaces for FRAMESET: createElement
+PASS Interfaces for h1: useNS
+PASS Interfaces for h1: useParser
+PASS Interfaces for H1: createElement
+PASS Interfaces for h2: useNS
+PASS Interfaces for h2: useParser
+PASS Interfaces for H2: createElement
+PASS Interfaces for h3: useNS
+PASS Interfaces for h3: useParser
+PASS Interfaces for H3: createElement
+PASS Interfaces for h4: useNS
+PASS Interfaces for h4: useParser
+PASS Interfaces for H4: createElement
+PASS Interfaces for h5: useNS
+PASS Interfaces for h5: useParser
+PASS Interfaces for H5: createElement
+PASS Interfaces for h6: useNS
+PASS Interfaces for h6: useParser
+PASS Interfaces for H6: createElement
+PASS Interfaces for head: useNS
+PASS Interfaces for head: useParser
+PASS Interfaces for HEAD: createElement
+PASS Interfaces for header: useNS
+PASS Interfaces for header: useParser
+PASS Interfaces for HEADER: createElement
+PASS Interfaces for hgroup: useNS
+PASS Interfaces for hgroup: useParser
+PASS Interfaces for HGROUP: createElement
+PASS Interfaces for hr: useNS
+PASS Interfaces for hr: useParser
+PASS Interfaces for HR: createElement
+PASS Interfaces for html: useNS
+PASS Interfaces for html: useParser
+PASS Interfaces for HTML: createElement
+PASS Interfaces for i: useNS
+PASS Interfaces for i: useParser
+PASS Interfaces for I: createElement
+PASS Interfaces for iframe: useNS
+PASS Interfaces for iframe: useParser
+PASS Interfaces for IFRAME: createElement
+PASS Interfaces for image: useNS
+PASS Interfaces for IMAGE: createElement
+PASS Interfaces for img: useNS
+PASS Interfaces for img: useParser
+PASS Interfaces for IMG: createElement
+PASS Interfaces for input: useNS
+PASS Interfaces for input: useParser
+PASS Interfaces for INPUT: createElement
+PASS Interfaces for ins: useNS
+PASS Interfaces for ins: useParser
+PASS Interfaces for INS: createElement
+PASS Interfaces for isindex: useNS
+PASS Interfaces for isindex: useParser
+PASS Interfaces for ISINDEX: createElement
+PASS Interfaces for kbd: useNS
+PASS Interfaces for kbd: useParser
+PASS Interfaces for KBD: createElement
+PASS Interfaces for keygen: useNS
+PASS Interfaces for keygen: useParser
+PASS Interfaces for KEYGEN: createElement
+PASS Interfaces for label: useNS
+PASS Interfaces for label: useParser
+PASS Interfaces for LABEL: createElement
+PASS Interfaces for legend: useNS
+PASS Interfaces for legend: useParser
+PASS Interfaces for LEGEND: createElement
+PASS Interfaces for li: useNS
+PASS Interfaces for li: useParser
+PASS Interfaces for LI: createElement
+PASS Interfaces for link: useNS
+PASS Interfaces for link: useParser
+PASS Interfaces for LINK: createElement
+PASS Interfaces for listing: useNS
+PASS Interfaces for listing: useParser
+PASS Interfaces for LISTING: createElement
+PASS Interfaces for main: useNS
+PASS Interfaces for main: useParser
+PASS Interfaces for MAIN: createElement
+PASS Interfaces for map: useNS
+PASS Interfaces for map: useParser
+PASS Interfaces for MAP: createElement
+PASS Interfaces for mark: useNS
+PASS Interfaces for mark: useParser
+PASS Interfaces for MARK: createElement
+PASS Interfaces for marquee: useNS
+PASS Interfaces for marquee: useParser
+PASS Interfaces for MARQUEE: createElement
+PASS Interfaces for menu: useNS
+PASS Interfaces for menu: useParser
+PASS Interfaces for MENU: createElement
+PASS Interfaces for meta: useNS
+PASS Interfaces for meta: useParser
+PASS Interfaces for META: createElement
+PASS Interfaces for meter: useNS
+PASS Interfaces for meter: useParser
+PASS Interfaces for METER: createElement
+PASS Interfaces for mod: useNS
+PASS Interfaces for mod: useParser
+PASS Interfaces for MOD: createElement
+PASS Interfaces for multicol: useNS
+PASS Interfaces for multicol: useParser
+PASS Interfaces for MULTICOL: createElement
+PASS Interfaces for nav: useNS
+PASS Interfaces for nav: useParser
+PASS Interfaces for NAV: createElement
+PASS Interfaces for nextid: useNS
+PASS Interfaces for nextid: useParser
+PASS Interfaces for NEXTID: createElement
+PASS Interfaces for nobr: useNS
+PASS Interfaces for nobr: useParser
+PASS Interfaces for NOBR: createElement
+PASS Interfaces for noembed: useNS
+PASS Interfaces for noembed: useParser
+PASS Interfaces for NOEMBED: createElement
+PASS Interfaces for noframes: useNS
+PASS Interfaces for noframes: useParser
+PASS Interfaces for NOFRAMES: createElement
+PASS Interfaces for noscript: useNS
+PASS Interfaces for noscript: useParser
+PASS Interfaces for NOSCRIPT: createElement
+PASS Interfaces for object: useNS
+PASS Interfaces for object: useParser
+PASS Interfaces for OBJECT: createElement
+PASS Interfaces for ol: useNS
+PASS Interfaces for ol: useParser
+PASS Interfaces for OL: createElement
+PASS Interfaces for optgroup: useNS
+PASS Interfaces for optgroup: useParser
+PASS Interfaces for OPTGROUP: createElement
+PASS Interfaces for option: useNS
+PASS Interfaces for option: useParser
+PASS Interfaces for OPTION: createElement
+PASS Interfaces for output: useNS
+PASS Interfaces for output: useParser
+PASS Interfaces for OUTPUT: createElement
+PASS Interfaces for p: useNS
+PASS Interfaces for p: useParser
+PASS Interfaces for P: createElement
+PASS Interfaces for param: useNS
+PASS Interfaces for param: useParser
+PASS Interfaces for PARAM: createElement
+PASS Interfaces for picture: useNS
+PASS Interfaces for picture: useParser
+PASS Interfaces for PICTURE: createElement
+PASS Interfaces for plaintext: useNS
+PASS Interfaces for plaintext: useParser
+PASS Interfaces for PLAINTEXT: createElement
+PASS Interfaces for pre: useNS
+PASS Interfaces for pre: useParser
+PASS Interfaces for PRE: createElement
+PASS Interfaces for progress: useNS
+PASS Interfaces for progress: useParser
+PASS Interfaces for PROGRESS: createElement
+PASS Interfaces for q: useNS
+PASS Interfaces for q: useParser
+PASS Interfaces for Q: createElement
+PASS Interfaces for quasit: useNS
+PASS Interfaces for quasit: useParser
+PASS Interfaces for QUASIT: createElement
+PASS Interfaces for rb: useNS
+PASS Interfaces for rb: useParser
+PASS Interfaces for RB: createElement
+PASS Interfaces for rp: useNS
+PASS Interfaces for rp: useParser
+PASS Interfaces for RP: createElement
+PASS Interfaces for rt: useNS
+PASS Interfaces for rt: useParser
+PASS Interfaces for RT: createElement
+PASS Interfaces for rtc: useNS
+PASS Interfaces for rtc: useParser
+PASS Interfaces for RTC: createElement
+PASS Interfaces for ruby: useNS
+PASS Interfaces for ruby: useParser
+PASS Interfaces for RUBY: createElement
+PASS Interfaces for s: useNS
+PASS Interfaces for s: useParser
+PASS Interfaces for S: createElement
+PASS Interfaces for samp: useNS
+PASS Interfaces for samp: useParser
+PASS Interfaces for SAMP: createElement
+PASS Interfaces for script: useNS
+PASS Interfaces for script: useParser
+PASS Interfaces for SCRIPT: createElement
+PASS Interfaces for section: useNS
+PASS Interfaces for section: useParser
+PASS Interfaces for SECTION: createElement
+PASS Interfaces for select: useNS
+PASS Interfaces for select: useParser
+PASS Interfaces for SELECT: createElement
+PASS Interfaces for slot: useNS
+PASS Interfaces for slot: useParser
+PASS Interfaces for SLOT: createElement
+PASS Interfaces for small: useNS
+PASS Interfaces for small: useParser
+PASS Interfaces for SMALL: createElement
+PASS Interfaces for source: useNS
+PASS Interfaces for source: useParser
+PASS Interfaces for SOURCE: createElement
+PASS Interfaces for spacer: useNS
+PASS Interfaces for spacer: useParser
+PASS Interfaces for SPACER: createElement
+PASS Interfaces for span: useNS
+PASS Interfaces for span: useParser
+PASS Interfaces for SPAN: createElement
+PASS Interfaces for strike: useNS
+PASS Interfaces for strike: useParser
+PASS Interfaces for STRIKE: createElement
+PASS Interfaces for strong: useNS
+PASS Interfaces for strong: useParser
+PASS Interfaces for STRONG: createElement
+PASS Interfaces for style: useNS
+PASS Interfaces for style: useParser
+PASS Interfaces for STYLE: createElement
+PASS Interfaces for sub: useNS
+PASS Interfaces for sub: useParser
+PASS Interfaces for SUB: createElement
+PASS Interfaces for summary: useNS
+PASS Interfaces for summary: useParser
+PASS Interfaces for SUMMARY: createElement
+PASS Interfaces for sup: useNS
+PASS Interfaces for sup: useParser
+PASS Interfaces for SUP: createElement
+PASS Interfaces for table: useNS
+PASS Interfaces for table: useParser
+PASS Interfaces for TABLE: createElement
+PASS Interfaces for tbody: useNS
+PASS Interfaces for TBODY: createElement
+PASS Interfaces for td: useNS
+PASS Interfaces for TD: createElement
+PASS Interfaces for textarea: useNS
+PASS Interfaces for textarea: useParser
+PASS Interfaces for TEXTAREA: createElement
+PASS Interfaces for tfoot: useNS
+PASS Interfaces for TFOOT: createElement
+PASS Interfaces for th: useNS
+PASS Interfaces for TH: createElement
+PASS Interfaces for thead: useNS
+PASS Interfaces for THEAD: createElement
+PASS Interfaces for time: useNS
+PASS Interfaces for time: useParser
+PASS Interfaces for TIME: createElement
+PASS Interfaces for title: useNS
+PASS Interfaces for title: useParser
+PASS Interfaces for TITLE: createElement
+PASS Interfaces for tr: useNS
+PASS Interfaces for TR: createElement
+PASS Interfaces for track: useNS
+PASS Interfaces for track: useParser
+PASS Interfaces for TRACK: createElement
+PASS Interfaces for tt: useNS
+PASS Interfaces for tt: useParser
+PASS Interfaces for TT: createElement
+PASS Interfaces for u: useNS
+PASS Interfaces for u: useParser
+PASS Interfaces for U: createElement
+PASS Interfaces for ul: useNS
+PASS Interfaces for ul: useParser
+PASS Interfaces for UL: createElement
+PASS Interfaces for var: useNS
+PASS Interfaces for var: useParser
+PASS Interfaces for VAR: createElement
+PASS Interfaces for video: useNS
+PASS Interfaces for video: useParser
+PASS Interfaces for VIDEO: createElement
+PASS Interfaces for wbr: useNS
+PASS Interfaces for wbr: useParser
+PASS Interfaces for WBR: createElement
+PASS Interfaces for xmp: useNS
+PASS Interfaces for xmp: useParser
+PASS Interfaces for XMP: createElement
+PASS Interfaces for å-bar: useNS
+PASS Interfaces for Å-BAR: createElement
 

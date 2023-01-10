@@ -61,7 +61,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "high"
       },
       {
         "pageref": "page_0",
@@ -102,7 +104,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "high"
       },
       {
         "pageref": "page_0",
@@ -143,7 +147,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "high"
       },
       {
         "pageref": "page_0",
@@ -191,7 +197,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -229,7 +237,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -245,7 +253,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -298,7 +308,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -335,7 +347,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -351,7 +363,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -388,7 +402,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": 0,
+            "compression": -5,
             "mimeType": "text/plain"
           },
           "redirectURL": "",
@@ -404,7 +418,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -461,7 +477,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -524,7 +542,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -590,7 +610,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -660,7 +682,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -735,7 +759,9 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_serverPort": 8000,
+        "_priority": "medium"
       }
     ]
   }
