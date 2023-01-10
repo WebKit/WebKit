@@ -69,4 +69,9 @@ AbstractFrameView* RemoteFrame::virtualView() const
     return m_view.get();
 }
 
+void RemoteFrame::setView(RefPtr<RemoteFrameView>&& view)
+{
+    m_view = WTFMove(view);
+}
+
 } // namespace WebCore

@@ -1860,6 +1860,7 @@ page/ProcessWarming.cpp
 page/Quirks.cpp
 page/RemoteDOMWindow.cpp
 page/RemoteFrame.cpp
+page/RemoteFrameView.cpp
 page/RenderingUpdateScheduler.cpp
 page/ResizeObservation.cpp
 page/ResizeObserver.cpp

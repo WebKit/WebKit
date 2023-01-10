@@ -81,6 +81,7 @@
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RemoteDOMWindow.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/RemoteFrameView.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -284,14 +285,30 @@ void WebFrame::didCommitLoadInAnotherProcess()
         return;
 
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(coreFrame.get());
-    if (auto* document = localFrame ? localFrame->document() : nullptr)
+    if (!localFrame)
+        return;
+
+    ScrollView* parentView { nullptr };
+    if (auto* document = localFrame->document())
         document->willBeRemovedFromFrame();
+    if (auto* frameView = localFrame->view()) {
+        parentView = frameView->parent();
+        frameView->removeFromParent();
+    }
+    localFrame->setView(nullptr);
 
     RefPtr ownerElement = coreFrame->ownerElement();
     parent->tree().removeChild(*coreFrame);
     coreFrame->disconnectOwnerElement();
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this);
+
     auto newFrame = WebCore::RemoteFrame::create(*corePage, m_frameID, ownerElement.get(), WTFMove(client));
+    auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
+    if (parentView)
+        parentView->addChild(remoteFrameView);
+    // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle.
+    newFrame->setView(remoteFrameView.ptr());
+
     m_coreFrame = newFrame.get();
     if (ownerElement) {
         // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.

@@ -56,6 +56,7 @@ public:
     RemoteFrameClient& client() { return m_client.get(); }
 
     RemoteFrameView* view() const { return m_view.get(); }
+    WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, UniqueRef<RemoteFrameClient>&&);

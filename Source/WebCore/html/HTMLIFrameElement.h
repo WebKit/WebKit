@@ -39,8 +39,6 @@ public:
 
     DOMTokenList& sandbox();
 
-    RenderIFrame* renderer() const;
-
     void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
