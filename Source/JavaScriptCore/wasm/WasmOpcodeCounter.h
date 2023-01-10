@@ -44,7 +44,7 @@ public:
 
     void increment(ExtSIMDOpType);
     void increment(ExtAtomicOpType);
-    void increment(GCOpType);
+    void increment(ExtGCOpType);
     void increment(OpType);
 
     void dump();
