@@ -1656,16 +1656,16 @@ DeclarativeShadowDOMEnabled:
 
 DefaultARIAForCustomElementsEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Default ARIA for Custom Elements"
   humanReadableDescription: "Enable Default ARIA for Custom Elements"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DefaultFixedFontSize:
   type: double
