@@ -787,8 +787,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
                 const CSSParserToken& ident = block.consume();
                 if (!equalLettersIgnoringASCIICase(ident.value(), "of"_s))
                     return nullptr;
-                if (block.peek().type() != WhitespaceToken)
-                    return nullptr;
                 block.consumeWhitespace();
                 auto selectorList = makeUnique<CSSSelectorList>();
                 *selectorList = consumeComplexSelectorList(block);
