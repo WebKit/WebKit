@@ -30,8 +30,7 @@
 #import "Logging.h"
 #import "WKNSArray.h"
 #import "WebPreferences.h"
-#import "_WKExperimentalFeatureInternal.h"
-#import "_WKInternalDebugFeatureInternal.h"
+#import "_WKFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -538,20 +537,26 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setFixedFontFamily(fixedPitchFontFamily);
 }
 
-+ (NSArray<_WKInternalDebugFeature *> *)_internalDebugFeatures
++ (NSArray<_WKFeature *> *)_features
+{
+    auto features = WebKit::WebPreferences::features();
+    return wrapper(API::Array::create(WTFMove(features)));
+}
+
++ (NSArray<_WKFeature *> *)_internalDebugFeatures
 {
     auto features = WebKit::WebPreferences::internalDebugFeatures();
     return wrapper(API::Array::create(WTFMove(features)));
 }
 
-- (BOOL)_isEnabledForInternalDebugFeature:(_WKInternalDebugFeature *)feature
+- (BOOL)_isEnabledForInternalDebugFeature:(_WKFeature *)feature
 {
-    return _preferences->isFeatureEnabled(*feature->_internalDebugFeature);
+    return _preferences->isFeatureEnabled(*feature->_wrappedFeature);
 }
 
-- (void)_setEnabled:(BOOL)value forInternalDebugFeature:(_WKInternalDebugFeature *)feature
+- (void)_setEnabled:(BOOL)value forInternalDebugFeature:(_WKFeature *)feature
 {
-    _preferences->setFeatureEnabled(*feature->_internalDebugFeature, value);
+    _preferences->setFeatureEnabled(*feature->_wrappedFeature, value);
 }
 
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures
@@ -560,26 +565,24 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     return wrapper(API::Array::create(WTFMove(features)));
 }
 
-// FIXME: Remove this once Safari has adopted the new API.
-- (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature
+- (BOOL)_isEnabledForFeature:(_WKFeature *)feature
 {
-    return [self _isEnabledForExperimentalFeature:feature];
+    return _preferences->isFeatureEnabled(*feature->_wrappedFeature);
 }
 
-// FIXME: Remove this once Safari has adopted the new API.
-- (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature
+- (void)_setEnabled:(BOOL)value forFeature:(_WKFeature *)feature
 {
-    [self _setEnabled:value forExperimentalFeature:feature];
+    _preferences->setFeatureEnabled(*feature->_wrappedFeature, value);
 }
 
-- (BOOL)_isEnabledForExperimentalFeature:(_WKExperimentalFeature *)feature
+- (BOOL)_isEnabledForExperimentalFeature:(_WKFeature *)feature
 {
-    return _preferences->isFeatureEnabled(*feature->_experimentalFeature);
+    return [self _isEnabledForFeature:feature];
 }
 
-- (void)_setEnabled:(BOOL)value forExperimentalFeature:(_WKExperimentalFeature *)feature
+- (void)_setEnabled:(BOOL)value forExperimentalFeature:(_WKFeature *)feature
 {
-    _preferences->setFeatureEnabled(*feature->_experimentalFeature, value);
+    [self _setEnabled:value forFeature:feature];
 }
 
 - (BOOL)_applePayCapabilityDisclosureAllowed

@@ -34,14 +34,14 @@
 
 namespace WebKit {
 
-const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
+const Vector<RefPtr<API::Object>>& WebPreferences::features()
 {
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {
-<%- for @pref in @exposedPreferences.select(&:experimental?) do -%>
+<% for @pref in @exposedFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        API::ExperimentalFeature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.apiStatus %>, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
+        API::Feature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.apiStatus %>, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
@@ -51,7 +51,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
     return features;
 }
 
-bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) const
+bool WebPreferences::isFeatureEnabled(const API::Feature& feature) const
 {
     struct FeatureGetterMapping {
         ASCIILiteral name;
@@ -59,7 +59,7 @@ bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) c
     };
 
     static FeatureGetterMapping getters[] = {
-<%- for @pref in @exposedPreferences.select(&:experimental?) do -%>
+<%- for @pref in @exposedFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -80,12 +80,12 @@ bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) c
     return false;
 }
 
-void WebPreferences::setFeatureEnabled(const API::ExperimentalFeature& feature, bool value)
+void WebPreferences::setFeatureEnabled(const API::Feature& feature, bool value)
 {
-    setExperimentalFeatureEnabledForKey(feature.key(), value);
+    setFeatureEnabledForKey(feature.key(), value);
 }
 
-void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool value)
+void WebPreferences::setFeatureEnabledForKey(const String& key, bool value)
 {
     struct FeatureSetterMapping {
         ASCIILiteral name;
@@ -93,7 +93,7 @@ void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool
     };
 
     static FeatureSetterMapping setters[] = {
-<%- for @pref in @exposedPreferences.select(&:experimental?) do -%>
+<%- for @pref in @exposedFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
@@ -120,6 +120,20 @@ void WebPreferences::enableAllExperimentalFeatures()
 #if <%= @pref.condition %>
 <%- end -%>
     set<%= @pref.name %>(true);
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+}
+
+void WebPreferences::resetAllInternalDebugFeatures()
+{
+    UpdateBatch batch(*this);
+<%- for @pref in @exposedFeatures.select(&:internal?) do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+    set<%= @pref.name %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

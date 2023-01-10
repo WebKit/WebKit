@@ -91,7 +91,7 @@ typedef const struct OpaqueWKContextMenuListener* WKContextMenuListenerRef;
 typedef const struct OpaqueWKCookieManager* WKCookieManagerRef;
 typedef const struct OpaqueWKCredential* WKCredentialRef;
 typedef const struct OpaqueWKDownload* WKDownloadRef;
-typedef const struct OpaqueWKExperimentalFeature* WKExperimentalFeatureRef;
+typedef const struct OpaqueWKExperimentalFeature* WKFeatureRef;
 typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
 typedef const struct OpaqueWKFrameHandle* WKFrameHandleRef;
 typedef const struct OpaqueWKFrameInfo* WKFrameInfoRef;

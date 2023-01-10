@@ -41,7 +41,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 
@@ -152,10 +152,10 @@ static Vector<RetainPtr<VKImageAnalyzerRequest>>& processedRequests()
 static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+    for (_WKFeature *feature in WKPreferences._features) {
         NSString *key = feature.key;
         if ([key isEqualToString:@"TextRecognitionInVideosEnabled"] || [key isEqualToString:@"VisualTranslationEnabled"] || [key isEqualToString:@"RemoveBackgroundEnabled"])
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
     [configuration _setAttachmentElementEnabled:YES];
 #if ENABLE(SERVICE_CONTROLS)

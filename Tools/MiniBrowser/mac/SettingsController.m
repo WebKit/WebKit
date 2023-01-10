@@ -211,7 +211,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItemToMenu(experimentalFeaturesMenu, @"Reset All to Defaults", @selector(resetAllExperimentalFeatures:), NO, 0);
 
     NSMenu *internalDebugFeaturesMenu = addSubmenu(@"Internal Features");
-    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+    for (_WKFeature *feature in WKPreferences._internalDebugFeatures) {
         NSMenuItem *item = addItemToMenu(internalDebugFeaturesMenu, feature.name, @selector(toggleInternalDebugFeature:), NO, InternalDebugFeatureTag);
         item.toolTip = feature.details;
         item.representedObject = feature;
@@ -373,12 +373,12 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
     WKPreferences *defaultPreferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
     if (menuItem.tag == ExperimentalFeatureTag) {
-        _WKExperimentalFeature *feature = menuItem.representedObject;
-        [menuItem setState:[defaultPreferences _isEnabledForExperimentalFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
+        _WKFeature *feature = menuItem.representedObject;
+        [menuItem setState:[defaultPreferences _isEnabledForFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
     }
     if (menuItem.tag == InternalDebugFeatureTag) {
-        _WKInternalDebugFeature *feature = menuItem.representedObject;
-        [menuItem setState:[defaultPreferences _isEnabledForInternalDebugFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
+        _WKFeature *feature = menuItem.representedObject;
+        [menuItem setState:[defaultPreferences _isEnabledForFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
     }
 
     return YES;
@@ -692,11 +692,11 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
 - (void)toggleExperimentalFeature:(id)sender
 {
-    _WKExperimentalFeature *feature = ((NSMenuItem *)sender).representedObject;
+    _WKFeature *feature = ((NSMenuItem *)sender).representedObject;
     WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
 
-    BOOL currentlyEnabled = [preferences _isEnabledForExperimentalFeature:feature];
-    [preferences _setEnabled:!currentlyEnabled forExperimentalFeature:feature];
+    BOOL currentlyEnabled = [preferences _isEnabledForFeature:feature];
+    [preferences _setEnabled:!currentlyEnabled forFeature:feature];
 
     [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
 }

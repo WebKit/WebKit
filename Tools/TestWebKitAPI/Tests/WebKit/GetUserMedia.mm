@@ -42,8 +42,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
-#import <WebKit/_WKExperimentalFeature.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/text/StringBuilder.h>
@@ -565,13 +564,13 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
 
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
     }
 
     initializeMediaCaptureConfiguration(configuration.get());
@@ -639,13 +638,13 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
 
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
     }
     initializeMediaCaptureConfiguration(configuration.get());
 
@@ -712,15 +711,15 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
 
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"WebRTCPlatformCodecsInGPUProcessEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
     }
 
     initializeMediaCaptureConfiguration(configuration.get());
@@ -1012,14 +1011,14 @@ TEST(WebKit, InvalidDeviceIdHashSalts)
 }
 
 
-static _WKExperimentalFeature *permissionsAPIEnabledExperimentalFeature()
+static _WKFeature *permissionsAPIEnabledExperimentalFeature()
 {
-    static RetainPtr<_WKExperimentalFeature> theFeature;
+    static RetainPtr<_WKFeature> theFeature;
     if (theFeature)
         return theFeature.get();
 
-    NSArray *features = [WKPreferences _experimentalFeatures];
-    for (_WKExperimentalFeature *feature in features) {
+    NSArray *features = [WKPreferences _features];
+    for (_WKFeature *feature in features) {
         if ([feature.key isEqual:@"PermissionsAPIEnabled"]) {
             theFeature = feature;
             break;
@@ -1033,7 +1032,7 @@ TEST(WebKit2, CapturePermission)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     initializeMediaCaptureConfiguration(configuration.get());
-    [[configuration preferences] _setEnabled:YES forExperimentalFeature:permissionsAPIEnabledExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forFeature:permissionsAPIEnabledExperimentalFeature()];
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -1140,7 +1139,7 @@ TEST(WebKit2, CapturePermissionWithSystemBlocking)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     preferences._mockCaptureDevicesEnabled = NO;
     preferences._getUserMediaRequiresFocus = NO;
-    [preferences _setEnabled:YES forExperimentalFeature:permissionsAPIEnabledExperimentalFeature()];
+    [preferences _setEnabled:YES forFeature:permissionsAPIEnabledExperimentalFeature()];
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];

@@ -25,8 +25,7 @@
 
 #pragma once
 
-#include "APIExperimentalFeature.h"
-#include "APIInternalDebugFeature.h"
+#include "APIFeature.h"
 #include "APIObject.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesStore.h"
@@ -63,16 +62,17 @@ public:
     // Implemented in generated file WebPreferencesGetterSetters.cpp.
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
 
+    static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
-    bool isFeatureEnabled(const API::ExperimentalFeature&) const;
-    void setFeatureEnabled(const API::ExperimentalFeature&, bool);
-    void setExperimentalFeatureEnabledForKey(const String&, bool);
-    void enableAllExperimentalFeatures();
-
     static const Vector<RefPtr<API::Object>>& internalDebugFeatures();
-    bool isFeatureEnabled(const API::InternalDebugFeature&) const;
-    void setFeatureEnabled(const API::InternalDebugFeature&, bool);
-    void setInternalDebugFeatureEnabledForKey(const String&, bool);
+    
+    bool isFeatureEnabled(const API::Feature&) const;
+    void setFeatureEnabled(const API::Feature&, bool);
+    void setFeatureEnabledForKey(const String&, bool);
+
+    // FIXME: Update for unified feature semantics
+    // enableAllExperimentalFeatures() should enable settings for testing based on status, or be replaced with an API that WebKitTestRunner can use to enable arbitrary settings.
+    void enableAllExperimentalFeatures();
     void resetAllInternalDebugFeatures();
 
     // Exposed for WebKitTestRunner use only.

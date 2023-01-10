@@ -31,7 +31,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WebKit, DefaultWKPreferences)
@@ -61,7 +61,7 @@ TEST(WebKit, ExperimentalFeatures)
 
     RetainPtr<WKPreferences> preferences = adoptNS([[WKPreferences alloc] init]);
 
-    for (_WKExperimentalFeature *feature in features) {
+    for (_WKFeature *feature in features) {
         BOOL value = [preferences _isEnabledForFeature:feature];
         [preferences _setEnabled:value forFeature:feature];
     }

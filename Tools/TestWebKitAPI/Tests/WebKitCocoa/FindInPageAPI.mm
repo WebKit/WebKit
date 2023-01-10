@@ -38,7 +38,7 @@
 #if ENABLE(IMAGE_ANALYSIS)
 #import "ImageAnalysisTestingUtilities.h"
 #import "InstanceMethodSwizzler.h"
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #endif
 
@@ -305,10 +305,10 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 static RetainPtr<TestWKWebView> createWebViewWithImageAnalysisDuringFindInPageEnabled()
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+    for (_WKFeature *feature in WKPreferences._features) {
         NSString *key = feature.key;
         if ([key isEqualToString:@"ImageAnalysisDuringFindInPageEnabled"])
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);

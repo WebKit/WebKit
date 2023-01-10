@@ -33,7 +33,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 
 namespace TestWebKitAPI {
 
@@ -46,9 +46,9 @@ static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess
     });
 
     auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
-            [[configuration1 preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration1 preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }
@@ -71,9 +71,9 @@ static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess
 
     auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration2.get().processPool = [configuration1 processPool];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
-            [[configuration2 preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration2 preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }
@@ -139,9 +139,9 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
     });
 
     auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
-            [[configuration1 preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration1 preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }
@@ -164,9 +164,9 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
 
     auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration2.get().processPool = [configuration1 processPool];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
-            [[configuration2 preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration2 preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }

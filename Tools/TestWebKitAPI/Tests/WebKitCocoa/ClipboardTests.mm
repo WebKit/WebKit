@@ -31,7 +31,7 @@
 #import <CoreServices/CoreServices.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 
 @interface TestWKWebView (ClipboardTests)
 
@@ -76,9 +76,9 @@ static RetainPtr<TestWKWebView> createWebViewForClipboardTests()
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration preferences] _setDOMPasteAllowed:YES];
     [[configuration preferences] _setJavaScriptCanAccessClipboard:YES];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"AsyncClipboardAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "APIFeature.h"
 
-#include <WebKit/WKBase.h>
+namespace API {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT WKTypeID WKInternalDebugFeatureGetTypeID();
-
-WK_EXPORT WKStringRef WKInternalDebugFeatureCopyName(WKInternalDebugFeatureRef);
-WK_EXPORT WKStringRef WKInternalDebugFeatureCopyKey(WKInternalDebugFeatureRef);
-WK_EXPORT WKStringRef WKInternalDebugFeatureCopyDetails(WKInternalDebugFeatureRef);
-WK_EXPORT bool WKInternalDebugFeatureDefaultValue(WKInternalDebugFeatureRef);
-WK_EXPORT bool WKInternalDebugFeatureIsHidden(WKInternalDebugFeatureRef);
-
-#ifdef __cplusplus
+Ref<Feature> Feature::create(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
+{
+    return adoptRef(*new Feature(name, key, status, details, defaultValue, hidden));
 }
-#endif
+
+Feature::Feature(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
+    : m_name(name)
+    , m_key(key)
+    , m_status(status)
+    , m_details(details)
+    , m_defaultValue(defaultValue)
+    , m_hidden(hidden)
+{
+}
+
+}

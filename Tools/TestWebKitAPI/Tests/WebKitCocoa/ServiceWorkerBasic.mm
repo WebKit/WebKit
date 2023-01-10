@@ -45,8 +45,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKExperimentalFeature.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
@@ -3003,9 +3002,9 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
 
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
     }
 
     auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
@@ -3086,9 +3085,9 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
 
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [preferences _setEnabled:YES forFeature:feature];
     }
 
     auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
@@ -3167,9 +3166,9 @@ TEST(ServiceWorker, openWindowWithoutDelegate)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
 
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
     }
 
     auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
@@ -3312,11 +3311,11 @@ TEST(ServiceWorker, WindowClientNavigate)
     done = false;
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
-            [[configuration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
         else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
-            [[configuration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
     auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
@@ -3448,9 +3447,9 @@ TEST(ServiceWorker, OpenWindowWebsiteDataStoreDelegate)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto preferences = [configuration preferences];
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
     }
 
     auto dataStoreDelegate = adoptNS([[ServiceWorkerOpenWindowWebsiteDataStoreDelegate alloc] initWithConfiguration:configuration.get()]);
@@ -3499,9 +3498,9 @@ TEST(ServiceWorker, OpenWindowCOOP)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto preferences = [configuration preferences];
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+            [preferences _setEnabled:NO forFeature:feature];
     }
 
     auto dataStoreDelegate = adoptNS([[ServiceWorkerOpenWindowWebsiteDataStoreDelegate alloc] initWithConfiguration:configuration.get()]);

@@ -81,7 +81,7 @@ void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef preferencesRef, bool value, WKStringRef experimentalFeatureKey)
 {
-    toImpl(preferencesRef)->setExperimentalFeatureEnabledForKey(toWTFString(experimentalFeatureKey), value);
+    toImpl(preferencesRef)->setFeatureEnabledForKey(toWTFString(experimentalFeatureKey), value);
 }
 
 WKArrayRef WKPreferencesCopyInternalDebugFeatures(WKPreferencesRef preferencesRef)
@@ -97,7 +97,7 @@ void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetInternalDebugFeatureForKey(WKPreferencesRef preferencesRef, bool value, WKStringRef internalDebugFeatureKey)
 {
-    toImpl(preferencesRef)->setInternalDebugFeatureEnabledForKey(toWTFString(internalDebugFeatureKey), value);
+    toImpl(preferencesRef)->setFeatureEnabledForKey(toWTFString(internalDebugFeatureKey), value);
 }
 
 void WKPreferencesSetBoolValueForKeyForTesting(WKPreferencesRef preferencesRef, bool value, WKStringRef key)

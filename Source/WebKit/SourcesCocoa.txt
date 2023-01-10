@@ -267,6 +267,7 @@ UIProcess/API/Cocoa/_WKDownload.mm
 UIProcess/API/Cocoa/_WKElementAction.mm
 UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
 UIProcess/API/Cocoa/_WKExperimentalFeature.mm
+UIProcess/API/Cocoa/_WKFeature.mm
 UIProcess/API/Cocoa/_WKFrameTreeNode.mm
 UIProcess/API/Cocoa/_WKGeolocationPosition.mm
 UIProcess/API/Cocoa/_WKInspector.mm

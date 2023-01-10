@@ -431,9 +431,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerProxyMessageR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesCombined.yaml
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesDefinitions.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesExperimentalFeatures.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesFeatures.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesGetterSetters.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesInternalDebugFeatures.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesKeys.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesKeys.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPreferencesStoreDefaultsMap.cpp

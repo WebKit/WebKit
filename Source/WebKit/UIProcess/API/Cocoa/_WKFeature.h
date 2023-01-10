@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKExperimentalFeature.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WebFeature.h>
 
-#include "APIExperimentalFeature.h"
-#include "WKAPICast.h"
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKFeature : NSObject
 
-WKTypeID WKExperimentalFeatureGetTypeID()
-{
-    return WebKit::toAPI(API::ExperimentalFeature::APIType);
-}
+@property (nonatomic, readonly, copy) NSString *key;
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly) WebFeatureStatus status;
+@property (nonatomic, readonly, copy) NSString *details;
+@property (nonatomic, readonly) BOOL defaultValue;
+@property (nonatomic, readonly, getter=isHidden) BOOL hidden;
 
-WKStringRef WKExperimentalFeatureCopyName(WKExperimentalFeatureRef feature)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->name());
-}
-
-WKStringRef WKExperimentalFeatureCopyKey(WKExperimentalFeatureRef feature)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->key());
-}
-
-WKStringRef WKExperimentalFeatureCopyDetails(WKExperimentalFeatureRef feature)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->details());
-}
-
-bool WKExperimentalFeatureDefaultValue(WKExperimentalFeatureRef feature)
-{
-    return WebKit::toImpl(feature)->defaultValue();
-}
-
-bool WKExperimentalFeatureIsHidden(WKExperimentalFeatureRef feature)
-{
-    return WebKit::toImpl(feature)->isHidden();
-}
-
+@end

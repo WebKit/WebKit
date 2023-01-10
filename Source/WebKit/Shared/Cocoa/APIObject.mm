@@ -76,7 +76,7 @@
 #import "_WKContextMenuElementInfoInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKDataTaskInternal.h"
-#import "_WKExperimentalFeatureInternal.h"
+#import "_WKFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFrameTreeNodeInternal.h"
 #import "_WKGeolocationPositionInternal.h"
@@ -84,7 +84,6 @@
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 #import "_WKInspectorInternal.h"
-#import "_WKInternalDebugFeatureInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
@@ -233,10 +232,6 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [_WKDataTask alloc];
         break;
 
-    case Type::InternalDebugFeature:
-        wrapper = [_WKInternalDebugFeature alloc];
-        break;
-
     case Type::Dictionary:
         wrapper = [WKNSDictionary alloc];
         break;
@@ -245,14 +240,14 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKDownload alloc];
         break;
 
-    case Type::ExperimentalFeature:
-        wrapper = [_WKExperimentalFeature alloc];
-        break;
-
     case Type::Error:
         wrapper = allocateWKObject([WKNSError class], size);
         break;
 
+    case Type::Feature:
+        wrapper = [_WKFeature alloc];
+        break;
+        
     case Type::FrameHandle:
         wrapper = [_WKFrameHandle alloc];
         break;

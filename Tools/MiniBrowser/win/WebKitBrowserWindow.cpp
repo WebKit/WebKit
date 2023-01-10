@@ -231,11 +231,11 @@ void WebKitBrowserWindow::resetFeatureMenu(FeatureType featureType, HMENU menu, 
         auto size = WKArrayGetSize(features.get());
         for (size_t i = 0; i < size; i++) {
             auto item = WKArrayGetItemAtIndex(features.get(), i);
-            assert(WKGetTypeID(item) == WKExperimentalFeatureGetTypeID());
-            auto feature = static_cast<WKExperimentalFeatureRef>(item);
-            auto name = createString(adoptWK(WKExperimentalFeatureCopyName(feature)).get());
-            auto key = adoptWK(WKExperimentalFeatureCopyKey(feature));
-            bool defaultValue = WKExperimentalFeatureDefaultValue(feature);
+            assert(WKGetTypeID(item) == WKFeatureGetTypeID());
+            auto feature = static_cast<WKFeatureRef>(item);
+            auto name = createString(adoptWK(WKFeatureCopyName(feature)).get());
+            auto key = adoptWK(WKFeatureCopyKey(feature));
+            bool defaultValue = WKFeatureDefaultValue(feature);
             if (resetsSettingsToDefaults) {
                 auto flag = MF_BYCOMMAND | (defaultValue ? MF_CHECKED : MF_UNCHECKED);
                 CheckMenuItem(menu, IDM_EXPERIMENTAL_FEATURES_BEGIN + i, flag);
@@ -253,11 +253,11 @@ void WebKitBrowserWindow::resetFeatureMenu(FeatureType featureType, HMENU menu, 
         auto size = WKArrayGetSize(features.get());
         for (size_t i = 0; i < size; i++) {
             auto item = WKArrayGetItemAtIndex(features.get(), i);
-            assert(WKGetTypeID(item) == WKInternalDebugFeatureGetTypeID());
-            auto feature = static_cast<WKInternalDebugFeatureRef>(item);
-            auto name = createString(adoptWK(WKInternalDebugFeatureCopyName(feature)).get());
-            auto key = adoptWK(WKInternalDebugFeatureCopyKey(feature));
-            bool defaultValue = WKInternalDebugFeatureDefaultValue(feature);
+            assert(WKGetTypeID(item) == WKFeatureGetTypeID());
+            auto feature = static_cast<WKFeatureRef>(item);
+            auto name = createString(adoptWK(WKFeatureCopyName(feature)).get());
+            auto key = adoptWK(WKFeatureCopyKey(feature));
+            bool defaultValue = WKFeatureDefaultValue(feature);
             if (resetsSettingsToDefaults) {
                 auto flag = MF_BYCOMMAND | (defaultValue ? MF_CHECKED : MF_UNCHECKED);
                 CheckMenuItem(menu, IDM_INTERNAL_DEBUG_FEATURES_BEGIN + i, flag);

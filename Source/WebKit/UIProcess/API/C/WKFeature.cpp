@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,38 @@
  */
 
 #include "config.h"
-#include "APIInternalDebugFeature.h"
+#include "WKFeature.h"
 
-namespace API {
+#include "APIFeature.h"
+#include "WKAPICast.h"
 
-Ref<InternalDebugFeature> InternalDebugFeature::create(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
+WKTypeID WKFeatureGetTypeID()
 {
-    return adoptRef(*new InternalDebugFeature(name, key, status, details, defaultValue, hidden));
+    return WebKit::toAPI(API::Feature::APIType);
 }
 
-InternalDebugFeature::InternalDebugFeature(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
-    : m_name(name)
-    , m_key(key)
-    , m_status(status)
-    , m_details(details)
-    , m_defaultValue(defaultValue)
-    , m_hidden(hidden)
+WKStringRef WKFeatureCopyName(WKFeatureRef feature)
 {
+    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->name());
 }
 
+WKStringRef WKFeatureCopyKey(WKFeatureRef feature)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->key());
 }
+
+WKStringRef WKFeatureCopyDetails(WKFeatureRef feature)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->details());
+}
+
+bool WKFeatureDefaultValue(WKFeatureRef feature)
+{
+    return WebKit::toImpl(feature)->defaultValue();
+}
+
+bool WKFeatureIsHidden(WKFeatureRef feature)
+{
+    return WebKit::toImpl(feature)->isHidden();
+}
+
