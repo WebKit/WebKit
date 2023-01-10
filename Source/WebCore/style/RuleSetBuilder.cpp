@@ -443,7 +443,7 @@ bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MQ::MediaQueryLi
 
 void RuleSetBuilder::MediaQueryCollector::pop(const MQ::MediaQueryList& mediaQueries)
 {
-    if (mediaQueries.isEmpty() || dynamicContextStack.isEmpty())
+    if (dynamicContextStack.isEmpty() || &dynamicContextStack.last().queries != &mediaQueries)
         return;
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
