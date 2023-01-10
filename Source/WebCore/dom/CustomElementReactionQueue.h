@@ -102,8 +102,10 @@ public:
 private:
     static void enqueueElementOnAppropriateElementQueue(Element&);
 
+    using Item = CustomElementReactionQueueItem;
+
     Ref<JSCustomElementInterface> m_interface;
-    Vector<CustomElementReactionQueueItem> m_items;
+    Vector<Item> m_items;
     bool m_elementInternalsAttached { false };
 };
 
