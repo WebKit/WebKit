@@ -96,6 +96,13 @@ CSSSelectorList CSSSelectorParser::consumeComplexSelectorList(CSSParserTokenRang
     });
 }
 
+CSSSelectorList CSSSelectorParser::consumeRelativeSelectorList(CSSParserTokenRange& range)
+{
+    return consumeSelectorList(range, [&](CSSParserTokenRange& range) {
+        return consumeRelativeScopeSelector(range);
+    });
+}
+
 CSSSelectorList CSSSelectorParser::consumeNestedSelectorList(CSSParserTokenRange& range)
 {
     return consumeSelectorList(range, [&] (CSSParserTokenRange& range) {
@@ -152,13 +159,6 @@ CSSSelectorList CSSSelectorParser::consumeForgivingComplexSelectorList(CSSParser
 {
     return consumeForgivingSelectorList(range, [&](CSSParserTokenRange& range) {
         return consumeComplexSelector(range);
-    });
-}
-
-CSSSelectorList CSSSelectorParser::consumeForgivingRelativeSelectorList(CSSParserTokenRange& range)
-{
-    return consumeForgivingSelectorList(range, [&](CSSParserTokenRange& range) {
-        return consumeRelativeScopeSelector(range);
     });
 }
 
@@ -830,7 +830,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
             SetForScope disallowNestedHas(m_disallowHasPseudoClass, true);
             auto selectorList = makeUnique<CSSSelectorList>();
-            *selectorList = consumeForgivingRelativeSelectorList(block);
+            *selectorList = consumeRelativeSelectorList(block);
             if (selectorList->isEmpty() || !block.atEnd())
                 return nullptr;
             selector->setSelectorList(WTFMove(selectorList));

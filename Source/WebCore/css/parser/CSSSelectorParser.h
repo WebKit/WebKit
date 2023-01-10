@@ -64,8 +64,8 @@ private:
     template<typename ConsumeSelector> CSSSelectorList consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
 
     CSSSelectorList consumeForgivingComplexSelectorList(CSSParserTokenRange&);
-    CSSSelectorList consumeForgivingRelativeSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
+    CSSSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);
 
     std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeCompoundSelector(CSSParserTokenRange&);
