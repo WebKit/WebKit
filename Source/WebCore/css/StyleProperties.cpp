@@ -1139,7 +1139,7 @@ RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) 
     auto value = property.value();
     // System fonts are represented as CSSPrimitiveValue for various font subproperties, but these must serialize as the empty string.
     // It might be better to implement this as a special CSSValue type instead of turning them into null here.
-    if (property.id() != CSSPropertyFont && CSSPropertyParserHelpers::isSystemFontShorthand(valueID(value)))
+    if (property.shorthandID() == CSSPropertyFont && CSSPropertyParserHelpers::isSystemFontShorthand(valueID(value)))
         return nullptr;
     return value;
 }
