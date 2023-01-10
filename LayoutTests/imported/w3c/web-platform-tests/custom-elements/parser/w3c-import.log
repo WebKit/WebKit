@@ -24,4 +24,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-constructed-element.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document.html
-/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/serializing-html-fragments.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/serializing-html-fragments-customized-builtins.html

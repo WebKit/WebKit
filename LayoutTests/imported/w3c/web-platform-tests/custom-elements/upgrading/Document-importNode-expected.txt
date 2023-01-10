@@ -1,6 +1,4 @@
 
 PASS autonomous: document.importNode() should import custom elements successfully
 PASS autonomous: document.importNode() should import "undefined" custom elements successfully
-FAIL built-in: document.importNode() should import custom elements successfully assert_true: expected true got false
-FAIL built-in: document.importNode() should import "undefined" custom elements successfully assert_true: expected true got false
 

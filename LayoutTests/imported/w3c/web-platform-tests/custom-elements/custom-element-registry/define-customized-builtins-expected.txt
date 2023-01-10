@@ -1,0 +1,33 @@
+
+FAIL If extends is a-, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-valid-name', class {}, { extends: name });
+      }" did not throw
+PASS If extends is a-a, should throw a NotSupportedError
+PASS If extends is aa-, should throw a NotSupportedError
+PASS If extends is aa-a, should throw a NotSupportedError
+PASS If extends is a-.-_, should throw a NotSupportedError
+PASS If extends is a-0123456789, should throw a NotSupportedError
+PASS If extends is a-漢字, should throw a NotSupportedError
+PASS If extends is a-𠀋, should throw a NotSupportedError
+FAIL If extends is bgsound, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+FAIL If extends is blink, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+FAIL If extends is isindex, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+FAIL If extends is multicol, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+FAIL If extends is nextid, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+FAIL If extends is spacer, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+FAIL If extends is elementnametobeunknownelement, should throw a NotSupportedError assert_throws_dom: function "() =>  {
+        customElements.define('test-define-extend-' + name, class {}, { extends: name });
+      }" did not throw
+

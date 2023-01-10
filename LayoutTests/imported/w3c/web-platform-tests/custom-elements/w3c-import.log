@@ -16,8 +16,10 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/CustomElementRegistry-constructor-and-callbacks-are-held-strongly.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/CustomElementRegistry.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/ElementInternals-accessibility.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-attachInternals.html
@@ -39,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/perform-microtask-checkpoint-before-construction-xml-parser.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/perform-microtask-checkpoint-before-construction.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/prevent-extensions-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print.html

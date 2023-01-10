@@ -14,7 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Document-importNode-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Document-importNode.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Node-cloneNode-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Node-cloneNode.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/upgrading-enqueue-reactions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element.html
