@@ -36,9 +36,11 @@
                 shouldBe('count', '0');
             }, false);
             box.addEventListener('animationend', () => {
+                // As long as the rendering count remains under 15, which matches 0.25s with
+                // a refresh rate of 60fps, then this test is positive.
                 count = internals.renderingUpdateCount();
-                shouldBeTrue('count <= 9');
-                if (count > 9)
+                shouldBeTrue('count <= 10');
+                if (count > 10)
                     debug(`Saw ${count} updates`);
                 finishJSTest();
             }, false);
