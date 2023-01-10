@@ -393,13 +393,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool variantSettingsIsNormal = variantSettings.isAllNormal();
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
     bool fontFaceDoesntSpecifyFeatures = !fontCreationContext.fontFaceFeatures() || fontCreationContext.fontFaceFeatures()->isEmpty();
-    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing && dontNeedToApplyFontPalettes) {
-#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
+    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing && dontNeedToApplyFontPalettes)
         return originalFont;
-#else
-        return createFontForInstalledFonts(originalFont, fontDescription.shouldAllowUserInstalledFonts());
-#endif
-    }
 
     // This algorithm is described at https://drafts.csswg.org/css-fonts-4/#feature-variation-precedence
     FeaturesMap featuresToBeApplied;
@@ -1120,20 +1115,12 @@ static bool isUserInstalledFont(CTFontRef font)
 }
 #endif
 
-#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
 static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts allowUserInstalledFonts, const UChar* characters, unsigned length)
 {
     CFIndex coveredLength = 0;
     auto fallbackOption = allowUserInstalledFonts == AllowUserInstalledFonts::No ? kCTFontFallbackOptionSystem : kCTFontFallbackOptionDefault;
     return adoptCF(CTFontCreateForCharactersWithLanguageAndOption(font, reinterpret_cast<const UniChar*>(characters), length, localeString, fallbackOption, &coveredLength));
 }
-#else
-static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts, const UChar* characters, unsigned length)
-{
-    CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreateForCharactersWithLanguage(font, reinterpret_cast<const UniChar*>(characters), length, localeString, &coveredLength));
-}
-#endif
 
 static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValue fontWeight, const AtomString& locale, AllowUserInstalledFonts allowUserInstalledFonts, const UChar* characters, unsigned length)
 {
@@ -1356,11 +1343,7 @@ void FontCache::prewarm(PrewarmInformation&& prewarmInformation)
                 CFIndex coveredLength = 0;
                 UniChar character = ' ';
 
-#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
                 auto fallbackWarmingFont = adoptCF(CTFontCreateForCharactersWithLanguageAndOption(warmingFont.get(), &character, 1, nullptr, kCTFontFallbackOptionSystem, &coveredLength));
-#else
-                auto fallbackWarmingFont = adoptCF(CTFontCreateForCharactersWithLanguage(warmingFont.get(), &character, 1, nullptr, &coveredLength));
-#endif
             }
         }
     });
