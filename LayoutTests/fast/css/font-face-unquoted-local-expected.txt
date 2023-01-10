@@ -1,0 +1,4 @@
+
+PASS Check that src: local(unquoted name); is valid
+PASS Check that src: local(invalid '' name); is invalid
+
