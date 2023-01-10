@@ -32,16 +32,16 @@ namespace WebCore {
 
 class ToggleButtonPart final : public ControlPart {
 public:
-    static Ref<ToggleButtonPart> create(ControlPartType type)
+    static Ref<ToggleButtonPart> create(StyleAppearance type)
     {
         return adoptRef(*new ToggleButtonPart(type));
     }
 
 private:
-    ToggleButtonPart(ControlPartType type)
+    ToggleButtonPart(StyleAppearance type)
         : ControlPart(type)
     {
-        ASSERT(type == ControlPartType::Checkbox || type == ControlPartType::Radio);
+        ASSERT(type == StyleAppearance::Checkbox || type == StyleAppearance::Radio);
     }
 
     std::unique_ptr<PlatformControl> createPlatformControl() final

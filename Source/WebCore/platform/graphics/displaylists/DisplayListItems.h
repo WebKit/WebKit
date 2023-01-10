@@ -1820,7 +1820,7 @@ public:
 
     WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
 
-    ControlPartType type() const { return m_part->type(); }
+    StyleAppearance type() const { return m_part->type(); }
     FloatRect rect() const { return m_rect; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     const ControlStyle& style() const { return m_style; }

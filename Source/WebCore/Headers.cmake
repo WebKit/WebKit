@@ -1760,7 +1760,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/controls/ColorWellPart.h
     platform/graphics/controls/ControlFactory.h
     platform/graphics/controls/ControlPart.h
-    platform/graphics/controls/ControlPartType.h
     platform/graphics/controls/ControlStyle.h
     platform/graphics/controls/InnerSpinButtonPart.h
     platform/graphics/controls/MenuListButtonPart.h
@@ -2135,6 +2134,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageQuotaManager.h
     storage/StorageType.h
 
+    style/StyleAppearance.h
     style/StyleChange.h
     style/StyleScope.h
     style/StyleScopeOrdinal.h

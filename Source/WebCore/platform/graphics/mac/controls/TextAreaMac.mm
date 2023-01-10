@@ -37,7 +37,7 @@ namespace WebCore {
 TextAreaMac::TextAreaMac(TextAreaPart& owningPart)
     : PlatformControl(owningPart)
 {
-    ASSERT(owningPart.type() == ControlPartType::Listbox || owningPart.type() == ControlPartType::TextArea);
+    ASSERT(owningPart.type() == StyleAppearance::Listbox || owningPart.type() == StyleAppearance::TextArea);
 }
 
 void TextAreaMac::draw(GraphicsContext& context, const FloatRect& rect, float, const ControlStyle& style)

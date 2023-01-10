@@ -39,7 +39,7 @@ public:
 
 private:
     SearchFieldPart()
-        : ControlPart(ControlPartType::SearchField)
+        : ControlPart(StyleAppearance::SearchField)
     {
     }
 

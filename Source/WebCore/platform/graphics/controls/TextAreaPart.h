@@ -32,16 +32,16 @@ namespace WebCore {
 
 class TextAreaPart final : public ControlPart {
 public:
-    static Ref<TextAreaPart> create(ControlPartType type)
+    static Ref<TextAreaPart> create(StyleAppearance type)
     {
         return adoptRef(*new TextAreaPart(type));
     }
 
 private:
-    TextAreaPart(ControlPartType type)
+    TextAreaPart(StyleAppearance type)
         : ControlPart(type)
     {
-        ASSERT(type == ControlPartType::Listbox || type == ControlPartType::TextArea);
+        ASSERT(type == StyleAppearance::Listbox || type == StyleAppearance::TextArea);
     }
 
     std::unique_ptr<PlatformControl> createPlatformControl() final

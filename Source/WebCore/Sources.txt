@@ -2205,7 +2205,6 @@ platform/graphics/WOFFFileFormat.cpp
 platform/graphics/WidthIterator.cpp
 platform/graphics/controls/ControlFactory.cpp
 platform/graphics/controls/ControlPart.cpp
-platform/graphics/controls/ControlPartType.cpp
 platform/graphics/controls/ControlStyle.cpp
 platform/graphics/controls/MeterPart.cpp
 platform/graphics/controls/ProgressBarPart.cpp
@@ -2718,6 +2717,7 @@ style/RuleFeature.cpp
 style/RuleSet.cpp
 style/RuleSetBuilder.cpp
 style/StyleAdjuster.cpp
+style/StyleAppearance.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
 style/StyleChange.cpp

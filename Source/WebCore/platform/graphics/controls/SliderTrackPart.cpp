@@ -31,18 +31,18 @@
 
 namespace WebCore {
 
-Ref<SliderTrackPart> SliderTrackPart::create(ControlPartType type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
+Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
 {
     return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTFMove(tickRatios)));
 }
 
-SliderTrackPart::SliderTrackPart(ControlPartType type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
+SliderTrackPart::SliderTrackPart(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
     : ControlPart(type)
     , m_thumbSize(thumbSize)
     , m_trackBounds(trackBounds)
     , m_tickRatios(WTFMove(tickRatios))
 {
-    ASSERT(type == ControlPartType::SliderHorizontal || type == ControlPartType::SliderVertical);
+    ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -54,7 +54,7 @@ void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect,
     static constexpr IntSize sliderTickSize = { 1, 3 };
     static constexpr int sliderTickOffsetFromTrackCenter = -9;
 
-    bool isHorizontal = type() == ControlPartType::SliderHorizontal;
+    bool isHorizontal = type() == StyleAppearance::SliderHorizontal;
 
     auto trackBounds = m_trackBounds;
     trackBounds.moveBy(IntPoint(rect.location()));

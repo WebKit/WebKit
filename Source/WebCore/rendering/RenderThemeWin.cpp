@@ -308,12 +308,12 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
     return platformActiveSelectionForegroundColor(options);
 }
 
-bool RenderThemeWin::supportsFocus(ControlPartType appearance) const
+bool RenderThemeWin::supportsFocus(StyleAppearance appearance) const
 {
     switch (appearance) {
-    case ControlPartType::PushButton:
-    case ControlPartType::Button:
-    case ControlPartType::DefaultButton:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Button:
+    case StyleAppearance::DefaultButton:
         return true;
     default:
         return false;
@@ -329,18 +329,18 @@ unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSub
 {
     unsigned state = 0;
     switch (o.style().effectiveAppearance()) {
-    case ControlPartType::PushButton:
-    case ControlPartType::Button:
-    case ControlPartType::DefaultButton:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Button:
+    case StyleAppearance::DefaultButton:
         state = DFCS_BUTTONPUSH;
         if (!isEnabled(o))
             state |= DFCS_INACTIVE;
         else if (isPressed(o))
             state |= DFCS_PUSHED;
         break;
-    case ControlPartType::Radio:
-    case ControlPartType::Checkbox:
-        state = (o.style().effectiveAppearance() == ControlPartType::Radio) ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK;
+    case StyleAppearance::Radio:
+    case StyleAppearance::Checkbox:
+        state = (o.style().effectiveAppearance() == StyleAppearance::Radio) ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK;
         if (isChecked(o))
             state |= DFCS_CHECKED;
         if (!isEnabled(o))
@@ -348,14 +348,14 @@ unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSub
         else if (isPressed(o))
             state |= DFCS_PUSHED;
         break;
-    case ControlPartType::Menulist:
+    case StyleAppearance::Menulist:
         state = DFCS_SCROLLCOMBOBOX;
         if (!isEnabled(o))
             state |= DFCS_INACTIVE;
         else if (isPressed(o))
             state |= DFCS_PUSHED;
         break;
-    case ControlPartType::InnerSpinButton: {
+    case StyleAppearance::InnerSpinButton: {
         bool isUpButton = subPart == SpinButtonUp;
         state = isUpButton ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
         if (!isEnabled(o) || isReadOnlyControl(o))
@@ -378,7 +378,7 @@ unsigned RenderThemeWin::determineState(const RenderObject& o)
     auto appearance = o.style().effectiveAppearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnlyControl(o) && (ControlPartType::TextField == appearance || ControlPartType::TextArea == appearance || ControlPartType::SearchField == appearance))
+    else if (isReadOnlyControl(o) && (StyleAppearance::TextField == appearance || StyleAppearance::TextArea == appearance || StyleAppearance::SearchField == appearance))
         result = TFS_READONLY; // Readonly is supported on textfields.
     else if (isPressed(o)) // Active overrides hover and focused.
         result = TS_ACTIVE;
@@ -386,7 +386,7 @@ unsigned RenderThemeWin::determineState(const RenderObject& o)
         result = TS_FOCUSED;
     else if (isHovered(o))
         result = TS_HOVER;
-    if (isIndeterminate(o) && appearance == ControlPartType::Checkbox)
+    if (isIndeterminate(o) && appearance == StyleAppearance::Checkbox)
         result += 8;
     else if (isChecked(o))
         result += 4; // 4 unchecked states, 4 checked states.
@@ -440,45 +440,45 @@ ThemeData RenderThemeWin::getClassicThemeData(const RenderObject& o, ControlSubP
 {
     ThemeData result;
     switch (o.style().effectiveAppearance()) {
-    case ControlPartType::PushButton:
-    case ControlPartType::Button:
-    case ControlPartType::DefaultButton:
-    case ControlPartType::Checkbox:
-    case ControlPartType::Radio:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Button:
+    case StyleAppearance::DefaultButton:
+    case StyleAppearance::Checkbox:
+    case StyleAppearance::Radio:
         result.m_part = DFC_BUTTON;
         result.m_state = determineClassicState(o);
         break;
-    case ControlPartType::Menulist:
+    case StyleAppearance::Menulist:
         result.m_part = DFC_SCROLL;
         result.m_state = determineClassicState(o);
         break;
-    case ControlPartType::Meter:
+    case StyleAppearance::Meter:
         result.m_part = PP_BAR;
         result.m_state = determineState(o);
         break;
-    case ControlPartType::SearchField:
-    case ControlPartType::TextField:
-    case ControlPartType::TextArea:
+    case StyleAppearance::SearchField:
+    case StyleAppearance::TextField:
+    case StyleAppearance::TextArea:
         result.m_part = TFP_TEXTFIELD;
         result.m_state = determineState(o);
         break;
-    case ControlPartType::SliderHorizontal:
+    case StyleAppearance::SliderHorizontal:
         result.m_part = TKP_TRACK;
         result.m_state = TS_NORMAL;
         break;
-    case ControlPartType::SliderVertical:
+    case StyleAppearance::SliderVertical:
         result.m_part = TKP_TRACKVERT;
         result.m_state = TS_NORMAL;
         break;
-    case ControlPartType::SliderThumbHorizontal:
+    case StyleAppearance::SliderThumbHorizontal:
         result.m_part = TKP_THUMBBOTTOM;
         result.m_state = determineSliderThumbState(o);
         break;
-    case ControlPartType::SliderThumbVertical:
+    case StyleAppearance::SliderThumbVertical:
         result.m_part = TKP_THUMBRIGHT;
         result.m_state = determineSliderThumbState(o);
         break;
-    case ControlPartType::InnerSpinButton:
+    case StyleAppearance::InnerSpinButton:
         result.m_part = DFC_SCROLL;
         result.m_state = determineClassicState(o, subPart);
         break;
@@ -495,18 +495,18 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
 
     ThemeData result;
     switch (o.style().effectiveAppearance()) {
-    case ControlPartType::PushButton:
-    case ControlPartType::Button:
-    case ControlPartType::DefaultButton:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Button:
+    case StyleAppearance::DefaultButton:
         result.m_part = BP_BUTTON;
         result.m_state = determineButtonState(o);
         break;
-    case ControlPartType::Checkbox:
+    case StyleAppearance::Checkbox:
         result.m_part = BP_CHECKBOX;
         result.m_state = determineState(o);
         break;
-    case ControlPartType::Menulist:
-    case ControlPartType::MenulistButton: {
+    case StyleAppearance::Menulist:
+    case StyleAppearance::MenulistButton: {
         const bool isVistaOrLater = (windowsVersion() >= WindowsVista);
         result.m_part = isVistaOrLater ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
         if (isVistaOrLater)
@@ -515,37 +515,37 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
             result.m_state = determineState(o);
         break;
     }
-    case ControlPartType::Meter:
+    case StyleAppearance::Meter:
         result.m_part = PP_BAR;
         result.m_state = determineState(o);
         break;
-    case ControlPartType::Radio:
+    case StyleAppearance::Radio:
         result.m_part = BP_RADIO;
         result.m_state = determineState(o);
         break;
-    case ControlPartType::SearchField:
-    case ControlPartType::TextField:
-    case ControlPartType::TextArea:
+    case StyleAppearance::SearchField:
+    case StyleAppearance::TextField:
+    case StyleAppearance::TextArea:
         result.m_part = (windowsVersion() >= WindowsVista) ? EP_EDITBORDER_NOSCROLL : TFP_TEXTFIELD;
         result.m_state = determineState(o);
         break;
-    case ControlPartType::SliderHorizontal:
+    case StyleAppearance::SliderHorizontal:
         result.m_part = TKP_TRACK;
         result.m_state = TS_NORMAL;
         break;
-    case ControlPartType::SliderVertical:
+    case StyleAppearance::SliderVertical:
         result.m_part = TKP_TRACKVERT;
         result.m_state = TS_NORMAL;
         break;
-    case ControlPartType::SliderThumbHorizontal:
+    case StyleAppearance::SliderThumbHorizontal:
         result.m_part = TKP_THUMBBOTTOM;
         result.m_state = determineSliderThumbState(o);
         break;
-    case ControlPartType::SliderThumbVertical:
+    case StyleAppearance::SliderThumbVertical:
         result.m_part = TKP_THUMBRIGHT;
         result.m_state = determineSliderThumbState(o);
         break;
-    case ControlPartType::InnerSpinButton:
+    case StyleAppearance::InnerSpinButton:
         result.m_part = subPart == SpinButtonUp ? SPNP_UP : SPNP_DOWN;
         result.m_state = determineSpinButtonState(o, subPart);
         break;
@@ -576,8 +576,8 @@ static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE 
         } else if (themeData.m_part == TKP_TRACK || themeData.m_part == TKP_TRACKVERT) {
             ::DrawEdge(hdc, &widgetRect, EDGE_SUNKEN, BF_RECT | BF_ADJUST);
             ::FillRect(hdc, &widgetRect, (HBRUSH)GetStockObject(GRAY_BRUSH));
-        } else if ((o.style().effectiveAppearance() == ControlPartType::SliderThumbHorizontal
-        || o.style().effectiveAppearance() == ControlPartType::SliderThumbVertical)
+        } else if ((o.style().effectiveAppearance() == StyleAppearance::SliderThumbHorizontal
+        || o.style().effectiveAppearance() == StyleAppearance::SliderThumbVertical)
         && (themeData.m_part == TKP_THUMBBOTTOM || themeData.m_part == TKP_THUMBTOP
         || themeData.m_part == TKP_THUMBLEFT || themeData.m_part == TKP_THUMBRIGHT)) {
             ::DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT | BF_SOFT | BF_MIDDLE | BF_ADJUST);
@@ -601,7 +601,7 @@ static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE 
             }
         } else {
             // Push buttons, buttons, checkboxes and radios, and the dropdown arrow in menulists.
-            if (o.style().effectiveAppearance() == ControlPartType::DefaultButton) {
+            if (o.style().effectiveAppearance() == StyleAppearance::DefaultButton) {
                 HBRUSH brush = ::GetSysColorBrush(COLOR_3DDKSHADOW);
                 ::FrameRect(hdc, &widgetRect, brush);
                 ::InflateRect(&widgetRect, -1, -1);
@@ -754,10 +754,10 @@ bool RenderThemeWin::paintSliderTrack(const RenderObject& o, const PaintInfo& i,
 {
     IntRect bounds = r;
     
-    if (o.style().effectiveAppearance() ==  ControlPartType::SliderHorizontal) {
+    if (o.style().effectiveAppearance() ==  StyleAppearance::SliderHorizontal) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
-    } else if (o.style().effectiveAppearance() == ControlPartType::SliderVertical) {
+    } else if (o.style().effectiveAppearance() == StyleAppearance::SliderVertical) {
         bounds.setWidth(trackWidth);
         bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
     }
@@ -778,10 +778,10 @@ const int sliderThumbHeight = 15;
 void RenderThemeWin::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
     auto type = style.effectiveAppearance();
-    if (type == ControlPartType::SliderThumbVertical) {
+    if (type == StyleAppearance::SliderThumbVertical) {
         style.setWidth(Length(sliderThumbHeight, LengthType::Fixed));
         style.setHeight(Length(sliderThumbWidth, LengthType::Fixed));
-    } else if (type == ControlPartType::SliderThumbHorizontal) {
+    } else if (type == StyleAppearance::SliderThumbHorizontal) {
         style.setWidth(Length(sliderThumbWidth, LengthType::Fixed));
         style.setHeight(Length(sliderThumbHeight, LengthType::Fixed));
     }
@@ -1006,10 +1006,10 @@ void RenderThemeWin::adjustMeterStyle(RenderStyle& style, const Element*) const
     style.setBoxShadow(nullptr);
 }
 
-bool RenderThemeWin::supportsMeter(ControlPartType type, const HTMLMeterElement&) const
+bool RenderThemeWin::supportsMeter(StyleAppearance type, const HTMLMeterElement&) const
 {
     switch (type) {
-    case ControlPartType::Meter:
+    case StyleAppearance::Meter:
         return true;
     default:
         return false;

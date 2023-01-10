@@ -32,19 +32,19 @@ namespace WebCore {
 
 class ButtonPart final : public ControlPart {
 public:
-    static Ref<ButtonPart> create(ControlPartType type)
+    static Ref<ButtonPart> create(StyleAppearance type)
     {
         return adoptRef(*new ButtonPart(type));
     }
 
 private:
-    ButtonPart(ControlPartType type)
+    ButtonPart(StyleAppearance type)
         : ControlPart(type)
     {
-        ASSERT(type == ControlPartType::Button
-            || type == ControlPartType::DefaultButton
-            || type == ControlPartType::PushButton
-            || type == ControlPartType::SquareButton);
+        ASSERT(type == StyleAppearance::Button
+            || type == StyleAppearance::DefaultButton
+            || type == StyleAppearance::PushButton
+            || type == StyleAppearance::SquareButton);
     }
 
     std::unique_ptr<PlatformControl> createPlatformControl() final

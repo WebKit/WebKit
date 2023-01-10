@@ -39,10 +39,10 @@ namespace WebCore {
 ButtonMac::ButtonMac(ButtonPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)
 {
-    ASSERT(m_owningPart.type() == ControlPartType::Button
-        || m_owningPart.type() == ControlPartType::DefaultButton
-        || m_owningPart.type() == ControlPartType::PushButton
-        || m_owningPart.type() == ControlPartType::SquareButton);
+    ASSERT(m_owningPart.type() == StyleAppearance::Button
+        || m_owningPart.type() == StyleAppearance::DefaultButton
+        || m_owningPart.type() == StyleAppearance::PushButton
+        || m_owningPart.type() == StyleAppearance::SquareButton);
 }
 
 IntSize ButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) const
@@ -74,7 +74,7 @@ IntOutsets ButtonMac::cellOutsets(NSControlSize controlSize, const ControlStyle&
 
 NSBezelStyle ButtonMac::bezelStyle(const FloatRect& rect, const ControlStyle& style) const
 {
-    if (m_owningPart.type() == ControlPartType::SquareButton)
+    if (m_owningPart.type() == StyleAppearance::SquareButton)
         return NSBezelStyleShadowlessSquare;
 
     auto controlSize = style.states.contains(ControlStyle::State::LargeControls) ? NSControlSizeLarge : NSControlSizeRegular;

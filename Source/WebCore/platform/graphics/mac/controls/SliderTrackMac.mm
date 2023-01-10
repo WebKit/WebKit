@@ -48,7 +48,7 @@ FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     auto rect = bounds;
     
     // Set the height/width and align the location in the center of the difference.
-    if (sliderTrackPart.type() == ControlPartType::SliderHorizontal) {
+    if (sliderTrackPart.type() == StyleAppearance::SliderHorizontal) {
         rect.setHeight(trackWidth);
         rect.setY(rect.y() + (bounds.height() - rect.height()) / 2);
     } else {
@@ -92,7 +92,7 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRect& rect, float
     struct CGFunctionCallbacks mainCallbacks = { 0, trackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (sliderTrackPart.type() == ControlPartType::SliderVertical)
+    if (sliderTrackPart.type() == StyleAppearance::SliderVertical)
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(logicalRect.x(),  logicalRect.maxY()), CGPointMake(logicalRect.maxX(), logicalRect.maxY()), mainFunction.get(), false, false));
     else
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(logicalRect.x(),  logicalRect.y()), CGPointMake(logicalRect.x(), logicalRect.maxY()), mainFunction.get(), false, false));

@@ -124,16 +124,16 @@ RenderTheme& RenderTheme::singleton()
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
     switch (style.effectiveAppearance()) {
-    case ControlPartType::PushButton:
-    case ControlPartType::Button:
-    case ControlPartType::TextField:
-    case ControlPartType::TextArea:
-    case ControlPartType::SearchField:
-    case ControlPartType::Menulist:
-    case ControlPartType::Radio:
-    case ControlPartType::Checkbox:
-    case ControlPartType::SliderHorizontal:
-    case ControlPartType::SliderVertical:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Button:
+    case StyleAppearance::TextField:
+    case StyleAppearance::TextArea:
+    case StyleAppearance::SearchField:
+    case StyleAppearance::Menulist:
+    case StyleAppearance::Radio:
+    case StyleAppearance::Checkbox:
+    case StyleAppearance::SliderHorizontal:
+    case StyleAppearance::SliderVertical:
         return true;
     default:
         break;
@@ -410,7 +410,7 @@ void RenderThemeAdwaita::adjustMenuListButtonStyle(RenderStyle& style, const Ele
 
 LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
 {
-    if (style.effectiveAppearance() == ControlPartType::NoControl)
+    if (style.effectiveAppearance() == StyleAppearance::None)
         return { };
 
     auto zoomedArrowSize = menuListButtonArrowSize * style.effectiveZoom();
@@ -433,7 +433,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     if (isHovered(renderObject))
         states.add(ControlStates::States::Hovered);
     ControlStates controlStates(states);
-    Theme::singleton().paint(ControlPartType::Button, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
+    Theme::singleton().paint(StyleAppearance::Button, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
     auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
     FloatRect fieldRect = rect;
@@ -534,11 +534,11 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    auto type = renderObject.style().effectiveAppearance();
-    ASSERT(type == ControlPartType::SliderHorizontal || type == ControlPartType::SliderVertical);
+    auto appearance = renderObject.style().effectiveAppearance();
+    ASSERT(appearance == StyleAppearance::SliderHorizontal || appearance == StyleAppearance::SliderVertical);
 
     FloatRect fieldRect = rect;
-    if (type == ControlPartType::SliderHorizontal) {
+    if (appearance == StyleAppearance::SliderHorizontal) {
         fieldRect.move(0, rect.height() / 2 - (sliderTrackSize / 2));
         fieldRect.setHeight(6);
     } else {
@@ -573,7 +573,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     }
     FloatRect rangeRect = fieldRect;
     FloatRoundedRect::Radii corners;
-    if (type == ControlPartType::SliderHorizontal) {
+    if (appearance == StyleAppearance::SliderHorizontal) {
         if (renderObject.style().direction() == TextDirection::RTL) {
             rangeRect.move(thumbLocation.x(), 0);
             rangeRect.setWidth(rangeRect.width() - thumbLocation.x());
@@ -613,8 +613,8 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
 
 void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    auto type = style.effectiveAppearance();
-    if (type != ControlPartType::SliderThumbHorizontal && type != ControlPartType::SliderThumbVertical)
+    auto appearance = style.effectiveAppearance();
+    if (appearance != StyleAppearance::SliderThumbHorizontal && appearance != StyleAppearance::SliderThumbVertical)
         return;
 
     style.setWidth(Length(sliderThumbSize, LengthType::Fixed));
@@ -626,7 +626,7 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ASSERT(renderObject.style().effectiveAppearance() == ControlPartType::SliderThumbHorizontal || renderObject.style().effectiveAppearance() == ControlPartType::SliderThumbVertical);
+    ASSERT(renderObject.style().effectiveAppearance() == StyleAppearance::SliderThumbHorizontal || renderObject.style().effectiveAppearance() == StyleAppearance::SliderThumbVertical);
 
     SRGBA<uint8_t> sliderThumbBackgroundColor;
     SRGBA<uint8_t> sliderThumbBackgroundHoveredColor;

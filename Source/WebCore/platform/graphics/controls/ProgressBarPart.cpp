@@ -36,7 +36,7 @@ Ref<ProgressBarPart> ProgressBarPart::create(double position, const Seconds& ani
 }
 
 ProgressBarPart::ProgressBarPart(double position, const Seconds& animationStartTime)
-    : ControlPart(ControlPartType::ProgressBar)
+    : ControlPart(StyleAppearance::ProgressBar)
     , m_position(position)
     , m_animationStartTime(animationStartTime)
 {
