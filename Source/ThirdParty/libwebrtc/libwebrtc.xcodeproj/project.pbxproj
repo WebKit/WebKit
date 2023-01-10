@@ -476,29 +476,6 @@
 		410B38E8292BAA610003E515 /* sad_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 410B35A0292B6E730003E515 /* sad_neon.c */; };
 		410B38E9292BAA610003E515 /* transpose_neon.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B35A1292B6E740003E515 /* transpose_neon.h */; };
 		410B38EB292BAAF20003E515 /* arm_cpudetect.c in Sources */ = {isa = PBXBuildFile; fileRef = 410B38EA292BAAF10003E515 /* arm_cpudetect.c */; };
-		410B3913292CC1800003E515 /* compare_row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FC292CC1700003E515 /* compare_row.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3914292CC1800003E515 /* basic_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FD292CC1700003E515 /* basic_types.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3915292CC1800003E515 /* loongson_intrinsics.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FE292CC1700003E515 /* loongson_intrinsics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3916292CC1800003E515 /* macros_msa.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B38FF292CC1710003E515 /* macros_msa.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3917292CC1800003E515 /* scale_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3900292CC1710003E515 /* scale_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3918292CC1800003E515 /* scale_uv.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3901292CC1710003E515 /* scale_uv.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3919292CC1800003E515 /* scale_row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3902292CC1720003E515 /* scale_row.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B391A292CC1800003E515 /* compare.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3903292CC1730003E515 /* compare.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B391B292CC1800003E515 /* video_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3904292CC1730003E515 /* video_common.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B391C292CC1800003E515 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3905292CC1740003E515 /* version.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B391D292CC1800003E515 /* convert_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3906292CC1750003E515 /* convert_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B391E292CC1800003E515 /* rotate_row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3907292CC1760003E515 /* rotate_row.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B391F292CC1800003E515 /* convert_from.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3908292CC1770003E515 /* convert_from.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3920292CC1800003E515 /* rotate.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3909292CC1770003E515 /* rotate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3921292CC1800003E515 /* mjpeg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390A292CC1780003E515 /* mjpeg_decoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3922292CC1800003E515 /* convert_from_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390B292CC1780003E515 /* convert_from_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3923292CC1800003E515 /* convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390C292CC1790003E515 /* convert.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3924292CC1800003E515 /* scale_rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390D292CC1790003E515 /* scale_rgb.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3925292CC1800003E515 /* scale.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390E292CC17A0003E515 /* scale.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3926292CC1800003E515 /* cpu_id.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B390F292CC17B0003E515 /* cpu_id.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3927292CC1800003E515 /* planar_functions.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3910292CC17C0003E515 /* planar_functions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3928292CC1800003E515 /* row.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3911292CC17E0003E515 /* row.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		410B3929292CC1800003E515 /* rotate_argb.h in Headers */ = {isa = PBXBuildFile; fileRef = 410B3912292CC17E0003E515 /* rotate_argb.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		410BA1232570F60C002E2F8A /* deprecated_rtp_sender_egress.cc in Sources */ = {isa = PBXBuildFile; fileRef = 410BA1212570F60C002E2F8A /* deprecated_rtp_sender_egress.cc */; };
 		410BA1242570F60C002E2F8A /* deprecated_rtp_sender_egress.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA1222570F60C002E2F8A /* deprecated_rtp_sender_egress.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		410BA1292570F6A5002E2F8A /* libaom_av1_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA1272570F6A5002E2F8A /* libaom_av1_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -19963,29 +19940,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				410B3914292CC1800003E515 /* basic_types.h in Headers */,
-				410B391A292CC1800003E515 /* compare.h in Headers */,
-				410B3913292CC1800003E515 /* compare_row.h in Headers */,
-				410B3923292CC1800003E515 /* convert.h in Headers */,
-				410B391D292CC1800003E515 /* convert_argb.h in Headers */,
-				410B391F292CC1800003E515 /* convert_from.h in Headers */,
-				410B3922292CC1800003E515 /* convert_from_argb.h in Headers */,
-				410B3926292CC1800003E515 /* cpu_id.h in Headers */,
-				410B3915292CC1800003E515 /* loongson_intrinsics.h in Headers */,
-				410B3916292CC1800003E515 /* macros_msa.h in Headers */,
-				410B3921292CC1800003E515 /* mjpeg_decoder.h in Headers */,
-				410B3927292CC1800003E515 /* planar_functions.h in Headers */,
-				410B3920292CC1800003E515 /* rotate.h in Headers */,
-				410B3929292CC1800003E515 /* rotate_argb.h in Headers */,
-				410B391E292CC1800003E515 /* rotate_row.h in Headers */,
-				410B3928292CC1800003E515 /* row.h in Headers */,
-				410B3925292CC1800003E515 /* scale.h in Headers */,
-				410B3917292CC1800003E515 /* scale_argb.h in Headers */,
-				410B3924292CC1800003E515 /* scale_rgb.h in Headers */,
-				410B3919292CC1800003E515 /* scale_row.h in Headers */,
-				410B3918292CC1800003E515 /* scale_uv.h in Headers */,
-				410B391C292CC1800003E515 /* version.h in Headers */,
-				410B391B292CC1800003E515 /* video_common.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
