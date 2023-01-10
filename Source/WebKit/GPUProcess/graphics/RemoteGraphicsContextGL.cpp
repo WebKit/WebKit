@@ -58,7 +58,11 @@ Vector<S> vectorCopyCast(const T& arrayReference)
 // Currently we have one global WebGL processing instance.
 IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
 {
-    static NeverDestroyed<IPC::StreamConnectionWorkQueue> instance("RemoteGraphicsContextGL work queue");
+    static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        instance.construct("RemoteGraphicsContextGL work queue"); // LazyNeverDestroyed owns the initial ref.
+    });
     return instance.get();
 }
 
@@ -74,7 +78,8 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), remoteGraphicsContextGLStreamWorkQueue()))
+    , m_workQueue(remoteGraphicsContextGLStreamWorkQueue())
+    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)
 #if ENABLE(VIDEO)
@@ -99,7 +104,7 @@ RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
     assertIsMainRunLoop();
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([attributes = WTFMove(attributes), protectedThis = Ref { *this }]() mutable {
+    workQueue().dispatch([attributes = WTFMove(attributes), protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize(WTFMove(attributes));
     });
 }
@@ -107,7 +112,7 @@ void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attribute
 void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection)
 {
     assertIsMainRunLoop();
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
+    workQueue().dispatch([protectedThis = WTFMove(refFromConnection)] {
         protectedThis->workQueueUninitialize();
     });
 }
@@ -116,7 +121,7 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
 void RemoteGraphicsContextGL::displayWasReconfigured()
 {
     assertIsMainRunLoop();
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = Ref { *this }]() {
+    workQueue().dispatch([protectedThis = Ref { *this }] {
         assertIsCurrent(protectedThis->workQueue());
         protectedThis->m_context->updateContextOnDisplayReconfiguration();
     });
@@ -132,7 +137,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         m_context->setClient(this);
         String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
         String requestableExtensions = m_context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
-        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, remoteGraphicsContextGLStreamWorkQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore(), extensions, requestableExtensions));
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore(), extensions, requestableExtensions));
         m_streamConnection->startReceivingMessages(*this, Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
     } else
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, { }, { }, emptyString(), emptyString()));
