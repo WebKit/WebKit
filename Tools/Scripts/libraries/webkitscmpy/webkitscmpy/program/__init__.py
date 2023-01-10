@@ -57,7 +57,7 @@ from webkitscmpy import local, log, remote
 def main(
     args=None, path=None, loggers=None, contributors=None,
     identifier_template=None, subversion=None, additional_setup=None, hooks=None,
-    canonical_svn=None,
+    canonical_svn=None, programs=None,
 ):
     logging.basicConfig(level=logging.WARNING)
 
@@ -88,7 +88,7 @@ def main(
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show,
-    ]
+    ] + (programs or [])
     if subversion:
         programs.append(SetupGitSvn)
 
