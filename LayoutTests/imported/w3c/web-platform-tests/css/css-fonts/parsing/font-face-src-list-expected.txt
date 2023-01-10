@@ -1,6 +1,6 @@
 
-PASS Check that src: local(inherit), url(foo.ttf) is valid
-PASS Check that src: local("myfont"), local(unset) is valid
+FAIL Check that src: local(inherit), url(foo.ttf) is valid assert_equals: expected true but got false
+FAIL Check that src: local("myfont"), local(unset) is valid assert_equals: expected true but got false
 FAIL Check that src: local(), url(foo.ttf) is valid assert_equals: expected true but got false
 FAIL Check that src: local(12px monospace), url(foo.ttf) is valid assert_equals: expected true but got false
 FAIL Check that src: local("myfont") format(opentype), url(foo.ttf) is valid assert_equals: expected true but got false
