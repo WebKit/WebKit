@@ -424,8 +424,7 @@ struct Segment {
 struct Element {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    // nullFuncIndex represents the case when an element segment (of type funcref)
-    // contains a null element.
+    // nullFuncIndex represents the case when an element segment contains a null element.
     constexpr static uint32_t nullFuncIndex = UINT32_MAX;
 
     enum class Kind : uint8_t {
@@ -556,5 +555,11 @@ struct WasmToWasmImportableFunction {
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 
 } } // namespace JSC::Wasm
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::Wasm::TableElementType);
+
+} // namespace WTF
 
 #endif // ENABLE(WEBASSEMBLY)
