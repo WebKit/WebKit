@@ -40,7 +40,7 @@ template<typename, typename> struct ArgumentCoder;
 class StreamConnectionEncoder final {
 public:
     // Stream message needs to be at least size of StreamSetDestinationID message.
-    static constexpr size_t minimumMessageSize = sizeof(MessageName) + sizeof(uint64_t);
+    static constexpr size_t minimumMessageSize = sizeof(MessageName) + sizeof(UInt128);
     static constexpr size_t messageAlignment = alignof(MessageName);
     static constexpr bool isIPCEncoder = true;
 
