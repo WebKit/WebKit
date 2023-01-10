@@ -4853,6 +4853,7 @@ SampleBufferContentKeySessionSupportEnabled:
   status: unstable
   humanReadableName: "ContentKeySession support for SampleBuffer Renderers"
   humanReadableDescription: "ContentKeySession support for SampleBuffer Renderers Enabled"
+  webcoreOnChange: sampleBufferContentKeySessionSupportEnabledChanged
   condition: HAVE(AVCONTENTKEYSPECIFIER)
   defaultValue:
     WebKitLegacy:

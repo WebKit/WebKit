@@ -169,11 +169,6 @@ public:
     static bool mediaSourceInlinePaintingEnabled() { return shared().m_mediaSourceInlinePaintingEnabled; }
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    static void setSampleBufferContentKeySessionSupportEnabled(bool);
-    static bool sampleBufferContentKeySessionSupportEnabled() { return shared().m_sampleBufferContentKeySessionSupportEnabled; }
-#endif
-
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { shared().m_builtInNotificationsEnabled = isEnabled; }
     static bool builtInNotificationsEnabled() { return shared().m_builtInNotificationsEnabled; }
@@ -267,10 +262,6 @@ private:
 
 #if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     bool m_mediaSourceInlinePaintingEnabled { false };
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool m_sampleBufferContentKeySessionSupportEnabled { false };
 #endif
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
