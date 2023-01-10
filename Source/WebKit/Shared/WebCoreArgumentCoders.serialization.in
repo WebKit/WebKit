@@ -2473,6 +2473,8 @@ struct WebCore::GamepadEffectParameters {
     double startDelay;
     double strongMagnitude;
     double weakMagnitude;
+    double leftTrigger;
+    double rightTrigger;
 };
 
 header: <WebCore/GamepadHapticEffectType.h>

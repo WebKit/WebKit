@@ -34,6 +34,8 @@ struct GamepadEffectParameters {
     double startDelay = 0.0;
     double strongMagnitude = 0.0;
     double weakMagnitude = 0.0;
+    double leftTrigger = 0.0;
+    double rightTrigger = 0.0;
 };
 
 } // namespace WebCore

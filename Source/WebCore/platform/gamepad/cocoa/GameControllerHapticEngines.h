@@ -51,19 +51,27 @@ public:
 
     void stop(CompletionHandler<void()>&&);
 
-    CHHapticEngine *strongEngine() { return m_strongEngine.get(); }
-    CHHapticEngine *weakEngine() { return m_weakEngine.get(); }
+    CHHapticEngine *leftHandleEngine() { return m_leftHandleEngine.get(); }
+    CHHapticEngine *rightHandleEngine() { return m_rightHandleEngine.get(); }
+    CHHapticEngine *leftTriggerEngine() { return m_leftTriggerEngine.get(); }
+    CHHapticEngine *rightTriggerEngine() { return m_rightTriggerEngine.get(); }
 
 private:
     explicit GameControllerHapticEngines(GCController *);
 
-    void ensureStarted(CompletionHandler<void(bool)>&&);
+    void ensureStarted(GamepadHapticEffectType, CompletionHandler<void(bool)>&&);
+    std::unique_ptr<GameControllerHapticEffect>& currentEffectForType(GamepadHapticEffectType);
 
-    RetainPtr<CHHapticEngine> m_strongEngine;
-    RetainPtr<CHHapticEngine> m_weakEngine;
-    bool m_failedToStartStrongEngine { false };
-    bool m_failedToStartWeakEngine { false };
-    std::unique_ptr<GameControllerHapticEffect> m_currentEffect;
+    RetainPtr<CHHapticEngine> m_leftHandleEngine;
+    RetainPtr<CHHapticEngine> m_rightHandleEngine;
+    RetainPtr<CHHapticEngine> m_leftTriggerEngine;
+    RetainPtr<CHHapticEngine> m_rightTriggerEngine;
+    bool m_failedToStartLeftHandleEngine { false };
+    bool m_failedToStartRightHandleEngine { false };
+    bool m_failedToStartLeftTriggerEngine { false };
+    bool m_failedToStartRightTriggerEngine { false };
+    std::unique_ptr<GameControllerHapticEffect> m_currentDualRumbleEffect;
+    std::unique_ptr<GameControllerHapticEffect> m_currentTriggerRumbleEffect;
 };
 
 } // namespace WebCore

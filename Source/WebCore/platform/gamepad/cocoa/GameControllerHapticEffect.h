@@ -29,29 +29,31 @@
 
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class GameControllerHapticEngines;
 struct GamepadEffectParameters;
+enum class GamepadHapticEffectType : uint8_t;
 
-class GameControllerHapticEffect {
+class GameControllerHapticEffect : public CanMakeWeakPtr<GameControllerHapticEffect> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<GameControllerHapticEffect> create(GameControllerHapticEngines&, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&);
+    static std::unique_ptr<GameControllerHapticEffect> create(GameControllerHapticEngines&, GamepadHapticEffectType, const GamepadEffectParameters&);
     ~GameControllerHapticEffect();
 
-    bool start();
+    void start(CompletionHandler<void(bool)>&&);
     void stop();
 
-    void strongEffectFinishedPlaying();
-    void weakEffectFinishedPlaying();
+    void leftEffectFinishedPlaying();
+    void rightEffectFinishedPlaying();
 
 private:
-    GameControllerHapticEffect(RetainPtr<id>&& strongPlayer, RetainPtr<id>&& weakPlayer, CompletionHandler<void(bool)>&&);
+    GameControllerHapticEffect(RetainPtr<id>&& leftlayer, RetainPtr<id>&& rightPlayer);
 
-    RetainPtr<id> m_strongPlayer;
-    RetainPtr<id> m_weakPlayer;
+    RetainPtr<id> m_leftPlayer;
+    RetainPtr<id> m_rightPlayer;
     CompletionHandler<void(bool)> m_completionHandler;
 };
 

@@ -27,5 +27,7 @@
     Conditional=GAMEPAD
 ] enum GamepadHapticEffectType {
     "dual-rumble",
-    "trigger-rumble", // Not in the specification but supported by Blink.
+    // Not in the specification but supported by Blink:
+    // https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/GamepadHapticsActuatorTriggerRumble/explainer.md
+    "trigger-rumble",
 };
