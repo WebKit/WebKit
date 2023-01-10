@@ -530,6 +530,12 @@ WEBKIT_API void
 webkit_settings_set_enable_webrtc                              (WebKitSettings *settings,
                                                                 gboolean enabled);
 
+WEBKIT_API gboolean
+webkit_settings_get_disable_web_security                       (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_disable_web_security                       (WebKitSettings *settings,
+                                                                gboolean        disabled);
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

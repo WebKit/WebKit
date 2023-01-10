@@ -1938,6 +1938,45 @@ static void testWebViewWebExtensionMode(WebViewTest* test, gconstpointer)
     g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
 }
 
+static void testWebViewDisableWebSecurity(WebViewTest* test, gconstpointer)
+{
+    webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
+        [](WebKitURISchemeRequest* request, gpointer userData) {
+            GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
+            const char* data = "<p>foobar!</p>";
+            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), data, strlen(data), nullptr);
+            webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(data), "text/html");
+        }, nullptr, nullptr);
+
+    char html[] = "<html><script>let foo = 0; fetch('foo://bar/baz').then(response => { foo = response.status; }).catch(err => { foo = -1; });</script></html>";
+
+    auto waitForFooChanged = [&test]() {
+        int fooValue;
+        do {
+            GUniqueOutPtr<GError> error;
+            JSCValue* jscvalue;
+            WebKitJavascriptResult* result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
+            g_assert_no_error(error.get());
+            jscvalue = webkit_javascript_result_get_js_value(result);
+            fooValue = jsc_value_to_int32(jscvalue);
+        } while (!fooValue);
+        return fooValue;
+    };
+
+    // By default web security is enabled, request is not allowed, foo should be -1.
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(waitForFooChanged(), ==, -1);
+
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    // Disable web security, now we can request forbidden content
+    webkit_settings_set_disable_web_security(settings, TRUE);
+
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(waitForFooChanged(), ==, 200);
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -2013,6 +2052,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "cors-allowlist", testWebViewCORSAllowlist);
     WebViewTest::add("WebKitWebView", "default-content-security-policy", testWebViewDefaultContentSecurityPolicy);
     WebViewTest::add("WebKitWebView", "web-extension-mode", testWebViewWebExtensionMode);
+    WebViewTest::add("WebKitWebView", "disable-web-security", testWebViewDisableWebSecurity);
 }
 
 void afterAll()
