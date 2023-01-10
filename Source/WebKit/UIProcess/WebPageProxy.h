@@ -2775,6 +2775,8 @@ private:
     void fullscreenVideoTextRecognitionTimerFired();
 #endif
 
+    bool useGPUProcessForDOMRenderingEnabled() const;
+
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
     WeakPtr<PageClient> m_pageClient;
