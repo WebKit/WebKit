@@ -57,6 +57,22 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPt
     if (!value)
         return { };
 
+    if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(*value)) {
+        if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(customPropertyValue->value())) {
+            auto& list = std::get<CSSCustomPropertyValue::SyntaxValueList>(customPropertyValue->value());
+
+            Vector<RefPtr<CSSStyleValue>> result;
+            result.reserveInitialCapacity(list.values.size());
+            for (auto& listValue : list.values) {
+                auto styleValue = CSSStyleValueFactory::constructStyleValueForCustomPropertySyntaxValue(listValue);
+                if (!styleValue)
+                    return { };
+                result.uncheckedAppend(WTFMove(styleValue));
+            }
+            return result;
+        }
+    }
+
     if (!is<CSSValueList>(*value) || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
         return { StylePropertyMapReadOnly::reifyValue(WTFMove(value), propertyID, document) };
 
