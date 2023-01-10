@@ -6621,7 +6621,7 @@ WebMParserEnabled:
 
 WebRTCAV1CodecEnabled:
   type: bool
-  status: unstable
+  status: preview
   humanReadableName: "WebRTC AV1 codec"
   humanReadableDescription: "Enable WebRTC AV1 codec"
   condition: ENABLE(WEB_RTC)
