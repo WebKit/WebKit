@@ -1,8 +1,8 @@
 
-FAIL SyncAccessHandle.close is idempotent promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
-FAIL SyncAccessHandle.read fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
-FAIL SyncAccessHandle.write fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
-FAIL SyncAccessHandle.flush fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
-FAIL SyncAccessHandle.getSize fails after SyncAccessHandle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
-FAIL SyncAccessHandle.truncate fails after SyncAccessHandle.handle.close promise_test: Unhandled rejection with value: object "InvalidStateError: AccessHandle is closed"
+PASS SyncAccessHandle.close is idempotent
+PASS SyncAccessHandle.read fails after SyncAccessHandle.close
+PASS SyncAccessHandle.write fails after SyncAccessHandle.close
+PASS SyncAccessHandle.flush fails after SyncAccessHandle.close
+PASS SyncAccessHandle.getSize fails after SyncAccessHandle.close
+PASS SyncAccessHandle.truncate fails after SyncAccessHandle.handle.close
 

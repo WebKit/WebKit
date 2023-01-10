@@ -87,7 +87,7 @@ ExceptionOr<void> FileSystemSyncAccessHandle::flush()
 ExceptionOr<void> FileSystemSyncAccessHandle::close()
 {
     if (m_isClosed)
-        return Exception { InvalidStateError, "AccessHandle is closed"_s };
+        return { };
 
     closeInternal(ShouldNotifyBackend::Yes);
     return { };
