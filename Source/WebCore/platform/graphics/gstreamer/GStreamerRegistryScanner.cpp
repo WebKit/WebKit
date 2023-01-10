@@ -411,7 +411,6 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         { ElementFactories::Type::VideoDecoder, "video/x-msvideocodec", { "video/x-msvideo"_s }, { } },
         { ElementFactories::Type::Demuxer, "application/vnd.rn-realmedia", { }, { } },
         { ElementFactories::Type::Demuxer, "application/x-3gp", { }, { } },
-        { ElementFactories::Type::Demuxer, "application/x-hls", { "application/vnd.apple.mpegurl"_s, "application/x-mpegurl"_s }, { } },
         { ElementFactories::Type::Demuxer, "application/x-pn-realaudio", { }, { } },
         { ElementFactories::Type::Demuxer, "application/dash+xml", { }, { } },
         { ElementFactories::Type::Demuxer, "audio/x-aiff", { }, { } },
@@ -420,6 +419,12 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         { ElementFactories::Type::Demuxer, "video/quicktime, variant=(string)3gpp", { "video/3gpp"_s }, { } },
         { ElementFactories::Type::Demuxer, "video/x-ms-asf", { }, { } },
     };
+
+    if (const char* hlsSupport = g_getenv("WEBKIT_GST_ENABLE_HLS_SUPPORT")) {
+        if (!g_strcmp0(hlsSupport, "1"))
+            mapping.append({ ElementFactories::Type::Demuxer, "application/x-hls", { "application/vnd.apple.mpegurl"_s, "application/x-mpegurl"_s }, { } });
+    }
+
     fillMimeTypeSetFromCapsMapping(factories, mapping);
 
     if (factories.hasElementForMediaType(ElementFactories::Type::Demuxer, "application/ogg")) {

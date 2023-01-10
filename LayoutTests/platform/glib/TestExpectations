@@ -251,7 +251,6 @@ webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Pass ]
 
 # These tests are expected to fail with GPU process and on Mac, but pass on GTK and WPE
-http/tests/media/hls/hls-progress.html [ Pass ]
 http/tests/media/media-document-referer.html [ Pass ]
 http/tests/media/media-document.html [ Pass ]
 http/tests/media/media-play-stream-chunked-icy.html [ Pass ]
@@ -916,14 +915,6 @@ webkit.org/b/210342 imported/w3c/web-platform-tests/media-source/mediasource-sou
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]
 
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
-
-# Tests failing with GStreamer 1.6.3
-webkit.org/b/154390 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
-webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
-
-webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
-
-webkit.org/b/227661 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout ]
 
 webkit.org/b/227934 media/media-source/media-webm-vorbis-partial.html [ Failure ]
 webkit.org/b/227934 media/media-source/media-webm-opus-partial.html [ Failure ]
@@ -1874,9 +1865,6 @@ webkit.org/b/158923 media/airplay-allows-buffering.html [ Skip ]
 webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen-no-controls.html [ Skip ]
 webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
 
-# No support for descriptive audio tracks in HLS file
-http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
-
 # LEGACY_ENCRYPTED_MEDIA is deprecated
 fast/events/webkit-media-key-events-constructor.html [ Skip ]
 
@@ -2106,9 +2094,6 @@ media/media-captions.html [ WontFix Failure ]
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]
 media/track/track-in-band-chapters.html [ Failure ]
 
-# DataCue.value not enabled
-http/tests/media/track-in-band-hls-metadata.html [ Skip ]
-
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]
@@ -2309,6 +2294,14 @@ fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ]
 fast/shadow-dom/focus-ring-on-shadow-host-focuswithin.html [ Skip ]
 fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ]
+
+# HLS media playback support is disabled in the GStreamer ports.
+http/tests/media/clearkey/clear-key-hls-aes128.html [ Skip ]
+http/tests/media/hls/ [ Skip ]
+http/tests/media/track-in-band-hls-metadata-crash.html [ Skip ]
+http/tests/media/track-in-band-hls-metadata.html [ Skip ]
+http/tests/media/video-hls-copy-into-canvas.html [ Skip ]
+http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
@@ -2752,17 +2745,11 @@ http/tests/media/video-preload.html [ Pass Slow ]
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
-webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash Timeout ]
 webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
-webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
-webkit.org/b/182108 http/tests/media/hls/hls-webvtt-default.html [ Timeout ]
-webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
-webkit.org/b/182108 http/tests/media/hls/hls-webvtt-flashing.html [ Timeout ]
-webkit.org/b/182108 http/tests/media/hls/hls-webvtt-style.html [ Timeout ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
 
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
