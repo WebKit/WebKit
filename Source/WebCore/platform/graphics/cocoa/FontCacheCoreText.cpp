@@ -47,10 +47,6 @@
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
-// FIXME: This seems like it should be in PlatformHave.h.
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#define HAS_CORE_TEXT_WIDTH_ATTRIBUTE (PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
-
 namespace WebCore {
 
 static inline void appendTrueTypeFeature(CFMutableArrayRef features, int type, int selector)
@@ -230,13 +226,6 @@ static inline float normalizeVariationWidth(float value)
         return value * 200 - 125;
     return value * 400 - 400;
 }
-
-#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
-static inline float normalizeWidth(float value)
-{
-    return normalizeVariationWidth(value + 1);
-}
-#endif
 
 struct FontType {
     FontType(CTFontRef font)
@@ -593,20 +582,6 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const St
     return nullptr;
 }
 
-#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
-static float stretchFromCoreTextTraits(CFDictionaryRef traits)
-{
-    auto widthNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits, kCTFontWidthTrait));
-    if (!widthNumber)
-        return normalStretchValue();
-
-    float ctWidth;
-    auto success = CFNumberGetValue(widthNumber, kCFNumberFloatType, &ctWidth);
-    ASSERT_UNUSED(success, success);
-    return normalizeWidth(ctWidth);
-}
-#endif
-
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, isMainThread() && observer == &FontCache::forCurrentThread());
@@ -838,22 +813,9 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
 
     VariationCapabilities variationCapabilities = variationCapabilitiesForFontDescriptor(fontDescriptor);
 
-#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
-    bool weightOrWidthComeFromTraits = !variationCapabilities.weight || !variationCapabilities.width;
-#else
-    bool weightOrWidthComeFromTraits = false;
-#endif
-
-    if (!variationCapabilities.slope || weightOrWidthComeFromTraits) {
+    if (!variationCapabilities.slope) {
         auto traits = adoptCF(static_cast<CFDictionaryRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontTraitsAttribute)));
         if (traits) {
-#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
-            if (!variationCapabilities.width) {
-                auto widthValue = stretchFromCoreTextTraits(traits.get());
-                variationCapabilities.width = {{ widthValue, widthValue }};
-            }
-#endif
-
             if (!variationCapabilities.slope) {
                 auto symbolicTraitsNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontSymbolicTrait));
                 if (symbolicTraitsNumber) {
@@ -873,12 +835,10 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
         variationCapabilities.weight = {{ value, value }};
     }
 
-#if HAS_CORE_TEXT_WIDTH_ATTRIBUTE
     if (!variationCapabilities.width) {
         auto value = getCSSAttribute(fontDescriptor, kCTFontCSSWidthAttribute, static_cast<float>(normalStretchValue()));
         variationCapabilities.width = {{ value, value }};
     }
-#endif
 
     FontSelectionCapabilities result = {{ FontSelectionValue(variationCapabilities.weight.value().minimum), FontSelectionValue(variationCapabilities.weight.value().maximum) },
         { FontSelectionValue(variationCapabilities.width.value().minimum), FontSelectionValue(variationCapabilities.width.value().maximum) },
