@@ -48,10 +48,10 @@ public:
     void setAccentColor(const Color&);
     Color accentColor();
 private:
-    LengthSize controlSize(ControlPartType, const FontCascade&, const LengthSize&, float) const final;
-    LengthSize minimumControlSize(ControlPartType, const FontCascade&, const LengthSize&, float) const final;
-    LengthBox controlBorder(ControlPartType, const FontCascade&, const LengthBox&, float) const final;
-    void paint(ControlPartType, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&) final;
+    LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
+    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
+    LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox&, float) const final;
+    void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&) final;
 
     void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
     void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);

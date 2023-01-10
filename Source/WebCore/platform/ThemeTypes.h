@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ControlPartType.h"
+#include "StyleAppearance.h"
 
 namespace WTF {
 class TextStream;

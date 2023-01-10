@@ -2370,8 +2370,8 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     WebCore::FloatBoxExtent borderWidth;
 };
 
-enum class WebCore::ControlPartType : uint8_t {
-    NoControl,
+enum class WebCore::StyleAppearance : uint8_t {
+    None,
     Auto,
     Checkbox,
     Radio,
@@ -2434,7 +2434,7 @@ enum class WebCore::ControlPartType : uint8_t {
 };
 
 [Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackPart {
-    WebCore::ControlPartType type();
+    WebCore::StyleAppearance type();
     WebCore::IntSize thumbSize();
     WebCore::IntRect trackBounds();
     Vector<double> tickRatios();

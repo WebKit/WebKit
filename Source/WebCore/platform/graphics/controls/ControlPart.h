@@ -26,8 +26,8 @@
 #pragma once
 
 #include "Color.h"
-#include "ControlPartType.h"
 #include "PlatformControl.h"
+#include "StyleAppearance.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class ControlPart : public RefCounted<ControlPart> {
 public:
     virtual ~ControlPart() = default;
 
-    ControlPartType type() const { return m_type; }
+    StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
     void setControlFactory(ControlFactory* controlFactory) { m_controlFactory = controlFactory; }
@@ -50,12 +50,12 @@ public:
     void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) const;
 
 protected:
-    WEBCORE_EXPORT ControlPart(ControlPartType);
+    WEBCORE_EXPORT ControlPart(StyleAppearance);
 
     PlatformControl* platformControl() const;
     virtual std::unique_ptr<PlatformControl> createPlatformControl() = 0;
 
-    const ControlPartType m_type;
+    const StyleAppearance m_type;
 
     mutable std::unique_ptr<PlatformControl> m_platformControl;
     ControlFactory* m_controlFactory { nullptr };
@@ -65,5 +65,5 @@ protected:
 
 #define SPECIALIZE_TYPE_TRAITS_CONTROL_PART(PartName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PartName##Part) \
-    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::ControlPartType::PartName; } \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::PartName; } \
 SPECIALIZE_TYPE_TRAITS_END()

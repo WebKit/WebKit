@@ -36,7 +36,7 @@ Ref<MeterPart> MeterPart::create(GaugeRegion gaugeRegion, double value, double m
 }
 
 MeterPart::MeterPart(GaugeRegion gaugeRegion, double value, double minimum, double maximum)
-    : ControlPart(ControlPartType::Meter)
+    : ControlPart(StyleAppearance::Meter)
     , m_gaugeRegion(gaugeRegion)
     , m_value(value)
     , m_minimum(minimum)

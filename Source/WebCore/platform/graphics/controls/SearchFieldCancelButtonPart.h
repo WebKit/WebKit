@@ -39,7 +39,7 @@ public:
 
 private:
     SearchFieldCancelButtonPart()
-        : ControlPart(ControlPartType::SearchFieldCancelButton)
+        : ControlPart(StyleAppearance::SearchFieldCancelButton)
     {
     }
 

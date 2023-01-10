@@ -1537,61 +1537,61 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
     encoder << part.type();
 
     switch (part.type()) {
-    case WebCore::ControlPartType::NoControl:
-    case WebCore::ControlPartType::Auto:
+    case WebCore::StyleAppearance::None:
+    case WebCore::StyleAppearance::Auto:
         break;
 
-    case WebCore::ControlPartType::Checkbox:
-    case WebCore::ControlPartType::Radio:
-    case WebCore::ControlPartType::PushButton:
-    case WebCore::ControlPartType::SquareButton:
-    case WebCore::ControlPartType::Button:
-    case WebCore::ControlPartType::DefaultButton:
-    case WebCore::ControlPartType::Listbox:
-    case WebCore::ControlPartType::Menulist:
-    case WebCore::ControlPartType::MenulistButton:
+    case WebCore::StyleAppearance::Checkbox:
+    case WebCore::StyleAppearance::Radio:
+    case WebCore::StyleAppearance::PushButton:
+    case WebCore::StyleAppearance::SquareButton:
+    case WebCore::StyleAppearance::Button:
+    case WebCore::StyleAppearance::DefaultButton:
+    case WebCore::StyleAppearance::Listbox:
+    case WebCore::StyleAppearance::Menulist:
+    case WebCore::StyleAppearance::MenulistButton:
         break;
 
-    case WebCore::ControlPartType::Meter:
+    case WebCore::StyleAppearance::Meter:
         encoder << downcast<WebCore::MeterPart>(part);
         break;
 
-    case WebCore::ControlPartType::ProgressBar:
+    case WebCore::StyleAppearance::ProgressBar:
         encoder << downcast<WebCore::ProgressBarPart>(part);
         break;
 
-    case WebCore::ControlPartType::SliderHorizontal:
-    case WebCore::ControlPartType::SliderVertical:
+    case WebCore::StyleAppearance::SliderHorizontal:
+    case WebCore::StyleAppearance::SliderVertical:
         encoder << downcast<WebCore::SliderTrackPart>(part);
         break;
 
-    case WebCore::ControlPartType::SearchField:
+    case WebCore::StyleAppearance::SearchField:
 #if ENABLE(APPLE_PAY)
-    case WebCore::ControlPartType::ApplePayButton:
+    case WebCore::StyleAppearance::ApplePayButton:
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case WebCore::ControlPartType::Attachment:
-    case WebCore::ControlPartType::BorderlessAttachment:
+    case WebCore::StyleAppearance::Attachment:
+    case WebCore::StyleAppearance::BorderlessAttachment:
 #endif
-    case WebCore::ControlPartType::TextArea:
-    case WebCore::ControlPartType::TextField:
-    case WebCore::ControlPartType::CapsLockIndicator:
+    case WebCore::StyleAppearance::TextArea:
+    case WebCore::StyleAppearance::TextField:
+    case WebCore::StyleAppearance::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case WebCore::ControlPartType::ColorWell:
+    case WebCore::StyleAppearance::ColorWell:
 #endif
 #if ENABLE(SERVICE_CONTROLS)
-    case WebCore::ControlPartType::ImageControlsButton:
+    case WebCore::StyleAppearance::ImageControlsButton:
 #endif
-    case WebCore::ControlPartType::InnerSpinButton:
+    case WebCore::StyleAppearance::InnerSpinButton:
 #if ENABLE(DATALIST_ELEMENT)
-    case WebCore::ControlPartType::ListButton:
+    case WebCore::StyleAppearance::ListButton:
 #endif
-    case WebCore::ControlPartType::SearchFieldDecoration:
-    case WebCore::ControlPartType::SearchFieldResultsDecoration:
-    case WebCore::ControlPartType::SearchFieldResultsButton:
-    case WebCore::ControlPartType::SearchFieldCancelButton:
-    case WebCore::ControlPartType::SliderThumbHorizontal:
-    case WebCore::ControlPartType::SliderThumbVertical:
+    case WebCore::StyleAppearance::SearchFieldDecoration:
+    case WebCore::StyleAppearance::SearchFieldResultsDecoration:
+    case WebCore::StyleAppearance::SearchFieldResultsButton:
+    case WebCore::StyleAppearance::SearchFieldCancelButton:
+    case WebCore::StyleAppearance::SliderThumbHorizontal:
+    case WebCore::StyleAppearance::SliderThumbVertical:
         break;
     }
 }
@@ -1603,33 +1603,33 @@ void ArgumentCoder<ControlPart>::encode<StreamConnectionEncoder>(StreamConnectio
 
 std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& decoder)
 {
-    std::optional<WebCore::ControlPartType> type;
+    std::optional<WebCore::StyleAppearance> type;
     decoder >> type;
     if (!type)
         return std::nullopt;
 
     switch (*type) {
-    case WebCore::ControlPartType::NoControl:
-    case WebCore::ControlPartType::Auto:
+    case WebCore::StyleAppearance::None:
+    case WebCore::StyleAppearance::Auto:
         break;
 
-    case WebCore::ControlPartType::Checkbox:
-    case WebCore::ControlPartType::Radio:
+    case WebCore::StyleAppearance::Checkbox:
+    case WebCore::StyleAppearance::Radio:
         return WebCore::ToggleButtonPart::create(*type);
 
-    case WebCore::ControlPartType::PushButton:
-    case WebCore::ControlPartType::SquareButton:
-    case WebCore::ControlPartType::Button:
-    case WebCore::ControlPartType::DefaultButton:
+    case WebCore::StyleAppearance::PushButton:
+    case WebCore::StyleAppearance::SquareButton:
+    case WebCore::StyleAppearance::Button:
+    case WebCore::StyleAppearance::DefaultButton:
         return WebCore::ButtonPart::create(*type);
 
-    case WebCore::ControlPartType::Menulist:
+    case WebCore::StyleAppearance::Menulist:
         return WebCore::MenuListPart::create();
 
-    case WebCore::ControlPartType::MenulistButton:
+    case WebCore::StyleAppearance::MenulistButton:
         return WebCore::MenuListButtonPart::create();
 
-    case WebCore::ControlPartType::Meter: {
+    case WebCore::StyleAppearance::Meter: {
         std::optional<Ref<WebCore::MeterPart>> meterPart;
         decoder >> meterPart;
         if (meterPart)
@@ -1637,7 +1637,7 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
         break;
     }
 
-    case WebCore::ControlPartType::ProgressBar: {
+    case WebCore::StyleAppearance::ProgressBar: {
         std::optional<Ref<WebCore::ProgressBarPart>> progressBarPart;
         decoder >> progressBarPart;
         if (progressBarPart)
@@ -1645,8 +1645,8 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
         break;
     }
 
-    case WebCore::ControlPartType::SliderHorizontal:
-    case WebCore::ControlPartType::SliderVertical: {
+    case WebCore::StyleAppearance::SliderHorizontal:
+    case WebCore::StyleAppearance::SliderVertical: {
         std::optional<Ref<WebCore::SliderTrackPart>> sliderTrackPart;
         decoder >> sliderTrackPart;
         if (sliderTrackPart)
@@ -1654,51 +1654,51 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
         break;
     }
 
-    case WebCore::ControlPartType::SearchField:
+    case WebCore::StyleAppearance::SearchField:
         return WebCore::SearchFieldPart::create();
 
 #if ENABLE(APPLE_PAY)
-    case WebCore::ControlPartType::ApplePayButton:
+    case WebCore::StyleAppearance::ApplePayButton:
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case WebCore::ControlPartType::Attachment:
-    case WebCore::ControlPartType::BorderlessAttachment:
+    case WebCore::StyleAppearance::Attachment:
+    case WebCore::StyleAppearance::BorderlessAttachment:
 #endif
         break;
 
-    case WebCore::ControlPartType::Listbox:
-    case WebCore::ControlPartType::TextArea:
+    case WebCore::StyleAppearance::Listbox:
+    case WebCore::StyleAppearance::TextArea:
         return WebCore::TextAreaPart::create(*type);
 
-    case WebCore::ControlPartType::TextField:
+    case WebCore::StyleAppearance::TextField:
         return WebCore::TextFieldPart::create();
 
-    case WebCore::ControlPartType::CapsLockIndicator:
+    case WebCore::StyleAppearance::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case WebCore::ControlPartType::ColorWell:
+    case WebCore::StyleAppearance::ColorWell:
         return WebCore::ColorWellPart::create();
 #endif
 #if ENABLE(SERVICE_CONTROLS)
-    case WebCore::ControlPartType::ImageControlsButton:
+    case WebCore::StyleAppearance::ImageControlsButton:
 #endif
         break;
 
-    case WebCore::ControlPartType::InnerSpinButton:
+    case WebCore::StyleAppearance::InnerSpinButton:
         return WebCore::InnerSpinButtonPart::create();
 
 #if ENABLE(DATALIST_ELEMENT)
-    case WebCore::ControlPartType::ListButton:
+    case WebCore::StyleAppearance::ListButton:
 #endif
-    case WebCore::ControlPartType::SearchFieldDecoration:
-    case WebCore::ControlPartType::SearchFieldResultsDecoration:
-    case WebCore::ControlPartType::SearchFieldResultsButton:
+    case WebCore::StyleAppearance::SearchFieldDecoration:
+    case WebCore::StyleAppearance::SearchFieldResultsDecoration:
+    case WebCore::StyleAppearance::SearchFieldResultsButton:
         break;
 
-    case WebCore::ControlPartType::SearchFieldCancelButton:
+    case WebCore::StyleAppearance::SearchFieldCancelButton:
         return WebCore::SearchFieldCancelButtonPart::create();
 
-    case WebCore::ControlPartType::SliderThumbHorizontal:
-    case WebCore::ControlPartType::SliderThumbVertical:
+    case WebCore::StyleAppearance::SliderThumbHorizontal:
+    case WebCore::StyleAppearance::SliderThumbVertical:
         return WebCore::SliderThumbPart::create(*type);
     }
 

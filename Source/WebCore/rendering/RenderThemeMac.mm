@@ -212,39 +212,39 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, ControlPartType type) const
+bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, StyleAppearance appearance) const
 {
-    switch (type) {
+    switch (appearance) {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case ControlPartType::Attachment:
-    case ControlPartType::BorderlessAttachment:
+    case StyleAppearance::Attachment:
+    case StyleAppearance::BorderlessAttachment:
 #endif
 #if ENABLE(APPLE_PAY)
-    case ControlPartType::ApplePayButton:
+    case StyleAppearance::ApplePayButton:
 #endif
-    case ControlPartType::Button:
-    case ControlPartType::Checkbox:
+    case StyleAppearance::Button:
+    case StyleAppearance::Checkbox:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ControlPartType::ColorWell:
+    case StyleAppearance::ColorWell:
 #endif
-    case ControlPartType::DefaultButton:
-    case ControlPartType::InnerSpinButton:
-    case ControlPartType::Listbox:
-    case ControlPartType::Menulist:
-    case ControlPartType::MenulistButton:
-    case ControlPartType::Meter:
-    case ControlPartType::ProgressBar:
-    case ControlPartType::Radio:
-    case ControlPartType::PushButton:
-    case ControlPartType::SearchField:
-    case ControlPartType::SearchFieldCancelButton:
-    case ControlPartType::SliderThumbHorizontal:
-    case ControlPartType::SliderThumbVertical:
-    case ControlPartType::SliderHorizontal:
-    case ControlPartType::SliderVertical:
-    case ControlPartType::SquareButton:
-    case ControlPartType::TextArea:
-    case ControlPartType::TextField:
+    case StyleAppearance::DefaultButton:
+    case StyleAppearance::InnerSpinButton:
+    case StyleAppearance::Listbox:
+    case StyleAppearance::Menulist:
+    case StyleAppearance::MenulistButton:
+    case StyleAppearance::Meter:
+    case StyleAppearance::ProgressBar:
+    case StyleAppearance::Radio:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::SearchField:
+    case StyleAppearance::SearchFieldCancelButton:
+    case StyleAppearance::SliderThumbHorizontal:
+    case StyleAppearance::SliderThumbVertical:
+    case StyleAppearance::SliderHorizontal:
+    case StyleAppearance::SliderVertical:
+    case StyleAppearance::SquareButton:
+    case StyleAppearance::TextArea:
+    case StyleAppearance::TextField:
         return true;
     default:
         break;
@@ -259,40 +259,39 @@ RenderThemeMac::RenderThemeMac()
 
 bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& renderer) const
 {
-    ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::Button
-        || type == ControlPartType::Checkbox
+    auto type = renderer.style().effectiveAppearance();
+    return type == StyleAppearance::Button
+        || type == StyleAppearance::Checkbox
 #if ENABLE(INPUT_TYPE_COLOR)
-        || type == ControlPartType::ColorWell
+        || type == StyleAppearance::ColorWell
 #endif
-        || type == ControlPartType::DefaultButton
-        || type == ControlPartType::InnerSpinButton
-        || type == ControlPartType::Menulist
-        || type == ControlPartType::Meter
-        || type == ControlPartType::ProgressBar
-        || type == ControlPartType::PushButton
-        || type == ControlPartType::Radio
-        || type == ControlPartType::SearchField
-        || type == ControlPartType::SearchFieldCancelButton
-        || type == ControlPartType::SliderThumbHorizontal
-        || type == ControlPartType::SliderThumbVertical
-        || type == ControlPartType::SliderHorizontal
-        || type == ControlPartType::SliderVertical
-        || type == ControlPartType::SquareButton;
+        || type == StyleAppearance::DefaultButton
+        || type == StyleAppearance::InnerSpinButton
+        || type == StyleAppearance::Menulist
+        || type == StyleAppearance::Meter
+        || type == StyleAppearance::ProgressBar
+        || type == StyleAppearance::PushButton
+        || type == StyleAppearance::Radio
+        || type == StyleAppearance::SearchField
+        || type == StyleAppearance::SearchFieldCancelButton
+        || type == StyleAppearance::SliderThumbHorizontal
+        || type == StyleAppearance::SliderThumbVertical
+        || type == StyleAppearance::SliderHorizontal
+        || type == StyleAppearance::SliderVertical
+        || type == StyleAppearance::SquareButton;
 }
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
 {
-    ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::Listbox
-        || type == ControlPartType::TextArea
-        || type == ControlPartType::TextField;
+    auto appearance = renderer.style().effectiveAppearance();
+    return appearance == StyleAppearance::Listbox
+        || appearance == StyleAppearance::TextArea
+        || appearance == StyleAppearance::TextField;
 }
 
 bool RenderThemeMac::canCreateControlPartForDecorations(const RenderObject& renderer) const
 {
-    ControlPartType type = renderer.style().effectiveAppearance();
-    return type == ControlPartType::MenulistButton;
+    return renderer.style().effectiveAppearance() == StyleAppearance::MenulistButton;
 }
 
 bool RenderThemeMac::useFormSemanticContext() const
@@ -780,14 +779,14 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     auto appearance = style.effectiveAppearance();
-    if (appearance == ControlPartType::TextField || appearance == ControlPartType::TextArea || appearance == ControlPartType::SearchField || appearance == ControlPartType::Listbox)
+    if (appearance == StyleAppearance::TextField || appearance == StyleAppearance::TextArea || appearance == StyleAppearance::SearchField || appearance == StyleAppearance::Listbox)
         return style.border() != userAgentStyle.border();
 
     // FIXME: This is horrible, but there is not much else that can be done.  Menu lists cannot draw properly when
     // scaled.  They can't really draw properly when transformed either.  We can't detect the transform case at style
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
     // is in effect we treat it like the control is styled.
-    if (appearance == ControlPartType::Menulist && style.effectiveZoom() != 1.0f)
+    if (appearance == StyleAppearance::Menulist && style.effectiveZoom() != 1.0f)
         return true;
 
     return RenderTheme::isControlStyled(style, userAgentStyle);
@@ -813,20 +812,20 @@ static FloatRect inflateRect(const FloatRect& rect, const IntSize& size, const i
 
 void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
 {
-    auto type = renderer.style().effectiveAppearance();
+    auto appearance = renderer.style().effectiveAppearance();
 
 #if USE(NEW_THEME)
-    switch (type) {
-    case ControlPartType::Checkbox:
-    case ControlPartType::Radio:
-    case ControlPartType::PushButton:
-    case ControlPartType::SquareButton:
+    switch (appearance) {
+    case StyleAppearance::Checkbox:
+    case StyleAppearance::Radio:
+    case StyleAppearance::PushButton:
+    case StyleAppearance::SquareButton:
 #if ENABLE(INPUT_TYPE_COLOR)
-    case ControlPartType::ColorWell:
+    case StyleAppearance::ColorWell:
 #endif
-    case ControlPartType::DefaultButton:
-    case ControlPartType::Button:
-    case ControlPartType::InnerSpinButton:
+    case StyleAppearance::DefaultButton:
+    case StyleAppearance::Button:
+    case StyleAppearance::InnerSpinButton:
             return RenderTheme::adjustRepaintRect(renderer, rect);
     default:
             break;
@@ -835,7 +834,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
 
     float zoomLevel = renderer.style().effectiveZoom();
 
-    if (type == ControlPartType::Menulist) {
+    if (appearance == StyleAppearance::Menulist) {
         setPopupButtonCellState(renderer, IntSize(rect.size()));
         IntSize size = popupButtonSizes()[[popupButton() controlSize]];
         size.setHeight(size.height() * zoomLevel);
@@ -905,7 +904,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o.style().effectiveAppearance() == ControlPartType::Checkbox)
+    if (o.style().effectiveAppearance() == StyleAppearance::Checkbox)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -1186,9 +1185,9 @@ FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, con
     return control->sizeForBounds(bounds, controlStyle);
 }
 
-bool RenderThemeMac::supportsMeter(ControlPartType type, const HTMLMeterElement&) const
+bool RenderThemeMac::supportsMeter(StyleAppearance appearance, const HTMLMeterElement&) const
 {
-    return type == ControlPartType::Meter;
+    return appearance == StyleAppearance::Meter;
 }
 
 IntRect RenderThemeMac::progressBarRectForBounds(const RenderProgress& renderProgress, const IntRect& bounds) const
@@ -1253,7 +1252,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
 {
-    if (style.effectiveAppearance() == ControlPartType::Menulist) {
+    if (style.effectiveAppearance() == StyleAppearance::Menulist) {
         const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
         return { static_cast<int>(padding[topPadding] * style.effectiveZoom()),
             static_cast<int>(padding[rightPadding] * style.effectiveZoom()),
@@ -1261,7 +1260,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, cons
             static_cast<int>(padding[leftPadding] * style.effectiveZoom()) };
     }
 
-    if (style.effectiveAppearance() == ControlPartType::MenulistButton) {
+    if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
         float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
@@ -1577,7 +1576,7 @@ constexpr int sliderThumbThickness = 15;
 void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
     float zoomLevel = style.effectiveZoom();
-    if (style.effectiveAppearance() == ControlPartType::SliderThumbHorizontal || style.effectiveAppearance() == ControlPartType::SliderThumbVertical) {
+    if (style.effectiveAppearance() == StyleAppearance::SliderThumbHorizontal || style.effectiveAppearance() == StyleAppearance::SliderThumbVertical) {
         style.setWidth(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
         style.setHeight(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
     }

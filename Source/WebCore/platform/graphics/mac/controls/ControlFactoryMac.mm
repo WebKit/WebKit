@@ -198,7 +198,7 @@ NSTextFieldCell *ControlFactoryMac::textFieldCell() const
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonPart& part)
 {
-    return makeUnique<ButtonMac>(part, *this, part.type() == ControlPartType::DefaultButton ? defaultButtonCell() : buttonCell());
+    return makeUnique<ButtonMac>(part, *this, part.type() == StyleAppearance::DefaultButton ? defaultButtonCell() : buttonCell());
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -265,7 +265,7 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextField(Text
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformToggleButton(ToggleButtonPart& part)
 {
-    return makeUnique<ToggleButtonMac>(part, *this, part.type() == ControlPartType::Checkbox ? checkboxCell() : radioCell());
+    return makeUnique<ToggleButtonMac>(part, *this, part.type() == StyleAppearance::Checkbox ? checkboxCell() : radioCell());
 }
 
 } // namespace WebCore

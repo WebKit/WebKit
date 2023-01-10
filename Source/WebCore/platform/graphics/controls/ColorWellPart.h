@@ -41,7 +41,7 @@ public:
 
 private:
     ColorWellPart()
-        : ControlPart(ControlPartType::ColorWell)
+        : ControlPart(StyleAppearance::ColorWell)
     {
     }
 

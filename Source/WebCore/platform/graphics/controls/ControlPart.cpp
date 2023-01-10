@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-ControlPart::ControlPart(ControlPartType type)
+ControlPart::ControlPart(StyleAppearance type)
     : m_type(type)
 {
 }

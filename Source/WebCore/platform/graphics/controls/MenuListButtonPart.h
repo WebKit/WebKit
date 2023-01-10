@@ -39,7 +39,7 @@ public:
 
 private:
     MenuListButtonPart()
-        : ControlPart(ControlPartType::MenulistButton)
+        : ControlPart(StyleAppearance::MenulistButton)
     {
     }
 

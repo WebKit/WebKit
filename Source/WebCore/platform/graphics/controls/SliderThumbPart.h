@@ -32,16 +32,16 @@ namespace WebCore {
 
 class SliderThumbPart final : public ControlPart {
 public:
-    static Ref<SliderThumbPart> create(ControlPartType type)
+    static Ref<SliderThumbPart> create(StyleAppearance type)
     {
         return adoptRef(*new SliderThumbPart(type));
     }
 
 private:
-    SliderThumbPart(ControlPartType type)
+    SliderThumbPart(StyleAppearance type)
         : ControlPart(type)
     {
-        ASSERT(type == ControlPartType::SliderThumbHorizontal || type == ControlPartType::SliderThumbVertical);
+        ASSERT(type == StyleAppearance::SliderThumbHorizontal || type == StyleAppearance::SliderThumbVertical);
     }
 
     std::unique_ptr<PlatformControl> createPlatformControl() final

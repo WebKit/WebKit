@@ -39,7 +39,7 @@ public:
 
 private:
     TextFieldPart()
-        : ControlPart(ControlPartType::TextField)
+        : ControlPart(StyleAppearance::TextField)
     {
     }
 

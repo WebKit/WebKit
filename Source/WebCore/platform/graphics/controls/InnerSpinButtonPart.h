@@ -39,7 +39,7 @@ public:
 
 private:
     InnerSpinButtonPart()
-        : ControlPart(ControlPartType::InnerSpinButton)
+        : ControlPart(StyleAppearance::InnerSpinButton)
     {
     }
 

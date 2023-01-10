@@ -47,19 +47,19 @@ private:
     friend NeverDestroyed<ThemeMac>;
     ThemeMac() = default;
 
-    int baselinePositionAdjustment(ControlPartType) const final;
+    int baselinePositionAdjustment(StyleAppearance) const final;
 
-    std::optional<FontCascadeDescription> controlFont(ControlPartType, const FontCascade&, float zoomFactor) const final;
+    std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const final;
 
-    LengthSize controlSize(ControlPartType, const FontCascade&, const LengthSize&, float zoomFactor) const final;
-    LengthSize minimumControlSize(ControlPartType, const FontCascade&, const LengthSize&, float zoomFactor) const final;
+    LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float zoomFactor) const final;
+    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float zoomFactor) const final;
 
-    LengthBox controlPadding(ControlPartType, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
-    LengthBox controlBorder(ControlPartType, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
+    LengthBox controlPadding(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
+    LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
 
-    bool controlRequiresPreWhiteSpace(ControlPartType type) const final { return type == ControlPartType::PushButton; }
+    bool controlRequiresPreWhiteSpace(StyleAppearance appearance) const final { return appearance == StyleAppearance::PushButton; }
 
-    void inflateControlPaintRect(ControlPartType, const ControlStates&, FloatRect&, float zoomFactor) const final;
+    void inflateControlPaintRect(StyleAppearance, const ControlStates&, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersReducedMotion() const final;
     bool userPrefersContrast() const final;

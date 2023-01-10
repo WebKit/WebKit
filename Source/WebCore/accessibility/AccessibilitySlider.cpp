@@ -68,12 +68,12 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
 
     auto styleAppearance = style.effectiveAppearance();
     switch (styleAppearance) {
-    case ControlPartType::SliderThumbHorizontal:
-    case ControlPartType::SliderHorizontal:
+    case StyleAppearance::SliderThumbHorizontal:
+    case StyleAppearance::SliderHorizontal:
         return AccessibilityOrientation::Horizontal;
     
-    case ControlPartType::SliderThumbVertical:
-    case ControlPartType::SliderVertical:
+    case StyleAppearance::SliderThumbVertical:
+    case StyleAppearance::SliderVertical:
         return AccessibilityOrientation::Vertical;
         
     default:

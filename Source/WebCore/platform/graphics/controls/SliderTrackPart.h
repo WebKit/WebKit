@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SliderTrackPart : public ControlPart {
 public:
-    WEBCORE_EXPORT static Ref<SliderTrackPart> create(ControlPartType, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
+    WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
 
     IntSize thumbSize() const { return m_thumbSize; }
     IntRect trackBounds() const { return m_trackBounds; }
@@ -43,7 +43,7 @@ public:
 #endif
 
 private:
-    SliderTrackPart(ControlPartType, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
+    SliderTrackPart(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
 
     std::unique_ptr<PlatformControl> createPlatformControl() override;
 
@@ -55,5 +55,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SliderTrackPart) \
-    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::ControlPartType::SliderHorizontal || part.type() == WebCore::ControlPartType::SliderVertical; } \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::SliderHorizontal || part.type() == WebCore::StyleAppearance::SliderVertical; } \
 SPECIALIZE_TYPE_TRAITS_END()
