@@ -32,6 +32,7 @@
 #import "GamepadEffectParameters.h"
 #import "GamepadHapticEffectType.h"
 #import "Logging.h"
+#import <GameController/GameController.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/CompletionHandler.h>

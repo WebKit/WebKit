@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,8 +59,6 @@ class SVGFEMorphologyElement final : public SVGFilterPrimitiveStandardAttributes
     WTF_MAKE_ISO_ALLOCATED(SVGFEMorphologyElement);
 public:
     static Ref<SVGFEMorphologyElement> create(const QualifiedName&, Document&);
-
-    void setRadius(float radiusX, float radiusY);
 
     String in1() const { return m_in1->currentValue(); }
     MorphologyOperatorType svgOperator() const { return m_svgOperator->currentValue<MorphologyOperatorType>(); }

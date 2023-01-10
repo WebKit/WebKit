@@ -555,7 +555,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
@@ -1404,7 +1404,8 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
                 patchpoint->setGenerator([this, tailCallStackOffsetFromFP, handle](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-                    handle->generate(jit, params, this);
+                    if (handle)
+                        handle->generate(jit, params, this);
                     jit.farJump(params[0].gpr(), WasmEntryPtrTag);
                 });
             }));
@@ -1426,7 +1427,8 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                handle->generate(jit, params, this);
+                if (handle)
+                    handle->generate(jit, params, this);
                 jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
             });
         }));
@@ -2654,7 +2656,7 @@ auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, 
     return { };
 }
 
-auto B3IRGenerator::addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
@@ -2707,10 +2709,10 @@ auto B3IRGenerator::addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, Expre
         });
         Value* postProcess = patchpoint;
         switch (arrayGetKind) {
-        case GCOpType::ArrayGet:
-        case GCOpType::ArrayGetU:
+        case ExtGCOpType::ArrayGet:
+        case ExtGCOpType::ArrayGetU:
             break;
-        case GCOpType::ArrayGetS: {
+        case ExtGCOpType::ArrayGetS: {
             size_t elementSize = elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
             uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
             Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), patchpoint, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
@@ -3821,8 +3823,6 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
     }
     constrainedArguments.append(B3::ConstrainedValue(previousFramePointer, ValueRep(MacroAssembler::framePointerRegister)));
 
-    Box<PatchpointExceptionHandle> exceptionHandle = Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers);
-
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(B3::Void, origin());
 
     patchpoint->effects.terminal = true;
@@ -3835,10 +3835,8 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
     patchpoint->clobber(clobbers);
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
 
-    patchpointFunctor(patchpoint, exceptionHandle);
+    patchpointFunctor(patchpoint, nullptr);
     patchpoint->appendVector(WTFMove(constrainedArguments));
-
-    *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
 
     block->append(patchpoint);
     return patchpoint;
@@ -3880,7 +3878,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle->generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex](LinkBuffer& linkBuffer) {
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3898,7 +3897,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle->generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             if (isTailCall)
                 jit.farJump(params[0].gpr(), WasmEntryPtrTag);
             else

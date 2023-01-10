@@ -49,8 +49,8 @@ shouldBeEqualToString("getComputedStyle(document.getElementById('test17')).fontS
 shouldBeEqualToString("getComputedStyle(document.getElementById('test18')).fontStyle", "italic");
 shouldBeEqualToString("getComputedStyle(document.getElementById('test19')).fontStyle", "italic");
 shouldBeEqualToString("getComputedStyle(document.getElementById('test20')).fontStyle", "normal");
-shouldBeEqualToString("getComputedStyle(document.getElementById('test21')).fontStyle", "oblique 14deg");
-shouldBeEqualToString("getComputedStyle(document.getElementById('test22')).fontStyle", "oblique");
+shouldBeEqualToString("getComputedStyle(document.getElementById('test21')).fontStyle", "oblique");
+shouldBeEqualToString("getComputedStyle(document.getElementById('test22')).fontStyle", "oblique 20deg");
 
 shouldBeEqualToString("getComputedStyle(document.getElementById('test1')).font", "16px / 18px Times");
 shouldBeEqualToString("getComputedStyle(document.getElementById('test2')).font", "");
@@ -72,8 +72,8 @@ shouldBeEqualToString("getComputedStyle(document.getElementById('test17')).font"
 shouldBeEqualToString("getComputedStyle(document.getElementById('test18')).font", `italic 48px / 49px "Helvetica Neue"`);
 shouldBeEqualToString("getComputedStyle(document.getElementById('test19')).font", `italic small-caps 100 extra-expanded 48px / 49px "Helvetica Neue"`);
 shouldBeEqualToString("getComputedStyle(document.getElementById('test20')).font", "16px / 18px Times");
-shouldBeEqualToString("getComputedStyle(document.getElementById('test21')).font", "");
-shouldBeEqualToString("getComputedStyle(document.getElementById('test22')).font", "oblique 16px / 18px Times");
+shouldBeEqualToString("getComputedStyle(document.getElementById('test21')).font", `oblique small-caps 123 extra-expanded 48px / 49px "Helvetica Neue"`);
+shouldBeEqualToString("getComputedStyle(document.getElementById('test22')).font", "");
 
 shouldBeEqualToString("document.getElementById('test1').style.font", "");
 shouldBeEqualToString("document.getElementById('test15').style.font", `italic 100 48px / 49px "Helvetica Neue"`);

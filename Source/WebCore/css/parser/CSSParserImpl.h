@@ -133,7 +133,7 @@ private:
     RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
 
     // This function is used for all the nested group rules (@media, @supports,..etc)
-    Vector<RefPtr<StyleRuleBase>>consumeRegularRuleList(CSSParserTokenRange block);
+    Vector<RefPtr<StyleRuleBase>> consumeRegularRuleList(CSSParserTokenRange block);
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleImport> consumeImportRule(CSSParserTokenRange prelude);
@@ -154,9 +154,14 @@ private:
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    ParsedPropertyVector consumeDeclarationListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
 
+    enum class OnlyDeclarations {
+        Yes,
+        No
+    };
     // FIXME: We should return value for all those functions instead of using class member attributes.
-    void consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange, StyleRuleType);
+    void consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange, StyleRuleType, OnlyDeclarations);
     void consumeDeclarationList(CSSParserTokenRange, StyleRuleType);
     void consumeStyleBlock(CSSParserTokenRange, StyleRuleType);
     void consumeDeclaration(CSSParserTokenRange, StyleRuleType);

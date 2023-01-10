@@ -70,14 +70,6 @@ void DeprecatedGlobalSettings::setMediaSourceInlinePaintingEnabled(bool isEnable
 }
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-void DeprecatedGlobalSettings::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
-{
-    shared().m_sampleBufferContentKeySessionSupportEnabled = enabled;
-    MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
-}
-#endif
-
 #if PLATFORM(WIN)
 void DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {

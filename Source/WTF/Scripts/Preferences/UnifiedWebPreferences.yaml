@@ -3479,7 +3479,7 @@ MaskWebGLStringsEnabled:
 
 MasonryEnabled:
   type: bool
-  status: testable
+  status: preview
   humanReadableName: "CSS Masonry Layout"
   humanReadableDescription: "Enable Masonry Layout for CSS Grid"
   defaultValue:
@@ -3869,7 +3869,7 @@ MinimumZoomFontSize:
 
 MockCaptureDevicesEnabled:
   type: bool
-  status: embedder
+  status: internal
   webcoreOnChange: mockCaptureDevicesEnabledChanged
   inspectorOverride: true
   condition: ENABLE(MEDIA_STREAM)
@@ -4853,6 +4853,7 @@ SampleBufferContentKeySessionSupportEnabled:
   status: unstable
   humanReadableName: "ContentKeySession support for SampleBuffer Renderers"
   humanReadableDescription: "ContentKeySession support for SampleBuffer Renderers Enabled"
+  webcoreOnChange: sampleBufferContentKeySessionSupportEnabledChanged
   condition: HAVE(AVCONTENTKEYSPECIFIER)
   defaultValue:
     WebKitLegacy:
@@ -6621,7 +6622,7 @@ WebMParserEnabled:
 
 WebRTCAV1CodecEnabled:
   type: bool
-  status: unstable
+  status: preview
   humanReadableName: "WebRTC AV1 codec"
   humanReadableDescription: "Enable WebRTC AV1 codec"
   condition: ENABLE(WEB_RTC)

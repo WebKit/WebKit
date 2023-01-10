@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-registry/define-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-registry/define.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-registry/per-global.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-registry/upgrade.html

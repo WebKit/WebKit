@@ -2494,32 +2494,6 @@ RenderElement* ComputedStyleExtractor::styledRenderer() const
     return m_element->renderer();
 }
 
-static bool isImplicitlyInheritedGridOrFlexProperty(CSSPropertyID propertyID)
-{
-    // It would be nice if grid and flex worked within normal CSS mechanisms and not invented their own inheritance system.
-    switch (propertyID) {
-    case CSSPropertyAlignSelf:
-    case CSSPropertyJustifySelf:
-    case CSSPropertyJustifyItems:
-    // FIXME: In StyleResolver::adjustRenderStyle z-index is adjusted based on the parent display property for grid/flex.
-    case CSSPropertyZIndex:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool nonInheritedColorPropertyHasValueCurrentColor(CSSPropertyID propertyID, const RenderStyle* style)
-{
-    if (CSSProperty::isInheritedProperty(propertyID) || !CSSProperty::isColorProperty(propertyID))
-        return false;
-
-    if (!style)
-        return true;
-
-    return RenderStyle::isCurrentColor(style->unresolvedColorForProperty(propertyID));
-}
-
 static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID propertyID)
 {
     if (element.styleValidity() != Style::Validity::Valid)
@@ -2539,30 +2513,15 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
         return style && style->containerType() != ContainerType::Normal;
     };
 
-    bool isInherited = CSSProperty::isInheritedProperty(propertyID) || isImplicitlyInheritedGridOrFlexProperty(propertyID);
-    bool maybeExplicitlyInherited = !isInherited;
-
     if (isQueryContainer(element))
         return false;
 
     const auto* currentElement = &element;
     for (auto& ancestor : composedTreeAncestors(element)) {
-        if (ancestor.styleValidity() >= Style::Validity::SubtreeInvalid)
+        if (ancestor.styleValidity() != Style::Validity::Valid)
             return false;
 
         if (isQueryContainer(ancestor))
-            return false;
-
-        if (maybeExplicitlyInherited) {
-            auto* style = currentElement->renderStyle();
-            // While most color properties are not inherited, the value 'currentcolor' resolves to the value of the inherited 'color' property.
-            if (nonInheritedColorPropertyHasValueCurrentColor(propertyID, style))
-                isInherited = true;
-
-            maybeExplicitlyInherited = !style || style->hasExplicitlyInheritedProperties();
-        }
-
-        if ((isInherited || maybeExplicitlyInherited) && ancestor.styleValidity() == Style::Validity::ElementInvalid)
             return false;
 
         if (ancestor.directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())

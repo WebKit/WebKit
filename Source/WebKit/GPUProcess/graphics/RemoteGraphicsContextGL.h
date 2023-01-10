@@ -95,7 +95,7 @@ public:
 protected:
     RemoteGraphicsContextGL(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, IPC::StreamServerConnection::Handle&&);
     void initialize(WebCore::GraphicsContextGLAttributes&&);
-    IPC::StreamConnectionWorkQueue& workQueue() const { return remoteGraphicsContextGLStreamWorkQueue(); }
+    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
 
     void workQueueInitialize(WebCore::GraphicsContextGLAttributes&&);
     virtual void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) { };
@@ -153,6 +153,7 @@ private:
 
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;

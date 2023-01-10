@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleValue.h"
@@ -47,6 +48,8 @@ public:
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const AtomString&, const String&, bool);
     static RefPtr<CSSStyleValue> constructStyleValueForShorthandSerialization(const String&);
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStrings(const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values);
+
+    static RefPtr<CSSStyleValue> constructStyleValueForCustomPropertySyntaxValue(const CSSCustomPropertyValue::SyntaxValue&);
 
 protected:
     CSSStyleValueFactory() = delete;

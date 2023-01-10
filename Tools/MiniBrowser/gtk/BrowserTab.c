@@ -319,10 +319,6 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
         else if (isForDisplayDevice)
             mediaType = "display";
         text = g_strdup_printf("Allow access to %s device?", mediaType);
-    } else if (WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)) {
-        title = "Media plugin missing request";
-        text = g_strdup_printf("The media backend was unable to find a plugin to play the requested media:\n%s.\nAllow to search and install the missing plugin?",
-            webkit_install_missing_media_plugins_permission_request_get_description(WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)));
     } else if (WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST(request)) {
         char* origin = getWebViewOrigin(webView);
         if (g_hash_table_contains(userMediaPermissionGrantedOrigins, origin)) {

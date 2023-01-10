@@ -3,12 +3,17 @@
 <container>
 <subcontainer>
 <target>Text</target>
+<target-sibling></target-sibling>
 </subcontainer>
+<subcontainer-sibling>
+</subcontainer-sibling>
 </container>
 <script>
 var target = document.querySelector("target");
 var container = document.querySelector("container");
 var subcontainer = document.querySelector("subcontainer");
+var subcontainerSibling = document.querySelector("subcontainer-sibling");
+var targetSibling = document.querySelector("target-sibling");
 test(() => {
      target.offsetLeft;
      internals.startTrackingStyleRecalcs();
@@ -19,19 +24,18 @@ test(() => {
 test(() => {
      target.offsetLeft;
      internals.startTrackingStyleRecalcs();
-     container.style.backgroundColor = "blue";
+     targetSibling.style.backgroundColor = "blue";
      assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
      assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
- }, "No style resolution when parent style is invalid and querying non-inherited property.");
+ }, "No style resolution when sibling style is invalid.");
 
- test(() => {
-     target.style.backgroundColor = "inherit";
+test(() => {
      target.offsetLeft;
      internals.startTrackingStyleRecalcs();
-     container.style.backgroundColor = "red";
+     subcontainerSibling.style.backgroundColor = "blue";
      assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
      assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
- }, "This still works with 'inherit'");
+ }, "No style resolution when ancestor sibling style is invalid.");
 
 test(() => {
      target.style.backgroundColor = "inherit";

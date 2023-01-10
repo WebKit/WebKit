@@ -54,7 +54,7 @@ namespace Wasm {
 
 #if ENABLE(B3_JIT)
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
-enum class ExtSIMDOpType : uint8_t {
+enum class ExtSIMDOpType : uint32_t {
     FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
 };
 #undef CREATE_ENUM_VALUE
@@ -154,10 +154,10 @@ constexpr std::pair<size_t, size_t> countNumberOfWasmGCOpcodes()
     return { numberOfOpcodes, mapSize + 1 };
 }
 
-constexpr bool isRegisteredGCOpcode(GCOpType op)
+constexpr bool isRegisteredGCOpcode(ExtGCOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, ...) case GCOpType::name:
+#define CREATE_CASE(name, id, ...) case ExtGCOpType::name:
     FOR_EACH_WASM_GC_OP(CREATE_CASE)
 #undef CREATE_CASE
         return true;
@@ -166,10 +166,10 @@ constexpr bool isRegisteredGCOpcode(GCOpType op)
     }
 }
 
-constexpr void dumpGCOpType(PrintStream& out, GCOpType op)
+constexpr void dumpExtGCOpType(PrintStream& out, ExtGCOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, ...) case GCOpType::name: out.print(#name); break;
+#define CREATE_CASE(name, id, ...) case ExtGCOpType::name: out.print(#name); break;
     FOR_EACH_WASM_GC_OP(CREATE_CASE)
 #undef CREATE_CASE
     default:
@@ -177,7 +177,7 @@ constexpr void dumpGCOpType(PrintStream& out, GCOpType op)
     }
 }
 
-MAKE_PRINT_ADAPTOR(GCOpTypeDump, GCOpType, dumpGCOpType);
+MAKE_PRINT_ADAPTOR(ExtGCOpTypeDump, ExtGCOpType, dumpExtGCOpType);
 
 constexpr std::pair<size_t, size_t> countNumberOfWasmBaseOpcodes()
 {

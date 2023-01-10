@@ -1,0 +1,3 @@
+
+FAIL Node.prototype.cloneNode(false) must be able to clone as a customized built-in element when it has an inconsistent "is" attribute assert_true: expected true got false
+

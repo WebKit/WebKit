@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
 
 import json
 import re
+import sys
 
 from collections import defaultdict
 from webkitcorepy import string_utils
@@ -111,6 +112,10 @@ class Contributor(object):
                 raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
 
             result = self.create(contributor.name, *contributor.emails)
+            if not result:
+                sys.stderr.write("Failed to create contributor {} ({})\n".format(contributor.name, ', '.join(contributor.emails)))
+                return None
+
             result.status = contributor.status or result.status
             result.github = contributor.github or result.github
             result.bitbucket = contributor.bitbucket or result.bitbucket
@@ -155,7 +160,7 @@ class Contributor(object):
         def __iter__(self):
             yielded = set()
             for contributor in self.values():
-                if contributor.name in yielded:
+                if contributor and contributor.name in yielded:
                     continue
                 yielded.add(contributor.name)
                 yield contributor

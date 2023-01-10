@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "GPUProcessConnection.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "LibWebRTCCodecsProxyMessages.h"
+#include "LibWebRTCProvider.h"
 #include "Logging.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
@@ -252,6 +253,9 @@ LibWebRTCCodecs::~LibWebRTCCodecs()
 void LibWebRTCCodecs::setCallbacks(bool useGPUProcess, bool useRemoteFrames)
 {
     ASSERT(isMainRunLoop());
+
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
 
     // We can enable GPUProcess but disable it is difficult once enabled since callbacks may be used in background threads.
     if (!useGPUProcess)

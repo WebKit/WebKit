@@ -142,6 +142,7 @@ private:
     Layout::ElementBox& rootLayoutBox();
     void clearInlineContent();
     void releaseCaches();
+    std::optional<size_t> lastLineIndexForContentHeight() const;
 
     LayoutUnit physicalBaselineForLine(LayoutIntegration::Line&) const;
     

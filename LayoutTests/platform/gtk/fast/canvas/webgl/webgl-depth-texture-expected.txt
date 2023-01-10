@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: *** Error compiling shader '[object WebGLShader]':0:1(11): error: syntax error, unexpected NEW_IDENTIFIER
+
+CONSOLE MESSAGE: *** Error compiling shader '[object WebGLShader]':0:1(14): error: syntax error, unexpected BASIC_TYPE_TOK, expecting '{'
+
 This test verifies the functionality of the WEBGL_depth_texture extension, if it is available.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

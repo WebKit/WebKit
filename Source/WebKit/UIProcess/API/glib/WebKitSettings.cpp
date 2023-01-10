@@ -176,6 +176,7 @@ enum {
     PROP_ENABLE_MEDIA,
     PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT,
     PROP_ENABLE_WEBRTC,
+    PROP_DISABLE_WEB_SECURITY,
     N_PROPERTIES,
 };
 
@@ -407,6 +408,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_WEBRTC:
         webkit_settings_set_enable_webrtc(settings, g_value_get_boolean(value));
         break;
+    case PROP_DISABLE_WEB_SECURITY:
+        webkit_settings_set_disable_web_security(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -609,6 +613,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_WEBRTC:
         g_value_set_boolean(value, webkit_settings_get_enable_webrtc(settings));
+        break;
+    case PROP_DISABLE_WEB_SECURITY:
+        g_value_set_boolean(value, webkit_settings_get_disable_web_security(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1594,6 +1601,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         "enable-webrtc",
         _("Enable WebRTC"),
         _("Whether WebRTC content should be handled"),
+        FALSE,
+        readWriteConstructParamFlags);
+
+    /**
+     * WebKitSettings:disable-web-security:
+     *
+     * Enable or disable support for Web Security on pages.
+     *
+     * This setting disables the same-origin policy, allowing every website full control over
+     * all other websites. This is for use in special environments where you wish to disable
+     * all security and allow websites to hack each other. It is impossible to use this setting
+     * securely.
+     *
+     * Since: 2.40
+     */
+    sObjProperties[PROP_DISABLE_WEB_SECURITY] = g_param_spec_boolean(
+        "disable-web-security",
+        _("Disable web security"),
+        _("Whether web security should be disabled."),
         FALSE,
         readWriteConstructParamFlags);
 
@@ -3963,4 +3989,43 @@ void webkit_settings_set_media_content_types_requiring_hardware_support(WebKitSe
     priv->preferences->setMediaContentTypesRequiringHardwareSupport(mediaContentTypesRequiringHardwareSupportString);
     priv->mediaContentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupportString.utf8();
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT]);
+}
+
+/**
+ * webkit_settings_get_disable_web_security:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:disable-web-security property.
+ *
+ * Returns: %TRUE If web security support is disabled or %FALSE otherwise.
+ *
+ * Since: 2.40
+*/
+gboolean webkit_settings_get_disable_web_security(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return !settings->priv->preferences->webSecurityEnabled();
+}
+
+/**
+ * webkit_settings_set_disable_web_security:
+ * @settings: a #WebKitSettings
+ * @disabled: Value to be set
+ *
+ * Set the #WebKitSettings:disable-web-security property.
+ *
+ * Since: 2.40
+ */
+void webkit_settings_set_disable_web_security(WebKitSettings* settings, gboolean disabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = !priv->preferences->webSecurityEnabled();
+    if (currentValue == disabled)
+        return;
+
+    priv->preferences->setWebSecurityEnabled(!disabled);
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_DISABLE_WEB_SECURITY]);
 }

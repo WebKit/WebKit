@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<style>
+div {
+    -webkit-animation-name: name1;
+    @unknown {
+        invalid: z;
+    }
+    @font-face {
+        invalid: bar;
+    }
+    @property --foo-name {
+        invalid: lol;
+    }
+    -webkit-animation-duration: 8s;
+    @counter-style {
+        invalid: bar;
+    }
+    @page {
+        margin-top: 4in;
+    }
+    -webkit-animation-timing-function: ease-in ! important;
+    @-webkit-keyframes name1 {
+        invalid {
+                    
+        }
+        from {
+            margin-bottom: auto;
+        }
+        to {
+            margin-bottom: 256in;
+        }
+    }
+};
+</style>
+<body>
+<noscript></noscript>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(() => testRunner.notifyDone(), 50);
+}
+document.body.offsetLeft;
+document.body.innerHTML = "This test passes if it doesn't assert or crash";
+</script>

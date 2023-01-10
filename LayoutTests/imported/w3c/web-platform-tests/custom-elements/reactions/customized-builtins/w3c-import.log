@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLAreaElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLBaseElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLButtonElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLCanvasElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLDataElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLDetailsElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLEmbedElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLFieldSetElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLImageElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLInputElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLLIElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLLabelElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLMapElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLMediaElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLMetaElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLMeterElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLModElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLOListElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLOptGroupElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLParamElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLProgressElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLQuoteElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLSlotElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLSourceElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLStyleElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLTableCellElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLTableColElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLTimeElement.html

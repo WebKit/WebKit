@@ -1,7 +1,6 @@
 
 PASS Node.prototype.cloneNode(false) must be able to clone a custom element
 PASS Node.prototype.cloneNode(false) must be able to clone as a autonomous custom element when it contains is attribute
-FAIL Node.prototype.cloneNode(false) must be able to clone as a customized built-in element when it has an inconsistent "is" attribute assert_true: expected true got false
 PASS Node.prototype.cloneNode(false) must be able to clone a custom element inside an iframe
 PASS Node.prototype.cloneNode(true) must be able to clone a descendent custom element
 PASS Node.prototype.cloneNode(true) must set parentNode, previousSibling, and nextSibling before upgrading custom elements

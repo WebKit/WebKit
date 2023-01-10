@@ -238,7 +238,7 @@ static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)
     }
     if (args.peek().type() == IdentToken) {
         AtomString familyName = CSSPropertyParserHelpers::concatenateFamilyName(args);
-        if (!args.atEnd())
+        if (familyName.isNull() || !args.atEnd())
             return nullptr;
         return CSSFontFaceSrcLocalValue::create(WTFMove(familyName));
     }

@@ -29,8 +29,42 @@
 
 namespace WebCore {
 
-class RemoteFrameView : public AbstractFrameView {
+class RemoteFrame;
+
+class RemoteFrameView final : public AbstractFrameView {
+public:
+    static Ref<RemoteFrameView> create(RemoteFrame& frame) { return adoptRef(*new RemoteFrameView(frame)); }
+
     FrameViewType viewType() const final { return FrameViewType::Remote; }
+private:
+    WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);
+
+    void invalidateRect(const IntRect&) final;
+    bool isActive() const final;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+    ScrollableArea* enclosingScrollableArea() const final;
+    bool isScrollableOrRubberbandable() final;
+    bool hasScrollableOrRubberbandableAncestor() final;
+    IntRect scrollableAreaBoundingBox(bool*) const final;
+    bool shouldPlaceVerticalScrollbarOnLeft() const final;
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
+    HostWindow* hostWindow() const final;
+    IntRect windowClipRect() const final;
+    void paintContents(GraphicsContext&, const IntRect& damageRect, SecurityOriginPaintPolicy, EventRegionContext*) final;
+    void addedOrRemovedScrollbar() final;
+    void delegatedScrollingModeDidChange() final;
+    void updateScrollCorner() final;
+    bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
+    bool isVerticalDocument() const final;
+    bool isFlippedDocument() const final;
+    bool shouldDeferScrollUpdateAfterContentSizeChange() final;
+    void scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset&, const ScrollOffset&) final;
+    void unobscuredContentSizeChanged() final;
+    void didFinishProhibitingScrollingWhenChangingContentSize() final;
+    void updateLayerPositionsAfterScrolling() final;
+    void updateCompositingLayersAfterScrolling() final;
+
+    const Ref<RemoteFrame> m_frame;
 };
 
 }

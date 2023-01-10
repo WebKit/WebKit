@@ -102,6 +102,7 @@ public:
     void setFrameRect(const IntRect&) final;
     FrameViewType viewType() const final { return FrameViewType::Local; }
 
+    // FIXME: This should return Frame. If it were a RemoteFrame, we would have a RemoteFrameView.
     AbstractFrame& frame() const { return m_frame; }
 
     WEBCORE_EXPORT RenderView* renderView() const;

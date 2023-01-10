@@ -91,7 +91,7 @@ void WasmOpcodeCounter::dump()
 
     dump<ExtAtomicOpType, ExtAtomicOpTypeDump>(m_extendedAtomicOpcodeCounter, m_extendedAtomicOpcodeInfo.first, m_extendedAtomicOpcodeInfo.second, isRegisteredExtenedAtomicOpcode, "<WASM.EXT.ATOMIC.OP.STAT>", "wasm extended atomic opcode");
 
-    dump<GCOpType, GCOpTypeDump>(m_GCOpcodeCounter, m_GCOpcodeInfo.first, m_GCOpcodeInfo.second, isRegisteredGCOpcode, "<WASM.GC.OP.STAT>", "wasm GC opcode");
+    dump<ExtGCOpType, ExtGCOpTypeDump>(m_GCOpcodeCounter, m_GCOpcodeInfo.first, m_GCOpcodeInfo.second, isRegisteredGCOpcode, "<WASM.GC.OP.STAT>", "wasm GC opcode");
 
     dump<OpType, OpTypeDump>(m_baseOpcodeCounter, m_baseOpcodeInfo.first, m_baseOpcodeInfo.second, isRegisteredBaseOpcode, "<WASM.BASE.OP.STAT>", "wasm base opcode");
 }
@@ -126,7 +126,7 @@ void WasmOpcodeCounter::increment(ExtAtomicOpType op)
     m_extendedAtomicOpcodeCounter[(uint8_t)op].exchangeAdd(1);
 }
 
-void WasmOpcodeCounter::increment(GCOpType op)
+void WasmOpcodeCounter::increment(ExtGCOpType op)
 {
     registerDispatch();
     m_GCOpcodeCounter[(uint8_t)op].exchangeAdd(1);

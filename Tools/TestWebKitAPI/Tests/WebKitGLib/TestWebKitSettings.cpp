@@ -378,6 +378,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
+    // WebSecurity is enabled by default.
+    g_assert_false(webkit_settings_get_disable_web_security(settings));
+    webkit_settings_set_disable_web_security(settings, TRUE);
+    g_assert_true(webkit_settings_get_disable_web_security(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

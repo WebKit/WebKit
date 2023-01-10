@@ -65,4 +65,20 @@ String makeString(const Name& characters)
 
 } } // namespace JSC::Wasm
 
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::Wasm::TableElementType type)
+{
+    switch (type) {
+    case JSC::Wasm::TableElementType::Externref:
+        out.print("Externref");
+        break;
+    case JSC::Wasm::TableElementType::Funcref:
+        out.print("Funcref");
+        break;
+    }
+}
+
+} // namespace WTF
+
 #endif // ENABLE(WEBASSEMBLY)

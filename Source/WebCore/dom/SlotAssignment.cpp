@@ -434,7 +434,7 @@ HTMLSlotElement* ManualSlotAssignment::findAssignedSlot(const Node& node)
 static Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> effectiveAssignedNodes(ShadowRoot& shadowRoot, const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& manuallyAssingedNodes)
 {
     return WTF::compactMap(manuallyAssingedNodes, [&](auto& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
-        if (node->parentNode() != shadowRoot.host())
+        if (!node || node->parentNode() != shadowRoot.host())
             return std::nullopt;
         return WeakPtr { node.get() };
     });

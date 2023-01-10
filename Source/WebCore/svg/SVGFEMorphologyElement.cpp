@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,13 +47,6 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
 Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFEMorphologyElement(tagName, document));
-}
-
-void SVGFEMorphologyElement::setRadius(float x, float y)
-{
-    m_radiusX->setBaseValInternal(x);
-    m_radiusY->setBaseValInternal(y);
-    updateSVGRendererForElementChange();
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomString& value)

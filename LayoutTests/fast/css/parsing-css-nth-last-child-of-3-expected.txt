@@ -8,15 +8,11 @@ PASS document.querySelector(":nth-last-child(even of)") threw exception SyntaxEr
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(even of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(even of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(evenof .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(odd of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(odd of    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(odd of.class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(oddof .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -24,15 +20,11 @@ PASS document.querySelector(":nth-last-child(n of)") threw exception SyntaxError
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(n of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(nof .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-n of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-n of    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-n of.class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-nof .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -40,15 +32,11 @@ PASS document.querySelector(":nth-last-child(3 of)") threw exception SyntaxError
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3 of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3 of    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -56,15 +44,11 @@ PASS document.querySelector(":nth-last-child(n+0 of)") threw exception SyntaxErr
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(n+0 of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n+0 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(n+0of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(n-0 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(n-0 of    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(n-0 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(n-0of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -72,15 +56,11 @@ PASS document.querySelector(":nth-last-child(0n of)") threw exception SyntaxErro
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(0n of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(0n of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(0nof .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3n+5 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3n+5 of    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n+5 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3n+5of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -88,23 +68,17 @@ PASS document.querySelector(":nth-last-child(-3n+5 of)") threw exception SyntaxE
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3n+5 of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n+5 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3n+5of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3n-5 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3n-5 of    )") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(3n-5 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(3n-5of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3n-5 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3n-5 of    )") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector(":nth-last-child(-3n-5 of.class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":nth-last-child(-3n-5of .class)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0

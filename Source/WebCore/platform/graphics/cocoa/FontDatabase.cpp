@@ -32,19 +32,10 @@
 
 namespace WebCore {
 
-FontDatabase::InstalledFont::InstalledFont(CTFontDescriptorRef fontDescriptor, AllowUserInstalledFonts allowUserInstalledFonts)
+FontDatabase::InstalledFont::InstalledFont(CTFontDescriptorRef fontDescriptor)
     : fontDescriptor(fontDescriptor)
     , capabilities(capabilitiesForFontDescriptor(fontDescriptor))
 {
-#if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
-    UNUSED_PARAM(allowUserInstalledFonts);
-#else
-    if (allowUserInstalledFonts != AllowUserInstalledFonts::No)
-        return;
-    auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    addAttributesForInstalledFonts(attributes.get(), allowUserInstalledFonts);
-    this->fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, attributes.get()));
-#endif
 }
 
 FontDatabase::InstalledFontFamily::InstalledFontFamily(Vector<InstalledFont>&& installedFonts)
@@ -81,7 +72,7 @@ const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const
             Vector<InstalledFont> result;
             result.reserveInitialCapacity(count);
             for (CFIndex i = 0; i < count; ++i) {
-                InstalledFont installedFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)), m_allowUserInstalledFonts);
+                InstalledFont installedFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)));
                 result.uncheckedAppend(WTFMove(installedFont));
             }
             return makeUnique<InstalledFontFamily>(WTFMove(result));
@@ -106,7 +97,7 @@ const FontDatabase::InstalledFont& FontDatabase::fontForPostScriptName(const Ato
         auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
         auto mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
         auto match = adoptCF(CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptorToMatch.get(), mandatoryAttributes.get()));
-        return InstalledFont(match.get(), m_allowUserInstalledFonts);
+        return InstalledFont(match.get());
     }).iterator->value;
 }
 

@@ -106,7 +106,7 @@ struct AirIRGeneratorBase {
 
     using ResultList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
-    using CallPatchpointData = std::pair<B3::PatchpointValue*, PatchpointExceptionHandle>;
+    using CallPatchpointData = std::pair<B3::PatchpointValue*, Box<PatchpointExceptionHandle>>;
 
     struct ControlData {
         ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -404,7 +404,7 @@ struct AirIRGeneratorBase {
     // GC (in derived classes)
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
@@ -2508,9 +2508,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t ty
 }
 
 template <typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(GCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
-    ASSERT(arrayGetKind == GCOpType::ArrayGet || arrayGetKind == GCOpType::ArrayGetS || arrayGetKind == GCOpType::ArrayGetU);
+    ASSERT(arrayGetKind == ExtGCOpType::ArrayGet || arrayGetKind == ExtGCOpType::ArrayGetS || arrayGetKind == ExtGCOpType::ArrayGetU);
 
     Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
@@ -2538,9 +2538,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(GCOpType arrayGetK
 
     if (elementType.is<PackedType>()) {
         switch (arrayGetKind) {
-        case GCOpType::ArrayGetU:
+        case ExtGCOpType::ArrayGetU:
             break;
-        case GCOpType::ArrayGetS: {
+        case ExtGCOpType::ArrayGetS: {
             size_t elementSize = elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
             uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
             auto tmpForShift = self().g32();
@@ -3167,7 +3167,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle.generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to wasm unlinked function call patchpoint");
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex](LinkBuffer& linkBuffer) {
@@ -3187,7 +3188,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle.generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
             if (isTailCall)
                 jit.farJump(params[0].gpr(), WasmEntryPtrTag);
@@ -3449,7 +3451,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
         patchpoint->setGenerator([=, this](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            exceptionHandle.generate(jit, params, this);
+            if (exceptionHandle)
+                exceptionHandle->generate(jit, params, this);
             jit.farJump(params[0].gpr(), WasmEntryPtrTag);
         });
         return { };
@@ -3474,7 +3477,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
 
     patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        exceptionHandle.generate(jit, params, this);
+        if (exceptionHandle)
+            exceptionHandle->generate(jit, params, this);
         jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
     });
 

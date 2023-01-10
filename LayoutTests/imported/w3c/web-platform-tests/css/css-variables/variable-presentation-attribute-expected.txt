@@ -3,15 +3,15 @@ PASS Testing 'stroke-width' on '#box1'.
 PASS Testing 'stroke-width' on '#box2'.
 PASS Testing 'stroke-width' on '#box3'.
 PASS Testing 'clip' on '#test4'.
-FAIL Testing 'alignment-baseline'. assert_equals: Value Test. expected "baseline" but got "auto"
-FAIL Testing 'baseline-shift'. assert_equals: Value Test. expected "sub" but got "baseline"
+PASS Testing 'alignment-baseline'.
+PASS Testing 'baseline-shift'.
 PASS Testing 'clip-rule'.
 PASS Testing 'color'.
 FAIL Testing 'color-interpolation-filters'. assert_equals: Default value. expected "" but got "linearrgb"
 PASS Testing 'cursor'.
 PASS Testing 'direction'.
-FAIL Testing 'display'. assert_equals: Value Test. expected "block" but got "inline"
-FAIL Testing 'dominant-baseline'. assert_equals: Value Test. expected "use-script" but got "auto"
+PASS Testing 'display'.
+PASS Testing 'dominant-baseline'.
 FAIL Testing 'fill'. assert_equals: Default value. expected "black" but got "rgb(0, 0, 0)"
 PASS Testing 'fill-opacity'.
 PASS Testing 'fill-rule'.
@@ -30,7 +30,7 @@ FAIL Testing 'kerning'. assert_equals: Default value. expected "auto" but got "0
 PASS Testing 'letter-spacing'.
 FAIL Testing 'lighting-color'. assert_equals: Default value. expected "" but got "rgb(255, 255, 255)"
 PASS Testing 'opacity'.
-FAIL Testing 'overflow'. assert_equals: Value Test. expected "hidden" but got "visible"
+PASS Testing 'overflow'.
 FAIL Testing 'pointer-events'. assert_equals: Default value. expected "visiblePainted" but got "auto"
 FAIL Testing 'stop-color'. assert_equals: Default value. expected "" but got "rgb(0, 0, 0)"
 PASS Testing 'stop-opacity'.
@@ -43,7 +43,7 @@ PASS Testing 'stroke-miterlimit'.
 PASS Testing 'stroke-opacity'.
 PASS Testing 'stroke-width'.
 PASS Testing 'text-anchor'.
-FAIL Testing 'text-decoration'. assert_equals: Value Test. expected "underline" but got "none"
+PASS Testing 'text-decoration'.
 PASS Testing 'visibility'.
 PASS Testing 'word-spacing'.
 FAIL Testing 'writing-mode'. assert_equals: Default value. expected "lr-tb" but got "horizontal-tb"

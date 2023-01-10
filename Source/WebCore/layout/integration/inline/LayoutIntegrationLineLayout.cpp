@@ -701,16 +701,55 @@ void LineLayout::prepareFloatingState()
     }
 }
 
+std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
+{
+    if (!m_inlineContent)
+        return { };
+
+    auto& lines = m_inlineContent->lines;
+    auto* layoutState = flow().view().frameView().layoutContext().layoutState();
+    if (!layoutState || lines.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    if (!layoutState->hasLineClamp())
+        return lines.size() - 1;
+
+    auto maximumLines = *layoutState->maximumLineCountForLineClamp();
+    if (!maximumLines) {
+        ASSERT_NOT_REACHED();
+        return lines.size() - 1;
+    }
+    auto visibleLines = layoutState->visibleLineCountForLineClamp();
+    // Previous block containers may have already produced some lines.
+    auto remainingNumberOfLines = maximumLines - visibleLines.value_or(0);
+    if (!remainingNumberOfLines) {
+        // This block is fully collapsed.
+        return { };
+    }
+    if (remainingNumberOfLines > 0) {
+        auto lastLineIndex = std::min(lines.size(), remainingNumberOfLines) - 1;
+        // FIXME: Clamped line is supposed to have trailing ellipsis. Assert on lines[lastLineIndex].hasEllipsis() when we have some means to clear
+        // line content after probing layout.
+        return lastLineIndex;
+    }
+    ASSERT_NOT_REACHED();
+    return lines.size() - 1;
+}
+
 LayoutUnit LineLayout::contentLogicalHeight() const
 {
     if (!m_inlineContent)
         return { };
 
-    // FIXME: Content height with line-clamp and non-hidden overflow computes to the clamped content.
+    auto lastLineIndex = lastLineIndexForContentHeight();
+    if (!lastLineIndex)
+        return { };
+
     auto& lines = m_inlineContent->lines;
     auto flippedContentHeightForWritingMode = rootLayoutBox().style().isHorizontalWritingMode()
-        ? lines.last().lineBoxBottom() - lines.first().lineBoxTop()
-        : lines.last().lineBoxRight() - lines.first().lineBoxLeft();
+        ? lines[*lastLineIndex].lineBoxBottom() - lines.first().lineBoxTop()
+        : lines[*lastLineIndex].lineBoxRight() - lines.first().lineBoxLeft();
     return LayoutUnit { m_inlineContent->clearGapBeforeFirstLine + flippedContentHeightForWritingMode + m_inlineContent->clearGapAfterLastLine };
 }
 

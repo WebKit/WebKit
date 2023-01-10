@@ -44,7 +44,7 @@ public:
 
     struct InstalledFont {
         InstalledFont() = default;
-        InstalledFont(CTFontDescriptorRef, AllowUserInstalledFonts);
+        InstalledFont(CTFontDescriptorRef);
 
         RetainPtr<CTFontDescriptorRef> fontDescriptor;
         FontSelectionCapabilities capabilities;

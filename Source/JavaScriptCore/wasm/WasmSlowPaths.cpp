@@ -426,8 +426,8 @@ WASM_SLOW_PATH_DECL(array_get)
     JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
-    Wasm::GCOpType arrayGetKind = static_cast<Wasm::GCOpType>(instruction.m_arrayGetKind);
-    if (arrayGetKind == Wasm::GCOpType::ArrayGetS) {
+    Wasm::ExtGCOpType arrayGetKind = static_cast<Wasm::ExtGCOpType>(instruction.m_arrayGetKind);
+    if (arrayGetKind == Wasm::ExtGCOpType::ArrayGetS) {
         EncodedJSValue value = Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index);
         Wasm::StorageType type = arrayObject->elementType().type;
         ASSERT(type.is<Wasm::PackedType>());
