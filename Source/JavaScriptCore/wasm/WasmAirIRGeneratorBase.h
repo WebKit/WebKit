@@ -106,7 +106,7 @@ struct AirIRGeneratorBase {
 
     using ResultList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
-    using CallPatchpointData = std::pair<B3::PatchpointValue*, PatchpointExceptionHandle>;
+    using CallPatchpointData = std::pair<B3::PatchpointValue*, Box<PatchpointExceptionHandle>>;
 
     struct ControlData {
         ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -3167,7 +3167,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle.generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to wasm unlinked function call patchpoint");
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex](LinkBuffer& linkBuffer) {
@@ -3187,7 +3188,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle.generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
             if (isTailCall)
                 jit.farJump(params[0].gpr(), WasmEntryPtrTag);
@@ -3449,7 +3451,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
         patchpoint->setGenerator([=, this](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            exceptionHandle.generate(jit, params, this);
+            if (exceptionHandle)
+                exceptionHandle->generate(jit, params, this);
             jit.farJump(params[0].gpr(), WasmEntryPtrTag);
         });
         return { };
@@ -3474,7 +3477,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
 
     patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        exceptionHandle.generate(jit, params, this);
+        if (exceptionHandle)
+            exceptionHandle->generate(jit, params, this);
         jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
     });
 

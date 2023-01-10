@@ -1404,7 +1404,8 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
                 patchpoint->setGenerator([this, tailCallStackOffsetFromFP, handle](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-                    handle->generate(jit, params, this);
+                    if (handle)
+                        handle->generate(jit, params, this);
                     jit.farJump(params[0].gpr(), WasmEntryPtrTag);
                 });
             }));
@@ -1426,7 +1427,8 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                handle->generate(jit, params, this);
+                if (handle)
+                    handle->generate(jit, params, this);
                 jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
             });
         }));
@@ -3821,8 +3823,6 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
     }
     constrainedArguments.append(B3::ConstrainedValue(previousFramePointer, ValueRep(MacroAssembler::framePointerRegister)));
 
-    Box<PatchpointExceptionHandle> exceptionHandle = Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers);
-
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(B3::Void, origin());
 
     patchpoint->effects.terminal = true;
@@ -3835,10 +3835,8 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
     patchpoint->clobber(clobbers);
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
 
-    patchpointFunctor(patchpoint, exceptionHandle);
+    patchpointFunctor(patchpoint, nullptr);
     patchpoint->appendVector(WTFMove(constrainedArguments));
-
-    *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
 
     block->append(patchpoint);
     return patchpoint;
@@ -3880,7 +3878,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle->generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex](LinkBuffer& linkBuffer) {
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3898,7 +3897,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
                 prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            handle->generate(jit, params, this);
+            if (handle)
+                handle->generate(jit, params, this);
             if (isTailCall)
                 jit.farJump(params[0].gpr(), WasmEntryPtrTag);
             else

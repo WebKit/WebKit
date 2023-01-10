@@ -580,7 +580,7 @@ public:
 
     Tmp emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
     template <size_t inlineCapacity>
-    PatchpointExceptionHandle preparePatchpointForExceptions(B3::PatchpointValue*, Vector<ConstrainedTmp, inlineCapacity>& args);
+    Box<PatchpointExceptionHandle> preparePatchpointForExceptions(B3::PatchpointValue*, Vector<ConstrainedTmp, inlineCapacity>& args);
 
 private:
     TypedTmp g32() { return { newTmp(B3::GP), Types::I32 }; }
@@ -1987,11 +1987,12 @@ auto AirIRGenerator64::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&
     for (unsigned i = 0; i < args.size(); ++i)
         patchArgs.append(ConstrainedTmp(args[i], B3::ValueRep::stackArgument(i * sizeof(EncodedJSValue))));
 
-    PatchpointExceptionHandle handle = preparePatchpointForExceptions(patch, patchArgs);
+    auto handle = preparePatchpointForExceptions(patch, patchArgs);
 
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        handle.generate(jit, params, this);
+        if (handle)
+            handle->generate(jit, params, this);
         emitThrowImpl(jit, exceptionIndex); 
     });
 
@@ -2011,10 +2012,11 @@ auto AirIRGenerator64::addRethrow(unsigned, ControlType& data) -> PartialResult
     patchArgs.append(ConstrainedTmp(TypedTmp(Tmp(GPRInfo::callFrameRegister), Types::I64), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
     patchArgs.append(ConstrainedTmp(data.exception(), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
 
-    PatchpointExceptionHandle handle = preparePatchpointForExceptions(patch, patchArgs);
+    auto handle = preparePatchpointForExceptions(patch, patchArgs);
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        handle.generate(jit, params, this);
+        if (handle)
+            handle->generate(jit, params, this);
         emitRethrowImpl(jit);
     });
 
@@ -2047,9 +2049,9 @@ auto AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, B3::Type returnType
             resultConstraints.append(B3::ValueRep(resultLocation.location));
         patchpoint->resultConstraints = WTFMove(resultConstraints);
     }
-    PatchpointExceptionHandle exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
+    auto exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
     emitPatchpoint(block, patchpoint, results, WTFMove(patchArgs));
-    return { patchpoint, exceptionHandle };
+    return { patchpoint, WTFMove(exceptionHandle) };
 }
 
 auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<int32_t>& tailCallStackOffsetFromFP, const Vector<ArgumentLocation>& constrainedArgLocations, const Vector<TypedTmp>& tmpArgs, Vector<ConstrainedTmp> patchArgs) -> CallPatchpointData
@@ -2131,13 +2133,11 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
         }
         patchArgs.append(ConstrainedTmp(tmp, constrainedArgLocations[i]));
     }
-    PatchpointExceptionHandle exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
-
     patchArgs.append({ tmp, B3::ValueRep(MacroAssembler::framePointerRegister) });
 
     emitPatchpoint(block, patchpoint, Tmp { }, WTFMove(patchArgs));
 
-    return { patchpoint, exceptionHandle };
+    return { patchpoint, nullptr };
 }
 
 template<typename IntType>
@@ -2358,11 +2358,11 @@ auto AirIRGenerator64::addCompare(Type type, MacroAssembler::RelationalCondition
 
 
 template <size_t inlineCapacity>
-PatchpointExceptionHandle AirIRGenerator64::preparePatchpointForExceptions(B3::PatchpointValue* patch, Vector<ConstrainedTmp, inlineCapacity>& args)
+Box<PatchpointExceptionHandle> AirIRGenerator64::preparePatchpointForExceptions(B3::PatchpointValue* patch, Vector<ConstrainedTmp, inlineCapacity>& args)
 {
     ++m_callSiteIndex;
     if (!m_tryCatchDepth)
-        return { m_hasExceptionHandlers };
+        return Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers);
 
     unsigned numLiveValues = 0;
     forEachLiveValue([&] (auto tmp) {
@@ -2372,7 +2372,7 @@ PatchpointExceptionHandle AirIRGenerator64::preparePatchpointForExceptions(B3::P
 
     patch->effects.exitsSideways = true;
 
-    return { m_hasExceptionHandlers, m_callSiteIndex, numLiveValues };
+    return Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers, m_callSiteIndex, numLiveValues);
 }
 
 auto AirIRGenerator64::addI64Ctz(ExpressionType arg, ExpressionType& result) -> PartialResult
