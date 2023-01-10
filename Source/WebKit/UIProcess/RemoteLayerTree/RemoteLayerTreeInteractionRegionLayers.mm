@@ -32,6 +32,7 @@
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/IntRectHash.h>
+#import <WebCore/TileController.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -86,7 +87,11 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
     ASSERT(properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged);
 
     HashMap<IntRect, CALayer *> interactionRegionLayers;
+    CALayer *tileGridLayer = nil;
     for (CALayer *sublayer in layer.sublayers) {
+        if (!tileGridLayer && String(sublayer.name) == TileController::tileGridContainerLayerName())
+            tileGridLayer = sublayer;
+
         if (!isInteractionRegionLayer(sublayer))
             continue;
         auto enclosingFrame = enclosingIntRect(sublayer.frame);
@@ -122,7 +127,10 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
                 setInteractionRegion(interactionRegionLayer.get(), region);
                 configureLayerForInteractionRegion(interactionRegionLayer.get(), makeString("WKInteractionRegion-"_s, String::number(region.elementIdentifier.toUInt64())));
 
-                [layer addSublayer:interactionRegionLayer.get()];
+                if (tileGridLayer)
+                    [layer insertSublayer:interactionRegionLayer.get() above:tileGridLayer];
+                else
+                    [layer addSublayer:interactionRegionLayer.get()];
             }
 
             [interactionRegionLayer setCornerRadius:std::max(region.borderRadius, minimumBorderRadius)];
