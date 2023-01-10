@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 # cd Source/WebKit/Scripts && python3 -m webkit.messages_unittest
 # cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
+from __future__ import print_function
 import os
 import re
 import sys
@@ -110,26 +111,6 @@ class GeneratedFileContentsTest(unittest.TestCase):
         implementation_contents = messages.generate_message_argument_description_implementation(self.receivers, receiver_header_files)
         self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, 'MessageArgumentDescriptions.cpp'))
 
-def add_reset_results_to_unittest_help():
-    script_name = os.path.basename(__file__)
-    reset_results_help = '''
-Custom Options:
-  -r, --reset-results  Reset expected results for {0}
-'''.format(script_name)
-
-    options_regex = re.compile('^Usage:')
-    lines = unittest.TestProgram.USAGE.splitlines(True)
-    index = 0
-    for index, line in enumerate(lines):
-        if options_regex.match(line) and index + 1 < len(lines):
-            lines.insert(index + 1, reset_results_help)
-            break
-
-    if index == (len(lines) - 1):
-        lines.append(reset_results_help)
-
-    unittest.TestProgram.USAGE = ''.join(lines)
-
 
 def parse_sys_argv():
     global reset_results
@@ -139,8 +120,15 @@ def parse_sys_argv():
             del sys.argv[index + 1]
             break
 
+    for index, arg in enumerate(sys.argv[1:]):
+        if arg in ('-h', '--h', '--help') or '--help'.startswith(arg):
+            print('''
+Custom Options:
+  -r, --reset-results  Reset expected results for {script_name}
+'''.format(script_name=os.path.basename(__file__)))
+            break
+
 
 if __name__ == '__main__':
-    add_reset_results_to_unittest_help()
     parse_sys_argv()
     unittest.main()
