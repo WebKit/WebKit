@@ -3479,7 +3479,7 @@ MaskWebGLStringsEnabled:
 
 MasonryEnabled:
   type: bool
-  status: testable
+  status: preview
   humanReadableName: "CSS Masonry Layout"
   humanReadableDescription: "Enable Masonry Layout for CSS Grid"
   defaultValue:
