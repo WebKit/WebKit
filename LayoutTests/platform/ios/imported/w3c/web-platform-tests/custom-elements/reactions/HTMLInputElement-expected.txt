@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: TypeError: The HTMLInputElement.capture getter can only be used on instances of HTMLInputElement
-
-Harness Error (FAIL), message = TypeError: The HTMLInputElement.capture getter can only be used on instances of HTMLInputElement
-
-
