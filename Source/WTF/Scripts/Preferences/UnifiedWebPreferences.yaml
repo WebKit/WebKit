@@ -3869,7 +3869,7 @@ MinimumZoomFontSize:
 
 MockCaptureDevicesEnabled:
   type: bool
-  status: embedder
+  status: internal
   webcoreOnChange: mockCaptureDevicesEnabledChanged
   inspectorOverride: true
   condition: ENABLE(MEDIA_STREAM)
