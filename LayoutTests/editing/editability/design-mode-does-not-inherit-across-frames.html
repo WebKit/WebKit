@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests that design mode does not inherit across frame boundaries.');
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+shouldBeEqualToString('iframe.contentDocument.designMode', 'off');
+shouldBeEqualToString('document.designMode = "on"; iframe.contentDocument.designMode', 'off');
+shouldBeEqualToString('document.designMode = "off"; iframe.contentDocument.designMode', 'off');
+shouldBeEqualToString('iframe.contentDocument.designMode = "on"; iframe.contentDocument.designMode', 'on');
+
+</script>
+</body>
+</html>
