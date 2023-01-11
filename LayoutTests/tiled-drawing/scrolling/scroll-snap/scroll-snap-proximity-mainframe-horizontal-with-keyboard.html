@@ -37,9 +37,9 @@
                 await UIHelper.delayFor(0);
 
                 let scrollPositionBeforeSnap = document.scrollingElement.scrollLeft;
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
                 var betweenFirstScrollPositionAndSecond =
                     document.scrollingElement.scrollLeft > scrollPositionBeforeSnap
                     && document.scrollingElement.scrollLeft < window.innerWidth;
@@ -48,10 +48,10 @@
                 // We reset the scrolling position because changing the DOM when we are not on
                 // a snap point can reset our scroll position.
                 document.scrollingElement.scrollLeft = scrollPositionBeforeSnap;
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("leftArrow");
+                await UIHelper.keyboardScroll("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
+                await UIHelper.keyboardScroll("leftArrow");
 
                 // Reversing directions should snap back.
                 expectTrue(document.scrollingElement.scrollLeft == scrollPositionBeforeSnap, "left arrow snapped back.");

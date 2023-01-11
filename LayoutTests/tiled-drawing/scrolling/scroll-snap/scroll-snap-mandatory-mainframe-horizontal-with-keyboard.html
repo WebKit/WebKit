@@ -34,13 +34,13 @@
             if (window.internals)
                 internals.settings.setScrollAnimatorEnabled(false);
             try {
-                await UIHelper.delayFor(0);
+                await UIHelper.ensurePresentationUpdate();
 
                 let scrollPositionBeforeSnap = document.scrollingElement.scrollLeft;
-                eventSender.keyDown("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
                 expectTrue(document.scrollingElement.scrollLeft == window.innerWidth, "arrow key div scrolled to second div.");
 
-                eventSender.keyDown("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
                 expectTrue(document.scrollingElement.scrollLeft == scrollPositionBeforeSnap, "arrow key div scrolled back to first div.");
             } catch (e) {
                 console.log(e);

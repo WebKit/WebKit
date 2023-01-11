@@ -40,10 +40,10 @@
                 eventSender.scalePageBy(scale, 0, 0);
 
                 let scrollPositionBeforeSnap = document.scrollingElement.scrollLeft;
-                eventSender.keyDown("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
                 expectTrue(document.scrollingElement.scrollLeft == (window.innerWidth * scale), "arrow key div scrolled to second div.");
 
-                eventSender.keyDown("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
                 expectTrue(document.scrollingElement.scrollLeft == scrollPositionBeforeSnap, "arrow key div scrolled back to first div.");
             } catch (e) {
                 console.log(e);
