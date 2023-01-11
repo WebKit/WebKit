@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebWorkerClient.h"
+#include "WebWorkerGraphicsClient.h"
 
 #include "ImageBufferShareableBitmapBackend.h"
 #include "RemoteImageBufferProxy.h"
@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebWorkerClient::WebWorkerClient(WebPage* page, SerialFunctionDispatcher& dispatcher)
+WebWorkerGraphicsClient::WebWorkerGraphicsClient(WebPage* page, SerialFunctionDispatcher& dispatcher)
     : m_dispatcher(dispatcher)
 #if ENABLE(GPU_PROCESS)
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
@@ -60,7 +60,7 @@ WebWorkerClient::WebWorkerClient(WebPage* page, SerialFunctionDispatcher& dispat
 }
 
 #if ENABLE(GPU_PROCESS)
-WebWorkerClient::WebWorkerClient(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, RemoteRenderingBackendCreationParameters& creationParameters, WebCore::PlatformDisplayID& displayID, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+WebWorkerGraphicsClient::WebWorkerGraphicsClient(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, RemoteRenderingBackendCreationParameters& creationParameters, WebCore::PlatformDisplayID& displayID, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
     : m_dispatcher(dispatcher)
     , m_connection(connection)
     , m_creationParameters(creationParameters)
@@ -68,14 +68,14 @@ WebWorkerClient::WebWorkerClient(IPC::Connection& connection, SerialFunctionDisp
     , m_displayID(displayID)
 { }
 #else
-WebWorkerClient::WebWorkerClient(SerialFunctionDispatcher& dispatcher, WebCore::PlatformDisplayID& displayID)
+WebWorkerGraphicsClient::WebWorkerGraphicsClient(SerialFunctionDispatcher& dispatcher, WebCore::PlatformDisplayID& displayID)
     : m_dispatcher(dispatcher)
     , m_displayID(displayID)
 { }
 #endif
 
 #if ENABLE(GPU_PROCESS)
-RemoteRenderingBackendProxy& WebWorkerClient::ensureRenderingBackend() const
+RemoteRenderingBackendProxy& WebWorkerGraphicsClient::ensureRenderingBackend() const
 {
     assertIsCurrent(m_dispatcher);
     if (!m_remoteRenderingBackendProxy)
@@ -84,23 +84,23 @@ RemoteRenderingBackendProxy& WebWorkerClient::ensureRenderingBackend() const
 }
 #endif
 
-std::unique_ptr<WorkerClient> WebWorkerClient::clone(SerialFunctionDispatcher& dispatcher)
+std::unique_ptr<WorkerGraphicsClient> WebWorkerGraphicsClient::clone(SerialFunctionDispatcher& dispatcher)
 {
     assertIsCurrent(m_dispatcher);
 #if ENABLE(GPU_PROCESS)
-    return makeUnique<WebWorkerClient>(m_connection, dispatcher, m_creationParameters, m_displayID, m_videoFrameObjectHeapProxy.copyRef());
+    return makeUnique<WebWorkerGraphicsClient>(m_connection, dispatcher, m_creationParameters, m_displayID, m_videoFrameObjectHeapProxy.copyRef());
 #else
-    return makeUnique<WebWorkerClient>(dispatcher, m_displayID);
+    return makeUnique<WebWorkerGraphicsClient>(dispatcher, m_displayID);
 #endif
 }
 
-PlatformDisplayID WebWorkerClient::displayID() const
+PlatformDisplayID WebWorkerGraphicsClient::displayID() const
 {
     assertIsCurrent(m_dispatcher);
     return m_displayID;
 }
 
-RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
+RefPtr<ImageBuffer> WebWorkerGraphicsClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
 #if ENABLE(GPU_PROCESS)
     if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
@@ -112,7 +112,7 @@ RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<Seriali
 #endif
 }
 
-RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck) const
+RefPtr<ImageBuffer> WebWorkerGraphicsClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck) const
 {
     assertIsCurrent(m_dispatcher);
 #if ENABLE(GPU_PROCESS)
@@ -123,7 +123,7 @@ RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, Re
 }
 
 #if ENABLE(WEBGL)
-RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
+RefPtr<GraphicsContextGL> WebWorkerGraphicsClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
 #if ENABLE(GPU_PROCESS)
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())

@@ -61,7 +61,7 @@ class ScheduledAction;
 class ScriptBuffer;
 class ScriptBufferSourceProvider;
 class WorkerCacheStorageConnection;
-class WorkerClient;
+class WorkerGraphicsClient;
 class WorkerFileSystemStorageConnection;
 class WorkerLocation;
 class WorkerMessagePortChannelProvider;
@@ -168,10 +168,10 @@ public:
 
     ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin()->data() }; }
 
-    WorkerClient* workerClient() { return m_workerClient.get(); }
+    WorkerGraphicsClient* workerGraphicsClient() { return m_workerGraphicsClient.get(); }
 
 protected:
-    WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
+    WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerGraphicsClient>&&);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
     void updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts);
@@ -242,7 +242,7 @@ private:
     RefPtr<WorkerSWClientConnection> m_swClientConnection;
 #endif
     std::unique_ptr<CSSValuePool> m_cssValuePool;
-    std::unique_ptr<WorkerClient> m_workerClient;
+    std::unique_ptr<WorkerGraphicsClient> m_workerGraphicsClient;
     RefPtr<CSSFontSelector> m_cssFontSelector;
     Settings::Values m_settingsValues;
     WorkerType m_workerType;

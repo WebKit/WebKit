@@ -61,7 +61,7 @@ class PopupMenu;
 class PopupMenuClient;
 class PopupOpeningObserver;
 class SearchPopupMenu;
-class WorkerClient;
+class WorkerGraphicsClient;
 
 struct AppHighlight;
 struct ContactInfo;
@@ -175,7 +175,7 @@ public:
     std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
 #endif
 
-    std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
+    std::unique_ptr<WorkerGraphicsClient> createWorkerGraphicsClient(SerialFunctionDispatcher&);
 
 #if ENABLE(APP_HIGHLIGHTS)
     void storeAppHighlight(AppHighlight&&) const;

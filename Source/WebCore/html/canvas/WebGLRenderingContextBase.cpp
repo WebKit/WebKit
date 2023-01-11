@@ -116,8 +116,8 @@
 #include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include "WebXRSystem.h"
-#include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerGraphicsClient.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>

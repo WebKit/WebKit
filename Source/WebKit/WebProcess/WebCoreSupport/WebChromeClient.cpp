@@ -64,7 +64,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
-#include "WebWorkerClient.h"
+#include "WebWorkerGraphicsClient.h"
 #include <WebCore/AppHighlight.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
@@ -922,9 +922,9 @@ RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<Seriali
 }
 #endif
 
-std::unique_ptr<WebCore::WorkerClient> WebChromeClient::createWorkerClient(SerialFunctionDispatcher& dispatcher)
+std::unique_ptr<WebCore::WorkerGraphicsClient> WebChromeClient::createWorkerGraphicsClient(SerialFunctionDispatcher& dispatcher)
 {
-    return makeUnique<WebWorkerClient>(&m_page, dispatcher);
+    return makeUnique<WebWorkerGraphicsClient>(&m_page, dispatcher);
 }
 
 #if ENABLE(WEBGL)

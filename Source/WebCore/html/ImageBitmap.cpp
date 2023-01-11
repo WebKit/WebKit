@@ -54,8 +54,8 @@
 #include "SharedBuffer.h"
 #include "SuspendableTimer.h"
 #include "WebCodecsVideoFrame.h"
-#include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerGraphicsClient.h"
 #include <variant>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
@@ -102,7 +102,7 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
             client = document.view()->root()->hostWindow();
         }
     } else if (scriptExecutionContext.isWorkerGlobalScope())
-        client = downcast<WorkerGlobalScope>(scriptExecutionContext).workerClient();
+        client = downcast<WorkerGlobalScope>(scriptExecutionContext).workerGraphicsClient();
 
     return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { client });
 }

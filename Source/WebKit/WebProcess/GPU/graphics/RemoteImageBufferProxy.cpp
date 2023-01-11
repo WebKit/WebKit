@@ -32,7 +32,7 @@
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebPage.h"
-#include "WebWorkerClient.h"
+#include "WebWorkerGraphicsClient.h"
 #include <WebCore/Document.h>
 #include <WebCore/WorkerGlobalScope.h>
 #include <wtf/SystemTracing.h>

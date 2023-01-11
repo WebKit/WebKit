@@ -41,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorkerGlobalScope);
 
 #define SCOPE_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [sharedWorkerIdentifier=%" PRIu64 "] SharedWorkerGlobalScope::" fmt, this, this->thread().identifier().toUInt64(), ##__VA_ARGS__)
 
-SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
+SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerGraphicsClient>&& workerClient)
     : WorkerGlobalScope(WorkerThreadType::SharedWorker, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider, WTFMove(workerClient))
     , m_name(name)
 {

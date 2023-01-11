@@ -42,8 +42,8 @@
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PlaceholderRenderingContext.h"
-#include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerGraphicsClient.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(WEBGL)
@@ -72,7 +72,7 @@ RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer(ScriptExecutionCont
         return nullptr;
     GraphicsClient* client = nullptr;
     if (is<WorkerGlobalScope>(context)) {
-        client = downcast<WorkerGlobalScope>(context).workerClient();
+        client = downcast<WorkerGlobalScope>(context).workerGraphicsClient();
         ASSERT(client);
     } else if (is<Document>(context)) {
         ASSERT(downcast<Document>(context).page());

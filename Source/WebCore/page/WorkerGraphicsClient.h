@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-class WorkerClient : public GraphicsClient {
+class WorkerGraphicsClient : public GraphicsClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    virtual std::unique_ptr<WorkerClient> clone(SerialFunctionDispatcher&) = 0;
+    virtual std::unique_ptr<WorkerGraphicsClient> clone(SerialFunctionDispatcher&) = 0;
 
-    virtual ~WorkerClient() = default;
+    virtual ~WorkerGraphicsClient() = default;
 };
 
 } // namespace WebCore

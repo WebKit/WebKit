@@ -28,14 +28,14 @@
 #include "Connection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
-#include <WebCore/WorkerClient.h>
+#include <WebCore/WorkerGraphicsClient.h>
 
 namespace WebKit {
 
 class WebPage;
 class RemoteRenderingBackendProxy;
 
-class WebWorkerClient : public WebCore::WorkerClient {
+class WebWorkerGraphicsClient : public WebCore::WorkerGraphicsClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // Constructed on the main thread, and then transferred to the
@@ -43,18 +43,18 @@ public:
     // happen on the worker.
     // Any details needed from the page must be copied at this
     // point, but can't hold references to any main-thread objects.
-    WebWorkerClient(WebPage*, SerialFunctionDispatcher&);
+    WebWorkerGraphicsClient(WebPage*, SerialFunctionDispatcher&);
 
     // Used for constructing clients for nested workers. Created on the
     // worker thread of the outer worker, and then transferred to the
     // nested worker.
 #if ENABLE(GPU_PROCESS)
-    WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+    WebWorkerGraphicsClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
 #else
-    WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID&);
+    WebWorkerGraphicsClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID&);
 #endif
 
-    std::unique_ptr<WorkerClient> clone(SerialFunctionDispatcher&) final;
+    std::unique_ptr<WorkerGraphicsClient> clone(SerialFunctionDispatcher&) final;
 
     WebCore::PlatformDisplayID displayID() const final;
 

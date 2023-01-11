@@ -39,8 +39,8 @@
 #include "InspectorInstrumentation.h"
 #include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"
-#include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerGraphicsClient.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <atomic>
@@ -289,7 +289,7 @@ GraphicsClient* CanvasBase::graphicsClient() const
     if (scriptExecutionContext()->isDocument() && downcast<Document>(scriptExecutionContext())->page())
         return &downcast<Document>(scriptExecutionContext())->page()->chrome();
     if (is<WorkerGlobalScope>(scriptExecutionContext()))
-        return downcast<WorkerGlobalScope>(scriptExecutionContext())->workerClient();
+        return downcast<WorkerGlobalScope>(scriptExecutionContext())->workerGraphicsClient();
 
     return nullptr;
 }

@@ -152,13 +152,13 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
     if (parentWorkerGlobalScope) {
         parentWorkerGlobalScope->thread().addChildThread(thread);
-        if (parentWorkerGlobalScope->thread().workerClient())
-            thread->setWorkerClient(parentWorkerGlobalScope->thread().workerClient()->clone(thread.get()));
+        if (parentWorkerGlobalScope->thread().workerGraphicsClient())
+            thread->setWorkerGraphicsClient(parentWorkerGlobalScope->thread().workerGraphicsClient()->clone(thread.get()));
     } else if (is<Document>(m_scriptExecutionContext.get())) {
         auto& document = downcast<Document>(*m_scriptExecutionContext);
         if (auto* page = document.page()) {
-            if (auto workerClient = page->chrome().createWorkerClient(thread.get()))
-                thread->setWorkerClient(WTFMove(workerClient));
+            if (auto workerClient = page->chrome().createWorkerGraphicsClient(thread.get()))
+                thread->setWorkerGraphicsClient(WTFMove(workerClient));
         }
     }
 

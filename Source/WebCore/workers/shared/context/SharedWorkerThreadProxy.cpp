@@ -44,8 +44,8 @@
 #include "SharedWorkerGlobalScope.h"
 #include "SharedWorkerThread.h"
 #include "WebRTCProvider.h"
-#include "WorkerClient.h"
 #include "WorkerFetchResult.h"
+#include "WorkerGraphicsClient.h"
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -112,8 +112,8 @@ SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedW
         addedListener = true;
     }
 
-    if (auto workerClient = m_page->chrome().createWorkerClient(thread()))
-        thread().setWorkerClient(WTFMove(workerClient));
+    if (auto workerClient = m_page->chrome().createWorkerGraphicsClient(thread()))
+        thread().setWorkerGraphicsClient(WTFMove(workerClient));
 }
 
 SharedWorkerThreadProxy::~SharedWorkerThreadProxy()

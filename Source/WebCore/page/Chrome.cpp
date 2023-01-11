@@ -51,7 +51,7 @@
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "WindowFeatures.h"
-#include "WorkerClient.h"
+#include "WorkerGraphicsClient.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
@@ -542,9 +542,9 @@ RefPtr<ImageBuffer> Chrome::sinkIntoImageBuffer(std::unique_ptr<SerializedImageB
     return m_client.sinkIntoImageBuffer(WTFMove(imageBuffer));
 }
 
-std::unique_ptr<WorkerClient> Chrome::createWorkerClient(SerialFunctionDispatcher& dispatcher)
+std::unique_ptr<WorkerGraphicsClient> Chrome::createWorkerGraphicsClient(SerialFunctionDispatcher& dispatcher)
 {
-    return m_client.createWorkerClient(dispatcher);
+    return m_client.createWorkerGraphicsClient(dispatcher);
 }
 
 #if ENABLE(WEBGL)

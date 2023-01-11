@@ -28,8 +28,8 @@
 
 #include "Chrome.h"
 #include "Page.h"
-#include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerGraphicsClient.h"
 
 namespace WebCore {
 
@@ -83,8 +83,8 @@ void ImageBitmapBacking::connect(ScriptExecutionContext& context)
     if (!m_serializedBitmap)
         return;
 
-    if (is<WorkerGlobalScope>(context) && downcast<WorkerGlobalScope>(context).workerClient()) {
-        auto* client = downcast<WorkerGlobalScope>(context).workerClient();
+    if (is<WorkerGlobalScope>(context) && downcast<WorkerGlobalScope>(context).workerGraphicsClient()) {
+        auto* client = downcast<WorkerGlobalScope>(context).workerGraphicsClient();
         m_bitmapData = client->sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
     } else if (is<Document>(context)) {
         ASSERT(downcast<Document>(context).page());
