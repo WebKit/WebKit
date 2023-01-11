@@ -207,7 +207,7 @@ private:
     static void initialize(JSContextRef, JSObjectRef);
     static void finalize(JSObjectRef);
 
-    static bool prepareToSendOutOfStreamMessage(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSIPC&, IPC::StreamClientConnection&, IPC::Encoder&, UInt128 destinationID, IPC::Timeout, JSValueRef* exception);
+    static bool prepareToSendOutOfStreamMessage(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSIPC&, IPC::StreamClientConnection&, IPC::Encoder&, uint64_t destinationID, IPC::Timeout, JSValueRef* exception);
 
     static const JSStaticFunction* staticFunctions();
     static JSValueRef open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
@@ -501,7 +501,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 namespace {
 
 struct SyncIPCMessageInfo {
-    UInt128 destinationID;
+    uint64_t destinationID; // FIXME: real IPC destinationID is at the moment UInt128, but we cannot decode that from JS.
     IPC::MessageName messageName;
     IPC::Timeout timeout;
 };
@@ -986,7 +986,7 @@ JSValueRef JSIPCStreamClientConnection::setSemaphores(JSContextRef context, JSOb
 }
 
 struct IPCStreamMessageInfo {
-    UInt128 destinationID;
+    uint64_t destinationID;
     IPC::MessageName messageName;
     IPC::Timeout timeout;
 };
@@ -1020,7 +1020,7 @@ static std::optional<IPCStreamMessageInfo> extractIPCStreamMessageInfo(JSContext
     return { { *destinationID, static_cast<IPC::MessageName>(*messageID), { timeoutDuration } } };
 }
 
-bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSIPC& jsIPC, IPC::StreamClientConnection& streamConnection, IPC::Encoder& encoder, UInt128 destinationID, IPC::Timeout timeout, JSValueRef* exception)
+bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSIPC& jsIPC, IPC::StreamClientConnection& streamConnection, IPC::Encoder& encoder, uint64_t destinationID, IPC::Timeout timeout, JSValueRef* exception)
 {
     // FIXME: Add support for sending in-stream IPC messages when appropriate.
     if (argumentCount > 3) {
