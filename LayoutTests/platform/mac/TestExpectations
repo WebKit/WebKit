@@ -2381,6 +2381,9 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 webkit.org/b/214290 [ BigSur Monterey ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ ImageOnlyFailure ]
 webkit.org/b/214290 [ BigSur Monterey ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ ImageOnlyFailure ]
 
+# The following test fails on Big Sur EWS bots.
+webkit.org/b/244012 [ BigSur ] imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-below-001.xht [ Pass ImageOnlyFailure ]
+
 # SVG tests that are broken in the legacy SVG engine, but pass using LBSE.
 svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
