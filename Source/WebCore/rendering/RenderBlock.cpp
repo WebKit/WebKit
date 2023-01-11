@@ -3394,7 +3394,7 @@ LayoutUnit RenderBlock::borderLeft() const
 
 LayoutUnit RenderBlock::borderBottom() const
 {
-    if (style().writingMode() != WritingMode::BottomToTop || !intrinsicBorderForFieldset())
+    if (!intrinsicBorderForFieldset())
         return RenderBox::borderBottom();
     return RenderBox::borderBottom() + intrinsicBorderForFieldset();
 }

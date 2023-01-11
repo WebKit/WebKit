@@ -6,17 +6,9 @@
 </div>
 </div>
 
-<div style="position:relative">
-<div style="-webkit-writing-mode: horizontal-bt; background-color: red; width: 100px; height: 100px;">
-    <div style="height: 5px"></div>
-    <div id=horizontal style="background-color: orange; height: 10px; position: relative; top: -20px;"></div>
-</div>
-</div>
-
 <pre id=console></pre>
 
 <script>
 shouldBe('document.getElementById("vertical").offsetLeft', '65');
-shouldBe('document.getElementById("horizontal").offsetTop', '65');
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -19,14 +19,12 @@ section > div, section > div {
 .ltr { direction: ltr; }
 .rtl { direction: rtl; }
 .h-tb { writing-mode: horizontal-tb; }
-.h-bt { -webkit-writing-mode: horizontal-bt; }
 .v-rl { writing-mode: vertical-rl; }
 .v-lr { writing-mode: vertical-lr; }
 </style>
 <section class="right">
   <p>These four containers should have a vertical scrollbar on the right.</p>
   <div class="h-tb ltr"><div class="square" data-expected="0"></div></div>
-  <div class="h-bt ltr"><div class="square" data-expected="0"></div></div>
   <div class="v-lr ltr"><div class="square" data-expected="0"></div></div>
   <div class="v-lr rtl"><div class="square" data-expected="0"></div></div>
 </section>
@@ -34,7 +32,6 @@ section > div, section > div {
 <section class="left">
   <p>These four containers should have a vertical scrollbar on the left.</p>
   <div class="h-tb rtl"><div class="square" data-expected="80"></div></div>
-  <div class="h-bt rtl"><div class="square" data-expected="80"></div></div>
   <div class="v-rl ltr"><div class="square" data-expected="80"></div></div>
   <div class="v-rl rtl"><div class="square" data-expected="80"></div></div>
 </section>

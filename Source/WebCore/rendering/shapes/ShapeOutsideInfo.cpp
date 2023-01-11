@@ -203,7 +203,6 @@ static inline LayoutUnit borderBeforeInWritingMode(const RenderBox& renderer, Wr
 {
     switch (writingMode) {
     case WritingMode::TopToBottom: return renderer.borderTop();
-    case WritingMode::BottomToTop: return renderer.borderBottom();
     case WritingMode::LeftToRight: return renderer.borderLeft();
     case WritingMode::RightToLeft: return renderer.borderRight();
     }
@@ -216,7 +215,6 @@ static inline LayoutUnit borderAndPaddingBeforeInWritingMode(const RenderBox& re
 {
     switch (writingMode) {
     case WritingMode::TopToBottom: return renderer.borderTop() + renderer.paddingTop();
-    case WritingMode::BottomToTop: return renderer.borderBottom() + renderer.paddingBottom();
     case WritingMode::LeftToRight: return renderer.borderLeft() + renderer.paddingLeft();
     case WritingMode::RightToLeft: return renderer.borderRight() + renderer.paddingRight();
     }

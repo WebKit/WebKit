@@ -88,10 +88,6 @@ RenderDetailsMarker::Orientation RenderDetailsMarker::orientation() const
         if (style().isLeftToRightDirection())
             return isOpen() ? Right : Down;
         return isOpen() ? Right : Up;
-    case WritingMode::BottomToTop:
-        if (style().isLeftToRightDirection())
-            return isOpen() ? Up : Right;
-        return isOpen() ? Up : Left;
     }
     return Right;
 }

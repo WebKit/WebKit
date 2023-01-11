@@ -30,10 +30,6 @@
         -webkit-writing-mode: horizontal-tb;
     }
 
-    .writing-mode-bt div.test {
-        -webkit-writing-mode: horizontal-bt;
-    }
-
     div.axis-vertical {
         -webkit-column-axis: vertical;
     }
@@ -42,13 +38,13 @@
         -webkit-column-axis: horizontal;
     }
 
-    .writing-mode-tb div.axis-vertical, .writing-mode-bt div.axis-vertical,
+    .writing-mode-tb div.axis-vertical,
     .writing-mode-lr div.axis-horizontal, .writing-mode-rl div.axis-horizontal {
         margin-block-end: 16px;
         margin-block-start: 96px;
     }
 
-    .writing-mode-tb div.axis-horizontal, .writing-mode-bt div.axis-horizontal,
+    .writing-mode-tb div.axis-horizontal,
     .writing-mode-lr div.axis-vertical, .writing-mode-rl div.axis-vertical {
         margin-inline-start: 96px;
         margin-bottom: 16px;
@@ -67,20 +63,6 @@
     div.test > div:nth-child(4) { background-color: #086; }
 </style>
 <div class="writing-mode-tb">
-    <div class="test axis-horizontal">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-    <div class="test axis-vertical">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-<div class="writing-mode-bt">
     <div class="test axis-horizontal">
         <div></div>
         <div></div>

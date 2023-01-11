@@ -69,7 +69,6 @@ var runTests = function () {
     testElement(0);
     testElement(1);
     testElement(2);
-    testElement(3);
 
     writeLog(error ? "FAIL" : "PASS");
 }
@@ -84,16 +83,12 @@ var runTests = function () {
     <details id="details0"><input></details>
 </div>
 
-<div style="-webkit-writing-mode:horizontal-bt;">
+<div style="-webkit-writing-mode:vertical-lr;">
     <details id="details1"><input></details>
 </div>
 
-<div style="-webkit-writing-mode:vertical-lr;">
-    <details id="details2"><input></details>
-</div>
-
 <div style="-webkit-writing-mode:vertical-rl;">
-    <details id="details3"><input></details>
+    <details id="details2"><input></details>
 </div>
 
 <div id="results">

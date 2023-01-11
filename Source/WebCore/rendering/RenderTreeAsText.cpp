@@ -369,13 +369,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             const auto& block = downcast<RenderBlock>(box);
             if (o.style().writingMode() == WritingMode::TopToBottom)
                 borderTop -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == WritingMode::BottomToTop)
-                borderBottom -= block.intrinsicBorderForFieldset();
             else if (o.style().writingMode() == WritingMode::LeftToRight)
                 borderLeft -= block.intrinsicBorderForFieldset();
             else if (o.style().writingMode() == WritingMode::RightToLeft)
                 borderRight -= block.intrinsicBorderForFieldset();
-            
         }
         if (borderTop || borderRight || borderBottom || borderLeft) {
             ts << " [border:";

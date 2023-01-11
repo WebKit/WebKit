@@ -36,11 +36,9 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-constexpr std::array<TextFlow, 8> allTextFlows = {
+constexpr std::array<TextFlow, 6> allTextFlows = {
     InlineEastBlockSouth,
     InlineWestBlockSouth,
-    InlineEastBlockNorth,
-    InlineWestBlockNorth,
     InlineSouthBlockEast,
     InlineSouthBlockWest,
     InlineNorthBlockEast,

@@ -19,11 +19,6 @@ div.horizontal
     -webkit-column-axis: vertical;
 }
 
-div.horizontal.flipped
-{
-    -webkit-writing-mode: horizontal-bt;
-}
-
 div.vertical
 {
     -webkit-writing-mode: vertical-lr;

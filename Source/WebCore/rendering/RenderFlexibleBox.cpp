@@ -756,11 +756,10 @@ WritingMode RenderFlexibleBox::transformedWritingMode() const
     
     switch (mode) {
     case WritingMode::TopToBottom:
-    case WritingMode::BottomToTop:
         return style().isLeftToRightDirection() ? WritingMode::LeftToRight : WritingMode::RightToLeft;
     case WritingMode::LeftToRight:
     case WritingMode::RightToLeft:
-        return style().isLeftToRightDirection() ? WritingMode::TopToBottom : WritingMode::BottomToTop;
+        return WritingMode::TopToBottom;
     }
     ASSERT_NOT_REACHED();
     return WritingMode::TopToBottom;
@@ -785,8 +784,6 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
     switch (transformedWritingMode()) {
     case WritingMode::TopToBottom:
         return borderTop();
-    case WritingMode::BottomToTop:
-        return borderBottom();
     case WritingMode::LeftToRight:
         return borderLeft();
     case WritingMode::RightToLeft:
@@ -801,8 +798,6 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
     switch (transformedWritingMode()) {
     case WritingMode::TopToBottom:
         return borderBottom();
-    case WritingMode::BottomToTop:
-        return borderTop();
     case WritingMode::LeftToRight:
         return borderRight();
     case WritingMode::RightToLeft:
@@ -831,8 +826,6 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
     switch (transformedWritingMode()) {
     case WritingMode::TopToBottom:
         return paddingTop();
-    case WritingMode::BottomToTop:
-        return paddingBottom();
     case WritingMode::LeftToRight:
         return paddingLeft();
     case WritingMode::RightToLeft:
@@ -847,8 +840,6 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
     switch (transformedWritingMode()) {
     case WritingMode::TopToBottom:
         return paddingBottom();
-    case WritingMode::BottomToTop:
-        return paddingTop();
     case WritingMode::LeftToRight:
         return paddingRight();
     case WritingMode::RightToLeft:
@@ -877,8 +868,6 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(const RenderBox& chi
     switch (transformedWritingMode()) {
     case WritingMode::TopToBottom:
         return child.marginTop();
-    case WritingMode::BottomToTop:
-        return child.marginBottom();
     case WritingMode::LeftToRight:
         return child.marginLeft();
     case WritingMode::RightToLeft:

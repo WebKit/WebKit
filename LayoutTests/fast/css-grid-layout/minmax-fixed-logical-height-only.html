@@ -34,12 +34,6 @@
     grid-template-rows: minmax(90%, 80px) minmax(10px, 60%);
 }
 
-#grid6 {
-    /* Overlapping range. */
-    grid-template-columns: 30px;
-    grid-template-rows: minmax(10px, 180px) minmax(30px, 150px);
-}
-
 .firstRowFirstColumn {
     width: 100%;
     height: 100%;
@@ -80,11 +74,5 @@
     <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="90"></div>
     <div class="secondRowFirstColumn" data-expected-height="30" data-expected-width="10"></div>
 </div>
-
-<div class="grid horizontalBT" id="grid6" data-expected-width="100" data-expected-height="200">
-    <div class="firstRowFirstColumn" data-expected-height="90" data-expected-width="30"></div>
-    <div class="secondRowFirstColumn" data-expected-height="110" data-expected-width="30"></div>
-</div>
-
 </body>
 </html>
