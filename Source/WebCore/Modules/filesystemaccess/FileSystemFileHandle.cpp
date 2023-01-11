@@ -97,7 +97,7 @@ void FileSystemFileHandle::closeSyncAccessHandle(FileSystemSyncAccessHandleIdent
     if (isClosed())
         return;
 
-    connection().closeSyncAccessHandle(identifier(), accessHandleIdentifier);
+    downcast<WorkerFileSystemStorageConnection>(connection()).closeSyncAccessHandle(identifier(), accessHandleIdentifier);
 }
 
 void FileSystemFileHandle::registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier, FileSystemSyncAccessHandle& handle)

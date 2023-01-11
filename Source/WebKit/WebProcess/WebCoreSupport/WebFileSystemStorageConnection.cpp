@@ -153,12 +153,14 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
     });
 }
 
-void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
+void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, FileSystemStorageConnection::VoidCallback&& completionHandler)
 {
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), 0);
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)]() mutable {
+        return completionHandler({ });
+    });
 }
 
 void WebFileSystemStorageConnection::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, FileSystemStorageConnection::GetHandleNamesCallback&& completionHandler)
