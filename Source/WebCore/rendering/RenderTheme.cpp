@@ -373,7 +373,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         auto& input = downcast<HTMLInputElement>(element.get());
 
         if (input.isTextButton() || input.isUploadButton())
-            return StyleAppearance::PushButton;
+            return StyleAppearance::Button;
 
         if (input.isCheckbox())
             return StyleAppearance::Checkbox;

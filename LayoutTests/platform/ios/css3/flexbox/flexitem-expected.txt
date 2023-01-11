@@ -15,18 +15,7 @@ PASS .flexbox 13
 PASS .flexbox 14
 PASS .flexbox 15
 PASS .flexbox 16
-FAIL .flexbox 17 assert_equals:
-<div class="flexbox">
-  <input data-expected-display="block" data-expected-width="75" type="checkbox" value="radio">
-  <input data-expected-display="block" data-expected-width="75" type="file" value="file">
-  <input data-expected-display="block" data-expected-width="75" type="image" value="image">
-  <input data-expected-display="block" data-expected-width="75" type="password" value="password">
-  <input data-expected-display="block" data-expected-width="75" type="radio" value="radio">
-  <input data-expected-display="block" data-expected-width="75" type="reset" value="reset">
-  <input data-expected-display="block" data-expected-width="75" type="submit" value="submit">
-  <input data-expected-display="block" data-expected-width="75" type="text" value="text">
-</div>
-width expected 75 but got 69
+PASS .flexbox 17
 FAIL .flexbox 18 assert_equals:
 <div class="flexbox" style="height:200px">
   <button data-expected-display="block" data-expected-width="100" data-expected-height="200">button</button>
