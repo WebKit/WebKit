@@ -155,38 +155,61 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
 {
     ASSERT(lineRun.textContent() && is<InlineTextBox>(lineRun.layoutBox()));
 
-    auto& layoutBox = lineRun.layoutBox();
-    auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
+    auto& inlineTextBox = downcast<InlineTextBox>(lineRun.layoutBox());
+    auto& style = !m_lineIndex ? inlineTextBox.firstLineStyle() : inlineTextBox.style();
+    auto& content = inlineTextBox.content();
+    auto& text = lineRun.textContent();
 
     auto inkOverflow = [&] {
-        auto initialContaingBlockSize = formattingState().layoutState().isInlineFormattingContextIntegration()
-            ? formattingState().layoutState().viewportSize()
-            : formattingState().layoutState().geometryForBox(FormattingContext::initialContainingBlock(layoutBox)).contentBox().size();
-        auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
         auto inkOverflow = textRunRect;
 
-        inkOverflow.inflate(strokeOverflow);
-        auto letterSpacing = style.fontCascade().letterSpacing();
-        if (letterSpacing < 0) {
+        auto addStrokeOverflow = [&] {
+            auto initialContaingBlockSize = formattingState().layoutState().isInlineFormattingContextIntegration()
+                ? formattingState().layoutState().viewportSize()
+                : formattingState().layoutState().geometryForBox(FormattingContext::initialContainingBlock(inlineTextBox)).contentBox().size();
+            auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
+            inkOverflow.inflate(strokeOverflow);
+        };
+        addStrokeOverflow();
+
+        auto addTextShadow = [&] {
+            auto textShadow = style.textShadowExtent();
+            inkOverflow.inflate(-textShadow.top(), textShadow.right(), textShadow.bottom(), -textShadow.left());
+        };
+        addTextShadow();
+
+        auto addLetterSpacingOverflow = [&] {
+            auto letterSpacing = style.fontCascade().letterSpacing();
+            if (letterSpacing >= 0)
+                return;
             // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
             inkOverflow.expand(-letterSpacing, { });
-        }
+        };
+        addLetterSpacingOverflow();
 
-        auto textShadow = style.textShadowExtent();
-        inkOverflow.inflate(-textShadow.top(), textShadow.right(), textShadow.bottom(), -textShadow.left());
+        auto addGlyphOverflow = [&] {
+            if (inlineTextBox.canUseSimpleFontCodePath()) {
+                // canUseSimpleFontCodePath maps to CodePath::Simple (and content with potential glyph overflow would says CodePath::SimpleWithGlyphOverflow).
+                return;
+            }
+            auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(content).substring(text->start, text->length), style);
+            // FIXME: Take fallback fonts into account.
+            auto& fontMetrics = style.metricsOfPrimaryFont();
+            auto topOverflow = std::max(0.f, ceilf(-enclosingAscentAndDescent.ascent) - fontMetrics.ascent());
+            auto bottomOverflow = std::max(0.f, ceilf(enclosingAscentAndDescent.descent) - fontMetrics.descent());
+            inkOverflow.inflate(topOverflow, { }, bottomOverflow, { });
+        };
+        addGlyphOverflow();
 
         return inkOverflow;
     };
-    auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
-    auto& content = inlineTextBox.content();
-    auto& text = lineRun.textContent();
 
     if (inlineTextBox.isCombined()) {
         static auto objectReplacementCharacterString = NeverDestroyed<String> { &objectReplacementCharacter, 1 };
         // The rendered text is the actual combined content, while the "original" one is blank.
         boxes.append({ m_lineIndex
             , InlineDisplay::Box::Type::Text
-            , layoutBox
+            , inlineTextBox
             , lineRun.bidiLevel()
             , textRunRect
             , inkOverflow()
@@ -204,7 +227,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
 
     boxes.append({ m_lineIndex
         , lineRun.isWordSeparator() ? InlineDisplay::Box::Type::WordSeparator : InlineDisplay::Box::Type::Text
-        , layoutBox
+        , inlineTextBox
         , lineRun.bidiLevel()
         , textRunRect
         , inkOverflow()
