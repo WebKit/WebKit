@@ -36,15 +36,16 @@
 
 namespace WebCore {
 
+class Document;
 class GamepadButton;
 class GamepadHapticActuator;
 class PlatformGamepad;
 
 class Gamepad: public RefCounted<Gamepad>, public CanMakeWeakPtr<Gamepad> {
 public:
-    static Ref<Gamepad> create(const PlatformGamepad& platformGamepad)
+    static Ref<Gamepad> create(Document* document, const PlatformGamepad& platformGamepad)
     {
-        return adoptRef(*new Gamepad(platformGamepad));
+        return adoptRef(*new Gamepad(document, platformGamepad));
     }
     ~Gamepad();
 
@@ -64,7 +65,7 @@ public:
     GamepadHapticActuator& vibrationActuator();
 
 private:
-    explicit Gamepad(const PlatformGamepad&);
+    Gamepad(Document*, const PlatformGamepad&);
     String m_id;
     unsigned m_index;
     bool m_connected;
@@ -75,7 +76,7 @@ private:
     Vector<double> m_axes;
     Vector<Ref<GamepadButton>> m_buttons;
 
-    RefPtr<GamepadHapticActuator> m_vibrationActuator;
+    Ref<GamepadHapticActuator> m_vibrationActuator;
 };
 
 } // namespace WebCore

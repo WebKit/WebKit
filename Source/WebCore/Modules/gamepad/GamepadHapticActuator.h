@@ -27,7 +27,9 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "ActiveDOMObject.h"
 #include "GamepadHapticEffectType.h"
+#include "VisibilityChangeClient.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -39,22 +41,33 @@ class Document;
 class Gamepad;
 struct GamepadEffectParameters;
 
-class GamepadHapticActuator : public RefCounted<GamepadHapticActuator> {
+class GamepadHapticActuator : public RefCounted<GamepadHapticActuator>, public ActiveDOMObject, public VisibilityChangeClient {
 public:
     using EffectType = GamepadHapticEffectType;
     enum class Type : uint8_t { Vibration, DualRumble };
     enum class Result : uint8_t { Complete, Preempted };
 
-    static Ref<GamepadHapticActuator> create(Type, Gamepad&);
+    static Ref<GamepadHapticActuator> create(Document*, Type, Gamepad&);
     ~GamepadHapticActuator();
 
     Type type() const { return m_type; }
     bool canPlayEffectType(EffectType) const;
-    void playEffect(Document&, EffectType, GamepadEffectParameters&&, Ref<DeferredPromise>&&);
-    void reset(Document&, Ref<DeferredPromise>&&);
+    void playEffect(EffectType, GamepadEffectParameters&&, Ref<DeferredPromise>&&);
+    void reset(Ref<DeferredPromise>&&);
 
 private:
-    GamepadHapticActuator(Type, Gamepad&);
+    GamepadHapticActuator(Document*, Type, Gamepad&);
+
+    Document* document();
+    void stopEffects(CompletionHandler<void()>&&);
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
+
+    // VisibilityChangeClient.
+    void visibilityStateChanged() final;
 
     Type m_type;
     WeakPtr<Gamepad> m_gamepad;

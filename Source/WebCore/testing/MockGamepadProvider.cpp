@@ -150,7 +150,7 @@ void MockGamepadProvider::gamepadInputActivity()
     });
 }
 
-void MockGamepadProvider::clearMockGamepads()
+void MockGamepadProvider::clearGamepadsForTesting()
 {
     // Disconnect any remaining connected gamepads.
     for (size_t i = 0; i < m_connectedGamepadVector.size(); ++i) {

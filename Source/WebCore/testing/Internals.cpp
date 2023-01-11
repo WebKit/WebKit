@@ -388,10 +388,6 @@
 #include "ImageControlsMac.h"
 #endif
 
-#if ENABLE(GAMEPAD)
-#include "MockGamepadProvider.h"
-#endif
-
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -722,10 +718,6 @@ Internals::Internals(Document& document)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(std::nullopt);
     VP9TestingOverrides::singleton().setVP9DecoderDisabled(std::nullopt);
     VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(std::nullopt);
-#endif
-
-#if ENABLE(GAMEPAD)
-    MockGamepadProvider::singleton().clearMockGamepads();
 #endif
 }
 

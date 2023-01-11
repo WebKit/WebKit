@@ -43,7 +43,7 @@ namespace WebCore {
 
 static NavigatorGamepad* navigatorGamepadFromDOMWindow(DOMWindow* window)
 {
-    return NavigatorGamepad::from(&window->navigator());
+    return NavigatorGamepad::from(window->navigator());
 }
 
 GamepadManager& GamepadManager::singleton()

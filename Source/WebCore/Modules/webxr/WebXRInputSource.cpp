@@ -52,7 +52,7 @@ WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, do
     , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin))
     , m_connectTime(timestamp)
 #if ENABLE(GAMEPAD)
-    , m_gamepad(Gamepad::create(WebXRGamepad(timestamp, timestamp, source)))
+    , m_gamepad(Gamepad::create(&document, WebXRGamepad(timestamp, timestamp, source)))
 #endif
 {
     update(timestamp, source);

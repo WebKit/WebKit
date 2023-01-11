@@ -39,10 +39,10 @@ class PlatformGamepad;
 class NavigatorGamepad : public Supplement<Navigator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NavigatorGamepad();
+    explicit NavigatorGamepad(Navigator&);
     virtual ~NavigatorGamepad();
 
-    static NavigatorGamepad* from(Navigator*);
+    static NavigatorGamepad* from(Navigator&);
 
     // The array of Gamepads might be sparse.
     // Null checking each entry is necessary.
@@ -60,6 +60,7 @@ private:
 
     const Vector<RefPtr<Gamepad>>& gamepads();
 
+    Navigator& m_navigator;
     Vector<RefPtr<Gamepad>> m_gamepads;
 };
 

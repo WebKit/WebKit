@@ -46,6 +46,7 @@
 #include "WebContextInjectedBundleClient.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include <WebCore/GamepadProvider.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -580,4 +581,12 @@ void WKContextSetLocalhostAliases(WKContextRef, WKArrayRef localhostAliases)
 {
     for (const auto& hostname : WebKit::toImpl(localhostAliases)->toStringVector())
         WebKit::LegacyGlobalSettings::singleton().registerHostnameAsLocal(hostname);
+}
+
+void WKContextClearMockGamepadsForTesting(WKContextRef)
+{
+#if ENABLE(GAMEPAD)
+    if (WebCore::GamepadProvider::singleton().isMockGamepadProvider())
+        WebCore::GamepadProvider::singleton().clearGamepadsForTesting();
+#endif
 }
