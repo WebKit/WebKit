@@ -163,6 +163,19 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
     return results;
 }
 
+static bool mayConvertCSSValueListToSingleValue(std::optional<CSSPropertyID> propertyID)
+{
+    if (!propertyID)
+        return true;
+
+    // Even though the CSS Parser uses a CSSValueList to represent these, they are not
+    // really lists and CSS-Typed-OM does not expect them to treat them as such.
+    return *propertyID != CSSPropertyGridRowStart
+        && *propertyID != CSSPropertyGridRowEnd
+        && *propertyID != CSSPropertyGridColumnStart
+        && *propertyID != CSSPropertyGridColumnEnd;
+}
+
 ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> cssValue, std::optional<CSSPropertyID> propertyID, Document* document)
 {
     if (is<CSSPrimitiveValue>(cssValue)) {
@@ -303,7 +316,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> c
         auto valueList = downcast<CSSValueList>(cssValue.ptr());
         if (!valueList->length())
             return Exception { TypeError, "The CSSValueList should not be empty."_s };
-        if (valueList->length() == 1 || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
+        if ((valueList->length() == 1 && mayConvertCSSValueListToSingleValue(propertyID)) || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
             return reifyValue(*valueList->begin(), propertyID, document);
     }
     
