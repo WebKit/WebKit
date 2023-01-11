@@ -94,6 +94,13 @@ static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNam
 #endif
 }
 
+#if USE(KCTFONTVARIATIONAXESATTRIBUTE)
+static RetainPtr<CFArrayRef> variationAxes(CTFontDescriptorRef fontDescriptor)
+{
+    return adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontVariationAxesAttribute)));
+}
+#endif
+
 VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
 {
     VariationDefaultsMap result;
@@ -740,8 +747,12 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
     if (!adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontVariationAttribute)))
         return result;
 
+#if USE(KCTFONTVARIATIONAXESATTRIBUTE)
+    auto variations = variationAxes(fontDescriptor);
+#else
     auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr));
     auto variations = variationAxes(font.get(), ShouldLocalizeAxisNames::No);
+#endif
     if (!variations)
         return result;
 
@@ -765,7 +776,16 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
 
     bool optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
 
-    if (FontType(font.get()).variationType == FontType::VariationType::TrueTypeGX && !optOutFromGXNormalization) {
+#if USE(KCTFONTVARIATIONAXESATTRIBUTE)
+    auto variationType = [&] {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=247987 Stop creating a whole CTFont here. Ideally we'd be able to do all the inspection we need to do without one.
+        auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr));
+        return FontType(font.get()).variationType;
+    }();
+#else
+    auto variationType = FontType(font.get()).variationType;
+#endif
+    if (variationType == FontType::VariationType::TrueTypeGX && !optOutFromGXNormalization) {
         if (result.weight)
             result.weight = { { normalizeGXWeight(result.weight.value().minimum), normalizeGXWeight(result.weight.value().maximum) } };
         if (result.width)
