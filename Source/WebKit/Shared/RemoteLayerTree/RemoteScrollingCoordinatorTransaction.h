@@ -44,6 +44,9 @@ public:
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
 
+    bool clearScrollLatching() const { return m_clearScrollLatching; }
+    void setClearScrollLatching(bool clearLatching) { m_clearScrollLatching = clearLatching; }
+
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
     void dump() const;
@@ -53,6 +56,10 @@ private:
     WARN_UNUSED_RETURN bool decode(IPC::Decoder&);
     
     std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
+    
+    // Data encoded here should be "imperative" (valid just for one transaction). Stateful things should live on scrolling tree nodes.
+    // Maybe RequestedScrollData should move here.
+    bool m_clearScrollLatching { false };
 };
 
 } // namespace WebKit

@@ -90,6 +90,9 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
     m_scrollingTree->commitTreeState(WTFMove(stateTree));
 
     establishLayerTreeScrollingRelations(*layerTreeHost);
+    
+    if (transaction.clearScrollLatching())
+        m_scrollingTree->clearLatchedNode();
 
     return std::exchange(m_requestedScroll, { });
 }

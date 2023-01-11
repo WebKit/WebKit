@@ -43,6 +43,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeStickyNodeCocoa.h>
 #import <WebCore/WheelEventTestMonitor.h>
@@ -102,6 +103,8 @@ void RemoteScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior)
 void RemoteScrollingCoordinator::buildTransaction(RemoteScrollingCoordinatorTransaction& transaction)
 {
     willCommitTree();
+
+    transaction.setClearScrollLatching(std::exchange(m_clearScrollLatchingInNextTransaction, false));
     transaction.setStateTreeToEncode(scrollingStateTree()->commit(LayerRepresentation::PlatformLayerIDRepresentation));
 }
 
@@ -145,6 +148,12 @@ void RemoteScrollingCoordinator::addNodeWithActiveRubberBanding(ScrollingNodeID 
 void RemoteScrollingCoordinator::removeNodeWithActiveRubberBanding(ScrollingNodeID nodeID)
 {
     m_nodesWithActiveRubberBanding.remove(nodeID);
+}
+
+void RemoteScrollingCoordinator::startMonitoringWheelEvents(bool clearLatchingState)
+{
+    if (clearLatchingState)
+        m_clearScrollLatchingInNextTransaction = true;
 }
 
 void RemoteScrollingCoordinator::receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase)

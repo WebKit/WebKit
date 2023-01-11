@@ -175,7 +175,7 @@ public:
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
     std::optional<ScrollingNodeID> latchedNodeID() const;
-    void clearLatchedNode();
+    WEBCORE_EXPORT void clearLatchedNode();
 
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
     void fixedOrStickyNodeAdded() { ++m_fixedOrStickyNodeCount; }

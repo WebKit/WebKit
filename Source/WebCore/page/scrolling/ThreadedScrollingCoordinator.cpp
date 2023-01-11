@@ -137,6 +137,8 @@ void ThreadedScrollingCoordinator::hasNodeWithAnimatedScrollChanged(bool hasAnim
 
 void ThreadedScrollingCoordinator::startMonitoringWheelEvents(bool clearLatchingState)
 {
+    // setIsMonitoringWheelEvents() is called on the root node via AsyncScrollingCoordinator::frameViewLayoutUpdated().
+
     if (clearLatchingState)
         scrollingTree()->clearLatchedNode();
 }
