@@ -324,6 +324,8 @@ void Recorder::beginTransparencyLayer(float opacity)
 
     appendStateChangeItemIfNecessary();
     recordBeginTransparencyLayer(opacity);
+
+    GraphicsContext::save();
     m_stateStack.append(m_stateStack.last().cloneForTransparencyLayer());
     
     m_state.didBeginTransparencyLayer();
@@ -335,9 +337,9 @@ void Recorder::endTransparencyLayer()
 
     appendStateChangeItemIfNecessary();
     recordEndTransparencyLayer();
-    m_stateStack.removeLast();
 
-    m_state.didEndTransparencyLayer(currentState().state.alpha());
+    m_stateStack.removeLast();
+    GraphicsContext::restore();
 }
 
 void Recorder::drawRect(const FloatRect& rect, float borderThickness)

@@ -148,6 +148,8 @@ void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
     GraphicsContext::beginTransparencyLayer(opacity);
     m_primaryContext.beginTransparencyLayer(opacity);
     m_secondaryContext.beginTransparencyLayer(opacity);
+
+    GraphicsContext::save();
     m_state.didBeginTransparencyLayer();
 
     VERIFY_STATE_SYNCHRONIZATION();
@@ -158,7 +160,8 @@ void BifurcatedGraphicsContext::endTransparencyLayer()
     GraphicsContext::endTransparencyLayer();
     m_primaryContext.endTransparencyLayer();
     m_secondaryContext.endTransparencyLayer();
-    m_state.didEndTransparencyLayer(m_primaryContext.alpha());
+
+    GraphicsContext::restore();
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
