@@ -37,7 +37,7 @@
     Move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, String newName) -> (std::optional<WebKit::FileSystemStorageError> result)
     GetFile(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<String, WebKit::FileSystemStorageError> result)
     CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>, WebKit::FileSystemStorageError> result)
-    CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
+    CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> ()
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
     GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result) WantsConnection
 

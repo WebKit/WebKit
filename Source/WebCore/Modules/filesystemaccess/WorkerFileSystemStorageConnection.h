@@ -47,6 +47,7 @@ public:
     void connectionClosed();
     void scopeClosed();
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
+    void closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier);
     using CallbackIdentifier = WorkerFileSystemStorageConnectionCallbackIdentifier;
     void didIsSameEntry(CallbackIdentifier, ExceptionOr<bool>&&);
     void didGetHandle(CallbackIdentifier, ExceptionOr<Ref<FileSystemHandleCloseScope>>&&);
@@ -72,7 +73,7 @@ private:
     void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) final;
     void getFile(FileSystemHandleIdentifier, StringCallback&&) final;
     void createSyncAccessHandle(FileSystemHandleIdentifier, FileSystemStorageConnection::GetAccessHandleCallback&&) final;
-    void closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier) final;
+    void closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) final;
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, ScriptExecutionContextIdentifier) final { };
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
