@@ -100,17 +100,14 @@ Code::Code(Procedure& proc)
                     else if (calleeSave.contains(reg, conservativeWidthWithoutVectors(reg)))
                         calleeSaveRegs.append(reg);
                 });
-            if (Options::airRandomizeRegs()) {
-                WeakRandom random(Options::airRandomizeRegsSeed() ? Options::airRandomizeRegsSeed() : weakRandom->getUint32());
-                shuffleVector(volatileRegs, [&] (unsigned limit) { return random.getUint32(limit); });
-                shuffleVector(calleeSaveRegs, [&] (unsigned limit) { return random.getUint32(limit); });
-                shuffleVector(fullCalleeSaveRegs, [&] (unsigned limit) { return random.getUint32(limit); });
-            }
             Vector<Reg> result;
             result.appendVector(volatileRegs);
             result.appendVector(fullCalleeSaveRegs);
-            if (!usesSIMD())
-                result.appendVector(calleeSaveRegs);
+            result.appendVector(calleeSaveRegs);
+            if (Options::airRandomizeRegs()) {
+                WeakRandom random(Options::airRandomizeRegsSeed() ? Options::airRandomizeRegsSeed() : weakRandom->getUint32());
+                shuffleVector(result, [&] (unsigned limit) { return random.getUint32(limit); });
+            }
             setRegsInPriorityOrder(bank, result);
         });
 

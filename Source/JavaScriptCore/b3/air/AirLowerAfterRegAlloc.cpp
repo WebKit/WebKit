@@ -109,17 +109,17 @@ void lowerAfterRegAlloc(Code& code)
     // If we run after stack allocation then we cannot use those callee saves that aren't in
     // the callee save list. Note that we are only run after stack allocation in -O1, so this
     // kind of slop is OK.
-    RegisterSet disallowedCalleeSaves;
-    {
-        RegisterSetBuilder disallowed;
-        if (code.stackIsAllocated()) {
-            disallowed = RegisterSetBuilder::calleeSaveRegisters();
-            ASSERT(!disallowed.hasAnyWideRegisters());
-            disallowed.exclude(code.calleeSaveRegisters());
-        }
-        disallowedCalleeSaves = disallowed.buildAndValidate();
+    ScalarRegisterSet disallowedCalleeSaves;
+    if (code.stackIsAllocated()) {
+        RegisterSetBuilder disallowed = RegisterSetBuilder::calleeSaveRegisters();
+        ASSERT(!disallowed.hasAnyWideRegisters());
+        RegisterSetBuilder usedCalleeSaves = code.calleeSaveRegisters();
+        ASSERT(!usedCalleeSaves.hasAnyWideRegisters());
+
+        disallowed.exclude(usedCalleeSaves);
+        disallowedCalleeSaves = disallowed.buildScalarRegisterSet();
     }
-    
+
     auto getScratches = [&] (ScalarRegisterSet set, Bank bank) -> std::array<Arg, 2> {
         std::array<Arg, 2> result;
         for (unsigned i = 0; i < 2; ++i) {

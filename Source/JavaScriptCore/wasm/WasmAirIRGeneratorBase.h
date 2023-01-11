@@ -1124,6 +1124,7 @@ void AirIRGeneratorBase<Derived, ExpressionType>::finalizeEntrypoints()
     successors.append(m_mainEntrypointStart);
     successors.appendVector(m_catchEntrypoints);
 
+    ASSERT(!m_loopEntryVariableData.size() || !m_proc.usesSIMD());
     for (auto& pair : m_loopEntryVariableData) {
         BasicBlock* loopBody = pair.first;
         BasicBlock* entry = m_code.addBlock();
@@ -1135,7 +1136,6 @@ void AirIRGeneratorBase<Derived, ExpressionType>::finalizeEntrypoints()
         Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
 
         for (size_t i = 0; i < temps.size(); ++i) {
-            // Note that we should never load a vector here, since these values come from the LLInt and it does not support SIMD.
             size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
             self().emitLoad(basePtr, offset, temps[i]);
         }
@@ -2824,7 +2824,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addTopLevel(BlockSignature sig
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
-    RELEASE_ASSERT(loopIndex == m_loopEntryVariableData.size());
+    RELEASE_ASSERT(loopIndex == m_loopEntryVariableData.size() || (m_proc.usesSIMD() && !m_loopEntryVariableData.size()));
 
     BasicBlock* body = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
@@ -2852,7 +2852,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addLoop(BlockSignature signatu
     m_currentBlock = body;
     emitLoopTierUpCheck(loopIndex, liveValues);
 
-    m_loopEntryVariableData.append(std::pair<BasicBlock*, Vector<ExpressionType>>(body, WTFMove(liveValues)));
+    if (!m_proc.usesSIMD())
+        m_loopEntryVariableData.append(std::pair<BasicBlock*, Vector<ExpressionType>>(body, WTFMove(liveValues)));
 
     return { };
 }

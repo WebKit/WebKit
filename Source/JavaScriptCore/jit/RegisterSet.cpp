@@ -376,7 +376,7 @@ RegisterSetBuilder RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuild
     result.exclude(RegisterSetBuilder::vmCalleeSaveRegisters());
     result.exclude(RegisterSetBuilder::stackRegisters());
     result.exclude(RegisterSetBuilder::reservedHardwareRegisters());
-    return result.buildWithLowerBits();
+    return result;
 }
 
 RegisterSetBuilder RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder liveRegisters)
@@ -385,7 +385,7 @@ RegisterSetBuilder RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilde
     result.exclude(RegisterSetBuilder::calleeSaveRegisters());
     result.exclude(RegisterSetBuilder::stackRegisters());
     result.exclude(RegisterSetBuilder::reservedHardwareRegisters());
-    return result.buildWithLowerBits();
+    return result;
 }
 
 RegisterSet RegisterSetBuilder::allGPRs()

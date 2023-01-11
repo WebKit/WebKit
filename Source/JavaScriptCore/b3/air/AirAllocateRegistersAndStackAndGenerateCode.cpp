@@ -735,8 +735,8 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             });
 
             if (inst.kind.opcode == Patch) {
-                m_earlyClobber.merge(inst.extraEarlyClobberedRegs());
-                m_lateClobber.merge(inst.extraClobberedRegs());
+                m_earlyClobber.merge(inst.extraEarlyClobberedRegs().buildWithLowerBits());
+                m_lateClobber.merge(inst.extraClobberedRegs().buildWithLowerBits());
 
                 m_earlyClobber.filter(m_allowedRegisters.includeWholeRegisterWidth());
                 m_lateClobber.filter(m_allowedRegisters.includeWholeRegisterWidth());
