@@ -817,7 +817,12 @@ class WebkitFlatpak:
 
             if args[0] == "bash":
                 args.extend(['--noprofile', '--norc', '-i'])
-                sandbox_environment["PS1"] = f"[📦🌐🐱 $FLATPAK_ID {self.platform}@{self.build_type} \\W]\\$ "
+                sandbox_environment["PS1"] = f"[$FLATPAK_ID {self.platform}@{self.build_type} \\W]\\$ "
+                try:
+                    if 'en_US.utf8' in subprocess.check_output(['locale', '-a']).decode("utf8").split():
+                        sandbox_environment["PS1"] = f"[📦🌐🐱 $FLATPAK_ID {self.platform}@{self.build_type} \\W]\\$ "
+                except FileNotFoundError:
+                    pass
             if gather_output:
                 building = False
             else:
