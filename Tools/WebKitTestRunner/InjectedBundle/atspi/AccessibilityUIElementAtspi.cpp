@@ -397,8 +397,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
+    
     if (attributeName == "AXPlaceholderValue"_s)
         return OpaqueJSString::tryCreate(attributes.get("placeholder-text"_s)).leakRef();
+
     if (attributeName == "AXInvalid"_s) {
         auto textAttributes = m_element->textAttributes();
         auto value = textAttributes.attributes.get("invalid"_s);
@@ -406,10 +408,15 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
             value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true"_s : "false"_s;
         return OpaqueJSString::tryCreate(value).leakRef();
     }
+
     if (attributeName == "AXARIALive"_s)
         return OpaqueJSString::tryCreate(attributes.get("live"_s)).leakRef();
+
     if (attributeName == "AXARIARelevant"_s)
         return OpaqueJSString::tryCreate(attributes.get("relevant"_s)).leakRef();
+
+    if (attributeName == "AXAutocompleteValue"_s)
+        return OpaqueJSString::tryCreate(attributes.get("autocomplete"_s)).leakRef();
 
     return JSStringCreateWithCharacters(nullptr, 0);
 }
