@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,6 +99,10 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     bool wasEndOfParagraph = isEndOfParagraph(lastParagraphInBlockNode);
 
     moveParagraphWithClones(start, end, blockNode.get(), outerBlock.get());
+
+    // Copy the inline style of the original block element to the newly created block-style element.
+    if (outerBlock.get() != nodeAfterInsertionPosition.get() && downcast<HTMLElement>(nodeAfterInsertionPosition.get())->hasAttribute(styleAttr))
+        blockNode->setAttribute(styleAttr, downcast<HTMLElement>(nodeAfterInsertionPosition.get())->getAttribute(styleAttr));
 
     if (wasEndOfParagraph && lastParagraphInBlockNode.anchorNode()->isConnected()
         && !isEndOfParagraph(lastParagraphInBlockNode) && !isStartOfParagraph(lastParagraphInBlockNode))
