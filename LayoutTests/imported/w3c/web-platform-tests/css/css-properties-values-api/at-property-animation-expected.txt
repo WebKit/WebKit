@@ -11,4 +11,6 @@ PASS Transitioning from specified value
 FAIL Transition triggered by initial value change assert_equals: expected "150px" but got "200px"
 PASS No transition when changing types
 PASS No transition when removing @property rule
+PASS Unregistered properties referencing animated properties update correctly.
+PASS Registered properties referencing animated properties update correctly.
 
