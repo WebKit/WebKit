@@ -42,8 +42,8 @@ enum class MessageFlags : uint8_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 
 template<typename, typename> struct ArgumentCoder;
-template<typename, typename> struct HasLegacyDecoder;
-template<typename, typename> struct HasModernDecoder;
+template<typename, typename, typename> struct HasLegacyDecoder;
+template<typename, typename, typename> struct HasModernDecoder;
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
