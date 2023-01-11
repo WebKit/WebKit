@@ -1063,9 +1063,9 @@ public:
     UndoManager& undoManager() const { return m_undoManager.get(); }
 
     // designMode support
-    enum InheritedBool { off = false, on = true, inherit };    
-    void setDesignMode(InheritedBool value);
-    bool inDesignMode() const;
+    enum class DesignMode : bool { Off, On };
+    void setDesignMode(DesignMode value);
+    bool inDesignMode() const { return m_designMode == DesignMode::On; }
     WEBCORE_EXPORT String designMode() const;
     WEBCORE_EXPORT void setDesignMode(const String&);
 
@@ -2123,7 +2123,7 @@ private:
 
     unsigned m_writeRecursionDepth { 0 };
 
-    InheritedBool m_designMode { inherit };
+    DesignMode m_designMode { DesignMode::Off };
     MediaProducerMediaStateFlags m_mediaState;
     bool m_userHasInteractedWithMediaElement { false };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
