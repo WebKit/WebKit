@@ -66,7 +66,7 @@ AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
 
 void AsyncScrollingCoordinator::hysterisisTimerFired(PAL::HysteresisState state)
 {
-    if (state == PAL::HysteresisState::Stopped)
+    if (m_page && state == PAL::HysteresisState::Stopped)
         m_page->didFinishScrolling();
 }
 
