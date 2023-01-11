@@ -1970,7 +1970,7 @@ EnterKeyHintEnabled:
 
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Enable Enumerating All Network Interfaces"
   webcoreBinding: none
   exposed: [ WebKit ]
@@ -3658,7 +3658,7 @@ MediaDataLoadsAutomatically:
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 MediaDevicesEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Media devices"
   humanReadableDescription: "Enable media devices"
   condition: ENABLE(MEDIA_STREAM)
@@ -3882,7 +3882,7 @@ MinimumZoomFontSize:
 
 MockCaptureDevicesEnabled:
   type: bool
-  status: internal
+  status: embedder
   webcoreOnChange: mockCaptureDevicesEnabledChanged
   inspectorOverride: true
   condition: ENABLE(MEDIA_STREAM)
