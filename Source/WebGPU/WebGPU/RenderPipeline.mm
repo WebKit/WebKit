@@ -186,21 +186,7 @@ bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descript
     // FIXME: Implement this according to the description in
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpurenderpipelinedescriptor
 
-    // FIXME: we additionally reject valid descriptors using unimplemented features.
-    // Remove these checks once we support them.
-
     UNUSED_PARAM(descriptor);
-    // Does not support module constants in vertex shaders
-    if (descriptor.vertex.constantCount)
-        return false;
-
-    if (descriptor.fragment) {
-        const auto& fragmentDescriptor = *descriptor.fragment;
-
-        // Does not support module constants in fragment shaders
-        if (fragmentDescriptor.constantCount)
-            return false;
-    }
 
     return true;
 }
@@ -333,6 +319,17 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
     return vertexDescriptor;
 }
 
+static auto buildKeyValueReplacements(const auto& stage)
+{
+    HashMap<String, decltype(WGPUConstantEntry::value)> keyValueReplacements;
+    for (size_t i = 0; i < stage.constantCount; ++i) {
+        auto& kvp = stage.constants[i];
+        keyValueReplacements.set(String::fromUTF8(kvp.key), kvp.value);
+    }
+
+    return keyValueReplacements;
+}
+
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
 {
     if (!validateRenderPipeline(descriptor))
@@ -349,7 +346,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         const auto& vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
         const auto& vertexFunctionName = String::fromLatin1(descriptor.vertex.entryPoint);
 
-        const auto vertexFunction = vertexModule.getNamedFunction(vertexFunctionName);
+        const auto vertexFunction = vertexModule.getNamedFunction(vertexFunctionName, buildKeyValueReplacements(descriptor.vertex));
         if (!vertexFunction)
             return RenderPipeline::createInvalid(*this);
 
@@ -365,7 +362,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         const auto& fragmentModule = WebGPU::fromAPI(fragmentDescriptor.module);
         const auto& fragmentFunctionName = String::fromLatin1(fragmentDescriptor.entryPoint);
 
-        const auto fragmentFunction = fragmentModule.getNamedFunction(fragmentFunctionName);
+        const auto fragmentFunction = fragmentModule.getNamedFunction(fragmentFunctionName, buildKeyValueReplacements(fragmentDescriptor));
 
         if (!fragmentFunction)
             return RenderPipeline::createInvalid(*this);
