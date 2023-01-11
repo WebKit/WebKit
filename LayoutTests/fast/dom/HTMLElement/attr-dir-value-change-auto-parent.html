@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body dir="auto">
+    <div id="test">مرحبا</div>
+</body>
+<script>
+    var element = document.getElementById("test");
+    shouldBe("getComputedStyle(element).getPropertyValue('direction')", "'rtl'");
+    element.setAttribute("dir", "auto");
+    shouldBe("getComputedStyle(element).getPropertyValue('direction')", "'rtl'");
+</script>
+</html>
