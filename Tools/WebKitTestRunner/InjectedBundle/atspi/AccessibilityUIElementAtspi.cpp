@@ -417,6 +417,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     if (attributeName == "AXAutocompleteValue"_s)
         return OpaqueJSString::tryCreate(attributes.get("autocomplete"_s)).leakRef();
+    
+    if (attributeName == "AXKeyShortcutsValue"_s)
+        return OpaqueJSString::tryCreate(attributes.get("keyshortcuts"_s)).leakRef();
 
     return JSStringCreateWithCharacters(nullptr, 0);
 }
