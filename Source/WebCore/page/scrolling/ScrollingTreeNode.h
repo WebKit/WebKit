@@ -41,7 +41,7 @@ class ScrollingTree;
 class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeScrollingNode;
 
-class ScrollingTreeNode : public ThreadSafeRefCounted<ScrollingTreeNode> {
+class ScrollingTreeNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingTreeNode> {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ScrollingTree;
 public:
@@ -75,9 +75,9 @@ public:
     
     virtual void willBeDestroyed() { }
 
-    ScrollingTreeNode* parent() const { return m_parent; }
-    void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
-    
+    RefPtr<ScrollingTreeNode> parent() const { return m_parent.get(); }
+    void setParent(RefPtr<ScrollingTreeNode>&& parent) { m_parent = parent; }
+
     WEBCORE_EXPORT bool isRootNode() const;
 
     const Vector<Ref<ScrollingTreeNode>>& children() const { return m_children; }
@@ -86,8 +86,8 @@ public:
     void removeChild(ScrollingTreeNode&);
     void removeAllChildren();
 
-    WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNodeIncludingSelf();
-    WEBCORE_EXPORT ScrollingTreeScrollingNode* enclosingScrollingNodeIncludingSelf();
+    WEBCORE_EXPORT RefPtr<ScrollingTreeFrameScrollingNode> enclosingFrameNodeIncludingSelf();
+    WEBCORE_EXPORT RefPtr<ScrollingTreeScrollingNode> enclosingScrollingNodeIncludingSelf();
 
     WEBCORE_EXPORT void dump(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const;
 
@@ -107,7 +107,7 @@ private:
     const ScrollingNodeType m_nodeType;
     const ScrollingNodeID m_nodeID;
 
-    ScrollingTreeNode* m_parent { nullptr };
+    ThreadSafeWeakPtr<ScrollingTreeNode> m_parent;
 };
 
 } // namespace WebCore

@@ -87,7 +87,7 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
         return m_constraints.layerPositionForConstrainingRect(constrainingRect);
     };
 
-    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+    for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (is<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
             auto& overflowProxyNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*ancestor);
             auto overflowNode = scrollingTree().nodeForID(overflowProxyNode.overflowScrollingNodeID());

@@ -90,22 +90,22 @@ void ScrollingTreeNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateT
         ts.dumpProperty("nodeID", scrollingNodeID());
 }
 
-ScrollingTreeFrameScrollingNode* ScrollingTreeNode::enclosingFrameNodeIncludingSelf()
+RefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeNode::enclosingFrameNodeIncludingSelf()
 {
-    auto* node = this;
+    RefPtr node = this;
     while (node && !node->isFrameScrollingNode())
         node = node->parent();
 
-    return downcast<ScrollingTreeFrameScrollingNode>(node);
+    return downcast<ScrollingTreeFrameScrollingNode>(node.get());
 }
 
-ScrollingTreeScrollingNode* ScrollingTreeNode::enclosingScrollingNodeIncludingSelf()
+RefPtr<ScrollingTreeScrollingNode> ScrollingTreeNode::enclosingScrollingNodeIncludingSelf()
 {
-    auto* node = this;
+    RefPtr node = this;
     while (node && !node->isScrollingNode())
         node = node->parent();
 
-    return downcast<ScrollingTreeScrollingNode>(node);
+    return downcast<ScrollingTreeScrollingNode>(node.get());
 }
 
 void ScrollingTreeNode::dump(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
