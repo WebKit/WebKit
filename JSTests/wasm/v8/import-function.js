@@ -249,8 +249,12 @@ function testCallPrint() {
       kExprCallFunction, 1   // --
     ])
     .exportFunc();
+  function fakePrint(...args) {
+    if (args.length < 1)
+      throw new Error()
+  }
 
-  var main = builder.instantiate({q: {print: print}}).exports.main;
+  var main = builder.instantiate({q: {print: fakePrint}}).exports.main;
 
   for (var i = -9; i < 900; i += 16.125) {
     main(i);

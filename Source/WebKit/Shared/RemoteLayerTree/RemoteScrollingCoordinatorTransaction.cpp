@@ -625,6 +625,8 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
 
 void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
 {
+    encoder << m_clearScrollLatching;
+
     int numNodes = m_scrollingStateTree ? m_scrollingStateTree->nodeCount() : 0;
     encoder << numNodes;
     
@@ -650,6 +652,9 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder, Remote
 
 bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
 {
+    if (!decoder.decode(m_clearScrollLatching))
+        return false;
+
     int numNodes;
     if (!decoder.decode(numNodes))
         return false;
@@ -945,6 +950,9 @@ String RemoteScrollingCoordinatorTransaction::description() const
 {
     TextStream ts;
 
+    if (m_clearScrollLatching)
+        ts.dumpProperty("clear scroll latching", clearScrollLatching());
+
     ts.startGroup();
     ts << "scrolling state tree";
 
@@ -963,7 +971,7 @@ String RemoteScrollingCoordinatorTransaction::description() const
 
 void RemoteScrollingCoordinatorTransaction::dump() const
 {
-    fprintf(stderr, "%s", description().utf8().data());
+    WTFLogAlways("%s", description().utf8().data());
 }
 #endif
 

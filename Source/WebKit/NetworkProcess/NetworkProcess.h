@@ -68,6 +68,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include <notify.h>
 #include <wtf/OSObjectPtr.h>
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
@@ -273,6 +274,8 @@ public:
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
 #endif
+
+    void notifyMediaStreamingActivity(bool);
 
     void setPrivateClickMeasurementEnabled(bool);
     bool privateClickMeasurementEnabled() const;
@@ -552,6 +555,9 @@ private:
     bool m_ftpEnabled { false };
     bool m_isSuspended { false };
     bool m_didSyncCookiesForClose { false };
+#if PLATFORM(COCOA)
+    int m_mediaStreamingActivitityToken { NOTIFY_TOKEN_INVALID };
+#endif
 };
 
 #if !PLATFORM(COCOA)

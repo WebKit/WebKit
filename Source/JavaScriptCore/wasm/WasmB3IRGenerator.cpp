@@ -3561,8 +3561,14 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     patch->append(framePointer(), ValueRep::reg(GPRInfo::argumentGPR1));
-    for (unsigned i = 0; i < args.size(); ++i)
-        patch->append(get(args[i]), ValueRep::stackArgument(i * sizeof(EncodedJSValue)));
+    for (unsigned i = 0; i < args.size(); ++i) {
+        // Note: SIMD values can appear here, but should never be read at runtime because this will throw an un-catchable TypeError instead.
+        // Nonetheless, they may clobber important things if they aren't treated as doubles.
+        auto arg = get(args[i]);
+        if (args[i]->type().isVector())
+            arg = constant(Double, 0);
+        patch->append(arg, ValueRep::stackArgument(i * sizeof(EncodedJSValue)));
+    }
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -3815,6 +3821,7 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
 
     Vector<B3::ConstrainedValue> constrainedArguments;
     for (unsigned i = 0; i < tmpArgs.size(); ++i) {
+        RELEASE_ASSERT(!tmpArgs[i]->type().isVector());
         if (constrainedArgLocations[i].location.isStackArgument()) {
             shuffleStackArg(get(block, tmpArgs[i]), constrainedArgLocations[i].location.offsetFromSP());
             continue;

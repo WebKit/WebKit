@@ -55,33 +55,33 @@
                 let targetElement = document.getElementById("container");
                 expectTrue(0 == targetElement.scrollLeft, "scroll origin is 0");
 
-                eventSender.keyDown("leftArrow");
-                eventSender.keyDown("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
 
                 let scrollPositionBetweenFirstAndSecondSnapPoint = targetElement.scrollLeft < 0 && targetElement.scrollLeft  > -300;
                 expectTrue(scrollPositionBetweenFirstAndSecondSnapPoint, "arrow keys allow escaping first snap position");
 
-                eventSender.keyDown("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
                 expectTrue(targetElement.scrollLeft == 0, "right arrow key snapped back to first snap position");
 
                 // Move to the second scroll snap position.
                 targetElement.scrollLeft = -300;
                 await UIHelper.delayFor(0);
 
-                eventSender.keyDown("leftArrow");
-                eventSender.keyDown("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
                 let scrollPositionBetweenSecondAndThirdSnapPoint = targetElement.scrollLeft < -300 && targetElement.scrollLeft  > -600;
                 expectTrue(scrollPositionBetweenSecondAndThirdSnapPoint, "left arrow keys allow escaping second snap position");
 
-                eventSender.keyDown("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
                 expectTrue(targetElement.scrollLeft == -300, "right arrow key snapped back to second snap position");
 
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
+                await UIHelper.keyboardScroll("rightArrow");
                 scrollPositionBetweenFirstAndSecondSnapPoint = targetElement.scrollLeft < 0 && targetElement.scrollLeft  > -300;
                 expectTrue(scrollPositionBetweenFirstAndSecondSnapPoint, "right arrow keys allow escaping second snap position");
 
-                eventSender.keyDown("leftArrow");
+                await UIHelper.keyboardScroll("leftArrow");
                 expectTrue(targetElement.scrollLeft == -300, "left arrow key snapped back to second snap position");
             } catch (e) {
                 console.log(e);

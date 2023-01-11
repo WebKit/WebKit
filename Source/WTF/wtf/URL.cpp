@@ -1307,15 +1307,15 @@ bool isEqualIgnoringQueryAndFragments(const URL& a, const URL& b)
     return substringIgnoringQueryAndFragments(a) == substringIgnoringQueryAndFragments(b);
 }
 
-void removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
+Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
 {
     if (keysToRemove.isEmpty())
-        return;
+        return { };
 
     if (!url.hasQuery())
-        return;
+        return { };
 
-    bool removedAnyKey = false;
+    Vector<String> removedParameters;
     StringBuilder queryWithoutRemovalKeys;
     for (auto bytes : url.query().split('&')) {
         auto nameAndValue = URLParser::parseQueryNameAndValue(bytes);
@@ -1327,15 +1327,17 @@ void removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
             continue;
 
         if (keysToRemove.contains(key)) {
-            removedAnyKey = true;
+            removedParameters.append(key);
             continue;
         }
 
         queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? "" : "&", bytes);
     }
 
-    if (removedAnyKey)
+    if (!removedParameters.isEmpty())
         url.setQuery(queryWithoutRemovalKeys);
+
+    return removedParameters;
 }
 
 } // namespace WTF

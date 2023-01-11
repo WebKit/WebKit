@@ -38,27 +38,27 @@
 
                 let scrollPositionBeforeSnap = document.scrollingElement.scrollTop;
                 let results = [];
-                await UIHelper.keyDown("downArrow");
-                await UIHelper.keyDown("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
                 var betweenFirstScrollPositionAndSecond =
                     document.scrollingElement.scrollTop > scrollPositionBeforeSnap
                     && document.scrollingElement.scrollTop < window.innerHeight;
                 results.push([betweenFirstScrollPositionAndSecond, "down arrow key did not scroll to second snap point"]);
 
-                await UIHelper.keyDown("pageDown");
+                await UIHelper.keyboardScroll("pageDown");
                 results.push([document.scrollingElement.scrollTop == window.innerHeight, "page down scrolled to the first snap point"]);
 
                 // Directional scrolling should be able to escape a snap point.
-                await UIHelper.keyDown("downArrow");
-                await UIHelper.keyDown("downArrow");
-                await UIHelper.keyDown("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
                 var betweenSecondScrollPositionAndThird =
                     document.scrollingElement.scrollTop > window.innerHeight
                     && document.scrollingElement.scrollTop < (window.innerHeight * 2);
                 results.push([betweenSecondScrollPositionAndThird, "down arrow key scrolled away from second div."]);
 
                 // Reversing directions should snap back though.
-                await UIHelper.keyDown("upArrow");
+                await UIHelper.keyboardScroll("upArrow");
                 results.push([document.scrollingElement.scrollTop == window.innerHeight, "up arrow scrolled back to second div"]);
 
                 // We avoid modifying the DOM until the test is over, because sometimes

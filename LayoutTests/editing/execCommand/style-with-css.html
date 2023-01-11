@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -30,10 +30,10 @@ if (document.queryCommandState('styleWithCSS') === true)
 else
     testFailed("queryCommandState('styleWithCSS') should return boolean true");
 
-if (document.queryCommandValue('styleWithCSS') === 'true')
-    testPassed("queryCommandValue('styleWithCSS') returns 'true'");
+if (document.queryCommandValue('styleWithCSS') === '')
+    testPassed("queryCommandValue('styleWithCSS') returns ''");
 else
-    testFailed("queryCommandValue('styleWithCSS') should return 'true'");
+    testFailed("queryCommandValue('styleWithCSS') should return ''");
 
 document.execCommand('styleWithCSS', false, false);
 if (document.queryCommandState('styleWithCSS') === false)
@@ -41,12 +41,11 @@ if (document.queryCommandState('styleWithCSS') === false)
 else
     testFailed("queryCommandState('styleWithCSS') should return boolean false");
 
-if (document.queryCommandValue('styleWithCSS') === 'false')
-    testPassed("queryCommandValue('styleWithCSS') returns 'false'");
+if (document.queryCommandValue('styleWithCSS') === '')
+    testPassed("queryCommandValue('styleWithCSS') returns ''");
 else
-    testFailed("queryCommandValue('styleWithCSS') should return 'false'");
+    testFailed("queryCommandValue('styleWithCSS') should return ''");
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

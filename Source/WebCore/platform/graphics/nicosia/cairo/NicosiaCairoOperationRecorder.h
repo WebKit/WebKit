@@ -77,8 +77,8 @@ private:
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) override;
     void drawEllipse(const WebCore::FloatRect&) override;
 
-    void drawFocusRing(const WebCore::Path&, float, float, const WebCore::Color&) override;
-    void drawFocusRing(const Vector<WebCore::FloatRect>&, float, float, const WebCore::Color&) override;
+    void drawFocusRing(const WebCore::Path&, float outlineWidth, const WebCore::Color&) override;
+    void drawFocusRing(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) override;
 
     void save() override;
     void restore() override;

@@ -148,6 +148,8 @@ void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
     GraphicsContext::beginTransparencyLayer(opacity);
     m_primaryContext.beginTransparencyLayer(opacity);
     m_secondaryContext.beginTransparencyLayer(opacity);
+
+    GraphicsContext::save();
     m_state.didBeginTransparencyLayer();
 
     VERIFY_STATE_SYNCHRONIZATION();
@@ -158,7 +160,8 @@ void BifurcatedGraphicsContext::endTransparencyLayer()
     GraphicsContext::endTransparencyLayer();
     m_primaryContext.endTransparencyLayer();
     m_secondaryContext.endTransparencyLayer();
-    m_state.didEndTransparencyLayer(m_primaryContext.alpha());
+
+    GraphicsContext::restore();
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -446,39 +449,21 @@ AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDevi
     return m_primaryContext.getCTM(includeDeviceScale);
 }
 
-void BifurcatedGraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void BifurcatedGraphicsContext::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
-    m_primaryContext.drawFocusRing(rects, width, offset, color);
-    m_secondaryContext.drawFocusRing(rects, width, offset, color);
+    m_primaryContext.drawFocusRing(path, outlineWidth, color);
+    m_secondaryContext.drawFocusRing(path, outlineWidth, color);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void BifurcatedGraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-    m_primaryContext.drawFocusRing(path, width, offset, color);
-    m_secondaryContext.drawFocusRing(path, width, offset, color);
+    m_primaryContext.drawFocusRing(rects, outlineOffset, outlineWidth, color);
+    m_secondaryContext.drawFocusRing(rects, outlineOffset, outlineWidth, color);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
-
-#if PLATFORM(MAC)
-void BifurcatedGraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw, const Color& color)
-{
-    m_primaryContext.drawFocusRing(path, timeOffset, needsRedraw, color);
-    m_secondaryContext.drawFocusRing(path, timeOffset, needsRedraw, color);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
-void BifurcatedGraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeOffset, bool& needsRedraw, const Color& color)
-{
-    m_primaryContext.drawFocusRing(rects, timeOffset, needsRedraw, color);
-    m_secondaryContext.drawFocusRing(rects, timeOffset, needsRedraw, color);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-#endif
 
 FloatSize BifurcatedGraphicsContext::drawText(const FontCascade& cascade, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
 {

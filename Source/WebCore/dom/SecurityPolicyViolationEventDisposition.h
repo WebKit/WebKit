@@ -32,15 +32,3 @@ namespace WebCore {
 enum class SecurityPolicyViolationEventDisposition : bool { Enforce, Report };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SecurityPolicyViolationEventDisposition> {
-    using values = EnumValues<
-    WebCore::SecurityPolicyViolationEventDisposition,
-    WebCore::SecurityPolicyViolationEventDisposition::Enforce,
-    WebCore::SecurityPolicyViolationEventDisposition::Report
-    >;
-};
-
-} // namespace WTF

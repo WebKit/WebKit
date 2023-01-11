@@ -136,7 +136,6 @@ public:
     void mergeAllChanges(const GraphicsContextState&);
 
     void didBeginTransparencyLayer();
-    void didEndTransparencyLayer(float originalOpacity);
 
     WTF::TextStream& dump(WTF::TextStream&) const;
 

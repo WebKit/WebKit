@@ -101,8 +101,8 @@ protected:
     virtual void recordDrawDotsForDocumentMarker(const FloatRect&, const DocumentMarkerLineStyle&) = 0;
     virtual void recordDrawEllipse(const FloatRect&) = 0;
     virtual void recordDrawPath(const Path&) = 0;
-    virtual void recordDrawFocusRingPath(const Path&, float width, float offset, const Color&) = 0;
-    virtual void recordDrawFocusRingRects(const Vector<FloatRect>&, float width, float offset, const Color&) = 0;
+    virtual void recordDrawFocusRingPath(const Path&, float outlineWidth, const Color&) = 0;
+    virtual void recordDrawFocusRingRects(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) = 0;
     virtual void recordFillRect(const FloatRect&) = 0;
     virtual void recordFillRectWithColor(const FloatRect&, const Color&) = 0;
     virtual void recordFillRectWithGradient(const FloatRect&, Gradient&) = 0;
@@ -244,13 +244,8 @@ private:
 
     WEBCORE_EXPORT void drawPath(const Path&) final;
 
-    WEBCORE_EXPORT void drawFocusRing(const Path&, float width, float offset, const Color&) final;
-    WEBCORE_EXPORT void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&) final;
-
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT void drawFocusRing(const Path&, double timeOffset, bool& needsRedraw, const Color&) final;
-    WEBCORE_EXPORT void drawFocusRing(const Vector<FloatRect>&, double timeOffset, bool& needsRedraw, const Color&) final;
-#endif
+    WEBCORE_EXPORT void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
+    WEBCORE_EXPORT void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
 
     WEBCORE_EXPORT void save() final;
     WEBCORE_EXPORT void restore() final;

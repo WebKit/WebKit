@@ -1,25 +1,21 @@
-<style>
-@font-face {
-    font-family: ahem;
-    src: local(unquoted name), url(../../resources/Ahem.ttf);
-}
-@font-face {
-    font-family: invalid;
-    src: local(invalid '' name), url(../../resources/Ahem.ttf);
-}
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style id="testStyle">
 </style>
-<p>This test ensures that unquoted font names are allowed in local().</p>
-
-<p>The text below should be a series of black boxes.</p>
-<p style="font-family: ahem;">FAIL</p>
-
-<p>The text below should not be a series of black boxes.</p>
-<p style="font-family: invalid;">SUCCESS</p>
-
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    document.documentElement.offsetTop;
-    setTimeout(function() { testRunner.notifyDone(); }, 200);
-}
+  const sheet = testStyle.sheet;
+  tests = [
+    { src: "local(unquoted name);", valid: true},
+    { src: "local(invalid '' name);", valid: false}
+  ];
+
+  for (let t of tests) {
+    test(() => {
+      assert_equals(sheet.cssRules.length, 0, "testSheet should initially be empty");
+      sheet.insertRule("@font-face { src: " + t.src + "}");
+      assert_equals(sheet.cssRules[0].style.getPropertyValue("src") != "", t.valid);
+      sheet.deleteRule(0);
+    }, "Check that src: " + t.src + " is " + (t.valid ? "valid" : "invalid"));
+  }
 </script>

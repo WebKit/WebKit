@@ -455,14 +455,13 @@ UIProcess/API/APIContentWorld.cpp
 UIProcess/API/APIContextMenuElementInfo.cpp
 UIProcess/API/APIDataTask.cpp
 UIProcess/API/APIDebuggableInfo.cpp
-UIProcess/API/APIExperimentalFeature.cpp
+UIProcess/API/APIFeature.cpp
 UIProcess/API/APIFrameInfo.cpp
 UIProcess/API/APIFrameTreeNode.cpp
 UIProcess/API/APIHTTPCookieStore.cpp
 UIProcess/API/APIHitTestResult.cpp
 UIProcess/API/APIInspectorConfiguration.cpp
 UIProcess/API/APIInspectorExtension.cpp
-UIProcess/API/APIInternalDebugFeature.cpp
 UIProcess/API/APINavigation.cpp
 UIProcess/API/APINavigationData.cpp
 UIProcess/API/APIPageConfiguration.cpp
@@ -486,7 +485,7 @@ UIProcess/API/C/WKContextConfigurationRef.cpp
 UIProcess/API/C/WKCookieManager.cpp
 UIProcess/API/C/WKCredential.cpp
 UIProcess/API/C/WKDownloadRef.cpp
-UIProcess/API/C/WKExperimentalFeature.cpp
+UIProcess/API/C/WKFeature.cpp
 UIProcess/API/C/WKFormSubmissionListener.cpp
 UIProcess/API/C/WKFrame.cpp
 UIProcess/API/C/WKFrameHandleRef.cpp
@@ -499,7 +498,6 @@ UIProcess/API/C/WKHTTPCookieStoreRef.cpp
 UIProcess/API/C/WKHitTestResult.cpp
 UIProcess/API/C/WKIconDatabase.cpp
 UIProcess/API/C/WKInspector.cpp
-UIProcess/API/C/WKInternalDebugFeature.cpp
 UIProcess/API/C/WKKeyValueStorageManager.cpp
 UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp
 UIProcess/API/C/WKMessageListener.cpp

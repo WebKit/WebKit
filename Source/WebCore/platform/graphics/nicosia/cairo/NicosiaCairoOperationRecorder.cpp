@@ -760,11 +760,11 @@ void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
     append(createCommand<DrawEllipse>(rect, state.fillBrush().color(), state.strokeStyle(), state.strokeBrush().color(), state.strokeThickness()));
 }
 
-void CairoOperationRecorder::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void CairoOperationRecorder::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
 #if PLATFORM(WPE) || PLATFORM(GTK)
     ThemeAdwaita::paintFocus(*this, path, color);
-    UNUSED_PARAM(width);
+    UNUSED_PARAM(outlineWidth);
 #else
     struct DrawFocusRing final : PaintingOperation, OperationData<Path, float, Color> {
         virtual ~DrawFocusRing() = default;
@@ -780,16 +780,15 @@ void CairoOperationRecorder::drawFocusRing(const Path& path, float width, float 
         }
     };
 
-    append(createCommand<DrawFocusRing>(path, width, color));
+    append(createCommand<DrawFocusRing>(path, outlineWidth, color));
 #endif
-    UNUSED_PARAM(offset);
 }
 
-void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
 #if PLATFORM(WPE) || PLATFORM(GTK)
     ThemeAdwaita::paintFocus(*this, rects, color);
-    UNUSED_PARAM(width);
+    UNUSED_PARAM(outlineWidth);
 #else
     struct DrawFocusRing final : PaintingOperation, OperationData<Vector<FloatRect>, float, Color> {
         virtual ~DrawFocusRing() = default;
@@ -805,9 +804,9 @@ void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float
         }
     };
 
-    append(createCommand<DrawFocusRing>(rects, width, color));
+    append(createCommand<DrawFocusRing>(rects, outlineWidth, color));
 #endif
-    UNUSED_PARAM(offset);
+    UNUSED_PARAM(outlineOffset);
 }
 
 void CairoOperationRecorder::save()

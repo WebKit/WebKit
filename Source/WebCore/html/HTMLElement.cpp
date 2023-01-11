@@ -845,7 +845,8 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
     RefPtr<Element> parent = parentOrShadowHostElement();
     bool isValid = true;
 
-    switch (parseTextDirection(value)) {
+    auto direction = parseTextDirection(value);
+    switch (direction) {
     case TextDirectionDirective::Invalid:
         isValid = false;
         if (selfOrPrecedingNodesAffectDirAuto() && (!parent || !parent->selfOrPrecedingNodesAffectDirAuto()) && !is<HTMLBDIElement>(*this))
@@ -875,7 +876,7 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
     }
 
     if (is<HTMLElement>(parent) && parent->selfOrPrecedingNodesAffectDirAuto()) {
-        if (isValid)
+        if (isValid && direction != TextDirectionDirective::Auto)
             setHasDirAutoFlagRecursively(this, false);
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
     }

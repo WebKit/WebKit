@@ -28,7 +28,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WebKitPrivate.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 
 @interface CookieConsentDelegate : NSObject<WKUIDelegatePrivate>
 @property (nonatomic) BOOL decision;
@@ -48,9 +48,9 @@ namespace TestWebKitAPI {
 static RetainPtr<TestWKWebView> createWebViewForTestingCookieConsent()
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+    for (_WKFeature *feature in WKPreferences._features) {
         if ([feature.key isEqualToString:@"CookieConsentAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }

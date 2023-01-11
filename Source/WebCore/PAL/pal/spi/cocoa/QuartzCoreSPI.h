@@ -130,6 +130,7 @@ typedef struct _CARenderContext CARenderContext;
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
 @property BOOL hitTestsAsOpaque;
+@property BOOL inheritsTiming;
 @property BOOL needsLayoutOnGeometryChange;
 @property BOOL shadowPathIsBounds;
 @property BOOL continuousCorners;

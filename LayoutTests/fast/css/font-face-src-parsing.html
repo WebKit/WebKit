@@ -36,13 +36,6 @@
 @font-face {
     src: local("foo bar");
 }
-</style>
-
-<!-- Invalid src descriptor rules. -->
-<style>
-@font-face {
-    src: url(font.ttf invalid);
-}
 @font-face {
     src: url(font.ttf),;
 }
@@ -51,6 +44,13 @@
 }
 @font-face {
     src: ,local(font);
+}
+</style>
+
+<!-- Invalid src descriptor rules. -->
+<style>
+@font-face {
+    src: url(font.ttf invalid);
 }
 @font-face {
     src: url(font.ttf), invalid();

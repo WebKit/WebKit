@@ -58,6 +58,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
     _WKPitchCorrectionAlgorithmBestForSpeech,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
+@class _WKFeature;
 @class _WKExperimentalFeature;
 @class _WKInternalDebugFeature;
 
@@ -137,13 +138,15 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @property (nonatomic, setter=_setAVFoundationEnabled:) BOOL _avFoundationEnabled WK_API_AVAILABLE(macos(10.10), ios(12.0));
 
++ (NSArray<_WKFeature *> *)_features WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (BOOL)_isEnabledForFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
+- (void)_setEnabled:(BOOL)value forFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
+
 + (NSArray<_WKInternalDebugFeature *> *)_internalDebugFeatures WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (BOOL)_isEnabledForInternalDebugFeature:(_WKInternalDebugFeature *)feature WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (void)_setEnabled:(BOOL)value forInternalDebugFeature:(_WKInternalDebugFeature *)feature WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures WK_API_AVAILABLE(macos(10.12), ios(10.0));
-- (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
-- (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (BOOL)_isEnabledForExperimentalFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_setEnabled:(BOOL)value forExperimentalFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
 

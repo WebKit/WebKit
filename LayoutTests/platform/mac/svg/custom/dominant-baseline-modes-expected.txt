@@ -22,10 +22,10 @@ layer at (0,0) size 400x400
         RenderSVGInlineText {#text} at (0,0) size 101x23
           chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
       RenderSVGPath {line} at (10,104) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
-    RenderSVGContainer {g} at (10,122) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-      RenderSVGText {text} at (10,2) size 101x23 contains 1 chunk(s)
+    RenderSVGContainer {g} at (10,112) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+      RenderSVGText {text} at (10,-8) size 101x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 101x23
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+          chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
       RenderSVGPath {line} at (10,134) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
     RenderSVGContainer {g} at (10,147) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
       RenderSVGText {text} at (10,-3) size 101x23 contains 1 chunk(s)
@@ -52,10 +52,10 @@ layer at (0,0) size 400x400
         RenderSVGInlineText {#text} at (0,0) size 101x23
           chunk 1 text run 1 at (10.00,19.49) startOffset 0 endOffset 14 width 100.55: "This is a test"
       RenderSVGPath {line} at (10,284) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
-    RenderSVGContainer {g} at (10,302) size 101x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
-      RenderSVGText {text} at (10,2) size 101x23 contains 1 chunk(s)
+    RenderSVGContainer {g} at (10,292) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+      RenderSVGText {text} at (10,-8) size 101x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 101x23
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
+          chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 14 width 100.55: "This is a test"
       RenderSVGPath {line} at (10,314) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
     RenderSVGContainer {g} at (10,344) size 101x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,330.00)}]
       RenderSVGText {text} at (10,15) size 101x23 contains 1 chunk(s)

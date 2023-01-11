@@ -80,8 +80,8 @@ private:
     void recordDrawDotsForDocumentMarker(const FloatRect&, const DocumentMarkerLineStyle&) final;
     void recordDrawEllipse(const FloatRect&) final;
     void recordDrawPath(const Path&) final;
-    void recordDrawFocusRingPath(const Path&, float width, float offset, const Color&) final;
-    void recordDrawFocusRingRects(const Vector<FloatRect>&, float width, float offset, const Color&) final;
+    void recordDrawFocusRingPath(const Path&, float outlineWidth, const Color&) final;
+    void recordDrawFocusRingRects(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
     void recordFillRect(const FloatRect&) final;
     void recordFillRectWithColor(const FloatRect&, const Color&) final;
     void recordFillRectWithGradient(const FloatRect&, Gradient&) final;

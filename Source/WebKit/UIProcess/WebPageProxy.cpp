@@ -6070,7 +6070,11 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
 
     auto processIdentifier = processForNavigation->coreProcessIdentifier();
     auto preventProcessShutdownScope = processForNavigation->shutdownPreventingScope();
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), existingNetworkResourceLoadIdentifierToResume, navigation] () mutable {
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), existingNetworkResourceLoadIdentifierToResume, navigationID] () mutable {
+        RefPtr navigation = m_navigationState->navigation(navigationID);
+        if (!navigation || !m_mainFrame)
+            return completionHandler(false);
+
         // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
         if (!m_provisionalPage)
             send(Messages::WebPage::StopLoadingDueToProcessSwap());
@@ -8619,6 +8623,13 @@ static Span<const ASCIILiteral> gpuMachServices()
 
 #endif // PLATFORM(COCOA)
 
+#if !PLATFORM(COCOA)
+bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
+{
+    return preferences().useGPUProcessForDOMRenderingEnabled();
+}
+#endif
+
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
     WebPageCreationParameters parameters;
@@ -8797,7 +8808,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderCanvasInGPUProcess = preferences().useGPUProcessForCanvasRenderingEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
-    parameters.shouldRenderDOMInGPUProcess = preferences().useGPUProcessForDOMRenderingEnabled();
+    parameters.shouldRenderDOMInGPUProcess = useGPUProcessForDOMRenderingEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldPlayMediaInGPUProcess = preferences().useGPUProcessForMediaEnabled();
 #if ENABLE(WEBGL)
@@ -10099,7 +10110,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     MediaProducerMediaStateFlags playingMediaMask { MediaProducerMediaState::IsPlayingAudio, MediaProducerMediaState::IsPlayingVideo };
     MediaProducerMediaStateFlags oldState = m_mediaState;
 
-    bool playingAudioChanges = (oldState.contains(MediaProducerMediaState::IsPlayingAudio)) != (newState.contains(MediaProducerMediaState::IsPlayingAudio));
+    bool playingAudioChanges = oldState.contains(MediaProducerMediaState::IsPlayingAudio) != newState.contains(MediaProducerMediaState::IsPlayingAudio);
     if (playingAudioChanges)
         pageClient().isPlayingAudioWillChange();
     m_mediaState = newState;
@@ -10127,6 +10138,9 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
         videoControlsManagerDidChange();
 
     m_process->updateAudibleMediaAssertions();
+    bool mediaStreamingChanges = oldState.contains(MediaProducerMediaState::HasStreamingActivity) != newState.contains(MediaProducerMediaState::HasStreamingActivity);
+    if (mediaStreamingChanges)
+        m_process->updateMediaStreamingActivity();
 }
 
 void WebPageProxy::updateReportedMediaCaptureState()
@@ -11840,7 +11854,7 @@ bool WebPageProxy::shouldAvoidSynchronouslyWaitingToPreventDeadlock() const
         return true;
 
 #if ENABLE(GPU_PROCESS)
-    if (m_preferences->useGPUProcessForDOMRenderingEnabled()) {
+    if (useGPUProcessForDOMRenderingEnabled()) {
         auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             // It's possible that the GPU process hasn't been initialized yet; in this case, we might end up in a deadlock

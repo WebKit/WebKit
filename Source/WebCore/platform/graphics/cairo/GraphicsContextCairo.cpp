@@ -213,29 +213,27 @@ void GraphicsContextCairo::clipToImageBuffer(ImageBuffer& buffer, const FloatRec
         Cairo::clipToImageBuffer(*this, nativeImage->platformImage().get(), destRect);
 }
 
-void GraphicsContextCairo::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void GraphicsContextCairo::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
 #if PLATFORM(WPE) || PLATFORM(GTK)
     ThemeAdwaita::paintFocus(*this, path, color);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(offset);
+    UNUSED_PARAM(outlineWidth);
     return;
 #else
-    UNUSED_PARAM(offset);
-    Cairo::drawFocusRing(*this, path, width, color);
+    Cairo::drawFocusRing(*this, path, outlineWidth, color);
 #endif
 }
 
-void GraphicsContextCairo::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void GraphicsContextCairo::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
 #if PLATFORM(WPE) || PLATFORM(GTK)
     ThemeAdwaita::paintFocus(*this, rects, color);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(offset);
+    UNUSED_PARAM(outlineOffset);
+    UNUSED_PARAM(outlineWidth);
     return;
 #else
-    UNUSED_PARAM(offset);
-    Cairo::drawFocusRing(*this, rects, width, color);
+    UNUSED_PARAM(outlineOffset);
+    Cairo::drawFocusRing(*this, rects, outlineWidth, color);
 #endif
 }
 

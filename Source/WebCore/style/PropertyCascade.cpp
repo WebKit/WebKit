@@ -53,6 +53,7 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
     , m_maximumCascadeLevel(maximumCascadeLevel)
     , m_rollbackScope(rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
+    , m_animationLayer(parent.m_animationLayer)
 {
     buildCascade();
 }
@@ -261,9 +262,12 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
     }
 
     // If we are animating custom properties they may affect other properties so we need to re-resolve them.
-    if (m_animationLayer->hasCustomProperties && property.value()->isVariableReferenceValue()) {
+    if (m_animationLayer->hasCustomProperties) {
         // We could check if the we are actually animating the referenced variable. Indirect cases would need to be taken into account.
-        return true;
+        if (customProperty && !customProperty->isResolved())
+            return true;
+        if (property.value()->isVariableReferenceValue())
+            return true;
     }
 
     // Check for 'em' units and similar property dependencies.

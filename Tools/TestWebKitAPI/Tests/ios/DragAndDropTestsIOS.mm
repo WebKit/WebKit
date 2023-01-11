@@ -44,7 +44,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebItemProviderPasteboard.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
@@ -2193,9 +2193,9 @@ TEST(DragAndDropTests, SuggestedNameContainsDot)
 TEST(DragAndDropTests, CanStartDragOnModel)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"ModelElementEnabled"])
-            [[configuration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
     // FIXME: Remove this after <rdar://problem/83863149> is fixed.

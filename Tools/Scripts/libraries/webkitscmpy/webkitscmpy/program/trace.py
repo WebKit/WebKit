@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@ from webkitscmpy import Commit, local, log, remote
 from webkitbugspy import Tracker
 
 
-COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-\/]*'
+COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-\/\.]*'
 COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
 CHERRY_PICK_RE = [
     re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of {}'.format(COMPOUND_COMMIT_REF)),

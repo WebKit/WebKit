@@ -33,7 +33,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashSet.h>
@@ -190,7 +190,7 @@ public:
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         auto preferences = [configuration preferences];
 
-        for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        for (_WKFeature *feature in [WKPreferences _features]) {
             if ([feature.key isEqualToString:@"MediaSessionCoordinatorEnabled"])
                 [preferences _setEnabled:YES forFeature:feature];
             if ([feature.key isEqualToString:@"MediaSessionEnabled"])

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "APIFeature.h"
+#import "WKObject.h"
+#import "_WKFeature.h"
 
-#include <WebKit/WKBase.h>
+namespace WebKit {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+template<> struct WrapperTraits<API::Feature> {
+    using WrapperClass = _WKFeature;
+};
 
-WK_EXPORT WKTypeID WKExperimentalFeatureGetTypeID();
-
-WK_EXPORT WKStringRef WKExperimentalFeatureCopyName(WKExperimentalFeatureRef);
-WK_EXPORT WKStringRef WKExperimentalFeatureCopyKey(WKExperimentalFeatureRef);
-WK_EXPORT WKStringRef WKExperimentalFeatureCopyDetails(WKExperimentalFeatureRef);
-WK_EXPORT bool WKExperimentalFeatureDefaultValue(WKExperimentalFeatureRef);
-WK_EXPORT bool WKExperimentalFeatureIsHidden(WKExperimentalFeatureRef);
-
-#ifdef __cplusplus
 }
-#endif
+
+@interface _WKFeature () <WKObject> {
+@package
+    API::ObjectStorage<API::Feature> _wrappedFeature;
+}
+@end

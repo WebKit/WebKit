@@ -62,7 +62,7 @@ FloatPoint ScrollingTreeFixedNode::computeLayerPosition() const
 {
     FloatSize overflowScrollDelta;
     ScrollingTreeStickyNode* lastStickyNode = nullptr;
-    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+    for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
             // Fixed nodes are positioned relative to the containing frame scrolling node.
             // We bail out after finding one.

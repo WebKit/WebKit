@@ -373,7 +373,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         auto& input = downcast<HTMLInputElement>(element.get());
 
         if (input.isTextButton() || input.isUploadButton())
-            return StyleAppearance::PushButton;
+            return StyleAppearance::Button;
 
         if (input.isCheckbox())
             return StyleAppearance::Checkbox;
@@ -507,11 +507,8 @@ static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& 
     if (type != StyleAppearance::SliderHorizontal && type != StyleAppearance::SliderVertical)
         return nullptr;
 
-    auto* input = dynamicDowncast<HTMLInputElement>(*renderer.node());
-    if (!input)
-        return nullptr;
-
-    if (!input->isRangeControl())
+    auto* input = dynamicDowncast<HTMLInputElement>(renderer.node());
+    if (!input || !input->isRangeControl())
         return nullptr;
 
     IntSize thumbSize;
@@ -523,10 +520,10 @@ static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& 
     IntRect trackBounds;
     if (const auto* trackRenderer = input->sliderTrackElement()->renderer()) {
         trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
-        
+
         // We can ignoring transforms because transform is handled by the graphics context.
         auto sliderBounds = renderer.absoluteBoundingBoxRectIgnoringTransforms();
-        
+
         // Make position relative to the transformed ancestor element.
         trackBounds.moveBy(-sliderBounds.location());
     }

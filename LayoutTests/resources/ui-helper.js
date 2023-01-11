@@ -423,6 +423,12 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async keyboardScroll(key)
+    {
+        eventSender.keyDown(key);
+        await UIHelper.ensurePresentationUpdate();
+    }
+
     static toggleCapsLock()
     {
         return new Promise((resolve) => {

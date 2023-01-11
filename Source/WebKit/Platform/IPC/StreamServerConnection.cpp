@@ -86,7 +86,7 @@ void StreamServerConnection::invalidate()
     m_connection->invalidate();
 }
 
-void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, UInt128 destinationID)
+void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
 {
     {
         auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
@@ -97,7 +97,7 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
     m_workQueue.addStreamConnection(*this);
 }
 
-void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, UInt128 destinationID)
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
 {
     m_workQueue.removeStreamConnection(*this);
 
@@ -254,7 +254,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
 
 bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, RefPtr<StreamMessageReceiver>& currentReceiver)
 {
-    UInt128 destinationID = 0;
+    uint64_t destinationID = 0;
     if (!decoder.decode(destinationID)) {
         m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
         return false;
@@ -298,7 +298,7 @@ bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
 
     RefPtr<StreamMessageReceiver> receiver;
     {
-        auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
+        auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), static_cast<uint64_t>(message->destinationID()));
         Locker locker { m_receiversLock };
         receiver = m_receivers.get(key);
     }

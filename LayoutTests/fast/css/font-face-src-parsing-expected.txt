@@ -14,11 +14,11 @@ Valid rules from the stylesheet:
 @font-face { src: local("font"), local("foo bar"); }
 @font-face { src: local("foo"); }
 @font-face { src: local("foo bar"); }
+@font-face { src: url("font.ttf"); }
+@font-face { src: url("font.ttf"), local("font2"); }
+@font-face { src: local("font"); }
 Invalid rules from the stylesheet:
 
-@font-face { }
-@font-face { }
-@font-face { }
 @font-face { }
 @font-face { }
 @font-face { }

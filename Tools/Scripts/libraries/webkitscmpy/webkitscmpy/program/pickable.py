@@ -111,19 +111,20 @@ class Pickable(Command):
     }
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser, loggers=None, json=True):
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
             help='String representation of a commit, branch or range of commits to filter for cherry-pickable commits',
         )
-        parser.add_argument(
-            '--json', '-j',
-            help='Convert the commit to a machine-readable JSON object',
-            action='store_true',
-            dest='json',
-            default=False,
-        )
+        if json:
+            parser.add_argument(
+                '--json', '-j',
+                help='Convert the commit to a machine-readable JSON object',
+                action='store_true',
+                dest='json',
+                default=False,
+            )
         parser.add_argument(
             '--into', '-i',
             help='Branch to pick changes into',
@@ -203,7 +204,7 @@ class Pickable(Command):
         return [commit for commit in commits if str(commit) in filtered_in]
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args, repository, printer=None, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only run '{}' on a native Git repository\n".format(cls.name))
             return 1
@@ -277,4 +278,5 @@ class Pickable(Command):
         if filters:
             commits = [commit for commit in commits if any([f(commit) for f in filters])]
 
-        return Info.print_(args, commits, verbose_default=1)
+        printer = printer or Info.print_
+        return printer(args, commits, verbose_default=1)

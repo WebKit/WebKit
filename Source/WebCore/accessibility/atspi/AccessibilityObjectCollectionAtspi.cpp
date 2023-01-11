@@ -109,12 +109,12 @@ AccessibilityObjectAtspi::CollectionMatchRule::CollectionMatchRule(GVariant* rul
     }
     attributes.type = attributesMatchType;
 
-    int role;
+    Atspi::Role role;
     i = 0;
     while (g_variant_iter_next(rolesIter.get(), "i", &role)) {
         for (int j = 0; j < 32; ++j) {
-            if (role & (1 << j))
-                roles.value.append(i * 32 + j);
+            if (static_cast<int>(role) & (1 << j))
+                roles.value.append(static_cast<Atspi::Role>(i * 32 + j));
         }
         i++;
     }

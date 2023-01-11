@@ -34,16 +34,10 @@ namespace IPC {
 class Decoder;
 class Encoder;
 
-namespace Detail {
-template<typename T, typename I> auto TestLegacyDecoder(int) -> decltype(I::decode(std::declval<Decoder&>(), std::declval<T&>()), std::true_type { });
-template<typename T, typename I> auto TestLegacyDecoder(long) -> std::false_type;
-template<typename T, typename I> auto TestModernDecoder(int) -> decltype(I::decode(std::declval<Decoder&>()), std::true_type { });
-template<typename T, typename I> auto TestModernDecoder(long) -> std::false_type;
-}
-template<typename T, typename I = T> struct HasLegacyDecoder : decltype(Detail::TestLegacyDecoder<T, I>(0)) { };
-template<typename T, typename I = T> inline constexpr bool HasLegacyDecoderV = HasLegacyDecoder<T, I>::value;
-template<typename T, typename I = T> struct HasModernDecoder : decltype(Detail::TestModernDecoder<T, I>(0)) { };
-template<typename T, typename I = T> inline constexpr bool HasModernDecoderV = HasModernDecoder<T, I>::value;
+template<typename T, typename I = T, typename = void> struct HasLegacyDecoder : std::false_type { };
+template<typename T, typename I> struct HasLegacyDecoder<T, I, std::void_t<decltype(I::decode(std::declval<Decoder&>(), std::declval<T&>()))>> : std::true_type { };
+template<typename T, typename I = T, typename = void> struct HasModernDecoder : std::false_type { };
+template<typename T, typename I> struct HasModernDecoder<T, I, std::void_t<decltype(I::decode(std::declval<Decoder&>()))>> : std::true_type { };
 
 template<typename T, typename = void> struct ArgumentCoder {
     template<typename Encoder>
@@ -61,7 +55,7 @@ template<typename T, typename = void> struct ArgumentCoder {
     template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
-        if constexpr(HasModernDecoderV<T>)
+        if constexpr(HasModernDecoder<T>::value)
             return T::decode(decoder);
         else {
             T t;
@@ -74,7 +68,7 @@ template<typename T, typename = void> struct ArgumentCoder {
     template<typename Decoder>
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
     {
-        if constexpr(HasLegacyDecoderV<T>)
+        if constexpr(HasLegacyDecoder<T>::value)
             return T::decode(decoder, t);
         else {
             std::optional<T> optional = T::decode(decoder);

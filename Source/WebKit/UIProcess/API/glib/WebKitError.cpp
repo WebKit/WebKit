@@ -120,3 +120,16 @@ GQuark webkit_snapshot_error_quark()
  * Returns: user content filter error domain.
  */
 G_DEFINE_QUARK(WebKitUserContentFilterError, webkit_user_content_filter_error)
+
+#if ENABLE(2022_GLIB_API)
+/**
+ * webkit_media_error_quark:
+ *
+ * Gets the quark for the domain of media errors.
+ *
+ * Returns: media error domin.
+ *
+ * Since: 2.40
+ */
+G_DEFINE_QUARK(WebKitMediaError, webkit_media_error)
+#endif

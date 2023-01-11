@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-#import <WebKit/WebFeature.h>
+#import <WebKit/_WKFeature.h>
 
-#import <Foundation/Foundation.h>
-
+// Empty subclass for binary compatibility. All logic should live in the superclass, _WKFeature.
 WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
-@interface _WKExperimentalFeature : NSObject
-
-@property (nonatomic, readonly, copy) NSString *key;
-@property (nonatomic, readonly, copy) NSString *name;
-@property (nonatomic, readonly) WebFeatureStatus status;
-@property (nonatomic, readonly, copy) NSString *details;
-@property (nonatomic, readonly) BOOL defaultValue;
-@property (nonatomic, readonly, getter=isHidden) BOOL hidden;
-
+@interface _WKExperimentalFeature : _WKFeature
 @end

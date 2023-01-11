@@ -868,6 +868,8 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     // 12. Destroy all resources for sourceBuffer.
     buffer.removedFromMediaSource();
 
+    notifyElementUpdateMediaState();
+
     return { };
 }
 
@@ -1117,7 +1119,16 @@ void MediaSource::regenerateActiveSourceBuffers()
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(true);
 
+    notifyElementUpdateMediaState();
+
     updateBufferedIfNeeded();
+}
+
+void MediaSource::notifyElementUpdateMediaState() const
+{
+    if (!mediaElement())
+        return;
+    mediaElement()->updateMediaState();
 }
 
 void MediaSource::updateBufferedIfNeeded()

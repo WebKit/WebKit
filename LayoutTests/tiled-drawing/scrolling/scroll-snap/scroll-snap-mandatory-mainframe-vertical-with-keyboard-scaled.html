@@ -43,20 +43,20 @@
                 let initialScrollPosition = document.scrollingElement.scrollTop;
                 let results = [];
 
-                eventSender.keyDown("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
                 results.push([document.scrollingElement.scrollTop == windowHeight, "arrow key scrolled to second div."]);
 
-                eventSender.keyDown("downArrow");
+                await UIHelper.keyboardScroll("downArrow");
                 results.push([document.scrollingElement.scrollTop == (windowHeight * 2), "arrow key scrolled to third div."]);
 
-                eventSender.keyDown("upArrow");
-                eventSender.keyDown("upArrow");
+                await UIHelper.keyboardScroll("upArrow");
+                await UIHelper.keyboardScroll("upArrow");
                 results.push([document.scrollingElement.scrollTop == 0, "arrow key div scrolled back to first div."]);
 
-                eventSender.keyDown("pageDown");
+                await UIHelper.keyboardScroll("pageDown");
                 results.push([document.scrollingElement.scrollTop == windowHeight, "page down scrolled to second div."]);
 
-                eventSender.keyDown("pageUp");
+                await UIHelper.keyboardScroll("pageUp");
                 results.push([document.scrollingElement.scrollTop == 0, "page up div scrolled back to first div."]);
 
                 // We avoid modifying the DOM until the test is over, because sometimes

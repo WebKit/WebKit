@@ -29,15 +29,15 @@
 
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
 
 static RetainPtr<TestWKWebView> createWebViewForTest()
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"InputTypeDateEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }

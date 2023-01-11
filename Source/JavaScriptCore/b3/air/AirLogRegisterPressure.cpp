@@ -58,7 +58,7 @@ void logRegisterPressure(Code& code)
             set.merge(localCalc.live());
             Inst::forEachDefWithExtraClobberedRegs<Reg>(
                 prevInst, &inst,
-                [&] (Reg reg, Arg::Role, Bank, Width width) {
+                [&] (Reg reg, Arg::Role, Bank, Width width, PreservedWidth) {
                     ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                     set.add(reg, width);
                 });

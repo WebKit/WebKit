@@ -119,12 +119,8 @@ public:
 
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
 
-    void drawFocusRing(const Vector<FloatRect>&, float, float, const Color&) final;
-    void drawFocusRing(const Path&, float, float, const Color&) final;
-#if PLATFORM(MAC)
-    void drawFocusRing(const Path&, double, bool&, const Color&) final;
-    void drawFocusRing(const Vector<FloatRect>&, double, bool&, const Color&) final;
-#endif
+    void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
+    void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
 
     FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) final;
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode) final;

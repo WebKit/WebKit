@@ -228,6 +228,7 @@ class Preferences
 
     @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
     @exposedPreferences = @preferences.select { |p| p.exposed }
+    @exposedFeatures = @exposedPreferences.select { |p| p.type == "bool" }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }

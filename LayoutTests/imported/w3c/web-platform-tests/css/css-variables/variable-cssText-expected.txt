@@ -4,7 +4,7 @@ PASS target2
 PASS target3
 PASS target4
 PASS target5
-FAIL target6 assert_equals: expected "background: green;" but got "background-color: green;"
+PASS target6
 PASS target7
 PASS target8
 PASS target9

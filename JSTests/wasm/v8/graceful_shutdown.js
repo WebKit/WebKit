@@ -25,6 +25,6 @@ load("wasm-module-builder.js");
   // Start the compilation but do not wait for the promise to resolve
   // with assertPromiseResult. This should not cause a crash.
   WebAssembly.compile(buffer).then(
-    () => { print("success")},
-    () => { print("failed"); });
+    () => { },
+    () => { throw new Error() });
 })();

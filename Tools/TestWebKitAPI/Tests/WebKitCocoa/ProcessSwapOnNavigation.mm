@@ -50,9 +50,8 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKInspector.h>
-#import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -7295,11 +7294,11 @@ TEST(ProcessSwap, ResponsePolicyDownloadAfterCOOPProcessSwap)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
         else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
     }
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -7354,11 +7353,11 @@ TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCOOP)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
         else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
     }
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -7394,11 +7393,11 @@ TEST(ProcessSwap, CommittedURLAfterNavigatingBackToCOOP)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
         else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
     }
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -7487,11 +7486,11 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     [webViewConfiguration preferences].javaScriptCanOpenWindowsAutomatically = YES;
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
         else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
-            [[webViewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
     }
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -7939,12 +7938,12 @@ static void configureLockdownWKWebViewConfiguration(WKWebViewConfiguration *conf
     config.preferences._mediaCaptureRequiresSecureConnection = NO;
     [config.preferences _setNotificationsEnabled:YES];
 
-    // Turn on all experimental features to confirm they are properly turned off in Lockdown Mode.
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures])
-        [config.preferences _setEnabled:YES forFeature:feature];
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    // Turn on testable and preview features to confirm they are properly turned off in Lockdown Mode.
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if (feature.status == WebFeatureStatusTestable || feature.status == WebFeatureStatusPreview)
+            [config.preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"WebRTCEncodedTransformEnabled"])
-            [config.preferences _setEnabled:YES forInternalDebugFeature:feature];
+            [config.preferences _setEnabled:YES forFeature:feature];
     }
 }
 

@@ -318,6 +318,8 @@ public:
     void setEmulatedConditions(PAL::SessionID, std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
+    void notifyMediaStreamingActivity(bool);
+
 private:
     explicit NetworkProcessProxy();
 

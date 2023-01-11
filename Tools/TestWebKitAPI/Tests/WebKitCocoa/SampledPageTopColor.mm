@@ -32,7 +32,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>

@@ -73,6 +73,8 @@ private:
     bool isScrollSnapInProgress(WebCore::ScrollingNodeID) const final;
 
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
+    
+    void startMonitoringWheelEvents(bool clearLatchingState) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -91,6 +93,8 @@ private:
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveRubberBanding;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveScrollSnap;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveUserScrolls;
+    
+    bool m_clearScrollLatchingInNextTransaction { false };
 };
 
 } // namespace WebKit

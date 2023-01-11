@@ -318,13 +318,8 @@ public:
 
     // Focus Rings
 
-    virtual void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&) = 0;
-    virtual void drawFocusRing(const Path&, float width, float offset, const Color&) = 0;
-    // FIXME: Can we hide these in the CG implementation? Or elsewhere?
-#if PLATFORM(MAC)
-    virtual void drawFocusRing(const Path&, double timeOffset, bool& needsRedraw, const Color&) = 0;
-    virtual void drawFocusRing(const Vector<FloatRect>&, double timeOffset, bool& needsRedraw, const Color&) = 0;
-#endif
+    virtual void drawFocusRing(const Path&, float outlineWidth, const Color&) = 0;
+    virtual void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) = 0;
 
     // Transforms
 

@@ -763,11 +763,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
             result.slope = extractVariationBounds(axis);
     }
 
-    bool optOutFromGXNormalization = false;
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
-#endif
+    bool optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
 
     if (FontType(font.get()).variationType == FontType::VariationType::TrueTypeGX && !optOutFromGXNormalization) {
         if (result.weight)

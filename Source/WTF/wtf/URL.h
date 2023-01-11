@@ -259,7 +259,9 @@ WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> differingQueryParameters(const URL&, const URL&);
 WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> queryParameters(const URL&);
 WTF_EXPORT_PRIVATE bool isEqualIgnoringQueryAndFragments(const URL&, const URL&);
-WTF_EXPORT_PRIVATE void removeQueryParameters(URL&, const HashSet<String>&);
+
+// Returns the parameters that were removed (including duplicates), in the order that they appear in the URL.
+WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, const HashSet<String>&);
 
 WTF_EXPORT_PRIVATE const URL& aboutBlankURL();
 WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();

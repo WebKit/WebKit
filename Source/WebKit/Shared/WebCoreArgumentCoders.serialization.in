@@ -2487,3 +2487,59 @@ struct WebCore::StorageEstimate {
     uint64_t usage
     uint64_t quota
 };
+
+header: <WebCore/DOMPasteAccess.h>
+enum class WebCore::DOMPasteAccessCategory : uint8_t {
+    General,
+    Fonts
+};
+
+enum class WebCore::DOMPasteAccessPolicy : uint8_t {
+    NotRequestedYet,
+    Denied,
+    Granted
+};
+
+enum class WebCore::DOMPasteAccessResponse : uint8_t {
+    DeniedForGesture,
+    GrantedForCommand,
+    GrantedForGesture
+};
+
+header: <WebCore/DeviceOrientationOrMotionPermissionState.h>
+enum class WebCore::DeviceOrientationOrMotionPermissionState : uint8_t { 
+    Granted,
+    Denied,
+    Prompt 
+};
+
+header: <WebCore/ExceptionDetails.h>
+[Nested] enum class WebCore::ExceptionDetails::Type : uint8_t {
+    Script,
+    InvalidTargetFrame,
+    AppBoundDomain
+};
+
+header: <WebCore/SecurityPolicyViolationEventDisposition.h>
+enum class WebCore::SecurityPolicyViolationEventDisposition : bool
+
+header: <WebCore/FontAttributeChanges.h>
+enum class WebCore::VerticalAlignChange : uint8_t { 
+    Superscript,
+    Baseline,
+    Subscript 
+};
+
+header: <WebCore/TextGranularity.h>
+enum class WebCore::TextGranularity : uint8_t {
+    CharacterGranularity,
+    WordGranularity,
+    SentenceGranularity,
+    LineGranularity,
+    ParagraphGranularity,
+    DocumentGranularity,
+    SentenceBoundary,
+    LineBoundary,
+    ParagraphBoundary,
+    DocumentBoundary
+};

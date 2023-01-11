@@ -932,6 +932,9 @@ float PlatformCALayerCocoa::contentsScale() const
 
 void PlatformCALayerCocoa::setContentsScale(float value)
 {
+    if (m_layerType == LayerTypeTransformLayer)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setContentsScale:value];
     [m_layer setRasterizationScale:value];

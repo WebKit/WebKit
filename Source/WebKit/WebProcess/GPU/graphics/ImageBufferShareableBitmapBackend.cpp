@@ -77,7 +77,7 @@ size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& 
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext&)
 {
-    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
+//    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
 
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())

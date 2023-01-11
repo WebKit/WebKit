@@ -35,8 +35,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKExperimentalFeature.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
@@ -124,24 +123,14 @@ static WKWebsiteDataStore *persistentDataStore(void)
         
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 
-        NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
-        for (_WKExperimentalFeature *feature in experimentalFeatures) {
+        NSArray<_WKFeature *> *features = [WKPreferences _features];
+        for (_WKFeature *feature in features) {
             BOOL enabled;
             if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
                 enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
             else
                 enabled = [feature defaultValue];
-            [configuration.preferences _setEnabled:enabled forExperimentalFeature:feature];
-        }
-
-        NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
-        for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
-            BOOL enabled;
-            if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
-                enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
-            else
-                enabled = [feature defaultValue];
-            [configuration.preferences _setEnabled:enabled forInternalDebugFeature:feature];
+            [configuration.preferences _setEnabled:enabled forFeature:feature];
         }
 
         configuration.preferences.elementFullscreenEnabled = YES;

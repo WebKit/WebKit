@@ -422,8 +422,13 @@ static void webkitWebContextConstructed(GObject* object)
     }
     configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.data(), priv->timeZoneOverride.length()));
 
-    if (!priv->websiteDataManager)
-        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
+    if (!priv->websiteDataManager) {
+        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new(
+#if !ENABLE(2022_GLIB_API)
+                    "local-storage-directory", priv->localStorageDirectory.data(),
+#endif
+        nullptr));
+    }
 
     priv->processPool = WebProcessPool::create(configuration);
     priv->processPool->setUserMessageHandler([webContext](UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler) {

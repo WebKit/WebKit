@@ -2065,7 +2065,8 @@ fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
 
-webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
+webkit.org/b/223949 [ Release Debug ] crypto/crypto-random-values-oom.html [ Pass Timeout ]
+[ Guard-Malloc ] crypto/crypto-random-values-oom.html [ Skip ]
 
 webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html [ Pass Failure ]
 
@@ -2363,9 +2364,6 @@ webkit.org/b/243515 [ Monterey+ ] svg/compositing/outermost-svg-directly-composi
 
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Pass Failure ]
 webkit.org/b/246356 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html [ Pass Failure ]
-
-# The following test only fail on Mac EWS bots.
-webkit.org/b/244012 imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-below-001.xht [ Pass ImageOnlyFailure ]
 
 # These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]

@@ -37,7 +37,7 @@
 #include <WebKit/WKData.h>
 #include <WebKit/WKDictionary.h>
 #include <WebKit/WKErrorRef.h>
-#include <WebKit/WKExperimentalFeature.h>
+#include <WebKit/WKFeature.h>
 #include <WebKit/WKFormSubmissionListener.h>
 #include <WebKit/WKFrame.h>
 #include <WebKit/WKFramePolicyListener.h>
@@ -45,7 +45,6 @@
 #include <WebKit/WKGeolocationPermissionRequest.h>
 #include <WebKit/WKGeolocationPosition.h>
 #include <WebKit/WKHitTestResult.h>
-#include <WebKit/WKInternalDebugFeature.h>
 #include <WebKit/WKMutableArray.h>
 #include <WebKit/WKMutableDictionary.h>
 #include <WebKit/WKNavigationDataRef.h>

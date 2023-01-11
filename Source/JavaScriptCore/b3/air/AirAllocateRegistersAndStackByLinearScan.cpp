@@ -70,12 +70,12 @@ struct TmpData {
     {
         out.print("{interval = ", interval, ", spilled = ", pointerDump(spilled), ", assigned = ", assigned, ", isUnspillable = ", isUnspillable, ", possibleRegs = ", possibleRegs, ", didBuildPossibleRegs = ", didBuildPossibleRegs, "}");
     }
-    
+
     void validate()
     {
         RELEASE_ASSERT(!(spilled && assigned));
     }
-    
+
     Interval interval;
     StackSlot* spilled { nullptr };
     ScalarRegisterSet possibleRegs;
@@ -87,18 +87,18 @@ struct TmpData {
 
 struct Clobber {
     Clobber() = default;
-    
+
     Clobber(size_t index, RegisterSet regs)
         : index(index)
         , regs(regs)
     {
     }
-    
+
     void dump(PrintStream& out) const
     {
         out.print(index, ":", regs);
     }
-    
+
     size_t index { 0 };
     RegisterSet regs;
 };
@@ -112,7 +112,7 @@ public:
         , m_insertionSets(code.size())
     {
     }
-    
+
     void run()
     {
         padInterference(m_code);
@@ -145,7 +145,7 @@ public:
         updateFrameSizeBasedOnStackSlots(m_code);
         m_code.setStackIsAllocated(true);
     }
-    
+
 private:
     void buildRegisterSetBuilder()
     {
@@ -168,17 +168,17 @@ private:
             index += block->size() * 2;
         }
     }
-    
+
     size_t indexOfHead(BasicBlock* block)
     {
         return m_startIndex[block];
     }
-    
+
     size_t indexOfTail(BasicBlock* block)
     {
         return indexOfHead(block) + block->size() * 2;
     }
-    
+
     static Interval earlyInterval(size_t indexOfEarly)
     {
         return Interval(indexOfEarly);
@@ -226,12 +226,12 @@ private:
         ASSERT_NOT_REACHED();
         return Interval();
     }
-    
+
     void buildIntervals()
     {
         CompilerTimingScope timingScope("Air", "LinearScan::buildIntervals");
         UnifiedTmpLiveness liveness(m_code);
-        
+
         for (BasicBlock* block : m_code) {
             size_t indexOfHead = this->indexOfHead(block);
             size_t indexOfTail = this->indexOfTail(block);
@@ -248,7 +248,7 @@ private:
                 if (!tmp.isReg())
                     m_map[tmp].interval |= Interval(indexOfTail);
             }
-            
+
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
                 size_t indexOfEarly = indexOfHead + instIndex * 2;
@@ -265,7 +265,7 @@ private:
             }
 
             RegLiveness::LocalCalcForUnifiedTmpLiveness localCalc(liveness, block);
-            
+
             auto record = [&] (unsigned instIndex) {
                 // FIXME: This could get the register sets from somewhere else, like the
                 // liveness constraints. Except we want those constraints to separate the late
@@ -293,25 +293,25 @@ private:
                                 nextRegs.add(reg, width);
                         });
                     if (next->kind.opcode == Patch)
-                        nextRegs.merge(next->extraEarlyClobberedRegs());
+                        nextRegs.merge(next->extraEarlyClobberedRegs().buildAndValidate());
                     if (!nextRegs.isEmpty())
                         m_clobbers.append(Clobber(indexOfHead + instIndex * 2, nextRegs.buildAndValidate()));
                 }
             };
-            
+
             record(block->size());
             for (unsigned instIndex = block->size(); instIndex--;) {
                 localCalc.execute(instIndex);
                 record(instIndex);
             }
         }
-        
+
         std::sort(
             m_clobbers.begin(), m_clobbers.end(),
             [] (Clobber& a, Clobber& b) -> bool {
                 return a.index < b.index;
             });
-        
+
         if (verbose()) {
             dataLog("Intervals:\n");
             m_code.forEachTmp(
@@ -321,18 +321,18 @@ private:
             dataLog("Clobbers: ", listDump(m_clobbers), "\n");
         }
     }
-    
+
     bool shouldSpillEverything()
     {
         if (!Options::airLinearScanSpillsEverything())
             return false;
-        
+
         // You're meant to hack this so that you selectively spill everything depending on reasons.
         // That's super useful for debugging.
 
         return true;
     }
-    
+
     void spillEverything()
     {
         m_code.forEachTmp(
@@ -340,19 +340,19 @@ private:
                 spill(tmp);
             });
     }
-    
+
     void prepareIntervalsForScanForRegisters()
     {
         prepareIntervals(
             [&] (TmpData& data) -> bool {
                 if (data.spilled)
                     return false;
-                
+
                 data.assigned = Reg();
                 return true;
             });
     }
-    
+
     void prepareIntervalsForScanForStack()
     {
         prepareIntervals(
@@ -360,42 +360,42 @@ private:
                 return data.spilled;
             });
     }
-    
+
     template<typename SelectFunc>
     void prepareIntervals(const SelectFunc& selectFunc)
     {
         m_tmps.shrink(0);
-        
+
         m_code.forEachTmp(
             [&] (Tmp tmp) {
                 TmpData& data = m_map[tmp];
                 if (!selectFunc(data))
                     return;
-                
+
                 m_tmps.append(tmp);
             });
-        
+
         std::sort(
             m_tmps.begin(), m_tmps.end(),
             [&] (Tmp& a, Tmp& b) {
                 return m_map[a].interval.begin() < m_map[b].interval.begin();
             });
-        
+
         if (verbose())
             dataLog("Tmps: ", listDump(m_tmps), "\n");
     }
-    
+
     Tmp addSpillTmpWithInterval(Bank bank, Interval interval)
     {
         TmpData data;
         data.interval = interval;
         data.isUnspillable = true;
-        
+
         Tmp tmp = m_code.newTmp(bank);
         m_map.append(tmp, data);
         return tmp;
     }
-    
+
     void attemptScanForRegisters(Bank bank)
     {
         // This is modeled after LinearScanRegisterAllocation in Fig. 1 in
@@ -403,15 +403,15 @@ private:
 
         m_active.clear();
         m_activeRegs = { };
-        
+
         size_t clobberIndex = 0;
         for (Tmp& tmp : m_tmps) {
             if (tmp.bank() != bank)
                 continue;
-            
+
             TmpData& entry = m_map[tmp];
             size_t index = entry.interval.begin();
-            
+
             if (verbose()) {
                 dataLog("Index #", index, ": ", tmp, "\n");
                 dataLog("  ", tmp, ": ", entry, "\n");
@@ -431,17 +431,17 @@ private:
                 for (Tmp tmp : m_active)
                     dataLog("    ", tmp, ": ", m_map[tmp], "\n");
             }
-            
+
             // This is ExpireOldIntervals in Fig. 1.
             while (!m_active.isEmpty()) {
                 Tmp tmp = m_active.first();
                 TmpData& entry = m_map[tmp];
-                
+
                 bool expired = entry.interval.end() <= index;
-                
+
                 if (!expired)
                     break;
-                
+
                 m_active.removeFirst();
                 m_activeRegs.remove(entry.assigned);
             }
@@ -461,18 +461,18 @@ private:
                 // Advance the clobber index until it's at a clobber that is relevant to us.
                 while (clobberIndex < m_clobbers.size() && m_clobbers[clobberIndex].index < index)
                     clobberIndex++;
-                
+
                 RegisterSetBuilder possibleRegs = m_allowedRegisters[bank].toRegisterSet();
                 for (size_t i = clobberIndex; i < m_clobbers.size() && m_clobbers[i].index < entry.interval.end(); ++i)
                     possibleRegs.exclude(m_clobbers[i].regs.includeWholeRegisterWidth());
-                
+
                 entry.possibleRegs = possibleRegs.buildScalarRegisterSet();
                 entry.didBuildPossibleRegs = true;
             }
-            
+
             if (verbose())
                 dataLog("  Possible regs: ", entry.possibleRegs, "\n");
-            
+
             // Find a free register that we are allowed to use.
             if (m_active.size() != m_allowedRegistersInPriorityOrder[bank].size()) {
                 bool didAssign = false;
@@ -488,7 +488,7 @@ private:
                 if (didAssign)
                     continue;
             }
-            
+
             // This is SpillAtInterval in Fig. 1, but modified to handle clobbers.
             Tmp spillTmp = m_active.takeLast(
                 [&] (Tmp spillCandidate) -> bool {
@@ -506,19 +506,19 @@ private:
                 addToActive(spillTmp);
                 continue;
             }
-            
+
             assign(tmp, spillEntry.assigned);
             spill(spillTmp);
         }
     }
-    
+
     void addToActive(Tmp tmp)
     {
         if (m_map[tmp].isUnspillable) {
             m_active.prepend(tmp);
             return;
         }
-        
+
         m_active.appendAndBubble(
             tmp,
             [&] (Tmp otherTmp) -> bool {
@@ -528,7 +528,7 @@ private:
                 return m_map[otherTmp].interval.end() > m_map[tmp].interval.end();
             });
     }
-    
+
     void assign(Tmp tmp, Reg reg)
     {
         TmpData& entry = m_map[tmp];
@@ -537,16 +537,16 @@ private:
         m_activeRegs.add(reg, IgnoreVectors);
         addToActive(tmp);
     }
-    
+
     void spill(Tmp tmp)
     {
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.isUnspillable);
-        entry.spilled = m_code.addStackSlot(m_code.usesSIMD() ? conservativeRegisterBytes(tmp.bank()) : conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
+        entry.spilled = m_code.addStackSlot(conservativeRegisterBytesWithoutVectors(tmp.bank()), StackSlotKind::Spill);
         entry.assigned = Reg();
         m_didSpill = true;
     }
-    
+
     void emitSpillCode()
     {
         for (BasicBlock* block : m_code) {
@@ -554,7 +554,7 @@ private:
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
                 unsigned indexOfEarly = indexOfHead + instIndex * 2;
-                
+
                 // First try to spill directly.
                 for (unsigned i = 0; i < inst.args.size(); ++i) {
                     Arg& arg = inst.args[i];
@@ -569,7 +569,7 @@ private:
                         continue;
                     arg = Arg::stack(spilled);
                 }
-                
+
                 // Fall back on the hard way.
                 inst.forEachTmp(
                     [&] (Tmp& tmp, Arg::Role role, Bank bank, Width) {
@@ -578,7 +578,7 @@ private:
                         StackSlot* spilled = m_map[tmp].spilled;
                         if (!spilled)
                             return;
-                        Opcode move = bank == GP ? Move : (m_code.usesSIMD() ? MoveVector : MoveDouble);
+                        Opcode move = bank == GP ? Move : MoveDouble;
                         tmp = addSpillTmpWithInterval(bank, intervalForSpill(indexOfEarly, role));
                         if (role == Arg::Scratch)
                             return;
@@ -590,7 +590,7 @@ private:
             }
         }
     }
-    
+
     void scanForStack()
     {
         // This is loosely modeled after LinearScanRegisterAllocation in Fig. 1 in
@@ -598,30 +598,30 @@ private:
 
         m_active.clear();
         m_usedSpillSlots.clearAll();
-        
+
         for (Tmp& tmp : m_tmps) {
             TmpData& entry = m_map[tmp];
             if (!entry.spilled)
                 continue;
-            
+
             size_t index = entry.interval.begin();
-            
+
             // This is ExpireOldIntervals in Fig. 1.
             while (!m_active.isEmpty()) {
                 Tmp tmp = m_active.first();
                 TmpData& entry = m_map[tmp];
-                
+
                 bool expired = entry.interval.end() <= index;
-                
+
                 if (!expired)
                     break;
-                
+
                 m_active.removeFirst();
                 m_usedSpillSlots.clear(entry.spillIndex);
             }
-            
+
             entry.spillIndex = m_usedSpillSlots.findBit(0, false);
-            size_t slotSize = m_code.usesSIMD() ? conservativeRegisterBytes(FP) : conservativeRegisterBytesWithoutVectors(FP);
+            size_t slotSize = conservativeRegisterBytesWithoutVectors(FP);
             ASSERT(entry.spilled->byteSize() <= slotSize);
             ptrdiff_t offset = -static_cast<ptrdiff_t>(m_code.frameSize()) - static_cast<ptrdiff_t>(entry.spillIndex) * slotSize - slotSize;
             if (verbose())
@@ -631,13 +631,13 @@ private:
             m_active.append(tmp);
         }
     }
-    
+
     void insertSpillCode()
     {
         for (BasicBlock* block : m_code)
             m_insertionSets[block].execute(block);
     }
-    
+
     void assignRegisters()
     {
         if (verbose()) {
@@ -649,7 +649,7 @@ private:
             dataLog("IR:\n");
             dataLog(m_code);
         }
-        
+
         for (BasicBlock* block : m_code) {
             for (Inst& inst : *block) {
                 if (verbose())
@@ -658,7 +658,7 @@ private:
                     [&] (Tmp& tmp) {
                         if (tmp.isReg())
                             return;
-                        
+
                         Reg reg = m_map[tmp].assigned;
                         if (!reg) {
                             dataLog("Failed to allocate reg for: ", tmp, "\n");
@@ -669,7 +669,7 @@ private:
             }
         }
     }
-    
+
     Code& m_code;
     Vector<Reg> m_allowedRegistersInPriorityOrder[numBanks];
     ScalarRegisterSet m_allowedRegisters[numBanks];
@@ -689,6 +689,7 @@ private:
 
 void allocateRegistersAndStackByLinearScan(Code& code)
 {
+    RELEASE_ASSERT(!code.usesSIMD());
     PhaseScope phaseScope(code, "allocateRegistersAndStackByLinearScan");
     if (verbose())
         dataLog("Air before linear scan:\n", code);

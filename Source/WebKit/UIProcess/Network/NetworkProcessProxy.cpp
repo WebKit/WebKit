@@ -1869,6 +1869,14 @@ void NetworkProcessProxy::cookiesDidChange(PAL::SessionID sessionID)
         websiteDataStore->cookieStore().cookiesDidChange();
 }
 
+void NetworkProcessProxy::notifyMediaStreamingActivity(bool activity)
+{
+    if (!canSendMessage())
+        return;
+
+    send(Messages::NetworkProcess::NotifyMediaStreamingActivity(activity), 0);
+}
+
 #if ENABLE(NETWORK_ISSUE_REPORTING)
 
 void NetworkProcessProxy::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, const URL& requestURL)

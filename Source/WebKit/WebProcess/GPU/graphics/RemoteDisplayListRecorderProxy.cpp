@@ -263,14 +263,14 @@ void RemoteDisplayListRecorderProxy::recordDrawPath(const Path& path)
     send(Messages::RemoteDisplayListRecorder::DrawPath(path));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawFocusRingPath(const Path& path, float width, float offset, const Color& color)
+void RemoteDisplayListRecorderProxy::recordDrawFocusRingPath(const Path& path, float outlineWidth, const Color& color)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawFocusRingPath(path, width, offset, color));
+    send(Messages::RemoteDisplayListRecorder::DrawFocusRingPath(path, outlineWidth, color));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void RemoteDisplayListRecorderProxy::recordDrawFocusRingRects(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawFocusRingRects(rects, width, offset, color));
+    send(Messages::RemoteDisplayListRecorder::DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
 void RemoteDisplayListRecorderProxy::recordFillRect(const FloatRect& rect)

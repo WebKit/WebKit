@@ -274,9 +274,18 @@ void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleId
     if (!m_scope)
         return;
 
-    callOnMainThread([mainThreadConnection = m_mainThreadConnection, identifier, accessHandleIdentifier]() mutable {
-        mainThreadConnection->closeSyncAccessHandle(identifier, accessHandleIdentifier);
+    BinarySemaphore semaphore;
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, identifier, accessHandleIdentifier, &semaphore]() mutable {
+        mainThreadConnection->closeSyncAccessHandle(identifier, accessHandleIdentifier, [&semaphore](auto) {
+            semaphore.signal();
+        });
     });
+    semaphore.wait();
+}
+
+void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&)
+{
+    ASSERT_NOT_REACHED();
 }
 
 void WorkerFileSystemStorageConnection::registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier identifier, FileSystemSyncAccessHandle& handle)

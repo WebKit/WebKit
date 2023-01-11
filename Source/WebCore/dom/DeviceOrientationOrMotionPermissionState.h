@@ -25,23 +25,8 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class DeviceOrientationOrMotionPermissionState : uint8_t { Granted, Denied, Prompt };
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::DeviceOrientationOrMotionPermissionState> {
-    using values = EnumValues<
-        WebCore::DeviceOrientationOrMotionPermissionState,
-        WebCore::DeviceOrientationOrMotionPermissionState::Granted,
-        WebCore::DeviceOrientationOrMotionPermissionState::Denied,
-        WebCore::DeviceOrientationOrMotionPermissionState::Prompt
-    >;
-};
 
 }

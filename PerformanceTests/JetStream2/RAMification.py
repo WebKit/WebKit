@@ -29,6 +29,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 jitTests = ["3d-cube-SP", "3d-raytrace-SP", "acorn-wtb", "ai-astar", "Air", "async-fs", "Babylon", "babylon-wtb", "base64-SP", "Basic", "Box2D", "cdjs", "chai-wtb", "coffeescript-wtb", "crypto", "crypto-aes-SP", "crypto-md5-SP", "crypto-sha1-SP", "date-format-tofte-SP", "date-format-xparb-SP", "delta-blue", "earley-boyer", "espree-wtb", "first-inspector-code-load", "FlightPlanner", "float-mm.c", "gaussian-blur", "gbemu", "gcc-loops-wasm", "hash-map", "HashSet-wasm", "jshint-wtb", "json-parse-inspector", "json-stringify-inspector", "lebab-wtb", "mandreel", "ML", "multi-inspector-code-load", "n-body-SP", "navier-stokes", "octane-code-load", "octane-zlib", "OfflineAssembler", "pdfjs", "prepack-wtb", "quicksort-wasm", "raytrace", "regex-dna-SP", "regexp", "richards", "richards-wasm", "splay", "stanford-crypto-aes", "stanford-crypto-pbkdf2", "stanford-crypto-sha256", "string-unpack-code-SP", "tagcloud-SP", "tsf-wasm", "typescript", "uglify-js-wtb", "UniPoker", "WSL"]
 
@@ -120,7 +121,10 @@ def parseArgs(parser=None):
     parser.add_argument("-l", "--lua", dest="runLuaTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run Lua comparison tests [default]")
     parser.add_argument("-n", "--run-no-jit", dest="runNoJITTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run no JIT tests [default]")
     parser.add_argument("-o", "--output", dest="jsonFilename", type=str, default=None, metavar="JSON-output-file", help="Path to JSON output")
+    parser.add_argument("--diagnostics-dir", dest="diagnosticDir", type=str, default="/tmp/RAMification-diagnostics/", metavar="diagnostic-dir", help="Path to a directory to dump diagnostic output.")
     parser.add_argument("-m", "--vmmap", dest="takeVmmap", action="store_true", default=False, help="Take a vmmap after each test")
+    parser.add_argument("--detailed-vmmap", dest="takeDetailedVmmap", action="store_true", default=False, help="Take a vmmap after each test including regions")
+    parser.add_argument("--memgraph", dest="takeMemgraph", action="store_true", default=False, help="Take a memgraph after each test")
     parser.add_argument("--smaps", dest="takeSmaps", action="store_true", default=False, help="Take a smaps rollup after each test")
 
     args = parser.parse_args()
@@ -149,7 +153,15 @@ class BaseRunner:
         self.rootDir = args.testDir
         self.environmentVars = {}
         self.vmmapOutput = "" if args.takeVmmap else None
+        self.takeDetailedVmmap = args.takeDetailedVmmap
         self.smapsOutput = "" if args.takeSmaps else None
+        self.takeMemgraph = args.takeMemgraph
+        self.diagnosticDir = args.diagnosticDir
+
+        if (self.takeDetailedVmmap or self.takeMemgraph) and not os.path.exists(self.diagnosticDir):
+            os.makedirs(self.diagnosticDir)
+            if not os.path.exists(self.diagnosticDir):
+                raise Exception("Couldn't create diagnostic dir {}".format(self.diagnosticDir))
 
     def setup(self):
         pass
@@ -190,8 +202,13 @@ class LocalRunner(BaseRunner):
         BaseRunner.__init__(self, args)
         self.jscCommand = args.jscCommand
 
+
     def runOneTest(self, test, extraOptions=None, useJetStream2Harness=True):
         self.resetForTest(test)
+
+        if self.takeMemgraph:
+            self.environmentVars["MallocStackLogging"] = "1"
+            self.environmentVars["__XPC_MallocStackLogging"] = "1"
 
         args = [self.jscCommand]
         if extraOptions:
@@ -201,6 +218,11 @@ class LocalRunner(BaseRunner):
             args.extend(["-e", "testList='{test}'; runMode='RAMification'".format(test=test), "cli.js"])
         else:
             args.extend(["--footprint", "{test}".format(test=test)])
+
+        if self.takeDetailedVmmap or self.takeMemgraph:
+            test_diagnostic_dir = os.path.dirname(os.path.join(self.diagnosticDir, test))
+            if not os.path.exists(test_diagnostic_dir):
+                os.makedirs(test_diagnostic_dir)
 
         self.resetForTest(test)
 
@@ -217,8 +239,18 @@ class LocalRunner(BaseRunner):
                     self.vmmapOutput = subprocess.Popen(['vmmap', '--summary', '{}'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
                     if sys.version_info[0] >= 3:
                         self.vmmapOutput = str(self.vmmapOutput, "utf-8")
+                if self.takeDetailedVmmap:
+                    vmmap_filename = os.path.join(self.diagnosticDir, "{}-{}.vmmap".format(test, int(time.time())))
+                    print("Collecting detailed vmmap at {}".format(vmmap_filename))
+                    self.vmmapDetailedOutput = subprocess.Popen(['vmmap', '{}'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+                    with open(vmmap_filename, 'wb') as f:
+                        f.write(self.vmmapDetailedOutput)
                 if self.smapsOutput is not None:
                     self.smapsOutput = subprocess.Popen(['cat', '/proc/{}/smaps_rollup'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+                if self.takeMemgraph:
+                    memgraph_filename = os.path.join(self.diagnosticDir, "{}-{}.memgraph".format(test, int(time.time())))
+                    print("Collecting memgraph at {}".format(memgraph_filename))
+                    subprocess.call(['/usr/bin/leaks', str(proc.pid), '--fullContent', '--forkCorpse', "--outputGraph={}".format(memgraph_filename)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                 proc.stdin.write(b"done\n")
                 proc.stdin.flush()
 
@@ -240,7 +272,7 @@ def main(parser=None):
 
     testRunner = args.runner(args)
 
-    if args.takeVmmap or args.takeSmaps:
+    if args.takeVmmap or args.takeDetailedVmmap or args.takeMemgraph or args.takeSmaps:
         testRunner.setEnv("JS_SHELL_WAIT_FOR_INPUT_TO_EXIT", "1")
 
     dyldFrameworkPath = frameworkPathFromExecutablePath(args.jscCommand)

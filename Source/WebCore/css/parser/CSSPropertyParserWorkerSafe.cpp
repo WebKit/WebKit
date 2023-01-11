@@ -256,11 +256,10 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, const CSSPar
             parsedValue = consumeFontFaceSrcLocal(range);
         else
             parsedValue = consumeFontFaceSrcURI(range, context);
-        if (!parsedValue)
-            return nullptr;
-        values->append(parsedValue.releaseNonNull());
+        if (parsedValue)
+            values->append(parsedValue.releaseNonNull());
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
-    return values;
+    return values->size() ? values : nullptr;
 }
 
 #if ENABLE(VARIATION_FONTS)

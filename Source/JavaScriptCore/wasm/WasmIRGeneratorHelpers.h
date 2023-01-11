@@ -183,6 +183,7 @@ static inline void buildEntryBufferForCatchNoSIMD(Probe::Context& context) { bui
 
 static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& jit)
 {
+    JIT_COMMENT(jit, "shared catch prologue");
     jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, GPRInfo::regT0);
     {
         // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
@@ -197,6 +198,7 @@ static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& ji
 
         loadedCase.link(&jit);
     }
+    JIT_COMMENT(jit, "restore callee saves from vm entry buffer");
     jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
 
     {

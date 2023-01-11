@@ -96,7 +96,7 @@ class Port(object):
     # Test names resemble unix relative paths, and use '/' as a directory separator.
     TEST_PATH_SEPARATOR = '/'
 
-    ALL_BUILD_TYPES = ('debug', 'release')
+    ALL_BUILD_TYPES = ('debug', 'release', 'guard-malloc', 'asan')
 
     DEFAULT_ARCHITECTURE = 'x86'
     DEVICE_TYPE = None
@@ -1094,7 +1094,13 @@ class Port(object):
     def test_configuration(self):
         """Returns the current TestConfiguration for the port."""
         if not self._test_configuration:
-            self._test_configuration = TestConfiguration(self.version_name(), self.architecture(), self._options.configuration.lower())
+            if self.get_option('guard_malloc'):
+                style = 'guard-malloc'
+            elif self._config.asan:
+                style = 'asan'
+            else:
+                style = self._options.configuration.lower()
+            self._test_configuration = TestConfiguration(self.version_name(), self.architecture(), style)
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

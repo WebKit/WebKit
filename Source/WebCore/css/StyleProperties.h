@@ -195,12 +195,12 @@ private:
     String getLayeredShorthandValue(const StylePropertyShorthand&) const;
     String get2Values(const StylePropertyShorthand&) const;
     String get4Values(const StylePropertyShorthand&) const;
-    String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue(const StylePropertyShorthand&) const;
     String fontVariantValue() const;
     String fontSynthesisValue() const;
     String offsetValue() const;
     String commonShorthandChecks(const StylePropertyShorthand&) const;
+    bool hasAllInitialValues(const StylePropertyShorthand&) const;
     StringBuilder asTextInternal() const;
 
     friend class PropertySetCSSStyleDeclaration;

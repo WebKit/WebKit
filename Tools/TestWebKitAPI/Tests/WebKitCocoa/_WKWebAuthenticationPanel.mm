@@ -45,7 +45,7 @@
 #import <WebKit/_WKAuthenticatorAssertionResponse.h>
 #import <WebKit/_WKAuthenticatorAttestationResponse.h>
 #import <WebKit/_WKAuthenticatorSelectionCriteria.h>
-#import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKPublicKeyCredentialCreationOptions.h>
 #import <WebKit/_WKPublicKeyCredentialDescriptor.h>
 #import <WebKit/_WKPublicKeyCredentialParameters.h>

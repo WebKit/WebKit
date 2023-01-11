@@ -14,18 +14,12 @@ window.onload = function()
     shouldBe("document.getElementById('button1').offsetHeight", "document.getElementById('button2').offsetHeight");
     shouldEvaluateTo("document.getElementById('button3').offsetHeight", 40);
     shouldEvaluateTo("document.getElementById('button4').offsetHeight", 40);
-
-    // Note, the expected height is the height of button 1 for the Mac ports, and 40 otherwise.
-    var expectedButton5Height = (navigator.platform.indexOf("Mac") !== -1) ? document.getElementById("button1").offsetHeight : 40;
-    if (document.getElementById('button5').offsetHeight == expectedButton5Height)
-        testPassed("document.getElementById('button5').offsetHeight is correct for this platform.");
-    else
-        testFailed("document.getElementById('button5').offsetHeight is incorrect for this platform. Should be the same height as button 1 for the Mac ports and 40 otherwise.");
+    shouldEvaluateTo("document.getElementById('button5').offsetHeight", 40);
 
     if (window.testRunner) {
         var testContainer = document.getElementById("test-container");
         if (testContainer)
-            document.body.removeChild(testContainer);   
+            document.body.removeChild(testContainer);
     }
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 }
@@ -45,10 +39,7 @@ window.onload = function()
 <hr/>
 <div id="console"></div>
 <script>
-    description("This tests that the specified height is honored (*) for &lt;input&gt; and &lt;button&gt; elements.<br/>" +
-                "(*) The Mac ports ignore the specified height for &lt;input type=&quot;button&quot;&gt; elements unless a " +
-                "border and/or background CSS property is also specified (see the fifth button below). Disregarding " +
-                "padding, they render the button with a height equal to the height of the font used for the button label.");
+    description("This tests that the specified height is honored (*) for &lt;input&gt; and &lt;button&gt; elements.");
 </script>
 </body>
 </html>

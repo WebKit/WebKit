@@ -729,6 +729,7 @@ class RunDashboardTests(RunWebKitTests):
 
 class RunAPITests(TestWithFailureCount):
     name = "run-api-tests"
+    VALID_ADDITIONAL_ARGUMENTS_LIST = ["--remote-layer-tree", "--use-gpu-process"]
     description = ["api tests running"]
     descriptionDone = ["api-tests"]
     jsonFileName = "api_test_results.json"
@@ -759,6 +760,10 @@ class RunAPITests(TestWithFailureCount):
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
         appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
+        additionalArguments = self.getProperty("additionalArguments", [])
+        for additionalArgument in additionalArguments:
+            if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
+                self.command += [additionalArgument]
         return shell.Test.start(self)
 
     def countFailures(self, cmd):

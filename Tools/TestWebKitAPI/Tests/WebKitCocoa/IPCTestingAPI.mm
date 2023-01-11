@@ -33,7 +33,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
@@ -103,9 +103,9 @@ TEST(IPCTestingAPI, IsDisabledByDefault)
 static RetainPtr<TestWKWebView> createWebViewWithIPCTestingAPI()
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+    for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
             break;
         }
     }

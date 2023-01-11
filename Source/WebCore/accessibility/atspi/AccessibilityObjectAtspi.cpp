@@ -22,7 +22,6 @@
 
 #if USE(ATSPI)
 #include "AXObjectCache.h"
-#include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
 #include "AccessibilityObjectInterface.h"
 #include "AccessibilityRootAtspi.h"
@@ -150,7 +149,7 @@ void AccessibilityObjectAtspi::elementDestroyed()
     AccessibilityAtspi::singleton().unregisterObject(*this);
 }
 
-static unsigned atspiRole(AccessibilityRole role)
+static Atspi::Role atspiRole(AccessibilityRole role)
 {
     switch (role) {
     case AccessibilityRole::Annotation:
@@ -1200,7 +1199,7 @@ void AccessibilityObjectAtspi::loadEvent(const char* event)
     AccessibilityAtspi::singleton().loadEvent(*this, event);
 }
 
-std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
+std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
 {
     if (m_coreObject->isPasswordField())
         return Atspi::Role::PasswordText;
@@ -1254,7 +1253,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
     return std::nullopt;
 }
 
-unsigned AccessibilityObjectAtspi::role() const
+Atspi::Role AccessibilityObjectAtspi::role() const
 {
     if (!m_coreObject)
         return Atspi::Role::InvalidRole;

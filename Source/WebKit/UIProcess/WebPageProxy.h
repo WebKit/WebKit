@@ -1615,6 +1615,7 @@ public:
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::IsPlayingAudio); }
+    bool hasMediaStreaming() const { return !!(m_mediaState & WebCore::MediaProducerMediaState::HasStreamingActivity); }
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
     void updateReportedMediaCaptureState();
 
@@ -2777,6 +2778,8 @@ private:
     void updateFullscreenVideoTextRecognition();
     void fullscreenVideoTextRecognitionTimerFired();
 #endif
+
+    bool useGPUProcessForDOMRenderingEnabled() const;
 
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;

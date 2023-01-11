@@ -4092,8 +4092,10 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
 
         if (RefPtr shadowRoot = element.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
             updateRelationsForTree(*shadowRoot);
-        if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
-            updateRelationsForTree(*frameOwnerElement->contentDocument());
+        if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element)) {
+            if (auto* document = frameOwnerElement->contentDocument())
+                updateRelationsForTree(*document);
+        }
 
         // Collect all possible origins, i.e., elements with non-empty relation attributes.
         for (const auto& attribute : relationAttributes()) {

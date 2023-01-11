@@ -956,6 +956,14 @@ void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& element
 
 #endif
 
+bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
+{
+    if (id useGPUProcessForDOMRendering = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"])
+        return [useGPUProcessForDOMRendering boolValue];
+
+    return preferences().useGPUProcessForDOMRenderingEnabled();
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

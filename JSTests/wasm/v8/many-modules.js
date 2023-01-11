@@ -37,7 +37,6 @@ const modules = [];
 // nops. This resion will be patched in the loop with values of increasing size.
 module_bytes.set(Array(sentinel.length).fill(_ => kExprNop), sentinel_position);
 for (let i = 0; i < num_modules; ++i) {
-  if (i % 50 == 0) print(i);
   module_bytes.set(wasmSignedLeb(i), sentinel_position);
   modules.push(new WebAssembly.Module(module_bytes));
 }

@@ -178,16 +178,6 @@ void GraphicsContextState::didBeginTransparencyLayer()
 #endif
 }
 
-void GraphicsContextState::didEndTransparencyLayer(float originalOpacity)
-{
-#if USE(CG)
-    // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Resore our alpha now.
-    m_alpha = originalOpacity;
-#else
-    UNUSED_PARAM(originalOpacity);
-#endif
-}
-
 static const char* stateChangeName(GraphicsContextState::Change change)
 {
     switch (change) {

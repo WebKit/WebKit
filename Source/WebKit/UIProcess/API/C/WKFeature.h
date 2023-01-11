@@ -23,39 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKInternalDebugFeature.h"
+#pragma once
 
-#include "APIInternalDebugFeature.h"
-#include "WKAPICast.h"
+#include <WebKit/WKBase.h>
 
-WKTypeID WKInternalDebugFeatureGetTypeID()
-{
-    return WebKit::toAPI(API::InternalDebugFeature::APIType);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKFeatureGetTypeID();
+
+WK_EXPORT WKStringRef WKFeatureCopyName(WKFeatureRef);
+WK_EXPORT WKStringRef WKFeatureCopyKey(WKFeatureRef);
+WK_EXPORT WKStringRef WKFeatureCopyDetails(WKFeatureRef);
+WK_EXPORT bool WKFeatureDefaultValue(WKFeatureRef);
+WK_EXPORT bool WKFeatureIsHidden(WKFeatureRef);
+
+#ifdef __cplusplus
 }
-
-WKStringRef WKInternalDebugFeatureCopyName(WKInternalDebugFeatureRef feature)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->name());
-}
-
-WKStringRef WKInternalDebugFeatureCopyKey(WKInternalDebugFeatureRef feature)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->key());
-}
-
-WKStringRef WKInternalDebugFeatureCopyDetails(WKInternalDebugFeatureRef feature)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(feature)->details());
-}
-
-bool WKInternalDebugFeatureDefaultValue(WKInternalDebugFeatureRef feature)
-{
-    return WebKit::toImpl(feature)->defaultValue();
-}
-
-bool WKInternalDebugFeatureIsHidden(WKInternalDebugFeatureRef feature)
-{
-    return WebKit::toImpl(feature)->isHidden();
-}
-
+#endif

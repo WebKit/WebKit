@@ -189,7 +189,7 @@ private:
             dataLog("    Executing ", inst, ": ", m_state, "\n");
 
         Inst::forEachDefWithExtraClobberedRegs<Reg>(&inst, &inst,
-            [&] (const Reg& reg, Arg::Role, Bank, Width) {
+            [&] (const Reg& reg, Arg::Role, Bank, Width, PreservedWidth) {
                 if (AirFixObviousSpillsInternal::verbose)
                     dataLog("        Clobbering ", reg, "\n");
                 m_state.clobber(reg);

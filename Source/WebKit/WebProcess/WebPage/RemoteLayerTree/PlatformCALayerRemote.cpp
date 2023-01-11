@@ -830,6 +830,9 @@ float PlatformCALayerRemote::contentsScale() const
 
 void PlatformCALayerRemote::setContentsScale(float value)
 {
+    if (m_layerType == LayerTypeTransformLayer)
+        return;
+
     m_properties.contentsScale = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsScaleChanged);
 
