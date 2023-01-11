@@ -105,8 +105,10 @@ void ContactsManager::select(const Vector<ContactProperty>& properties, const Co
 
     m_contactPickerIsShowing = true;
 
-    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), this] (std::optional<Vector<ContactInfo>>&& info) {
-        m_contactPickerIsShowing = false;
+    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), weakThis = WeakPtr { *this }] (std::optional<Vector<ContactInfo>>&& info) {
+        if (weakThis)
+            weakThis->m_contactPickerIsShowing = false;
+
         if (info) {
             promise->resolve<IDLSequence<IDLDictionary<ContactInfo>>>(*info);
             return;
