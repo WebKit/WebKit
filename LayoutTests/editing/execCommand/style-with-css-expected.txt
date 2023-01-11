@@ -9,9 +9,9 @@ PASS styleWithCSS changed the state successfully
 PASS styleWithCSS changed the state successfully
 PASS styleWithCSS changed the state successfully
 PASS queryCommandState('styleWithCSS') returns true
-PASS queryCommandValue('styleWithCSS') returns 'true'
+PASS queryCommandValue('styleWithCSS') returns ''
 PASS queryCommandState('styleWithCSS') returns false
-PASS queryCommandValue('styleWithCSS') returns 'false'
+PASS queryCommandValue('styleWithCSS') returns ''
 PASS successfullyParsed is true
 
 TEST COMPLETE
