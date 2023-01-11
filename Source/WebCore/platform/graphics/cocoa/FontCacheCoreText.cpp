@@ -1123,13 +1123,8 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     ASSERT(length > 0);
 
     RetainPtr<CFStringRef> localeString;
-// FIXME: Why not do this on watchOS and tvOS?
-#if PLATFORM(IOS) || PLATFORM(MAC)
     if (!locale.isNull())
         localeString = locale.string().createCFString();
-#else
-    UNUSED_PARAM(locale);
-#endif
 
     auto result = createFontForCharacters(font, localeString.get(), allowUserInstalledFonts, characters, length);
     ASSERT(!isUserInstalledFont(result.get()) || allowUserInstalledFonts == AllowUserInstalledFonts::Yes);
