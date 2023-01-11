@@ -1771,30 +1771,18 @@ static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 #endif
 }
 
-static bool drawFocusRing(GraphicsContext& context, Page& page, const Path& path, const RenderStyle& style, Color focusRingColor)
+static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
 {
-    bool needsRepaint = false;
-#if PLATFORM(MAC)
-    context.drawFocusRing(path, page.focusController().timeSinceFocusWasSet().seconds(), needsRepaint, focusRingColor);
-    UNUSED_PARAM(style);
-#else
-    context.drawFocusRing(path, style.outlineWidth(), style.outlineOffset(), focusRingColor);
-    UNUSED_PARAM(page);
-#endif
-    return needsRepaint;
+    context.drawFocusRing(path, style.outlineWidth(), color);
 }
 
-static bool drawFocusRing(GraphicsContext& context, Page& page, Vector<FloatRect> rects, const RenderStyle& style, Color focusRingColor)
+static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
 {
-    bool needsRepaint = false;
 #if PLATFORM(MAC)
-    context.drawFocusRing(rects, page.focusController().timeSinceFocusWasSet().seconds(), needsRepaint, focusRingColor);
-    UNUSED_PARAM(style);
+    context.drawFocusRing(rects, 0, style.outlineWidth(), color);
 #else
-    context.drawFocusRing(rects, style.outlineWidth(), style.outlineOffset(), focusRingColor);
-    UNUSED_PARAM(page);
+    context.drawFocusRing(rects, style.outlineOffset(), style.outlineWidth(), color);
 #endif
-    return needsRepaint;
 }
 
 
@@ -1809,7 +1797,6 @@ void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle
         pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
     Color focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleColorOptions()) : style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
-    bool needsRepaint;
     if (useShrinkWrappedFocusRingForOutlineStyleAuto() && style.hasBorderRadius()) {
         Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style.border(), outlineOffset, style.direction(), style.writingMode(),
             document().deviceScaleFactor());
@@ -1817,11 +1804,9 @@ void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
         }
-        needsRepaint = drawFocusRing(paintInfo.context(), page(), path, style, focusRingColor);
+        drawFocusRing(paintInfo.context(), path, style, focusRingColor);
     } else
-        needsRepaint = drawFocusRing(paintInfo.context(), page(), pixelSnappedFocusRingRects, style, focusRingColor);
-    if (needsRepaint)
-        page().focusController().setFocusedElementNeedsRepaint();
+        drawFocusRing(paintInfo.context(), pixelSnappedFocusRingRects, style, focusRingColor);
 }
 
 void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRect)

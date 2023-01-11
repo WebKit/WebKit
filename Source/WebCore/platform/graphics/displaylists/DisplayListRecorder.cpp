@@ -378,29 +378,17 @@ void Recorder::drawPath(const Path& path)
     recordDrawPath(path);
 }
 
-void Recorder::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void Recorder::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
     appendStateChangeItemIfNecessary();
-    recordDrawFocusRingPath(path, width, offset, color);
+    recordDrawFocusRingPath(path, outlineWidth, color);
 }
 
-void Recorder::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void Recorder::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
     appendStateChangeItemIfNecessary();
-    recordDrawFocusRingRects(rects, width, offset, color);
+    recordDrawFocusRingRects(rects, outlineOffset, outlineWidth, color);
 }
-
-#if PLATFORM(MAC)
-void Recorder::drawFocusRing(const Path&, double, bool&, const Color&)
-{
-    notImplemented();
-}
-
-void Recorder::drawFocusRing(const Vector<FloatRect>&, double, bool&, const Color&)
-{
-    notImplemented();
-}
-#endif
 
 void Recorder::fillRect(const FloatRect& rect)
 {

@@ -1050,25 +1050,22 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    DrawFocusRingPath(Path&& path, float width, float offset, Color color)
-        : m_path(WTFMove(path))
-        , m_width(width)
-        , m_offset(offset)
+    DrawFocusRingPath(const Path& path, float outlineWidth, const Color& color)
+        : m_path(path)
+        , m_outlineWidth(outlineWidth)
         , m_color(color)
     {
     }
 
-    DrawFocusRingPath(const Path& path, float width, float offset, Color color)
-        : m_path(path)
-        , m_width(width)
-        , m_offset(offset)
+    DrawFocusRingPath(Path&& path, float outlineWidth, const Color& color)
+        : m_path(WTFMove(path))
+        , m_outlineWidth(outlineWidth)
         , m_color(color)
     {
     }
 
     const Path& path() const { return m_path; }
-    float width() const { return m_width; }
-    float offset() const { return m_offset; }
+    float outlineWidth() const { return m_outlineWidth; }
     const Color& color() const { return m_color; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -1078,8 +1075,7 @@ public:
 
 private:
     Path m_path;
-    float m_width;
-    float m_offset;
+    float m_outlineWidth;
     Color m_color;
 };
 
@@ -1087,8 +1083,7 @@ template<class Encoder>
 void DrawFocusRingPath::encode(Encoder& encoder) const
 {
     encoder << m_path;
-    encoder << m_width;
-    encoder << m_offset;
+    encoder << m_outlineWidth;
     encoder << m_color;
 }
 
@@ -1100,14 +1095,9 @@ std::optional<DrawFocusRingPath> DrawFocusRingPath::decode(Decoder& decoder)
     if (!path)
         return std::nullopt;
 
-    std::optional<float> width;
-    decoder >> width;
-    if (!width)
-        return std::nullopt;
-
-    std::optional<float> offset;
-    decoder >> offset;
-    if (!offset)
+    std::optional<float> outlineWidth;
+    decoder >> outlineWidth;
+    if (!outlineWidth)
         return std::nullopt;
 
     std::optional<Color> color;
@@ -1115,7 +1105,7 @@ std::optional<DrawFocusRingPath> DrawFocusRingPath::decode(Decoder& decoder)
     if (!color)
         return std::nullopt;
 
-    return {{ WTFMove(*path), *width, *offset, *color }};
+    return { { WTFMove(*path), *outlineWidth, *color } };
 }
 
 class DrawFocusRingRects {
@@ -1124,22 +1114,36 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawFocusRingRects(const Vector<FloatRect>&, float width, float offset, const Color&);
+    DrawFocusRingRects(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
+        : m_rects(rects)
+        , m_outlineOffset(outlineOffset)
+        , m_outlineWidth(outlineWidth)
+        , m_color(color)
+    {
+    }
 
-    const Vector<FloatRect> rects() const { return m_rects; }
-    float width() const { return m_width; }
-    float offset() const { return m_offset; }
+    DrawFocusRingRects(Vector<FloatRect>&& rects, float outlineOffset, float outlineWidth, Color color)
+        : m_rects(WTFMove(rects))
+        , m_outlineOffset(outlineOffset)
+        , m_outlineWidth(outlineWidth)
+        , m_color(color)
+    {
+    }
+
+    const Vector<FloatRect>& rects() const { return m_rects; }
+    float outlineOffset() const { return m_outlineOffset; }
+    float outlineWidth() const { return m_outlineWidth; }
     const Color& color() const { return m_color; }
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<DrawFocusRingRects> decode(Decoder&);
 
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+
 private:
     Vector<FloatRect> m_rects;
-    float m_width;
-    float m_offset;
+    float m_outlineOffset;
+    float m_outlineWidth;
     Color m_color;
 };
 
@@ -1147,8 +1151,8 @@ template<class Encoder>
 void DrawFocusRingRects::encode(Encoder& encoder) const
 {
     encoder << m_rects;
-    encoder << m_width;
-    encoder << m_offset;
+    encoder << m_outlineOffset;
+    encoder << m_outlineWidth;
     encoder << m_color;
 }
 
@@ -1160,14 +1164,14 @@ std::optional<DrawFocusRingRects> DrawFocusRingRects::decode(Decoder& decoder)
     if (!rects)
         return std::nullopt;
 
-    std::optional<float> width;
-    decoder >> width;
-    if (!width)
+    std::optional<float> outlineOffset;
+    decoder >> outlineOffset;
+    if (!outlineOffset)
         return std::nullopt;
 
-    std::optional<float> offset;
-    decoder >> offset;
-    if (!offset)
+    std::optional<float> outlineWidth;
+    decoder >> outlineWidth;
+    if (!outlineWidth)
         return std::nullopt;
 
     std::optional<Color> color;
@@ -1175,7 +1179,7 @@ std::optional<DrawFocusRingRects> DrawFocusRingRects::decode(Decoder& decoder)
     if (!color)
         return std::nullopt;
 
-    return {{ *rects, *width, *offset, *color }};
+    return { { WTFMove(*rects), *outlineOffset, *outlineWidth, *color } };
 }
 
 class FillRect {

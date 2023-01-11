@@ -395,14 +395,14 @@ void RemoteDisplayListRecorder::drawPath(const Path& path)
     handleItem(DisplayList::DrawPath(path));
 }
 
-void RemoteDisplayListRecorder::drawFocusRingPath(const Path& path, float width, float offset, const Color& color)
+void RemoteDisplayListRecorder::drawFocusRingPath(const Path& path, float outlineWidth, const Color& color)
 {
-    handleItem(DisplayList::DrawFocusRingPath(path, width, offset, color));
+    handleItem(DisplayList::DrawFocusRingPath(path, outlineWidth, color));
 }
 
-void RemoteDisplayListRecorder::drawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void RemoteDisplayListRecorder::drawFocusRingRects(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-    handleItem(DisplayList::DrawFocusRingRects(rects, width, offset, color));
+    handleItem(DisplayList::DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
 void RemoteDisplayListRecorder::fillRect(const FloatRect& rect)

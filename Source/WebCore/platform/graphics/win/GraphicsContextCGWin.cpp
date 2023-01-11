@@ -103,23 +103,23 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     ::DeleteDC(hdc);
 }
 
-void GraphicsContextCG::drawFocusRing(const Path& path, float width, float offset, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
     // FIXME: implement
 }
 
 // FIXME: This is nearly identical to the GraphicsContext::drawFocusRing function in GraphicsContextMac.mm.
 // The code could move to GraphicsContextCG.cpp and be shared.
-void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-    float radius = (width - 1) / 2.0f;
-    offset += radius;
+    float radius = (outlineWidth - 1) / 2.0f;
+    outlineOffset += radius;
     auto colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
 
     auto focusRingPath = adoptCF(CGPathCreateMutable());
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
-        CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
+        CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -outlineOffset, -outlineOffset));
 
     CGContextRef context = platformContext();
     CGContextSaveGState(context);

@@ -237,14 +237,14 @@ void RecorderImpl::recordDrawPath(const Path& path)
     append<DrawPath>(path);
 }
 
-void RecorderImpl::recordDrawFocusRingPath(const Path& path, float width, float offset, const Color& color)
+void RecorderImpl::recordDrawFocusRingPath(const Path& path, float outlineWidth, const Color& color)
 {
-    append<DrawFocusRingPath>(path, width, offset, color);
+    append<DrawFocusRingPath>(path, outlineWidth, color);
 }
 
-void RecorderImpl::recordDrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+void RecorderImpl::recordDrawFocusRingRects(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-    append<DrawFocusRingRects>(rects, width, offset, color);
+    append<DrawFocusRingRects>(rects, outlineOffset, outlineWidth, color);
 }
 
 void RecorderImpl::recordFillRect(const FloatRect& rect)

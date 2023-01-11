@@ -276,20 +276,12 @@ void DrawPath::apply(GraphicsContext& context) const
 
 void DrawFocusRingPath::apply(GraphicsContext& context) const
 {
-    context.drawFocusRing(m_path, m_width, m_offset, m_color);
-}
-
-DrawFocusRingRects::DrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
-    : m_rects(rects)
-    , m_width(width)
-    , m_offset(offset)
-    , m_color(color)
-{
+    context.drawFocusRing(m_path, m_outlineWidth, m_color);
 }
 
 void DrawFocusRingRects::apply(GraphicsContext& context) const
 {
-    context.drawFocusRing(m_rects, m_width, m_offset, m_color);
+    context.drawFocusRing(m_rects, m_outlineOffset, m_outlineWidth, m_color);
 }
 
 void FillRect::apply(GraphicsContext& context) const
@@ -736,16 +728,15 @@ void dumpItem(TextStream& ts, const DrawPath& item, OptionSet<AsTextFlag>)
 void dumpItem(TextStream& ts, const DrawFocusRingPath& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("path", item.path());
-    ts.dumpProperty("width", item.width());
-    ts.dumpProperty("offset", item.offset());
+    ts.dumpProperty("outline-width", item.outlineWidth());
     ts.dumpProperty("color", item.color());
 }
 
 void dumpItem(TextStream& ts, const DrawFocusRingRects& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("rects", item.rects());
-    ts.dumpProperty("width", item.width());
-    ts.dumpProperty("offset", item.offset());
+    ts.dumpProperty("outline-offset", item.outlineOffset());
+    ts.dumpProperty("outline-width", item.outlineWidth());
     ts.dumpProperty("color", item.color());
 }
 

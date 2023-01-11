@@ -96,8 +96,8 @@ private:
     void recordDrawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&) final;
     void recordDrawEllipse(const WebCore::FloatRect&) final;
     void recordDrawPath(const WebCore::Path&) final;
-    void recordDrawFocusRingPath(const WebCore::Path&, float width, float offset, const WebCore::Color&) final;
-    void recordDrawFocusRingRects(const Vector<WebCore::FloatRect>&, float width, float offset, const WebCore::Color&) final;
+    void recordDrawFocusRingPath(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
+    void recordDrawFocusRingRects(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
     void recordFillRect(const WebCore::FloatRect&) final;
     void recordFillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&) final;
     void recordFillRectWithGradient(const WebCore::FloatRect&, WebCore::Gradient&) final;

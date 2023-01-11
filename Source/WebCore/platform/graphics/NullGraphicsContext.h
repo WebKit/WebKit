@@ -122,12 +122,8 @@ private:
     ImageDrawResult drawTiledImage(Image&, const FloatRect&, const FloatPoint&, const FloatSize&, const FloatSize&, const ImagePaintingOptions& = { }) final { return ImageDrawResult::DidNothing; }
     ImageDrawResult drawTiledImage(Image&, const FloatRect&, const FloatRect&, const FloatSize&, Image::TileRule, Image::TileRule, const ImagePaintingOptions& = { }) final { return ImageDrawResult::DidNothing; }
 
+    void drawFocusRing(const Path&, float, const Color&) final { }
     void drawFocusRing(const Vector<FloatRect>&, float, float, const Color&) final { }
-    void drawFocusRing(const Path&, float, float, const Color&) final { }
-#if PLATFORM(MAC)
-    void drawFocusRing(const Path&, double, bool&, const Color&) final { }
-    void drawFocusRing(const Vector<FloatRect>&, double, bool&, const Color&) final { }
-#endif
 
     void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { }) final { }
     void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { }) final;
