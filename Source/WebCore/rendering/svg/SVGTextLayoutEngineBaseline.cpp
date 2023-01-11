@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -109,18 +111,15 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     ASSERT(textRendererParent);
 
     AlignmentBaseline baseline = textRenderer.style().svgStyle().alignmentBaseline();
-    if (baseline == AlignmentBaseline::Auto) {
+    if (baseline == AlignmentBaseline::Auto || baseline == AlignmentBaseline::Baseline) {
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textRendererParent);
-        ASSERT(baseline != AlignmentBaseline::Auto);
+        ASSERT(baseline != AlignmentBaseline::Auto && baseline != AlignmentBaseline::Baseline);
     }
 
     const FontMetrics& fontMetrics = m_font.metricsOfPrimaryFont();
 
     // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
     switch (baseline) {
-    case AlignmentBaseline::Baseline:
-        // FIXME: This seems wrong. Why are we returning an enum value converted to a float?
-        return static_cast<float>(dominantBaselineToAlignmentBaseline(isVerticalText, textRendererParent));
     case AlignmentBaseline::BeforeEdge:
     case AlignmentBaseline::TextBeforeEdge:
         return fontMetrics.floatAscent();
@@ -131,13 +130,16 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     case AlignmentBaseline::AfterEdge:
     case AlignmentBaseline::TextAfterEdge:
     case AlignmentBaseline::Ideographic:
-        return fontMetrics.floatDescent();
+        return -fontMetrics.floatDescent();
     case AlignmentBaseline::Alphabetic:
         return 0;
     case AlignmentBaseline::Hanging:
         return fontMetrics.floatAscent() * 8 / 10.f;
     case AlignmentBaseline::Mathematical:
         return fontMetrics.floatAscent() / 2;
+    case AlignmentBaseline::Baseline:
+        ASSERT_NOT_REACHED();
+        return 0;
     case AlignmentBaseline::Auto:
         ASSERT_NOT_REACHED();
         return 0;
