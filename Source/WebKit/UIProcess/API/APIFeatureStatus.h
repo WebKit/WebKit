@@ -40,8 +40,6 @@ enum class FeatureStatus : uint8_t {
     // Enabled by default in Safari Technology Preview, but not considered ready to ship yet.
     Preview,
     // Enabled by default and ready for general use.
-    Stable,
-    // Enabled by default and in general use for more than a year.
-    Shipping
+    Stable
 };
 }

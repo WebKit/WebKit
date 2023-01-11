@@ -45,9 +45,7 @@ typedef NS_ENUM(NSUInteger, WebFeatureStatus) {
     /// Enabled by default in Safari Technology Preview, but not considered ready to ship yet.
     WebFeatureStatusPreview,
     /// Enabled by default and ready for general use.
-    WebFeatureStatusStable,
-    /// Enabled by default and in general use for more than a year.
-    WebFeatureStatusShipping
+    WebFeatureStatusStable
 };
 
 @interface WebFeature : NSObject

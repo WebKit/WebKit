@@ -67,8 +67,6 @@
         return WebFeatureStatusPreview;
     case API::FeatureStatus::Stable:
         return WebFeatureStatusStable;
-    case API::FeatureStatus::Shipping:
-        return WebFeatureStatusShipping;
     default:
         ASSERT_NOT_REACHED();
     }

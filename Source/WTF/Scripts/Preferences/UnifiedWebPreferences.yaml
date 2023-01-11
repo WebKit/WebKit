@@ -630,7 +630,7 @@ BackspaceKeyNavigationEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 BeaconAPIEnabled:
   type: bool
-  status: shipping
+  status: stable
   humanReadableName: "Beacon API"
   humanReadableDescription: "Beacon API"
   defaultValue:
@@ -2397,7 +2397,7 @@ GraphicsContextFiltersEnabled:
 
 HTTPEquivEnabled:
   type: bool
-  status: shipping
+  status: stable
   humanReadableName: "http-equiv"
   humanReadableDescription: "Enable http-equiv attribute"
   webcoreName: httpEquivEnabled
@@ -3085,7 +3085,7 @@ JavaScriptCanOpenWindowsAutomatically:
 
 JavaScriptEnabled:
   type: bool
-  status: shipping
+  status: stable
   humanReadableName: "JavaScript"
   humanReadableDescription: "Enable JavaScript"
   inspectorOverride: true
@@ -3405,7 +3405,7 @@ LocalFileContentSniffingEnabled:
 
 LocalStorageEnabled:
   type: bool
-  status: shipping
+  status: stable
   humanReadableName: "Local Storage"
   humanReadableDescription: "Enable Local Storage"
   webKitLegacyPreferenceKey: WebKitLocalStorageEnabledPreferenceKey
@@ -3765,7 +3765,7 @@ MediaSessionPlaylistEnabled:
 
 MediaSourceEnabled:
   type: bool
-  status: embedder
+  status: stable
   humanReadableName: "Media Source API"
   humanReadableDescription: "Media Source API"
   defaultValue:
@@ -4852,7 +4852,7 @@ SKAttributionEnabled:
 
 SafeBrowsingEnabled:
   type: bool
-  status: embedder
+  status: stable
   humanReadableName: "Safe Browsing"
   humanReadableDescription: "Enable Safe Browsing"
   webcoreBinding: none
@@ -6530,7 +6530,7 @@ WebGLDraftExtensionsEnabled:
 
 WebGLEnabled:
   type: bool
-  status: shipping
+  status: stable
   humanReadableName: "WebGL"
   humanReadableDescription: "Enable WebGL"
   defaultValue:
