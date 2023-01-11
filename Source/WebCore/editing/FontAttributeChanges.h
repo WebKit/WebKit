@@ -160,14 +160,3 @@ bool FontAttributeChanges::decode(Decoder& decoder, FontAttributeChanges& change
 }
 
 } // namespace WebCore
-
-namespace WTF {
-template<> struct EnumTraits<WebCore::VerticalAlignChange> {
-    using values = EnumValues<
-        WebCore::VerticalAlignChange,
-        WebCore::VerticalAlignChange::Superscript,
-        WebCore::VerticalAlignChange::Baseline,
-        WebCore::VerticalAlignChange::Subscript
-    >;
-};
-}
