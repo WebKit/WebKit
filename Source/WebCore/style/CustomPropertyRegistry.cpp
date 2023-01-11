@@ -116,6 +116,9 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
     // Last rule wins.
     // https://drafts.css-houdini.org/css-properties-values-api/#determining-registration
     m_propertiesFromStylesheet.set(property.name, makeUnique<const CSSRegisteredCustomProperty>(WTFMove(property)));
+
+    // Changing property registration may affect computed property values in the cache.
+    m_scope.invalidateMatchedDeclarationsCache();
 }
 
 void CustomPropertyRegistry::clearRegisteredFromStylesheets()

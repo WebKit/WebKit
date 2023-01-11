@@ -6,7 +6,7 @@ PASS @property later in stylesheet wins
 PASS CSS.registerProperty determines the registration when uncontested
 PASS @property registrations are cleared when rule removed
 PASS Computed value becomes token sequence when @property is removed
-FAIL Inherited status is reflected in computed styles when @property is removed assert_equals: expected "0px" but got "10px"
+PASS Inherited status is reflected in computed styles when @property is removed
 PASS Invalid @property rule (missing syntax) does not overwrite previous valid rule
 PASS Invalid @property rule (missing inherits descriptor) does not overwrite previous valid rule
 PASS Invalid @property rule (missing initial-value) does not overwrite previous valid rule
