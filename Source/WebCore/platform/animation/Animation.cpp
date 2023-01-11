@@ -48,6 +48,7 @@ Animation::Animation()
     , m_propertySet(false)
     , m_timingFunctionSet(false)
     , m_compositeOperationSet(false)
+    , m_customOrUnknownPropertySet(false)
     , m_isNone(false)
     , m_delayFilled(false)
     , m_directionFilled(false)
@@ -85,6 +86,7 @@ Animation::Animation(const Animation& o)
     , m_propertySet(o.m_propertySet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
     , m_compositeOperationSet(o.m_compositeOperationSet)
+    , m_customOrUnknownPropertySet(o.m_customOrUnknownPropertySet)
     , m_isNone(o.m_isNone)
     , m_delayFilled(o.m_delayFilled)
     , m_directionFilled(o.m_directionFilled)
@@ -122,6 +124,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_nameSet == other.m_nameSet
         && m_timingFunctionSet == other.m_timingFunctionSet
         && m_compositeOperationSet == other.m_compositeOperationSet
+        && m_customOrUnknownPropertySet == other.m_customOrUnknownPropertySet
         && m_isNone == other.m_isNone;
 
     if (!result)
