@@ -75,7 +75,7 @@ public:
 
     WEBCORE_EXPORT void notifyNetworkStateChange(bool isOnline);
 
-    WEBCORE_EXPORT void startFetch(SWServerConnectionIdentifier, FetchIdentifier, Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+    WEBCORE_EXPORT void startFetch(SWServerConnectionIdentifier, FetchIdentifier, Function<Ref<WebCore::ServiceWorkerFetch::Client>()>&& createFetchTaskClient, ResourceRequest&&, String&& referrer, FetchOptions&&, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
     WEBCORE_EXPORT void cancelFetch(SWServerConnectionIdentifier, FetchIdentifier);
     WEBCORE_EXPORT void convertFetchToDownload(SWServerConnectionIdentifier, FetchIdentifier);
     WEBCORE_EXPORT void continueDidReceiveFetchResponse(SWServerConnectionIdentifier, FetchIdentifier);
@@ -128,9 +128,6 @@ private:
     ServiceWorkerInspectorProxy m_inspectorProxy;
     uint64_t m_functionalEventTasksCounter { 0 };
     HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
-
-    // Accessed in worker thread.
-    HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
 };
 
 } // namespace WebKit

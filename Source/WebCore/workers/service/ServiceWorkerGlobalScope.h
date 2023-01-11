@@ -30,6 +30,7 @@
 #include "NotificationClient.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
+#include "ServiceWorkerFetch.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/MonotonicTime.h>
@@ -93,6 +94,11 @@ public:
     void recordUserGesture();
     void setIsProcessingUserGestureForTesting(bool value) { m_isProcessingUserGesture = value; }
 
+    bool hasOngoingFetchTasks() const;
+    void addOngoingFetchTask(std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>&&);
+    RefPtr<ServiceWorkerFetch::Client> ongoingFetchTask(std::pair<SWServerConnectionIdentifier, FetchIdentifier>) const;
+    RefPtr<ServiceWorkerFetch::Client> takeOngoingFetchTask(std::pair<SWServerConnectionIdentifier, FetchIdentifier>);
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
     void notifyServiceWorkerPageOfCreationIfNecessary();
@@ -117,6 +123,7 @@ private:
     bool m_isProcessingUserGesture { false };
     Timer m_userGestureTimer;
     RefPtr<PushEvent> m_pushEvent;
+    HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
 };
 
 } // namespace WebCore

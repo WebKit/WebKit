@@ -216,6 +216,31 @@ void ServiceWorkerGlobalScope::recordUserGesture()
     m_userGestureTimer.startOneShot(userGestureLifetime);
 }
 
+void ServiceWorkerGlobalScope::addOngoingFetchTask(std::pair<SWServerConnectionIdentifier, FetchIdentifier> key, Ref<ServiceWorkerFetch::Client>&& task)
+{
+    ASSERT(isContextThread());
+    ASSERT(!m_ongoingFetchTasks.contains(key));
+    m_ongoingFetchTasks.add(key, WTFMove(task));
+}
+
+RefPtr<ServiceWorkerFetch::Client> ServiceWorkerGlobalScope::ongoingFetchTask(std::pair<SWServerConnectionIdentifier, FetchIdentifier> key) const
+{
+    ASSERT(isContextThread());
+    return m_ongoingFetchTasks.get(key);
+}
+
+RefPtr<ServiceWorkerFetch::Client> ServiceWorkerGlobalScope::takeOngoingFetchTask(std::pair<SWServerConnectionIdentifier, FetchIdentifier> key)
+{
+    ASSERT(isContextThread());
+    return m_ongoingFetchTasks.take(key);
+}
+
+bool ServiceWorkerGlobalScope::hasOngoingFetchTasks() const
+{
+    ASSERT(isContextThread());
+    return !m_ongoingFetchTasks.isEmpty();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)
