@@ -491,13 +491,15 @@ WI.TreeElement = class TreeElement extends WI.Object
         return false;
     }
 
-    reveal()
+    reveal({skipExpandingAncestors} = {})
     {
-        var currentAncestor = this.parent;
-        while (currentAncestor && !currentAncestor.root) {
-            if (!currentAncestor.expanded)
-                currentAncestor.expand();
-            currentAncestor = currentAncestor.parent;
+        if (!skipExpandingAncestors) {
+            let currentAncestor = this.parent;
+            while (currentAncestor && !currentAncestor.root) {
+                if (!currentAncestor.expanded)
+                    currentAncestor.expand();
+                currentAncestor = currentAncestor.parent;
+            }
         }
 
         // This must be called before onreveal, as some subclasses will scrollIntoViewIfNeeded and
