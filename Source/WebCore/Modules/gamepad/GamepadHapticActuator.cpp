@@ -87,6 +87,9 @@ void GamepadHapticActuator::playEffect(Document& document, EffectType effectType
         promise->reject(Exception { NotSupportedError, "This gamepad doesn't support playing such effect"_s });
         return;
     }
+
+    effectParameters.duration = std::min(effectParameters.duration, GamepadEffectParameters::maximumDuration.milliseconds());
+
     m_playingEffectPromise = WTFMove(promise);
     GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [this, protectedThis = Ref { *this }, document = Ref { document }, playingEffectPromise = m_playingEffectPromise](bool success) {
         if (m_playingEffectPromise != playingEffectPromise)
