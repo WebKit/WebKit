@@ -123,7 +123,11 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE;
     case API::Error::Plugin::PlugInCancelledConnection:
         return WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED;
+#endif
     case API::Error::Plugin::PlugInWillHandleLoad:
+#if ENABLE(2022_GLIB_API)
+        return WEBKIT_MEDIA_ERROR_WILL_HANDLE_LOAD;
+#else
         return WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD;
 #endif
     case API::Error::Download::Transport:
@@ -170,9 +174,13 @@ unsigned toWebCoreError(unsigned webKitError)
         return API::Error::Plugin::JavaUnavailable;
     case WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED:
         return API::Error::Plugin::PlugInCancelledConnection;
-    case WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD:
-        return API::Error::Plugin::PlugInWillHandleLoad;
 #endif
+#if ENABLE(2022_GLIB_API)
+    case WEBKIT_MEDIA_ERROR_WILL_HANDLE_LOAD:
+#else
+    case WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD:
+#endif
+        return API::Error::Plugin::PlugInWillHandleLoad;
     case WEBKIT_DOWNLOAD_ERROR_NETWORK:
         return API::Error::Download::Transport;
     case WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER:

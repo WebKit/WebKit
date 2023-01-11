@@ -41,6 +41,10 @@ G_BEGIN_DECLS
 #define WEBKIT_PRINT_ERROR               webkit_print_error_quark ()
 #endif
 
+#if ENABLE(2022_GLIB_API)
+#define WEBKIT_MEDIA_ERROR               webkit_media_error_quark ()
+#endif
+
 /**
  * WebKitNetworkError:
  * @WEBKIT_NETWORK_ERROR_FAILED: Generic load failure
@@ -163,6 +167,20 @@ typedef enum {
     WEBKIT_USER_CONTENT_FILTER_ERROR_NOT_FOUND,
 } WebKitUserContentFilterError;
 
+#if ENABLE(2022_GLIB_API)
+/**
+ * WebKitMediaError:
+ * @WEBKIT_MEDIA_ERROR_WILL_HANDLE_LOAD: Preliminary load failure for media content types. A new load will be started to perform the media load. Since: 2.40
+ *
+ * Enum values used to denote the various media errors.
+ *
+ * Since: 2.40
+ */
+typedef enum {
+    WEBKIT_MEDIA_ERROR_WILL_HANDLE_LOAD = 204
+} WebKitMediaError;
+#endif
+
 WEBKIT_API GQuark
 webkit_network_error_quark             (void);
 
@@ -190,6 +208,11 @@ webkit_snapshot_error_quark            (void);
 
 WEBKIT_API GQuark
 webkit_user_content_filter_error_quark (void);
+
+#if ENABLE(2022_GLIB_API)
+WEBKIT_API GQuark
+webkit_media_error_quark               (void);
+#endif
 
 G_END_DECLS
 

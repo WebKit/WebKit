@@ -60,7 +60,11 @@ const WTF::String& Error::webKitPolicyErrorDomain()
 const WTF::String& Error::webKitPluginErrorDomain()
 {
 #if USE(GLIB)
+#if ENABLE(2022_GLIB_API)
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitMediaError"));
+#else
     static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPluginError"));
+#endif
     return webKitErrorDomainString;
 #else
     return webKitErrorDomain();
