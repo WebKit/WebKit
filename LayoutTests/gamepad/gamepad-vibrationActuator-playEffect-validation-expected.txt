@@ -1,0 +1,23 @@
+Tests input validation for vibrationActuator.playEffect
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gamepad.vibrationActuator.canPlayEffectType('dual-rumble') is true
+PASS result is "complete"
+* Invalid input test: Negative duration
+PASS playEffect() threw exception: TypeError: Invalid effect parameter
+* Invalid input test: Negative startDelay
+PASS playEffect() threw exception: TypeError: Invalid effect parameter
+* Invalid input test: Negative weakMagnitude
+PASS playEffect() threw exception: TypeError: Invalid effect parameter
+* Invalid input test: Negative strongMagnitude
+PASS playEffect() threw exception: TypeError: Invalid effect parameter
+* Invalid input test: weakMagnitude > 1
+PASS playEffect() threw exception: TypeError: Invalid effect parameter
+* Invalid input test: strongMagnitude > 1
+PASS playEffect() threw exception: TypeError: Invalid effect parameter
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

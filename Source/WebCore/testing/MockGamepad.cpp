@@ -34,6 +34,7 @@ MockGamepad::MockGamepad(unsigned index, const String& gamepadID, const String& 
     : PlatformGamepad(index)
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
+    m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
     updateDetails(gamepadID, mapping, axisCount, buttonCount);
 }
 

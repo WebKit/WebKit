@@ -49,6 +49,18 @@ GamepadHapticActuator::GamepadHapticActuator(Gamepad& gamepad)
 {
 }
 
+static bool areEffectParametersValid(GamepadHapticEffectType effectType, const GamepadEffectParameters& parameters)
+{
+    if (parameters.duration < 0 || parameters.startDelay < 0)
+        return false;
+
+    if (effectType == GamepadHapticEffectType::DualRumble) {
+        if (parameters.weakMagnitude < 0 || parameters.strongMagnitude < 0 || parameters.weakMagnitude > 1 || parameters.strongMagnitude > 1)
+            return false;
+    }
+    return true;
+}
+
 GamepadHapticActuator::~GamepadHapticActuator() = default;
 
 bool GamepadHapticActuator::canPlayEffectType(EffectType effectType) const
@@ -58,6 +70,10 @@ bool GamepadHapticActuator::canPlayEffectType(EffectType effectType) const
 
 void GamepadHapticActuator::playEffect(Document& document, EffectType effectType, GamepadEffectParameters&& effectParameters, Ref<DeferredPromise>&& promise)
 {
+    if (!areEffectParametersValid(effectType, effectParameters)) {
+        promise->reject(Exception { TypeError, "Invalid effect parameter"_s });
+        return;
+    }
     if (!document.isFullyActive() || document.hidden() || !m_gamepad) {
         promise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         return;
