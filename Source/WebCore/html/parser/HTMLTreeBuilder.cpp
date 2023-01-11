@@ -914,8 +914,6 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     m_templateInsertionModes.removeLast();
     resetInsertionModeAppropriately();
 
-    m_tree.attachDeclarativeShadowRootIfNeeded(shadowHost.get(), templateElement);
-
     return true;
 }
 

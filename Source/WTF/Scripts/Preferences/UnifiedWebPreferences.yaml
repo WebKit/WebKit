@@ -1654,6 +1654,19 @@ DeclarativeShadowDOMEnabled:
     WebCore:
       default: true
 
+DeclarativeShadowDOMInDOMParserEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "DOMParser support for Declarative Shadow DOM"
+  humanReadableDescription: "Enable Declarative Shadow DOM in DOMParser"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DefaultARIAForCustomElementsEnabled:
   type: bool
   status: stable
@@ -5594,19 +5607,6 @@ StorageBlockingPolicy:
       default: WebCore::StorageBlockingPolicy::BlockThirdParty
     WebCore:
       default: StorageBlockingPolicy::AllowAll
-
-StreamingDeclarativeShadowDOMEnabled:
-  type: bool
-  status: stable
-  humanReadableName: "Streaming for Declarative Shadow DOM"
-  humanReadableDescription: "Enable Streaming for Declarative Shadow DOM"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 SubgridEnabled:
   type: bool
