@@ -1986,7 +1986,11 @@ auto AirIRGenerator64::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&
     patchArgs.append(ConstrainedTmp(TypedTmp(Tmp(GPRInfo::callFrameRegister), Types::I64), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
     for (unsigned i = 0; i < args.size(); ++i) {
         // Note: SIMD values can appear here, but should never be read at runtime because this will throw an un-catchable TypeError instead.
-        patchArgs.append(ConstrainedTmp(args[i], B3::ValueRep::stackArgument(i * sizeof(EncodedJSValue))));
+        // Nonetheless, they may clobber important things if they aren't treated as doubles.
+        auto arg = args[i];
+        if (args[i].type().isV128())
+            arg = TypedTmp(args[i].tmp(), Types::F64);
+        patchArgs.append(ConstrainedTmp(arg, B3::ValueRep::stackArgument(i * sizeof(EncodedJSValue))));
     }
 
     auto handle = preparePatchpointForExceptions(patch, patchArgs);
@@ -2129,6 +2133,7 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
 
     for (unsigned i = 0; i < tmpArgs.size(); ++i) {
         TypedTmp tmp = tmpArgs[i];
+        RELEASE_ASSERT(!tmp.type().isV128());
         if (constrainedArgLocations[i].location.isStackArgument()) {
             shuffleStackArg(tmp, constrainedArgLocations[i].location.offsetFromSP());
             continue;
