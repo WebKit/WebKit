@@ -263,6 +263,11 @@ void NetworkProcess::didClose(IPC::Connection&)
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
         session.storageManager().syncLocalStorage([callbackAggregator] { });
     });
+
+#if PLATFORM(COCOA)
+    if (m_mediaStreamingActivitityToken != NOTIFY_TOKEN_INVALID)
+        notify_cancel(m_mediaStreamingActivitityToken);
+#endif
 }
 
 void NetworkProcess::didCreateDownload()
@@ -1364,6 +1369,31 @@ void NetworkProcess::setPrivateClickMeasurementEnabled(bool enabled)
 bool NetworkProcess::privateClickMeasurementEnabled() const
 {
     return m_privateClickMeasurementEnabled;
+}
+
+void NetworkProcess::notifyMediaStreamingActivity(bool activity)
+{
+#if PLATFORM(COCOA)
+    static const char* notifyMediaStreamingName = "com.apple.WebKit.mediaStreamingActivity";
+
+    if (m_mediaStreamingActivitityToken == NOTIFY_TOKEN_INVALID) {
+        auto status = notify_register_check(notifyMediaStreamingName, &m_mediaStreamingActivitityToken);
+        if (status != NOTIFY_STATUS_OK || m_mediaStreamingActivitityToken == NOTIFY_TOKEN_INVALID) {
+            RELEASE_LOG_ERROR(IPC, "notify_register_check() for %s failed with status (%d) 0x%X", notifyMediaStreamingName, status, status);
+            m_mediaStreamingActivitityToken = NOTIFY_TOKEN_INVALID;
+            return;
+        }
+    }
+    auto status = notify_set_state(m_mediaStreamingActivitityToken, activity ? 1 : 0);
+    if (status != NOTIFY_STATUS_OK) {
+        RELEASE_LOG_ERROR(IPC, "notify_set_state() for %s failed with status (%d) 0x%X", notifyMediaStreamingName, status, status);
+        return;
+    }
+    status = notify_post(notifyMediaStreamingName);
+    RELEASE_LOG_ERROR_IF(status != NOTIFY_STATUS_OK, IPC, "notify_post() for %s failed with status (%d) 0x%X", notifyMediaStreamingName, status, status);
+#else
+    UNUSED_PARAM(activity);
+#endif
 }
 
 void NetworkProcess::setPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool enabled)

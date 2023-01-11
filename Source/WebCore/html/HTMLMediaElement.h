@@ -626,6 +626,8 @@ public:
 
     bool hasSource() const { return hasCurrentSrc() || srcObject(); }
 
+    void updateMediaState();
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -973,7 +975,6 @@ private:
     void resumeFromDocumentSuspension() final;
 
     void scheduleUpdateMediaState();
-    void updateMediaState();
     bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
 
@@ -1256,8 +1257,9 @@ private:
     bool m_settingMediaStreamSrcObject { false };
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     MediaProducerMediaStateFlags m_mediaState;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };

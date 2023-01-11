@@ -10110,7 +10110,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     MediaProducerMediaStateFlags playingMediaMask { MediaProducerMediaState::IsPlayingAudio, MediaProducerMediaState::IsPlayingVideo };
     MediaProducerMediaStateFlags oldState = m_mediaState;
 
-    bool playingAudioChanges = (oldState.contains(MediaProducerMediaState::IsPlayingAudio)) != (newState.contains(MediaProducerMediaState::IsPlayingAudio));
+    bool playingAudioChanges = oldState.contains(MediaProducerMediaState::IsPlayingAudio) != newState.contains(MediaProducerMediaState::IsPlayingAudio);
     if (playingAudioChanges)
         pageClient().isPlayingAudioWillChange();
     m_mediaState = newState;
@@ -10138,6 +10138,9 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
         videoControlsManagerDidChange();
 
     m_process->updateAudibleMediaAssertions();
+    bool mediaStreamingChanges = oldState.contains(MediaProducerMediaState::HasStreamingActivity) != newState.contains(MediaProducerMediaState::HasStreamingActivity);
+    if (mediaStreamingChanges)
+        m_process->updateMediaStreamingActivity();
 }
 
 void WebPageProxy::updateReportedMediaCaptureState()

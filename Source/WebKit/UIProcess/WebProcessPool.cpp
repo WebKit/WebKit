@@ -211,6 +211,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
+    , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -2137,6 +2138,34 @@ void WebProcessPool::updateAudibleMediaAssertions()
         , gpuProcess() ? RefPtr<ProcessAssertion> { ProcessAssertion::create(gpuProcess()->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) } : nullptr
 #endif
     };
+}
+
+WebProcessWithMediaStreamingToken WebProcessPool::webProcessWithMediaStreamingToken() const
+{
+    return m_webProcessWithMediaStreamingCounter.count();
+}
+
+void WebProcessPool::updateMediaStreamingActivity()
+{
+    if (!m_webProcessWithMediaStreamingCounter.value()) {
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateMediaStreamingActivity: The number of processes with media networking now zero. Notify network.");
+        m_mediaStreamingActivity = false;
+        notifyMediaStreamingActivity(false);
+        return;
+    }
+
+    if (m_mediaStreamingActivity)
+        return;
+
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateMediaStreamingActivity: The number of processes with media networking is now greater than zero. Notify network.");
+    m_mediaStreamingActivity = true;
+    notifyMediaStreamingActivity(true);
+}
+
+void WebProcessPool::notifyMediaStreamingActivity(bool activity)
+{
+    if (auto& networkProcess = NetworkProcessProxy::defaultNetworkProcess())
+        networkProcess->notifyMediaStreamingActivity(activity);
 }
 
 void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceWorkerProcess)

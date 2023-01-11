@@ -405,6 +405,8 @@ public:
     static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
     static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
 
+    void notifyMediaStreamingActivity(bool);
+
 #if PLATFORM(COCOA)
     void updateProcessSuppressionState();
 
@@ -496,6 +498,7 @@ public:
 #endif
 
     WebProcessWithAudibleMediaToken webProcessWithAudibleMediaToken() const;
+    WebProcessWithMediaStreamingToken webProcessWithMediaStreamingToken() const;
 
     void disableDelayedWebProcessLaunch() { m_isDelayedWebProcessLaunchDisabled = true; }
 
@@ -562,6 +565,7 @@ private:
 
     void updateProcessAssertions();
     void updateAudibleMediaAssertions();
+    void updateMediaStreamingActivity();
 
     // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
@@ -808,6 +812,9 @@ private:
 #endif
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;
+
+    WebProcessWithMediaStreamingCounter m_webProcessWithMediaStreamingCounter;
+    bool m_mediaStreamingActivity { false };
 
 #if PLATFORM(PLAYSTATION)
     int32_t m_userId { -1 };

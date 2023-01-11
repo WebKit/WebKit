@@ -170,6 +170,8 @@ static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorP
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
+static NSString * const WebKitMediaStreamingActivity = @"WebKitMediaStreamingActivity";
+
 #if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
