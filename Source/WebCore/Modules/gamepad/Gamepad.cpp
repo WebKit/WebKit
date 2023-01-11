@@ -75,7 +75,7 @@ void Gamepad::updateFromPlatformGamepad(const PlatformGamepad& platformGamepad)
 GamepadHapticActuator& Gamepad::vibrationActuator()
 {
     if (!m_vibrationActuator)
-        m_vibrationActuator = GamepadHapticActuator::create(*this);
+        m_vibrationActuator = GamepadHapticActuator::create(GamepadHapticActuator::Type::DualRumble, *this);
     return *m_vibrationActuator;
 }
 

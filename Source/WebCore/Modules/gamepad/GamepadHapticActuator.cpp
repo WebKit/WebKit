@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-Ref<GamepadHapticActuator> GamepadHapticActuator::create(Gamepad& gamepad)
+Ref<GamepadHapticActuator> GamepadHapticActuator::create(Type type, Gamepad& gamepad)
 {
-    return adoptRef(*new GamepadHapticActuator(gamepad));
+    return adoptRef(*new GamepadHapticActuator(type, gamepad));
 }
 
-GamepadHapticActuator::GamepadHapticActuator(Gamepad& gamepad)
-    : m_type { Type::Vibration }
+GamepadHapticActuator::GamepadHapticActuator(Type type, Gamepad& gamepad)
+    : m_type { type }
     , m_gamepad { gamepad }
 {
 }

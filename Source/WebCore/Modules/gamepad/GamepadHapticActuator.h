@@ -41,12 +41,12 @@ struct GamepadEffectParameters;
 
 class GamepadHapticActuator : public RefCounted<GamepadHapticActuator> {
 public:
-    static Ref<GamepadHapticActuator> create(Gamepad&);
-    ~GamepadHapticActuator();
-
     using EffectType = GamepadHapticEffectType;
     enum class Type : uint8_t { Vibration, DualRumble };
     enum class Result : uint8_t { Complete, Preempted };
+
+    static Ref<GamepadHapticActuator> create(Type, Gamepad&);
+    ~GamepadHapticActuator();
 
     Type type() const { return m_type; }
     bool canPlayEffectType(EffectType) const;
@@ -54,7 +54,7 @@ public:
     void reset(Document&, Ref<DeferredPromise>&&);
 
 private:
-    explicit GamepadHapticActuator(Gamepad&);
+    GamepadHapticActuator(Type, Gamepad&);
 
     Type m_type;
     WeakPtr<Gamepad> m_gamepad;
