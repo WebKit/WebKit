@@ -23,7 +23,7 @@
 namespace WebCore {
 namespace Atspi {
 
-enum Role {
+enum class Role {
     InvalidRole,
     AcceleratorLabel,
     Alert,

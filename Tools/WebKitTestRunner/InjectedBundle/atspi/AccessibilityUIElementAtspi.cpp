@@ -678,7 +678,7 @@ static String xmlRoleValueString(const String& xmlRoles)
     return { };
 }
 
-static String roleValueToString(unsigned roleValue)
+static String roleValueToString(WebCore::Atspi::Role roleValue)
 {
     switch (roleValue) {
     case WebCore::Atspi::Role::Alert:
