@@ -53,6 +53,7 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
     , m_maximumCascadeLevel(maximumCascadeLevel)
     , m_rollbackScope(rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
+    , m_animationLayer(parent.m_animationLayer)
 {
     buildCascade();
 }
