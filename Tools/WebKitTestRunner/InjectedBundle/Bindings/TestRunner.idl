@@ -288,7 +288,7 @@ interface TestRunner {
     undefined setAllowedMenuActions(object actions);
 
     // Gamepad
-    undefined setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount);
+    undefined setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount, boolean supportsDualRumble);
     undefined setMockGamepadAxisValue(unsigned long index, unsigned long axisIndex, double value);
     undefined setMockGamepadButtonValue(unsigned long index, unsigned long buttonIndex, double value);
     undefined connectMockGamepad(unsigned long index);

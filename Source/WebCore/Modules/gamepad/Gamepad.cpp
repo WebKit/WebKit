@@ -43,7 +43,7 @@ Gamepad::Gamepad(Document* document, const PlatformGamepad& platformGamepad)
     , m_mapping(platformGamepad.mapping())
     , m_supportedEffectTypes(platformGamepad.supportedEffectTypes())
     , m_axes(platformGamepad.axisValues().size(), 0.0)
-    , m_vibrationActuator(GamepadHapticActuator::create(document, GamepadHapticActuator::Type::DualRumble, *this))
+    , m_vibrationActuator(platformGamepad.supportedEffectTypes().contains(GamepadHapticEffectType::DualRumble) ? RefPtr { GamepadHapticActuator::create(document, GamepadHapticActuator::Type::DualRumble, *this) } : nullptr)
 {
     unsigned buttonCount = platformGamepad.buttonValues().size();
     m_buttons.reserveInitialCapacity(buttonCount);
@@ -71,11 +71,6 @@ void Gamepad::updateFromPlatformGamepad(const PlatformGamepad& platformGamepad)
         m_buttons[i]->setValue(platformGamepad.buttonValues()[i].value());
 
     m_timestamp = platformGamepad.lastUpdateTime();
-}
-
-GamepadHapticActuator& Gamepad::vibrationActuator()
-{
-    return m_vibrationActuator.get();
 }
 
 } // namespace WebCore

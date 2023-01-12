@@ -62,7 +62,7 @@ public:
     void updateFromPlatformGamepad(const PlatformGamepad&);
     void setConnected(bool connected) { m_connected = connected; }
 
-    GamepadHapticActuator& vibrationActuator();
+    GamepadHapticActuator* vibrationActuator() { return m_vibrationActuator.get(); }
 
 private:
     Gamepad(Document*, const PlatformGamepad&);
@@ -76,7 +76,7 @@ private:
     Vector<double> m_axes;
     Vector<Ref<GamepadButton>> m_buttons;
 
-    Ref<GamepadHapticActuator> m_vibrationActuator;
+    RefPtr<GamepadHapticActuator> m_vibrationActuator;
 };
 
 } // namespace WebCore
