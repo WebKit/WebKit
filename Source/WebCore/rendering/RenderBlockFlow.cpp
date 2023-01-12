@@ -3809,18 +3809,26 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     auto newBorderBoxBottom = computeBorderBoxBottom();
 
-    repaintLogicalTop = contentBoxTop;
-    repaintLogicalBottom = std::max(oldBorderBoxBottom, newBorderBoxBottom);
-
-    auto inflateRepaintTopAndBottomWithInkOverflow = [&] {
-        if (!layoutFormattingContextLineLayout.hasVisualOverflow())
+    auto updateRepaintTopAndBottomIfNeeded = [&] {
+        auto isFullLayout = selfNeedsLayout() || relayoutChildren;
+        if (isFullLayout) {
+            // Let's trigger full repaint instead for now (matching legacy line layout).
+            // FIXME: We should revisit this behavior and run repaints strictly on visual overflow.
+            repaintLogicalTop = { };
+            repaintLogicalBottom = { };
             return;
-        for (auto lineBox = InlineIterator::firstLineBoxFor(*this); lineBox; lineBox.traverseNext()) {
-            repaintLogicalTop = std::min(repaintLogicalTop, LayoutUnit { lineBox->inkOverflowTop() });
-            repaintLogicalBottom = std::max(repaintLogicalBottom, LayoutUnit { lineBox->inkOverflowBottom() });
+        }
+
+        repaintLogicalTop = contentBoxTop;
+        repaintLogicalBottom = std::max(oldBorderBoxBottom, newBorderBoxBottom);
+        if (layoutFormattingContextLineLayout.hasVisualOverflow()) {
+            for (auto lineBox = InlineIterator::firstLineBoxFor(*this); lineBox; lineBox.traverseNext()) {
+                repaintLogicalTop = std::min(repaintLogicalTop, LayoutUnit { lineBox->inkOverflowTop() });
+                repaintLogicalBottom = std::max(repaintLogicalBottom, LayoutUnit { lineBox->inkOverflowBottom() });
+            }
         }
     };
-    inflateRepaintTopAndBottomWithInkOverflow();
+    updateRepaintTopAndBottomIfNeeded();
 
     setLogicalHeight(newBorderBoxBottom);
     if (layoutState.hasLineClamp())

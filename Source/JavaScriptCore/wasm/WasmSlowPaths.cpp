@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
+#include "FrameTracers.h"
 #include "JITExceptions.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyException.h"
@@ -44,7 +45,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryPlan.h"
-#include "WasmOperations.h"
+#include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
 #include "WasmWorklist.h"
 #include "WebAssemblyFunction.h"
@@ -391,7 +392,7 @@ WASM_SLOW_PATH_DECL(out_of_line_jump_target)
 WASM_SLOW_PATH_DECL(ref_func)
 {
     auto instruction = pc->as<WasmRefFunc>();
-    WASM_RETURN(Wasm::operationWasmRefFunc(instance, instruction.m_functionIndex));
+    WASM_RETURN(Wasm::refFunc(instance, instruction.m_functionIndex));
 }
 
 WASM_SLOW_PATH_DECL(array_new)
@@ -411,11 +412,13 @@ WASM_SLOW_PATH_DECL(array_new)
     } else
         value = READ(instruction.m_value).encodedJSValue();
 
-    WASM_RETURN(Wasm::operationWasmArrayNew(instance, instruction.m_typeIndex, size, value));
+    WASM_RETURN(Wasm::arrayNew(instance, instruction.m_typeIndex, size, value));
 }
 
 WASM_SLOW_PATH_DECL(array_get)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmArrayGet>();
     EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
     if (JSValue::decode(arrayref).isNull())
@@ -428,7 +431,7 @@ WASM_SLOW_PATH_DECL(array_get)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
     Wasm::ExtGCOpType arrayGetKind = static_cast<Wasm::ExtGCOpType>(instruction.m_arrayGetKind);
     if (arrayGetKind == Wasm::ExtGCOpType::ArrayGetS) {
-        EncodedJSValue value = Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index);
+        EncodedJSValue value = Wasm::arrayGet(instance, instruction.m_typeIndex, arrayref, index);
         Wasm::StorageType type = arrayObject->elementType().type;
         ASSERT(type.is<Wasm::PackedType>());
         size_t elementSize = type.as<Wasm::PackedType>() == Wasm::PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
@@ -437,11 +440,13 @@ WASM_SLOW_PATH_DECL(array_get)
         result = result << bitShift;
         WASM_RETURN(static_cast<EncodedJSValue>(result >> bitShift));
     } else
-        WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
+        WASM_RETURN(Wasm::arrayGet(instance, instruction.m_typeIndex, arrayref, index));
 }
 
 WASM_SLOW_PATH_DECL(array_set)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmArraySet>();
     EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
     if (JSValue::decode(arrayref).isNull())
@@ -455,17 +460,19 @@ WASM_SLOW_PATH_DECL(array_set)
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArraySet);
 
-    Wasm::operationWasmArraySet(instance, instruction.m_typeIndex, arrayref, index, value);
+    Wasm::arraySet(instance, instruction.m_typeIndex, arrayref, index, value);
     WASM_END_IMPL();
 }
 
 WASM_SLOW_PATH_DECL(struct_new)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmStructNew>();
     ASSERT(instruction.m_typeIndex < instance->module().moduleInformation().typeCount());
 
     ASSERT(!instruction.m_firstValue.isConstant());
-    WASM_RETURN(Wasm::operationWasmStructNew(instance, instruction.m_typeIndex, instruction.m_useDefault, instruction.m_useDefault ? nullptr : reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue))));
+    WASM_RETURN(Wasm::structNew(instance, instruction.m_typeIndex, instruction.m_useDefault, instruction.m_useDefault ? nullptr : reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_firstValue))));
 }
 
 WASM_SLOW_PATH_DECL(struct_get)
@@ -473,15 +480,17 @@ WASM_SLOW_PATH_DECL(struct_get)
     UNUSED_PARAM(instance);
     auto instruction = pc->as<WasmStructGet>();
     auto structReference = READ(instruction.m_structReference).encodedJSValue();
-    WASM_RETURN(Wasm::operationWasmStructGet(structReference, instruction.m_fieldIndex));
+    WASM_RETURN(Wasm::structGet(structReference, instruction.m_fieldIndex));
 }
 
 WASM_SLOW_PATH_DECL(struct_set)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmStructSet>();
     auto structReference = READ(instruction.m_structReference).encodedJSValue();
     auto value = READ(instruction.m_value).encodedJSValue();
-    Wasm::operationWasmStructSet(instance, structReference, instruction.m_fieldIndex, value);
+    Wasm::structSet(instance, structReference, instruction.m_fieldIndex, value);
     WASM_END();
 }
 
@@ -489,7 +498,7 @@ WASM_SLOW_PATH_DECL(table_get)
 {
     auto instruction = pc->as<WasmTableGet>();
     int32_t index = READ(instruction.m_index).unboxedInt32();
-    EncodedJSValue result = Wasm::operationGetWasmTableElement(instance, instruction.m_tableIndex, index);
+    EncodedJSValue result = Wasm::tableGet(instance, instruction.m_tableIndex, index);
     if (!result)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_RETURN(result);
@@ -500,7 +509,7 @@ WASM_SLOW_PATH_DECL(table_set)
     auto instruction = pc->as<WasmTableSet>();
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
     EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
-    if (!Wasm::operationSetWasmTableElement(instance, instruction.m_tableIndex, index, value))
+    if (!Wasm::tableSet(instance, instruction.m_tableIndex, index, value))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();
 }
@@ -511,7 +520,7 @@ WASM_SLOW_PATH_DECL(table_init)
     uint32_t dstOffset = READ(instruction.m_dstOffset).unboxedUInt32();
     uint32_t srcOffset = READ(instruction.m_srcOffset).unboxedUInt32();
     uint32_t length = READ(instruction.m_length).unboxedUInt32();
-    if (!Wasm::operationWasmTableInit(instance, instruction.m_elementIndex, instruction.m_tableIndex, dstOffset, srcOffset, length))
+    if (!Wasm::tableInit(instance, instruction.m_elementIndex, instruction.m_tableIndex, dstOffset, srcOffset, length))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();
 }
@@ -522,7 +531,7 @@ WASM_SLOW_PATH_DECL(table_fill)
     uint32_t offset = READ(instruction.m_offset).unboxedUInt32();
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
-    if (!Wasm::operationWasmTableFill(instance, instruction.m_tableIndex, offset, fill, size))
+    if (!Wasm::tableFill(instance, instruction.m_tableIndex, offset, fill, size))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();
 }
@@ -532,14 +541,16 @@ WASM_SLOW_PATH_DECL(table_grow)
     auto instruction = pc->as<WasmTableGrow>();
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
-    WASM_RETURN(Wasm::operationWasmTableGrow(instance, instruction.m_tableIndex, fill, size));
+    WASM_RETURN(Wasm::tableGrow(instance, instruction.m_tableIndex, fill, size));
 }
 
 WASM_SLOW_PATH_DECL(grow_memory)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmGrowMemory>();
     int32_t delta = READ(instruction.m_delta).unboxedInt32();
-    WASM_RETURN(Wasm::operationGrowMemory(callFrame, instance, delta));
+    WASM_RETURN(Wasm::growMemory(instance, delta));
 }
 
 inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
@@ -653,6 +664,8 @@ static size_t jsrSize()
 
 WASM_SLOW_PATH_DECL(call_builtin)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmCallBuiltin>();
     Register* stackBottom = callFrame->registers() - instruction.m_stackOffset;
     Register* stackStart = stackBottom + CallFrame::headerSizeInRegisters + /* indirect call target */ 1;
@@ -682,7 +695,7 @@ WASM_SLOW_PATH_DECL(call_builtin)
         uint32_t dstAddress = takeGPR().unboxedUInt32();
         uint32_t targetValue = takeGPR().unboxedUInt32();
         uint32_t count = takeGPR().unboxedUInt32();
-        if (!Wasm::operationWasmMemoryFill(instance, dstAddress, targetValue, count))
+        if (!Wasm::memoryFill(instance, dstAddress, targetValue, count))
             WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
         WASM_END();
     }
@@ -690,7 +703,7 @@ WASM_SLOW_PATH_DECL(call_builtin)
         uint32_t dstAddress = takeGPR().unboxedUInt32();
         uint32_t srcAddress = takeGPR().unboxedUInt32();
         uint32_t count = takeGPR().unboxedUInt32();
-        if (!Wasm::operationWasmMemoryCopy(instance, dstAddress, srcAddress, count))
+        if (!Wasm::memoryCopy(instance, dstAddress, srcAddress, count))
             WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
         WASM_END();
     }
@@ -699,13 +712,13 @@ WASM_SLOW_PATH_DECL(call_builtin)
         uint32_t srcAddress = takeGPR().unboxedUInt32();
         uint32_t length = takeGPR().unboxedUInt32();
         uint32_t dataSegmentIndex = takeGPR().unboxedUInt32();
-        if (!Wasm::operationWasmMemoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length))
+        if (!Wasm::memoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length))
             WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
         WASM_END();
     }
     case Wasm::LLIntBuiltin::TableSize: {
         uint32_t tableIndex = takeGPR().unboxedUInt32();
-        int32_t result = Wasm::operationGetWasmTableSize(instance, tableIndex);
+        int32_t result = Wasm::tableSize(instance, tableIndex);
         gprStart[0] = static_cast<EncodedJSValue>(result);
         WASM_END();
     }
@@ -715,18 +728,18 @@ WASM_SLOW_PATH_DECL(call_builtin)
         int32_t length = takeGPR().unboxedInt32();
         uint32_t dstTableIndex = takeGPR().unboxedUInt32();
         uint32_t srcTableIndex = takeGPR().unboxedUInt32();
-        if (!Wasm::operationWasmTableCopy(instance, dstTableIndex, srcTableIndex, dstOffset, srcOffset, length))
+        if (!Wasm::tableCopy(instance, dstTableIndex, srcTableIndex, dstOffset, srcOffset, length))
             WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
         WASM_END();
     }
     case Wasm::LLIntBuiltin::DataDrop: {
         uint32_t dataSegmentIndex = takeGPR().unboxedUInt32();
-        Wasm::operationWasmDataDrop(instance, dataSegmentIndex);
+        Wasm::dataDrop(instance, dataSegmentIndex);
         WASM_END();
     }
     case Wasm::LLIntBuiltin::ElemDrop: {
         uint32_t elementIndex = takeGPR().unboxedUInt32();
-        Wasm::operationWasmElemDrop(instance, elementIndex);
+        Wasm::elemDrop(instance, elementIndex);
         WASM_END();
     }
     default:
@@ -756,7 +769,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_wait32)
     unsigned offset = instruction.m_offset;
     uint32_t value = READ(instruction.m_value).unboxedInt32();
     int64_t timeout = READ(instruction.m_timeout).unboxedInt64();
-    int32_t result = Wasm::operationMemoryAtomicWait32(instance, base, offset, value, timeout);
+    int32_t result = Wasm::memoryAtomicWait32(instance, base, offset, value, timeout);
     if (result < 0)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     WASM_RETURN(result);
@@ -769,7 +782,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_wait64)
     unsigned offset = instruction.m_offset;
     uint64_t value = READ(instruction.m_value).unboxedInt64();
     int64_t timeout = READ(instruction.m_timeout).unboxedInt64();
-    int32_t result = Wasm::operationMemoryAtomicWait64(instance, base, offset, value, timeout);
+    int32_t result = Wasm::memoryAtomicWait64(instance, base, offset, value, timeout);
     if (result < 0)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     WASM_RETURN(result);
@@ -781,7 +794,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_notify)
     unsigned base = READ(instruction.m_pointer).unboxedInt32();
     unsigned offset = instruction.m_offset;
     int32_t count = READ(instruction.m_count).unboxedInt32();
-    int32_t result = Wasm::operationMemoryAtomicNotify(instance, base, offset, count);
+    int32_t result = Wasm::memoryAtomicNotify(instance, base, offset, count);
     if (result < 0)
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     WASM_RETURN(result);
@@ -789,7 +802,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_notify)
 
 WASM_SLOW_PATH_DECL(throw)
 {
-    instance->storeTopCallFrame(callFrame);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
@@ -824,7 +837,7 @@ WASM_SLOW_PATH_DECL(throw)
 
 WASM_SLOW_PATH_DECL(rethrow)
 {
-    instance->storeTopCallFrame(callFrame);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
@@ -1101,7 +1114,8 @@ WASM_SLOW_PATH_DECL(i64_trunc_sat_f64_s)
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);
-    WASM_RETURN_TWO(operationWasmToJSException(callFrame, exceptionType, instance), nullptr);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+    WASM_RETURN_TWO(Wasm::throwWasmToJSException(callFrame, exceptionType, instance), nullptr);
 }
 
 extern "C" SlowPathReturnType slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t x)

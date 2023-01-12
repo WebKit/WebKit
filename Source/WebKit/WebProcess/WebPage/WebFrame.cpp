@@ -288,26 +288,25 @@ void WebFrame::didCommitLoadInAnotherProcess()
     if (!localFrame)
         return;
 
-    ScrollView* parentView { nullptr };
-    if (auto* document = localFrame->document())
-        document->willBeRemovedFromFrame();
-    if (auto* frameView = localFrame->view()) {
-        parentView = frameView->parent();
-        frameView->removeFromParent();
-    }
+    auto* frameLoaderClient = this->frameLoaderClient();
+    if (!frameLoaderClient)
+        return;
+
+    auto invalidator = frameLoaderClient->takeFrameInvalidator();
+    RefPtr ownerElement = coreFrame->ownerElement();
+    auto* ownerRenderer = localFrame->ownerRenderer();
     localFrame->setView(nullptr);
 
-    RefPtr ownerElement = coreFrame->ownerElement();
     parent->tree().removeChild(*coreFrame);
     coreFrame->disconnectOwnerElement();
-    auto client = makeUniqueRef<WebRemoteFrameClient>(*this);
+    auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
 
     auto newFrame = WebCore::RemoteFrame::create(*corePage, m_frameID, ownerElement.get(), WTFMove(client));
     auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
-    if (parentView)
-        parentView->addChild(remoteFrameView);
     // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle.
     newFrame->setView(remoteFrameView.ptr());
+    if (ownerRenderer)
+        ownerRenderer->setWidget(remoteFrameView.ptr());
 
     m_coreFrame = newFrame.get();
     if (ownerElement) {

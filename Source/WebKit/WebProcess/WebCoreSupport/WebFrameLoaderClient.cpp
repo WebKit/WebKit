@@ -119,13 +119,13 @@ using namespace WebCore;
 
 WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
     : m_frame(WTFMove(frame))
+    , m_frameInvalidator(makeScopeExit<Function<void()>>([frame = m_frame] {
+        frame->invalidate();
+    }))
 {
 }
 
-WebFrameLoaderClient::~WebFrameLoaderClient()
-{
-    m_frame->invalidate();
-}
+WebFrameLoaderClient::~WebFrameLoaderClient() = default;
 
 std::optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
 {

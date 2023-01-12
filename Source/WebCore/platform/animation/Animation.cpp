@@ -23,6 +23,7 @@
 #include "Animation.h"
 
 #include "CommonAtomStrings.h"
+#include "WebAnimationUtilities.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 
@@ -48,7 +49,6 @@ Animation::Animation()
     , m_propertySet(false)
     , m_timingFunctionSet(false)
     , m_compositeOperationSet(false)
-    , m_customOrUnknownPropertySet(false)
     , m_isNone(false)
     , m_delayFilled(false)
     , m_directionFilled(false)
@@ -66,7 +66,6 @@ Animation::Animation(const Animation& o)
     : RefCounted<Animation>()
     , m_property(o.m_property)
     , m_name(o.m_name)
-    , m_customOrUnknownProperty(o.m_customOrUnknownProperty)
     , m_iterationCount(o.m_iterationCount)
     , m_delay(o.m_delay)
     , m_duration(o.m_duration)
@@ -86,7 +85,6 @@ Animation::Animation(const Animation& o)
     , m_propertySet(o.m_propertySet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
     , m_compositeOperationSet(o.m_compositeOperationSet)
-    , m_customOrUnknownPropertySet(o.m_customOrUnknownPropertySet)
     , m_isNone(o.m_isNone)
     , m_delayFilled(o.m_delayFilled)
     , m_directionFilled(o.m_directionFilled)
@@ -108,7 +106,6 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_playState == other.m_playState
         && m_compositeOperation == other.m_compositeOperation
         && m_playStateSet == other.m_playStateSet
-        && m_customOrUnknownProperty == other.m_customOrUnknownProperty
         && m_iterationCount == other.m_iterationCount
         && m_delay == other.m_delay
         && m_duration == other.m_duration
@@ -124,13 +121,12 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_nameSet == other.m_nameSet
         && m_timingFunctionSet == other.m_timingFunctionSet
         && m_compositeOperationSet == other.m_compositeOperationSet
-        && m_customOrUnknownPropertySet == other.m_customOrUnknownPropertySet
         && m_isNone == other.m_isNone;
 
     if (!result)
         return false;
 
-    return !matchProperties || (m_property.mode == other.m_property.mode && m_property.id == other.m_property.id && m_propertySet == other.m_propertySet);
+    return !matchProperties || (m_property.mode == other.m_property.mode && m_property.animatableProperty == other.m_property.animatableProperty && m_propertySet == other.m_propertySet);
 }
 
 auto Animation::initialName() -> const Name&
@@ -144,8 +140,7 @@ TextStream& operator<<(TextStream& ts, Animation::TransitionProperty transitionP
     switch (transitionProperty.mode) {
     case Animation::TransitionMode::All: ts << "all"; break;
     case Animation::TransitionMode::None: ts << "none"; break;
-    case Animation::TransitionMode::SingleProperty: ts << nameLiteral(transitionProperty.id); break;
-    case Animation::TransitionMode::CustomProperty: ts << "custom property"; break;
+    case Animation::TransitionMode::SingleProperty: ts << animatablePropertyAsString(transitionProperty.animatableProperty); break;
     case Animation::TransitionMode::UnknownProperty: ts << "unknown property"; break;
     }
     return ts;

@@ -441,11 +441,8 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
     }
     if (primitiveValue.propertyID() == CSSPropertyInvalid) {
         auto stringValue = primitiveValue.stringValue();
-        if (isCustomPropertyName(stringValue))
-            animation.setProperty({ Animation::TransitionMode::CustomProperty, CSSPropertyCustom });
-        else
-            animation.setProperty({ Animation::TransitionMode::UnknownProperty, CSSPropertyInvalid });
-        animation.setCustomOrUnknownProperty(stringValue);
+        auto transitionMode = isCustomPropertyName(stringValue) ? Animation::TransitionMode::SingleProperty : Animation::TransitionMode::UnknownProperty;
+        animation.setProperty({ transitionMode, AtomString { stringValue } });
         return;
     }
 

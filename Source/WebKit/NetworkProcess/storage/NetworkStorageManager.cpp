@@ -345,7 +345,7 @@ void NetworkStorageManager::estimate(const WebCore::ClientOrigin& origin, Comple
     completionHandler(originStorageManager(origin).estimate());
 }
 
-void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& completionHandler)
+void NetworkStorageManager::resetStoragePersistedState(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_closed);

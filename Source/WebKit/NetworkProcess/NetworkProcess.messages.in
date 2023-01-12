@@ -187,7 +187,7 @@ messages -> NetworkProcess LegacyReceiver {
 #if PLATFORM(IOS_FAMILY)
     SetBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period) -> ()
 #endif
-    ClearStorage(PAL::SessionID sessionID) -> ()
+    ResetStoragePersistedState(PAL::SessionID sessionID) -> ()
     CloneSessionStorageForWebPage(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier sourcePage, WebKit::WebPageProxyIdentifier destinationPage)
     DidIncreaseQuota(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, WebKit::QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
     

@@ -383,6 +383,11 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 #define DECLARE_CALL_FRAME(vm) ((vm).topCallFrame)
 #endif
 
+#if USE(BUILTIN_FRAME_ADDRESS)
+#define DECLARE_WASM_CALL_FRAME(instance) DECLARE_CALL_FRAME(instance->vm())
+#else
+#define DECLARE_WASM_CALL_FRAME(instance) ((instance)->temporaryCallFrame())
+#endif
 
 } // namespace JSC
 

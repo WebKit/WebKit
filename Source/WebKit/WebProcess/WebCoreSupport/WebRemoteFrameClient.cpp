@@ -28,9 +28,12 @@
 
 namespace WebKit {
 
-WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame)
+WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
     : m_frame(WTFMove(frame))
+    , m_frameInvalidator(WTFMove(frameInvalidator))
 {
 }
+
+WebRemoteFrameClient::~WebRemoteFrameClient() = default;
 
 }

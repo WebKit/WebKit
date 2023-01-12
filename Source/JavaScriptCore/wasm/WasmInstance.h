@@ -196,6 +196,7 @@ public:
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
     static ptrdiff_t offsetOfCachedMemory() { return OBJECT_OFFSETOF(Instance, m_cachedMemory); }
     static ptrdiff_t offsetOfCachedBoundsCheckingSize() { return OBJECT_OFFSETOF(Instance, m_cachedBoundsCheckingSize); }
+    static ptrdiff_t offsetOfTemporaryCallFrame() { return OBJECT_OFFSETOF(Instance, m_temporaryCallFrame); }
 
     // Tail accessors.
     static constexpr size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }
@@ -222,13 +223,14 @@ public:
     static constexpr size_t offsetOfTablePtr(unsigned numImportFunctions, unsigned i) { return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * i; }
     static constexpr size_t offsetOfGlobalPtr(unsigned numImportFunctions, unsigned numTables, unsigned i) { return roundUpToMultipleOf<sizeof(Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables) + sizeof(Global::Value) * i; }
 
-    void storeTopCallFrame(void* callFrame)
-    {
-        vm().topCallFrame = bitwise_cast<CallFrame*>(callFrame);
-    }
-
     const Tag& tag(unsigned i) const { return *m_tags[i]; }
     void setTag(unsigned, Ref<const Tag>&&);
+
+    CallFrame* temporaryCallFrame() const { return m_temporaryCallFrame; }
+    void setTemporaryCallFrame(CallFrame* callFrame)
+    {
+        m_temporaryCallFrame = callFrame;
+    }
 
 private:
     Instance(VM&, Ref<Module>&&);
@@ -244,6 +246,7 @@ private:
     Ref<Module> m_module;
     RefPtr<Memory> m_memory;
 
+    CallFrame* m_temporaryCallFrame { nullptr };
     Global::Value* m_globals { nullptr };
     FunctionWrapperMap m_functionWrappers;
     BitVector m_globalsToMark;

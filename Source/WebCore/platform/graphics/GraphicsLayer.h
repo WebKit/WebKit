@@ -35,6 +35,7 @@
 #include "GraphicsLayerClient.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "ProcessIdentifier.h"
 #include "Region.h"
 #include "ScrollableArea.h"
 #include "ScrollTypes.h"
@@ -275,8 +276,9 @@ public:
 
     virtual void initialize(Type) { }
 
-    using PlatformLayerID = uint64_t;
-    virtual PlatformLayerID primaryLayerID() const { return 0; }
+    enum PlatformLayerIDType { };
+    using PlatformLayerID = ObjectIdentifier<PlatformLayerIDType>;
+    virtual PlatformLayerID primaryLayerID() const { return { }; }
 
     GraphicsLayerClient& client() const { return *m_client; }
 
@@ -523,7 +525,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     enum class ModelInteraction : uint8_t { Enabled, Disabled };
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
-    virtual PlatformLayerID contentsLayerIDForModel() const { return 0; }
+    virtual PlatformLayerID contentsLayerIDForModel() const { return { }; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
 

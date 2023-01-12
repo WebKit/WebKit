@@ -192,7 +192,7 @@ void RemoteScrollingCoordinatorProxyIOS::establishLayerTreeScrollingRelations(co
 {
     for (auto layerID : m_layersWithScrollingRelations) {
         if (auto* layerNode = remoteLayerTreeHost.nodeForID(layerID)) {
-            layerNode->setActingScrollContainerID(0);
+            layerNode->setActingScrollContainerID({ });
             layerNode->setStationaryScrollContainerIDs({ });
         }
     }

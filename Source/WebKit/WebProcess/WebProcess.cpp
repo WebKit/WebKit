@@ -264,6 +264,7 @@ namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
 
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
 NO_RETURN static void callExit(IPC::Connection*)
 {
 #if OS(WINDOWS)
@@ -273,14 +274,16 @@ NO_RETURN static void callExit(IPC::Connection*)
     _exit(EXIT_SUCCESS);
 #endif
 }
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-static void callExitSoon(IPC::Connection*)
+static void crashAfter10Seconds(IPC::Connection*)
 {
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds the process will exit forcibly.
     static const auto watchdogDelay = 10_s;
     WorkQueue::create("WebKit.WebProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
-        callExit(nullptr);
+        // We use g_error() here to cause a crash and allow debugging this unexpected late exit.
+        g_error("WebProcess didn't exit as expected after the UI process connection was closed");
     });
 }
 #endif
@@ -386,7 +389,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 // atexit handlers are called in the main thread to cleanup resources like EGL displays.
 // Unless the main thread doesn't exit after 10 senconds to avoid leaking the process.
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    IPC::Connection::DidCloseOnConnectionWorkQueueCallback callExitCallback = callExitSoon;
+    IPC::Connection::DidCloseOnConnectionWorkQueueCallback callExitCallback = crashAfter10Seconds;
 #else
     // We call _exit() directly from the background queue in case the main thread is unresponsive
     // and AuxiliaryProcess::didClose() does not get called.

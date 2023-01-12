@@ -42,19 +42,13 @@
 
 namespace WebCore {
 
-static GraphicsLayer::PlatformLayerID generateLayerID()
-{
-    static GraphicsLayer::PlatformLayerID layerID;
-    return ++layerID;
-}
-
 #if COMPILER(MSVC)
 const float PlatformCALayer::webLayerWastedSpaceThreshold = 0.75f;
 #endif
 
 PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
     : m_layerType(layerType)
-    , m_layerID(generateLayerID())
+    , m_layerID(GraphicsLayer::PlatformLayerID::generate())
     , m_owner(owner)
 {
 }

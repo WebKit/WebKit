@@ -31,8 +31,12 @@ let strs = [
 for (let str in strs)
     assert(atob(btoa(str)) === str);
 
+assert(atob(null) === '\x9Eée');
+shouldThrow(() => { atob(undefined); }, "Error: Invalid character in argument for atob.");
+shouldThrow(() => { atob('好'); }, "Error: Invalid character in argument for atob.");
+shouldThrow(() => { atob(); }, "Error: Missing input for atob.");
+
 assert(atob(btoa(null)) === "null");
 assert(atob(btoa(undefined)) === "undefined");
-
-shouldThrow(() => { btoa("嗨"); }, "Error: Invalid argument for btoa.");
-shouldThrow(() => { atob(undefined); }, "Error: Invalid argument for atob.");
+shouldThrow(() => { btoa("嗨"); }, "Error: Invalid character in argument for btoa.");
+shouldThrow(() => { btoa(); }, "Error: Missing input for btoa.");

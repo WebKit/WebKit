@@ -96,7 +96,7 @@ private:
     WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
 #endif
 
-    WebCore::GraphicsLayer::PlatformLayerID m_actingScrollContainerID { 0 };
+    WebCore::GraphicsLayer::PlatformLayerID m_actingScrollContainerID;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_stationaryScrollContainerIDs;
 };
 

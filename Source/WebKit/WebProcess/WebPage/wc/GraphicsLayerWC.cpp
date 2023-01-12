@@ -155,13 +155,6 @@ GraphicsLayerWC::~GraphicsLayerWC()
         m_observer->graphicsLayerRemoved(*this);
 }
 
-GraphicsLayer::PlatformLayerID GraphicsLayerWC::generateLayerID()
-{
-    // 0 and max can't be used for hash keys
-    static GraphicsLayer::PlatformLayerID id = 1;
-    return id++;
-}
-
 GraphicsLayer::PlatformLayerID GraphicsLayerWC::primaryLayerID() const
 {
     return m_layerID;

@@ -2028,7 +2028,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         return;
 
     if (relationAttributes().contains(attrName))
-        relationsNeedUpdate(true);
+        updateRelations(*element, attrName);
 
     if (attrName == roleAttr)
         handleRoleChanged(element, oldValue, newValue);
@@ -4060,6 +4060,40 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
     }
 }
 
+void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType)
+{
+    auto* object = get(&origin);
+    if (!object)
+        return;
+
+    auto relationsIterator = m_relations.find(object->objectID());
+    if (relationsIterator == m_relations.end())
+        return;
+
+    auto targetIDs = relationsIterator->value.take(static_cast<uint8_t>(relationType));
+    auto symmetric = symmetricRelation(relationType);
+    if (symmetric == AXRelationType::None)
+        return;
+
+    for (AXID targetID : targetIDs)
+        removeRelationByID(targetID, object->objectID(), symmetric);
+}
+
+void AXObjectCache::removeRelationByID(AXID originID, AXID targetID, AXRelationType relationType)
+{
+    auto relationsIterator = m_relations.find(originID);
+    if (relationsIterator == m_relations.end())
+        return;
+
+    auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType));
+    if (targetsIterator == relationsIterator->value.end())
+        return;
+
+    targetsIterator->value.removeAllMatching([targetID] (const AXID axID) {
+        return axID == targetID;
+    });
+}
+
 void AXObjectCache::updateRelationsIfNeeded()
 {
     if (!m_relationsNeedUpdate)
@@ -4073,19 +4107,6 @@ void AXObjectCache::updateRelationsIfNeeded()
 void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
 {
     ASSERT(!rootNode.parentNode());
-    struct RelationOrigin {
-        RefPtr<Element> originElement;
-        AtomString targetID;
-        AXRelationType relationType;
-    };
-
-    struct RelationTarget {
-        RefPtr<Element> targetElement;
-        AtomString targetID;
-    };
-
-    Vector<RelationOrigin> origins;
-    Vector<RelationTarget> targets;
     for (auto& element : descendantsOfType<Element>(rootNode)) {
         if (element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag))
             continue;
@@ -4097,53 +4118,65 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
                 updateRelationsForTree(*document);
         }
 
-        // Collect all possible origins, i.e., elements with non-empty relation attributes.
-        for (const auto& attribute : relationAttributes()) {
-            if (m_document.settings().ariaReflectionForElementReferencesEnabled()) {
-                if (Element::isElementReflectionAttribute(attribute)) {
-                    if (auto reflectedElement = element.getElementAttribute(attribute)) {
-                        addRelation(&element, reflectedElement, attributeToRelationType(attribute));
-                        continue;
-                    }
-                } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
-                    if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
-                        for (auto reflectedElement : reflectedElements.value())
-                            addRelation(&element, reflectedElement.get(), attributeToRelationType(attribute));
-                        continue;
-                    }
-                }
-            }
-
-            auto& idsString = element.attributeWithoutSynchronization(attribute);
-            if (idsString.isNull()) {
-                if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {
-                    for (auto& targetElement : defaultARIA->elementsForAttribute(element, attribute))
-                        addRelation(&element, targetElement.get(), attributeToRelationType(attribute));
-                }
-                continue;
-            }
-            SpaceSplitString ids(idsString, SpaceSplitString::ShouldFoldCase::No);
-            for (size_t i = 0; i < ids.size(); ++i)
-                origins.append({ &element, ids[i], attributeToRelationType(attribute) });
-        }
-
-        // Collect all possible targets, i.e., elements with a non-empty id attribute.
-        auto elementID = element.attributeWithoutSynchronization(idAttr);
-        if (!elementID.isEmpty())
-            targets.append({ &element, elementID });
+        for (const auto& attribute : relationAttributes())
+            addRelations(element, attribute);
     }
+}
 
-    for (const auto& origin : origins) {
-        for (const auto& target : targets) {
-            if (origin.originElement == target.targetElement) {
-                // Relationship should be between different elements.
-                continue;
+void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute)
+{
+    if (m_document.settings().ariaReflectionForElementReferencesEnabled()) {
+        if (Element::isElementReflectionAttribute(attribute)) {
+            if (auto reflectedElement = origin.getElementAttribute(attribute)) {
+                addRelation(&origin, reflectedElement, attributeToRelationType(attribute));
+                return;
             }
-
-            if (origin.targetID == target.targetID)
-                addRelation(origin.originElement.get(), target.targetElement.get(), origin.relationType);
+        } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+            if (auto reflectedElements = origin.getElementsArrayAttribute(attribute)) {
+                for (auto reflectedElement : reflectedElements.value())
+                    addRelation(&origin, reflectedElement.get(), attributeToRelationType(attribute));
+                return;
+            }
         }
     }
+
+    auto& value = origin.attributeWithoutSynchronization(attribute);
+    if (value.isNull()) {
+        if (auto* defaultARIA = origin.customElementDefaultARIAIfExists()) {
+            for (auto& target : defaultARIA->elementsForAttribute(origin, attribute))
+                addRelation(&origin, target.get(), attributeToRelationType(attribute));
+        }
+        return;
+    }
+
+    SpaceSplitString ids(value, SpaceSplitString::ShouldFoldCase::No);
+    for (size_t i = 0; i < ids.size(); ++i) {
+        auto* target = origin.treeScope().getElementById(ids[i]);
+        if (!target || target == &origin)
+            continue;
+
+        addRelation(&origin, target, attributeToRelationType(attribute));
+    }
+}
+
+void AXObjectCache::updateRelations(Element& origin, const QualifiedName& attribute)
+{
+    if (origin.hasTagName(metaTag) || origin.hasTagName(headTag) || origin.hasTagName(scriptTag))
+        return;
+
+    auto relationType = attributeToRelationType(attribute);
+    if (relationType == AXRelationType::None) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    removeRelations(origin, relationType);
+    addRelations(origin, attribute);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->relationsNeedUpdate(true);
+#endif
 }
 
 void AXObjectCache::relationsNeedUpdate(bool needUpdate)

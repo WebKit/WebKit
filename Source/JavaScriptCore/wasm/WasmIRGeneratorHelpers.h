@@ -108,24 +108,13 @@ static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<Exc
 static inline void emitRethrowImpl(CCallHelpers& jit)
 {
     // Instance in argumentGPR0
-    // frame pointer in argumentGPR1
-    // exception pointer in argumentGPR2
+    // exception pointer in argumentGPR1
 
     GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR0;
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), scratch);
-    {
-        auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, scratch, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
-        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), scratch);
-        auto loadedCase = jit.jump();
-
-        preciseAllocationCase.link(&jit);
-        jit.loadPtr(CCallHelpers::Address(scratch, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), scratch);
-
-        loadedCase.link(&jit);
-    }
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfVM()), scratch);
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(scratch);
 
+    jit.prepareWasmCallOperation(GPRInfo::argumentGPR0);
     CCallHelpers::Call call = jit.call(OperationPtrTag);
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
@@ -136,26 +125,15 @@ static inline void emitRethrowImpl(CCallHelpers& jit)
 static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
 {
     // Instance in argumentGPR0
-    // frame pointer in argumentGPR1
     // arguments to the exception off of stack pointer
 
     GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR0;
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), scratch);
-    {
-        auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, scratch, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
-        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), scratch);
-        auto loadedCase = jit.jump();
-
-        preciseAllocationCase.link(&jit);
-        jit.loadPtr(CCallHelpers::Address(scratch, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), scratch);
-
-        loadedCase.link(&jit);
-    }
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfVM()), scratch);
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(scratch);
 
-    jit.move(MacroAssembler::TrustedImm32(exceptionIndex), GPRInfo::argumentGPR2);
-    jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR3);
+    jit.move(MacroAssembler::TrustedImm32(exceptionIndex), GPRInfo::argumentGPR1);
+    jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR2);
+    jit.prepareWasmCallOperation(GPRInfo::argumentGPR0);
     CCallHelpers::Call call = jit.call(OperationPtrTag);
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.addLinkTask([call] (LinkBuffer& linkBuffer) {

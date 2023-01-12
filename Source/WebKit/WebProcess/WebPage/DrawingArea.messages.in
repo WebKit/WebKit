@@ -35,8 +35,8 @@ messages -> DrawingArea NotRefCounted {
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 
-    AcceleratedAnimationDidStart(uint64_t layerID, String key, MonotonicTime startTime)
-    AcceleratedAnimationDidEnd(uint64_t layerID, String key)
+    AcceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, String key, MonotonicTime startTime)
+    AcceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, String key)
     
     AddTransactionCallbackID(WebKit::CallbackID callbackID)
 #endif

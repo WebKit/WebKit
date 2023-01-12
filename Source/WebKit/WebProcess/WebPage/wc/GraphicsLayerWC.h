@@ -118,13 +118,11 @@ private:
     VisibleAndCoverageRects computeVisibleAndCoverageRect(WebCore::TransformState&, bool preserves3D) const;
     void recursiveCommitChanges(const WebCore::TransformState&);
 
-    static GraphicsLayer::PlatformLayerID generateLayerID();
-
     friend class WTF::DoublyLinkedListNode<GraphicsLayerWC>;
 
     GraphicsLayerWC* m_prev;
     GraphicsLayerWC* m_next;
-    WebCore::GraphicsLayer::PlatformLayerID m_layerID { generateLayerID() };
+    WebCore::GraphicsLayer::PlatformLayerID m_layerID { WebCore::GraphicsLayer::PlatformLayerID::generate() };
     Observer* m_observer;
     std::unique_ptr<WCTiledBacking> m_tiledBacking;
     PlatformLayer* m_platformLayer { nullptr };

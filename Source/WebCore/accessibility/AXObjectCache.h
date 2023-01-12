@@ -528,6 +528,10 @@ private:
     static AXRelationType symmetricRelation(AXRelationType);
     void addRelation(Element*, Element*, AXRelationType);
     void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddingSymmetricRelation = AddingSymmetricRelation::No);
+    void removeRelationByID(AXID originID, AXID targetID, AXRelationType);
+    void addRelations(Element&, const QualifiedName&);
+    void updateRelations(Element&, const QualifiedName&);
+    void removeRelations(Element&, AXRelationType);
     void updateRelationsIfNeeded();
     void updateRelationsForTree(ContainerNode&);
     void relationsNeedUpdate(bool);

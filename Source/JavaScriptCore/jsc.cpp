@@ -1389,12 +1389,25 @@ JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame*
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* string = callFrame->argument(0).toString(globalObject);
+
+    if (!callFrame->argumentCount())
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for atob."_s)));
+
+    JSValue jsValue = callFrame->argument(0);
+    if (jsValue.isUndefined())
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
+
+    auto* string = jsValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto decodedData = base64Decode(string->value(globalObject), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
+    String encodedString = string->value(globalObject);
+
+    if (encodedString.isNull())
+        return JSValue::encode(jsEmptyString(vm));
+
+    auto decodedData = base64Decode(encodedString, { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
     if (!decodedData)
-        throwException(globalObject, scope, createError(globalObject, "Invalid argument for atob."_s));
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
 
     return JSValue::encode(jsString(vm, String(decodedData->data(), decodedData->size())));
 }
@@ -1403,6 +1416,10 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!callFrame->argumentCount())
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for btoa."_s)));
+
     auto* string = callFrame->argument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -1412,7 +1429,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
         return JSValue::encode(jsEmptyString(vm));
 
     if (!stringToEncode.isAllLatin1())
-        throwException(globalObject, scope, createError(globalObject, "Invalid argument for btoa."_s));
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for btoa."_s)));
 
     String encodedString = base64EncodeToString(stringToEncode.latin1());
     return JSValue::encode(jsString(vm, encodedString));

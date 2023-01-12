@@ -28,6 +28,7 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
+#import "SharedMemory.h"
 #import <CoreText/CoreText.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/DataDetectorElementInfo.h>
@@ -435,7 +436,14 @@ void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const We
     const auto& creationData = platformData.creationData();
     encoder << static_cast<bool>(creationData);
     if (creationData) {
-        encoder << creationData->fontFaceData;
+        WebKit::SharedMemory::Handle handle;
+        {
+            auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(creationData->fontFaceData);
+            if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
+                handle = WTFMove(*memoryHandle);
+        }
+        encoder << creationData->fontFaceData->size();
+        encoder << WTFMove(handle);
         encoder << creationData->itemInCollection;
     } else {
         auto options = CTFontDescriptorGetOptions(fontDescriptor.get());
@@ -531,19 +539,31 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         return std::nullopt;
 
     if (*includesCreationData) {
-        std::optional<Ref<WebCore::FragmentedSharedBuffer>> fontFaceData;
-        decoder >> fontFaceData;
-        if (!fontFaceData)
+        std::optional<uint64_t> bufferSize;
+        decoder >> bufferSize;
+        if (!bufferSize)
             return std::nullopt;
 
-        auto localFontFaceData = fontFaceData.value()->makeContiguous();
+        std::optional<WebKit::SharedMemory::Handle> handle;
+        decoder >> handle;
+        if (!handle)
+            return std::nullopt;
+
+        auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
+        if (!sharedMemoryBuffer)
+            return std::nullopt;
+
+        if (sharedMemoryBuffer->size() < *bufferSize)
+            return std::nullopt;
+
+        auto fontFaceData = sharedMemoryBuffer->createSharedBuffer(*bufferSize);
 
         std::optional<String> itemInCollection;
         decoder >> itemInCollection;
         if (!itemInCollection)
             return std::nullopt;
 
-        auto fontCustomPlatformData = createFontCustomPlatformData(localFontFaceData, *itemInCollection);
+        auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, *itemInCollection);
         if (!fontCustomPlatformData)
             return std::nullopt;
         auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
@@ -552,7 +572,7 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes->get()));
         auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), *size, nullptr));
 
-        auto creationData = WebCore::FontPlatformData::CreationData { localFontFaceData, *itemInCollection };
+        auto creationData = WebCore::FontPlatformData::CreationData { fontFaceData, *itemInCollection };
         return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, &creationData);
     }
 
