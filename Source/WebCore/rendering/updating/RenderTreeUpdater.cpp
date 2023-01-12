@@ -110,6 +110,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     m_styleUpdate = WTFMove(styleUpdate);
 
     for (auto& root : m_styleUpdate->roots()) {
+        if (&root->document() != &m_document)
+            continue;
         auto* renderingRoot = findRenderingRoot(*root);
         if (!renderingRoot)
             continue;
