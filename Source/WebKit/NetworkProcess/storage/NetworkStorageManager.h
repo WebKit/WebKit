@@ -85,7 +85,7 @@ public:
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     void close(CompletionHandler<void()>&&);
-    void clearStorageForTesting(CompletionHandler<void()>&&);
+    void resetStoragePersistedState(CompletionHandler<void()>&&);
     void clearStorageForWebPage(WebPageProxyIdentifier);
     void cloneSessionStorageForWebPage(WebPageProxyIdentifier, WebPageProxyIdentifier);
     void didIncreaseQuota(WebCore::ClientOrigin&&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);

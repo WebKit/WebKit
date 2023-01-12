@@ -252,7 +252,7 @@ public:
     void networkProcessDidTerminate(ProcessTerminationReason);
     
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
-    void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
+    void resetStoragePersistedState(PAL::SessionID, CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
 #endif

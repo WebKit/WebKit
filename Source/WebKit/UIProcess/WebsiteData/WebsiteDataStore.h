@@ -376,7 +376,7 @@ public:
     static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
 
     void resetQuota(CompletionHandler<void()>&&);
-    void clearStorage(CompletionHandler<void()>&&);
+    void resetStoragePersistedState(CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
 #endif

@@ -879,9 +879,26 @@ void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* cont
     });
 }
 
+void WKWebsiteDataStoreResetStoragePersistedState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreResetStoragePersistedStateCallback callback)
+{
+    WebKit::toImpl(dataStoreRef)->resetStoragePersistedState([context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
 void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearStorageCallback callback)
 {
-    WebKit::toImpl(dataStoreRef)->clearStorage([context, callback] {
+    OptionSet<WebKit::WebsiteDataType> dataTypes = {
+        WebKit::WebsiteDataType::LocalStorage,
+        WebKit::WebsiteDataType::IndexedDBDatabases,
+        WebKit::WebsiteDataType::FileSystem,
+        WebKit::WebsiteDataType::DOMCache,
+#if ENABLE(SERVICE_WORKER)
+        WebKit::WebsiteDataType::ServiceWorkerRegistrations
+#endif
+    };
+    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
         if (callback)
             callback(context);
     });
