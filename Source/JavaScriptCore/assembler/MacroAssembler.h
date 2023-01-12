@@ -2171,6 +2171,11 @@ public:
 
     // This leaks memory. Must not be used for production.
     JS_EXPORT_PRIVATE void probeDebug(Function<void(Probe::Context&)>);
+    template<bool B> void probeDebugIf(Function<void(Probe::Context&)> func)
+    {
+        if constexpr (B)
+            probeDebug(WTFMove(func));
+    }
 
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.

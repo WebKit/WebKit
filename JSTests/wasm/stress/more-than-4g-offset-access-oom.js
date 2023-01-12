@@ -19,4 +19,4 @@ async function test() {
     }, WebAssembly.RuntimeError, `Out of bounds memory access`);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

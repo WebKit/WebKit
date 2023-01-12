@@ -106,7 +106,7 @@ struct AirIRGeneratorBase {
 
     using ResultList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
-    using CallPatchpointData = std::pair<B3::PatchpointValue*, Box<PatchpointExceptionHandle>>;
+    using CallPatchpointData = std::tuple<B3::PatchpointValue*, Box<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
 
     struct ControlData {
         ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
@@ -902,9 +902,6 @@ public:
     bool m_makesCalls { false };
     bool m_makesTailCalls { false };
 
-    // This tracks the maximum stack offset for a tail call, to be used in the stack overflow check.
-    Checked<int32_t> m_tailCallStackOffsetFromFP { 0 };
-
     std::optional<bool> m_hasExceptionHandlers;
 
     HashMap<BlockSignature, B3::Type> m_tupleMap;
@@ -1027,7 +1024,6 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
 
         {
             const Checked<int32_t> wasmFrameSize = m_code.frameSize();
-            const Checked<int32_t> wasmTailCallFrameSize = -m_tailCallStackOffsetFromFP;
             const unsigned minimumParentCheckSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), 1024);
             const unsigned extraFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max<uint32_t>(
                 // This allows us to elide stack checks for functions that are terminal nodes in the call
@@ -1046,13 +1042,9 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
             bool frameSizeNeedsOverflowCheck = checkSize >= static_cast<int32_t>(minimumParentCheckSize);
             bool needsOverflowCheck = frameSizeNeedsOverflowCheck;
 
-            if (m_makesCalls) {
+            if (m_makesCalls || m_makesTailCalls) {
                 needsOverflowCheck = true;
                 checkSize = checkedSum<int32_t>(checkSize, extraFrameSize).value();
-            } else if (m_makesTailCalls) {
-                Checked<int32_t> tailCallCheckSize = std::max<Checked<int32_t>>(wasmTailCallFrameSize + extraFrameSize, 0);
-                checkSize = frameSizeNeedsOverflowCheck ? std::max<Checked<int32_t>>(tailCallCheckSize, wasmFrameSize).value() : tailCallCheckSize.value();
-                needsOverflowCheck = needsOverflowCheck || checkSize >= static_cast<int32_t>(minimumParentCheckSize);
             }
 
             bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
@@ -3146,18 +3138,14 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
     const auto& callingConvention = wasmCallingConvention();
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
-    Checked<int32_t> tailCallStackOffsetFromFP;
+
+    const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
+    CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
 
     if (isTailCall) {
         m_makesTailCalls = true;
-
-        const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
-        CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
-        Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
-        tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
-
-        m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, tailCallStackOffsetFromFP);
     } else {
         m_makesCalls = true;
         for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
@@ -3167,12 +3155,11 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
     auto emitUnlinkedWasmToWasmCall = [&, this](CallPatchpointData data) -> void {
-        CallPatchpointData::first_type patchpoint = data.first;
-        CallPatchpointData::second_type handle = data.second;
-        patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        auto& [patchpoint, handle, prepareCall] = data;
+        patchpoint->setGenerator([this, unlinkedWasmToWasmCalls, functionIndex, handle = handle, prepareCall = prepareCall, isTailCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if (isTailCall)
-                prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+            if (prepareCall)
+                prepareCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to wasm unlinked function call patchpoint");
@@ -3184,16 +3171,15 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
     };
 
     auto emitCallToEmbedder = [&, this](CallPatchpointData data) -> void {
-        CallPatchpointData::first_type patchpoint = data.first;
-        CallPatchpointData::second_type handle = data.second;
+        auto& [patchpoint, handle, prepareCall] = data;
         // We need to clobber all potential pinned registers since we might be leaving the instance.
         // We pessimistically assume we could be calling to something that is bounds checking.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
         patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-        patchpoint->setGenerator([this, handle, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        patchpoint->setGenerator([this, handle = handle, prepareCall = prepareCall, isTailCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if (isTailCall)
-                prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+            if (prepareCall)
+                prepareCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
@@ -3231,13 +3217,13 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
         append(isEmbedderBlock, Move, Arg::addr(jumpDestination), jumpDestination);
 
         if (isTailCall) {
-            emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(isWasmBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args));
-            emitCallToEmbedder(self().emitTailCallPatchpoint(isEmbedderBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
+            emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(isWasmBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args));
+            emitCallToEmbedder(self().emitTailCallPatchpoint(isEmbedderBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
             return { };
         }
 
         auto data = self().emitCallPatchpoint(isWasmBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo);
-        auto* patchpoint = data.first;
+        auto* patchpoint = std::get<0>(data);
 
         // We need to clobber all potential pinned registers since we might be leaving the instance.
         // We pessimistically assume we could be calling to something that is bounds checking.
@@ -3263,12 +3249,12 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
     } // isImportedFunctionFromFunctionIndexSpace
 
     if (isTailCall) {
-        emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args));
+        emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args));
         return { };
     }
 
     auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo);
-    auto* patchpoint = data.first;
+    auto* patchpoint = std::get<0>(data);
 
     // We need to clobber the size register since the LLInt always bounds checks
     if (self().useSignalingMemory() || m_info.memory.isShared())
@@ -3446,19 +3432,15 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
 
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
         const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
-        CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
-        Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
-        Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
-        m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, tailCallStackOffsetFromFP);
+        CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
+        CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
 
-        auto data = self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args, { { calleeCode, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } });
-        auto patchpoint = data.first;
-        auto exceptionHandle = data.second;
-        patchpoint->setGenerator([=, this](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        auto [patchpoint, handle, prepareCall] =
+            self().emitTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { calleeCode, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } });
+        ASSERT(!handle);
+        patchpoint->setGenerator([prepareCall = prepareCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            if (exceptionHandle)
-                exceptionHandle->generate(jit, params, this);
+            prepareCall->run(jit, params);
             jit.farJump(params[0].gpr(), WasmEntryPtrTag);
         });
         return { };
@@ -3469,9 +3451,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
     for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
         results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
 
-    auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { calleeCode, B3::ValueRep::SomeRegister } });
-    auto* patchpoint = data.first;
-    auto exceptionHandle = data.second;
+    auto [patchpoint, handle, prepareCall] = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { calleeCode, B3::ValueRep::SomeRegister } });
+    ASSERT(!prepareCall);
 
     // We need to clobber all potential pinned registers since we might be leaving the instance.
     // We pessimistically assume we're always calling something that is bounds checking so
@@ -3481,10 +3462,10 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
 
     patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
-    patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patchpoint->setGenerator([handle = handle, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        if (exceptionHandle)
-            exceptionHandle->generate(jit, params, this);
+        if (handle)
+            handle->generate(jit, params, this);
         jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
     });
 

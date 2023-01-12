@@ -44,8 +44,11 @@ template<typename Collection>
 void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collection)
 {
     unsigned frameSize = 0;
-    for (StackSlot* slot : collection)
+    for (StackSlot* slot : collection) {
+        if (slot->offsetFromFP() > 0)
+            continue;
         frameSize = std::max(frameSize, static_cast<unsigned>(-slot->offsetFromFP()));
+    }
     code.setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize) + stackAdjustmentForAlignment());
 }
 

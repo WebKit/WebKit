@@ -560,7 +560,7 @@ public:
 
     // Calls
     CallPatchpointData WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, B3::Type, const ResultList&, const Vector<TypedTmp>& tmpArgs, const CallInformation&, Vector<ConstrainedTmp> patchArgs = { });
-    CallPatchpointData WARN_UNUSED_RETURN emitTailCallPatchpoint(BasicBlock*, const Checked<int32_t>& tailCallStackOffsetFromFP, const Vector<ArgumentLocation>&, const Vector<TypedTmp>& tmpArgs, Vector<ConstrainedTmp> patchArgs = { });
+    CallPatchpointData WARN_UNUSED_RETURN emitTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<TypedTmp>& tmpArgSourceLocations, Vector<ConstrainedTmp> patchArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
@@ -2057,15 +2057,23 @@ auto AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, B3::Type returnType
     }
     auto exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
     emitPatchpoint(block, patchpoint, results, WTFMove(patchArgs));
-    return { patchpoint, WTFMove(exceptionHandle) };
+    return { patchpoint, WTFMove(exceptionHandle), nullptr };
 }
 
-auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<int32_t>& tailCallStackOffsetFromFP, const Vector<ArgumentLocation>& constrainedArgLocations, const Vector<TypedTmp>& tmpArgs, Vector<ConstrainedTmp> patchArgs) -> CallPatchpointData
+// See also: https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/.
+auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<TypedTmp>& tmpArgSourceLocations, Vector<ConstrainedTmp> patchArgs) -> CallPatchpointData
 {
-    //    Layout of stack right before tail call F -> G
+    // Our args are placed in argument registers or locals.
+    // We must:
+    // - Restore callee saves
+    // - Restore and re-sign lr
+    // - Restore our caller's FP so that our stack frame is always valid
+    // - Move stack args from our stack to their final resting spots. Note that they might overlap.
+    // - Move argumentCountIncludingThis to its final spot, since WASM uses it for exceptions.
+    // Layout of stack here, and after
     //
     //
-    //    |          ......            |                                                                      |          ......            |
+    //    |          Original Caller   |                                                                      |          ......            |
     //    +----------------------------+ <-- 0x5501ff4ff0                                                     +----------------------------+ <-- 0x5501ff4ff0
     //    |           F.argN           |    |                                    +-------------------->       |           G.argM           |    |
     //    +----------------------------+    | lower address                      |                            +----------------------------+    | lower address
@@ -2080,9 +2088,9 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
     //    |  F.callee (aka F, unused in wasm) |                                  |                            |        G.callee            |
     //    +----------------------------+                                         |                            +----------------------------+
     //    |        F.codeBlock         |                               (shuffleStackArgs...)                  |        G.codeBlock         |
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    | return-address after F     |                                         |                            |   return-address after F   |
     //    +----------------------------+                                         |        SP at G prologue -> +----------------------------+
+    //    | return-address after F     |                                         |                            |   return-address after F   |
+    //    +----------------------------+                                         |                            +----------------------------+
     //    |          F.caller.FP       |                                         |                            |          F.caller.FP       |
     //    +----------------------------+  <- F.FP                                |    G.FP after G prologue-> +----------------------------+
     //    |          callee saves      |                                         |                            |          callee saves      |
@@ -2097,28 +2105,110 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
     //    +----------------------------|  <- SP |                                       SP after G prologue-> +----------------------------+
     //                                          |
     //                                          +- New tmp stack slots are eventually allocated here
+    //    Note that F.FP is not the same as G.FP because the number of args may differ.
+
+    // This diagram is implemented by:
+    // callInformationFor, role = caller:
+    //  - CallFrame::headerSizeInRegisters counts CallerFrameAndPC, codeBlock, callee, argumentCountIncludingThis after stack args
+    // emitFunctionPrologue(): push lr, fp then set fp = sp. Counted as CallerFrameAndPC in callInformationFor
+    // defaultPrologueGenerator(): push callee saves below fp
+
+    // We must not clobber any local because source args may be located anywhere.
+    // First slot here is the last argument to the caller, a.k.a the first stack slot that belongs to us.
+    const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
+    const Checked<int32_t> offsetOfNewFPFromFirstSlot = checkedProduct<int32_t>(-1, WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfoAsCallee.headerAndArgumentStackSizeInBytes));
+    const Checked<int32_t> newFPOffsetFromFP = checkedSum<int32_t>(offsetOfFirstSlotFromFP + offsetOfNewFPFromFirstSlot);
+
+    ASSERT(wasmCalleeInfoAsCallee.params.size() == tmpArgSourceLocations.size());
+    for (unsigned i = 0; i < patchArgs.size(); ++i) {
+        // We will clobber our stack, so we shouldn't be reading anything from it after this point.
+        ASSERT(patchArgs[i].rep.isReg() || patchArgs[i].rep.isConstant());
+        ASSERT(!patchArgs[i].rep.isGPR() || patchArgs[i].rep.gpr() != MacroAssembler::dataTempRegister);
+        ASSERT(!patchArgs[i].rep.isGPR() || patchArgs[i].rep.gpr() != MacroAssembler::memoryTempRegister);
+    }
+
+    // Place args in their final register, final stack slot (if it doesn't clobber anything important) or a temporary stack slot.
+    // Ideally any register would be fine as a destination as long as it is not callee-save, but there isn't a way to express that in air.
+    // We have to be careful to ensure that our all of our args are in their final order and contiguous at the top of the stack. 
+    // Here is an example of why:
     //
-    //  See https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/ for a more in-depth explanation.
+    // arg 0
+    // ------
+    // header
+    // ------  < FP
+    // callee saves and other locals
+    // ------
+    // Arg Stack Slot 0
+    // ------
+    // ...
+    // ------
+    // Arg Stack Slot < 50
+    // Top of stack
+    //
+    // Inside this patchpoint, this needs to become:
+    //
+    // arg 0  (from a localm copied in air before entering the patchpoint)
+    // ------
+    // arg 1  (from a local, copied in air before entering the patchpoint)
+    // ------
+    // ...    (copied from arg stack slot 0)
+    // ------
+    // arg 50 (from arg stack slot 0)
+    // ------
+    // rest of the new frame
+    // ------
+    // We are guaranteed that Arg 0 does not overlap with arg stack slot 0. After some small fixed number of slots,
+    // this guarantee goes away. Since Air doesn't let us make a stack slot with a minimum fp offset, we must guarantee that
+    // the number of args is smaller than or equal to the number of arg stack slots at the top of the stack, and that
+    // they are in their final order. Then, it is fine if they overlap.
 
-    auto shuffleStackArg = [this, block, tailCallStackOffsetFromFP] (Tmp tmp, int32_t offsetFromSP) -> void {
-        Checked<int32_t> offsetFromFP = tailCallStackOffsetFromFP + offsetFromSP;
+    ASSERT(!m_code.stackIsAllocated());
+    const bool mightClobberLocals = newFPOffsetFromFP < 0;
+    intptr_t argumentBufferOffsetFromSP = 2 * 8;
+    const unsigned firstPatchArg = patchArgs.size();
 
-        if (offsetFromFP < 0) {
-            StackSlot* stackSlot = m_code.addStackSlot(sizeof(Register), StackSlotKind::Locked);
-            stackSlot->setOffsetFromFP(offsetFromFP);
-            append(block, tmp.isGP() ? Move : MoveDouble, tmp, Arg::stack(stackSlot));
-            return;
+    for (unsigned i = 0; i < tmpArgSourceLocations.size(); ++i) {
+        // Remember that we need to copy these in order, with higher addresses first.
+        TypedTmp src = tmpArgSourceLocations[i];
+        auto dst = wasmCalleeInfoAsCallee.params[i];
+        // We are viewing this as the callee.
+        ASSERT(!dst.location.isStackArgument());
+        ASSERT(dst.width >= src.type().width());
+        if (!dst.location.isStack()) {
+            // We will restore callee saves before jumping to the callee.
+            // The calling convention should guarantee this anyway, but let's document it just in case.
+            ASSERT(!RegisterSetBuilder::calleeSaveRegisters().contains(dst.location.isGPR() ? Reg(dst.location.jsr().gpr()) : Reg(dst.location.fpr()), IgnoreVectors));
+            ASSERT(!dst.location.isGPR() || dst.location.jsr().gpr() != MacroAssembler::dataTempRegister);
+            ASSERT(!dst.location.isGPR() || dst.location.jsr().gpr() != MacroAssembler::memoryTempRegister);
+            patchArgs.append(ConstrainedTmp(src, dst));
+            continue;
         }
+        ASSERT(dst.width >= Width64);
+        if (!mightClobberLocals) {
+            StackSlot* slot = m_code.addStackSlot(bytesForWidth(dst.width), StackSlotKind::Locked);
+            RELEASE_ASSERT(dst.location.offsetFromFP() >= Checked<intptr_t>(CallFrameSlot::thisArgument * sizeof(Register)));
+            auto offsetFromFP = checkedSum<int32_t>(dst.location.offsetFromFP(), newFPOffsetFromFP).value();
+            slot->setOffsetFromFP(offsetFromFP);
+            append(block, moveForType(toB3Type(src.type())), src, Arg::stack(slot));
+            continue;
+        }
+        patchArgs.append(ConstrainedTmp(src, B3::ValueRep::stackArgument(argumentBufferOffsetFromSP)));
+        argumentBufferOffsetFromSP += bytesForWidth(dst.width);
+    }
+    const unsigned lastPatchArg = patchArgs.size();
 
-        append(block, tmp.isGP() ? Move : MoveDouble, tmp, Arg::addr(Tmp(GPRInfo::callFrameRegister), offsetFromFP));
-    };
+    // Save the return pc and the Argument Count Including This slot, which stores exception info for wasm.
+    StackSlot* from = m_code.addStackSlot(sizeof(Register), StackSlotKind::Locked);
+    from->setOffsetFromFP(CallFrameSlot::argumentCountIncludingThis * sizeof(Register));
+    auto argCount = g64();
+    append(block, Move, Arg::stack(from), argCount);
+    patchArgs.append(ConstrainedTmp(argCount, B3::ValueRep::stackArgument(8)));
 
-    auto tmp = g64();
-
-    append(block, Move, Arg::addr(Tmp(MacroAssembler::framePointerRegister), CallFrame::returnPCOffset()), tmp);
-    shuffleStackArg(tmp, -static_cast<int32_t>(sizeof(Register)));
-
-    append(block, Move, Arg::addr(Tmp(MacroAssembler::framePointerRegister)), tmp);
+    from = m_code.addStackSlot(sizeof(Register), StackSlotKind::Locked);
+    from->setOffsetFromFP(CallFrame::returnPCOffset());
+    auto returnPC = g64();
+    append(block, Move, Arg::stack(from), returnPC);
+    patchArgs.append(ConstrainedTmp(returnPC, B3::ValueRep::stackArgument(0)));
 
     auto* patchpoint = addPatchpoint(B3::Void);
     patchpoint->effects.terminal = true;
@@ -2130,21 +2220,13 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobber(clobbers);
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
-
-    for (unsigned i = 0; i < tmpArgs.size(); ++i) {
-        TypedTmp tmp = tmpArgs[i];
-        RELEASE_ASSERT(!tmp.type().isV128());
-        if (constrainedArgLocations[i].location.isStackArgument()) {
-            shuffleStackArg(tmp, constrainedArgLocations[i].location.offsetFromSP());
-            continue;
-        }
-        patchArgs.append(ConstrainedTmp(tmp, constrainedArgLocations[i]));
-    }
-    patchArgs.append({ tmp, B3::ValueRep(MacroAssembler::framePointerRegister) });
-
+    // See prepareForTailCall for the heart of this patchpoint.
     emitPatchpoint(block, patchpoint, Tmp { }, WTFMove(patchArgs));
 
-    return { patchpoint, nullptr };
+    return { patchpoint, nullptr, createSharedTask<B3::StackmapGeneratorFunction>(
+         [firstPatchArg, lastPatchArg, wasmCalleeInfoAsCallee, newFPOffsetFromFP] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            prepareForTailCallImpl(jit, params, wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, newFPOffsetFromFP);
+         }) };
 }
 
 template<typename IntType>

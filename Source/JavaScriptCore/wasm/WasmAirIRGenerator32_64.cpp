@@ -265,7 +265,7 @@ public:
 
     // Calls
     CallPatchpointData WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, B3::Type, const ResultList&, const Vector<TypedTmp>& tmpArgs, const CallInformation&, Vector<ConstrainedTmp> patchArgs = { });
-    CallPatchpointData WARN_UNUSED_RETURN emitTailCallPatchpoint(BasicBlock*, const Checked<int32_t>& tailCallStackOffsetFromFP, const Vector<ArgumentLocation>&, const Vector<TypedTmp>& tmpArgs, Vector<ConstrainedTmp> patchArgs = { });
+    CallPatchpointData WARN_UNUSED_RETURN emitTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<TypedTmp>& tmpArgSourceLocations, Vector<ConstrainedTmp> patchArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addShift64(B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);

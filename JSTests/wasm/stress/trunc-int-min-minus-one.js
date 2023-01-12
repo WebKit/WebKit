@@ -28,4 +28,4 @@ async function test() {
     assert.throws(() => truncU(NaN), WebAssembly.RuntimeError, `Out of bounds Trunc operation (evaluating 'func(...args)')`);
 }
 
-assert.asyncTest(test());
+await assert.asyncTest(test());

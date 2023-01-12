@@ -206,33 +206,170 @@ static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& ji
     jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 }
 
-static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGenerationParams& params, const Checked<int32_t>& tailCallStackOffsetFromFP)
+// See AirIRGenerator64::emitTailCallPatchpoint for the setup before this.
+static inline void prepareForTailCallImpl(CCallHelpers& jit, const B3::StackmapGenerationParams& params, CallInformation wasmCalleeInfoAsCallee, unsigned firstPatchArg, unsigned lastPatchArg, int32_t newFPOffsetFromFP)
 {
-    Checked<int32_t> frameSize = params.code().frameSize();
-    Checked<int32_t> newStackOffset = frameSize + tailCallStackOffsetFromFP;
+    constexpr bool tailCallVerbose = false;
+    const bool mightClobberLocals = newFPOffsetFromFP < 0;
+    
+    AllowMacroScratchRegisterUsage allowScratch(jit);
+    JIT_COMMENT(jit, "Set up tail call, might clobber locals: ", mightClobberLocals);
 
+    // Note: we must only use the memory temp register inside the instructions below.
+    auto tmp = jit.scratchRegister();
+
+    // Set up a valid frame so that we can clobber this one.
     RegisterAtOffsetList calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
+    jit.emitRestore(calleeSaves);
 
-    // We will use sp-based offsets since the frame pointer is already pointing to the previous frame.
-    calleeSaves.adjustOffsets(frameSize);
-    jit.emitRestore(calleeSaves, MacroAssembler::stackPointerRegister);
+    const unsigned frameSize = params.code().frameSize();
 
-    // The return PC was saved on the stack in the tail call patchpoint.
+    auto fpOffsetToSPOffset = [frameSize](unsigned offset) {
+        return checkedSum<intptr_t>(frameSize + offset).value();
+    };
+    auto acit = params[lastPatchArg];
+    auto retPc = params[lastPatchArg + 1];
+    ASSERT(acit.isStack());
+    ASSERT(retPc.isStack());
+
+    JIT_COMMENT(jit, "Let's use the caller's frame, so that we always have a valid frame.");
+    jit.probeDebugIf<tailCallVerbose>([frameSize, fpOffsetToSPOffset, newFPOffsetFromFP, acit, retPc] (Probe::Context& context) {
+        uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+        uint64_t fp = context.gpr<uint64_t>(GPRInfo::callFrameRegister);
+        dataLogLn("Before changing anything: FP: ", RawHex(fp), " SP: ", RawHex(sp));
+        dataLogLn("New FP will be at ", RawHex(sp + fpOffsetToSPOffset(newFPOffsetFromFP)));
+        dataLogLn("ACIT temp original: ", RawHex(context.gpr<uint64_t*>(GPRInfo::callFrameRegister)[acit.offsetFromFP()/sizeof(uint64_t)]));
+        dataLogLn("retPc temp original: ", RawHex(context.gpr<uint64_t*>(GPRInfo::callFrameRegister)[retPc.offsetFromFP()/sizeof(uint64_t)]));
+        ASSERT(sp + frameSize == fp);
+    });
+    jit.loadPtr(CCallHelpers::Address(MacroAssembler::framePointerRegister, CallFrame::callerFrameOffset()), MacroAssembler::framePointerRegister);
+    jit.probeDebugIf<tailCallVerbose>([fpOffsetToSPOffset, acit, retPc] (Probe::Context& context) {
+        uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+        uint64_t fp = context.gpr<uint64_t>(GPRInfo::callFrameRegister);
+        dataLogLn("Used old frame: FP: ", RawHex(fp), " SP: ", RawHex(sp));
+        dataLogLn("ACIT temp off sp: ", RawHex(context.gpr<uint64_t*>(MacroAssembler::stackPointerRegister)[fpOffsetToSPOffset(acit.offsetFromFP())/sizeof(uint64_t)]));
+        dataLogLn("retPc temp off sp: ", RawHex(context.gpr<uint64_t*>(MacroAssembler::stackPointerRegister)[fpOffsetToSPOffset(retPc.offsetFromFP())/sizeof(uint64_t)]));
+
+    });
+
+    intptr_t lastStackArgOfset = std::numeric_limits<intptr_t>::min();
+    JIT_COMMENT(jit, "Copy over args if needed into their final position, clobbering everything.");
+    
+    for (unsigned i = 0; i < wasmCalleeInfoAsCallee.params.size(); ++i) {
+        auto dst = wasmCalleeInfoAsCallee.params[wasmCalleeInfoAsCallee.params.size() - i - 1];
+        ASSERT(!dst.location.isStackArgument());
+        if (!dst.location.isStack() || !mightClobberLocals)
+            continue;
+        auto src = params[firstPatchArg + wasmCalleeInfoAsCallee.params.size() - i - 1];
+        ASSERT(src.isStack());
+        intptr_t srcOffset = fpOffsetToSPOffset(src.offsetFromFP());
+        intptr_t dstOffset = fpOffsetToSPOffset(checkedSum<int32_t>(dst.location.offsetFromFP(), newFPOffsetFromFP).value());
+        ASSERT(srcOffset >= 0);
+        ASSERT(dstOffset >= 0);
+
+        if (tailCallVerbose)
+            dataLogLn("[static] Arg ", i, " sp[", dstOffset, "]", " = sp[", srcOffset, "]; Final location is newFp[", dst.location.offsetFromFP(), "]; newFPOffsetFromFP = ", newFPOffsetFromFP, "; frameSize: ", params.code().frameSize());
+
+        // Assert monotonic continuity.
+        if (lastStackArgOfset == std::numeric_limits<intptr_t>::min())
+            lastStackArgOfset = srcOffset;
+        else
+            lastStackArgOfset -= bytesForWidth(dst.width);
+        ASSERT(lastStackArgOfset == srcOffset);
+        ASSERT(dstOffset >= srcOffset);
+
+        if (dst.width <= Width64)
+            ASSERT(dst.width == Width64);
+        jit.load64(CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset), tmp);
+        jit.probeDebugIf<tailCallVerbose>([i, src, tmp, dstOffset, srcOffset, dst, newFPOffsetFromFP, frameSize = params.code().frameSize()] (Probe::Context& context) {
+            dataLogLn("Temp stack arg copy: ", i, " patch arg: ", src, " value: ", context.gpr<uint64_t>(tmp));
+            dataLogLn("sp[", dstOffset, "]", " = sp[", srcOffset, "]; Final location is newFp[", dst.location.offsetFromFP(), "]; newFPOffsetFromFP = ", newFPOffsetFromFP, "; frameSize: ", frameSize);
+        });
+        jit.store64(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister, dstOffset));
+        if (dst.width > Width64) {
+            JIT_COMMENT(jit, "other 64 bits");
+            jit.load64(CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset + sizeof(Register)), tmp);
+            jit.store64(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister, dstOffset + sizeof(Register)));
+        }
+    }
+
+    RELEASE_ASSERT(!mightClobberLocals || firstPatchArg + wasmCalleeInfoAsCallee.params.size() + 2 >= params.size());
+
+    JIT_COMMENT(jit, "Now we can restore / resign lr and the argument count including this, which in wasm stores exception info.");
+
+    jit.load64(CCallHelpers::Address(MacroAssembler::stackPointerRegister,
+        fpOffsetToSPOffset(acit.offsetFromFP())), tmp);
+    jit.probeDebugIf<tailCallVerbose>([tmp, fpOffsetToSPOffset, newFPOffsetFromFP, acit] (Probe::Context& context) {
+        uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+        intptr_t fpOffset = CallFrameSlot::argumentCountIncludingThis * sizeof(Register);
+        intptr_t newFpOffset = checkedSum<intptr_t>(fpOffset, newFPOffsetFromFP).value();
+        dataLogLn("ArgumentCountIncludingThis fp[", acit.offsetFromFP(), "] or sp[", fpOffsetToSPOffset(acit.offsetFromFP()), "] value: ", RawHex(context.gpr<uint64_t>(tmp)), " overwrites: ", RawHex(bitwise_cast<uint64_t*>(sp)[fpOffsetToSPOffset(newFpOffset)/sizeof(uint64_t)]));
+    });
+    jit.store64(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister,
+        fpOffsetToSPOffset(checkedSum<intptr_t>(CallFrameSlot::argumentCountIncludingThis * sizeof(Register), newFPOffsetFromFP).value())));
+
+    jit.load64(CCallHelpers::Address(MacroAssembler::stackPointerRegister,
+        fpOffsetToSPOffset(retPc.offsetFromFP())), tmp);
+    jit.probeDebugIf<tailCallVerbose>([tmp, fpOffsetToSPOffset, newFPOffsetFromFP, retPc] (Probe::Context& context) {
+        uint64_t sp = context.gpr<uint64_t>(MacroAssembler::stackPointerRegister);
+        intptr_t fpOffset = CallFrame::returnPCOffset();
+        intptr_t newFpOffset = checkedSum<intptr_t>(fpOffset, newFPOffsetFromFP).value();
+        dataLogLn("return pc fp[", retPc.offsetFromFP(), "] or sp[", fpOffsetToSPOffset(retPc.offsetFromFP()), "] value: ", RawHex(context.gpr<uint64_t>(tmp)), " overwrites: ", RawHex(bitwise_cast<uint64_t*>(sp)[fpOffsetToSPOffset(newFpOffset)/sizeof(uint64_t)]));
+    });
+    jit.store64(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister,
+        fpOffsetToSPOffset(checkedSum<intptr_t>(CallFrame::returnPCOffset(), newFPOffsetFromFP).value())));
+
+    // Pop our locals, leaving only the new frame behind as though our original caller had called the callee.
+    // Also pop callee.
+    auto newFPOffsetFromSP = fpOffsetToSPOffset(newFPOffsetFromFP);
+    ASSERT(newFPOffsetFromSP > 0);
+
 #if CPU(X86_64)
-    newStackOffset -= Checked<int32_t>(sizeof(Register));
+    jit.addPtr(MacroAssembler::TrustedImm32(newFPOffsetFromSP + CallerFrameAndPC::returnPCOffset()), MacroAssembler::stackPointerRegister);
+    // Return PC is now at the top of the stack
 #elif CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
-    jit.loadPtr(CCallHelpers::Address(MacroAssembler::stackPointerRegister, newStackOffset - Checked<int32_t>(sizeof(Register))), MacroAssembler::linkRegister);
+    JIT_COMMENT(jit, "The return pointer was loaded above.");
+    jit.move(tmp, MacroAssembler::linkRegister);
 #if CPU(ARM64E)
-    GPRReg callerSP = jit.scratchRegister();
-    jit.addPtr(MacroAssembler::TrustedImm32(frameSize + Checked<int32_t>(sizeof(CallerFrameAndPC))), MacroAssembler::stackPointerRegister, callerSP);
-    jit.untagPtr(callerSP, MacroAssembler::linkRegister);
+    JIT_COMMENT(jit, "The return pointer was signed with the stack height before we pushed lr, fp, see emitFunctionPrologue. newFPOffsetFromSP: ", newFPOffsetFromSP, " newFPOffsetFromFP ", newFPOffsetFromFP);
+    jit.addPtr(MacroAssembler::TrustedImm32(fpOffsetToSPOffset(0) + sizeof(CallerFrameAndPC)), MacroAssembler::stackPointerRegister, tmp);
+    jit.untagPtr(tmp, MacroAssembler::linkRegister);
+    jit.probeDebugIf<tailCallVerbose>([] (Probe::Context& context) {
+        dataLogLn("untagged return pc: ", RawHex(context.gpr<uint64_t>(MacroAssembler::linkRegister)));
+    });
+    JIT_COMMENT(jit, "Validate untagged pointer");
     jit.validateUntaggedPtr(MacroAssembler::linkRegister);
+    jit.addPtr(MacroAssembler::TrustedImm32(newFPOffsetFromSP + sizeof(CallerFrameAndPC)), MacroAssembler::stackPointerRegister);
 #endif
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
 
-    jit.addPtr(MacroAssembler::TrustedImm32(newStackOffset), MacroAssembler::stackPointerRegister);
+#ifndef NDEBUG
+    for (unsigned i = 0; i < 50; ++i) {
+        // Everthing after sp might be overwritten anyway.
+        jit.store64(MacroAssembler::TrustedImm32(0), CCallHelpers::Address(MacroAssembler::stackPointerRegister, -i * sizeof(uint64_t)));
+    }
+#endif
+
+    JIT_COMMENT(jit, "OK, now we can jump.");
+    jit.probeDebugIf<tailCallVerbose>([wasmCalleeInfoAsCallee] (Probe::Context& context) {
+        dataLogLn("Can now jump: FP: ", RawHex(context.gpr<uint64_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
+        auto* newFP = context.gpr<uint64_t*>(MacroAssembler::stackPointerRegister) - sizeof(CallerFrameAndPC) / sizeof(uint64_t);
+        dataLogLn("New FP will be at ", RawPointer(newFP));
+
+        for (unsigned i = 0; i < wasmCalleeInfoAsCallee.params.size(); ++i) {
+            auto arg = wasmCalleeInfoAsCallee.params[i];
+            dataLog("Arg ", i, " located at ", arg.location, " = ");
+            if (arg.location.isGPR())
+                dataLog(context.gpr(arg.location.jsr().gpr()));
+            else if (arg.location.isFPR())
+                dataLog(context.fpr(arg.location.fpr()));
+            else
+                dataLog(newFP[arg.location.offsetFromFP() / sizeof(uint64_t)]);
+            dataLogLn();
+        }
+    });
 }
 
 } } // namespace JSC::Wasm

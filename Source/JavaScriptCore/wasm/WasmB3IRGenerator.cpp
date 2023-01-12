@@ -100,6 +100,7 @@ public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
+    using CallPatchpointData = std::tuple<B3::PatchpointValue*, Box<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
 
     static constexpr bool tierSupportsSIMD = true;
 
@@ -608,8 +609,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
-    B3::PatchpointValue* createCallPatchpoint(BasicBlock*, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
-    B3::PatchpointValue* createTailCallPatchpoint(BasicBlock*, const Vector<ArgumentLocation>&, const Vector<ExpressionType>& tmpArgs, const Checked<int32_t>& tailCallStackOffsetFromFP, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
+    auto createCallPatchpoint(BasicBlock*, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs) -> CallPatchpointData;
+    auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
@@ -1387,8 +1388,8 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
 
     const auto& callingConvention = wasmCallingConvention();
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
+    CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
-    const Vector<ArgumentLocation>& locations = wasmCalleeInfo.params;
 
     m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
 
@@ -1397,45 +1398,37 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
 
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
         const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
-        CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
-        Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
-        Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
-        m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, tailCallStackOffsetFromFP);
+        CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
-        createTailCallPatchpoint(m_currentBlock, locations, args, tailCallStackOffsetFromFP,
-            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
-                patchpoint->append(calleeCode, ValueRep(GPRInfo::wasmScratchGPR0));
-                patchpoint->setGenerator([this, tailCallStackOffsetFromFP, handle](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                    AllowMacroScratchRegisterUsage allowScratch(jit);
-                    prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-                    if (handle)
-                        handle->generate(jit, params, this);
-                    jit.farJump(params[0].gpr(), WasmEntryPtrTag);
-                });
-            }));
+        auto [patchpoint, handle, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { { calleeCode, ValueRep(GPRInfo::wasmScratchGPR0) }});
+        patchpoint->setGenerator([this, handle = handle, prepareForCall = prepareForCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            prepareForCall->run(jit, params);
+            if (handle)
+                handle->generate(jit, params, this);
+            jit.farJump(params[0].gpr(), WasmEntryPtrTag);
+        });
         return { };
     }
 
     m_makesCalls = true;
 
     B3::Type returnType = toB3ResultType(&signature);
-    Value* callResult = createCallPatchpoint(m_currentBlock, returnType, wasmCalleeInfo, args,
-        scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
-            // We need to clobber all potential pinned registers since we might be leaving the instance.
-            // We pessimistically assume we're always calling something that is bounds checking so
-            // because the wasm->wasm thunk unconditionally overrides the size registers.
-            // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
-            // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+    auto [patchpoint, handle, _] = createCallPatchpoint(m_currentBlock, returnType, wasmCalleeInfo, args);
+    // We need to clobber all potential pinned registers since we might be leaving the instance.
+    // We pessimistically assume we're always calling something that is bounds checking so
+    // because the wasm->wasm thunk unconditionally overrides the size registers.
+    // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
+    // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
+    patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
-            patchpoint->append(calleeCode, ValueRep::SomeRegister);
-            patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-                if (handle)
-                    handle->generate(jit, params, this);
-                jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
-            });
-        }));
+    patchpoint->append(calleeCode, ValueRep::SomeRegister);
+    patchpoint->setGenerator([this, handle = handle, returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        if (handle)
+            handle->generate(jit, params, this);
+        jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
+    });
 
     switch (returnType.kind()) {
     case B3::Void: {
@@ -1444,11 +1437,11 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
     case B3::Tuple: {
         const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
         for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
-            results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
+            results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], patchpoint, i)));
         break;
     }
     default: {
-        results.append(push(callResult));
+        results.append(push(patchpoint));
         break;
     }
     }
@@ -3716,7 +3709,7 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
 }
 
 
-B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
+auto B3IRGenerator::createCallPatchpoint(BasicBlock* block, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs) -> CallPatchpointData
 {
     Vector<B3::ConstrainedValue> constrainedPatchArgs;
     for (unsigned i = 0; i < tmpArgs.size(); ++i)
@@ -3729,7 +3722,6 @@ B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, B3::
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
-    patchpointFunctor(patchpoint, exceptionHandle);
     patchpoint->appendVector(constrainedPatchArgs);
 
     *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
@@ -3742,96 +3734,80 @@ B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, B3::
         patchpoint->resultConstraints = WTFMove(resultConstraints);
     }
     block->append(patchpoint);
-    return patchpoint;
+    return { patchpoint, nullptr, nullptr };
 }
 
-B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, const Vector<ArgumentLocation>& constrainedArgLocations, const Vector<ExpressionType>& tmpArgs, const Checked<int32_t>& tailCallStackOffsetFromFP, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
+auto B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
 {
-    //    Layout of stack right before tail call F -> G
-    //
-    //
-    //    |          ......            |                                                                      |          ......            |
-    //    +----------------------------+ <-- 0x5501ff4ff0                                                     +----------------------------+ <-- 0x5501ff4ff0
-    //    |           F.argN           |    |                                    +-------------------->       |           G.argM           |    |
-    //    +----------------------------+    | lower address                      |                            +----------------------------+    | lower address
-    //    |           F.arg1           |    v                                    |                            |           arg1             |    v
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    |           F.arg0           |                                         |                            |           arg0             |
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    |           F.this           |                                         |                            |           this'            |
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    | argumentCountIncludingThis |                                         |                            |          A.C.I.T.'         |
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    |  F.callee (aka F, unused in wasm) |                                  |                            |        G.callee            |
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    |        F.codeBlock         |                               (shuffleStackArgs...)                  |        G.codeBlock         |
-    //    +----------------------------+                                         |                            +----------------------------+
-    //    | return-address after F     |                                         |                            |   return-address after F   |
-    //    +----------------------------+                                         |        SP at G prologue -> +----------------------------+
-    //    |          F.caller.FP       |                                         |                            |          F.caller.FP       |
-    //    +----------------------------+  <- F.FP                                |    G.FP after G prologue-> +----------------------------+
-    //    |          callee saves      |                                         |                            |          callee saves      |
-    //    +----------------------------+   <----+   argM to G  ------------------+                            +----------------------------+
-    //    |          F.local0          |        |   ....                                                      |          G.local0          |
-    //    +----------------------------+        |   arg0 to G                                                 +----------------------------+
-    //    |          F.local1          |        |                                                             |          G.local1          |
-    //    +----------------------------+        |                                                             +----------------------------+
-    //    |          F.localN          |        |                                                             |          G.localM          |
-    //    +----------------------------|        |                                                             +----------------------------+
-    //    |          ......            |        |                                                             |          ......            |
-    //    +----------------------------|  <- SP |                                       SP after G prologue-> +----------------------------+
-    //                                          |
-    //                                          +- New tmp stack slots are eventually allocated here
-    //
-    //  See https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/ for a more in-depth explanation.
+    // See AirIRGenerator64::emitTailCallPatchpoint for a detailed diagram.
+    const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
+    const Checked<int32_t> offsetOfNewFPFromFirstSlot = checkedProduct<int32_t>(-1, WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfoAsCallee.headerAndArgumentStackSizeInBytes));
+    const Checked<int32_t> newFPOffsetFromFP = checkedSum<int32_t>(offsetOfFirstSlotFromFP + offsetOfNewFPFromFirstSlot);
 
-    auto shuffleStackArg = [this, block, tailCallStackOffsetFromFP](Value* value, int32_t offsetFromSP) {
-        Checked<int32_t> offsetFromFP = tailCallStackOffsetFromFP + offsetFromSP;
+    ASSERT(wasmCalleeInfoAsCallee.params.size() == tmpArgSourceLocations.size());
+    const bool mightClobberLocals = newFPOffsetFromFP < 0;
+    intptr_t argumentBufferOffsetFromSP = 2 * 8;
+    const unsigned firstPatchArg = patchArgs.size();
 
-        if (offsetFromFP < 0) {
-            Air::StackSlot* stackSlot = m_proc.addStackSlot(sizeof(Register));
-            stackSlot->setOffsetFromFP(offsetFromFP);
-            Value* address = block->appendNew<SlotBaseValue>(m_proc, Origin(), stackSlot);
-            block->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), value, address);
-            return;
-        }
-
-        B3::Value* address = block->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), constant(pointerType(), offsetFromFP));
-        block->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), value, address);
-    };
-
-    Value* returnAddress = block->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), framePointer(), safeCast<int32_t>(CallFrame::returnPCOffset()));
-    shuffleStackArg(returnAddress, -static_cast<int32_t>(sizeof(Register)));
-    Value* previousFramePointer = block->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), framePointer());
-
-    Vector<B3::ConstrainedValue> constrainedArguments;
-    for (unsigned i = 0; i < tmpArgs.size(); ++i) {
-        RELEASE_ASSERT(!tmpArgs[i]->type().isVector());
-        if (constrainedArgLocations[i].location.isStackArgument()) {
-            shuffleStackArg(get(block, tmpArgs[i]), constrainedArgLocations[i].location.offsetFromSP());
+    for (unsigned i = 0; i < tmpArgSourceLocations.size(); ++i) {
+        // Remember that we need to copy these in order, with higher addresses first.
+        auto src = get(block, tmpArgSourceLocations[i]);
+        auto dst = wasmCalleeInfoAsCallee.params[i];
+        // We are viewing this as the callee.
+        ASSERT(!dst.location.isStackArgument());
+        ASSERT(dst.width >= src->resultWidth());
+        if (!dst.location.isStack()) {
+            // We will restore callee saves before jumping to the callee.
+            // The calling convention should guarantee this anyway, but let's document it just in case.
+            ASSERT(!RegisterSetBuilder::calleeSaveRegisters().contains(dst.location.isGPR() ? Reg(dst.location.jsr().gpr()) : Reg(dst.location.fpr()), IgnoreVectors));
+            ASSERT(!dst.location.isGPR() || dst.location.jsr().gpr() != MacroAssembler::dataTempRegister);
+            ASSERT(!dst.location.isGPR() || dst.location.jsr().gpr() != MacroAssembler::memoryTempRegister);
+            patchArgs.append(ConstrainedValue(src, dst));
             continue;
         }
-        constrainedArguments.append(B3::ConstrainedValue(get(block, tmpArgs[i]), constrainedArgLocations[i]));
+        ASSERT(dst.width >= Width64);
+        if (!mightClobberLocals) {
+            RELEASE_ASSERT(dst.location.offsetFromFP() >= Checked<intptr_t>(CallFrameSlot::thisArgument * sizeof(Register)));
+            auto offsetFromFP = checkedSum<int32_t>(dst.location.offsetFromFP(), newFPOffsetFromFP).value();
+            Value* address = block->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), constant(pointerType(), offsetFromFP));
+            block->appendNew<MemoryValue>(m_proc, B3::Store, origin(), src, address);
+            continue;
+        }
+        patchArgs.append(ConstrainedValue(src, B3::ValueRep::stackArgument(argumentBufferOffsetFromSP)));
+        argumentBufferOffsetFromSP += bytesForWidth(dst.width);
     }
-    constrainedArguments.append(B3::ConstrainedValue(previousFramePointer, ValueRep(MacroAssembler::framePointerRegister)));
+
+    const unsigned lastPatchArg = patchArgs.size();
+
+    // Save the return pc and the Argument Count Including This slot, which stores exception info for wasm.
+    Value* from = block->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), framePointer(), CallFrameSlot::argumentCountIncludingThis * sizeof(Register));
+    patchArgs.append(ConstrainedValue(from, B3::ValueRep::stackArgument(8)));
+
+    from = block->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), framePointer(), CallFrame::returnPCOffset());
+    patchArgs.append(ConstrainedValue(from, B3::ValueRep::stackArgument(0)));
 
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(B3::Void, origin());
-
     patchpoint->effects.terminal = true;
-    patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
+    patchpoint->effects.writesPinned = true;
 
     RegisterSetBuilder clobbers;
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobber(clobbers);
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
-
-    patchpointFunctor(patchpoint, nullptr);
-    patchpoint->appendVector(WTFMove(constrainedArguments));
+    // See prepareForTailCallImpl for the heart of this patchpoint.
+    patchpoint->appendVector(WTFMove(patchArgs));
 
     block->append(patchpoint);
-    return patchpoint;
+
+    return { patchpoint, nullptr, createSharedTask<B3::StackmapGeneratorFunction>(
+         [wasmCalleeInfoAsCallee, wasmCallerInfoAsCallee, firstPatchArg, lastPatchArg, newFPOffsetFromFP, argumentBufferOffsetFromSP] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            ASSERT(params.code().callArgAreaSizeInBytes() >= argumentBufferOffsetFromSP);
+            ASSERT(params.code().frameSize() >= argumentBufferOffsetFromSP);
+            ASSERT(newFPOffsetFromFP >= 0 || params.code().frameSize() >= static_cast<uint32_t>(-newFPOffsetFromFP));
+            prepareForTailCallImpl(jit, params, wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, newFPOffsetFromFP);
+         }) };
 }
 
 auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
@@ -3843,21 +3819,17 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
     const auto& callingConvention = wasmCallingConvention();
     Checked<int32_t> tailCallStackOffsetFromFP;
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
+    CallInformation wasmCalleeInfoAsCallee = callingConvention.callInformationFor(signature, CallRole::Callee);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCalleeInfo.headerAndArgumentStackSizeInBytes);
+    const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
     B3::Type returnType;
     Value* jumpDestination = nullptr;
 
     if (isTailCall) {
         m_makesTailCalls = true;
-
-        const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
-        CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
-        Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
-        tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
-
-        m_tailCallStackOffsetFromFP = std::min(m_tailCallStackOffsetFromFP, tailCallStackOffsetFromFP);
     } else {
         m_makesCalls = true;
         returnType = toB3ResultType(&signature);
@@ -3865,11 +3837,16 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
 
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
-    auto emitUnlinkedWasmToWasmCall = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
-        patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    auto emitUnlinkedWasmToWasmCall = [this, unlinkedWasmToWasmCalls, functionIndex, isTailCall](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle, RefPtr<B3::StackmapGenerator> prepareForCall) -> void {
+        if (isTailCall) {
+            ASSERT(prepareForCall);
+            ASSERT(!handle);
+        } else
+            ASSERT(!prepareForCall);
+        patchpoint->setGenerator([this, handle, unlinkedWasmToWasmCalls, functionIndex, isTailCall, prepareForCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if (isTailCall)
-                prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+            if (prepareForCall)
+                prepareForCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
@@ -3879,20 +3856,26 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
         });
     };
 
-    auto emitCallToEmbedder = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
+    auto emitCallToEmbedder = [this, &jumpDestination, returnType, isTailCall](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle, RefPtr<B3::StackmapGenerator> prepareForCall) -> void {
+        if (isTailCall) {
+            ASSERT(prepareForCall);
+            ASSERT(!handle);
+        } else {
+            ASSERT(!prepareForCall);
+        }
         patchpoint->append(jumpDestination, ValueRep(GPRInfo::wasmScratchGPR0));
         // We need to clobber all potential pinned registers since we might be leaving the instance.
         // We pessimistically assume we could be calling to something that is bounds checking.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
         patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-        patchpoint->setGenerator([this, handle, returnType, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        patchpoint->setGenerator([this, handle, returnType, isTailCall, prepareForCall](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            if (isTailCall)
-                prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+            if (prepareForCall)
+                prepareForCall->run(jit, params);
             if (handle)
                 handle->generate(jit, params, this);
             if (isTailCall)
-                jit.farJump(params[0].gpr(), WasmEntryPtrTag);
+                jit.farJump(params[params.size() - 1].gpr(), WasmEntryPtrTag);
             else
                 jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
         });
@@ -3933,18 +3916,18 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
         BasicBlock* isEmbedderBlock = m_proc.addBlock();
         m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isWasmCall, FrequentedBlock(isWasmBlock), FrequentedBlock(isEmbedderBlock));
 
-        PatchpointValue* wasmCallResult = nullptr;
-        if (isTailCall) {
-            wasmCallResult = createTailCallPatchpoint(isWasmBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP,
-                scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
-        } else {
-            wasmCallResult = createCallPatchpoint(isWasmBlock, returnType, wasmCalleeInfo, args,
-                scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
-            // We need to clobber all potential pinned registers since we might be leaving the instance.
-            // We pessimistically assume we could be calling to something that is bounds checking.
-            // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-            wasmCallResult->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-        }
+        CallPatchpointData patchpointData;
+        if (isTailCall)
+            patchpointData = createTailCallPatchpoint(isWasmBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { });
+        else
+            patchpointData = createCallPatchpoint(isWasmBlock, returnType, wasmCalleeInfo, args);
+        auto [wasmCallResult, wasmHandle, wasmPrepareForCall] = patchpointData;
+        emitUnlinkedWasmToWasmCall(wasmCallResult, wasmHandle, wasmPrepareForCall);
+        
+        // We need to clobber all potential pinned registers since we might be leaving the instance.
+        // We pessimistically assume we could be calling to something that is bounds checking.
+        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+        wasmCallResult->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
         // FIXME: Let's remove this indirection by creating a PIC friendly IC
         // for calls out to the embedder. This shouldn't be that hard to do. We could probably
@@ -3954,13 +3937,13 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfWasmToEmbedderStub(functionIndex)));
 
         if (isTailCall) {
-            createTailCallPatchpoint(isEmbedderBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP,
-                scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToEmbedder));
+            auto [patchpoint, handle, prepareForCall] = createTailCallPatchpoint(isEmbedderBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { });
+            emitCallToEmbedder(patchpoint, handle, prepareForCall);
             return { };
         }
 
-        Value* embedderCallResult = createCallPatchpoint(isEmbedderBlock, returnType, wasmCalleeInfo, args,
-            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToEmbedder));
+        auto [embedderCallResult, embedderHandle, embedderPrepareForCall] = createCallPatchpoint(isEmbedderBlock, returnType, wasmCalleeInfo, args);
+        emitCallToEmbedder(embedderCallResult, embedderHandle, embedderPrepareForCall);
 
         BasicBlock* continuation = m_proc.addBlock();
         m_currentBlock = continuation;
@@ -3985,13 +3968,13 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
     } // isImportedFunctionFromFunctionIndexSpace
 
     if (isTailCall) {
-        createTailCallPatchpoint(m_currentBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP,
-            scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
+        auto [patchpoint, handle, prepareForCall] = createTailCallPatchpoint(m_currentBlock, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, args, { });
+        emitUnlinkedWasmToWasmCall(patchpoint, handle, prepareForCall);
         return { };
     }
 
-    PatchpointValue* callResult = createCallPatchpoint(m_currentBlock, returnType, wasmCalleeInfo, args,
-        scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
+    auto [callResult, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, returnType, wasmCalleeInfo, args);
+    emitUnlinkedWasmToWasmCall(callResult, handle, prepareForCall);
     // We need to clobber the size register since the LLInt always bounds checks
     if (useSignalingMemory() || m_info.memory.isShared())
         callResult->clobberLate(RegisterSetBuilder { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
