@@ -62,7 +62,7 @@ public:
 
     LayerRepresentation(GraphicsLayer* graphicsLayer)
         : m_graphicsLayer(graphicsLayer)
-        , m_layerID(graphicsLayer ? graphicsLayer->primaryLayerID() : 0)
+        , m_layerID(graphicsLayer ? graphicsLayer->primaryLayerID() : GraphicsLayer::PlatformLayerID { })
         , m_representation(GraphicsLayerRepresentation)
     { }
 
@@ -109,6 +109,12 @@ public:
     GraphicsLayer::PlatformLayerID layerID() const
     {
         return m_layerID;
+    }
+
+    std::optional<GraphicsLayer::PlatformLayerID> layerIDForEncoding() const
+    {
+        ASSERT(m_representation != PlatformLayerRepresentation);
+        return m_layerID ? std::optional<GraphicsLayer::PlatformLayerID>(m_layerID) : std::nullopt;
     }
 
     explicit operator GraphicsLayer::PlatformLayerID() const
@@ -193,7 +199,7 @@ private:
 
     RefPtr<GraphicsLayer> m_graphicsLayer;
     void* m_typelessPlatformLayer { nullptr };
-    GraphicsLayer::PlatformLayerID m_layerID { 0 };
+    GraphicsLayer::PlatformLayerID m_layerID;
     Type m_representation { EmptyRepresentation };
 };
 

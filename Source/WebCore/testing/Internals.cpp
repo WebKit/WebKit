@@ -3036,7 +3036,7 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
         return Exception { NotFoundError };
 
     auto* backing = layerModelObject.layer()->backing();
-    return backing->graphicsLayer()->primaryLayerID();
+    return backing->graphicsLayer()->primaryLayerID().toUInt64();
 }
 
 static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)

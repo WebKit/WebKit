@@ -174,7 +174,7 @@ void ArgumentCoder<ScrollingStateNode>::encode(Encoder& encoder, const Scrolling
     encoder << node.changedProperties();
     
     if (node.hasChangedProperty(ScrollingStateNode::Property::Layer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.layer());
+        encoder << node.layer().layerIDForEncoding();
 }
 
 bool ArgumentCoder<ScrollingStateNode>::decode(Decoder& decoder, ScrollingStateNode& node)
@@ -186,10 +186,10 @@ bool ArgumentCoder<ScrollingStateNode>::decode(Decoder& decoder, ScrollingStateN
 
     node.setChangedProperties(changedProperties);
     if (node.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setLayer(layerID);
+        node.setLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     return true;
@@ -224,16 +224,16 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::KeyboardScrollData, keyboardScrollData)
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrollContainerLayer());
+        encoder << node.scrollContainerLayer().layerIDForEncoding();
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
+        encoder << node.scrolledContentsLayer().layerIDForEncoding();
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.horizontalScrollbarLayer());
+        encoder << node.horizontalScrollbarLayer().layerIDForEncoding();
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.verticalScrollbarLayer());
+        encoder << node.verticalScrollbarLayer().layerIDForEncoding();
 }
 
 void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
@@ -257,16 +257,16 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::OverrideVisualViewportSize, overrideVisualViewportSize)
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
+        encoder << node.counterScrollingLayer().layerIDForEncoding();
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer());
+        encoder << node.insetClipLayer().layerIDForEncoding();
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer());
+        encoder << node.contentShadowLayer().layerIDForEncoding();
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.rootContentsLayer());
+        encoder << node.rootContentsLayer().layerIDForEncoding();
 }
 
 void ArgumentCoder<ScrollingStateFrameHostingNode>::encode(Encoder& encoder, const ScrollingStateFrameHostingNode& node)
@@ -323,31 +323,31 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::KeyboardScrollData, RequestedKeyboardScrollData, setKeyboardScrollData);
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setScrollContainerLayer(layerID);
+        node.setScrollContainerLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setScrolledContentsLayer(layerID);
+        node.setScrolledContentsLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setHorizontalScrollbarLayer(layerID);
+        node.setHorizontalScrollbarLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setVerticalScrollbarLayer(layerID);
+        node.setVerticalScrollbarLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     return true;
@@ -376,31 +376,31 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::OverrideVisualViewportSize, std::optional<FloatSize>, setOverrideVisualViewportSize)
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setCounterScrollingLayer(layerID);
+        node.setCounterScrollingLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setInsetClipLayer(layerID);
+        node.setInsetClipLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setContentShadowLayer(layerID);
+        node.setContentShadowLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
+        std::optional<GraphicsLayer::PlatformLayerID> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setRootContentsLayer(layerID);
+        node.setRootContentsLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
     }
 
     return true;

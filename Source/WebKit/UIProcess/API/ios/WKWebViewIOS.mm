@@ -1069,7 +1069,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     if (_perProcessState.pendingFindLayerID) {
         CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_perProcessState.pendingFindLayerID);
         if (layer.superlayer) {
-            _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, 0);
+            _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, { });
             _page->findClient().didAddLayerForFindOverlay(_page.get(), layer);
         }
     }
@@ -4113,8 +4113,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_perProcessState.pendingFindLayerID && !_perProcessState.committedFindLayerID)
         return;
 
-    _perProcessState.pendingFindLayerID = 0;
-    _perProcessState.committedFindLayerID = 0;
+    _perProcessState.pendingFindLayerID = { };
+    _perProcessState.committedFindLayerID = { };
 
     _page->removeLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();

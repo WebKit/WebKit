@@ -76,7 +76,7 @@ public:
     // This avoids keeping an outstanding InUse reference when suspended.
     void mapAllIOSurfaceBackingStore();
 
-    CALayer *layerWithIDForTesting(uint64_t) const;
+    CALayer *layerWithIDForTesting(WebCore::GraphicsLayer::PlatformLayerID) const;
 
     bool replayCGDisplayListsIntoBackingStore() const;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

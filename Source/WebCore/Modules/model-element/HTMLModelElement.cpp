@@ -337,18 +337,18 @@ GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()
 {
     auto* page = document().page();
     if (!page)
-        return 0;
+        return { };
 
     if (!is<RenderLayerModelObject>(this->renderer()))
-        return 0;
+        return { };
 
     auto& renderLayerModelObject = downcast<RenderLayerModelObject>(*this->renderer());
     if (!renderLayerModelObject.isComposited() || !renderLayerModelObject.layer() || !renderLayerModelObject.layer()->backing())
-        return 0;
+        return { };
 
     auto* graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
     if (!graphicsLayer)
-        return 0;
+        return { };
 
     return graphicsLayer->contentsLayerIDForModel();
 }

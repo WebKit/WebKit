@@ -331,6 +331,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DragApplicationFlags',
         'WebCore::FrameIdentifier',
         'WebCore::GraphicsContextGLAttributes',
+        'WebCore::GraphicsLayer::PlatformLayerID',
         'WebCore::ModalContainerControlType',
         'WebCore::NativeImageReference',
         'WebCore::PluginLoadClientPolicy',

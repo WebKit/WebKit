@@ -429,9 +429,9 @@ RefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String&
     return m_animations.get(key);
 }
 
-static inline bool isEquivalentLayer(const PlatformCALayer* layer, GraphicsLayer::PlatformLayerID layerID)
+static inline bool isEquivalentLayer(const PlatformCALayer* layer, const std::optional<GraphicsLayer::PlatformLayerID>& layerID)
 {
-    GraphicsLayer::PlatformLayerID newLayerID = layer ? layer->layerID() : 0;
+    auto newLayerID = layer ? layer->layerID() : GraphicsLayer::PlatformLayerID { };
     return layerID == newLayerID;
 }
 
@@ -461,7 +461,7 @@ void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
         m_properties.maskLayerID = m_maskLayer->layerID();
     } else {
         m_maskLayer = nullptr;
-        m_properties.maskLayerID = 0;
+        m_properties.maskLayerID = { };
     }
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MaskLayerChanged);
@@ -475,7 +475,7 @@ void PlatformCALayerRemote::setClonedLayer(const PlatformCALayer* layer)
     if (layer)
         m_properties.clonedLayerID = layer->layerID();
     else
-        m_properties.clonedLayerID = 0;
+        m_properties.clonedLayerID = { };
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ClonedContentsChanged);
 }

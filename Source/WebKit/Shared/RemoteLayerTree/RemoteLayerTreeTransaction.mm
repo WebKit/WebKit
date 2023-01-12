@@ -44,8 +44,7 @@ RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(RemoteLayerTreeTransactio
 RemoteLayerTreeTransaction& RemoteLayerTreeTransaction::operator=(RemoteLayerTreeTransaction&&) = default;
 
 RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
-    : layerID(0)
-    , type(WebCore::PlatformCALayer::LayerTypeLayer)
+    : type(WebCore::PlatformCALayer::LayerTypeLayer)
     , hostingContextID(0)
     , hostingDeviceScaleFactor(1)
     , preservesFlip(false)
@@ -599,8 +598,10 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << m_themeColor;
     encoder << m_pageExtendedBackgroundColor;
     encoder << m_sampledPageTopColor;
-    
+
+#if PLATFORM(MAC)
     encoder << m_pageScalingLayerID;
+#endif
 
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
@@ -707,8 +708,10 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_sampledPageTopColor))
         return false;
 
+#if PLATFORM(MAC)
     if (!decoder.decode(result.m_pageScalingLayerID))
         return false;
+#endif
 
     if (!decoder.decode(result.m_pageScaleFactor))
         return false;
@@ -1008,8 +1011,9 @@ String RemoteLayerTreeTransaction::description() const
     if (m_pageScaleFactor != 1)
         ts.dumpProperty("pageScaleFactor", m_pageScaleFactor);
 
-    if (m_pageScalingLayerID != 1)
-        ts.dumpProperty("pageScalingLayer", m_pageScalingLayerID);
+#if PLATFORM(MAC)
+    ts.dumpProperty("pageScalingLayer", m_pageScalingLayerID);
+#endif
 
     ts.dumpProperty("minimumScaleFactor", m_minimumScaleFactor);
     ts.dumpProperty("maximumScaleFactor", m_maximumScaleFactor);

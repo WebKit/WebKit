@@ -166,8 +166,8 @@ public:
         std::unique_ptr<RemoteLayerBackingStore> backingStore;
         std::unique_ptr<WebCore::FilterOperations> filters;
         WebCore::Path shapePath;
-        WebCore::GraphicsLayer::PlatformLayerID maskLayerID { 0 };
-        WebCore::GraphicsLayer::PlatformLayerID clonedLayerID { 0 };
+        Markable<WebCore::GraphicsLayer::PlatformLayerID> maskLayerID;
+        Markable<WebCore::GraphicsLayer::PlatformLayerID> clonedLayerID;
 #if ENABLE(SCROLLING_THREAD)
         WebCore::ScrollingNodeID scrollingNodeID { 0 };
 #endif
@@ -267,10 +267,12 @@ public:
 
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
-    
-    WebCore::GraphicsLayer::PlatformLayerID pageScalingLayerID() const { return m_pageScalingLayerID; }
+
+#if PLATFORM(MAC)
+    WebCore::GraphicsLayer::PlatformLayerID pageScalingLayerID() const { return m_pageScalingLayerID.value(); }
     void setPageScalingLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_pageScalingLayerID = layerID; }
-    
+#endif
+
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
     void setRenderTreeSize(uint64_t renderTreeSize) { m_renderTreeSize = renderTreeSize; }
 
@@ -345,7 +347,9 @@ private:
     WebCore::Color m_pageExtendedBackgroundColor;
     WebCore::Color m_sampledPageTopColor;
 
-    WebCore::GraphicsLayer::PlatformLayerID m_pageScalingLayerID { 0 }; // Only used for non-delegated scaling.
+#if PLATFORM(MAC)
+    Markable<WebCore::GraphicsLayer::PlatformLayerID> m_pageScalingLayerID; // Only used for non-delegated scaling.
+#endif
 
     double m_pageScaleFactor { 1 };
     double m_minimumScaleFactor { 1 };

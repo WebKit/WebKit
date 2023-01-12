@@ -103,7 +103,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     auto* rootNode = nodeForID(transaction.rootLayerID());
     
     if (!rootNode)
-        REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID());
+        REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID().toUInt64());
 
     if (m_rootNode != rootNode) {
         m_rootNode = rootNode;
@@ -125,7 +125,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
         if (!node) {
             // We have evidence that this can still happen, but don't know how (see r241899 for one already-fixed cause).
-            REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find layer with ID %llu", this, layerID);
+            REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find layer with ID %llu", this, layerID.toUInt64());
             continue;
         }
 
@@ -141,12 +141,12 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
         if (!node) {
             // We have evidence that this can still happen, but don't know how (see r241899 for one already-fixed cause).
-            REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find layer with ID %llu", this, layerID);
+            REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find layer with ID %llu", this, layerID.toUInt64());
             continue;
         }
 
         if (properties.changedProperties.contains(RemoteLayerTreeTransaction::ClonedContentsChanged) && properties.clonedLayerID)
-            clonesToUpdate.append({ layerID, properties.clonedLayerID });
+            clonesToUpdate.append({ layerID, *properties.clonedLayerID });
 
         RemoteLayerTreePropertyApplier::applyProperties(*node, this, properties, m_nodes, layerContentsType);
 
@@ -258,7 +258,7 @@ void RemoteLayerTreeHost::clearLayers()
     m_rootNode = nullptr;
 }
 
-CALayer *RemoteLayerTreeHost::layerWithIDForTesting(uint64_t layerID) const
+CALayer *RemoteLayerTreeHost::layerWithIDForTesting(WebCore::GraphicsLayer::PlatformLayerID layerID) const
 {
     return layerForID(layerID);
 }

@@ -189,12 +189,12 @@ void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(GraphicsLayer::Platf
     m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTFMove(handle));
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, MonotonicTime startTime)
 {
     m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_identifier);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(uint64_t layerID, const String& key)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key)
 {
     m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), m_identifier);
 }
@@ -395,7 +395,7 @@ bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
     return m_remoteLayerTreeHost->rootLayer();
 }
 
-CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID) const
+CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(WebCore::GraphicsLayer::PlatformLayerID layerID) const
 {
     return m_remoteLayerTreeHost->layerWithIDForTesting(layerID);
 }

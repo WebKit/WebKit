@@ -380,7 +380,7 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
         return;
     }
 
-    auto* maskNode = relatedLayers.get(properties.maskLayerID);
+    auto* maskNode = properties.maskLayerID ? relatedLayers.get(*properties.maskLayerID) : nullptr;
     ASSERT(maskNode);
     if (!maskNode)
         return;
