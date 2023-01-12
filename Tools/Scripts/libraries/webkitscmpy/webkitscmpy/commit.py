@@ -31,9 +31,9 @@ from webkitscmpy import Contributor
 
 class Commit(object):
     HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
-    REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
-    IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S*))?$')
-    NUMBER_RE = re.compile(r'^-?\d*$')
+    REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d{1,10})$')
+    IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d{1,10})\.)?(?P<identifier>-?\d{1,10})(@(?P<branch>\S*))?$')
+    NUMBER_RE = re.compile(r'^-?\d{1,10}$')
     HASH_LABEL_SIZE = 12
     UUID_MULTIPLIER = 100
 
@@ -87,7 +87,7 @@ class Commit(object):
             match = cls.REVISION_RE.match(revision)
             if match:
                 revision = int(match.group('revision'))
-            elif revision.isdigit():
+            elif cls.NUMBER_RE.match(revision):
                 revision = int(revision)
             else:
                 if do_assert:
