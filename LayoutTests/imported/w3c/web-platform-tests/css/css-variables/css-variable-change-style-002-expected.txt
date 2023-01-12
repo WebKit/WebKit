@@ -1,0 +1,5 @@
+
+PASS Declaration changes on 'color' propagate to all variable references
+PASS Declaration changes on 'background-color' propagate to all variable references
+PASS Declaration changes on 'white-space' propagate to all variable references
+

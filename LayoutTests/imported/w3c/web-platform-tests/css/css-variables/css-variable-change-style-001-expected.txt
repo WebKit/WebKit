@@ -1,0 +1,11 @@
+
+PASS Test declaration changes on 'color' as variable
+PASS Avoid masking differences on 'color' due to declaration changes
+PASS Test changing 'color' value to become a css variable
+PASS Test declaration changes on 'background-color' as variable
+PASS Avoid masking differences on 'background-color' due to declaration changes
+PASS Test changing 'background-color' value to become a css variable
+PASS Test declaration changes on 'white-space' as variable
+PASS Avoid masking differences on 'white-space' due to declaration changes
+PASS Test changing 'white-space' value to become a css variable
+

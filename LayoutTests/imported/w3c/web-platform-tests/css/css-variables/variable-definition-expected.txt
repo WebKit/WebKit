@@ -7,7 +7,7 @@ PASS no char variable
 PASS white space value (single space)
 PASS white space value (double space)
 PASS overwrite
-PASS can't overwrite with no value
+PASS can overwrite with no value
 PASS can overwrite with space value
 PASS case sensetivity
 PASS case sensetivity2
@@ -30,7 +30,7 @@ PASS no char variable (Computed Style)
 PASS white space value (single space) (Computed Style)
 PASS white space value (double space) (Computed Style)
 PASS overwrite (Computed Style)
-PASS can't overwrite with no value (Computed Style)
+PASS can overwrite with no value (Computed Style)
 PASS can overwrite with space value (Computed Style)
 PASS case sensetivity (Computed Style)
 PASS case sensetivity2 (Computed Style)
@@ -53,7 +53,7 @@ PASS no char variable (Cascading)
 PASS white space value (single space) (Cascading)
 PASS white space value (double space) (Cascading)
 PASS overwrite (Cascading)
-PASS can't overwrite with no value (Cascading)
+PASS can overwrite with no value (Cascading)
 PASS can overwrite with space value (Cascading)
 PASS case sensetivity (Cascading)
 PASS case sensetivity2 (Cascading)

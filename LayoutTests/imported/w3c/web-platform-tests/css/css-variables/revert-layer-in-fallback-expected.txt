@@ -1,0 +1,6 @@
+
+FAIL var(--unknown, revert-layer) in custom property assert_equals: expected "PASS" but got "revert-layer"
+PASS var(--unknown, revert-layer) in shorthand
+PASS var(--unknown, revert-layer) in shorthand observed via longhand
+PASS var(--unknown, revert-layer) in longhand
+
