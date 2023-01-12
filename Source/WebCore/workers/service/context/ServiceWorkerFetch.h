@@ -62,7 +62,7 @@ public:
     virtual void continueDidReceiveResponse() = 0;
     virtual void convertFetchToDownload() = 0;
     virtual void setFetchEvent(Ref<FetchEvent>&&) = 0;
-    virtual void navigationPreloadIsReady(ResourceResponse&&) = 0;
+    virtual void navigationPreloadIsReady(ResourceResponse::CrossThreadData&&) = 0;
     virtual void navigationPreloadFailed(ResourceError&&) = 0;
     virtual void usePreload() = 0;
 };
