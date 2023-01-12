@@ -27,17 +27,20 @@
 
 #include "WebFrame.h"
 #include <WebCore/RemoteFrameClient.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
 class WebRemoteFrameClient final : public WebCore::RemoteFrameClient {
 public:
-    explicit WebRemoteFrameClient(Ref<WebFrame>&&);
+    explicit WebRemoteFrameClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
+    ~WebRemoteFrameClient();
 
     WebFrame& webFrame() const { return m_frame.get(); }
 
 private:
     Ref<WebFrame> m_frame;
+    ScopeExit<Function<void()>> m_frameInvalidator;
 };
 
 }

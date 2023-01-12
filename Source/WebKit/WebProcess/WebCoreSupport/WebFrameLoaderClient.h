@@ -30,6 +30,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <pal/SessionID.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -66,6 +67,8 @@ public:
 #endif
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
+
+    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
 
 private:
     bool hasHTMLView() const final;
@@ -272,6 +275,7 @@ private:
     inline bool hasPlugInView() const;
 
     Ref<WebFrame> m_frame;
+    ScopeExit<Function<void()>> m_frameInvalidator;
 
 #if ENABLE(PDFKIT_PLUGIN)
     RefPtr<PluginView> m_pluginView;
