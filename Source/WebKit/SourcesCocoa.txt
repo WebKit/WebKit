@@ -25,7 +25,6 @@ NetworkProcess/cache/NetworkCacheDataCocoa.mm
 NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
 
 NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm
-NetworkProcess/cocoa/NetworkConnectionIntegrityHelpers.mm
 NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
@@ -81,6 +80,7 @@ GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
+Platform/cocoa/NetworkConnectionIntegrityHelpers.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm

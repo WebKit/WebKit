@@ -2101,10 +2101,6 @@ public:
     void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(bool)>&&);
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    static Vector<String>& cachedLookalikeStrings();
-#endif
-
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
 
 #if PLATFORM(COCOA)
@@ -2739,8 +2735,10 @@ private:
     static bool isInHardwareKeyboardMode();
 #endif
 
+    void waitForInitialLookalikeCharacterStrings(WebFramePolicyListenerProxy&);
+    void sendCachedLookalikeCharacterStrings();
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    void updateLookalikeCharacterStringsIfNeeded();
+    static Vector<String>& cachedLookalikeStrings();
 #endif
 
 #if USE(RUNNINGBOARD)
@@ -3360,7 +3358,7 @@ private:
     bool m_isLockdownModeExplicitlySet { false };
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    bool m_shouldUpdateLookalikeCharacterStrings { false };
+    bool m_needsInitialLookalikeCharacterStrings { true };
 #endif
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;

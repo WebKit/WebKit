@@ -106,7 +106,6 @@
 #if PLATFORM(COCOA)
 #include "CookieStorageUtilsCF.h"
 #include "LaunchServicesDatabaseObserver.h"
-#include "NetworkConnectionIntegrityHelpers.h"
 #include "NetworkSessionCocoa.h"
 #include <wtf/cocoa/Entitlements.h>
 #endif
@@ -2852,14 +2851,5 @@ void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, Comple
     auto* session = networkSession(sessionID);
     completionHandler(session ? session->countNonDefaultSessionSets() : 0);
 }
-
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-
-void NetworkProcess::requestLookalikeCharacterStrings(CompletionHandler<void(const Vector<String>&)>&& completionHandler)
-{
-    WebKit::requestLookalikeCharacterStrings(WTFMove(completionHandler));
-}
-
-#endif
 
 } // namespace WebKit

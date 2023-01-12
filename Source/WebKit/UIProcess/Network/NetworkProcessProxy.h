@@ -213,8 +213,6 @@ public:
     void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&&);
 #endif
 
-    void requestLookalikeCharacterStrings(CompletionHandler<void(Vector<String>&&)>&&);
-
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
     
     void synthesizeAppIsBackground(bool background);

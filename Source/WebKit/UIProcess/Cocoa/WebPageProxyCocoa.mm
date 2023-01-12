@@ -36,6 +36,7 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "ModalContainerControlClassifier.h"
+#import "NetworkConnectionIntegrityHelpers.h"
 #import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "QuickLookThumbnailLoader.h"
