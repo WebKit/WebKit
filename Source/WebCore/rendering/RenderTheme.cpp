@@ -102,8 +102,10 @@ RenderTheme::RenderTheme()
 
 StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, StyleAppearance autoAppearance) const
 {
-    if (!element)
+    if (!element) {
+        style.setEffectiveAppearance(StyleAppearance::None);
         return StyleAppearance::None;
+    }
 
     auto appearance = style.effectiveAppearance();
     if (appearance == autoAppearance)
