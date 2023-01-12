@@ -291,8 +291,8 @@ private:
     bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize);
     bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex);
-    bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex);
+    bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, FilterOperation::OperationType, bool keyframesShouldUseAnimationWideTimingFunction);
 
     bool isRunningTransformAnimation() const;
 
@@ -490,16 +490,15 @@ private:
     // a single transition or keyframe animation, so index is used to distinguish these.
     enum class PlayState { Playing, PlayPending, Paused, PausePending };
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, Seconds timeOffset)
+        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, Seconds timeOffset)
             : m_animation(WTFMove(caAnimation))
             , m_name(animationName)
             , m_property(property)
             , m_index(index)
-            , m_subIndex(subIndex)
             , m_timeOffset(timeOffset)
         { }
 
-        String animationIdentifier() const { return makeString(m_name, '_', static_cast<unsigned>(m_property), '_', m_index, '_', m_subIndex); }
+        String animationIdentifier() const { return makeString(m_name, '_', static_cast<unsigned>(m_property), '_', m_index); }
         std::optional<Seconds> computedBeginTime() const
         {
             if (m_beginTime)
@@ -511,7 +510,6 @@ private:
         String m_name;
         AnimatedPropertyID m_property;
         int m_index;
-        int m_subIndex;
         Seconds m_timeOffset { 0_s };
         std::optional<Seconds> m_beginTime;
         PlayState m_playState { PlayState::PlayPending };

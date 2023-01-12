@@ -3095,7 +3095,7 @@ void GraphicsLayerCA::updateAnimations()
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
 
-        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, UUID::createVersion4()), property, 0, 0, 0_s);
+        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, UUID::createVersion4()), property, 0, 0_s);
         animationGroup.m_beginTime = animationGroupBeginTime;
 
         setAnimationOnLayer(animationGroup);
@@ -3143,7 +3143,7 @@ void GraphicsLayerCA::updateAnimations()
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
 
-        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, UUID::createVersion4()), property, 0, 0, 0_s);
+        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, UUID::createVersion4()), property, 0, 0_s);
         if (delay)
             animation.m_beginTime = currentTime - animationGroupBeginTime;
 
@@ -3439,7 +3439,7 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     if (!valuesOK)
         return false;
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, 0, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
 
     return true;
 }
@@ -3462,7 +3462,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     if (!validMatrices)
         return false;
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, 0, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
     return true;
 }
 
@@ -3538,33 +3538,28 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    FilterOperation::OperationType filterOp = operation->type();
-    int numAnimatedProperties = PlatformCAFilters::numAnimatedFilterProperties(filterOp);
-    
-    // Each filter might need to animate multiple properties, each with their own keyPath. The keyPath is always of the form:
+    auto filterOp = operation->type();
+    if (!PlatformCAFilters::isAnimatedFilterProperty(filterOp))
+        return true;
+
+    // The keyPath is always of the form:
     //
     //      filter.filter_<animationIndex>.<filterPropertyName>
-    //
-    // PlatformCAAnimation tells us how many properties each filter has and we iterate that many times and create an animation
-    // for each. This internalFilterPropertyIndex gets passed to PlatformCAAnimation so it can properly create the property animation
-    // values.
-    for (int internalFilterPropertyIndex = 0; internalFilterPropertyIndex < numAnimatedProperties; ++internalFilterPropertyIndex) {
-        bool valuesOK;
-        RefPtr<PlatformCAAnimation> caAnimation;
-        auto keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
-        
-        if (isKeyframe(valueList)) {
-            caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-            valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
-        } else {
-            caAnimation = createBasicAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-            valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex);
-        }
-        
-        ASSERT_UNUSED(valuesOK, valuesOK);
+    bool valuesOK;
+    RefPtr<PlatformCAAnimation> caAnimation;
+    auto keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp));
 
-        m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, internalFilterPropertyIndex, timeOffset));
+    if (isKeyframe(valueList)) {
+        caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
+    } else {
+        caAnimation = createBasicAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex);
     }
+
+    ASSERT_UNUSED(valuesOK, valuesOK);
+
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
 
     return true;
 }
@@ -3860,7 +3855,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, int internalFilterPropertyIndex)
+bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex)
 {
     ASSERT(valueList.size() == 2);
 
@@ -3890,13 +3885,13 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
         toOperation = defaultToOperation.get();
     }
 
-    basicAnim->setFromValue(fromOperation, internalFilterPropertyIndex);
-    basicAnim->setToValue(toOperation, internalFilterPropertyIndex);
+    basicAnim->setFromValue(fromOperation);
+    basicAnim->setToValue(toOperation);
 
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::OperationType filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
     Vector<RefPtr<FilterOperation>> values;
@@ -3923,7 +3918,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
-    keyframeAnim->setValues(values, internalFilterPropertyIndex);
+    keyframeAnim->setValues(values);
     keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
 
     return true;
@@ -4255,7 +4250,6 @@ void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, const char* ca
             textStream.dumpProperty("CA animation", animation.m_animation.get());
             textStream.dumpProperty("property", animation.m_property);
             textStream.dumpProperty("index", animation.m_index);
-            textStream.dumpProperty("subindex", animation.m_subIndex);
             textStream.dumpProperty("time offset", animation.m_timeOffset);
             textStream.dumpProperty("begin time", animation.m_beginTime);
             textStream.dumpProperty("play state", (unsigned)animation.m_playState);

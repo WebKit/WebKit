@@ -30,18 +30,18 @@
 
 using namespace WebCore;
 
-void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
+void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations&)
 {
     // Hardware filter animation not implemented on Windows.
 }
 
-int PlatformCAFilters::numAnimatedFilterProperties(FilterOperation::OperationType type)
+bool PlatformCAFilters::isAnimatedFilterProperty(FilterOperation::OperationType)
 {
     // Hardware filter animation not implemented on Windows.
-    return 0;
+    return false;
 }
 
-const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::OperationType type, int internalFilterPropertyIndex)
+const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::OperationType)
 {
     // Hardware filter animation not implemented on Windows.
     return "";
