@@ -2771,7 +2771,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
     setMediaStreamCaptureMuted(false);
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 {
 }
@@ -5189,8 +5189,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     if (frame->isMainFrame()) {
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
-#if PLATFORM(IOS_FAMILY)
-        m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+#if PLATFORM(COCOA)
+        if (is<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea))
+            m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
 #endif
     }
 
@@ -8347,6 +8348,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
+    m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
 #endif
 
     if (m_drawingArea) {
@@ -8418,7 +8420,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
     m_lastVisibleContentRectUpdate = { };
     m_hasNetworkRequestsOnSuspended = false;
     m_isKeyboardAnimatingIn = false;
