@@ -647,6 +647,26 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this.expandedChildrenLimit = Math.max(visibleChildren.length, this.expandedChildrenLimit + WI.DOMTreeElement.InitialChildrenLimit);
     }
 
+    reveal({skipExpandingAncestors} = {})
+    {
+        // Handle expansion specifically to make sure we also call `showChildNode` with the relevant child.
+        if (!skipExpandingAncestors) {
+            let currentElement = this;
+            while (currentElement.parent && !currentElement.parent.root) {
+                if (!currentElement.parent.expanded)
+                    currentElement.parent.expand();
+
+                // Some subclasses may hide elements by default to avoid showing too many items initially, but to reveal
+                // an element we must load that element and previous sibilings as well.
+                currentElement.parent.showChildNode(currentElement);
+
+                currentElement = currentElement.parent;
+            }
+        }
+
+        super.reveal({skipExpandingAncestors: true});
+    }
+
     onexpand()
     {
         if (this._elementCloseTag)
@@ -657,8 +677,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         this.updateTitle();
 
-        for (let treeElement of this.children)
-            treeElement.updateSelectionArea();
+        for (let treeElement of this.children) {
+            if (treeElement instanceof WI.DOMTreeElement)
+                treeElement.updateSelectionArea();
+        }
     }
 
     oncollapse()

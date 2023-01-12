@@ -381,6 +381,12 @@ GPU* Navigator::gpu()
     return m_gpuForWebGPU.get();
 }
 
+Document* Navigator::document()
+{
+    auto* frame = this->frame();
+    return frame ? frame->document() : nullptr;
+}
+
 #if ENABLE(BADGING)
 
 void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)

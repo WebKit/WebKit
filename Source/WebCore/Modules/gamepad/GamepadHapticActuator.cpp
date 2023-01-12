@@ -38,17 +38,6 @@
 
 namespace WebCore {
 
-Ref<GamepadHapticActuator> GamepadHapticActuator::create(Type type, Gamepad& gamepad)
-{
-    return adoptRef(*new GamepadHapticActuator(type, gamepad));
-}
-
-GamepadHapticActuator::GamepadHapticActuator(Type type, Gamepad& gamepad)
-    : m_type { type }
-    , m_gamepad { gamepad }
-{
-}
-
 static bool areEffectParametersValid(GamepadHapticEffectType effectType, const GamepadEffectParameters& parameters)
 {
     if (parameters.duration < 0 || parameters.startDelay < 0)
@@ -61,6 +50,22 @@ static bool areEffectParametersValid(GamepadHapticEffectType effectType, const G
     return true;
 }
 
+Ref<GamepadHapticActuator> GamepadHapticActuator::create(Document* document, Type type, Gamepad& gamepad)
+{
+    auto actuator = adoptRef(*new GamepadHapticActuator(document, type, gamepad));
+    actuator->suspendIfNeeded();
+    return actuator;
+}
+
+GamepadHapticActuator::GamepadHapticActuator(Document* document, Type type, Gamepad& gamepad)
+    : ActiveDOMObject(document)
+    , m_type { type }
+    , m_gamepad { gamepad }
+{
+    if (document)
+        document->registerForVisibilityStateChangedCallbacks(*this);
+}
+
 GamepadHapticActuator::~GamepadHapticActuator() = default;
 
 bool GamepadHapticActuator::canPlayEffectType(EffectType effectType) const
@@ -68,18 +73,20 @@ bool GamepadHapticActuator::canPlayEffectType(EffectType effectType) const
     return m_gamepad && m_gamepad->supportedEffectTypes().contains(effectType);
 }
 
-void GamepadHapticActuator::playEffect(Document& document, EffectType effectType, GamepadEffectParameters&& effectParameters, Ref<DeferredPromise>&& promise)
+void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParameters&& effectParameters, Ref<DeferredPromise>&& promise)
 {
     if (!areEffectParametersValid(effectType, effectParameters)) {
         promise->reject(Exception { TypeError, "Invalid effect parameter"_s });
         return;
     }
-    if (!document.isFullyActive() || document.hidden() || !m_gamepad) {
+
+    auto document = this->document();
+    if (!document || !document->isFullyActive() || document->hidden() || !m_gamepad) {
         promise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         return;
     }
     if (auto playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr)) {
-        document.eventLoop().queueTask(TaskSource::Gamepad, [playingEffectPromise = WTFMove(playingEffectPromise)] {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = WTFMove(playingEffectPromise)] {
             playingEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         });
     }
@@ -91,31 +98,66 @@ void GamepadHapticActuator::playEffect(Document& document, EffectType effectType
     effectParameters.duration = std::min(effectParameters.duration, GamepadEffectParameters::maximumDuration.milliseconds());
 
     m_playingEffectPromise = WTFMove(promise);
-    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [this, protectedThis = Ref { *this }, document = Ref { document }, playingEffectPromise = m_playingEffectPromise](bool success) {
+    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [this, protectedThis = makePendingActivity(*this), playingEffectPromise = m_playingEffectPromise](bool success) mutable {
         if (m_playingEffectPromise != playingEffectPromise)
             return; // Was already pre-empted.
-        document->eventLoop().queueTask(TaskSource::Gamepad, [playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr), success] {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr), success] {
             playingEffectPromise->resolve<IDLEnumeration<Result>>(success ? Result::Complete : Result::Preempted);
         });
     });
 }
 
-void GamepadHapticActuator::reset(Document& document, Ref<DeferredPromise>&& promise)
+void GamepadHapticActuator::reset(Ref<DeferredPromise>&& promise)
 {
-    if (!document.isFullyActive() || document.hidden() || !m_gamepad) {
+    auto document = this->document();
+    if (!document || !document->isFullyActive() || document->hidden() || !m_gamepad) {
         promise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         return;
     }
-    if (auto playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr)) {
-        document.eventLoop().queueTask(TaskSource::Gamepad, [playingEffectPromise = WTFMove(playingEffectPromise)] {
-            playingEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
-        });
-    }
-    GamepadProvider::singleton().stopEffects(m_gamepad->index(), m_gamepad->id(), [document = Ref { document }, promise = WTFMove(promise)]() mutable {
-        document->eventLoop().queueTask(TaskSource::Gamepad, [promise = WTFMove(promise)] {
+    stopEffects([this, protectedThis = makePendingActivity(*this), promise = WTFMove(promise)]() mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [promise = WTFMove(promise)] {
             promise->resolve<IDLEnumeration<Result>>(Result::Complete);
         });
     });
+}
+
+void GamepadHapticActuator::stopEffects(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_playingEffectPromise)
+        return completionHandler();
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr)] {
+        playingEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
+    });
+    GamepadProvider::singleton().stopEffects(m_gamepad->index(), m_gamepad->id(), WTFMove(completionHandler));
+}
+
+Document* GamepadHapticActuator::document()
+{
+    return downcast<Document>(scriptExecutionContext());
+}
+
+const char* GamepadHapticActuator::activeDOMObjectName() const
+{
+    return "GamepadHapticActuator";
+}
+
+void GamepadHapticActuator::suspend(ReasonForSuspension)
+{
+    stopEffects([] { });
+}
+
+void GamepadHapticActuator::stop()
+{
+    stopEffects([] { });
+}
+
+void GamepadHapticActuator::visibilityStateChanged()
+{
+    auto* document = this->document();
+    if (!document || !document->hidden())
+        return;
+    stopEffects([] { });
 }
 
 } // namespace WebCore

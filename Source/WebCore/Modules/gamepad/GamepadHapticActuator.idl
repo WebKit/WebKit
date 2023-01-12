@@ -34,14 +34,15 @@ enum GamepadHapticResult {
 };
 
 [
+    ActiveDOMObject,
     Conditional=GAMEPAD,
     EnabledBySetting=GamepadVibrationActuatorEnabled,
     Exposed=Window
 ] interface GamepadHapticActuator {
     readonly attribute GamepadHapticActuatorType type;
     boolean canPlayEffectType(GamepadHapticEffectType type);
-    [CallWith=RelevantDocument] Promise<GamepadHapticResult> playEffect(GamepadHapticEffectType type, optional GamepadEffectParameters params = {});
-    [CallWith=RelevantDocument] Promise<GamepadHapticResult> reset();
+    Promise<GamepadHapticResult> playEffect(GamepadHapticEffectType type, optional GamepadEffectParameters params = {});
+    Promise<GamepadHapticResult> reset();
 
     // Non standard: Supported for compatibility with Blink.
     [ImplementedAs=canPlayEffectType] boolean canPlay(GamepadHapticEffectType type);

@@ -211,14 +211,7 @@ static void drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect,
             // For slider cells, draw only the knob.
             [(NSSliderCell *)cell drawKnob:rect];
         } else {
-#if 1
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-            [cell drawWithFrame:rect inView:nil];
-#pragma clang diagnostic pop
-#else
             [cell drawWithFrame:rect inView:view];
-#endif
             [cell setControlView:nil];
         }
     }

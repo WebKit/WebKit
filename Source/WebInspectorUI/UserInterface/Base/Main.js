@@ -2451,7 +2451,6 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
                     {name: WI.UIString("Allow Media Capture on Insecure Sites"), setting: InspectorBackend.Enum.Page.Setting.MediaCaptureRequiresSecureConnection, value: false},
                     {name: WI.UIString("Disable ICE Candidate Restrictions"), setting: InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, value: false},
                     {name: WI.UIString("Use Mock Capture Devices"), setting: InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, value: true},
-                    {name: WI.UIString("Disable Encryption"), setting: InspectorBackend.Enum.Page.Setting.WebRTCEncryptionEnabled, value: false},
                 ],
             ],
         },

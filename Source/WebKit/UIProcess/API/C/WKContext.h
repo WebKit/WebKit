@@ -215,6 +215,8 @@ WK_EXPORT void WKContextRefreshPlugIns(WKContextRef context);
 
 WK_EXPORT void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name);
 
+WK_EXPORT void WKContextClearMockGamepadsForTesting(WKContextRef contextRef);
+
 #ifdef __cplusplus
 }
 #endif

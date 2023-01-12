@@ -1121,6 +1121,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
+    WKContextClearMockGamepadsForTesting(TestController::singleton().context());
 
     WKPageSetMockCameraOrientation(m_mainWebView->page(), 0);
     resetMockMediaDevices();

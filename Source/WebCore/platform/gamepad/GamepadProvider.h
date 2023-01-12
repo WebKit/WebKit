@@ -52,6 +52,8 @@ public:
     virtual void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) = 0;
     virtual void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) = 0;
 
+    virtual void clearGamepadsForTesting() { }
+
 protected:
     WEBCORE_EXPORT void dispatchPlatformGamepadInputActivity();
     void setShouldMakeGamepadsVisibile() { m_shouldMakeGamepadsVisible = true; }

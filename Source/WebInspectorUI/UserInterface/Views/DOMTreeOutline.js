@@ -468,7 +468,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             this._previousHoveredElement = null;
         }
 
-        if (element) {
+        if (element instanceof WI.DOMTreeElement) {
             element.hovered = true;
             this._previousHoveredElement = element;
 

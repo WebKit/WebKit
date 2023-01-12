@@ -14,7 +14,8 @@ function runTest() {
         finishJSTest();
     });
 
-    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2);
+    const supportsDualRumble = true;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2, supportsDualRumble);
     testRunner.setMockGamepadAxisValue(0, 0, 0.7);
     testRunner.setMockGamepadAxisValue(0, 1, -1.0);
     testRunner.setMockGamepadButtonValue(0, 0, 1.0);

@@ -65,7 +65,7 @@ async function runTest() {
     // do one at a time...
     for (var i = 0; i < 20; ++i) {
         const p = makeHandlerListenerPair("connected");
-        testRunner.setMockGamepadDetails(i, i, "", i, i);
+        testRunner.setMockGamepadDetails(i, i, "", i, i, false);
         log("Connecting gamepad:");
         testRunner.connectMockGamepad(i);
         await p;
@@ -99,7 +99,8 @@ async function runTest() {
         "Awesome Joystick 5000",
         "standard",
         4,
-        16
+        16,
+        false
     );
     testRunner.setMockGamepadAxisValue(10, 0, 0.7);
     testRunner.setMockGamepadAxisValue(10, 1, -0.9);

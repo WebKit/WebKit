@@ -67,6 +67,8 @@ public:
 
     GPU* gpu();
 
+    Document* document();
+
 #if ENABLE(BADGING)
     void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(Ref<DeferredPromise>&&);
