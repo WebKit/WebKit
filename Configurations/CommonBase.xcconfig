@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Apple Inc. All rights reserved.
+// Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -26,3 +26,5 @@
 #include "SDKVariant.xcconfig"
 #include "WebKitProjectPaths.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
+
+WK_COMMON_WARNING_CFLAGS = -Wall -Wconditional-uninitialized -Wextra -Wformat=2 -Wundef;

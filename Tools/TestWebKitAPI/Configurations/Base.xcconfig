@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -74,7 +74,10 @@ CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
-WARNING_CFLAGS = -Wall -W -Wformat=2 -Wno-unused-parameter -Wthread-safety;
+WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) $(WK_FIXME_WARNING_CFLAGS) -Wthread-safety;
+
+// Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
+WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter -Wno-undef;
 
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
