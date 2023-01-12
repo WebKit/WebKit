@@ -593,7 +593,7 @@ Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
 
 void Page::settingsDidChange()
 {
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
     m_webRTCProvider->setH265Support(settings().webRTCH265CodecEnabled());
     m_webRTCProvider->setVP9Support(settings().webRTCVP9Profile0CodecEnabled(), settings().webRTCVP9Profile2CodecEnabled());
 #endif
