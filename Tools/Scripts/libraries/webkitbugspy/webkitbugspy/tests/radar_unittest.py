@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -372,3 +372,8 @@ What version of 'WebKit Text' should the bug be associated with?:
                 project='WebKit',
                 redact={'version:Other': True},
             ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'version:Other'"))
+
+    def test_milestone(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).milestone, 'October')
