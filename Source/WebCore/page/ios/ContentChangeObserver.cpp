@@ -223,6 +223,18 @@ void ContentChangeObserver::completeDurationBasedContentObservation()
     adjustObservedState(Event::EndedFixedObservationTimeWindow);
 }
 
+static bool isObservedPropertyForTransition(AnimatableProperty property)
+{
+    return WTF::switchOn(property,
+        [] (CSSPropertyID propertyId) {
+            return propertyId == CSSPropertyLeft || propertyId == CSSPropertyOpacity;
+        },
+        [] (const AtomString&) {
+            return false;
+        }
+    );
+}
+
 void ContentChangeObserver::didAddTransition(const Element& element, const Animation& transition)
 {
     if (!isContentChangeObserverEnabled())
@@ -235,7 +247,7 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
         return;
     if (!transition.isDurationSet() || !transition.isPropertySet())
         return;
-    if (!isObservedPropertyForTransition(transition.property().id))
+    if (!isObservedPropertyForTransition(transition.property().animatableProperty))
         return;
     auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
     if (transitionEnd > maximumDelayForTransitions)

@@ -34,6 +34,7 @@
 #include "RenderStyleConstants.h"
 #include "Timer.h"
 #include "WKContentObservation.h"
+#include "WebAnimationTypes.h"
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakPtr.h>
@@ -138,7 +139,6 @@ private:
     void setShouldObserveDOMTimerSchedulingAndTransitions(bool);
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     bool isObservingTransitions() const { return m_isObservingTransitions; }
-    bool isObservedPropertyForTransition(CSSPropertyID propertyId) const { return propertyId == CSSPropertyLeft || propertyId == CSSPropertyOpacity; }
     void domTimerExecuteDidStart(const DOMTimer&);
     void domTimerExecuteDidFinish(const DOMTimer&);
     void registerDOMTimer(const DOMTimer&);

@@ -401,34 +401,38 @@ static bool transitionMatchesProperty(const Animation& transition, AnimatablePro
     if (transition.isPropertyFilled())
         return false;
 
-    auto mode = transition.property().mode;
-    if (mode == Animation::TransitionMode::None || mode == Animation::TransitionMode::UnknownProperty)
+    switch (transition.property().mode) {
+    case Animation::TransitionMode::All:
+        return true;
+    case Animation::TransitionMode::None:
+    case Animation::TransitionMode::UnknownProperty:
         return false;
-
-    if (mode == Animation::TransitionMode::CustomProperty) {
-        return WTF::switchOn(property,
-            [] (CSSPropertyID) {
+    case Animation::TransitionMode::SingleProperty: {
+        return WTF::switchOn(transition.property().animatableProperty,
+            [&] (CSSPropertyID propertyId) {
+                if (!std::holds_alternative<CSSPropertyID>(property))
+                    return false;
+                auto propertyIdToMatch = std::get<CSSPropertyID>(property);
+                auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.direction(), style.writingMode());
+                if (resolvedPropertyId == propertyIdToMatch)
+                    return true;
+                for (auto longhand : shorthandForProperty(resolvedPropertyId)) {
+                    if (longhand == propertyIdToMatch)
+                        return true;
+                }
                 return false;
             },
             [&] (const AtomString& customProperty) {
-                return customProperty == transition.customOrUnknownProperty();
+                if (!std::holds_alternative<AtomString>(property))
+                    return false;
+                return std::get<AtomString>(property) == customProperty;
             }
         );
     }
-
-    if (mode == Animation::TransitionMode::SingleProperty && std::holds_alternative<CSSPropertyID>(property)) {
-        auto cssPropertyId = std::get<CSSPropertyID>(property);
-        auto transitionProperty = CSSProperty::resolveDirectionAwareProperty(transition.property().id, style.direction(), style.writingMode());
-        if (transitionProperty != cssPropertyId) {
-            for (auto longhand : shorthandForProperty(transitionProperty)) {
-                if (longhand == cssPropertyId)
-                    return true;
-            }
-            return false;
-        }
     }
 
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet<AnimatableProperty>& transitionProperties, bool& transitionPropertiesContainAll)
@@ -440,20 +444,30 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     if (!transitions)
         return;
 
-    for (const auto& animation : *transitions) {
-        auto mode = animation->property().mode;
-        if (mode == Animation::TransitionMode::SingleProperty) {
-            auto property = CSSProperty::resolveDirectionAwareProperty(animation->property().id, style.direction(), style.writingMode());
-            if (isShorthandCSSProperty(property)) {
-                for (auto longhand : shorthandForProperty(property))
-                    transitionProperties.add(longhand);
-            } else if (property != CSSPropertyInvalid)
-                transitionProperties.add(property);
-        } else if (mode == Animation::TransitionMode::CustomProperty)
-            transitionProperties.add(AtomString { animation->customOrUnknownProperty() });
-        else if (mode == Animation::TransitionMode::All) {
+    for (const auto& transition : *transitions) {
+        auto transitionProperty = transition->property();
+        switch (transitionProperty.mode) {
+        case Animation::TransitionMode::All:
             transitionPropertiesContainAll = true;
             return;
+        case Animation::TransitionMode::None:
+        case Animation::TransitionMode::UnknownProperty:
+            continue;
+        case Animation::TransitionMode::SingleProperty: {
+            WTF::switchOn(transitionProperty.animatableProperty,
+                [&] (CSSPropertyID propertyId) {
+                    auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.direction(), style.writingMode());
+                    if (isShorthandCSSProperty(resolvedPropertyId)) {
+                        for (auto longhand : shorthandForProperty(resolvedPropertyId))
+                            transitionProperties.add(longhand);
+                    } else if (resolvedPropertyId != CSSPropertyInvalid)
+                        transitionProperties.add(resolvedPropertyId);
+                },
+                [&] (const AtomString& customProperty) {
+                    transitionProperties.add(customProperty);
+                }
+            );
+        }
         }
     }
 }

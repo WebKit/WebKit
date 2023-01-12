@@ -29,6 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleScopeOrdinal.h"
 #include "TimingFunction.h"
+#include "WebAnimationTypes.h"
 
 namespace WebCore {
 
@@ -49,7 +50,6 @@ public:
     bool isPropertySet() const { return m_propertySet; }
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
     bool isCompositeOperationSet() const { return m_compositeOperationSet; }
-    bool isCustomOrUnknownPropertySet() const { return m_customOrUnknownPropertySet; }
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
@@ -63,7 +63,7 @@ public:
         return !m_directionSet && !m_durationSet && !m_fillModeSet
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet
-            && !m_isNone && !m_compositeOperationSet && !m_customOrUnknownPropertySet;
+            && !m_isNone && !m_compositeOperationSet;
     }
 
     bool isEmptyOrZeroDuration() const
@@ -81,7 +81,6 @@ public:
     void clearProperty() { m_propertySet = false; m_propertyFilled = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
     void clearCompositeOperation() { m_compositeOperationSet = false; m_compositeOperationFilled = false; }
-    void clearCustomOrUnknownProperty() { m_customOrUnknownPropertySet = false; }
 
     void clearAll()
     {
@@ -95,7 +94,6 @@ public:
         clearProperty();
         clearTimingFunction();
         clearCompositeOperation();
-        clearCustomOrUnknownProperty();
     }
 
     double delay() const { return m_delay; }
@@ -104,13 +102,12 @@ public:
         All,
         None,
         SingleProperty,
-        CustomProperty,
         UnknownProperty
     };
 
     struct TransitionProperty {
         TransitionMode mode;
-        CSSPropertyID id;
+        AnimatableProperty animatableProperty;
     };
 
     enum AnimationDirection {
@@ -139,7 +136,6 @@ public:
     Style::ScopeOrdinal nameStyleScopeOrdinal() const { return m_nameStyleScopeOrdinal; }
     AnimationPlayState playState() const { return static_cast<AnimationPlayState>(m_playState); }
     TransitionProperty property() const { return m_property; }
-    const String& customOrUnknownProperty() const { return m_customOrUnknownProperty; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     TimingFunction* defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
 
@@ -157,7 +153,6 @@ public:
     }
     void setPlayState(AnimationPlayState d) { m_playState = static_cast<unsigned>(d); m_playStateSet = true; }
     void setProperty(TransitionProperty t) { m_property = t; m_propertySet = true; }
-    void setCustomOrUnknownProperty(const String& property) { m_customOrUnknownProperty = property; m_customOrUnknownPropertySet = true; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTFMove(function); }
 
@@ -172,7 +167,6 @@ public:
     void fillProperty(TransitionProperty property) { setProperty(property); m_propertyFilled = true; }
     void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
     void fillCompositeOperation(CompositeOperation compositeOperation) { setCompositeOperation(compositeOperation); m_compositeOperationFilled = true; }
-    void fillCustomOrUnknownProperty(const String& property) { setCustomOrUnknownProperty(property); }
 
     bool isDelayFilled() const { return m_delayFilled; }
     bool isDirectionFilled() const { return m_directionFilled; }
@@ -205,7 +199,6 @@ private:
     TransitionProperty m_property { TransitionMode::All, CSSPropertyInvalid };
 
     Name m_name;
-    String m_customOrUnknownProperty;
     double m_iterationCount;
     double m_delay;
     double m_duration;
@@ -230,7 +223,6 @@ private:
     bool m_propertySet : 1;
     bool m_timingFunctionSet : 1;
     bool m_compositeOperationSet : 1;
-    bool m_customOrUnknownPropertySet : 1;
 
     bool m_isNone : 1;
 

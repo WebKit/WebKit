@@ -32,6 +32,7 @@
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
 #include "CSSAnimationEvent.h"
+#include "CSSPropertyNames.h"
 #include "CSSSelector.h"
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
@@ -329,6 +330,18 @@ ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
     if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
         return Exception { SyntaxError };
     return CSSSelector::pseudoId(pseudoType);
+}
+
+AtomString animatablePropertyAsString(AnimatableProperty property)
+{
+    return WTF::switchOn(property,
+        [] (CSSPropertyID propertyId) {
+            return nameString(propertyId);
+        },
+        [] (const AtomString& customProperty) {
+            return customProperty;
+        }
+    );
 }
 
 } // namespace WebCore

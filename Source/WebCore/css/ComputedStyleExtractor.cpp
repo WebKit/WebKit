@@ -74,6 +74,7 @@
 #include "StyleScope.h"
 #include "Styleable.h"
 #include "TranslateTransformOperation.h"
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 
@@ -1297,16 +1298,16 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
 
 static Ref<CSSValue> createTransitionPropertyValue(const Animation& animation)
 {
-    switch (animation.property().mode) {
+    auto transitionProperty = animation.property();
+    switch (transitionProperty.mode) {
     case Animation::TransitionMode::None:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     case Animation::TransitionMode::All:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueAll);
     case Animation::TransitionMode::SingleProperty:
-        return CSSValuePool::singleton().createCustomIdent(nameString(animation.property().id));
-    case Animation::TransitionMode::CustomProperty:
     case Animation::TransitionMode::UnknownProperty:
-        return CSSValuePool::singleton().createCustomIdent(animation.customOrUnknownProperty());
+        auto transitionPropertyAsString = animatablePropertyAsString(transitionProperty.animatableProperty);
+        return CSSValuePool::singleton().createCustomIdent(transitionPropertyAsString);
     }
     ASSERT_NOT_REACHED();
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
