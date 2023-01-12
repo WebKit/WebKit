@@ -1922,9 +1922,11 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));
+    GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
     patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         JIT_COMMENT(jit, "Catch entrypoint patchpoint after loading from scratch buffer");
         AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.prepareWasmCallOperation(wasmContextInstanceGPR);
         jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
         jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
@@ -1983,7 +1985,6 @@ auto AirIRGenerator64::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     Vector<ConstrainedTmp, 8> patchArgs;
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(Tmp(GPRInfo::callFrameRegister), Types::I64), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
     for (unsigned i = 0; i < args.size(); ++i) {
         // Note: SIMD values can appear here, but should never be read at runtime because this will throw an un-catchable TypeError instead.
         // Nonetheless, they may clobber important things if they aren't treated as doubles.
@@ -2015,8 +2016,7 @@ auto AirIRGenerator64::addRethrow(unsigned, ControlType& data) -> PartialResult
 
     Vector<ConstrainedTmp, 3> patchArgs;
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(Tmp(GPRInfo::callFrameRegister), Types::I64), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
-    patchArgs.append(ConstrainedTmp(data.exception(), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
+    patchArgs.append(ConstrainedTmp(data.exception(), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
 
     auto handle = preparePatchpointForExceptions(patch, patchArgs);
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {

@@ -90,6 +90,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             JIT_COMMENT(jit, "convert wasm return to big int");
             JSValueRegs inputJSR = wasmFrameConvention.results[0].location.jsr();
             GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
+            jit.prepareWasmCallOperation(PinnedRegisterInfo::get().wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToBigInt)>(wasmContextInstanceGPR, inputJSR);
             jit.callOperation(operationConvertToBigInt);
         } else
@@ -188,7 +189,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
                     continue;
 
                 GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
-                constexpr JSValueRegs valueJSR = preferredArgumentJSR<decltype(operationConvertToBigInt), 2>();
+                constexpr JSValueRegs valueJSR = preferredArgumentJSR<decltype(operationConvertToBigInt), 1>();
 
                 CCallHelpers::Address address { CCallHelpers::stackPointerRegister };
                 if (loc.isGPR() || loc.isFPR()) {
@@ -200,6 +201,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
                     address = address.withOffset(loc.offsetFromSP());
 
                 jit.loadValue(address, valueJSR);
+                jit.prepareWasmCallOperation(wasmContextInstanceGPR);
                 jit.setupArguments<decltype(operationConvertToBigInt)>(wasmContextInstanceGPR, valueJSR);
                 jit.callOperation(operationConvertToBigInt);
                 jit.storeValue(JSRInfo::returnValueJSR, address);
@@ -207,11 +209,12 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
         }
 
         GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
-        constexpr GPRReg savedResultsGPR = preferredArgumentGPR<decltype(operationAllocateResultsArray), 4>();
+        constexpr GPRReg savedResultsGPR = preferredArgumentGPR<decltype(operationAllocateResultsArray), 3>();
         jit.move(CCallHelpers::stackPointerRegister, savedResultsGPR);
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
+        jit.prepareWasmCallOperation(wasmContextInstanceGPR);
         jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
         JIT_COMMENT(jit, "operationAllocateResultsArray");
         jit.callOperation(operationAllocateResultsArray);

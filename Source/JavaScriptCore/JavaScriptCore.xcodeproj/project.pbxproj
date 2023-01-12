@@ -1917,6 +1917,7 @@
 		E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E334CBB521FD96A9000EB178 /* RegExpGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3369129296EEBFE00324FD7 /* WasmOperationsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3369128296EEBFE00324FD7 /* WasmOperationsInlines.h */; };
 		E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E337B966224324E50093A820 /* WasmCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E339700523210E0B00B0AE21 /* JSInternalFieldObjectImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E339700423210E0A00B0AE21 /* JSInternalFieldObjectImplInlines.h */; };
 		E33A94962255323000D42B06 /* RandomizingFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */; };
@@ -5402,6 +5403,7 @@
 		E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpGlobalData.h; sourceTree = "<group>"; };
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
+		E3369128296EEBFE00324FD7 /* WasmOperationsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOperationsInlines.h; sourceTree = "<group>"; };
 		E337B966224324E50093A820 /* WasmCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCapabilities.h; sourceTree = "<group>"; };
 		E339700423210E0A00B0AE21 /* JSInternalFieldObjectImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImplInlines.h; sourceTree = "<group>"; };
 		E33A94922255322900D42B06 /* FuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FuzzerAgent.h; sourceTree = "<group>"; };
@@ -7550,6 +7552,7 @@
 				53C6FEEE1E8ADFA900B18425 /* WasmOpcodeOrigin.h */,
 				E39D8B2C23021E1E00265852 /* WasmOperations.cpp */,
 				E39D8B2D23021E1E00265852 /* WasmOperations.h */,
+				E3369128296EEBFE00324FD7 /* WasmOperationsInlines.h */,
 				E3C694B123026873006FBE42 /* WasmOSREntryData.h */,
 				527E6CEA2772B9C5005E0782 /* WasmOSREntryPlan.cpp */,
 				527E6CEB2772B9C5005E0782 /* WasmOSREntryPlan.h */,
@@ -11420,6 +11423,7 @@
 				5311BD4B1EA581E500525281 /* WasmOMGPlan.h in Headers */,
 				53C6FEEF1E8ADFA900B18425 /* WasmOpcodeOrigin.h in Headers */,
 				E39D8B2E23021E2600265852 /* WasmOperations.h in Headers */,
+				E3369129296EEBFE00324FD7 /* WasmOperationsInlines.h in Headers */,
 				53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */,
 				E3C694B323026877006FBE42 /* WasmOSREntryData.h in Headers */,
 				527E6CEC2772B9CB005E0782 /* WasmOSREntryPlan.h in Headers */,

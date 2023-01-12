@@ -43,6 +43,7 @@
 #if ENABLE(WEBASSEMBLY)
 #include "WasmMemoryInformation.h"
 #include "WasmContextInlines.h"
+#include "WasmInstance.h"
 #endif
 
 namespace JSC {
@@ -1084,6 +1085,14 @@ bool AssemblyHelpers::loadWasmContextInstanceNeedsMacroScratchRegister()
 bool AssemblyHelpers::storeWasmContextInstanceNeedsMacroScratchRegister()
 {
     return false;
+}
+
+void AssemblyHelpers::prepareWasmCallOperation(GPRReg instanceGPR)
+{
+    UNUSED_PARAM(instanceGPR);
+#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
+    storePtr(GPRInfo::callFrameRegister, Address(instanceGPR, Wasm::Instance::offsetOfTemporaryCallFrame()));
+#endif
 }
 
 #endif // ENABLE(WEBASSEMBLY)

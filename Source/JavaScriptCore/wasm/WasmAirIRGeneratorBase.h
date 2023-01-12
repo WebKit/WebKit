@@ -806,6 +806,11 @@ protected:
             return m_proc.addConstant(B3::Origin(), toB3Type(tmp.type()), 0);
         };
 
+#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
+        // Prepare wasm operation calls.
+        self().emitStore(ExpressionType { Tmp(GPRInfo::callFrameRegister), Types::IPtr }, instanceValue().tmp(), Instance::offsetOfTemporaryCallFrame());
+#endif
+
         B3::Value* dummyFunc = m_proc.addConstant(B3::Origin(), B3::pointerType(), bitwise_cast<uintptr_t>(func));
         B3::Value* origin = m_proc.add<B3::CCallValue>(resultType, B3::Origin(), B3::Effects::none(), dummyFunc, makeDummyValue(theArgs)...);
 
@@ -1444,7 +1449,7 @@ template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     result = self().g32();
-    emitCCall(&operationGrowMemory, result, ExpressionType { Tmp(GPRInfo::callFrameRegister), Types::IPtr }, instanceValue(), delta);
+    emitCCall(&operationGrowMemory, result, instanceValue(), delta);
     restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
     return { };

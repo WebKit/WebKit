@@ -938,6 +938,7 @@ Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::SomeRegister);
     patch->resultConstraints.append(B3::ValueRep::SomeRegister); // result Tag
+    GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
     patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         // Returning one EncodedJSValue on the stack
@@ -945,6 +946,7 @@ Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
         jit.subPtr(CCallHelpers::TrustedImm32(resultSpace), MacroAssembler::stackPointerRegister);
         jit.move(params[3].gpr(), GPRInfo::argumentGPR0);
         jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR1);
+        jit.prepareWasmCallOperation(wasmContextInstanceGPR);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
         jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
             linkBuffer.link<OperationPtrTag>(call, operationWasmRetrieveAndClearExceptionIfCatchable);
@@ -1125,7 +1127,6 @@ auto AirIRGenerator32::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&
 
     Vector<ConstrainedTmp, 8> patchArgs;
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(Tmp(GPRInfo::callFrameRegister), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
     for (unsigned i = 0; i < args.size(); ++i) {
         if (args[i].isGPPair()) {
             patchArgs.append(ConstrainedTmp(TypedTmp(args[i].lo(), Types::I32), B3::ValueRep::stackArgument(i * sizeof(EncodedJSValue) + PayloadOffset)));
@@ -1157,9 +1158,8 @@ auto AirIRGenerator32::addRethrow(unsigned, ControlType& data) -> PartialResult
 
     Vector<ConstrainedTmp, 3> patchArgs;
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(Tmp(GPRInfo::callFrameRegister), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().lo(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().hi(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR3)));
+    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().lo(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
+    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().hi(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
 
     auto handle = preparePatchpointForExceptions(patch, patchArgs);
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {

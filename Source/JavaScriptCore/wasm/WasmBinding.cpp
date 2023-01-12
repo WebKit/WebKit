@@ -44,34 +44,24 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // https://bugs.webkit.org/show_bug.cgi?id=184157
     JIT jit;
 
-    GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
-#if USE(JSVALUE32_64)
-    GPRReg baseMemory = wasmCallingConvention().prologueScratchGPRs[1];
-    GPRReg sizeRegAsScratch = wasmCallingConvention().prologueScratchGPRs[2];
-#else
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
-    GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-    GPRReg sizeRegAsScratch = pinnedRegs.boundsCheckingSizeRegister;
-#endif
-    ASSERT(baseMemory != GPRReg::InvalidGPRReg);
-    ASSERT(sizeRegAsScratch != GPRReg::InvalidGPRReg);
+    GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
     ASSERT(scratch != GPRReg::InvalidGPRReg);
-    ASSERT(noOverlap(scratch, baseMemory, sizeRegAsScratch));
+    ASSERT(noOverlap(scratch, PinnedRegisterInfo::get().wasmContextInstancePointer));
 
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
-    jit.loadWasmContextInstance(sizeRegAsScratch); // Old Instance*
-    // Get the callee's Wasm::Instance and set it as WasmContext's instance. The caller will take care of restoring its own Instance.
-    jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfTargetInstance(importIndex)), baseMemory); // Instance*.
     // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
-    jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
-    jit.storeWasmContextInstance(baseMemory);
+    jit.loadPtr(JIT::Address(pinnedRegs.wasmContextInstancePointer, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
+    // Get the callee's Wasm::Instance and set it as WasmContext's instance. The caller will take care of restoring its own Instance.
+    // This switches the current instance.
+    jit.loadPtr(JIT::Address(pinnedRegs.wasmContextInstancePointer, Instance::offsetOfTargetInstance(importIndex)), pinnedRegs.wasmContextInstancePointer); // Instance*.
 
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
-    // Set up the callee's baseMemory register as well as the memory size registers.
+    // Set up the callee's baseMemoryPointer register as well as the memory size registers.
     {
-        jit.loadPairPtr(baseMemory, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1], /* validateAuth */ true, /* mayBeNull */ false);
+        jit.loadPairPtr(pinnedRegs.wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister);
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1], /* validateAuth */ true, /* mayBeNull */ false);
     }
 #endif
 

@@ -53,22 +53,21 @@ void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, Sa
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
 #endif
-JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame*));
+JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (Instance*));
 
-JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (CallFrame*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (CallFrame*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (Instance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (Instance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (Instance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (Instance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (Instance*, EncodedWasmValue));
 
-JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame*, Instance*, EncodedWasmValue));
-
-JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));
-JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame*, Wasm::Instance*, const TypeDefinition*, IndexingType, JSValue*));
+JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (Instance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (Wasm::Instance*, const TypeDefinition*, IndexingType, JSValue*));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
 JSC_DECLARE_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));
 JSC_DECLARE_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t));
-JSC_DECLARE_JIT_OPERATION(operationGrowMemory, int32_t, (void*, Instance*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationGrowMemory, int32_t, (Instance*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmMemoryFill, size_t, (Instance*, uint32_t dstAddress, uint32_t targetValue, uint32_t count));
 JSC_DECLARE_JIT_OPERATION(operationWasmMemoryCopy, size_t, (Instance*, uint32_t dstAddress, uint32_t srcAddress, uint32_t count));
 
@@ -93,10 +92,10 @@ JSC_DECLARE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance
 JSC_DECLARE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmStructSet, void, (Instance*, EncodedJSValue, uint32_t, EncodedJSValue));
 
-JSC_DECLARE_JIT_OPERATION(operationWasmThrow, void*, (Instance*, CallFrame*, unsigned exceptionIndex, uint64_t*));
-JSC_DECLARE_JIT_OPERATION(operationWasmRethrow, void*, (Instance*, CallFrame*, EncodedJSValue thrownValue));
+JSC_DECLARE_JIT_OPERATION(operationWasmThrow, void*, (Instance*, unsigned exceptionIndex, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationWasmRethrow, void*, (Instance*, EncodedJSValue thrownValue));
 
-JSC_DECLARE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame*, Wasm::ExceptionType, Instance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSException, void*, (Instance*, Wasm::ExceptionType));
 
 struct ThrownExceptionInfo {
     EncodedJSValue thrownValue;
