@@ -125,7 +125,8 @@ static bool shouldTreatAsOpaqueOrigin(const URL& url)
 #if ENABLE(PDFJS)
         || url.protocolIs("webkit-pdfjs-viewer"_s)
 #endif
-        || url.protocolIs("blob"_s))
+        || url.protocolIsBlob()
+        || url.protocolIsData())
         return false;
 
     return !LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());

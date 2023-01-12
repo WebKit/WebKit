@@ -162,10 +162,7 @@ static Span<const ASCIILiteral> builtinSchemesWithUniqueOrigins()
 {
     static constexpr std::array schemes {
         "about"_s,
-        "javascript"_s,
-        // This is an intentional difference from the behavior the HTML specification calls for.
-        // See https://bugs.webkit.org/show_bug.cgi?id=11885
-        "data"_s,
+        "javascript"_s
     };
     return schemes;
 }
