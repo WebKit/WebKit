@@ -605,15 +605,8 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
     // What is left in oldChildrenIDs are the IDs that are no longer children of axAncestor.
     // Thus, remove them from m_nodeMap and queue them to be removed from the tree.
-    for (const AXID& axID : oldChildrenIDs) {
-        // However, we don't want to remove subtrees from the nodemap that are part of the to-be-queued node changes (i.e those in `idsBeingChanged`).
-        // This is important when a node moves to a different part of the tree rather than being deleted -- for example:
-        //   1. Object 123 is slated to be a child of this object (i.e. in newChildren), and we collect node changes for it.
-        //   2. Object 123 is currently a member of a subtree of some other object in oldChildrenIDs.
-        //   3. Thus, we don't want to delete Object 123 from the nodemap, instead allowing it to be moved.
-        if (axID.isValid())
-            removeSubtreeFromNodeMap(axID, axAncestor);
-    }
+    for (const AXID& axID : oldChildrenIDs)
+        removeSubtreeFromNodeMap(axID, axAncestor);
 
     if (resolveNodeChanges == ResolveNodeChanges::Yes)
         queueRemovalsAndUnresolvedChanges(WTFMove(oldChildrenIDs));
@@ -695,6 +688,9 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AXCoreObject* axPar
     AXTRACE("AXIsolatedTree::removeSubtreeFromNodeMap"_s);
     AXLOG(makeString("Removing subtree for objectID ", objectID.loggingString()));
     ASSERT(isMainThread());
+
+    if (!objectID.isValid())
+        return;
 
     if (!m_nodeMap.contains(objectID)) {
         AXLOG(makeString("Tried to remove AXID ", objectID.loggingString(), " that is no longer in m_nodeMap."));
