@@ -176,6 +176,17 @@ TextStream& operator<<(TextStream& ts, const ObjectIdentifier<T>& identifier)
     return ts;
 }
 
+template<typename T> class StringTypeAdapter<ObjectIdentifier<T>> {
+public:
+    StringTypeAdapter(ObjectIdentifier<T> identifier)
+        : m_identifier(identifier) { }
+    unsigned length() const { return lengthOfIntegerAsString(m_identifier.toUInt64()); }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { writeIntegerToBuffer(m_identifier.toUInt64(), destination); }
+private:
+    ObjectIdentifier<T> m_identifier;
+};
+
 } // namespace WTF
 
 using WTF::ObjectIdentifier;

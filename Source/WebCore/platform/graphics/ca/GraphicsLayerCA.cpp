@@ -513,7 +513,7 @@ String GraphicsLayerCA::debugName() const
     String caLayerDescription;
     if (!m_layer->isPlatformCALayerRemote())
         caLayerDescription = makeString("CALayer(0x", hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") ");
-    return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID().toUInt64(), ") ", name());
+    return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID(), ") ", name());
 #else
     return name();
 #endif
