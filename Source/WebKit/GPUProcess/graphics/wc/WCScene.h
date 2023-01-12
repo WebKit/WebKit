@@ -28,6 +28,7 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include "UpdateInfo.h"
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/TextureMapperFPSCounter.h>
 #include <wtf/Forward.h>
@@ -55,7 +56,7 @@ public:
 
 private:
     struct Layer;
-    using LayerMap = HashMap<uint64_t, std::unique_ptr<Layer>>;
+    using LayerMap = HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<Layer>>;
 
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     WCSceneContext* m_context { nullptr };
