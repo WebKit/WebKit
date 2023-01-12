@@ -573,6 +573,11 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         for error in json.get('errors', []):
             error_message = '---\tERROR\t---\n'
 
+            if not isinstance(error, dict):
+                error_message += str(error) + '\n'
+                error_messages.append(error_message)
+                continue
+
             code = error.get('code')
             if code:
                 type = self.ERROR_MAP.get(code, '')
