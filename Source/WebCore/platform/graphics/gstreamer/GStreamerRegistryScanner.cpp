@@ -50,9 +50,17 @@ GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
 #define MEDIA_MAX_HEIGHT 4320.0f
 #define MEDIA_MAX_FRAMERATE 60.0f
 
+static bool singletonInitialized = false;
+
+bool GStreamerRegistryScanner::singletonNeedsInitialization()
+{
+    return singletonInitialized;
+}
+
 GStreamerRegistryScanner& GStreamerRegistryScanner::singleton()
 {
     static NeverDestroyed<GStreamerRegistryScanner> sharedInstance;
+    singletonInitialized = true;
     return sharedInstance;
 }
 
@@ -233,7 +241,16 @@ GStreamerRegistryScanner::GStreamerRegistryScanner(bool isMediaSource)
     }
 
     GST_DEBUG_CATEGORY_INIT(webkit_media_gst_registry_scanner_debug, "webkitregistryscanner", 0, "WebKit GStreamer registry scanner");
-    registerWebKitGStreamerElements();
+
+    refresh();
+}
+
+void GStreamerRegistryScanner::refresh()
+{
+#if USE(GSTREAMER_WEBRTC)
+    m_audioRtpExtensions.reset();
+    m_videoRtpExtensions.reset();
+#endif
 
     ElementFactories factories(OptionSet<ElementFactories::Type>::fromRaw(static_cast<unsigned>(ElementFactories::Type::All)));
     initializeDecoders(factories);
@@ -293,6 +310,8 @@ void GStreamerRegistryScanner::fillMimeTypeSetFromCapsMapping(const GStreamerReg
 
 void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner::ElementFactories& factories)
 {
+    m_decoderCodecMap.clear();
+    m_decoderMimeTypeSet.clear();
     if (auto result = factories.hasElementForMediaType(ElementFactories::Type::AudioDecoder, "audio/mpeg, mpegversion=(int)4")) {
         m_decoderMimeTypeSet.add(AtomString("audio/aac"_s));
         m_decoderMimeTypeSet.add(AtomString("audio/mp4"_s));
@@ -475,6 +494,9 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
     // MSE is about playback, which means decoding. No need to check for encoders then.
     if (m_isMediaSource)
         return;
+
+    m_encoderCodecMap.clear();
+    m_encoderMimeTypeSet.clear();
 
     auto aacSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/mpeg, mpegversion=(int)4");
     if (auto result = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/mpeg, mpegversion=(int)4")) {
