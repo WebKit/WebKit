@@ -3,7 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1511,6 +1512,12 @@ bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, cons
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + location();
+
+    // Exit early if no children can be hit.
+    LayoutRect overflowRect = visualOverflowRect();
+    overflowRect.moveBy(adjustedLocation);
+    if (!locationInContainer.intersects(overflowRect))
+        return false;
 
     // Check kids first.
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
