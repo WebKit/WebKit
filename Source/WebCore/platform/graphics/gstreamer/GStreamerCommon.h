@@ -82,6 +82,7 @@ Vector<String> extractGStreamerOptionsFromCommandLine();
 void setGStreamerOptionsFromUIProcess(Vector<String>&&);
 bool ensureGStreamerInitialized();
 void registerWebKitGStreamerElements();
+void registerWebKitGStreamerVideoEncoder();
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
 #if ENABLE(THUNDER)

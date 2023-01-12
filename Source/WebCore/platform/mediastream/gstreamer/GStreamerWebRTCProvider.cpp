@@ -80,6 +80,7 @@ void GStreamerWebRTCProvider::initializeAudioEncodingCapabilities()
 
 void GStreamerWebRTCProvider::initializeVideoEncodingCapabilities()
 {
+    registerWebKitGStreamerVideoEncoder();
     m_videoEncodingCapabilities = GStreamerRegistryScanner::singleton().videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
     m_videoEncodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2(), isSupportingH265 = isSupportingH265()](const auto& codec) {
         if (!isSupportingVP9Profile0 && codec.sdpFmtpLine == "profile-id=0"_s)
