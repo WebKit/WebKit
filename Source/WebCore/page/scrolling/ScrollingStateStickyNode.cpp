@@ -99,7 +99,7 @@ FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& view
         return m_constraints.layerPositionForConstrainingRect(constrainingRect);
     };
 
-    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+    for (auto ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (is<ScrollingStateOverflowScrollProxyNode>(*ancestor)) {
             auto& overflowProxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(*ancestor);
             auto overflowNode = scrollingStateTree().stateNodeForID(overflowProxyNode.overflowScrollingNode());

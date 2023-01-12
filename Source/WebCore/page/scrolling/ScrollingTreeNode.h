@@ -32,6 +32,7 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

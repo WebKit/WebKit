@@ -30,7 +30,7 @@
 #include "GraphicsLayer.h"
 #include "ScrollingCoordinator.h"
 #include <stdint.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -203,7 +203,7 @@ private:
     Type m_representation { EmptyRepresentation };
 };
 
-class ScrollingStateNode : public ThreadSafeRefCounted<ScrollingStateNode> {
+class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ScrollingStateNode();
@@ -296,9 +296,9 @@ public:
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
 
-    ScrollingStateNode* parent() const { return m_parent; }
-    void setParent(ScrollingStateNode* parent) { m_parent = parent; }
-    ScrollingNodeID parentNodeID() const { return m_parent ? m_parent->scrollingNodeID() : 0; }
+    RefPtr<ScrollingStateNode> parent() const { return m_parent.get(); }
+    void setParent(RefPtr<ScrollingStateNode>&& parent) { m_parent = parent; }
+    ScrollingNodeID parentNodeID() const;
 
     Vector<RefPtr<ScrollingStateNode>>* children() const { return m_children.get(); }
     std::unique_ptr<Vector<RefPtr<ScrollingStateNode>>> takeChildren() { return WTFMove(m_children); }
@@ -334,11 +334,19 @@ private:
 
     ScrollingStateTree& m_scrollingStateTree;
 
-    ScrollingStateNode* m_parent { nullptr };
+    ThreadSafeWeakPtr<ScrollingStateNode> m_parent;
     std::unique_ptr<Vector<RefPtr<ScrollingStateNode>>> m_children;
 
     LayerRepresentation m_layer;
 };
+
+inline ScrollingNodeID ScrollingStateNode::parentNodeID() const
+{
+    auto parent = m_parent.get();
+    if (!parent)
+        return 0;
+    return parent->scrollingNodeID();
+}
 
 } // namespace WebCore
 
