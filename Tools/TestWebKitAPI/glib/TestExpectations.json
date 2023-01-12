@@ -133,6 +133,9 @@
     },
     "TestWebKitWebView": {
         "subtests": {
+            "/webkit/WebKitWebView/can-show-mime-type": {
+                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/250480"}}
+            },
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
             },
@@ -373,6 +376,13 @@
             },
             "/webkit/WebKitWebView/tls-errors-redirect-to-http": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
+            }
+        }
+    },
+    "TestWebCore": {
+        "subtests": {
+            "MIMETypeRegistry.CanShowMIMEType": {
+                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/250480"}}
             }
         }
     }
