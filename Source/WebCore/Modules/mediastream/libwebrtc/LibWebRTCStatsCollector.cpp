@@ -91,8 +91,11 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
 {
     fillReceivedRtpStreamStats(stats, rtcStats);
 
-    // receiverId
-    // remoteId
+    if (rtcStats.track_identifier.is_defined())
+        stats.trackIdentifier = fromStdString(*rtcStats.track_identifier);
+    if (rtcStats.remote_id.is_defined())
+        stats.remoteId = fromStdString(*rtcStats.remote_id);
+
     if (rtcStats.packets_received.is_defined())
         stats.packetsReceived = *rtcStats.packets_received;
     if (rtcStats.frames_dropped.is_defined())

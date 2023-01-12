@@ -88,8 +88,7 @@ dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
 
 [ JSGenerateToJSObject ]
 dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
-    // required DOMString receiverId;
-    DOMString remoteId;
+    required DOMString trackIdentifier;
     unsigned long framesDecoded;
     unsigned long keyFramesDecoded;
     unsigned long frameWidth;

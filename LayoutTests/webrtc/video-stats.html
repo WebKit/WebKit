@@ -122,8 +122,9 @@ function testTimestampDifference(timeStampDifference, numberOfFrames)
 function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
 {
     return getInboundRTPStats(secondConnection).then((stats) => {
-        assert_true("framesDropped" in stats);
-        assert_true(!!stats.kind);
+        assert_true("framesDropped" in stats, "framesDropped");
+        assert_true(!!stats.trackIdentifier, "trackIdentifier");
+        assert_true(!!stats.kind, "kind");
         if (stats.framesDecoded > statsSecondConnection.framesDecoded) {
             if (testTimestampDifference(stats.timestamp - statsSecondConnection.timestamp, stats.framesDecoded - statsSecondConnection.framesDecoded))
                 return Promise.reject("timestamp and frames increment do not match");

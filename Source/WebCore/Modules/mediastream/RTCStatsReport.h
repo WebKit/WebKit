@@ -89,7 +89,7 @@ public:
     struct InboundRtpStreamStats : ReceivedRtpStreamStats {
         InboundRtpStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
-        String receiverId;
+        String trackIdentifier;
         String remoteId;
         std::optional<uint32_t> framesDecoded;
         std::optional<uint32_t> keyFramesDecoded;
