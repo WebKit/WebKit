@@ -24,6 +24,7 @@
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "NotImplemented.h"
 #include <wtf/StdMap.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/StringBuilder.h>
@@ -37,11 +38,58 @@ GST_DEBUG_CATEGORY(webrtc_venc_debug);
 
 #define KBIT_TO_BIT 1024
 
+// FIXME: Make this configurable at runtime?
+#define NUMBER_OF_THREADS 4
+
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9;video/x-h265"));
 
+// https://www.w3.org/TR/mediastream-recording/#bitratemode
+typedef enum {
+    CONSTANT_BITRATE_MODE = 0,
+    VARIABLE_BITRATE_MODE = 1,
+} BitrateMode;
+
+#define WEBRTC_VIDEO_ENCODER_TYPE_BITRATE_MODE (webrtcVideoEncoderBitrateModeGetType())
+static GType webrtcVideoEncoderBitrateModeGetType()
+{
+    static GType bitrateModeGType = 0;
+    static const GEnumValue values[] = {
+        { CONSTANT_BITRATE_MODE, "Encode at a constant bitrate", "constant" },
+        { VARIABLE_BITRATE_MODE, "Encode using a variable bitrate, allowing more space to be used for complex signals and less space for less complex signals.", "variable" },
+        { 0, nullptr, nullptr },
+    };
+
+    if (!bitrateModeGType)
+        bitrateModeGType = g_enum_register_static("BitrateMode", values);
+    return bitrateModeGType;
+}
+
+// https://www.w3.org/TR/webcodecs/#enumdef-latencymode
+typedef enum {
+    QUALITY_LATENCY_MODE = 0,
+    REALTIME_LATENCY_MODE = 1,
+} LatencyMode;
+
+#define WEBRTC_VIDEO_ENCODER_TYPE_LATENCY_MODE (webrtcVideoEncoderLatencyModeGetType())
+static GType webrtcVideoEncoderLatencyModeGetType()
+{
+    static GType latencyModeGType = 0;
+    static const GEnumValue values[] = {
+        { QUALITY_LATENCY_MODE, "Optimize for encoding quality", "quality" },
+        { REALTIME_LATENCY_MODE, "Optimize for low latency", "realtime" },
+        { 0, nullptr, nullptr },
+    };
+
+    if (!latencyModeGType)
+        latencyModeGType = g_enum_register_static("LatencyMode", values);
+    return latencyModeGType;
+}
+
 using SetBitrateFunc = Function<void(GObject* encoder, const char* propertyName, int bitrate)>;
 using SetupFunc = Function<void(WebKitWebrtcVideoEncoder*)>;
+using SetBitrateModeFunc = Function<void(GstElement*, BitrateMode)>;
+using SetLatencyModeFunc = Function<void(GstElement*, LatencyMode)>;
 
 struct EncoderDefinition {
     GRefPtr<GstCaps> caps;
@@ -51,6 +99,8 @@ struct EncoderDefinition {
     GRefPtr<GstCaps> encodedFormat;
     SetBitrateFunc setBitrate;
     SetupFunc setupEncoder;
+    SetBitrateModeFunc setBitrateMode;
+    SetLatencyModeFunc setLatencyMode;
     const char* bitratePropertyName;
     const char* keyframeIntervalPropertyName;
 };
@@ -75,7 +125,7 @@ public:
     }
 
     static void registerEncoder(EncoderId id, const char* name, const char* parserName, const char* caps, const char* encodedFormat,
-        SetupFunc&& setupEncoder, const char* bitratePropertyName, SetBitrateFunc&& setBitrate, const char* keyframeIntervalPropertyName)
+        SetupFunc&& setupEncoder, const char* bitratePropertyName, SetBitrateFunc&& setBitrate, const char* keyframeIntervalPropertyName, SetBitrateModeFunc&& setBitrateMode, SetLatencyModeFunc&& setLatency)
     {
         auto encoderFactory = adoptGRef(gst_element_factory_find(name));
         if (!encoderFactory) {
@@ -104,6 +154,8 @@ public:
             .encodedFormat = encodedFormat ? adoptGRef(gst_caps_from_string(encodedFormat)) : nullptr,
             .setBitrate = WTFMove(setBitrate),
             .setupEncoder = WTFMove(setupEncoder),
+            .setBitrateMode = WTFMove(setBitrateMode),
+            .setLatencyMode = WTFMove(setLatency),
             .bitratePropertyName = bitratePropertyName,
             .keyframeIntervalPropertyName = keyframeIntervalPropertyName,
         }));
@@ -131,6 +183,8 @@ struct _WebKitWebrtcVideoEncoderPrivate {
     GRefPtr<GstElement> videoScale;
     GRefPtr<GstCaps> encodedCaps;
     unsigned bitrate;
+    BitrateMode bitrateMode;
+    LatencyMode latencyMode;
 };
 
 #define webkit_webrtc_video_encoder_parent_class parent_class
@@ -142,6 +196,8 @@ enum {
     PROP_ENCODER,
     PROP_BITRATE,
     PROP_KEYFRAME_INTERVAL,
+    PROP_BITRATE_MODE,
+    PROP_LATENCY_MODE,
     N_PROPS
 };
 
@@ -169,6 +225,12 @@ static void webrtcVideoEncoderGetProperty(GObject* object, guint prop_id, GValue
             auto encoder = Encoders::definition(priv->encoderId);
             g_object_get_property(G_OBJECT(priv->encoder.get()), encoder->keyframeIntervalPropertyName, value);
         }
+        break;
+    case PROP_BITRATE_MODE:
+        g_value_set_enum(value, priv->bitrateMode);
+        break;
+    case PROP_LATENCY_MODE:
+        g_value_set_enum(value, priv->latencyMode);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -277,6 +339,9 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
 
     encoderDefinition->setupEncoder(self);
 
+    encoderDefinition->setBitrateMode(priv->encoder.get(), priv->bitrateMode);
+    encoderDefinition->setLatencyMode(priv->encoder.get(), priv->latencyMode);
+
     gst_element_link_many(priv->videoConvert.get(), priv->videoScale.get(), priv->inputCapsFilter.get(), nullptr);
     if (shouldLinkEncoder)
         gst_element_link(priv->inputCapsFilter.get(), priv->encoder.get());
@@ -371,6 +436,20 @@ static void webrtcVideoEncoderSetProperty(GObject* object, guint prop_id, const 
             g_object_set(priv->encoder.get(), encoder->keyframeIntervalPropertyName, g_value_get_uint(value), nullptr);
         }
         break;
+    case PROP_BITRATE_MODE:
+        priv->bitrateMode = static_cast<BitrateMode>(g_value_get_enum(value));
+        if (priv->encoder) {
+            auto encoder = Encoders::definition(priv->encoderId);
+            encoder->setBitrateMode(priv->encoder.get(), priv->bitrateMode);
+        }
+        break;
+    case PROP_LATENCY_MODE:
+        priv->latencyMode = static_cast<LatencyMode>(g_value_get_enum(value));
+        if (priv->encoder) {
+            auto encoder = Encoders::definition(priv->encoderId);
+            encoder->setLatencyMode(priv->encoder.get(), priv->latencyMode);
+        }
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -409,6 +488,9 @@ static void webrtcVideoEncoderConstructed(GObject* encoder)
     auto* self = WEBKIT_WEBRTC_VIDEO_ENCODER(encoder);
     self->priv->encoderId = None;
 
+    self->priv->bitrateMode = CONSTANT_BITRATE_MODE;
+    self->priv->latencyMode = REALTIME_LATENCY_MODE;
+
     auto* sinkPad = webkitGstGhostPadFromStaticTemplate(&sinkTemplate, "sink", nullptr);
     GST_OBJECT_FLAG_SET(sinkPad, GST_PAD_FLAG_NEED_PARENT);
     gst_pad_set_event_function(sinkPad, reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject* parent, GstEvent* event) -> gboolean {
@@ -442,15 +524,23 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
     Encoders::registerEncoder(OmxH264, "omxh264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
         [](WebKitWebrtcVideoEncoder* self) {
-            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "control-rate", "variable");
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "target-bitrate", setBitrateBitPerSec, "interval-intraframes");
+        }, "target-bitrate", setBitrateBitPerSec, "interval-intraframes", [](GstElement* encoder, BitrateMode mode) {
+            switch (mode) {
+            case CONSTANT_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "control-rate", "constant");
+                break;
+            case VARIABLE_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "control-rate", "variable");
+                break;
+            };
+        }, [](GstElement*, LatencyMode) {
+            notImplemented();
+        });
     Encoders::registerEncoder(X264, "x264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream",
         [](WebKitWebrtcVideoEncoder* self) {
-            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "tune", "zerolatency");
-            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "speed-preset", "ultrafast");
-            g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", 4, nullptr);
+            g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", NUMBER_OF_THREADS, nullptr);
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
 
             const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
@@ -462,21 +552,64 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
             }
             g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
             g_object_set(self->priv->outputCapsFilter.get(), "caps", self->priv->encodedCaps.get(), nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
+            switch (mode) {
+            case CONSTANT_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "pass", "cbr");
+                break;
+            case VARIABLE_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "pass", "pass1");
+                break;
+            };
+        }, [](GstElement* encoder, LatencyMode mode) {
+            switch (mode) {
+            case REALTIME_LATENCY_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "tune", "zerolatency");
+                gst_util_set_object_arg(G_OBJECT(encoder), "speed-preset", "ultrafast");
+                break;
+            case QUALITY_LATENCY_MODE:
+                g_object_set(encoder, "tune", 0, nullptr);
+                gst_util_set_object_arg(G_OBJECT(encoder), "speed-preset", "None");
+                gst_util_set_object_arg(G_OBJECT(encoder), "pass", "qual");
+                break;
+            };
+        });
     Encoders::registerEncoder(OpenH264, "openh264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream",
         [](WebKitWebrtcVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
             g_object_set(self->priv->outputCapsFilter.get(), "caps", self->priv->encodedCaps.get(), nullptr);
-        }, "bitrate", setBitrateBitPerSec, "gop-size");
+        }, "bitrate", setBitrateBitPerSec, "gop-size", [](GstElement*, BitrateMode) {
+            notImplemented();
+        }, [](GstElement*, LatencyMode) {
+            notImplemented();
+        });
     Encoders::registerEncoder(Vp8, "vp8enc", nullptr, "video/x-vp8", nullptr,
         [](WebKitWebrtcVideoEncoder* self) {
-            gst_preset_load_preset(GST_PRESET(self->priv->encoder.get()), "Profile Realtime");
-        }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist");
+            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "keyframe-mode", "disabled");
+        }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist", [](GstElement* encoder, BitrateMode mode) {
+            switch (mode) {
+            case CONSTANT_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cbr");
+                break;
+            case VARIABLE_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "vbr");
+                break;
+            };
+        }, [](GstElement* encoder, LatencyMode mode) {
+            switch (mode) {
+            case REALTIME_LATENCY_MODE:
+                gst_preset_load_preset(GST_PRESET(encoder), "Profile Realtime");
+                break;
+            case QUALITY_LATENCY_MODE:
+                g_object_set(encoder, "threads", NUMBER_OF_THREADS, "cpu-used", NUMBER_OF_THREADS, "deadline", 0, "lag-in-frames", 25, nullptr);
+                gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cq");
+                break;
+            };
+        });
 
     Encoders::registerEncoder(Vp9, "vp9enc", nullptr, "video/x-vp9", nullptr,
         [](WebKitWebrtcVideoEncoder* self) {
-            g_object_set(self->priv->encoder.get(), "threads", 4, "cpu-used", 4, "tile-rows", 2, "row-mt", true, nullptr);
             auto inputCaps = adoptGRef(gst_caps_new_any());
             const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
             if (const char* profileString = gst_structure_get_string(structure, "profile")) {
@@ -486,24 +619,91 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
                     inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420_10LE", nullptr));
             }
             g_object_set(self->priv->inputCapsFilter.get(), "caps", inputCaps.get(), nullptr);
-        }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist");
+        }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist", [](GstElement* encoder, BitrateMode mode) {
+            switch (mode) {
+            case CONSTANT_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cbr");
+                break;
+            case VARIABLE_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "vbr");
+                break;
+            };
+        }, [](GstElement* encoder, LatencyMode mode) {
+            switch (mode) {
+            case REALTIME_LATENCY_MODE:
+                g_object_set(encoder, "threads", NUMBER_OF_THREADS, "cpu-used", NUMBER_OF_THREADS, "deadline", 1, "lag-in-frames", 0, nullptr);
+                break;
+            case QUALITY_LATENCY_MODE:
+                g_object_set(encoder, "threads", NUMBER_OF_THREADS, "cpu-used", NUMBER_OF_THREADS, "deadline", 0, "lag-in-frames", 25, nullptr);
+                gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cq");
+                break;
+            };
+        });
 
     Encoders::registerEncoder(VaapiH264, "vah264lpenc", "h264parse", "video/x-h264", nullptr,
         [](WebKitWebrtcVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement*, BitrateMode) {
+            // Not supported.
+        }, [](GstElement* encoder, LatencyMode mode) {
+            switch (mode) {
+            case REALTIME_LATENCY_MODE:
+                g_object_set(encoder, "target-usage", 1, nullptr);
+                break;
+            case QUALITY_LATENCY_MODE:
+                g_object_set(encoder, "target-usage", 7, nullptr);
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
+                break;
+            };
+        });
 
     Encoders::registerEncoder(VaapiH264, "vah264enc", "h264parse", "video/x-h264", nullptr,
         [](WebKitWebrtcVideoEncoder* self) {
-            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "rate-control", "cbr");
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
+            switch (mode) {
+            case CONSTANT_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cbr");
+                break;
+            case VARIABLE_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "vbr");
+                break;
+            };
+        }, [](GstElement* encoder, LatencyMode mode) {
+            switch (mode) {
+            case REALTIME_LATENCY_MODE:
+                g_object_set(encoder, "target-usage", 1, nullptr);
+                break;
+            case QUALITY_LATENCY_MODE:
+                g_object_set(encoder, "target-usage", 7, nullptr);
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
+                break;
+            };
+        });
 
     Encoders::registerEncoder(VaapiH265, "vah265enc", "h265parse", "video/x-h265", nullptr,
         [](WebKitWebrtcVideoEncoder* self) {
-            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "rate-control", "cbr");
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max");
+        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
+            switch (mode) {
+            case CONSTANT_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cbr");
+                break;
+            case VARIABLE_BITRATE_MODE:
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "vbr");
+                break;
+            };
+        }, [](GstElement* encoder, LatencyMode mode) {
+            switch (mode) {
+            case REALTIME_LATENCY_MODE:
+                g_object_set(encoder, "target-usage", 1, nullptr);
+                break;
+            case QUALITY_LATENCY_MODE:
+                g_object_set(encoder, "target-usage", 7, nullptr);
+                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
+                break;
+            };
+        });
 
     auto srcPadTemplateCaps = createSrcPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));
@@ -517,6 +717,12 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
 
     g_object_class_install_property(objectClass, PROP_KEYFRAME_INTERVAL, g_param_spec_uint("keyframe-interval", "Keyframe interval", "The interval between keyframes", 0, G_MAXINT, 0,
         static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
+    g_object_class_install_property(objectClass, PROP_BITRATE_MODE, g_param_spec_enum("bitrate-mode", "Bitrate mode",
+        "Bitrate mode", WEBRTC_VIDEO_ENCODER_TYPE_BITRATE_MODE, CONSTANT_BITRATE_MODE, WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(objectClass, PROP_LATENCY_MODE, g_param_spec_enum("latency-mode", "Latency mode",
+        "Latency mode", WEBRTC_VIDEO_ENCODER_TYPE_LATENCY_MODE, REALTIME_LATENCY_MODE, WEBKIT_PARAM_READWRITE));
 }
+
+#undef NUMBER_OF_THREADS
 
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
