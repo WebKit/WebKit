@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
+#include "FrameTracers.h"
 #include "JITExceptions.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyException.h"
@@ -416,6 +417,8 @@ WASM_SLOW_PATH_DECL(array_new)
 
 WASM_SLOW_PATH_DECL(array_get)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmArrayGet>();
     EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
     if (JSValue::decode(arrayref).isNull())
@@ -442,6 +445,8 @@ WASM_SLOW_PATH_DECL(array_get)
 
 WASM_SLOW_PATH_DECL(array_set)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmArraySet>();
     EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
     if (JSValue::decode(arrayref).isNull())
@@ -461,6 +466,8 @@ WASM_SLOW_PATH_DECL(array_set)
 
 WASM_SLOW_PATH_DECL(struct_new)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmStructNew>();
     ASSERT(instruction.m_typeIndex < instance->module().moduleInformation().typeCount());
 
@@ -478,6 +485,8 @@ WASM_SLOW_PATH_DECL(struct_get)
 
 WASM_SLOW_PATH_DECL(struct_set)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmStructSet>();
     auto structReference = READ(instruction.m_structReference).encodedJSValue();
     auto value = READ(instruction.m_value).encodedJSValue();
@@ -537,7 +546,7 @@ WASM_SLOW_PATH_DECL(table_grow)
 
 WASM_SLOW_PATH_DECL(grow_memory)
 {
-    instance->storeTopCallFrame(callFrame);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
     auto instruction = pc->as<WasmGrowMemory>();
     int32_t delta = READ(instruction.m_delta).unboxedInt32();
@@ -655,6 +664,8 @@ static size_t jsrSize()
 
 WASM_SLOW_PATH_DECL(call_builtin)
 {
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
     auto instruction = pc->as<WasmCallBuiltin>();
     Register* stackBottom = callFrame->registers() - instruction.m_stackOffset;
     Register* stackStart = stackBottom + CallFrame::headerSizeInRegisters + /* indirect call target */ 1;
@@ -791,7 +802,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_notify)
 
 WASM_SLOW_PATH_DECL(throw)
 {
-    instance->storeTopCallFrame(callFrame);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
@@ -826,7 +837,7 @@ WASM_SLOW_PATH_DECL(throw)
 
 WASM_SLOW_PATH_DECL(rethrow)
 {
-    instance->storeTopCallFrame(callFrame);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
@@ -1103,7 +1114,7 @@ WASM_SLOW_PATH_DECL(i64_trunc_sat_f64_s)
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);
-    instance->storeTopCallFrame(callFrame);
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
     WASM_RETURN_TWO(Wasm::throwWasmToJSException(callFrame, exceptionType, instance), nullptr);
 }
 

@@ -223,11 +223,6 @@ public:
     static constexpr size_t offsetOfTablePtr(unsigned numImportFunctions, unsigned i) { return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * i; }
     static constexpr size_t offsetOfGlobalPtr(unsigned numImportFunctions, unsigned numTables, unsigned i) { return roundUpToMultipleOf<sizeof(Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables) + sizeof(Global::Value) * i; }
 
-    void storeTopCallFrame(void* callFrame)
-    {
-        vm().topCallFrame = bitwise_cast<CallFrame*>(callFrame);
-    }
-
     const Tag& tag(unsigned i) const { return *m_tags[i]; }
     void setTag(unsigned, Ref<const Tag>&&);
 
