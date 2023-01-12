@@ -87,8 +87,10 @@ RenderTheme::RenderTheme()
 
 ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, ControlPart autoAppearance) const
 {
-    if (!element)
+    if (!element) {
+        style.setEffectiveAppearance(NoControlPart);
         return NoControlPart;
+    }
 
     ControlPart part = style.effectiveAppearance();
     if (part == autoAppearance)
