@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/ElementInternals-accessibility.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-attachInternals.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-constructor-customized-bulitins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/adopted-callback.html

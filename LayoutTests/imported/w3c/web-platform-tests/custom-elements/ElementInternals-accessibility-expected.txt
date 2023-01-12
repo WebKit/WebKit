@@ -13,7 +13,7 @@ PASS ariaCurrent is defined in ElementInternals
 PASS ariaDescribedByElements is defined in ElementInternals
 PASS ariaDetailsElements is defined in ElementInternals
 PASS ariaDisabled is defined in ElementInternals
-FAIL ariaErrorMessageElement is defined in ElementInternals assert_inherits: property "ariaErrorMessageElement" not found in prototype chain
+PASS ariaErrorMessageElements is defined in ElementInternals
 PASS ariaExpanded is defined in ElementInternals
 PASS ariaFlowToElements is defined in ElementInternals
 PASS ariaHasPopup is defined in ElementInternals
@@ -45,4 +45,5 @@ PASS ariaValueMax is defined in ElementInternals
 PASS ariaValueMin is defined in ElementInternals
 PASS ariaValueNow is defined in ElementInternals
 PASS ariaValueText is defined in ElementInternals
+PASS ariaErrorMessageElement is not defined in ElementInternals
 
