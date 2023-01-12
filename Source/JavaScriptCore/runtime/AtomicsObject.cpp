@@ -449,14 +449,13 @@ JSValue atomicsWaitImpl(JSGlobalObject* globalObject, JSArrayType* typedArray, u
     if (!std::isnan(timeoutInMilliseconds))
         timeout = std::max(Seconds::fromMilliseconds(timeoutInMilliseconds), 0_s);
 
-    if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread()) {
-        throwTypeError(globalObject, scope, makeString("Atomics."_s,
-            (type == AtomicsWaitType::Async ? "waitAsync"_s : "wait"_s), " cannot be called from the current thread."_s));
-        return { };
-    }
-
     if (type == AtomicsWaitType::Async)
         return WaiterListManager::singleton().waitAsync(globalObject, vm, ptr, expectedValue, timeout);
+
+    if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread()) {
+        throwTypeError(globalObject, scope, "Atomics.wait cannot be called from the current thread."_s);
+        return { };
+    }
 
     auto result = WaiterListManager::singleton().waitSync(vm, ptr, expectedValue, timeout);
     switch (result) {
