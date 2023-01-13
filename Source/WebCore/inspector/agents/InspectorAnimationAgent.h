@@ -67,7 +67,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> stopTracking();
 
     // InspectorInstrumentation
-    void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, ComputedEffectTiming);
+    void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     void didChangeWebAnimationName(WebAnimation&);
     void didSetWebAnimationEffect(WebAnimation&);
     void didChangeWebAnimationEffectTiming(WebAnimation&);

@@ -562,7 +562,7 @@ std::optional<double> AnimationEffect::progressUntilNextStep(double iterationPro
     return nextStepProgress - iterationProgress;
 }
 
-Seconds AnimationEffect::timeToNextTick(BasicEffectTiming timing) const
+Seconds AnimationEffect::timeToNextTick(const BasicEffectTiming& timing) const
 {
     switch (timing.phase) {
     case AnimationEffectPhase::Before:
