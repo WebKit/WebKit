@@ -446,6 +446,8 @@ static std::optional<RTCErrorDetailType> toRTCErrorDetailType(webrtc::RTCErrorDe
     case webrtc::RTCErrorDetailType::NONE:
         return { };
     };
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 RefPtr<RTCError> toRTCError(const webrtc::RTCError& rtcError)
