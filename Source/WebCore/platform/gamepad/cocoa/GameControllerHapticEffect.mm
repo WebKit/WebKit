@@ -36,9 +36,22 @@
 
 namespace WebCore {
 
+static double magnitudeToIntensity(double magnitude)
+{
+    if (magnitude <= 0)
+        return 0;
+
+    // Magnitude is a value in the [0; 1] range. Intensity has the same range but with
+    // GameController, intensities below 0.1 don't register. To address this, we scale
+    // the magnitude to be in the [0.1; 1] range.
+    constexpr double newRange = 0.9;
+    constexpr double newMinimum = 0.1;
+    return (std::min(magnitude, 1.0) * newRange) + newMinimum;
+}
+
 std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto createPlayer = [&](CHHapticEngine *engine, double intensity) -> RetainPtr<id> {
+    auto createPlayer = [&](CHHapticEngine *engine, double magnitude) -> RetainPtr<id> {
         NSDictionary* hapticDict = @{
             CHHapticPatternKeyPattern: @[
                 @{ CHHapticPatternKeyEvent: @{
@@ -47,7 +60,7 @@ std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(G
                     CHHapticPatternKeyEventDuration: [NSNumber numberWithDouble:std::clamp<double>(parameters.duration / 1000., 0, GamepadEffectParameters::maximumDuration.seconds())],
                     CHHapticPatternKeyEventParameters: @[ @{
                         CHHapticPatternKeyParameterID: CHHapticEventParameterIDHapticIntensity,
-                        CHHapticPatternKeyParameterValue: [NSNumber numberWithDouble:std::clamp<double>(intensity, 0, 1)],
+                        CHHapticPatternKeyParameterValue: [NSNumber numberWithDouble:magnitudeToIntensity(magnitude)],
                     } ]
                 }, },
             ],
