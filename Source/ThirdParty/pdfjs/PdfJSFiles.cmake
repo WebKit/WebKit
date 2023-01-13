@@ -184,7 +184,10 @@ set(PDFJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-newparagraph.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-noicon.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-note.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paperclip.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-paragraph.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/annotation-pushpin.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorFreeText.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/cursor-editorInk.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-next.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/findbarButton-previous.svg
@@ -265,6 +268,7 @@ set(PDFJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/locale/ff/viewer.properties
     ${THIRDPARTY_DIR}/pdfjs/web/locale/fi/viewer.properties
     ${THIRDPARTY_DIR}/pdfjs/web/locale/fr/viewer.properties
+    ${THIRDPARTY_DIR}/pdfjs/web/locale/fur/viewer.properties
     ${THIRDPARTY_DIR}/pdfjs/web/locale/fy-NL/viewer.properties
     ${THIRDPARTY_DIR}/pdfjs/web/locale/ga-IE/viewer.properties
     ${THIRDPARTY_DIR}/pdfjs/web/locale/gd/viewer.properties

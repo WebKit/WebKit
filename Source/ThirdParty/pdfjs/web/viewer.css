@@ -27,6 +27,8 @@
      -moz-text-size-adjust: none;
           text-size-adjust: none;
   forced-color-adjust: none;
+  transform-origin: 0 0;
+  z-index: 2;
 }
 
 .textLayer span,
@@ -140,6 +142,7 @@
   left: 0;
   pointer-events: none;
   transform-origin: 0 0;
+  z-index: 3;
 }
 
 .annotationLayer section {
@@ -765,6 +768,13 @@
   --editorInk-editing-cursor: url(images/cursor-editorInk.svg) 0 16, pointer;
 }
 
+@media (-webkit-min-device-pixel-ratio: 1.1), (min-resolution: 1.1dppx) {
+  :root {
+    --editorFreeText-editing-cursor: url(images/cursor-editorFreeText.svg) 0 16,
+      text;
+  }
+}
+
 @media (forced-colors: active) {
   :root {
     --focus-outline: solid 3px ButtonText;
@@ -790,7 +800,7 @@
   font-size: calc(100px * var(--scale-factor));
   transform-origin: 0 0;
   cursor: auto;
-  z-index: 20000;
+  z-index: 4;
 }
 
 .annotationEditorLayer.freeTextEditing {
@@ -930,6 +940,9 @@
 
 .pdfViewer .canvasWrapper {
   overflow: hidden;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
 .pdfViewer .page {
@@ -1019,6 +1032,11 @@
   display: none;
 }
 
+.pdfViewer .page canvas[zooming] {
+  width: 100%;
+  height: 100%;
+}
+
 .pdfViewer .page .loadingIcon {
   position: absolute;
   display: block;
@@ -1027,6 +1045,7 @@
   right: 0;
   bottom: 0;
   background: url("images/loading-icon.gif") center no-repeat;
+  z-index: 5;
 }
 .pdfViewer .page .loadingIcon.notVisible {
   background: none;
@@ -1067,8 +1086,8 @@
   --progressBar-percent: 0%;
   --progressBar-end-offset: 0;
   --progressBar-color: rgba(10, 132, 255, 1);
-  --progressBar-indeterminate-bg-color: rgba(221, 221, 222, 1);
-  --progressBar-indeterminate-blend-color: rgba(116, 177, 239, 1);
+  --progressBar-bg-color: rgba(221, 221, 222, 1);
+  --progressBar-blend-color: rgba(116, 177, 239, 1);
   --scrollbar-color: auto;
   --scrollbar-bg-color: auto;
   --toolbar-icon-bg-color: rgba(0, 0, 0, 1);
@@ -1158,8 +1177,8 @@
     --main-color: rgba(249, 249, 250, 1);
     --body-bg-color: rgba(42, 42, 46, 1);
     --progressBar-color: rgba(0, 96, 223, 1);
-    --progressBar-indeterminate-bg-color: rgba(40, 40, 43, 1);
-    --progressBar-indeterminate-blend-color: rgba(20, 68, 133, 1);
+    --progressBar-bg-color: rgba(40, 40, 43, 1);
+    --progressBar-blend-color: rgba(20, 68, 133, 1);
     --scrollbar-color: rgba(121, 121, 123, 1);
     --scrollbar-bg-color: rgba(35, 35, 39, 1);
     --toolbar-icon-bg-color: rgba(255, 255, 255, 1);
@@ -1511,7 +1530,7 @@ body {
   position: absolute;
   inset-inline: 0 var(--progressBar-end-offset);
   height: 4px;
-  background-color: var(--body-bg-color);
+  background-color: var(--progressBar-bg-color);
   border-bottom: 1px solid var(--toolbar-border-color);
   transition-property: inset-inline-start;
   transition-duration: var(--sidebar-transition-duration);
@@ -1554,7 +1573,7 @@ body {
 
 #loadingBar.indeterminate .progress {
   transform: none;
-  background-color: var(--progressBar-indeterminate-bg-color);
+  background-color: var(--progressBar-bg-color);
   transition: none;
 }
 
@@ -1566,12 +1585,12 @@ body {
   width: calc(100% + 150px);
   background: repeating-linear-gradient(
     135deg,
-    var(--progressBar-indeterminate-blend-color) 0,
-    var(--progressBar-indeterminate-bg-color) 5px,
-    var(--progressBar-indeterminate-bg-color) 45px,
+    var(--progressBar-blend-color) 0,
+    var(--progressBar-bg-color) 5px,
+    var(--progressBar-bg-color) 45px,
     var(--progressBar-color) 55px,
     var(--progressBar-color) 95px,
-    var(--progressBar-indeterminate-blend-color) 100px
+    var(--progressBar-blend-color) 100px
   );
   animation: progressIndeterminate 1s linear infinite;
 }
