@@ -32,6 +32,7 @@
 #include "CSSFontFamily.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSParser.h"
+#include "CSSParserIdioms.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
@@ -276,10 +277,10 @@ static bool fontWeightValueIsBold(CSSValue& fontWeight)
         return false;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
-    if (primitiveValue.isCSSWideKeyword())
-        return false;
-
     auto valueID = primitiveValue.valueID();
+
+    if (isCSSWideKeyword(valueID))
+        return false;
 
     switch (valueID) {
     case CSSValueNormal:

@@ -268,25 +268,25 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
 
+    auto valueID = WebCore::valueID(valueToApply.get());
+
     const CSSCustomPropertyValue* customPropertyValue = nullptr;
-    CSSValueID customPropertyValueID = CSSValueInvalid;
     const CSSRegisteredCustomProperty* registeredCustomProperty = nullptr;
 
     if (id == CSSPropertyCustom) {
         customPropertyValue = downcast<CSSCustomPropertyValue>(valueToApply.ptr());
         ASSERT(customPropertyValue->isResolved());
         if (std::holds_alternative<CSSValueID>(customPropertyValue->value()))
-            customPropertyValueID = std::get<CSSValueID>(customPropertyValue->value());
+            valueID = std::get<CSSValueID>(customPropertyValue->value());
         auto& name = customPropertyValue->name();
         registeredCustomProperty = m_state.document().customPropertyRegistry().get(name);
     }
 
-    bool isInherit = valueToApply->isInheritValue() || customPropertyValueID == CSSValueInherit;
-    bool isInitial = valueToApply->isInitialValue() || customPropertyValueID == CSSValueInitial;
-
-    bool isUnset = valueToApply->isUnsetValue() || customPropertyValueID == CSSValueUnset;
-    bool isRevert = valueToApply->isRevertValue() || customPropertyValueID == CSSValueRevert;
-    bool isRevertLayer = valueToApply->isRevertLayerValue() || customPropertyValueID == CSSValueRevertLayer;
+    bool isInherit = valueID == CSSValueInherit;
+    bool isInitial = valueID == CSSValueInitial;
+    bool isUnset = valueID == CSSValueUnset;
+    bool isRevert = valueID == CSSValueRevert;
+    bool isRevertLayer = valueID == CSSValueRevertLayer;
 
     if (isRevert || isRevertLayer) {
         // In @keyframes, 'revert-layer' rolls back the cascaded value to the author level.
