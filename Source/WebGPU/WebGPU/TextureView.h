@@ -41,37 +41,39 @@ class Texture;
 class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
+    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device, const Ref<Texture>& textureBacking)
     {
-        return adoptRef(*new TextureView(texture, descriptor, renderExtent, device));
+        return adoptRef(*new TextureView(texture, descriptor, renderExtent, device, textureBacking));
     }
-    static Ref<TextureView> createInvalid(Device& device)
+    static Ref<TextureView> createInvalid(Device& device, const Ref<Texture>& textureBacking)
     {
-        return adoptRef(*new TextureView(device));
+        return adoptRef(*new TextureView(device, textureBacking));
     }
 
     ~TextureView();
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_texture; }
+    bool isValid() const { return texture(); }
 
-    id<MTLTexture> texture() const { return m_texture; }
+    id<MTLTexture> texture() const;
     const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
     const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }
 
     Device& device() const { return m_device; }
+    void recreateBackingWithStorageIfNeeded() const;
 
 private:
-    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Device&);
-    TextureView(Device&);
+    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Device&, const Ref<Texture>&);
+    TextureView(Device&, const Ref<Texture>&);
 
-    const id<MTLTexture> m_texture { nil };
+    id<MTLTexture> m_texture { nil };
 
     const WGPUTextureViewDescriptor m_descriptor;
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
+    const Ref<Texture> m_textureBacking;
 };
 
 } // namespace WebGPU

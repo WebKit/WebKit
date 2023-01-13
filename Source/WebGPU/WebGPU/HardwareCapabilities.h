@@ -37,6 +37,7 @@ struct HardwareCapabilities {
     struct BaseCapabilities {
         MTLArgumentBuffersTier argumentBuffersTier { MTLArgumentBuffersTier1 };
         bool supportsNonPrivateDepthStencilTextures { false };
+        bool supportsMemorylessTextures { false };
         id<MTLCounterSet> timestampCounterSet { nil };
         id<MTLCounterSet> statisticCounterSet { nil };
     } baseCapabilities;

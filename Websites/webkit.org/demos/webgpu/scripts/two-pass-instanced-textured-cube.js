@@ -87,6 +87,10 @@ async function helloCube() {
         size: translationBufferSize,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
+    const translationBuffer2 = device.createBuffer({
+        size: translationBufferSize,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
     
     /* GPUTexture */
     const image = new Image();
@@ -127,7 +131,71 @@ async function helloCube() {
     });
 
     /*** Shader Setup ***/
+    
+    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [
+        { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {} },
+        { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: {} },
+        { binding: 2, visibility: GPUShaderStage.FRAGMENT, texture: {} },
+        { binding: 3, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
+    ] });
 
+    const uniformBindGroup = device.createBindGroup({
+        layout: uniformBindGroupLayout,
+        entries: [
+          {
+            binding: 0,
+            resource: {
+              buffer: uniformBuffer,
+              offset: 0
+            },
+          },
+          {
+            binding: 1,
+            resource: {
+              buffer: translationBuffer,
+              offset: 0
+            },
+          },
+          {
+            binding: 2,
+            resource: texture.createView(),
+          },
+          {
+            binding: 3,
+            resource: sampler,
+          },
+        ],
+      });
+
+    const uniformBindGroup2 = device.createBindGroup({
+        layout: uniformBindGroupLayout,
+        entries: [
+          {
+            binding: 0,
+            resource: {
+              buffer: uniformBuffer,
+              offset: 0
+            },
+          },
+          {
+            binding: 1,
+            resource: {
+              buffer: translationBuffer2,
+              offset: 0
+            },
+          },
+          {
+            binding: 2,
+            resource: texture.createView(),
+          },
+          {
+            binding: 3,
+            resource: sampler,
+          },
+        ],
+      });
+
+    
     const mslSource = `
                 #define vertexInputPackedFloatSize 10
                 #include <metal_stdlib>
@@ -209,8 +277,7 @@ async function helloCube() {
             format: "depth24plus",
             depthWriteEnabled: true,
             depthCompare: "less-equal"
-        },
-        multisample: { count: 4 }
+        }
     };
 
     const deviceScaleFactor = window.devicePixelRatio || 1;
@@ -218,55 +285,21 @@ async function helloCube() {
         size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
         format: 'depth24plus',
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
-        sampleCount: 4
-    });
-
-    const msaaRenderTarget = device.createTexture({
-        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
-        sampleCount: 4,
-        format: 'bgra8unorm',
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        sampleCount: 1
     });
 
     const depthTextureView = depthTexture.createView();
 
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
-
-    const uniformBindGroup = device.createBindGroup({
-        layout: renderPipeline.getBindGroupLayout(1),
-        entries: [
-          {
-            binding: 0,
-            resource: {
-              buffer: uniformBuffer,
-              offset: 0
-            },
-          },
-          {
-            binding: 1,
-            resource: {
-              buffer: translationBuffer,
-              offset: 0
-            },
-          },
-          {
-            binding: 2,
-            resource: texture.createView(),
-          },
-          {
-            binding: 3,
-            resource: sampler,
-          },
-        ],
-      });
-
+    
     /*** Swap Chain Setup ***/
     function frameUpdate() {
         const d = new Date();
         const seconds = d.getMilliseconds() / 1000.0 + d.getSeconds();
         const secondsBuffer = new Float32Array(instanceCount * 3);
         const translations = new Float32Array(instanceCount * 4);
+        const translations2 = new Float32Array(instanceCount * 4);
         const pi = 6.28318530718;
         for (let i = 0; i < instanceCount; ++i) {
             const offset = (pi * i) / instanceCount;
@@ -284,6 +317,11 @@ async function helloCube() {
             translations[i * 4 + 1] = yOffset;
             translations[i * 4 + 2] = 0;
             translations[i * 4 + 3] = 1;
+            
+            translations2[i * 4] = xOffset - 0.15;
+            translations2[i * 4 + 1] = yOffset - 0.15;
+            translations2[i * 4 + 2] = -.5;
+            translations2[i * 4 + 3] = 1;
         }
 
         device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer, 0, uniformBufferSize);
@@ -305,15 +343,12 @@ async function helloCube() {
         const renderAttachment = currentTexture.createView();
         
         /* GPUColor */
-        const darkBlue = { r: 0.15, g: 0.15, b: 0.5, a: 1 };
-        
         /* GPURenderPassColorATtachmentDescriptor */
         const colorAttachmentDescriptor = {
-            view: msaaRenderTarget.createView(),
-            resolveTarget: renderAttachment,
+            view: renderAttachment,
             loadOp: "clear",
             storeOp: "store",
-            clearColor: darkBlue
+            clearValue: { r: 0.15, g: 0.15, b: 0.5, a: 1 }
         };
         
         /* GPURenderPassDescriptor */
@@ -321,9 +356,9 @@ async function helloCube() {
             view: depthTextureView,
             depthClearValue: 1.0,
             depthLoadOp: "clear",
-            depthStoreOp: "discard",
+            depthStoreOp: "store",
             stencilLoadOp: "clear",
-            stencilStoreOp: "discard",
+            stencilStoreOp: "store",
         };
         const renderPassDescriptor = {
             colorAttachments: [colorAttachmentDescriptor],
@@ -344,6 +379,39 @@ async function helloCube() {
         renderPassEncoder.draw(36, instanceCount, 0, 0); // 36 vertices, 10 instances, 0th vertex, 0th instance.
         renderPassEncoder.end();
         
+        /* second GPURenderPassEncoder */
+        device.queue.writeBuffer(translationBuffer2, 0, translations2, 0, translationBufferSize);
+        
+        const colorAttachmentDescriptor2 = {
+            view: renderAttachment,
+            loadOp: "load",
+            storeOp: "store",
+            clearValue: { r: 0.15, g: 0.5, b: 0.15, a: 1 }
+        };
+        
+        /* GPURenderPassDescriptor */
+        const depthAttachment2 = {
+            view: depthTextureView,
+            depthClearValue: 1.0,
+            depthLoadOp: "load",
+            depthStoreOp: "store",
+            stencilLoadOp: "load",
+            stencilStoreOp: "store",
+        };
+        const renderPassDescriptor2 = {
+            colorAttachments: [colorAttachmentDescriptor2],
+            depthStencilAttachment: depthAttachment2
+        };
+        
+        
+        const renderPassEncoder2 = commandEncoder.beginRenderPass(renderPassDescriptor2);
+        
+        renderPassEncoder2.setPipeline(renderPipeline);
+        renderPassEncoder2.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
+        renderPassEncoder2.setBindGroup(1, uniformBindGroup2);
+        renderPassEncoder2.draw(36, instanceCount); // 36 vertices, 10 instances
+        renderPassEncoder2.end();
+
         /* GPUComamndBuffer */
         const commandBuffer = commandEncoder.finish();
         
