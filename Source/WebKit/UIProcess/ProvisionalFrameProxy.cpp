@@ -67,8 +67,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
 
-    drawingArea->attachToProvisionalFrameProcess(m_process);
-
     LoadParameters loadParameters;
     loadParameters.request = request;
     loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
