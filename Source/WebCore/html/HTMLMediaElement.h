@@ -336,8 +336,12 @@ public:
 
     bool volumeLocked() const { return m_volumeLocked; }
     WEBCORE_EXPORT void setVolumeLocked(bool);
-    bool buffering() const;
-    bool stalled() const;
+
+    bool buffering() const { return m_buffering; }
+    void updateBufferingState();
+
+    bool stalled() const { return m_stalled; }
+    void updateStalledState();
 
     WEBCORE_EXPORT void togglePlayState();
     WEBCORE_EXPORT void beginScrubbing() override;
@@ -1149,6 +1153,8 @@ private:
     bool m_initiallyMuted : 1;
     bool m_paused : 1;
     bool m_seeking : 1;
+    bool m_buffering : 1;
+    bool m_stalled : 1;
     bool m_seekRequested : 1;
     bool m_wasPlayingBeforeSeeking : 1;
 

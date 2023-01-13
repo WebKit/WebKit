@@ -828,10 +828,6 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
     }
     else
         HTMLElement::parseAttribute(name, value);
-
-    // Changing the "muted" attribue could affect ":muted"
-    if (name == mutedAttr)
-        invalidateStyle();
 }
 
 void HTMLMediaElement::finishParsingChildren()
@@ -2605,7 +2601,8 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     if (state == MediaPlayer::NetworkState::Empty) {
         // Just update the cached state and leave, we can't do anything.
         m_networkState = NETWORK_EMPTY;
-        invalidateStyle();
+        updateBufferingState();
+        updateStalledState();
         return;
     }
 
@@ -2635,7 +2632,8 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         m_completelyLoaded = true;
     }
 
-    invalidateStyle();
+    updateBufferingState();
+    updateStalledState();
 }
 
 void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
@@ -2918,7 +2916,8 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     updateMediaController();
     updateActiveTextTrackCues(currentMediaTime());
 
-    invalidateStyle();
+    updateBufferingState();
+    updateStalledState();
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -3270,13 +3269,13 @@ void HTMLMediaElement::progressEventTimerFired()
             m_previousProgressTime = time;
             if (m_sentStalledEvent) {
                 m_sentStalledEvent = false;
-                invalidateStyle();
+                updateStalledState();
             }
             updateRenderer();
         } else if (timedelta > 3_s && !m_sentStalledEvent) {
             scheduleEvent(eventNames().stalledEvent);
             m_sentStalledEvent = true;
-            invalidateStyle();
+            updateStalledState();
             setShouldDelayLoadEvent(false);
         }
     });
@@ -3796,8 +3795,8 @@ void HTMLMediaElement::setPaused(bool paused)
         { CSSSelector::PseudoClassPlaying, !paused },
     });
     m_paused = paused;
-    // FIXME: Use PseudoClassChangeInvalidation for :buffering/:stalling and remove the line below.
-    invalidateStyle();
+    updateBufferingState();
+    updateStalledState();
 }
 
 double HTMLMediaElement::defaultPlaybackRate() const
@@ -4280,7 +4279,7 @@ void HTMLMediaElement::setVolumeLocked(bool locked)
     m_volumeLocked = locked;
 }
 
-bool HTMLMediaElement::buffering() const
+void HTMLMediaElement::updateBufferingState()
 {
     // CSS Selectors Level 4; Editor's Draft, 2 July 2021
     // <https://drafts.csswg.org/selectors/>
@@ -4291,10 +4290,14 @@ bool HTMLMediaElement::buffering() const
     // but has not yet obtained enough data to resume playback. (Note that the element is still considered
     // to be “playing” when it is “buffering”. Whenever :buffering matches an element, :playing also
     // matches the element.)
-    return !paused() && m_networkState == NETWORK_LOADING && m_readyState <= HAVE_CURRENT_DATA;
+    bool buffering = !paused() && m_networkState == NETWORK_LOADING && m_readyState <= HAVE_CURRENT_DATA;
+    if (m_buffering != buffering) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassBuffering, buffering);
+        m_buffering = buffering;
+    }
 }
 
-bool HTMLMediaElement::stalled() const
+void HTMLMediaElement::updateStalledState()
 {
     // CSS Selectors Level 4; Editor's Draft, 2 July 2021
     // <https://drafts.csswg.org/selectors/>
@@ -4306,7 +4309,11 @@ bool HTMLMediaElement::stalled() const
     // stall timeout. [HTML] (Note that, like with the :buffering pseudo-class, the element is still
     // considered to be “playing” when it is “stalled”. Whenever :stalled matches an element, :playing
     // also matches the element.)
-    return !paused() && m_networkState == NETWORK_LOADING && m_readyState <= HAVE_CURRENT_DATA && m_sentStalledEvent;
+    bool stalled = !paused() && m_networkState == NETWORK_LOADING && m_readyState <= HAVE_CURRENT_DATA && m_sentStalledEvent;
+    if (m_stalled != stalled) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassStalled, stalled);
+        m_stalled = stalled;
+    }
 }
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
