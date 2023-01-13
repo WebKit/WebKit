@@ -91,6 +91,8 @@ public:
     // The data in the returned pointer here will only be valid for the lifetime of the Decoder object.
     // Returns nullptr on failure.
     WARN_UNUSED_RETURN const uint8_t* decodeFixedLengthReference(size_t, size_t alignment);
+    template<typename T>
+    WARN_UNUSED_RETURN Span<const T> decodeSpan(size_t);
 
     template<typename T>
     WARN_UNUSED_RETURN bool decode(T& t)
@@ -223,6 +225,22 @@ inline bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t al
     m_bufferPos += size;
 
     return true;
+}
+
+template<typename T>
+inline Span<const T> Decoder::decodeSpan(size_t size)
+{
+    if (size > std::numeric_limits<size_t>::max() / sizeof(T))
+        return { };
+
+    const uint8_t* alignedPosition = roundUpToMultipleOf<alignof(T)>(m_bufferPos);
+    if (UNLIKELY(!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size * sizeof(T)))) {
+        markInvalid();
+        return { };
+    }
+
+    m_bufferPos = alignedPosition + size * sizeof(T);
+    return { reinterpret_cast<const T*>(alignedPosition), size };
 }
 
 } // namespace IPC

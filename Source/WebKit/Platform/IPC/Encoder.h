@@ -69,6 +69,8 @@ public:
     void wrapForTesting(UniqueRef<Encoder>&&);
 
     void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
+    template<typename T, size_t Extent>
+    void encodeSpan(const Span<T, Extent>&);
 
     template<typename T>
     Encoder& operator<<(T&& t)
@@ -108,5 +110,11 @@ private:
 
     Vector<Attachment> m_attachments;
 };
+
+template<typename T, size_t Extent>
+inline void Encoder::encodeSpan(const Span<T, Extent>& data)
+{
+    encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+}
 
 } // namespace IPC
