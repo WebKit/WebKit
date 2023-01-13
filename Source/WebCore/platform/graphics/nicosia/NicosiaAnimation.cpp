@@ -141,7 +141,7 @@ static const TimingFunction& timingFunctionForAnimationValue(const AnimationValu
 
 static KeyframeValueList createThreadsafeKeyFrames(const KeyframeValueList& originalKeyframes, const FloatSize& boxSize)
 {
-    if (originalKeyframes.property() != AnimatedPropertyTransform)
+    if (originalKeyframes.property() != AnimatedProperty::Transform)
         return originalKeyframes;
 
     // Currently translation operations are the only transform operations that store a non-fixed
@@ -306,15 +306,15 @@ Seconds Animation::computeTotalRunningTime(MonotonicTime time)
 void Animation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
-    case AnimatedPropertyTransform:
+    case AnimatedProperty::Transform:
         applicationResults.transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize);
         return;
-    case AnimatedPropertyOpacity:
+    case AnimatedProperty::Opacity:
         applicationResults.opacity = applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress);
         return;
-    case AnimatedPropertyFilter:
+    case AnimatedProperty::Filter:
 #if ENABLE(FILTERS_LEVEL_2)
-    case AnimatedPropertyWebkitBackdropFilter:
+    case AnimatedProperty::WebkitBackdropFilter:
 #endif
         applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize);
         return;
@@ -338,7 +338,7 @@ void Animations::remove(const String& name)
     });
 }
 
-void Animations::remove(const String& name, AnimatedPropertyID property)
+void Animations::remove(const String& name, AnimatedProperty property)
 {
     m_animations.removeAllMatching([&name, property] (const Animation& animation) {
         return animation.name() == name && animation.keyframes().property() == property;
@@ -379,7 +379,7 @@ void Animations::applyKeepingInternalState(Animation::ApplicationResult& applica
         animation.applyKeepingInternalState(applicationResults, time);
 }
 
-bool Animations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
+bool Animations::hasActiveAnimationsOfType(AnimatedProperty type) const
 {
     return std::any_of(m_animations.begin(), m_animations.end(),
         [&type](const Animation& animation) {

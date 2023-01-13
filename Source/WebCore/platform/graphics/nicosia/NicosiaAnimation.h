@@ -40,7 +40,7 @@ public:
     };
 
     Animation()
-        : m_keyframes(WebCore::AnimatedPropertyInvalid)
+        : m_keyframes(WebCore::AnimatedProperty::Invalid)
     { }
     Animation(const String&, const WebCore::KeyframeValueList&, const WebCore::FloatSize&, const WebCore::Animation&, MonotonicTime, Seconds, AnimationState);
 
@@ -84,7 +84,7 @@ public:
 
     void add(const Animation&);
     void remove(const String& name);
-    void remove(const String& name, WebCore::AnimatedPropertyID);
+    void remove(const String& name, WebCore::AnimatedProperty);
     void pause(const String&, Seconds);
     void suspend(MonotonicTime);
     void resume();
@@ -98,7 +98,7 @@ public:
     Vector<Animation>& animations() { return m_animations; }
 
     bool hasRunningAnimations() const;
-    bool hasActiveAnimationsOfType(WebCore::AnimatedPropertyID type) const;
+    bool hasActiveAnimationsOfType(WebCore::AnimatedProperty type) const;
 
 private:
     Vector<Animation> m_animations;

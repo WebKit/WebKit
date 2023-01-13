@@ -201,7 +201,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class KeyframeValueList {
 public:
-    explicit KeyframeValueList(AnimatedPropertyID property)
+    explicit KeyframeValueList(AnimatedProperty property)
         : m_property(property)
     {
     }
@@ -231,7 +231,7 @@ public:
         m_values.swap(other.m_values);
     }
 
-    AnimatedPropertyID property() const { return m_property; }
+    AnimatedProperty property() const { return m_property; }
 
     size_t size() const { return m_values.size(); }
     const AnimationValue& at(size_t i) const { return *m_values.at(i); }
@@ -241,7 +241,7 @@ public:
 
 protected:
     Vector<std::unique_ptr<const AnimationValue>> m_values;
-    AnimatedPropertyID m_property;
+    AnimatedProperty m_property;
 };
 
 // GraphicsLayer is an abstraction for a rendering surface with backing store,
@@ -488,7 +488,7 @@ public:
     WEBCORE_EXPORT virtual void setEventRegion(EventRegion&&);
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
-    static String animationNameForTransition(AnimatedPropertyID);
+    static String animationNameForTransition(AnimatedProperty);
 
     // Return true if the animation is handled by the compositing system.
     virtual bool addAnimation(const KeyframeValueList&, const FloatSize& /*boxSize*/, const Animation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }

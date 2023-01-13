@@ -3860,14 +3860,14 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
         return false;
 
-    KeyframeValueList rotateVector(AnimatedPropertyRotate);
-    KeyframeValueList scaleVector(AnimatedPropertyScale);
-    KeyframeValueList translateVector(AnimatedPropertyTranslate);
-    KeyframeValueList transformVector(AnimatedPropertyTransform);
-    KeyframeValueList opacityVector(AnimatedPropertyOpacity);
-    KeyframeValueList filterVector(AnimatedPropertyFilter);
+    KeyframeValueList rotateVector(AnimatedProperty::Rotate);
+    KeyframeValueList scaleVector(AnimatedProperty::Scale);
+    KeyframeValueList translateVector(AnimatedProperty::Translate);
+    KeyframeValueList transformVector(AnimatedProperty::Transform);
+    KeyframeValueList opacityVector(AnimatedProperty::Opacity);
+    KeyframeValueList filterVector(AnimatedProperty::Filter);
 #if ENABLE(FILTERS_LEVEL_2)
-    KeyframeValueList backdropFilterVector(AnimatedPropertyWebkitBackdropFilter);
+    KeyframeValueList backdropFilterVector(AnimatedProperty::WebkitBackdropFilter);
 #endif
 
     for (auto& currentKeyframe : keyframes) {
@@ -4014,68 +4014,68 @@ LayoutRect RenderLayerBacking::compositedBoundsIncludingMargin() const
     return boundsIncludingMargin;
 }
 
-CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
+CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedProperty property)
 {
     CSSPropertyID cssProperty = CSSPropertyInvalid;
     switch (property) {
-    case AnimatedPropertyTranslate:
+    case AnimatedProperty::Translate:
         cssProperty = CSSPropertyTranslate;
         break;
-    case AnimatedPropertyScale:
+    case AnimatedProperty::Scale:
         cssProperty = CSSPropertyScale;
         break;
-    case AnimatedPropertyRotate:
+    case AnimatedProperty::Rotate:
         cssProperty = CSSPropertyRotate;
         break;
-    case AnimatedPropertyTransform:
+    case AnimatedProperty::Transform:
         cssProperty = CSSPropertyTransform;
         break;
-    case AnimatedPropertyOpacity:
+    case AnimatedProperty::Opacity:
         cssProperty = CSSPropertyOpacity;
         break;
-    case AnimatedPropertyBackgroundColor:
+    case AnimatedProperty::BackgroundColor:
         cssProperty = CSSPropertyBackgroundColor;
         break;
-    case AnimatedPropertyFilter:
+    case AnimatedProperty::Filter:
         cssProperty = CSSPropertyFilter;
         break;
 #if ENABLE(FILTERS_LEVEL_2)
-    case AnimatedPropertyWebkitBackdropFilter:
+    case AnimatedProperty::WebkitBackdropFilter:
         cssProperty = CSSPropertyWebkitBackdropFilter;
         break;
 #endif
-    case AnimatedPropertyInvalid:
+    case AnimatedProperty::Invalid:
         ASSERT_NOT_REACHED();
     }
     return cssProperty;
 }
 
-AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
+AnimatedProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
 {
     switch (cssProperty) {
     case CSSPropertyTranslate:
-        return AnimatedPropertyTranslate;
+        return AnimatedProperty::Translate;
     case CSSPropertyScale:
-        return AnimatedPropertyScale;
+        return AnimatedProperty::Scale;
     case CSSPropertyRotate:
-        return AnimatedPropertyRotate;
+        return AnimatedProperty::Rotate;
     case CSSPropertyTransform:
-        return AnimatedPropertyTransform;
+        return AnimatedProperty::Transform;
     case CSSPropertyOpacity:
-        return AnimatedPropertyOpacity;
+        return AnimatedProperty::Opacity;
     case CSSPropertyBackgroundColor:
-        return AnimatedPropertyBackgroundColor;
+        return AnimatedProperty::BackgroundColor;
     case CSSPropertyFilter:
-        return AnimatedPropertyFilter;
+        return AnimatedProperty::Filter;
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
-        return AnimatedPropertyWebkitBackdropFilter;
+        return AnimatedProperty::WebkitBackdropFilter;
 #endif
     default:
         // It's fine if we see other css properties here; they are just not accelerated.
         break;
     }
-    return AnimatedPropertyInvalid;
+    return AnimatedProperty::Invalid;
 }
 
 CompositingLayerType RenderLayerBacking::compositingLayerType() const
@@ -4144,7 +4144,7 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
     return ts;
 }
 
-TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedPropertyID property) const
+TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProperty property) const
 {
     TransformationMatrix matrix;
 
@@ -4153,13 +4153,13 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
             operation->apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
     };
 
-    if (property == AnimatedPropertyTranslate)
+    if (property == AnimatedProperty::Translate)
         applyTransformOperation(renderer().style().translate());
-    else if (property == AnimatedPropertyScale)
+    else if (property == AnimatedProperty::Scale)
         applyTransformOperation(renderer().style().scale());
-    else if (property == AnimatedPropertyRotate)
+    else if (property == AnimatedProperty::Rotate)
         applyTransformOperation(renderer().style().rotate());
-    else if (property == AnimatedPropertyTransform)
+    else if (property == AnimatedProperty::Transform)
         renderer().style().transform().apply(snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), matrix);
     else
         ASSERT_NOT_REACHED();
