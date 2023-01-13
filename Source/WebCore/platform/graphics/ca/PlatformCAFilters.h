@@ -40,13 +40,13 @@ class PlatformCAFilters {
 public:
     WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&);
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
-    static bool isAnimatedFilterProperty(FilterOperation::OperationType);
-    static const char* animatedFilterPropertyName(FilterOperation::OperationType);
+    static bool isAnimatedFilterProperty(FilterOperation::Type);
+    static const char* animatedFilterPropertyName(FilterOperation::Type);
 
     WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation*);
 
     // A null operation indicates that we should make a "no-op" filter of the given type.
-    static RetainPtr<NSValue> colorMatrixValueForFilter(FilterOperation::OperationType, const FilterOperation*);
+    static RetainPtr<NSValue> colorMatrixValueForFilter(FilterOperation::Type, const FilterOperation*);
 };
 
 }

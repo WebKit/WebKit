@@ -598,7 +598,7 @@ bool GraphicsLayerTextureMapper::filtersCanBeComposited(const FilterOperations& 
         return false;
 
     for (const auto& filterOperation : filters.operations()) {
-        if (filterOperation->type() == FilterOperation::REFERENCE)
+        if (filterOperation->type() == FilterOperation::Type::Reference)
             return false;
     }
 

@@ -38,38 +38,38 @@ namespace WebCore {
 
 namespace Style {
 
-static FilterOperation::OperationType filterOperationForType(CSSValueID type)
+static FilterOperation::Type filterOperationForType(CSSValueID type)
 {
     switch (type) {
     case CSSValueUrl:
-        return FilterOperation::REFERENCE;
+        return FilterOperation::Type::Reference;
     case CSSValueGrayscale:
-        return FilterOperation::GRAYSCALE;
+        return FilterOperation::Type::Grayscale;
     case CSSValueSepia:
-        return FilterOperation::SEPIA;
+        return FilterOperation::Type::Sepia;
     case CSSValueSaturate:
-        return FilterOperation::SATURATE;
+        return FilterOperation::Type::Saturate;
     case CSSValueHueRotate:
-        return FilterOperation::HUE_ROTATE;
+        return FilterOperation::Type::HueRotate;
     case CSSValueInvert:
-        return FilterOperation::INVERT;
+        return FilterOperation::Type::Invert;
     case CSSValueAppleInvertLightness:
-        return FilterOperation::APPLE_INVERT_LIGHTNESS;
+        return FilterOperation::Type::AppleInvertLightness;
     case CSSValueOpacity:
-        return FilterOperation::OPACITY;
+        return FilterOperation::Type::Opacity;
     case CSSValueBrightness:
-        return FilterOperation::BRIGHTNESS;
+        return FilterOperation::Type::Brightness;
     case CSSValueContrast:
-        return FilterOperation::CONTRAST;
+        return FilterOperation::Type::Contrast;
     case CSSValueBlur:
-        return FilterOperation::BLUR;
+        return FilterOperation::Type::Blur;
     case CSSValueDropShadow:
-        return FilterOperation::DROP_SHADOW;
+        return FilterOperation::Type::DropShadow;
     default:
         break;
     }
     ASSERT_NOT_REACHED();
-    return FilterOperation::NONE;
+    return FilterOperation::Type::None;
 }
 
 std::optional<FilterOperations> createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& cssToLengthConversionData, const CSSValue& inValue)
@@ -101,12 +101,12 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             continue;
 
         auto& filterValue = downcast<CSSFunctionValue>(currentValue.get());
-        FilterOperation::OperationType operationType = filterOperationForType(filterValue.name());
+        auto operationType = filterOperationForType(filterValue.name());
 
         // Check that all parameters are primitive values, with the
         // exception of drop shadow which has a CSSShadowValue parameter.
         const CSSPrimitiveValue* firstValue = nullptr;
-        if (operationType != FilterOperation::DROP_SHADOW) {
+        if (operationType != FilterOperation::Type::DropShadow) {
             bool haveNonPrimitiveValue = false;
             for (unsigned j = 0; j < filterValue.length(); ++j) {
                 if (!is<CSSPrimitiveValue>(*filterValue.itemWithoutBoundsCheck(j))) {
@@ -121,9 +121,9 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
         }
 
         switch (operationType) {
-        case FilterOperation::GRAYSCALE:
-        case FilterOperation::SEPIA:
-        case FilterOperation::SATURATE: {
+        case FilterOperation::Type::Grayscale:
+        case FilterOperation::Type::Sepia:
+        case FilterOperation::Type::Saturate: {
             double amount = 1;
             if (filterValue.length() == 1) {
                 amount = firstValue->doubleValue();
@@ -134,7 +134,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             operations.operations().append(BasicColorMatrixFilterOperation::create(amount, operationType));
             break;
         }
-        case FilterOperation::HUE_ROTATE: {
+        case FilterOperation::Type::HueRotate: {
             double angle = 0;
             if (filterValue.length() == 1)
                 angle = firstValue->computeDegrees();
@@ -142,10 +142,10 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
             break;
         }
-        case FilterOperation::INVERT:
-        case FilterOperation::BRIGHTNESS:
-        case FilterOperation::CONTRAST:
-        case FilterOperation::OPACITY: {
+        case FilterOperation::Type::Invert:
+        case FilterOperation::Type::Brightness:
+        case FilterOperation::Type::Contrast:
+        case FilterOperation::Type::Opacity: {
             double amount = 1;
             if (filterValue.length() == 1) {
                 amount = firstValue->doubleValue();
@@ -156,11 +156,11 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
             break;
         }
-        case FilterOperation::APPLE_INVERT_LIGHTNESS: {
+        case FilterOperation::Type::AppleInvertLightness: {
             operations.operations().append(InvertLightnessFilterOperation::create());
             break;
         }
-        case FilterOperation::BLUR: {
+        case FilterOperation::Type::Blur: {
             Length stdDeviation = Length(0, LengthType::Fixed);
             if (filterValue.length() >= 1)
                 stdDeviation = convertToFloatLength(firstValue, cssToLengthConversionData);
@@ -170,7 +170,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             operations.operations().append(BlurFilterOperation::create(stdDeviation));
             break;
         }
-        case FilterOperation::DROP_SHADOW: {
+        case FilterOperation::Type::DropShadow: {
             if (filterValue.length() != 1)
                 return std::nullopt;
 

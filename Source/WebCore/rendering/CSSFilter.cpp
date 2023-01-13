@@ -226,51 +226,51 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
 
     for (auto& operation : operations.operations()) {
         switch (operation->type()) {
-        case FilterOperation::APPLE_INVERT_LIGHTNESS:
-            ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+        case FilterOperation::Type::AppleInvertLightness:
+            ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
             break;
 
-        case FilterOperation::BLUR:
+        case FilterOperation::Type::Blur:
             function = createBlurEffect(downcast<BlurFilterOperation>(*operation), clipOperation());
             break;
 
-        case FilterOperation::BRIGHTNESS:
+        case FilterOperation::Type::Brightness:
             function = createBrightnessEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
-        case FilterOperation::CONTRAST:
+        case FilterOperation::Type::Contrast:
             function = createContrastEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
-        case FilterOperation::DROP_SHADOW:
+        case FilterOperation::Type::DropShadow:
             function = createDropShadowEffect(downcast<DropShadowFilterOperation>(*operation));
             break;
 
-        case FilterOperation::GRAYSCALE:
+        case FilterOperation::Type::Grayscale:
             function = createGrayScaleEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
-        case FilterOperation::HUE_ROTATE:
+        case FilterOperation::Type::HueRotate:
             function = createHueRotateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
-        case FilterOperation::INVERT:
+        case FilterOperation::Type::Invert:
             function = createInvertEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
-        case FilterOperation::OPACITY:
+        case FilterOperation::Type::Opacity:
             function = createOpacityEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
-        case FilterOperation::SATURATE:
+        case FilterOperation::Type::Saturate:
             function = createSaturateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
-        case FilterOperation::SEPIA:
+        case FilterOperation::Type::Sepia:
             function = createSepiaEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
-        case FilterOperation::REFERENCE:
+        case FilterOperation::Type::Reference:
             function = createReferenceFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, preferredFilterRenderingModes, targetBoundingBox, destinationContext);
             break;
 
@@ -375,7 +375,7 @@ bool CSSFilter::isIdentity(RenderElement& renderer, const FilterOperations& oper
         return false;
 
     for (auto& operation : operations.operations()) {
-        if (operation->type() == FilterOperation::REFERENCE) {
+        if (operation->type() == FilterOperation::Type::Reference) {
             if (!isIdentityReferenceFilter(downcast<ReferenceFilterOperation>(*operation), renderer))
                 return false;
             continue;
@@ -393,7 +393,7 @@ IntOutsets CSSFilter::calculateOutsets(RenderElement& renderer, const FilterOper
     IntOutsets outsets;
 
     for (auto& operation : operations.operations()) {
-        if (operation->type() == FilterOperation::REFERENCE) {
+        if (operation->type() == FilterOperation::Type::Reference) {
             outsets += calculateReferenceFilterOutsets(downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
             continue;
         }

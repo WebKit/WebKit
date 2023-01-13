@@ -442,7 +442,7 @@ static bool filtersCanBeComposited(const FilterOperations& filters)
     if (!filters.size())
         return false;
     for (const auto& filterOperation : filters.operations()) {
-        if (filterOperation->type() == FilterOperation::REFERENCE)
+        if (filterOperation->type() == FilterOperation::Type::Reference)
             return false;
     }
     return true;

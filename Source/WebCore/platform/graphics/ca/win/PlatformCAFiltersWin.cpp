@@ -35,13 +35,13 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
     // Hardware filter animation not implemented on Windows.
 }
 
-bool PlatformCAFilters::isAnimatedFilterProperty(FilterOperation::OperationType)
+bool PlatformCAFilters::isAnimatedFilterProperty(FilterOperation::Type)
 {
     // Hardware filter animation not implemented on Windows.
     return false;
 }
 
-const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::OperationType)
+const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Type)
 {
     // Hardware filter animation not implemented on Windows.
     return "";

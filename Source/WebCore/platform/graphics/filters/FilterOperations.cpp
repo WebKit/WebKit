@@ -61,7 +61,7 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
 bool FilterOperations::hasReferenceFilter() const
 {
     for (auto& operation : m_operations) {
-        if (operation->type() == FilterOperation::REFERENCE)
+        if (operation->type() == FilterOperation::Type::Reference)
             return true;
     }
     return false;
@@ -72,7 +72,7 @@ IntOutsets FilterOperations::outsets() const
     IntOutsets totalOutsets;
     for (auto& operation : m_operations) {
         switch (operation->type()) {
-        case FilterOperation::BLUR: {
+        case FilterOperation::Type::Blur: {
             auto& blurOperation = downcast<BlurFilterOperation>(*operation);
             float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
@@ -80,7 +80,7 @@ IntOutsets FilterOperations::outsets() const
             totalOutsets += outsets;
             break;
         }
-        case FilterOperation::DROP_SHADOW: {
+        case FilterOperation::Type::DropShadow: {
             auto& dropShadowOperation = downcast<DropShadowFilterOperation>(*operation);
             float stdDeviation = dropShadowOperation.stdDeviation();
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
@@ -94,7 +94,7 @@ IntOutsets FilterOperations::outsets() const
             totalOutsets += outsets;
             break;
         }
-        case FilterOperation::REFERENCE:
+        case FilterOperation::Type::Reference:
             ASSERT_NOT_REACHED();
             break;
         default:

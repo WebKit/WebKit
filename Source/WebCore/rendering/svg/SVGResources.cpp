@@ -240,7 +240,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             const FilterOperations& filterOperations = style.filter();
             if (filterOperations.size() == 1) {
                 const FilterOperation& filterOperation = *filterOperations.at(0);
-                if (filterOperation.type() == FilterOperation::REFERENCE) {
+                if (filterOperation.type() == FilterOperation::Type::Reference) {
                     const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                     AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), element.document());
                     if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id)))

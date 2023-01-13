@@ -1493,7 +1493,7 @@ private:
 
         auto listContainsReference = [](auto& filterOperations) {
             return filterOperations.operations().findIf([](auto& filterOperation) {
-                return filterOperation->type() == FilterOperation::OperationType::REFERENCE;
+                return filterOperation->type() == FilterOperation::Type::Reference;
             }) != notFound;
         };
 
