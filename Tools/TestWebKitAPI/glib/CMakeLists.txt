@@ -20,6 +20,14 @@ set(WebKitGLibAPITests_INCLUDE_DIRECTORIES
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
 )
 
+if (USE_LIBWEBRTC)
+    list(APPEND WebKitGLibAPITests_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/libwebrtc/Source"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
+    )
+endif ()
+
 set(WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
