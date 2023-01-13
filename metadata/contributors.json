@@ -1292,6 +1292,14 @@
    },
    {
       "emails" : [
+         "bug-bridge@webkit.org"
+      ],
+      "github" : "webkit-bug-bridge",
+      "name" : "Bug Bridge",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
          "font@but.tw"
       ],
       "github" : "ButTaiwan",
