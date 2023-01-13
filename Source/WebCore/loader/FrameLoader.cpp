@@ -2667,7 +2667,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load");
 #if ENABLE(DATA_DETECTION)
             auto document = m_frame.document();
-            auto types = OptionSet<DataDetectorType> { m_frame.settings().dataDetectorTypes() };
+            OptionSet<DataDetectorType> types = m_frame.settings().dataDetectorTypes();
             if (document && types) {
                 auto documentLevelResults = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionContext()));
                 m_frame.dataDetectionResults().setDocumentLevelResults(documentLevelResults.get());

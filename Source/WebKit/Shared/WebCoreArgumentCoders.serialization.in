@@ -2543,3 +2543,74 @@ enum class WebCore::TextGranularity : uint8_t {
     ParagraphBoundary,
     DocumentBoundary
 };
+
+header: <WebCore/FontAttributes.h>
+[CustomHeader] struct WebCore::TextList {
+    WebCore::ListStyleType style
+    int startingItemNumber
+    bool ordered
+};
+
+[Nested] enum class WebCore::FontAttributes::SubscriptOrSuperscript : uint8_t {
+    None,
+    Subscript,
+    Superscript
+};
+
+[Nested] enum class WebCore::FontAttributes::HorizontalAlignment : uint8_t {
+    Left,
+    Center,
+    Right,
+    Justify,
+    Natural
+};
+
+[CustomHeader] struct WebCore::FontAttributes {
+    RefPtr<WebCore::Font> font
+    WebCore::Color backgroundColor
+    WebCore::Color foregroundColor
+    WebCore::FontShadow fontShadow
+    WebCore::FontAttributes::SubscriptOrSuperscript subscriptOrSuperscript
+    WebCore::FontAttributes::HorizontalAlignment horizontalAlignment
+    Vector<WebCore::TextList> textLists
+    bool hasUnderline
+    bool hasStrikeThrough
+    bool hasMultipleFonts
+};
+
+header: <WebCore/WritingDirection.h>
+enum class WebCore::WritingDirection : uint8_t {
+    Natural,
+    LeftToRight,
+    RightToLeft
+};
+
+header: <WebCore/VisibleSelection.h>
+enum class WebCore::SelectionDirection : uint8_t {
+    Forward,
+    Backward,
+    Right,
+    Left
+};
+
+#if ENABLE(DATA_DETECTION)
+header: <WebCore/DataDetectorType.h>
+[OptionSet] enum class WebCore::DataDetectorType : uint8_t {
+    PhoneNumber,
+    Link,
+    Address,
+    CalendarEvent,
+    TrackingNumber,
+    FlightNumber,
+    LookupSuggestion,
+};
+#endif
+
+header: <WebCore/AutocapitalizeTypes.h>
+enum class WebCore::AutocapitalizeType : uint8_t {
+    Default,
+    None,
+    Words,
+    Sentences,
+    AllCharacters
+};

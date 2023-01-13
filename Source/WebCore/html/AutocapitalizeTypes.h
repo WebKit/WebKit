@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class AutocapitalizeType : uint8_t {
@@ -38,18 +36,3 @@ enum class AutocapitalizeType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AutocapitalizeType> {
-    using values = EnumValues<
-        WebCore::AutocapitalizeType,
-        WebCore::AutocapitalizeType::Default,
-        WebCore::AutocapitalizeType::None,
-        WebCore::AutocapitalizeType::Words,
-        WebCore::AutocapitalizeType::Sentences,
-        WebCore::AutocapitalizeType::AllCharacters
-    >;
-};
-
-} // namespace WTF

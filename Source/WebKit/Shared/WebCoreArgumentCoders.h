@@ -155,7 +155,6 @@ struct DictationAlternative;
 struct DictionaryPopupInfo;
 struct EventTrackingRegions;
 struct ExceptionDetails;
-struct FontAttributes;
 struct FileChooserSettings;
 struct TextRecognitionDataDetector;
 struct Length;
@@ -445,11 +444,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
 template<> struct ArgumentCoder<Ref<WebCore::SecurityOrigin>> {
     static void encode(Encoder&, const Ref<WebCore::SecurityOrigin>&);
     static std::optional<Ref<WebCore::SecurityOrigin>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::FontAttributes> {
-    static void encode(Encoder&, const WebCore::FontAttributes&);
-    static std::optional<WebCore::FontAttributes> decode(Decoder&);
 };
 
 #if ENABLE(ATTACHMENT_ELEMENT)

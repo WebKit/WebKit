@@ -65,7 +65,6 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/Font.h>
-#include <WebCore/FontAttributes.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBGetResult.h>
@@ -1184,75 +1183,6 @@ std::optional<Ref<SecurityOrigin>> ArgumentCoder<Ref<SecurityOrigin>>::decode(De
     if (!origin)
         return std::nullopt;
     return origin.releaseNonNull();
-}
-
-void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
-{
-    encoder << attributes.backgroundColor;
-    encoder << attributes.foregroundColor;
-    encoder << attributes.fontShadow;
-    encoder << attributes.hasUnderline;
-    encoder << attributes.hasStrikeThrough;
-    encoder << attributes.hasMultipleFonts;
-    encoder << attributes.textLists;
-    encoder << attributes.horizontalAlignment;
-    encoder << attributes.subscriptOrSuperscript;
-    encoder << attributes.font;
-}
-
-std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
-{
-    std::optional<Color> backgroundColor;
-    decoder >> backgroundColor;
-    if (!backgroundColor)
-        return std::nullopt;
-
-    std::optional<Color> foregroundColor;
-    decoder >> foregroundColor;
-    if (!foregroundColor)
-        return std::nullopt;
-
-    std::optional<FontShadow> fontShadow;
-    decoder >> fontShadow;
-    if (!fontShadow)
-        return std::nullopt;
-
-    std::optional<bool> hasUnderline;
-    decoder >> hasUnderline;
-    if (!hasUnderline)
-        return std::nullopt;
-
-    std::optional<bool> hasStrikeThrough;
-    decoder >> hasStrikeThrough;
-    if (!hasStrikeThrough)
-        return std::nullopt;
-
-    std::optional<bool> hasMultipleFonts;
-    decoder >> hasMultipleFonts;
-    if (!hasMultipleFonts)
-        return std::nullopt;
-
-    std::optional<Vector<TextList>> textLists;
-    decoder >> textLists;
-    if (!textLists)
-        return std::nullopt;
-
-    std::optional<FontAttributes::HorizontalAlignment> horizontalAlignment;
-    decoder >> horizontalAlignment;
-    if (!horizontalAlignment)
-        return std::nullopt;
-
-    std::optional<FontAttributes::SubscriptOrSuperscript> subscriptOrSuperscript;
-    decoder >> subscriptOrSuperscript;
-    if (!subscriptOrSuperscript)
-        return std::nullopt;
-
-    std::optional<RefPtr<Font>> font;
-    decoder >> font;
-    if (!font)
-        return std::nullopt;
-
-    return { { WTFMove(*font), WTFMove(*backgroundColor), WTFMove(*foregroundColor), WTFMove(*fontShadow), *subscriptOrSuperscript, *horizontalAlignment, WTFMove(*textLists), *hasUnderline, *hasStrikeThrough, *hasMultipleFonts } };
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

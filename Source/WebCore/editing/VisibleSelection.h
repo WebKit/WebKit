@@ -27,7 +27,6 @@
 
 #include "TextGranularity.h"
 #include "VisiblePosition.h"
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -182,17 +181,3 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisibleSelect
 void showTree(const WebCore::VisibleSelection&);
 void showTree(const WebCore::VisibleSelection*);
 #endif
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SelectionDirection> {
-    using values = EnumValues<
-        WebCore::SelectionDirection,
-        WebCore::SelectionDirection::Forward,
-        WebCore::SelectionDirection::Backward,
-        WebCore::SelectionDirection::Right,
-        WebCore::SelectionDirection::Left
-    >;
-};
-
-} // namespace WTF

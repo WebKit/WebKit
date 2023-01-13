@@ -48,31 +48,6 @@ struct TextList {
 #endif
 };
 
-template<class Encoder> inline void TextList::encode(Encoder& encoder) const
-{
-    encoder << style << startingItemNumber << ordered;
-}
-
-template<class Decoder> inline std::optional<TextList> TextList::decode(Decoder& decoder)
-{
-    std::optional<ListStyleType> style;
-    decoder >> style;
-    if (!style)
-        return std::nullopt;
-
-    std::optional<int> startingItemNumber;
-    decoder >> startingItemNumber;
-    if (!startingItemNumber)
-        return std::nullopt;
-
-    std::optional<bool> ordered;
-    decoder >> ordered;
-    if (!ordered)
-        return std::nullopt;
-
-    return { { *style, *startingItemNumber, *ordered } };
-}
-
 struct FontAttributes {
     enum class SubscriptOrSuperscript : uint8_t { None, Subscript, Superscript };
     enum class HorizontalAlignment : uint8_t { Left, Center, Right, Justify, Natural };
@@ -94,27 +69,3 @@ struct FontAttributes {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::FontAttributes::SubscriptOrSuperscript> {
-    using values = EnumValues<
-        WebCore::FontAttributes::SubscriptOrSuperscript,
-        WebCore::FontAttributes::SubscriptOrSuperscript::None,
-        WebCore::FontAttributes::SubscriptOrSuperscript::Subscript,
-        WebCore::FontAttributes::SubscriptOrSuperscript::Superscript
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FontAttributes::HorizontalAlignment> {
-    using values = EnumValues<
-        WebCore::FontAttributes::HorizontalAlignment,
-        WebCore::FontAttributes::HorizontalAlignment::Left,
-        WebCore::FontAttributes::HorizontalAlignment::Center,
-        WebCore::FontAttributes::HorizontalAlignment::Right,
-        WebCore::FontAttributes::HorizontalAlignment::Justify,
-        WebCore::FontAttributes::HorizontalAlignment::Natural
-    >;
-};
-
-} // namespace WTF

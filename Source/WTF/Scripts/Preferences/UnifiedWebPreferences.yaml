@@ -1581,7 +1581,7 @@ DataDetectorTypes:
     WebKit:
       default: 0
     WebCore:
-      default: DataDetectorType::None
+      default: '{ }'
 
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:

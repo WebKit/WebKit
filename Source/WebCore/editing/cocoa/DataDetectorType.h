@@ -27,12 +27,9 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class DataDetectorType : uint8_t {
-    None = 0,
     PhoneNumber = 1 << 0,
     Link = 1 << 1,
     Address = 1 << 2,
@@ -43,23 +40,5 @@ enum class DataDetectorType : uint8_t {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::DataDetectorType> {
-    using values = EnumValues<
-        WebCore::DataDetectorType,
-        WebCore::DataDetectorType::None,
-        WebCore::DataDetectorType::PhoneNumber,
-        WebCore::DataDetectorType::Link,
-        WebCore::DataDetectorType::Address,
-        WebCore::DataDetectorType::CalendarEvent,
-        WebCore::DataDetectorType::TrackingNumber,
-        WebCore::DataDetectorType::FlightNumber,
-        WebCore::DataDetectorType::LookupSuggestion
-    >;
-};
-
-} // namespace WTF
 
 #endif
