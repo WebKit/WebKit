@@ -27,6 +27,7 @@
 #include "ProvisionalFrameProxy.h"
 
 #include "APIWebsitePolicies.h"
+#include "DrawingAreaProxy.h"
 #include "FrameInfoData.h"
 #include "HandleMessage.h"
 #include "LoadParameters.h"
@@ -55,12 +56,18 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 
     m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frame.frameID().object(), *this);
 
+    ASSERT(m_frame.page());
     auto& page = *m_frame.page();
-    auto parameters = page.creationParameters(m_process, *page.drawingArea());
+    auto* drawingArea = page.drawingArea();
+    ASSERT(drawingArea);
+
+    auto parameters = page.creationParameters(m_process, *drawingArea);
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.mainFrameIdentifier = frame.frameID();
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+
+    drawingArea->attachToProvisionalFrameProcess(m_process);
 
     LoadParameters loadParameters;
     loadParameters.request = request;

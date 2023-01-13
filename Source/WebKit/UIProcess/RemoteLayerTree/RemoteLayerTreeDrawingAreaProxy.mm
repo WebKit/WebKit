@@ -55,8 +55,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& p
     // FIXME: We should do this somewhere else.
     IOSurfacePool::sharedPool().setPoolSize(0);
 
-    processProxy.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
-    m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver.append(processProxy);
+    startReceivingRemoteLayerTreeDrawingAreaProxyMessages(processProxy);
 
     if (m_webPageProxy.preferences().tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
@@ -67,6 +66,18 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
     m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
     for (auto& process : m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver)
         process->removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
+}
+
+void RemoteLayerTreeDrawingAreaProxy::attachToProvisionalFrameProcess(WebProcessProxy& process)
+{
+    startReceivingRemoteLayerTreeDrawingAreaProxyMessages(process);
+    startReceivingMessages(process);
+}
+
+void RemoteLayerTreeDrawingAreaProxy::startReceivingRemoteLayerTreeDrawingAreaProxyMessages(WebProcessProxy& processProxy)
+{
+    processProxy.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
+    m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver.append(processProxy);
 }
 
 std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemoteLayerTreeHost()

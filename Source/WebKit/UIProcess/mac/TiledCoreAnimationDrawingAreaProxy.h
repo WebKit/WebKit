@@ -38,6 +38,7 @@ public:
 
 private:
     // DrawingAreaProxy
+    void attachToProvisionalFrameProcess(WebProcessProxy&) final { ASSERT_NOT_REACHED(); }
     void deviceScaleFactorDidChange() override;
     void sizeDidChange() override;
     void colorSpaceDidChange() override;

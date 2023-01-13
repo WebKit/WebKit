@@ -70,6 +70,7 @@ public:
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
     void startReceivingMessages(WebProcessProxy&);
+    virtual void attachToProvisionalFrameProcess(WebProcessProxy&) = 0;
 
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
