@@ -712,6 +712,8 @@ public:
     ScaleTransformOperation* scale() const { return m_rareNonInheritedData->scale.get(); }
     TranslateTransformOperation* translate() const { return m_rareNonInheritedData->translate.get(); }
 
+    bool affectsTransform() const { return hasTransform() || offsetPath() || rotate() || scale() || translate(); }
+
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
     TextEmphasisMark textEmphasisMark() const;
     const AtomString& textEmphasisCustomMark() const { return m_rareInheritedData->textEmphasisCustomMark; }
