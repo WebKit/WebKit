@@ -379,7 +379,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeVal
 
 static bool checkElementState(WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::State state)
 {
-    return element->state() & (G_GUINT64_CONSTANT(1) << state);
+    return element->states().contains(state);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
