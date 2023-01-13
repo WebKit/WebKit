@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
+ * Copyright (C) Apple 2023. All rights reserved.
+ * Copyright (C) Google 2014. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -268,28 +270,23 @@ static inline void dumpTextBoxes(Vector<SVGInlineTextBox*>& boxes)
 }
 #endif
 
-void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& boxes)
+void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& textBoxes)
 {
-    unsigned boxCount = boxes.size();
-    if (!boxCount)
+    if (textBoxes.isEmpty())
         return;
 
-    AffineTransform textBoxTransformation;
-    for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
-        SVGInlineTextBox* textBox = boxes.at(boxPosition);
-        Vector<SVGTextFragment>& fragments = textBox->textFragments();
+    for (auto textBox : textBoxes) {
+        auto textBoxTransformation = m_chunkLayoutBuilder.transformationForTextBox(textBox);
+        if (textBoxTransformation.isIdentity())
+            continue;
 
-        unsigned fragmentCount = fragments.size();
-        for (unsigned i = 0; i < fragmentCount; ++i) {
-            textBoxTransformation = m_chunkLayoutBuilder.transformationForTextBox(textBox);
-            if (textBoxTransformation.isIdentity())
-                continue;
-            ASSERT(fragments[i].lengthAdjustTransform.isIdentity());
-            fragments[i].lengthAdjustTransform = textBoxTransformation;
+        for (auto& fragment : textBox->textFragments()) {
+            ASSERT(fragment.lengthAdjustTransform.isIdentity());
+            fragment.lengthAdjustTransform = textBoxTransformation;
         }
     }
 
-    boxes.clear();
+    textBoxes.clear();
 }
 
 void SVGTextLayoutEngine::finishLayout()
