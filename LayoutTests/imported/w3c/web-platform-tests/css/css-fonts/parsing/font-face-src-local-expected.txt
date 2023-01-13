@@ -1,4 +1,6 @@
 
+PASS Check that src: local(A) dummy() is invalid
+PASS Check that src: dummy() local(A) is invalid
 PASS Check that src: local(  A  ) is valid
 PASS Check that src: local(A B) is valid
 PASS Check that src: local(A    B) is valid
