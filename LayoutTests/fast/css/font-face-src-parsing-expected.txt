@@ -17,10 +17,10 @@ Valid rules from the stylesheet:
 @font-face { src: url("font.ttf"); }
 @font-face { src: url("font.ttf"), local("font2"); }
 @font-face { src: local("font"); }
+@font-face { src: url("font.ttf"); }
+@font-face { src: url("foo.ttf"); }
 Invalid rules from the stylesheet:
 
-@font-face { }
-@font-face { }
 @font-face { }
 @font-face { }
 @font-face { }

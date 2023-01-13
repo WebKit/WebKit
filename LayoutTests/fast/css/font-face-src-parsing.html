@@ -45,6 +45,12 @@
 @font-face {
     src: ,local(font);
 }
+@font-face {
+    src: url(font.ttf), invalid();
+}
+@font-face {
+    src: url(foo.ttf), invalid;
+}
 </style>
 
 <!-- Invalid src descriptor rules. -->
@@ -53,14 +59,7 @@
     src: url(font.ttf invalid);
 }
 @font-face {
-    src: url(font.ttf), invalid();
-}
-@font-face {
     src: url(foo.ttf) invalid;
-}
-
-@font-face {
-    src: url(foo.ttf), invalid;
 }
 @font-face {
     src: url(foo.ttf) "invalid";
