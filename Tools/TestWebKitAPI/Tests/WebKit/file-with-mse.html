@@ -5,14 +5,32 @@
       var source;
       var request;
 
+      function isMP4Supported()
+      {
+        return MediaSource.isTypeSupported('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
+      }
+      function isWebMVP9Supported()
+      {
+        return MediaSource.isTypeSupported('video/webm;codecs="vp9,opus"');
+      }
+      function isWebMOpusSupported()
+      {
+        return MediaSource.isTypeSupported('video/webm;codecs="opus"');
+      }
       function playVideo()
       {
           document.getElementById('test-video').play();
           request = new XMLHttpRequest();
           request.responseType = 'arraybuffer';
-          request.open('GET', 'test-mse.mp4', true);
+          request.open('GET', isMP4Supported() ? 'test-mse.mp4' : isWebMVP9Supported() ? 'test-mse.webm' : 'test-mse-audio.webm', true);
           request.addEventListener('load', load);
           request.send();
+      }
+
+      function unloadVideo()
+      {
+          var video = document.getElementById('test-video');
+          video.src = "";
       }
 
       function load(event)
@@ -25,7 +43,7 @@
 
       function sourceopen(event)
       {
-          var sourceBuffer = source.addSourceBuffer('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
+          var sourceBuffer = source.addSourceBuffer(isMP4Supported() ? 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"' : isWebMVP9Supported() ? 'video/webm;codecs="vp9,opus"' : 'video/webm;codecs="opus"');
           sourceBuffer.appendBuffer(request.response);
       }
   </script>
@@ -36,6 +54,7 @@
     </p>
     <p>
         <button onclick="playVideo()">Play video</button>
+        <button onclick="unloadVideo()">Unload video</button>
     </p>
 </body>
 </html>

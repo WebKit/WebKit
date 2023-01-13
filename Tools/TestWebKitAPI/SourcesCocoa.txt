@@ -275,6 +275,7 @@ Tests/WebKitCocoa/WKNSDictionaryEmptyDictionaryCrash.mm
 Tests/WebKitCocoa/WKNSNumber.mm
 Tests/WebKitCocoa/WKNavigationResponse.mm
 Tests/WebKitCocoa/WKObject.mm
+Tests/WebKitCocoa/WKPageHasMediaStreamingActivity.mm
 Tests/WebKitCocoa/WKPDFView.mm
 Tests/WebKitCocoa/WKPrinting.mm
 Tests/WebKitCocoa/WKProcessPoolConfiguration.mm
