@@ -594,6 +594,7 @@ WebGLErrorsToConsoleEnabled:
 
 WebRTCEncryptionEnabled:
   type: bool
+  inspectorOverride: true
   defaultValue:
     WebCore:
       default: true

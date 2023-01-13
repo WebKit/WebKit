@@ -20,6 +20,7 @@
                 "ScriptEnabled",
                 "ShowDebugBorders",
                 "ShowRepaintCounter",
+                "WebRTCEncryptionEnabled",
                 "WebSecurityEnabled"
             ]
         },
