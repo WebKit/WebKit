@@ -22,7 +22,6 @@
 #pragma once
 
 #include "CSSSelector.h"
-#include "Document.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
 #include "MatchedDeclarationsCache.h"
@@ -89,7 +88,9 @@ struct ResolutionContext {
 class Resolver : public RefCounted<Resolver> {
     WTF_MAKE_ISO_ALLOCATED(Resolver);
 public:
-    static Ref<Resolver> create(Document&);
+    // Style resolvers are shared between shadow trees with identical styles. That's why we don't simply provide a Style::Scope.
+    enum class ScopeType : bool { Document, ShadowTree };
+    static Ref<Resolver> create(Document&, ScopeType);
     ~Resolver();
 
     ResolvedStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
@@ -101,9 +102,11 @@ public:
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
     std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);
 
-    Document& document() { return m_document; }
-    const Document& document() const { return m_document; }
-    const Settings& settings() const { return m_document.settings(); }
+    Document& document();
+    const Document& document() const;
+    const Settings& settings() const;
+
+    ScopeType scopeType() const { return m_scopeType; }
 
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
@@ -151,13 +154,17 @@ public:
     const RenderStyle* rootDefaultStyle() const { return m_rootDefaultStyle.get(); }
 
 private:
-    Resolver(Document&);
+    Resolver(Document&, ScopeType);
+    void initialize();
 
     class State;
 
     BuilderContext builderContext(const State&);
 
     void applyMatchedProperties(State&, const MatchResult&);
+
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    const ScopeType m_scopeType;
 
     ScopeRuleSets m_ruleSets;
 
@@ -166,8 +173,6 @@ private:
 
     MQ::MediaQueryEvaluator m_mediaQueryEvaluator;
     std::unique_ptr<RenderStyle> m_rootDefaultStyle;
-
-    Document& m_document;
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
