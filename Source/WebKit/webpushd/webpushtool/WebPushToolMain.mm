@@ -59,6 +59,49 @@ static void printUsageAndTerminate(NSString *message)
     exit(-1);
 }
 
+static std::unique_ptr<PushMessageForTesting> pushMessageFromStdin()
+{
+    NSError *error;
+    NSData *data = [[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFileAndReturnError:&error];
+
+    if (!data) {
+        if (error)
+            fprintf(stderr, "Error reading stdin for push message: %s", [[error description] UTF8String]);
+        return nullptr;
+    }
+
+    NSString *input = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSArray<NSString *> *lines = [input componentsSeparatedByString:@"\n"];
+
+    // Format of a stdin push message is:
+    // Line 1 - App code signing identifier
+    // Line 2 - Push partition string
+    // Line 3 - Push registration URL
+    // Remainder - Push message payload
+
+    if (lines.count < 4) {
+        fprintf(stderr, "stdin has %i lines, but a valid push message payload must be at least 4 lines\n", (int)lines.count);
+        return nullptr;
+    }
+
+    PushMessageForTesting pushMessage;
+    pushMessage.targetAppCodeSigningIdentifier = lines[0];
+    pushMessage.pushPartitionString = lines[1];
+    pushMessage.registrationURL = [NSURL URLWithString:lines[2] relativeToURL:nil];
+
+    NSMutableString *payload = [[NSMutableString alloc] init];
+    for (size_t i = 3; i < lines.count - 1; ++i) {
+        [payload appendString:lines[i]];
+        [payload appendString:@"\n"];
+    }
+    [payload appendString:lines.lastObject];
+    pushMessage.message = payload;
+
+    fprintf(stdout, "Sending a push message from stdin to app '%s', partition '%s', url '%s', with (%u) bytes of payload\n", [lines[0] UTF8String], [lines[1] UTF8String], [lines[2] UTF8String], (unsigned)pushMessage.message.length());
+
+    return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
+}
+
 static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumerator<NSString *> *enumerator)
 {
     NSString *appIdentifier = [enumerator nextObject];
@@ -182,6 +225,10 @@ int main(int, const char **)
 
             argument = [enumerator nextObject];
         }
+
+        // If we still have no push message, then try reading one from stdin.
+        if (!pushMessage)
+            pushMessage = pushMessageFromStdin();
     }
 
     if (!action && !pushMessage)
