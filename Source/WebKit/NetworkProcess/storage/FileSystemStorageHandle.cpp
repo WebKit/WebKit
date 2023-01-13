@@ -47,7 +47,7 @@ std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSys
         canAccess = FileSystem::makeAllDirectories(path);
         break;
     case FileSystemStorageHandle::Type::File:
-        if (auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write); FileSystem::isHandleValid(handle)) {
+        if (auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite); FileSystem::isHandleValid(handle)) {
             FileSystem::closeFile(handle);
             canAccess = true;
         }
