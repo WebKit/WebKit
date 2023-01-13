@@ -45,6 +45,18 @@
 
 namespace WebCore {
 
+struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea>, public CanMakeCheckedPtr {
+    ~SameSizeAsScrollableArea() { }
+    SameSizeAsScrollableArea() { }
+    void* pointer[3];
+    IntPoint origin;
+    bool bytes[9];
+};
+
+#if CPU(ADDRESS64)
+static_assert(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), "ScrollableArea should stay small");
+#endif
+
 ScrollableArea::ScrollableArea() = default;
 ScrollableArea::~ScrollableArea() = default;
 
