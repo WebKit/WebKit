@@ -51,6 +51,9 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!syntax)
         return Exception { SyntaxError, "Invalid property syntax definition."_s };
 
+    if (!syntax->isUniversal() && descriptor.initialValue.isNull())
+        return Exception { SyntaxError, "An initial value is mandatory except for the '*' syntax."_s };
+
     RefPtr<CSSCustomPropertyValue> initialValue;
     if (!descriptor.initialValue.isNull()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
