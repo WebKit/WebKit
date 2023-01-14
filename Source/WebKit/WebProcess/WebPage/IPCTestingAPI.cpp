@@ -2457,12 +2457,12 @@ JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef
         return JSValueMakeUndefined(context);
     }
 
-    auto bufferSize = argumentCount ? convertToUint64(toJS(globalObject, arguments[0])) : std::optional<uint64_t> { };
-    if (!bufferSize) {
+    auto bufferSizeLog2 = argumentCount ? convertToUint64(toJS(globalObject, arguments[0])) : std::optional<uint64_t> { };
+    if (!bufferSizeLog2) {
         *exception = createTypeError(context, "Must specify the size"_s);
         return JSValueMakeUndefined(context);
     }
-    auto connectionPair = IPC::StreamClientConnection::create(*bufferSize);
+    auto connectionPair = IPC::StreamClientConnection::create(*bufferSizeLog2);
     auto& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSObject* connectionPairObject = JSC::constructEmptyArray(globalObject, nullptr);

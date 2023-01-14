@@ -64,7 +64,7 @@ public:
     };
 
     // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
-    static StreamConnectionPair create(size_t bufferSize);
+    static StreamConnectionPair create(unsigned bufferSizeLog2);
 
     ~StreamClientConnection();
 
@@ -98,7 +98,7 @@ public:
     Connection& connectionForTesting();
 
 private:
-    StreamClientConnection(Ref<Connection>, size_t bufferSize);
+    StreamClientConnection(Ref<Connection>, unsigned bufferSizeLog2);
 
     struct Span {
         uint8_t* data;

@@ -40,14 +40,14 @@
 
 namespace WebKit {
 
-static constexpr size_t defaultStreamSize = 1 << 21;
 
 RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_gpuProcessConnection(&gpuProcessConnection)
 {
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
+    constexpr size_t connectionBufferSizeLog2 = 21;
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
     m_streamConnection = WTFMove(clientConnection);
     m_gpuProcessConnection->addClient(*this);
     m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(identifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);

@@ -71,7 +71,7 @@ class Encoder;
 class StreamConnectionBuffer {
     WTF_MAKE_NONCOPYABLE(StreamConnectionBuffer);
 public:
-    explicit StreamConnectionBuffer(size_t memorySize);
+    explicit StreamConnectionBuffer(unsigned dataSizeLog2);
     StreamConnectionBuffer(StreamConnectionBuffer&&);
     ~StreamConnectionBuffer();
 

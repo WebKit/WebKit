@@ -39,10 +39,11 @@ static Ref<WebKit::SharedMemory> createMemory(size_t size)
     return memory.releaseNonNull();
 }
 
-StreamConnectionBuffer::StreamConnectionBuffer(size_t memorySize)
-    : m_dataSize(memorySize - headerSize())
-    , m_sharedMemory(createMemory(memorySize))
+StreamConnectionBuffer::StreamConnectionBuffer(unsigned dataSizeLog2)
+    : m_dataSize(static_cast<size_t>(1u) << dataSizeLog2)
+    , m_sharedMemory(createMemory(m_dataSize + headerSize()))
 {
+    ASSERT(dataSizeLog2 < 31u); // Currently expected to be not that big, and offset to fit in size_t with the tag bits.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 }
 

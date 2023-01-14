@@ -32,9 +32,13 @@ namespace TestWebKitAPI {
 
 TEST(StreamConnectionBufferTests, CreateWorks)
 {
-    IPC::StreamConnectionBuffer b(5000);
+    IPC::StreamConnectionBuffer b(8);
     EXPECT_NE(b.data(), nullptr);
-    EXPECT_LT(b.dataSize(), 5000u);
+    EXPECT_EQ(b.dataSize(), 256u);
+
+    IPC::StreamConnectionBuffer b2(24);
+    EXPECT_NE(b2.data(), nullptr);
+    EXPECT_EQ(b2.dataSize(), 16777216u);
 }
 
 }
