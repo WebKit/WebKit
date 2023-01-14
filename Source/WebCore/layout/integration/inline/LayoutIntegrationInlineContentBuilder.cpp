@@ -38,11 +38,6 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-inline InlineDisplay::Line::EnclosingTopAndBottom operator+(const InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
-{
-    return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
-}
-
 inline static float lineOverflowLogicalWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineContentLogicalWidth)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
@@ -148,7 +143,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         auto ellipsis = std::optional<Line::Ellipsis> { };
         if (auto ellipsisVisualRect = line.ellipsisVisualRect())
             ellipsis = { *ellipsisVisualRect, rootBoxStyle.isLeftToRightDirection() };
-        inlineContent.lines.append({ firstBoxIndex, boxCount, line.lineBoxLogicalRect(), line.lineBoxRect(), line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentVisualOffsetInInlineDirection(), line.contentLogicalWidth(), line.isHorizontal(), ellipsis });
+        inlineContent.lines.append({ firstBoxIndex, boxCount, line.lineBoxLogicalRect(), line.lineBoxRect(), line.enclosingLogicalTopAndBottom().top, line.enclosingLogicalTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentVisualOffsetInInlineDirection(), line.contentLogicalWidth(), line.isHorizontal(), ellipsis });
     }
 }
 

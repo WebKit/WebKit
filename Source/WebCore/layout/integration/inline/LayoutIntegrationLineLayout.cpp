@@ -737,7 +737,7 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
     return lines.size() - 1;
 }
 
-LayoutUnit LineLayout::contentLogicalHeight() const
+LayoutUnit LineLayout::contentBoxLogicalHeight() const
 {
     if (!m_inlineContent)
         return { };
@@ -747,10 +747,9 @@ LayoutUnit LineLayout::contentLogicalHeight() const
         return { };
 
     auto& lines = m_inlineContent->lines;
-    auto flippedContentHeightForWritingMode = rootLayoutBox().style().isHorizontalWritingMode()
-        ? lines[*lastLineIndex].lineBoxBottom() - lines.first().lineBoxTop()
-        : lines[*lastLineIndex].lineBoxRight() - lines.first().lineBoxLeft();
-    return LayoutUnit { m_inlineContent->clearGapBeforeFirstLine + flippedContentHeightForWritingMode + m_inlineContent->clearGapAfterLastLine };
+    auto& firstLine = lines[0];
+    auto& lastLine = lines[*lastLineIndex];
+    return LayoutUnit { m_inlineContent->clearGapBeforeFirstLine + (lastLine.lineBoxLogicalRect().maxY() - firstLine.lineBoxLogicalRect().y()) + m_inlineContent->clearGapAfterLastLine };
 }
 
 size_t LineLayout::lineCount() const

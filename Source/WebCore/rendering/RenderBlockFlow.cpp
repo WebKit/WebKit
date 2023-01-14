@@ -3792,7 +3792,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (!hasLines() && hasLineIfEmpty())
             return lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 
-        return layoutFormattingContextLineLayout.contentLogicalHeight();
+        return layoutFormattingContextLineLayout.contentBoxLogicalHeight();
     };
 
     auto computeBorderBoxBottom = [&] {
@@ -3819,10 +3819,15 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             return;
         }
 
-        repaintLogicalTop = contentBoxTop;
-        repaintLogicalBottom = std::max(oldBorderBoxBottom, newBorderBoxBottom);
+        auto firstLineBox = InlineIterator::firstLineBoxFor(*this);
+        auto lastLineBox = InlineIterator::lastLineBoxFor(*this);
+        if (!firstLineBox)
+            return;
+
+        repaintLogicalTop = std::min(contentBoxTop, LayoutUnit { firstLineBox->contentLogicalTop() });
+        repaintLogicalBottom = std::max(std::max(oldBorderBoxBottom, newBorderBoxBottom), LayoutUnit { lastLineBox->contentLogicalBottom() });
         if (layoutFormattingContextLineLayout.hasVisualOverflow()) {
-            for (auto lineBox = InlineIterator::firstLineBoxFor(*this); lineBox; lineBox.traverseNext()) {
+            for (auto lineBox = firstLineBox; lineBox; lineBox.traverseNext()) {
                 repaintLogicalTop = std::min(repaintLogicalTop, LayoutUnit { lineBox->inkOverflowTop() });
                 repaintLogicalBottom = std::max(repaintLogicalBottom, LayoutUnit { lineBox->inkOverflowBottom() });
             }
