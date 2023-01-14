@@ -575,12 +575,16 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)
 {
-    return element.matchesUserInvalidPseudoClass();
+    if (const auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(element))
+        return formControlElement->matchesUserInvalidPseudoClass();
+    return false;
 }
 
 ALWAYS_INLINE bool matchesUserValidPseudoClass(const Element& element)
 {
-    return element.matchesUserValidPseudoClass();
+    if (const auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(element))
+        return formControlElement->matchesUserValidPseudoClass();
+    return false;
 }
 
 } // namespace WebCore

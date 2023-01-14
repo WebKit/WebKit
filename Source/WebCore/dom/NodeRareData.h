@@ -272,7 +272,6 @@ public:
         ComputedStyleMap = 1 << 20,
         ExplicitlySetAttrElementsMap = 1 << 21,
         EffectiveLang = 1 << 22,
-        FormAssociatedCustomElement = 1 << 23,
     };
 #endif
 

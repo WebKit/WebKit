@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CustomElementFormValue.h"
 #include "GCReachableRef.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -43,7 +42,6 @@ namespace WebCore {
 class CustomElementReactionQueueItem;
 class Document;
 class Element;
-class HTMLFormElement;
 class JSCustomElementInterface;
 class QualifiedName;
 
@@ -77,18 +75,12 @@ public:
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);
     static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
-    static void enqueueFormAssociatedCallbackIfNeeded(Element&, HTMLFormElement*);
-    static void enqueueFormDisabledCallbackIfNeeded(Element&, bool isDisabled);
-    static void enqueueFormResetCallbackIfNeeded(Element&);
-    static void enqueueFormStateRestoreCallbackIfNeeded(Element&, CustomElementFormValue&&);
     static void enqueuePostUpgradeReactions(Element&);
 
     bool observesStyleAttribute() const;
     bool isElementInternalsDisabled() const;
     bool isElementInternalsAttached() const;
     void setElementInternalsAttached();
-    bool isFormAssociated() const;
-    bool hasFormStateRestoreCallback() const;
 
     void invokeAll(Element&);
     void clear();

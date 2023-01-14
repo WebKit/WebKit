@@ -30,7 +30,6 @@
 #include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
-#include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "WindowEventLoop.h"
@@ -50,10 +49,6 @@ public:
         Disconnected,
         Adopted,
         AttributeChanged,
-        FormAssociated,
-        FormReset,
-        FormDisabled,
-        FormStateRestore,
     };
 
     CustomElementReactionQueueItem(Type type)
@@ -71,21 +66,6 @@ public:
         , m_attributeName(attributeName)
         , m_oldValue(oldValue)
         , m_newValue(newValue)
-    { }
-
-    explicit CustomElementReactionQueueItem(HTMLFormElement* form)
-        : m_type(Type::FormAssociated)
-        , m_associatedForm(form)
-    { }
-
-    explicit CustomElementReactionQueueItem(bool isDisabled)
-        : m_type(Type::FormDisabled)
-        , m_isDisabled(isDisabled)
-    { }
-
-    explicit CustomElementReactionQueueItem(CustomElementFormValue&& state)
-        : m_type(Type::FormStateRestore)
-        , m_formAssociatedState(state)
     { }
 
     Type type() const { return m_type; }
@@ -109,19 +89,6 @@ public:
             ASSERT(m_attributeName);
             elementInterface.invokeAttributeChangedCallback(element, m_attributeName.value(), m_oldValue, m_newValue);
             break;
-        case Type::FormAssociated:
-            elementInterface.invokeFormAssociatedCallback(element, m_associatedForm.get());
-            break;
-        case Type::FormReset:
-            elementInterface.invokeFormResetCallback(element);
-            break;
-        case Type::FormDisabled:
-            ASSERT(m_isDisabled);
-            elementInterface.invokeFormDisabledCallback(element, m_isDisabled.value());
-            break;
-        case Type::FormStateRestore:
-            elementInterface.invokeFormStateRestoreCallback(element, m_formAssociatedState);
-            break;
         }
     }
 
@@ -132,12 +99,6 @@ private:
     std::optional<QualifiedName> m_attributeName;
     AtomString m_oldValue;
     AtomString m_newValue;
-
-    // FIXME: Don't allocate all these arguments for all callback types.
-    // https://bugs.webkit.org/show_bug.cgi?id=249956
-    std::optional<bool> m_isDisabled;
-    RefPtr<HTMLFormElement> m_associatedForm;
-    CustomElementFormValue m_formAssociatedState;
 };
 
 CustomElementReactionQueue::CustomElementReactionQueue(JSCustomElementInterface& elementInterface)
@@ -246,55 +207,6 @@ void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element
     enqueueElementOnAppropriateElementQueue(element);
 }
 
-void CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(Element& element, HTMLFormElement* associatedForm)
-{
-    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
-    if (element.document().refCount() <= 0)
-        return; // Don't enqueue formAssociatedCallback if the entire document is getting destructed.
-    auto& queue = *element.reactionQueue();
-    if (!queue.m_interface->hasFormAssociatedCallback())
-        return;
-    ASSERT(queue.isFormAssociated());
-    queue.m_items.append(CustomElementReactionQueueItem { associatedForm });
-    enqueueElementOnAppropriateElementQueue(element);
-}
-
-void CustomElementReactionQueue::enqueueFormResetCallbackIfNeeded(Element& element)
-{
-    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
-    ASSERT(element.document().refCount() > 0);
-    auto& queue = *element.reactionQueue();
-    if (!queue.m_interface->hasFormResetCallback())
-        return;
-    ASSERT(queue.isFormAssociated());
-    queue.m_items.append({ CustomElementReactionQueueItem::Type::FormReset });
-    enqueueElementOnAppropriateElementQueue(element);
-}
-
-void CustomElementReactionQueue::enqueueFormDisabledCallbackIfNeeded(Element& element, bool isDisabled)
-{
-    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
-    ASSERT(element.document().refCount() > 0);
-    auto& queue = *element.reactionQueue();
-    if (!queue.m_interface->hasFormDisabledCallback())
-        return;
-    ASSERT(queue.isFormAssociated());
-    queue.m_items.append(CustomElementReactionQueueItem { isDisabled });
-    enqueueElementOnAppropriateElementQueue(element);
-}
-
-void CustomElementReactionQueue::enqueueFormStateRestoreCallbackIfNeeded(Element& element, CustomElementFormValue&& state)
-{
-    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
-    ASSERT(element.document().refCount() > 0);
-    auto& queue = *element.reactionQueue();
-    if (!queue.m_interface->hasFormStateRestoreCallback())
-        return;
-    ASSERT(queue.isFormAssociated());
-    queue.m_items.append(CustomElementReactionQueueItem { WTFMove(state) });
-    enqueueElementOnAppropriateElementQueue(element);
-}
-
 void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
@@ -324,16 +236,6 @@ bool CustomElementReactionQueue::observesStyleAttribute() const
 bool CustomElementReactionQueue::isElementInternalsDisabled() const
 {
     return m_interface->isElementInternalsDisabled();
-}
-
-bool CustomElementReactionQueue::isFormAssociated() const
-{
-    return m_interface->isFormAssociated();
-}
-
-bool CustomElementReactionQueue::hasFormStateRestoreCallback() const
-{
-    return m_interface->hasFormStateRestoreCallback();
 }
 
 bool CustomElementReactionQueue::isElementInternalsAttached() const

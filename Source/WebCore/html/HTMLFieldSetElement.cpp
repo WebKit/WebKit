@@ -63,22 +63,18 @@ Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagNam
 
 static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& startNode, bool isDisabled)
 {
-    auto range = inclusiveDescendantsOfType<Element>(startNode);
-    auto it = range.begin();
-
-    // This preserves status-quo established before https://github.com/WebKit/WebKit/pull/4988:
-    // setDisabledByAncestorFieldset() may modify shadow DOM of <input> / <textarea> elements, but we don't care.
-    it.dropAssertions();
-
-    while (it != range.end()) {
-        if (auto* listedElement = it->asValidatedFormListedElement())
-            listedElement->setDisabledByAncestorFieldset(isDisabled);
-
-        // Don't call setDisabledByAncestorFieldset() on form controls inside disabled fieldsets.
-        if (is<HTMLFieldSetElement>(*it) && it->hasAttributeWithoutSynchronization(disabledAttr))
-            it.traverseNextSkippingChildren();
+    RefPtr<HTMLFormControlElement> control;
+    if (is<HTMLFormControlElement>(startNode))
+        control = &downcast<HTMLFormControlElement>(startNode);
+    else
+        control = Traversal<HTMLFormControlElement>::firstWithin(startNode);
+    while (control) {
+        control->setAncestorDisabled(isDisabled);
+        // Don't call setAncestorDisabled(false) on form controls inside disabled fieldsets.
+        if (is<HTMLFieldSetElement>(*control) && control->hasAttributeWithoutSynchronization(disabledAttr))
+            control = Traversal<HTMLFormControlElement>::nextSkippingChildren(*control, &startNode);
         else
-            it.traverseNext();
+            control = Traversal<HTMLFormControlElement>::next(*control, &startNode);
     }
 }
 
@@ -179,7 +175,7 @@ Ref<HTMLCollection> HTMLFieldSetElement::elements()
     return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<FieldSetElements>::traversalType>>(*this, FieldSetElements);
 }
 
-void HTMLFieldSetElement::addInvalidDescendant(const HTMLElement& invalidFormControlElement)
+void HTMLFieldSetElement::addInvalidDescendant(const HTMLFormControlElement& invalidFormControlElement)
 {
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(invalidFormControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT(static_cast<const Element&>(invalidFormControlElement).matchesInvalidPseudoClass());
@@ -192,7 +188,7 @@ void HTMLFieldSetElement::addInvalidDescendant(const HTMLElement& invalidFormCon
     m_invalidDescendants.add(invalidFormControlElement);
 }
 
-void HTMLFieldSetElement::removeInvalidDescendant(const HTMLElement& formControlElement)
+void HTMLFieldSetElement::removeInvalidDescendant(const HTMLFormControlElement& formControlElement)
 {
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT_WITH_MESSAGE(m_invalidDescendants.contains(formControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");

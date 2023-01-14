@@ -48,8 +48,8 @@ public:
     static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
     ValidityState* validity();
 
-    virtual bool isValidatedFormListedElement() const = 0;
     virtual bool isFormControlElement() const = 0;
+    virtual bool isFormControlElementWithState() const;
     virtual bool isEnumeratable() const = 0;
 
     // Returns the 'name' attribute value. If this element has no name
@@ -61,7 +61,7 @@ public:
     // Return true for a successful control (see HTML4-17.13.2).
     virtual bool appendFormData(DOMFormData&) { return false; }
 
-    void formWillBeDestroyed() override;
+    void formWillBeDestroyed() final;
 
     void resetFormOwner() final;
 
@@ -87,19 +87,15 @@ public:
 
     void formAttributeTargetChanged();
 
-    virtual FormListedElement* asFormListedElement() = 0;
-    virtual ValidatedFormListedElement* asValidatedFormListedElement() = 0;
-
 protected:
     FormListedElement(HTMLFormElement*);
 
-    void clearForm() { setForm(nullptr); }
+    void elementInsertedIntoAncestor(Element&, Node::InsertionType) final;
+    void elementRemovedFromAncestor(Element&, Node::RemovalType);
+    void didMoveToNewDocument(Document& oldDocument);
 
-    void didMoveToNewDocument();
-    void elementInsertedIntoAncestor(Element&, Node::InsertionType) override;
-    void elementRemovedFromAncestor(Element&, Node::RemovalType) override;
-    void parseAttribute(const QualifiedName&, const AtomString&);
-    void parseFormAttribute(const AtomString&);
+    void clearForm() { setForm(nullptr); }
+    void formAttributeChanged();
 
     // If you add an override of willChangeForm() or didChangeForm() to a class
     // derived from this one, you will need to add a call to setForm(0) to the
@@ -115,6 +111,8 @@ private:
     virtual bool willValidate() const = 0;
 
     void resetFormAttributeTargetObserver();
+
+    bool isFormListedElement() const final { return true; }
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     String m_customValidationMessage;

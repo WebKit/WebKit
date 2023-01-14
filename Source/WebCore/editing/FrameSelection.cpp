@@ -2490,23 +2490,14 @@ static HTMLFormElement* scanForForm(Element* start)
     for (auto& element : descendantsOfType<HTMLElement>(start->document())) {
         if (is<HTMLFormElement>(element))
             return &downcast<HTMLFormElement>(element);
-        if (element.isFormListedElement())
-            return element.asFormListedElement()->form();
+        if (is<HTMLFormControlElement>(element))
+            return downcast<HTMLFormControlElement>(element).form();
         if (is<HTMLFrameElementBase>(element)) {
             if (auto* contentDocument = downcast<HTMLFrameElementBase>(element).contentDocument()) {
                 if (auto* frameResult = scanForForm(contentDocument->documentElement()))
                     return frameResult;
             }
         }
-    }
-    return nullptr;
-}
-
-static ValidatedFormListedElement* findFormControlElementAncestor(Element& element)
-{
-    for (auto& ancestor : lineageOfType<Element>(element)) {
-        if (auto* formControlAncestor = ancestor.asValidatedFormListedElement())
-            return formControlAncestor;
     }
     return nullptr;
 }
@@ -2523,7 +2514,7 @@ HTMLFormElement* FrameSelection::currentForm() const
 
     if (auto form = lineageOfType<HTMLFormElement>(*start).first())
         return form;
-    if (auto* formControl = findFormControlElementAncestor(*start))
+    if (auto formControl = lineageOfType<HTMLFormControlElement>(*start).first())
         return formControl->form();
 
     // Try walking forward in the node tree to find a form element.

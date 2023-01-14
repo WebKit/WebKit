@@ -26,7 +26,6 @@
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "ElementAnimationRareData.h"
-#include "FormAssociatedCustomElement.h"
 #include "IntersectionObserver.h"
 #include "KeyframeEffectStack.h"
 #include "NamedNodeMap.h"
@@ -71,9 +70,6 @@ public:
 
     CustomElementDefaultARIA* customElementDefaultARIA() { return m_customElementDefaultARIA.get(); }
     void setCustomElementDefaultARIA(std::unique_ptr<CustomElementDefaultARIA>&& defaultARIA) { m_customElementDefaultARIA = WTFMove(defaultARIA); }
-
-    FormAssociatedCustomElement* formAssociatedCustomElement() { return m_formAssociatedCustomElement.get(); }
-    void setFormAssociatedCustomElement(std::unique_ptr<FormAssociatedCustomElement>&& element) { m_formAssociatedCustomElement = WTFMove(element); }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTFMove(attributeMap); }
@@ -145,8 +141,6 @@ public:
             result.add(UseType::CustomElementReactionQueue);
         if (m_customElementDefaultARIA)
             result.add(UseType::CustomElementDefaultARIA);
-        if (m_formAssociatedCustomElement)
-            result.add(UseType::FormAssociatedCustomElement);
         if (m_attributeMap)
             result.add(UseType::AttributeMap);
         if (m_intersectionObserverData)
@@ -183,7 +177,6 @@ private:
     RefPtr<ShadowRoot> m_shadowRoot;
     std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
     std::unique_ptr<CustomElementDefaultARIA> m_customElementDefaultARIA;
-    std::unique_ptr<FormAssociatedCustomElement> m_formAssociatedCustomElement;
     std::unique_ptr<NamedNodeMap> m_attributeMap;
 
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;

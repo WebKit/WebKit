@@ -1,3 +1,0 @@
-
-PASS Custom elements don't get associated with a form in precustomized state
-

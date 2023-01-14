@@ -29,7 +29,6 @@
 #include "CustomElementRegistry.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMConstructorBase.h"
@@ -86,7 +85,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
         auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
         RETURN_IF_EXCEPTION(scope, { });
 
-        Ref<HTMLElement> element = elementInterface->createElement(document);
+        Ref<HTMLElement> element = HTMLElement::create(elementInterface->name(), document);
         element->setIsDefinedCustomElement(*elementInterface);
         auto* jsElement = JSHTMLElement::create(newElementStructure, newTargetGlobalObject, element.get());
         cacheWrapper(newTargetGlobalObject->world(), element.ptr(), jsElement);

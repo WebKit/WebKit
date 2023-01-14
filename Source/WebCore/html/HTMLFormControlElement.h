@@ -24,8 +24,8 @@
 #pragma once
 
 #include "Autofill.h"
+#include "FormListedElement.h"
 #include "LabelableElement.h"
-#include "ValidatedFormListedElement.h"
 
 #if ENABLE(AUTOCAPITALIZE)
 #include "Autocapitalize.h"
@@ -33,19 +33,20 @@
 
 namespace WebCore {
 
-class HTMLFormControlElement : public LabelableElement, public ValidatedFormListedElement {
+class DOMFormData;
+class HTMLFieldSetElement;
+class HTMLFormElement;
+class HTMLLegendElement;
+class ValidationMessage;
+
+// HTMLFormControlElement is the default implementation of FormListedElement,
+// and form-associated element implementations should use HTMLFormControlElement
+// unless there is a special reason.
+class HTMLFormControlElement : public LabelableElement, public FormListedElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElement);
+    friend class DelayedUpdateValidityScope;
 public:
     virtual ~HTMLFormControlElement();
-
-    bool isValidatedFormListedElement() const override { return true; }
-    bool isFormListedElement() const override { return true; }
-
-    bool matchesValidPseudoClass() const override { return willValidate() && isValidFormControlElement(); }
-    bool matchesInvalidPseudoClass() const override { return willValidate() && !isValidFormControlElement(); }
-
-    bool isDisabledFormControl() const override { return isDisabled(); }
-    bool supportsFocus() const override { return !isDisabled(); }
 
     WEBCORE_EXPORT String formEnctype() const;
     WEBCORE_EXPORT void setFormEnctype(const AtomString&);
@@ -55,22 +56,39 @@ public:
     WEBCORE_EXPORT String formAction() const;
     WEBCORE_EXPORT void setFormAction(const AtomString&);
 
+    void setAncestorDisabled(bool isDisabled);
+
+    virtual void reset() { }
+
     bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
     void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
 
     bool wasChangedSinceLastFormControlChangeEvent() const { return m_wasChangedSinceLastFormControlChangeEvent; }
     void setChangedSinceLastFormControlChangeEvent(bool);
 
+    bool wasInteractedWithSinceLastFormSubmitEvent() const { return m_wasInteractedWithSinceLastFormSubmitEvent; }
+    void setInteractedWithSinceLastFormSubmitEvent(bool);
+
     virtual void dispatchFormControlChangeEvent();
     void dispatchChangeEvent();
     void dispatchCancelEvent();
     void dispatchFormControlInputEvent();
 
+    bool isDisabledFormControl() const final { return m_disabled || m_disabledByAncestorFieldset; }
+
+    bool isEnumeratable() const override { return false; }
+
     bool isRequired() const { return m_isRequired; }
 
     const AtomString& type() const { return formControlType(); }
 
+    virtual const AtomString& formControlType() const = 0;
+
     virtual bool canTriggerImplicitSubmission() const { return false; }
+
+    // Override in derived classes to get the encoded name=value pair for submitting.
+    // Return true for a successful control (see HTML4-17.13.2).
+    bool appendFormData(DOMFormData&) override { return false; }
 
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
@@ -83,6 +101,26 @@ public:
 #if ENABLE(AUTOCAPITALIZE)
     WEBCORE_EXPORT AutocapitalizeType autocapitalizeType() const final;
 #endif
+
+    // "willValidate" means "is a candidate for constraint validation".
+    WEBCORE_EXPORT bool willValidate() const final;
+    void updateVisibleValidationMessage();
+    void hideVisibleValidationMessage();
+    WEBCORE_EXPORT bool checkValidity(Vector<RefPtr<HTMLFormControlElement>>* unhandledInvalidControls = nullptr);
+    bool reportValidity();
+    void focusAndShowValidationMessage();
+    bool isShowingValidationMessage() const;
+    WEBCORE_EXPORT bool isFocusingWithValidationMessage() const;
+    // This must be called when a validation constraint or control value is changed.
+    void updateValidity();
+    void setCustomValidity(const String&) override;
+
+    bool matchesUserInvalidPseudoClass() const;
+    bool matchesUserValidPseudoClass() const;
+
+    virtual bool supportsReadOnly() const { return false; }
+    bool isReadOnly() const { return supportsReadOnly() && m_hasReadOnlyAttribute; }
+    bool isMutable() const { return !isDisabledFormControl() && !isReadOnly(); }
 
     WEBCORE_EXPORT String autocomplete() const;
     WEBCORE_EXPORT void setAutocomplete(const AtomString&);
@@ -101,18 +139,20 @@ public:
 protected:
     HTMLFormControlElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
+    bool disabledByAncestorFieldset() const { return m_disabledByAncestorFieldset; }
+
+    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    virtual void disabledAttributeChanged();
+    virtual void disabledStateChanged();
+    virtual void readOnlyStateChanged();
+    virtual void requiredStateChanged();
+    void didAttachRenderers() override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void didAttachRenderers() override;
-    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
-    void finishParsingChildren() override;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
-    void disabledStateChanged() override;
-    void readOnlyStateChanged() override;
-    virtual void requiredStateChanged();
-
+    bool supportsFocus() const override;
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isMouseFocusable() const override;
 
@@ -120,14 +160,33 @@ protected:
 
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
+    // This must be called any time the result of willValidate() has changed.
+    void updateWillValidateAndValidity();
+    virtual bool computeWillValidate() const;
+    virtual bool readOnlyBarsFromConstraintValidation() const { return false; }
+
+    bool validationMessageShadowTreeContains(const Node&) const;
+
+    void willChangeForm() override;
+    void didChangeForm() override;
+
 private:
-    void refFormAssociatedElement() const override { ref(); }
-    void derefFormAssociatedElement() const override { deref(); }
+    void refFormAssociatedElement() override { ref(); }
+    void derefFormAssociatedElement() override { deref(); }
 
     void runFocusingStepsForAutofocus() final;
-    HTMLElement* validationAnchorElement() final { return this; }
+
+    bool matchesValidPseudoClass() const override;
+    bool matchesInvalidPseudoClass() const override;
 
     bool isFormControlElement() const final { return true; }
+
+    bool isValidFormControlElement() const;
+
+    bool computeIsDisabledByFieldsetAncestor() const;
+    
+    void startDelayingUpdateValidity() { ++m_delayedUpdateValidityCount; }
+    void endDelayingUpdateValidity();
 
     // These functions can be called concurrently for ValidityState.
     HTMLElement& asHTMLElement() final { return *this; }
@@ -135,14 +194,55 @@ private:
 
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
     FormListedElement* asFormListedElement() final { return this; }
-    ValidatedFormListedElement* asValidatedFormListedElement() final { return this; }
 
     bool needsMouseFocusableQuirk() const;
 
+    std::unique_ptr<ValidationMessage> m_validationMessage;
+    
+    unsigned m_delayedUpdateValidityCount { 0 };
+
+    bool m_isFocusingWithValidationMessage { false };
+
+    unsigned m_disabled : 1;
+    unsigned m_hasReadOnlyAttribute : 1;
     unsigned m_isRequired : 1;
     unsigned m_valueMatchesRenderer : 1;
+    unsigned m_disabledByAncestorFieldset : 1;
+
+    enum DataListAncestorState { Unknown, InsideDataList, NotInsideDataList };
+    mutable unsigned m_dataListAncestorState : 2;
+
+    // The initial value of m_willValidate depends on the derived class. We can't
+    // initialize it with a virtual function in the constructor. m_willValidate
+    // is not deterministic as long as m_willValidateInitialized is false.
+    mutable bool m_willValidateInitialized: 1;
+    mutable bool m_willValidate : 1;
+
+    // Cache of validity()->valid().
+    // But "candidate for constraint validation" doesn't affect m_isValid.
+    unsigned m_isValid : 1;
+
     unsigned m_wasChangedSinceLastFormControlChangeEvent : 1;
+    unsigned m_wasInteractedWithSinceLastFormSubmitEvent : 1;
 };
+
+class DelayedUpdateValidityScope {
+public:
+    DelayedUpdateValidityScope(HTMLFormControlElement& element)
+        : m_element(element)
+    {
+        m_element.startDelayingUpdateValidity();
+    }
+    
+    ~DelayedUpdateValidityScope()
+    {
+        m_element.endDelayingUpdateValidity();
+    }
+
+private:
+    HTMLFormControlElement& m_element;
+};
+
 
 } // namespace WebCore
 
