@@ -1041,7 +1041,7 @@ def generate_message_handler(receiver):
             result.append('    if (connection.connection().ignoreInvalidMessageForTesting())\n')
             result.append('        return;\n')
             result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));\n')
+            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());\n')
         result.append('}\n')
     else:
         receive_variant = receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''
@@ -1062,7 +1062,7 @@ def generate_message_handler(receiver):
             result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
             result.append('        return;\n')
             result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));\n')
+            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());\n')
         result.append('}\n')
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
@@ -1082,7 +1082,7 @@ def generate_message_handler(receiver):
         result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
         result.append('        return false;\n')
         result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-        result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));\n')
+        result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());\n')
         result.append('    return false;\n')
         result.append('}\n')
 
