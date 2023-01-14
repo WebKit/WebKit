@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "ArgumentCoders.h"
+#include "IPCTestUtilities.h"
 #include "StreamClientConnection.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
@@ -163,62 +164,78 @@ public:
 
 class StreamConnectionTest : public ::testing::Test {
 public:
-    StreamConnectionTest()
-        : m_workQueue(IPC::StreamConnectionWorkQueue::create("StreamConnectionTest work queue"))
-    {
-    }
-
     void SetUp() override
     {
         WTF::initializeMainThread();
+        m_serverQueue = IPC::StreamConnectionWorkQueue::create("StreamConnectionTest work queue");
         constexpr unsigned bufferSizeLog2 = 14;
         auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(bufferSizeLog2);
-        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), *m_workQueue);
+        auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
         m_clientConnection = WTFMove(clientConnection);
-        m_serverConnection = WTFMove(serverConnection);
+        m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
+        serverQueue().dispatch([this, serverConnection = WTFMove(serverConnection)] () mutable {
+            assertIsCurrent(serverQueue());
+            m_serverConnection = WTFMove(serverConnection);
+        });
     }
 
     void TearDown() override
     {
-        m_workQueue->stopAndWaitForCompletion();
         m_clientConnection->invalidate();
-        m_serverConnection->invalidate();
+        serverQueue().dispatch([&] {
+            assertIsCurrent(serverQueue());
+            m_serverConnection->invalidate();
+        });
+        m_serverQueue->stopAndWaitForCompletion();
     }
 
     void localReferenceBarrier()
     {
         BinarySemaphore workQueueWait;
-        m_workQueue->dispatch([&] {
+        serverQueue().dispatch([&] {
             workQueueWait.signal();
         });
         workQueueWait.wait();
     }
 
+    IPC::StreamConnectionWorkQueue& serverQueue()
+    {
+        return *m_serverQueue;
+    }
+
 protected:
     MockMessageReceiver m_mockClientReceiver;
-    RefPtr<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamClientConnection> m_clientConnection;
-    RefPtr<IPC::StreamServerConnection> m_serverConnection;
+    RefPtr<IPC::StreamConnectionWorkQueue> m_serverQueue;
+    RefPtr<IPC::StreamServerConnection> m_serverConnection WTF_GUARDED_BY_CAPABILITY(serverQueue());
 };
 
 TEST_F(StreamConnectionTest, OpenConnections)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
-    m_serverConnection->invalidate();
+    serverQueue().dispatch([this] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->open();
+        m_serverConnection->invalidate();
+    });
     m_mockClientReceiver.waitUntilClosed();
     m_clientConnection->invalidate();
+    localReferenceBarrier();
 }
 
 TEST_F(StreamConnectionTest, SendMessage)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
-    m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), 77);
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->open();
+        m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), 77);
+    });
     for (uint64_t i = 0u; i < 55u; ++i)
         m_clientConnection->send(MockStreamTestMessage1 { }, makeObjectIdentifier<TestObjectIdentifier>(77), defaultSendTimeout);
-    m_workQueue->dispatch([this] {
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
         for (uint64_t i = 100u; i < 160u; ++i)
             m_serverConnection->send(MockStreamTestMessage1 { }, makeObjectIdentifier<TestObjectIdentifier>(i));
     });
@@ -232,15 +249,19 @@ TEST_F(StreamConnectionTest, SendMessage)
         EXPECT_EQ(message.messageName, MockStreamTestMessage1::name());
         EXPECT_EQ(message.destinationID, 77u);
     }
-    m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), 77);
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), 77);
+    });
+    localReferenceBarrier();
 }
 
 TEST_F(StreamConnectionTest, SendAsyncReplyMessage)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     mockServerReceiver->setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        assertIsCurrent(serverQueue());
         using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
         auto contents = decoder.decode<uint64_t>();
         auto asyncReplyID = decoder.decode<AsyncReplyID>();
@@ -248,8 +269,11 @@ TEST_F(StreamConnectionTest, SendAsyncReplyMessage)
         m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID.value_or(AsyncReplyID { }), contents.value_or(0));
         return true;
     });
-    m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
-
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->open();
+        m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    });
     HashSet<uint64_t> replies;
     for (uint64_t i = 100u; i < 155u; ++i) {
         m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
@@ -261,15 +285,19 @@ TEST_F(StreamConnectionTest, SendAsyncReplyMessage)
         RunLoop::current().cycle();
     for (uint64_t i = 100u; i < 155u; ++i)
         EXPECT_TRUE(replies.contains(i));
-    m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    });
+    localReferenceBarrier();
 }
 
 TEST_F(StreamConnectionTest, SendAsyncReplyMessageCancel)
 {
     m_clientConnection->open(m_mockClientReceiver);
-    m_serverConnection->open();
     RefPtr<MockStreamMessageReceiver> mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
     mockServerReceiver->setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        assertIsCurrent(serverQueue());
         using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
         auto contents = decoder.decode<uint64_t>();
         auto asyncReplyID = decoder.decode<AsyncReplyID>();
@@ -277,11 +305,15 @@ TEST_F(StreamConnectionTest, SendAsyncReplyMessageCancel)
         m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID.value_or(AsyncReplyID { }), contents.value_or(0));
         return true;
     });
-    m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->open();
+        m_serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    });
 
     std::atomic<bool> waiting;
     BinarySemaphore workQueueWait;
-    m_workQueue->dispatch([&] {
+    serverQueue().dispatch([&] {
         waiting = true;
         workQueueWait.wait();
     });
@@ -307,7 +339,10 @@ TEST_F(StreamConnectionTest, SendAsyncReplyMessageCancel)
         RunLoop::current().cycle();
     for (uint64_t i = 100u; i < 155u; ++i)
         EXPECT_TRUE(replies.contains(i));
-    m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    serverQueue().dispatch([&] {
+        assertIsCurrent(serverQueue());
+        m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessageWithAsyncReply1::name()), 77);
+    });
     localReferenceBarrier();
 }
 
