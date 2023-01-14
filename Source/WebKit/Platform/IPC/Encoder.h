@@ -67,7 +67,6 @@ public:
 
     void wrapForTesting(UniqueRef<Encoder>&&);
 
-    void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
     template<typename T, size_t Extent>
     void encodeSpan(const Span<T, Extent>&);
     template<typename T>
@@ -90,6 +89,7 @@ public:
     static constexpr bool isIPCEncoder = true;
 
 private:
+    void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
     uint8_t* grow(size_t alignment, size_t);
 
     bool hasAttachments() const;

@@ -54,21 +54,6 @@ public:
 
     ~StreamConnectionEncoder() = default;
 
-    bool encodeFixedLengthData(const uint8_t* data, size_t size, size_t alignment)
-    {
-        size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer + m_encodedSize));
-        size_t newBufferPointer = roundUpToMultipleOf(alignment, bufferPointer);
-        if (newBufferPointer < bufferPointer)
-            return false;
-        intptr_t alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
-        if (!reserve(alignedSize, size))
-            return false;
-        uint8_t* buffer = m_buffer + alignedSize;
-        memcpy(buffer, data, size);
-        m_encodedSize = alignedSize + size;
-        return true;
-    }
-
     template<typename T, size_t Extent>
     bool encodeSpan(const Span<T, Extent>& data)
     {
@@ -92,7 +77,23 @@ public:
     size_t size() const { ASSERT(isValid()); return m_encodedSize; }
     bool isValid() const { return m_bufferCapacity; }
     operator bool() const { return isValid(); }
+
 private:
+    bool encodeFixedLengthData(const uint8_t* data, size_t size, size_t alignment)
+    {
+        size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer + m_encodedSize));
+        size_t newBufferPointer = roundUpToMultipleOf(alignment, bufferPointer);
+        if (newBufferPointer < bufferPointer)
+            return false;
+        intptr_t alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
+        if (!reserve(alignedSize, size))
+            return false;
+        uint8_t* buffer = m_buffer + alignedSize;
+        memcpy(buffer, data, size);
+        m_encodedSize = alignedSize + size;
+        return true;
+    }
+
     bool reserve(size_t alignedSize, size_t additionalSize)
     {
         size_t size = alignedSize + additionalSize;
@@ -102,6 +103,7 @@ private:
         }
         return true;
     }
+
     uint8_t* m_buffer;
     size_t m_bufferCapacity;
     size_t m_encodedSize { 0 };

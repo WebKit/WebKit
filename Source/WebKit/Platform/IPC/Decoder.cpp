@@ -153,17 +153,6 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     return wrappedDecoder;
 }
 
-const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment)
-{
-    if (!alignBufferPosition(alignment, size))
-        return nullptr;
-
-    const uint8_t* data = m_bufferPos;
-    m_bufferPos += size;
-
-    return data;
-}
-
 std::optional<Attachment> Decoder::takeLastAttachment()
 {
     if (m_attachments.isEmpty()) {
