@@ -109,17 +109,23 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         auto firstBoxIndex = boxIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
         // Collect overflow from boxes.
+        // Note while we compute ink overflow for all type of boxes including atomic inline level boxes (e.g. <iframe> <img>) as part of constructing
+        // display boxes (see InlineDisplayContentBuilder) RenderBlockFlow expects visual overflow.
+        // Visual overflow propagation is slightly different from ink overflow when it comes to renderers with self painting layers.
+        // -and for now we consult atomic renderers for such visual overflow which is not how we are supposed to do in LFC.
+        // (visual overflow is computed during their ::layout() call which we issue right before running inline layout in RenderBlockFlow::layoutModernLines)
         for (; boxIndex < boxes.size() && boxes[boxIndex].lineIndex() == lineIndex; ++boxIndex) {
             auto& box = boxes[boxIndex];
-            if (box.isRootInlineBox())
+            if (box.isRootInlineBox() || box.isEllipsis() || box.isLineBreak())
                 continue;
 
-            lineInkOverflowRect.unite(box.inkOverflow());
+            if (box.isText()) {
+                lineInkOverflowRect.unite(box.inkOverflow());
+                continue;
+            }
 
-            auto& layoutBox = box.layoutBox();
-            if (layoutBox.isAtomicInlineLevelBox()) {
-                // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
-                auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+            if (box.isAtomicInlineLevelBox()) {
+                auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox()));
                 if (!renderer.hasSelfPaintingLayer()) {
                     auto childInkOverflow = renderer.logicalVisualOverflowRectForPropagation(&renderer.parent()->style());
                     childInkOverflow.move(box.left(), box.top());
@@ -128,6 +134,12 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
                 auto childScrollableOverflow = renderer.layoutOverflowRectForPropagation(&renderer.parent()->style());
                 childScrollableOverflow.move(box.left(), box.top());
                 scrollableOverflowRect.unite(childScrollableOverflow);
+                continue;
+            }
+
+            if (box.isInlineBox()) {
+                if (!downcast<RenderElement>(m_boxTree.rendererForLayoutBox(box.layoutBox())).hasSelfPaintingLayer())
+                    lineInkOverflowRect.unite(box.inkOverflow());
             }
         }
 

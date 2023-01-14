@@ -11,14 +11,14 @@ Tests whether we switch back to a hidpi backing store when rasterized content is
       (device scale 2.00)
       (children 1
         (GraphicsLayer
-          (offsetFromRenderer width=-3 height=-3)
-          (position 5.00 49.00)
-          (bounds 1003.00 1008.00)
+          (position 8.00 52.00)
+          (bounds 1000.00 1005.00)
           (opacity 0.50)
           (device scale 2.00)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=-3 height=-3)
+              (position -3.00 -3.00)
               (anchor 0.00 0.00)
               (bounds 1006.00 1006.00)
               (drawsContent 1)
