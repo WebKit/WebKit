@@ -501,7 +501,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 namespace {
 
 struct SyncIPCMessageInfo {
-    uint64_t destinationID; // FIXME: real IPC destinationID is at the moment UInt128, but we cannot decode that from JS.
+    uint64_t destinationID;
     IPC::MessageName messageName;
     IPC::Timeout timeout;
 };
@@ -2881,13 +2881,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String::fromLatin1(IPC::description(decoder.messageName()))));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    JSC::JSObject* array = JSC::constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    array->putDirectIndex(globalObject, 0, JSC::JSValue(static_cast<uint64_t>(decoder.destinationID())));
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    array->putDirectIndex(globalObject, 1, JSC::JSValue(static_cast<uint64_t>(decoder.destinationID() >> 64)));
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(array));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(decoder.destinationID()));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {

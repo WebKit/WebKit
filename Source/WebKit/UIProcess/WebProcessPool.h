@@ -165,9 +165,9 @@ public:
     }
 
     void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&);
-    void addMessageReceiver(IPC::ReceiverName, UInt128 destinationID, IPC::MessageReceiver&);
+    void addMessageReceiver(IPC::ReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
     void removeMessageReceiver(IPC::ReceiverName);
-    void removeMessageReceiver(IPC::ReceiverName, UInt128 destinationID);
+    void removeMessageReceiver(IPC::ReceiverName, uint64_t destinationID);
 
     WebBackForwardCache& backForwardCache() { return m_backForwardCache.get(); }
     
