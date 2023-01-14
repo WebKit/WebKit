@@ -246,15 +246,12 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
         auto ellipsisPolicy = lineEndingEllipsisPolicy(rootStyle, numberOfLines, maximumNumberOfVisibleLinesForThisInlineContent);
         auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, ellipsisPolicy }, previousLine);
 
-        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
-        auto isLastLine = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty());
-        auto contentIsTruncatedInBlockDirection = (!isLastLine && ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection) || ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
-        if (contentIsTruncatedInBlockDirection)
-            lineContent.lineNeedsTrailingEllipsis = true;
-
         auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints, blockLayoutState);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+
+        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
+        auto isLastLine = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty());
         if (isLastLine)
             break;
 
