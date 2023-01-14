@@ -252,7 +252,7 @@ AllowUniversalAccessFromFileURLs:
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 AllowViewportShrinkToFitContent:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Allow Viewport Shrink to Fit Content"
   humanReadableDescription: "Allow the viewport shrink to fit content heuristic when appropriate"
   condition: PLATFORM(IOS_FAMILY)
@@ -561,7 +561,7 @@ AttachmentElementEnabled:
 
 AudioDescriptionsEnabled:
   type: bool
-  status: unstable
+  status: developer
   condition: ENABLE(VIDEO)
   humanReadableName: "Audio descriptions for video - Standard"
   humanReadableDescription: "Enable standard audio descriptions for video"
@@ -589,7 +589,7 @@ AuthorAndUserStylesEnabled:
 
 AutomaticLiveResizeEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Enable Automatic Live Resize"
   humanReadableDescription: "Automatically synchronize web view resize with painting"
   webcoreBinding: none
@@ -1100,7 +1100,7 @@ CSSTransformStyleOptimized3DEnabled:
 
 CSSTypedOMColorEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "CSS Typed OM: Color Support"
   humanReadableDescription: "Enable the CSS Typed OM Color support"
   defaultValue:
@@ -1520,7 +1520,7 @@ DOMAudioSessionEnabled:
 
 DOMPasteAccessRequestsEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "DOM Paste Access Requests"
   humanReadableDescription: "Enable DOM Paste Access Requests"
   defaultValue:
@@ -1559,7 +1559,7 @@ DOMTestingAPIsEnabled:
 
 DOMTimersThrottlingEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "DOM timer throttling enabled"
   webKitLegacyPreferenceKey: WebKitDOMTimersThrottlingEnabledPreferenceKey
   defaultValue:
@@ -1586,7 +1586,7 @@ DataDetectorTypes:
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "DataList Element"
   humanReadableDescription: "Enable datalist elements"
   condition: ENABLE(DATALIST_ELEMENT)
@@ -1920,7 +1920,7 @@ EditableLinkBehavior:
 
 EmbedElementEnabled:
   type: bool
-  status: unstable
+  status: shipping
   humanReadableName: "Embed Element"
   humanReadableDescription: "Embed Element"
   defaultValue:
@@ -1956,7 +1956,7 @@ EncryptedMediaAPIEnabled:
 
 EnterKeyHintEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Enter Key Hint"
   humanReadableDescription: "Enable the enterKeyHint HTML attribute"
   defaultValue:
@@ -2021,7 +2021,7 @@ ExposeSpeakersEnabled:
 
 ExtendedAudioDescriptionsEnabled:
   type: bool
-  status: unstable
+  status: developer
   condition: ENABLE(VIDEO)
   humanReadableName: "Audio descriptions for video - Extended"
   humanReadableDescription: "Enable extended audio descriptions for video"
@@ -2124,7 +2124,7 @@ FetchAPIKeepAliveEnabled:
 
 FetchMetadataEnabled:
   type: bool
-  status: preview
+  status: stable
   humanReadableName: "Fetch Metadata"
   humanReadableDescription: "Enable Fetch Metadata headers"
   defaultValue:
@@ -2355,7 +2355,7 @@ GenericCueAPIEnabled:
 
 GetUserMediaRequiresFocus:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Require focus to start getUserMedia"
   humanReadableDescription: "Require focus to start getUserMedia"
   condition: ENABLE(MEDIA_STREAM)
@@ -2369,7 +2369,7 @@ GetUserMediaRequiresFocus:
 
 GoogleAntiFlickerOptimizationQuirkEnabled:
   type: bool
-  status: embedder
+  status: developer
   humanReadableName: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
   humanReadableDescription: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
   defaultValue:
@@ -2450,7 +2450,7 @@ HiddenPageDOMTimerThrottlingAutoIncreases:
 
 HiddenPageDOMTimerThrottlingEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Hidden page DOM timer throttling"
   humanReadableDescription: "Enable hidden page DOM timer throttling"
   webcoreOnChange: hiddenPageDOMTimerThrottlingStateChanged
@@ -3190,7 +3190,7 @@ LayoutViewportHeightExpansionFactor:
 
 LazyIframeLoadingEnabled:
   type: bool
-  status: unstable
+  status: developer
   humanReadableName: "Lazy iframe loading"
   humanReadableDescription: "Enable lazy iframe loading support"
   defaultValue:
@@ -4067,7 +4067,7 @@ NeedsSiteSpecificQuirks:
 
 NeedsStorageAccessFromFileURLsQuirk:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Needs storage access from file URLs quirk"
   defaultValue:
     WebKitLegacy:
@@ -4131,7 +4131,6 @@ OffscreenCanvasEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)": true
-      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)": true
@@ -4149,7 +4148,6 @@ OffscreenCanvasInWorkersEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)": true
-      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)": true
@@ -4373,7 +4371,7 @@ PerformanceNavigationTimingAPIEnabled:
 
 PerformanceResourceTimingSensitivePropertiesEnabled:
   type: bool
-  status: internal
+  status: stable
   humanReadableName: "PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize"
   humanReadableDescription: "Enable all properties of PerformanceResourceTiming API"
   defaultValue:
@@ -4484,7 +4482,7 @@ PreferPageRenderingUpdatesNear60FPSEnabled:
 
 PreferSandboxedMediaParsing:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Prefer Sandboxed Parsing of Media"
   humanReadableDescription: "Prefer parsing media out-of-process in a sandboxed service"
   condition: ENABLE(VIDEO)
@@ -4786,7 +4784,7 @@ ResolutionMediaFeatureEnabled:
 
 ResourceLoadSchedulingEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Resource Load Scheduling"
   humanReadableDescription: "Network process side priority and visibility based resource load scheduling"
   defaultValue:
@@ -4815,7 +4813,7 @@ ResourceUsageOverlayVisible:
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 RestrictedHTTPResponseAccess:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Filter HTTP Response for Web Processes"
   humanReadableDescription: "Enable HTTP Response filtering for Web Processes"
   webcoreBinding: DeprecatedGlobalSettings
@@ -5025,7 +5023,7 @@ ScrollingPerformanceTestingEnabled:
 
 SecureContextChecksEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Secure Context Checks"
   humanReadableDescription: "Allow access to HTTPS-only Web APIs over HTTP"
   defaultValue:
@@ -5474,7 +5472,7 @@ SpatialNavigationEnabled:
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 SpeakerSelectionRequiresUserGesture:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Require a user gesture for speaker selection"
   humanReadableDescription: "Require a user gesture for speaker selection"
   condition: ENABLE(MEDIA_STREAM)
@@ -5634,7 +5632,7 @@ SuppressesIncrementalRendering:
 
 SyntheticEditingCommandsEnabled:
   type: bool
-  status: embedder
+  status: stable
   humanReadableName: "Synthetic Editing Commands"
   humanReadableDescription: "Enable Synthetic Editing Commands"
   defaultValue:
@@ -5908,7 +5906,7 @@ UpgradeKnownHostsToHTTPSEnabled:
 
 UseARKitForModel:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Use ARKit for <model>"
   humanReadableDescription: "Use ARKit for <model>"
   webcoreBinding: none
@@ -6015,7 +6013,7 @@ UseGPUProcessForWebGLEnabled:
 
 UseGeneralDirectoryForStorage:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Use General Directory For Storage"
   humanReadableDescription: "Use general storage directory for IndexedDB and LocalStorage"
   webcoreBinding: none
@@ -6098,7 +6096,7 @@ UseSceneKitForModel:
 
 UserActivationAPIEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "User Activation API"
   humanReadableDescription: "Enable User Activation API"
   defaultValue:
@@ -6111,7 +6109,7 @@ UserActivationAPIEnabled:
 
 UserGesturePromisePropagationEnabled:
   type: bool
-  status: internal
+  status: developer
   humanReadableName: "UserGesture Promise Propagation"
   humanReadableDescription: "UserGesture Promise Propagation"
   defaultValue:
@@ -6287,7 +6285,7 @@ VisualViewportEnabled:
 
 VorbisDecoderEnabled:
   type: bool
-  status: embedder
+  status: stable
   humanReadableName: "Vorbis audio decoder"
   humanReadableDescription: "Enable Vorbis audio decoder"
   condition: ENABLE(VORBIS)
@@ -6487,7 +6485,7 @@ WebCodecsAV1Enabled:
 
 WebCodecsEnabled:
   type: bool
-  status: preview
+  status: stable
   humanReadableName: "Web Codecs"
   humanReadableDescription: "Web Codecs"
   condition: ENABLE(WEB_CODECS)
