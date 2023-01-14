@@ -3623,19 +3623,15 @@ bool AccessibilityObject::isDOMHidden() const
 
 bool AccessibilityObject::isShowingValidationMessage() const
 {
-    if (RefPtr element = this->element()) {
-        if (auto* listedElement = element->asValidatedFormListedElement())
-            return listedElement->isShowingValidationMessage();
-    }
+    if (is<HTMLFormControlElement>(node()))
+        return downcast<HTMLFormControlElement>(*node()).isShowingValidationMessage();
     return false;
 }
 
 String AccessibilityObject::validationMessage() const
 {
-    if (RefPtr element = this->element()) {
-        if (auto* listedElement = element->asValidatedFormListedElement())
-            return listedElement->validationMessage();
-    }
+    if (is<HTMLFormControlElement>(node()))
+        return downcast<HTMLFormControlElement>(*node()).validationMessage();
     return String();
 }
 

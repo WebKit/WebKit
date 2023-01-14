@@ -27,6 +27,7 @@
 #include "NetworkSession.h"
 
 #include "CacheStorageEngine.h"
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
 #include "NetworkLoadScheduler.h"
@@ -680,7 +681,7 @@ SWServer& NetworkSession::ensureSWServer()
                 ASSERT_NOT_REACHED();
                 return;
             }
-            m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), [] { });
+            m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
         });
     }
     return *m_swServer;

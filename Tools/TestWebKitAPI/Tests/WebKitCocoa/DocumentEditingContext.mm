@@ -525,6 +525,19 @@ TEST(DocumentEditingContext, RectsRequestInContentEditableWithDivBreaks)
     }
 }
 
+TEST(DocumentEditingContext, PasswordFieldRequest)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<input id='passwordField' type='password' value='testPassword'>")];
+    [webView stringByEvaluatingJavaScript:@"passwordField.focus(); passwordField.select();"];
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 1)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NULL(context.contextBefore);
+    EXPECT_NSSTRING_EQ("testPassword", context.selectedText);
+    EXPECT_NULL(context.contextAfter);
+}
 
 TEST(DocumentEditingContext, SpatialRequest_RectEncompassingInput)
 {

@@ -77,15 +77,7 @@ public:
     bool isNamedImageValue() const { return m_classType == NamedImageClass; }
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
     bool isImageValue() const { return m_classType == ImageClass; }
-    bool isImplicitInitialValue() const;
-    bool isInheritValue() const;
-    bool isInitialValue() const;
-    bool isUnsetValue() const;
-    bool isRevertValue() const;
-    bool isRevertLayerValue() const;
-    bool isCSSWideKeyword() const;
-    bool treatAsInitialValue(CSSPropertyID) const;
-    bool treatAsInheritedValue(CSSPropertyID) const;
+    bool isImplicitInitialValue() const { return m_isImplicitInitialValue; }
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }
     bool isRadialGradientValue() const { return m_classType == RadialGradientClass; }
     bool isConicGradientValue() const { return m_classType == ConicGradientClass; }
@@ -257,7 +249,7 @@ protected:
     // CSSPrimitiveValue:
     unsigned m_primitiveUnitType : 7 { 0 }; // CSSUnitType
     mutable unsigned m_hasCachedCSSText : 1 { false };
-    unsigned m_isImplicit : 1 { false };
+    unsigned m_isImplicitInitialValue : 1 { false };
 
     // CSSValueList and CSSValuePair:
     unsigned m_valueSeparator : ValueSeparatorBits { 0 };

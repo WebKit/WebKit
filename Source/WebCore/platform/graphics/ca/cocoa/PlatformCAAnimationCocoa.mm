@@ -428,9 +428,9 @@ void PlatformCAAnimationCocoa::setFromValue(const Color& value)
     [static_cast<CABasicAnimation *>(m_animation.get()) setFromValue:@[@(r), @(g), @(b), @(a)]];
 }
 
-void PlatformCAAnimationCocoa::setFromValue(const FilterOperation* operation, int internalFilterPropertyIndex)
+void PlatformCAAnimationCocoa::setFromValue(const FilterOperation* operation)
 {
-    auto value = PlatformCAFilters::filterValueForOperation(operation, internalFilterPropertyIndex);
+    auto value = PlatformCAFilters::filterValueForOperation(operation);
     [static_cast<CABasicAnimation *>(m_animation.get()) setFromValue:value.get()];
 }
 
@@ -471,9 +471,9 @@ void PlatformCAAnimationCocoa::setToValue(const Color& value)
     [static_cast<CABasicAnimation *>(m_animation.get()) setToValue:@[@(r), @(g), @(b), @(a)]];
 }
 
-void PlatformCAAnimationCocoa::setToValue(const FilterOperation* operation, int internalFilterPropertyIndex)
+void PlatformCAAnimationCocoa::setToValue(const FilterOperation* operation)
 {
-    auto value = PlatformCAFilters::filterValueForOperation(operation, internalFilterPropertyIndex);
+    auto value = PlatformCAFilters::filterValueForOperation(operation);
     [static_cast<CABasicAnimation *>(m_animation.get()) setToValue:value.get()];
 }
 
@@ -529,13 +529,13 @@ void PlatformCAAnimationCocoa::setValues(const Vector<Color>& value)
     }).get()];
 }
 
-void PlatformCAAnimationCocoa::setValues(const Vector<RefPtr<FilterOperation>>& values, int internalFilterPropertyIndex)
+void PlatformCAAnimationCocoa::setValues(const Vector<RefPtr<FilterOperation>>& values)
 {
     if (animationType() != Keyframe)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(values, [&] (auto& value) {
-        return PlatformCAFilters::filterValueForOperation(value.get(), internalFilterPropertyIndex);
+        return PlatformCAFilters::filterValueForOperation(value.get());
     }).get()];
 }
 

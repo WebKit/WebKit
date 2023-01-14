@@ -35,13 +35,15 @@
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult)
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLookalikeCharacterStrings shouldWaitForInitialLookalikeCharacterStrings)
     : m_reply(WTFMove(reply))
 {
     if (expectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::No)
         didReceiveSafeBrowsingResults({ });
     if (expectAppBoundDomainResult == ShouldExpectAppBoundDomainResult::No)
         didReceiveAppBoundDomainResult({ });
+    if (shouldWaitForInitialLookalikeCharacterStrings == ShouldWaitForInitialLookalikeCharacterStrings::No)
+        didReceiveInitialLookalikeCharacterStrings();
 }
 
 WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
@@ -50,7 +52,7 @@ void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(std::optional<N
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_policyResult && m_safeBrowsingWarning) {
+    if (m_policyResult && m_safeBrowsingWarning && m_doneWaitingForLookalikeCharacterStrings) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(*m_safeBrowsingWarning), isNavigatingToAppBoundDomain);
     } else
@@ -61,16 +63,30 @@ void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrows
 {
     ASSERT(isMainRunLoop());
     ASSERT(!m_safeBrowsingWarning);
-    if (m_policyResult && m_isNavigatingToAppBoundDomain) {
+    if (m_policyResult && m_isNavigatingToAppBoundDomain && m_doneWaitingForLookalikeCharacterStrings) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingWarning), *m_isNavigatingToAppBoundDomain);
     } else
         m_safeBrowsingWarning = WTFMove(safeBrowsingWarning);
 }
 
+void WebFramePolicyListenerProxy::didReceiveInitialLookalikeCharacterStrings()
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_doneWaitingForLookalikeCharacterStrings);
+
+    if (m_policyResult && m_isNavigatingToAppBoundDomain && m_safeBrowsingWarning) {
+        if (m_reply)
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(*m_safeBrowsingWarning), *m_isNavigatingToAppBoundDomain);
+        return;
+    }
+
+    m_doneWaitingForLookalikeCharacterStrings = true;
+}
+
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
-    if (m_safeBrowsingWarning && m_isNavigatingToAppBoundDomain) {
+    if (m_safeBrowsingWarning && m_isNavigatingToAppBoundDomain && m_doneWaitingForLookalikeCharacterStrings) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingWarning), *m_isNavigatingToAppBoundDomain);
     } else if (!m_policyResult)

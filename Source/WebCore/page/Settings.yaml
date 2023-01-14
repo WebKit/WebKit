@@ -88,7 +88,7 @@ DataDetectorTypes:
   condition: ENABLE(DATA_DETECTION)
   defaultValue:
     WebCore:
-      default: DataDetectorType::None
+      default: '{ }'
 
 DefaultVideoPosterURL:
   comment: >-
@@ -594,6 +594,7 @@ WebGLErrorsToConsoleEnabled:
 
 WebRTCEncryptionEnabled:
   type: bool
+  inspectorOverride: true
   defaultValue:
     WebCore:
       default: true

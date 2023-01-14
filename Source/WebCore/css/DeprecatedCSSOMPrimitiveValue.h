@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
 #include "DeprecatedCSSOMValue.h"
 
@@ -86,7 +87,7 @@ public:
     static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
 
     String stringValue() const { return m_value->stringValue(); }
-    bool isCSSWideKeyword() const { return m_value->isCSSWideKeyword(); }
+    bool isCSSWideKeyword() const { return WebCore::isCSSWideKeyword(valueID(m_value.get())); }
     static unsigned short cssValueType() { return CSS_PRIMITIVE_VALUE; }
 
 private:

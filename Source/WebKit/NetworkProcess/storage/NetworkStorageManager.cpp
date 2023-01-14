@@ -153,7 +153,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
         }
 #if PLATFORM(IOS_FAMILY)
         // Exclude LocalStorage directory to reduce backup traffic. See https://webkit.org/b/168388.
-        if (m_unifiedOriginStorageLevel != UnifiedOriginStorageLevel::None  && !m_customLocalStoragePath.isEmpty()) {
+        if (m_unifiedOriginStorageLevel == UnifiedOriginStorageLevel::None  && !m_customLocalStoragePath.isEmpty()) {
             FileSystem::makeAllDirectories(m_customLocalStoragePath);
             FileSystem::setExcludedFromBackup(m_customLocalStoragePath, true);
         }

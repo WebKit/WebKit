@@ -564,7 +564,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 static CGFloat contentZoomScale(WKWebView *webView)
 {
     CGFloat scale = webView._currentContentView.layer.affineTransform.a;
-    ASSERT(scale == [webView->_scrollView zoomScale]);
+    ASSERT(webView->_resizeAnimationView || scale == [webView->_scrollView zoomScale]);
     return scale;
 }
 

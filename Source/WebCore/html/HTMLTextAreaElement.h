@@ -53,8 +53,6 @@ public:
 
     WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElement() const final;
 
-    bool shouldSaveAndRestoreFormControlState() const final { return true; }
-
 private:
     HTMLTextAreaElement(Document&, HTMLFormElement*);
 

@@ -36,9 +36,11 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "ModalContainerControlClassifier.h"
+#import "NetworkConnectionIntegrityHelpers.h"
 #import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "QuickLookThumbnailLoader.h"
+#import "RemoteLayerTreeTransaction.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferReference.h"
@@ -122,6 +124,41 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr IntSize iconSize = IntSize(400, 400);
+
+static bool exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, uint64_t committedSize)
+{
+    const double thesholdSizeFraction = 0.5; // Empirically-derived.
+    return committedSize > thresholdSize * thesholdSizeFraction;
+}
+
+void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
+{
+    themeColorChanged(layerTreeTransaction.themeColor());
+    pageExtendedBackgroundColorDidChange(layerTreeTransaction.pageExtendedBackgroundColor());
+    sampledPageTopColorChanged(layerTreeTransaction.sampledPageTopColor());
+
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
+        if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
+            m_hasUpdatedRenderingAfterDidCommitLoad = true;
+            stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
+            m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+        }
+    }
+
+    pageClient().didCommitLayerTree(layerTreeTransaction);
+
+    // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
+    if (m_observedLayoutMilestones.contains(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
+        && exceedsRenderTreeSizeSizeThreshold(m_sessionRestorationRenderTreeSize, layerTreeTransaction.renderTreeSize())) {
+        m_hitRenderTreeSizeThreshold = true;
+        didReachLayoutMilestone(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
+    }
+}
+
+void WebPageProxy::layerTreeCommitComplete()
+{
+    pageClient().layerTreeCommitComplete();
+}
 
 #if ENABLE(DATA_DETECTION)
 

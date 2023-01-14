@@ -206,7 +206,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             if (!current.isInherited()) {
                 // Inherited only mode is used after matched properties cache hit.
                 // A match with a value that is explicitly inherited should never have been cached.
-                ASSERT(!current.value()->isInheritValue());
+                ASSERT(!isValueID(current.value(), CSSValueInherit));
                 continue;
             }
         } else if (m_includedProperties == IncludedProperties::AfterAnimation) {

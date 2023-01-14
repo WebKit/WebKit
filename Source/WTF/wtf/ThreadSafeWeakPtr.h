@@ -185,7 +185,7 @@ public:
         return *this;
     }
 
-    template<typename U>
+    template<typename U, std::enable_if_t<!std::is_pointer_v<U>>* = nullptr>
     ThreadSafeWeakPtr& operator=(const U& retainedReference)
     {
         m_controlBlock = controlBlock(retainedReference);
@@ -198,6 +198,12 @@ public:
     {
         m_controlBlock = retainedPointer ? controlBlock(*retainedPointer) : nullptr;
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlock->objectHasBeenDeleted());
+        return *this;
+    }
+
+    ThreadSafeWeakPtr& operator=(std::nullptr_t)
+    {
+        m_controlBlock = nullptr;
         return *this;
     }
 

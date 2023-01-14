@@ -2,6 +2,9 @@
 PASS Check that src: url("foo.ttf") is valid
 PASS Check that src: url("foo.ttf"), url("bar.ttf") is valid
 PASS Check that src: url("foo.ttf") format() is invalid
+PASS Check that src: url("foo.ttf") dummy() is invalid
+PASS Check that src: url("foo.ttf") format("woff") dummy() is invalid
+PASS Check that src: url("foo.ttf") dummy() format("woff") is invalid
 PASS Check that src: url("foo.ttf") format("collection") is valid
 PASS Check that src: url("foo.ttf") format("opentype") is valid
 PASS Check that src: url("foo.ttf") format("truetype") is valid
@@ -28,7 +31,7 @@ PASS Check that src: url("foo.ttf") format("svg"), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format(svg), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format(xyzz 200px), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format(xyzz), url("bar.html") is valid
-FAIL Check that src: url("foo.ttf") dummy(xyzzy), url("bar.html") is valid assert_equals: expected true but got false
+PASS Check that src: url("foo.ttf") dummy(xyzzy), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format(), url("bar.html") is valid
 PASS Check that src: url("foo.ttf") format(none), url("bar.html") is valid
 

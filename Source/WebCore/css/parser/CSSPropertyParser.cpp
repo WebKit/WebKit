@@ -1170,9 +1170,6 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
         }
         ASSERT_NOT_REACHED();
         return ""_s;
-    }, [](std::monostate) {
-        ASSERT_NOT_REACHED();
-        return ""_s;
     });
 }
 

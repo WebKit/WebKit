@@ -1,6 +1,7 @@
 
 PASS Simple substitution test
 PASS You can't build up a single token where part of it is provided by a variable
+PASS You can't build up a single token where part of it is provided by a variable (percentages)
 PASS Multiple variable references in a single property
 PASS Multiple variable references in a single property (no spaces)
 PASS Fallback value

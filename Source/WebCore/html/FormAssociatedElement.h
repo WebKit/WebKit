@@ -28,8 +28,8 @@ namespace WebCore {
 // https://html.spec.whatwg.org/multipage/forms.html#form-associated-element
 class FormAssociatedElement {
 public:
-    void ref() const { refFormAssociatedElement(); }
-    void deref() const { derefFormAssociatedElement(); }
+    void ref() { refFormAssociatedElement(); }
+    void deref() { derefFormAssociatedElement(); }
 
     virtual ~FormAssociatedElement() { RELEASE_ASSERT(!m_form); }
     virtual HTMLElement& asHTMLElement() = 0;
@@ -44,8 +44,6 @@ public:
     virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
     virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
 
-    virtual FormAssociatedElement* asFormAssociatedElement() = 0;
-
 protected:
     explicit FormAssociatedElement(HTMLFormElement*);
 
@@ -53,8 +51,8 @@ protected:
     virtual void setFormInternal(HTMLFormElement*);
 
 private:
-    virtual void refFormAssociatedElement() const = 0;
-    virtual void derefFormAssociatedElement() const = 0;
+    virtual void refFormAssociatedElement() = 0;
+    virtual void derefFormAssociatedElement() = 0;
 
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;

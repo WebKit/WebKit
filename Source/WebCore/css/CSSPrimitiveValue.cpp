@@ -386,7 +386,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, double num, CSSUnitType 
 CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag)
     : CSSPrimitiveValue(CSSValueInitial)
 {
-    m_isImplicit = true;
+    m_isImplicitInitialValue = true;
     makeStatic();
 }
 
@@ -1679,11 +1679,6 @@ void CSSPrimitiveValue::collectDirectRootComputationalDependencies(HashSet<CSSPr
     default:
         break;
     }
-}
-
-bool CSSPrimitiveValue::isCSSWideKeyword() const
-{
-    return WebCore::isCSSWideKeyword(valueID());
 }
 
 } // namespace WebCore

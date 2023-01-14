@@ -76,7 +76,7 @@ AccessibilityObjectAtspi::CollectionMatchRule::CollectionMatchRule(GVariant* rul
     while (g_variant_iter_next(statesIter.get(), "i", &state)) {
         for (int j = 0; j < 32; ++j) {
             if (state & (1 << j))
-                states.value |= G_GUINT64_CONSTANT(1) << (i * 32 + j);
+                states.value.add(static_cast<Atspi::State>(1 << j << i * 32));
         }
         i++;
     }
@@ -193,7 +193,7 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::matchInterfaces(Accessibilit
 
 bool AccessibilityObjectAtspi::CollectionMatchRule::matchStates(AccessibilityObjectAtspi& axObject)
 {
-    if (!states.value)
+    if (states.value.isEmpty())
         return true;
 
     switch (states.type) {
@@ -201,11 +201,11 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::matchStates(AccessibilityObj
     case Atspi::CollectionMatchType::MatchEmpty:
         return false;
     case Atspi::CollectionMatchType::MatchAll:
-        return (axObject.state() & states.value) == states.value;
+        return axObject.states().containsAll(states.value);
     case Atspi::CollectionMatchType::MatchAny:
-        return !!(axObject.state() & states.value);
+        return axObject.states().containsAny(states.value);
     case Atspi::CollectionMatchType::MatchNone:
-        return !(axObject.state() & states.value);
+        return !axObject.states().containsAny(states.value);
     }
 
     return false;

@@ -279,7 +279,7 @@ void ServiceWorkerThreadProxy::navigationPreloadIsReady(SWServerConnectionIdenti
     ASSERT(!isMainThread());
     postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier, responseData = response.crossThreadData()] (auto&) mutable {
         if (auto client = m_ongoingFetchTasks.get({ connectionIdentifier, fetchIdentifier }))
-            client->navigationPreloadIsReady(ResourceResponse::fromCrossThreadData(WTFMove(responseData)));
+            client->navigationPreloadIsReady(WTFMove(responseData));
     }, WorkerRunLoop::defaultMode());
 }
 

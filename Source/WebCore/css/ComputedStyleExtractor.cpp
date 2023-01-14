@@ -1026,62 +1026,62 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
     for (Vector<RefPtr<FilterOperation>>::const_iterator it = filterOperations.operations().begin(); it != end; ++it) {
         FilterOperation& filterOperation = **it;
 
-        if (filterOperation.type() == FilterOperation::REFERENCE) {
+        if (filterOperation.type() == FilterOperation::Type::Reference) {
             ReferenceFilterOperation& referenceOperation = downcast<ReferenceFilterOperation>(filterOperation);
             list->append(cssValuePool.createValue(referenceOperation.url(), CSSUnitType::CSS_URI));
         } else {
             RefPtr<CSSFunctionValue> filterValue;
             switch (filterOperation.type()) {
-            case FilterOperation::GRAYSCALE: {
+            case FilterOperation::Type::Grayscale: {
                 filterValue = CSSFunctionValue::create(CSSValueGrayscale);
                 filterValue->append(cssValuePool.createValue(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::SEPIA: {
+            case FilterOperation::Type::Sepia: {
                 filterValue = CSSFunctionValue::create(CSSValueSepia);
                 filterValue->append(cssValuePool.createValue(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::SATURATE: {
+            case FilterOperation::Type::Saturate: {
                 filterValue = CSSFunctionValue::create(CSSValueSaturate);
                 filterValue->append(cssValuePool.createValue(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::HUE_ROTATE: {
+            case FilterOperation::Type::HueRotate: {
                 filterValue = CSSFunctionValue::create(CSSValueHueRotate);
                 filterValue->append(cssValuePool.createValue(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_DEG));
                 break;
             }
-            case FilterOperation::INVERT: {
+            case FilterOperation::Type::Invert: {
                 filterValue = CSSFunctionValue::create(CSSValueInvert);
                 filterValue->append(cssValuePool.createValue(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::APPLE_INVERT_LIGHTNESS: {
+            case FilterOperation::Type::AppleInvertLightness: {
                 filterValue = CSSFunctionValue::create(CSSValueAppleInvertLightness);
                 break;
             }
-            case FilterOperation::OPACITY: {
+            case FilterOperation::Type::Opacity: {
                 filterValue = CSSFunctionValue::create(CSSValueOpacity);
                 filterValue->append(cssValuePool.createValue(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::BRIGHTNESS: {
+            case FilterOperation::Type::Brightness: {
                 filterValue = CSSFunctionValue::create(CSSValueBrightness);
                 filterValue->append(cssValuePool.createValue(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::CONTRAST: {
+            case FilterOperation::Type::Contrast: {
                 filterValue = CSSFunctionValue::create(CSSValueContrast);
                 filterValue->append(cssValuePool.createValue(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_NUMBER));
                 break;
             }
-            case FilterOperation::BLUR: {
+            case FilterOperation::Type::Blur: {
                 filterValue = CSSFunctionValue::create(CSSValueBlur);
                 filterValue->append(adjustLengthForZoom(downcast<BlurFilterOperation>(filterOperation).stdDeviation(), style, adjust));
                 break;
             }
-            case FilterOperation::DROP_SHADOW: {
+            case FilterOperation::Type::DropShadow: {
                 DropShadowFilterOperation& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
                 filterValue = CSSFunctionValue::create(CSSValueDropShadow);
                 // We want our computed style to look like that of a text shadow (has neither spread nor inset style).

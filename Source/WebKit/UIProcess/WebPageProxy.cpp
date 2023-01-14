@@ -69,6 +69,7 @@
 #include "FrameTreeNodeData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
+#include "LoadedWebArchive.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "NativeWebGestureEvent.h"
@@ -220,6 +221,7 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
+#include "NetworkConnectionIntegrityHelpers.h"
 #include "NetworkIssueReporter.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
@@ -1212,7 +1214,7 @@ void WebPageProxy::initializeWebPage()
     m_process->addVisitedLinkStoreUser(visitedLinkStore(), m_identifier);
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    m_shouldUpdateLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
+    m_needsInitialLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
 #endif
 }
 
@@ -1751,7 +1753,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     prepareToLoadWebPage(process(), loadParameters);
 
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), [this, protectedThis = Ref { *this }, process = m_process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL, htmlData = WTFMove(htmlData)] () mutable {
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL), LoadedWebArchive::No), [this, protectedThis = Ref { *this }, process = m_process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL, htmlData = WTFMove(htmlData)] () mutable {
         loadParameters.data = { htmlData->data(), htmlData->size() };
         process->markProcessAsRecentlyUsed();
         process->assumeReadAccessToBaseURL(*this, baseURL.string());
@@ -1777,20 +1779,22 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     if (!hasRunningProcess())
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
-    auto transaction = m_pageLoadState.transaction();
-    m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), { }, LoadedWebArchive::Yes), [this, protectedThis = Ref { *this }, webArchiveData = RefPtr { webArchiveData }, userData = RefPtr { userData }] {
+        auto transaction = m_pageLoadState.transaction();
+        m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
 
-    LoadParameters loadParameters;
-    loadParameters.navigationID = 0;
-    loadParameters.data = webArchiveData->dataReference();
-    loadParameters.MIMEType = "application/x-webarchive"_s;
-    loadParameters.encodingName = "utf-16"_s;
-    loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-    prepareToLoadWebPage(process(), loadParameters);
+        LoadParameters loadParameters;
+        loadParameters.navigationID = 0;
+        loadParameters.data = webArchiveData->dataReference();
+        loadParameters.MIMEType = "application/x-webarchive"_s;
+        loadParameters.encodingName = "utf-16"_s;
+        loadParameters.userData = UserData(process().transformObjectsToHandles(userData.get()).get());
+        prepareToLoadWebPage(process(), loadParameters);
 
-    m_process->markProcessAsRecentlyUsed();
-    send(Messages::WebPage::LoadData(loadParameters));
-    m_process->startResponsivenessTimer();
+        m_process->markProcessAsRecentlyUsed();
+        send(Messages::WebPage::LoadData(loadParameters));
+        m_process->startResponsivenessTimer();
+    });
 }
 
 void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
@@ -2771,7 +2775,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
     setMediaStreamCaptureMuted(false);
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 {
 }
@@ -5189,8 +5193,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     if (frame->isMainFrame()) {
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
-#if PLATFORM(IOS_FAMILY)
-        m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+#if PLATFORM(COCOA)
+        if (is<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea))
+            m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
 #endif
     }
 
@@ -5272,9 +5277,6 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #endif
 #if USE(APPKIT)
         closeSharedPreviewPanelIfNecessary();
-#endif
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        updateLookalikeCharacterStringsIfNeeded();
 #endif
     }
 
@@ -5788,6 +5790,16 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
 #endif
 
+    auto shouldWaitForInitialLookalikeCharacterStrings = ShouldWaitForInitialLookalikeCharacterStrings::No;
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    if (preferences().sanitizeLookalikeCharactersInLinksEnabled()) {
+        if (cachedLookalikeStrings().isEmpty())
+            shouldWaitForInitialLookalikeCharacterStrings = ShouldWaitForInitialLookalikeCharacterStrings::Yes;
+        else if (m_needsInitialLookalikeCharacterStrings)
+            sendCachedLookalikeCharacterStrings();
+    }
+#endif
+
     Ref listener = frame.setUpPolicyListenerProxy([this, protectedThis = Ref { *this }, frame = Ref { frame }, sender = WTFMove(sender), navigation, navigationAction, frameInfo] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%llu, isMainFrame=%d, navigationID=%llu, policyAction=%u, safeBrowsingWarning=%d, isAppBoundDomain=%d", frame->frameID().object().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID() : 0, (unsigned)policyAction, !!safeBrowsingWarning, !!isAppBoundDomain);
 
@@ -5816,6 +5828,11 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             if (frame->isMainFrame())
                 m_isTopFrameNavigatingToAppBoundDomain = m_isNavigatingToAppBoundDomain;
         }
+#endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+        if (m_needsInitialLookalikeCharacterStrings)
+            sendCachedLookalikeCharacterStrings();
 #endif
 
         if (!m_pageClient)
@@ -5859,9 +5876,11 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         }
         completionHandler(policyAction);
 
-    }, shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult);
+    }, shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult, shouldWaitForInitialLookalikeCharacterStrings);
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
+    if (shouldWaitForInitialLookalikeCharacterStrings == ShouldWaitForInitialLookalikeCharacterStrings::Yes)
+        waitForInitialLookalikeCharacterStrings(listener);
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url(), websiteDataStore().configuration().enableInAppBrowserPrivacyForTesting());
     auto host = shouldSendSecurityOriginData ? frameInfo.securityOrigin.host : request.url().host();
@@ -6001,7 +6020,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
         });
 
         receivedPolicyDecision(policyAction, nullptr, nullptr, WTFMove(navigationAction), WTFMove(sender));
-    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No);
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLookalikeCharacterStrings::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationAction.get(), request, frameName, WTFMove(listener));
@@ -6046,7 +6065,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
             policyAction = PolicyAction::Download;
 #endif
         receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender));
-    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No);
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLookalikeCharacterStrings::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener));
@@ -6070,7 +6089,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
 
     auto processIdentifier = processForNavigation->coreProcessIdentifier();
     auto preventProcessShutdownScope = processForNavigation->shutdownPreventingScope();
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), existingNetworkResourceLoadIdentifierToResume, navigationID] () mutable {
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), LoadedWebArchive::No), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), existingNetworkResourceLoadIdentifierToResume, navigationID] () mutable {
         RefPtr navigation = m_navigationState->navigation(navigationID);
         if (!navigation || !m_mainFrame)
             return completionHandler(false);
@@ -6245,7 +6264,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
 #endif
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        newPage->m_shouldUpdateLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
+        newPage->m_needsInitialLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
 #endif
     };
 
@@ -8347,6 +8366,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
+    m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
 #endif
 
     if (m_drawingArea) {
@@ -8418,7 +8438,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
     m_lastVisibleContentRectUpdate = { };
     m_hasNetworkRequestsOnSuspended = false;
     m_isKeyboardAnimatingIn = false;
@@ -11882,38 +11901,36 @@ Vector<String>& WebPageProxy::cachedLookalikeStrings()
     return cachedStrings.get();
 }
 
-void WebPageProxy::updateLookalikeCharacterStringsIfNeeded()
+#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+void WebPageProxy::sendCachedLookalikeCharacterStrings()
 {
-    if (!m_shouldUpdateLookalikeCharacterStrings)
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    if (!hasRunningProcess())
         return;
 
-    m_shouldUpdateLookalikeCharacterStrings = false;
-
-    if (!preferences().sanitizeLookalikeCharactersInLinksEnabled())
+    if (cachedLookalikeStrings().isEmpty())
         return;
 
-    if (!cachedLookalikeStrings().isEmpty()) {
-        send(Messages::WebPage::SetLookalikeCharacterStrings(cachedLookalikeStrings()));
-        return;
-    }
-
-    RefPtr networkProcess = websiteDataStore().networkProcessIfExists();
-    if (!networkProcess) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    networkProcess->requestLookalikeCharacterStrings([weakPage = WeakPtr { *this }](auto&& strings) {
-        if (cachedLookalikeStrings().isEmpty()) {
-            cachedLookalikeStrings() = WTFMove(strings);
-            cachedLookalikeStrings().shrinkToFit();
-        }
-        if (RefPtr page = weakPage.get(); page && page->hasRunningProcess())
-            page->send(Messages::WebPage::SetLookalikeCharacterStrings(cachedLookalikeStrings()));
-    });
+    m_needsInitialLookalikeCharacterStrings = false;
+    send(Messages::WebPage::SetLookalikeCharacterStrings(cachedLookalikeStrings()));
+#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 }
 
-#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+void WebPageProxy::waitForInitialLookalikeCharacterStrings(WebFramePolicyListenerProxy& listener)
+{
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    requestLookalikeCharacterStrings([listener = Ref { listener }](auto& strings) {
+        if (cachedLookalikeStrings().isEmpty()) {
+            cachedLookalikeStrings() = strings;
+            cachedLookalikeStrings().shrinkToFit();
+        }
+        listener->didReceiveInitialLookalikeCharacterStrings();
+    });
+#else
+    listener.didReceiveInitialLookalikeCharacterStrings();
+#endif
+}
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)

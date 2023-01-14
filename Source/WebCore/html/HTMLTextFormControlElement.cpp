@@ -70,7 +70,7 @@ using namespace HTMLNames;
 static Position positionForIndex(TextControlInnerTextElement*, unsigned);
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+    : HTMLFormControlElementWithState(tagName, document, form)
     , m_cachedSelectionDirection(document.frame() && document.frame()->editor().behavior().shouldConsiderSelectionAsDirectional() ? SelectionHasForwardDirection : SelectionHasNoDirection)
     , m_lastChangeWasUserEdit(false)
     , m_isPlaceholderVisible(false)
@@ -87,13 +87,13 @@ bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node& child) co
     // FIXME: We shouldn't force the pseudo elements down into the shadow, but
     // this perserves the current behavior of WebKit.
     if (child.isPseudoElement())
-        return HTMLFormControlElement::childShouldCreateRenderer(child);
-    return hasShadowRootParent(child) && HTMLFormControlElement::childShouldCreateRenderer(child);
+        return HTMLFormControlElementWithState::childShouldCreateRenderer(child);
+    return hasShadowRootParent(child) && HTMLFormControlElementWithState::childShouldCreateRenderer(child);
 }
 
 Node::InsertedIntoAncestorResult HTMLTextFormControlElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    InsertedIntoAncestorResult InsertedIntoAncestorResult = HTMLFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    InsertedIntoAncestorResult InsertedIntoAncestorResult = HTMLFormControlElementWithState::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         String initialValue = value();
         setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
@@ -131,7 +131,7 @@ void HTMLTextFormControlElement::dispatchFocusEvent(RefPtr<Element>&& oldFocused
     if (supportsPlaceholder())
         updatePlaceholderVisibility();
     handleFocusEvent(oldFocusedElement.get(), options.direction);
-    HTMLFormControlElement::dispatchFocusEvent(WTFMove(oldFocusedElement), options);
+    HTMLFormControlElementWithState::dispatchFocusEvent(WTFMove(oldFocusedElement), options);
 }
 
 void HTMLTextFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
@@ -140,7 +140,7 @@ void HTMLTextFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedE
         updatePlaceholderVisibility();
     // Match the order in Document::setFocusedElement.
     handleBlurEvent();
-    HTMLFormControlElement::dispatchBlurEvent(WTFMove(newFocusedElement));
+    HTMLFormControlElementWithState::dispatchBlurEvent(WTFMove(newFocusedElement));
 }
 
 void HTMLTextFormControlElement::didEditInnerTextValue()
@@ -553,18 +553,18 @@ void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const
         updatePlaceholderText();
         updatePlaceholderVisibility();
     } else
-        HTMLFormControlElement::parseAttribute(name, value);
+        HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
 void HTMLTextFormControlElement::disabledStateChanged()
 {
-    HTMLFormControlElement::disabledStateChanged();
+    HTMLFormControlElementWithState::disabledStateChanged();
     updateInnerTextElementEditability();
 }
 
 void HTMLTextFormControlElement::readOnlyStateChanged()
 {
-    HTMLFormControlElement::readOnlyStateChanged();
+    HTMLFormControlElementWithState::readOnlyStateChanged();
     updateInnerTextElementEditability();
 }
 
@@ -742,27 +742,26 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
     if (!renderer)
         return value();
 
-    Node* softLineBreakNode = nullptr;
-    unsigned softLineBreakOffset = 0;
+    Node* breakNode = nullptr;
+    unsigned breakOffset = 0;
     auto currentLineBox = InlineIterator::firstLineBoxFor(*renderer);
     if (!currentLineBox)
         return value();
 
     auto skipToNextSoftLineBreakPosition = [&] {
-        for (; currentLineBox; currentLineBox.traverseNext()) {
+        while (currentLineBox) {
             auto lastRun = currentLineBox->lastLeafBox();
             ASSERT(lastRun);
-            auto& renderer = lastRun->renderer();
-            auto lineEndsWithBR = is<RenderLineBreak>(renderer) && !downcast<RenderLineBreak>(renderer).isWBR();
-            if (!lineEndsWithBR) {
-                softLineBreakNode = renderer.node();
-                softLineBreakOffset = lastRun->maximumCaretOffset();
-                currentLineBox.traverseNext();
+            // Skip last line.
+            currentLineBox.traverseNext();
+            if (currentLineBox && !lastRun->isLineBreak()) {
+                breakNode = lastRun->renderer().node();
+                breakOffset = lastRun->maximumCaretOffset();
                 return;
             }
         }
-        softLineBreakNode = nullptr;
-        softLineBreakOffset = 0;
+        breakNode = nullptr;
+        breakOffset = 0;
     };
 
     skipToNextSoftLineBreakPosition();
@@ -775,17 +774,17 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
             String data = downcast<Text>(*node).data();
             unsigned length = data.length();
             unsigned position = 0;
-            while (softLineBreakNode == node && softLineBreakOffset <= length) {
-                if (softLineBreakOffset > position) {
-                    result.appendSubstring(data, position, softLineBreakOffset - position);
-                    position = softLineBreakOffset;
+            while (breakNode == node && breakOffset <= length) {
+                if (breakOffset > position) {
+                    result.appendSubstring(data, position, breakOffset - position);
+                    position = breakOffset;
                     result.append(newlineCharacter);
                 }
                 skipToNextSoftLineBreakPosition();
             }
             result.appendSubstring(data, position, length - position);
         }
-        while (softLineBreakNode == node)
+        while (breakNode == node)
             skipToNextSoftLineBreakPosition();
     }
     stripTrailingNewline(result);

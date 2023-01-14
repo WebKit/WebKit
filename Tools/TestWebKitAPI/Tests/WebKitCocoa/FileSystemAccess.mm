@@ -190,7 +190,7 @@ TEST(FileSystemAccess, NetworkProcessCrashDuringWrite)
     // Open access handle should be closed when network process crashes.
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"error: InvalidStateError - AccessHandle is closing or closed", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"error: InvalidStateError - AccessHandle is closed", [lastScriptMessage body]);
 
     // Access handle can be created after network process is relaunched.
     [webView evaluateJavaScript:@"start()" completionHandler:nil];
@@ -242,7 +242,7 @@ TEST(FileSystemAccess, DeleteDataDuringWrite)
 
     // Open access handle should be when website data is removed.
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"error: InvalidStateError - AccessHandle is closing or closed", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"error: InvalidStateError - AccessHandle is closed", [lastScriptMessage body]);
 }
 
 static NSString *basicString = @"<script> \

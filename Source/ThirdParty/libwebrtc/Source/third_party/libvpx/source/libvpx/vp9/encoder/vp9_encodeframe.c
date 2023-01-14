@@ -815,8 +815,8 @@ static void fill_variance_8x8avg(const uint8_t *s, int sp, const uint8_t *d,
 
 // Check if most of the superblock is skin content, and if so, force split to
 // 32x32, and set x->sb_is_skin for use in mode selection.
-static int skin_sb_split(VP9_COMP *cpi, MACROBLOCK *x, const int low_res,
-                         int mi_row, int mi_col, int *force_split) {
+static int skin_sb_split(VP9_COMP *cpi, const int low_res, int mi_row,
+                         int mi_col, int *force_split) {
   VP9_COMMON *const cm = &cpi->common;
 #if CONFIG_VP9_HIGHBITDEPTH
   if (cm->use_highbitdepth) return 0;
@@ -828,11 +828,6 @@ static int skin_sb_split(VP9_COMP *cpi, MACROBLOCK *x, const int low_res,
                    mi_row + 8 < cm->mi_rows)) {
     int num_16x16_skin = 0;
     int num_16x16_nonskin = 0;
-    uint8_t *ysignal = x->plane[0].src.buf;
-    uint8_t *usignal = x->plane[1].src.buf;
-    uint8_t *vsignal = x->plane[2].src.buf;
-    int sp = x->plane[0].src.stride;
-    int spuv = x->plane[1].src.stride;
     const int block_index = mi_row * cm->mi_cols + mi_col;
     const int bw = num_8x8_blocks_wide_lookup[BLOCK_64X64];
     const int bh = num_8x8_blocks_high_lookup[BLOCK_64X64];
@@ -851,13 +846,7 @@ static int skin_sb_split(VP9_COMP *cpi, MACROBLOCK *x, const int low_res,
           i = ymis;
           break;
         }
-        ysignal += 16;
-        usignal += 8;
-        vsignal += 8;
       }
-      ysignal += (sp << 4) - 64;
-      usignal += (spuv << 3) - 32;
-      vsignal += (spuv << 3) - 32;
     }
     if (num_16x16_skin > 12) {
       *force_split = 1;
@@ -1534,8 +1523,7 @@ static int choose_partitioning(VP9_COMP *cpi, const TileInfo *const tile,
     vp9_build_inter_predictors_sb(xd, mi_row, mi_col, BLOCK_64X64);
 
     if (cpi->use_skin_detection)
-      x->sb_is_skin =
-          skin_sb_split(cpi, x, low_res, mi_row, mi_col, force_split);
+      x->sb_is_skin = skin_sb_split(cpi, low_res, mi_row, mi_col, force_split);
 
     d = xd->plane[0].dst.buf;
     dp = xd->plane[0].dst.stride;

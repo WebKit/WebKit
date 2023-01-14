@@ -199,6 +199,9 @@ private:
 
     void setCaretDecorationVisibility(bool) override;
 
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
+    void layerTreeCommitComplete() override;
+
     void registerInsertionUndoGrouping() override;
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

@@ -410,10 +410,8 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         else if (!g_strcmp0(methodName, "GetState")) {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(au)"));
 
-            auto states = atspiObject->state();
             g_variant_builder_open(&builder, G_VARIANT_TYPE("au"));
-            g_variant_builder_add(&builder, "u", static_cast<uint32_t>(states & 0xffffffff));
-            g_variant_builder_add(&builder, "u", static_cast<uint32_t>(states >> 32));
+            atspiObject->buildStates(&builder);
             g_variant_builder_close(&builder);
 
             g_dbus_method_invocation_return_value(invocation, g_variant_builder_end(&builder));
@@ -738,96 +736,92 @@ static bool shouldIncludeOrientationState(const AXCoreObject& coreObject)
         || coreObject.isSlider();
 }
 
-uint64_t AccessibilityObjectAtspi::state() const
+OptionSet<Atspi::State> AccessibilityObjectAtspi::states() const
 {
-    uint64_t states = 0;
-
-    auto addState = [&](Atspi::State atspiState) {
-        states |= (G_GUINT64_CONSTANT(1) << atspiState);
-    };
+    OptionSet<Atspi::State> states;
 
     if (!m_coreObject) {
-        addState(Atspi::State::Defunct);
+        states.add(Atspi::State::Defunct);
         return states;
     }
 
     auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     if (m_coreObject->isEnabled()) {
-        addState(Atspi::State::Enabled);
-        addState(Atspi::State::Sensitive);
+        states.add(Atspi::State::Enabled);
+        states.add(Atspi::State::Sensitive);
     }
 
     if (m_coreObject->isVisible()) {
-        addState(Atspi::State::Visible);
+        states.add(Atspi::State::Visible);
         if (!m_coreObject->isOffScreen())
-            addState(Atspi::State::Showing);
+            states.add(Atspi::State::Showing);
     }
 
     if (m_coreObject->isSelectedOptionActive() || m_coreObject->currentState() != AccessibilityCurrentState::False)
-        addState(Atspi::State::Active);
+        states.add(Atspi::State::Active);
 
     if (m_coreObject->canSetFocusAttribute())
-        addState(Atspi::State::Focusable);
+        states.add(Atspi::State::Focusable);
 
     if (m_coreObject->isFocused() && !m_coreObject->activeDescendant())
-        addState(Atspi::State::Focused);
+        states.add(Atspi::State::Focused);
     else if (liveObject->isActiveDescendantOfFocusedContainer()) {
-        addState(Atspi::State::Focusable);
-        addState(Atspi::State::Focused);
+        states.add(Atspi::State::Focusable);
+        states.add(Atspi::State::Focused);
     }
 
     if (m_coreObject->canSetValueAttribute()) {
         if (m_coreObject->supportsChecked())
-            addState(Atspi::State::Checkable);
+            states.add(Atspi::State::Checkable);
 
         if (m_coreObject->isTextControl() || m_coreObject->isNonNativeTextControl())
-            addState(Atspi::State::Editable);
+            states.add(Atspi::State::Editable);
     } else if (liveObject && liveObject->supportsReadOnly())
-        addState(Atspi::State::ReadOnly);
+        states.add(Atspi::State::ReadOnly);
 
     if (m_coreObject->isChecked())
-        addState(Atspi::State::Checked);
+        states.add(Atspi::State::Checked);
 
     if (m_coreObject->isPressed())
-        addState(Atspi::State::Pressed);
+        states.add(Atspi::State::Pressed);
 
     if (m_coreObject->isRequired())
-        addState(Atspi::State::Required);
+        states.add(Atspi::State::Required);
 
     if (m_coreObject->roleValue() == AccessibilityRole::TextArea || m_coreObject->ariaIsMultiline())
-        addState(Atspi::State::MultiLine);
+        states.add(Atspi::State::MultiLine);
     else if (m_coreObject->roleValue() == AccessibilityRole::TextField || m_coreObject->roleValue() == AccessibilityRole::SearchField)
-        addState(Atspi::State::SingleLine);
+        states.add(Atspi::State::SingleLine);
 
     if (m_coreObject->isTextControl())
-        addState(Atspi::State::SelectableText);
+        states.add(Atspi::State::SelectableText);
 
     if (m_coreObject->canSetSelectedAttribute())
-        addState(Atspi::State::Selectable);
+        states.add(Atspi::State::Selectable);
 
     if (m_coreObject->isMultiSelectable())
-        addState(Atspi::State::Multiselectable);
+        states.add(Atspi::State::Multiselectable);
 
     if (m_coreObject->isSelected())
-        addState(Atspi::State::Selected);
+        states.add(Atspi::State::Selected);
 
     if (m_coreObject->canSetExpandedAttribute())
-        addState(Atspi::State::Expandable);
+        states.add(Atspi::State::Expandable);
 
     if (m_coreObject->isExpanded())
-        addState(Atspi::State::Expanded);
+        states.add(Atspi::State::Expanded);
 
     if (m_coreObject->hasPopup())
-        addState(Atspi::State::HasPopup);
+        states.add(Atspi::State::HasPopup);
 
     if (shouldIncludeOrientationState(*m_coreObject)) {
         switch (m_coreObject->orientation()) {
         case AccessibilityOrientation::Horizontal:
-            addState(Atspi::State::Horizontal);
+            states.add(Atspi::State::Horizontal);
             break;
         case AccessibilityOrientation::Vertical:
-            addState(Atspi::State::Vertical);
+            states.add(Atspi::State::Vertical);
             break;
         case AccessibilityOrientation::Undefined:
             break;
@@ -835,21 +829,21 @@ uint64_t AccessibilityObjectAtspi::state() const
     }
 
     if (m_coreObject->isIndeterminate())
-        addState(Atspi::State::Indeterminate);
+        states.add(Atspi::State::Indeterminate);
     else if ((m_coreObject->isCheckboxOrRadio() || m_coreObject->isMenuItem() || m_coreObject->isToggleButton()) && m_coreObject->checkboxOrRadioValue() == AccessibilityButtonState::Mixed)
-        addState(Atspi::State::Indeterminate);
+        states.add(Atspi::State::Indeterminate);
 
     if (m_coreObject->isModalNode())
-        addState(Atspi::State::Modal);
+        states.add(Atspi::State::Modal);
 
     if (m_coreObject->isBusy())
-        addState(Atspi::State::Busy);
+        states.add(Atspi::State::Busy);
 
     if (m_coreObject->invalidStatus() != "false"_s)
-        addState(Atspi::State::InvalidEntry);
+        states.add(Atspi::State::InvalidEntry);
 
     if (liveObject && liveObject->supportsAutoComplete() && liveObject->autoCompleteValue() != "none"_s)
-        addState(Atspi::State::SupportsAutocompletion);
+        states.add(Atspi::State::SupportsAutocompletion);
 
     return states;
 }
@@ -1143,6 +1137,13 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_collection_interface.name);
 }
 
+void AccessibilityObjectAtspi::buildStates(GVariantBuilder* builder) const
+{
+    uint64_t states = this->states().toRaw();
+    g_variant_builder_add(builder, "u", static_cast<uint32_t>(states & 0xffffffff));
+    g_variant_builder_add(builder, "u", static_cast<uint32_t>(states >> 32));
+}
+
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
 {
     g_variant_builder_add(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8().data());
@@ -1153,9 +1154,9 @@ void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
     // Do not set the children count in cache, because children are handled by children-changed signals.
     g_variant_builder_add(builder, "i", -1);
 
-    GVariantBuilder interfaces = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("as"));
-    buildInterfaces(&interfaces);
-    g_variant_builder_add(builder, "@as", g_variant_new("as", &interfaces));
+    GVariantBuilder interfacesBuilder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("as"));
+    buildInterfaces(&interfacesBuilder);
+    g_variant_builder_add(builder, "@as", g_variant_new("as", &interfacesBuilder));
 
     g_variant_builder_add(builder, "s", name().data());
 
@@ -1163,11 +1164,9 @@ void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
 
     g_variant_builder_add(builder, "s", description().data());
 
-    GVariantBuilder states = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("au"));
-    auto atspiStates = state();
-    g_variant_builder_add(&states, "u", static_cast<uint32_t>(atspiStates & 0xffffffff));
-    g_variant_builder_add(&states, "u", static_cast<uint32_t>(atspiStates >> 32));
-    g_variant_builder_add(builder, "@au", g_variant_builder_end(&states));
+    GVariantBuilder statesBuilder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("au"));
+    buildStates(&statesBuilder);
+    g_variant_builder_add(builder, "@au", g_variant_builder_end(&statesBuilder));
 }
 
 void AccessibilityObjectAtspi::childAdded(AccessibilityObjectAtspi& child)

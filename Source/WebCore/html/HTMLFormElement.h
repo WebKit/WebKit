@@ -39,7 +39,6 @@ class FormListedElement;
 class HTMLFormControlElement;
 class HTMLFormControlsCollection;
 class HTMLImageElement;
-class ValidatedFormListedElement;
 
 class HTMLFormElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormElement);
@@ -68,8 +67,8 @@ public:
     void registerFormListedElement(FormListedElement&);
     void unregisterFormListedElement(FormListedElement&);
 
-    void addInvalidFormControl(const HTMLElement&);
-    void removeInvalidFormControlIfNeeded(const HTMLElement&);
+    void addInvalidFormControl(const HTMLFormControlElement&);
+    void removeInvalidFormControlIfNeeded(const HTMLFormControlElement&);
 
     void registerImgElement(HTMLImageElement&);
     void unregisterImgElement(HTMLImageElement&);
@@ -117,7 +116,6 @@ public:
 
     WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& unsafeListedElements() const;
     WEBCORE_EXPORT Vector<Ref<FormListedElement>> copyListedElementsVector() const;
-    Vector<Ref<ValidatedFormListedElement>> copyValidatedListedElementsVector() const;
     const Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>>& imageElements() const { return m_imageElements; }
 
     StringPairVector textFieldValues() const;
@@ -155,7 +153,7 @@ private:
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector. Returns true if there
     // are any invalid controls in this form.
-    bool checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<ValidatedFormListedElement>>&);
+    bool checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTMLFormControlElement>>&);
 
     RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
     void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);
@@ -179,7 +177,7 @@ private:
 
     Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_listedElements;
     Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>> m_imageElements;
-    WeakHashSet<HTMLElement, WeakPtrImplWithEventTargetData> m_invalidFormControls;
+    WeakHashSet<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_invalidFormControls;
     WeakPtr<FormSubmission> m_plannedFormSubmission;
     std::unique_ptr<DOMTokenList> m_relList;
 

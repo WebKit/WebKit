@@ -59,7 +59,6 @@
 #include "EventNames.h"
 #include "FocusController.h"
 #include "FocusEvent.h"
-#include "FormAssociatedCustomElement.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -837,16 +836,6 @@ bool Element::isUserActionElementHasFocusVisible() const
 {
     ASSERT(isUserActionElement());
     return document().userActionElements().hasFocusVisible(*this);
-}
-
-FormListedElement* Element::asFormListedElement()
-{
-    return nullptr;
-}
-
-ValidatedFormListedElement* Element::asValidatedFormListedElement()
-{
-    return nullptr;
 }
 
 bool Element::isUserActionElementHasFocusWithin() const
@@ -2915,6 +2904,7 @@ CustomElementReactionQueue* Element::reactionQueue() const
     if (isFailedOrPrecustomizedCustomElement()) {
         auto* queue = elementRareData()->customElementReactionQueue();
         ASSERT(queue);
+        ASSERT(queue->isEmpty() || queue->hasJustUpgradeReaction());
     }
 #endif
     if (!hasRareData())
@@ -4086,16 +4076,6 @@ bool Element::matchesInvalidPseudoClass() const
     return false;
 }
 
-bool Element::matchesUserValidPseudoClass() const
-{
-    return false;
-}
-
-bool Element::matchesUserInvalidPseudoClass() const
-{
-    return false;
-}
-
 bool Element::matchesReadWritePseudoClass() const
 {
     return false;
@@ -5170,23 +5150,6 @@ StylePropertyMap* Element::attributeStyleMap()
 void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 {
     ensureElementRareData().setAttributeStyleMap(WTFMove(map));
-}
-
-void Element::ensureFormAssociatedCustomElement()
-{
-    RELEASE_ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(*this));
-    auto& data = ensureElementRareData();
-    if (!data.formAssociatedCustomElement())
-        data.setFormAssociatedCustomElement(makeUnique<FormAssociatedCustomElement>(downcast<HTMLMaybeFormAssociatedCustomElement>(*this)));
-}
-
-FormAssociatedCustomElement& Element::formAssociatedCustomElementUnsafe() const
-{
-    RELEASE_ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(*this));
-    ASSERT(hasRareData());
-    auto* customElement = elementRareData()->formAssociatedCustomElement();
-    ASSERT(customElement);
-    return *customElement;
 }
 
 StylePropertyMapReadOnly* Element::computedStyleMap()

@@ -310,28 +310,28 @@ void TextureMapperGL::drawNumber(int number, const Color& color, const FloatPoin
 #endif
 }
 
-static TextureMapperShaderProgram::Options optionsForFilterType(FilterOperation::OperationType type, unsigned pass)
+static TextureMapperShaderProgram::Options optionsForFilterType(FilterOperation::Type type, unsigned pass)
 {
     switch (type) {
-    case FilterOperation::GRAYSCALE:
+    case FilterOperation::Type::Grayscale:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::GrayscaleFilter };
-    case FilterOperation::SEPIA:
+    case FilterOperation::Type::Sepia:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SepiaFilter };
-    case FilterOperation::SATURATE:
+    case FilterOperation::Type::Saturate:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SaturateFilter };
-    case FilterOperation::HUE_ROTATE:
+    case FilterOperation::Type::HueRotate:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::HueRotateFilter };
-    case FilterOperation::INVERT:
+    case FilterOperation::Type::Invert:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::InvertFilter };
-    case FilterOperation::BRIGHTNESS:
+    case FilterOperation::Type::Brightness:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::BrightnessFilter };
-    case FilterOperation::CONTRAST:
+    case FilterOperation::Type::Contrast:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::ContrastFilter };
-    case FilterOperation::OPACITY:
+    case FilterOperation::Type::Opacity:
         return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::OpacityFilter };
-    case FilterOperation::BLUR:
+    case FilterOperation::Type::Blur:
         return { TextureMapperShaderProgram::BlurFilter };
-    case FilterOperation::DROP_SHADOW:
+    case FilterOperation::Type::DropShadow:
         if (!pass)
             return { TextureMapperShaderProgram::AlphaBlur };
         return { TextureMapperShaderProgram::AlphaBlur, TextureMapperShaderProgram::ContentTexture, TextureMapperShaderProgram::SolidColor };
@@ -379,19 +379,19 @@ static void prepareFilterProgram(TextureMapperShaderProgram& program, const Filt
     glUseProgram(program.programID());
 
     switch (operation.type()) {
-    case FilterOperation::GRAYSCALE:
-    case FilterOperation::SEPIA:
-    case FilterOperation::SATURATE:
-    case FilterOperation::HUE_ROTATE:
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate:
         glUniform1f(program.filterAmountLocation(), static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
         break;
-    case FilterOperation::INVERT:
-    case FilterOperation::BRIGHTNESS:
-    case FilterOperation::CONTRAST:
-    case FilterOperation::OPACITY:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
+    case FilterOperation::Type::Opacity:
         glUniform1f(program.filterAmountLocation(), static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
         break;
-    case FilterOperation::BLUR: {
+    case FilterOperation::Type::Blur: {
         const BlurFilterOperation& blur = static_cast<const BlurFilterOperation&>(operation);
         FloatSize radius;
 
@@ -405,7 +405,7 @@ static void prepareFilterProgram(TextureMapperShaderProgram& program, const Filt
         glUniform1fv(program.gaussianKernelLocation(), GaussianKernelHalfWidth, gaussianKernel());
         break;
     }
-    case FilterOperation::DROP_SHADOW: {
+    case FilterOperation::Type::DropShadow: {
         const DropShadowFilterOperation& shadow = static_cast<const DropShadowFilterOperation&>(operation);
         glUniform1fv(program.gaussianKernelLocation(), GaussianKernelHalfWidth, gaussianKernel());
         switch (pass) {

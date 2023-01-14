@@ -28,6 +28,7 @@
 #include "DMABufVideoSinkGStreamer.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
+#include "GStreamerRegistryScanner.h"
 #include "GUniquePtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
@@ -332,10 +333,20 @@ bool isThunderRanked()
 }
 #endif
 
+static void registerInternalVideoEncoder()
+{
+    // TODO: Remove this ifdef, this element doesn't explicitly use MediaStream APIs and can
+    // also be used for WebCodec video encoding.
+#if ENABLE(MEDIA_STREAM)
+    gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER);
+#endif
+}
+
 void registerWebKitGStreamerElements()
 {
     static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    bool registryWasUpdated = false;
+    std::call_once(onceFlag, [&registryWasUpdated] {
 
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
         if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {
@@ -353,8 +364,8 @@ void registerWebKitGStreamerElements()
 
 #if ENABLE(MEDIA_STREAM)
         gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
-        gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER);
 #endif
+        registerInternalVideoEncoder();
 
 #if ENABLE(MEDIA_SOURCE)
         gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
@@ -405,7 +416,28 @@ void registerWebKitGStreamerElements()
             if (auto vaapiPlugin = adoptGRef(gst_registry_find_plugin(registry, "vaapi")))
                 gst_registry_remove_plugin(registry, vaapiPlugin.get());
         }
+        registryWasUpdated = true;
     });
+
+    // The GStreamer registry might be updated after the scanner was initialized, so in this situation
+    // we need to reset the internal state of the registry scanner.
+    if (registryWasUpdated && !GStreamerRegistryScanner::singletonNeedsInitialization())
+        GStreamerRegistryScanner::singleton().refresh();
+}
+
+void registerWebKitGStreamerVideoEncoder()
+{
+    static std::once_flag onceFlag;
+    bool registryWasUpdated = false;
+    std::call_once(onceFlag, [&registryWasUpdated] {
+        registerInternalVideoEncoder();
+        registryWasUpdated = true;
+    });
+
+    // The video encoder might be registered after the scanner was initialized, so in this situation
+    // we need to reset the internal state of the registry scanner.
+    if (registryWasUpdated && !GStreamerRegistryScanner::singletonNeedsInitialization())
+        GStreamerRegistryScanner::singleton().refresh();
 }
 
 unsigned getGstPlayFlag(const char* nick)

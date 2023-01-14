@@ -44,6 +44,7 @@
 #include "GamepadData.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
 #include "LegacyGlobalSettings.h"
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -1461,7 +1462,7 @@ void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, I
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID, IPC::MessageReceiver& messageReceiver)
+void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
@@ -1471,7 +1472,7 @@ void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
 }
 
-void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID)
+void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
@@ -1867,8 +1868,14 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
             LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", sourceURL.string().utf8().data(), navigation->currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
         }
 
+        auto loadedWebArchive = LoadedWebArchive::No;
+#if ENABLE(WEB_ARCHIVE)
+        if (auto& substituteData = navigation->substituteData(); substituteData && equalIgnoringASCIICase(substituteData->MIMEType, "application/x-webarchive"_s))
+            loadedWebArchive = LoadedWebArchive::Yes;
+#endif
+
         auto processIdentifier = process->coreProcessIdentifier();
-        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
+        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), loadedWebArchive), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
             completionHandler(WTFMove(process), suspendedPage, reason);
         });
     });

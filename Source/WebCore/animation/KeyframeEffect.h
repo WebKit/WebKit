@@ -237,7 +237,7 @@ private:
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
     void setAnimation(WebAnimation*) final;
-    Seconds timeToNextTick(BasicEffectTiming) const final;
+    Seconds timeToNextTick(const BasicEffectTiming&) const final;
     bool ticksContinouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
 

@@ -203,7 +203,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return nullptr;
-    return wrapForDeprecatedCSSOM(getPropertyCSSValueInternal(propertyID).get());
+    return wrapForDeprecatedCSSOM(m_propertySet->getPropertyCSSValue(propertyID).get());
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyName)
@@ -296,11 +296,6 @@ ExceptionOr<String> PropertySetCSSStyleDeclaration::removeProperty(const String&
     if (changed)
         mutationScope.enqueueMutationRecord();
     return result;
-}
-
-RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
-{
-    return m_propertySet->getPropertyCSSValue(propertyID);
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)

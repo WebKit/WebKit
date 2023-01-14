@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -5567,7 +5567,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @JonWBedard, @ryanhaddad or @alancoon")
+        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @JonWBedard, @ryanhaddad, @alancoon or @webkit-bug-bridge")
         return self.runStep()
 
 

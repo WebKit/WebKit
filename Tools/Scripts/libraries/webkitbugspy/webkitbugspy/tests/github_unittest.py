@@ -409,3 +409,8 @@ Field: body
 Documentation URL: https://docs.github.com/rest/reference/pulls#create-a-pull-request
 '''
             self.assertEqual(github.Tracker(self.URL).parse_error(error_json), parsed_error)
+
+    def test_milestone(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = github.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).milestone, 'October')

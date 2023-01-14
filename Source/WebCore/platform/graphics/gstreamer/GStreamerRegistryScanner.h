@@ -38,11 +38,14 @@ class ContentType;
 
 class GStreamerRegistryScanner {
 public:
+    static bool singletonNeedsInitialization();
     static GStreamerRegistryScanner& singleton();
     static void getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
 
     explicit GStreamerRegistryScanner(bool isMediaSource = false);
     ~GStreamerRegistryScanner() = default;
+
+    void refresh();
 
     enum Configuration {
         Decoding = 0,

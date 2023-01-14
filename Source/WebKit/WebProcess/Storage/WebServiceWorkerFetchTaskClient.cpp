@@ -230,8 +230,9 @@ void WebServiceWorkerFetchTaskClient::setFetchEvent(Ref<WebCore::FetchEvent>&& e
 {
     m_event = WTFMove(event);
 
-    if (!m_preloadResponse.isNull()) {
-        m_event->navigationPreloadIsReady(WTFMove(m_preloadResponse));
+    if (m_preloadResponse) {
+        m_event->navigationPreloadIsReady(ResourceResponse::fromCrossThreadData(WTFMove(*m_preloadResponse)));
+        m_preloadResponse = std::nullopt;
         m_event = nullptr;
         return;
     }
@@ -242,14 +243,14 @@ void WebServiceWorkerFetchTaskClient::setFetchEvent(Ref<WebCore::FetchEvent>&& e
     }
 }
 
-void WebServiceWorkerFetchTaskClient::navigationPreloadIsReady(ResourceResponse&& response)
+void WebServiceWorkerFetchTaskClient::navigationPreloadIsReady(ResourceResponse::CrossThreadData&& response)
 {
     if (!m_event) {
         m_preloadResponse = WTFMove(response);
         return;
     }
 
-    m_event->navigationPreloadIsReady(WTFMove(response));
+    m_event->navigationPreloadIsReady(ResourceResponse::fromCrossThreadData(WTFMove(response)));
     m_event = nullptr;
 }
 

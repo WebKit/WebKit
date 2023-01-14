@@ -370,14 +370,14 @@ Protocol::ErrorStringOr<void> InspectorAnimationAgent::stopTracking()
     return { };
 }
 
-static bool isDelayed(ComputedEffectTiming& computedTiming)
+static bool isDelayed(const ComputedEffectTiming& computedTiming)
 {
     if (!computedTiming.localTime)
         return false;
     return computedTiming.localTime.value() < (computedTiming.endTime - computedTiming.activeDuration);
 }
 
-void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& keyframeEffect, ComputedEffectTiming computedTiming)
+void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& keyframeEffect, const ComputedEffectTiming& computedTiming)
 {
     auto* animation = keyframeEffect.animation();
     if (!is<DeclarativeAnimation>(animation))

@@ -29,6 +29,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+IGNORE_WARNINGS_BEGIN("undef")
 #import <PepperUICore/PUICActionController.h>
 #import <PepperUICore/PUICActionController_Private.h>
 #import <PepperUICore/PUICActionGroup.h>
@@ -50,6 +51,7 @@
 #import <PepperUICore/PUICTableViewCell.h>
 #import <PepperUICore/UIDevice+PUICAdditions.h>
 #import <PepperUICore/UIScrollView+PUICAdditionsPrivate.h>
+IGNORE_WARNINGS_END
 
 #if HAVE(QUICKBOARD_COLLECTION_VIEWS)
 #import <PepperUICore/PUICQuickboardListCollectionViewItemCell.h>

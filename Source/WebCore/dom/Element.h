@@ -60,8 +60,6 @@ class Document;
 class ElementAnimationRareData;
 class ElementData;
 class ElementRareData;
-class FormAssociatedCustomElement;
-class FormListedElement;
 class Frame;
 class HTMLDocument;
 class IntSize;
@@ -81,7 +79,6 @@ class StylePropertyMap;
 class StylePropertyMapReadOnly;
 class Text;
 class UniqueElementData;
-class ValidatedFormListedElement;
 class WebAnimation;
 
 enum class AnimationImpact : uint8_t;
@@ -312,8 +309,6 @@ public:
     void parserSetAttributes(const Vector<Attribute>&);
 
     bool isEventHandlerAttribute(const Attribute&) const;
-    virtual FormListedElement* asFormListedElement();
-    virtual ValidatedFormListedElement* asValidatedFormListedElement();
     virtual bool attributeContainsJavaScriptURL(const Attribute&) const;
 
     // Remove attributes that might introduce scripting from the vector leaving the element unchanged.
@@ -503,8 +498,6 @@ public:
 
     virtual bool matchesValidPseudoClass() const;
     virtual bool matchesInvalidPseudoClass() const;
-    virtual bool matchesUserValidPseudoClass() const;
-    virtual bool matchesUserInvalidPseudoClass() const;
     virtual bool matchesReadWritePseudoClass() const;
     virtual bool matchesIndeterminatePseudoClass() const;
     virtual bool matchesDefaultPseudoClass() const;
@@ -523,10 +516,8 @@ public:
     virtual bool isMediaElement() const { return false; }
 #endif
 
-    virtual bool isFormListedElement() const { return false; }
-    virtual bool isValidatedFormListedElement() const { return false; }
     virtual bool isFormControlElement() const { return false; }
-    virtual bool isMaybeFormAssociatedCustomElement() const { return false; }
+    virtual bool isFormControlElementWithState() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }
     virtual bool isTextFormControlElement() const { return false; }
     virtual bool isTextField() const { return false; }
@@ -739,9 +730,6 @@ protected:
 
     StylePropertyMap* attributeStyleMap();
     void setAttributeStyleMap(Ref<StylePropertyMap>&&);
-
-    FormAssociatedCustomElement& formAssociatedCustomElementUnsafe() const;
-    void ensureFormAssociatedCustomElement();
 
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 

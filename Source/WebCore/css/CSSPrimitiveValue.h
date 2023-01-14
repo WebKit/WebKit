@@ -118,14 +118,6 @@ public:
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 
-    bool isInitialValue() const { return valueID() == CSSValueInitial; }
-    bool isImplicitInitialValue() const { return isInitialValue() && m_isImplicit; }
-    bool isInheritValue() const { return valueID() == CSSValueInherit; }
-    bool isUnsetValue() const { return valueID() == CSSValueUnset; }
-    bool isRevertValue() const { return valueID() == CSSValueRevert; }
-    bool isRevertLayerValue() const { return valueID() == CSSValueRevertLayer; }
-    bool isCSSWideKeyword() const;
-
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
 

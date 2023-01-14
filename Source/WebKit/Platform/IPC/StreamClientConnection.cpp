@@ -56,7 +56,7 @@ void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage
     ASSERT_NOT_REACHED(); // The sender is expected to be trusted, so all invalid messages are programming errors.
 }
 
-StreamClientConnection::StreamConnectionPair StreamClientConnection::create(size_t bufferSize)
+StreamClientConnection::StreamConnectionPair StreamClientConnection::create(unsigned bufferSizeLog2)
 {
     auto connectionIdentifiers = Connection::createConnectionIdentifierPair();
     // Create StreamClientConnection with "server" type Connection. The caller will send the "client" type connection identifier via
@@ -66,7 +66,7 @@ StreamClientConnection::StreamConnectionPair StreamClientConnection::create(size
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
     auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
-    RefPtr<StreamClientConnection> clientConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize) };
+    RefPtr<StreamClientConnection> clientConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSizeLog2) };
     StreamServerConnection::Handle serverHandle {
         WTFMove(connectionIdentifiers->client),
         clientConnection->streamBuffer().createHandle()
@@ -74,9 +74,9 @@ StreamClientConnection::StreamConnectionPair StreamClientConnection::create(size
     return { WTFMove(clientConnection), WTFMove(serverHandle) };
 }
 
-StreamClientConnection::StreamClientConnection(Ref<Connection> connection, size_t bufferSize)
+StreamClientConnection::StreamClientConnection(Ref<Connection> connection, unsigned bufferSizeLog2)
     : m_connection(WTFMove(connection))
-    , m_buffer(bufferSize)
+    , m_buffer(bufferSizeLog2)
 {
     // Read starts from 0 with limit of 0 and reader sleeping.
     sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);

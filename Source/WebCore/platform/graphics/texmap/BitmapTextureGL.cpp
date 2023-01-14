@@ -181,20 +181,20 @@ void BitmapTextureGL::updatePendingContents(const IntRect& targetRect, const Int
 }
 #endif
 
-static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
+static unsigned getPassesRequiredForFilter(FilterOperation::Type type)
 {
     switch (type) {
-    case FilterOperation::GRAYSCALE:
-    case FilterOperation::SEPIA:
-    case FilterOperation::SATURATE:
-    case FilterOperation::HUE_ROTATE:
-    case FilterOperation::INVERT:
-    case FilterOperation::BRIGHTNESS:
-    case FilterOperation::CONTRAST:
-    case FilterOperation::OPACITY:
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
+    case FilterOperation::Type::Opacity:
         return 1;
-    case FilterOperation::BLUR:
-    case FilterOperation::DROP_SHADOW:
+    case FilterOperation::Type::Blur:
+    case FilterOperation::Type::DropShadow:
         // We use two-passes (vertical+horizontal) for blur and drop-shadow.
         return 2;
     default:
@@ -231,7 +231,7 @@ RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper
                 intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha);
             texmapGL.bindSurface(intermediateSurface.get());
             texmapGL.drawFiltered(*resultSurface.get(), spareSurface.get(), *filter, j);
-            if (!j && filter->type() == FilterOperation::DROP_SHADOW) {
+            if (!j && filter->type() == FilterOperation::Type::DropShadow) {
                 spareSurface = resultSurface;
                 resultSurface = nullptr;
             }

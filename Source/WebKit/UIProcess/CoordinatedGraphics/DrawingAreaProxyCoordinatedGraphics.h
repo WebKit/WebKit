@@ -92,6 +92,7 @@ private:
 #endif
 
     void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
+    void attachToProvisionalFrameProcess(WebProcessProxy&) final { ASSERT_NOT_REACHED(); }
 
     class DrawingMonitor {
         WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;

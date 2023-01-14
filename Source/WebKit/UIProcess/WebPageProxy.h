@@ -958,6 +958,7 @@ public:
     void didConcludeDrop();
 #endif
 #endif // PLATFORM(IOS_FAMILY)
+
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
@@ -2103,10 +2104,6 @@ public:
     void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(bool)>&&);
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    static Vector<String>& cachedLookalikeStrings();
-#endif
-
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
 
 #if PLATFORM(COCOA)
@@ -2741,8 +2738,10 @@ private:
     static bool isInHardwareKeyboardMode();
 #endif
 
+    void waitForInitialLookalikeCharacterStrings(WebFramePolicyListenerProxy&);
+    void sendCachedLookalikeCharacterStrings();
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    void updateLookalikeCharacterStringsIfNeeded();
+    static Vector<String>& cachedLookalikeStrings();
 #endif
 
 #if USE(RUNNINGBOARD)
@@ -2810,6 +2809,7 @@ private:
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
 #if PLATFORM(COCOA)
     std::unique_ptr<RemoteLayerTreeHost> m_frozenRemoteLayerTreeHost;
+    TransactionID m_firstLayerTreeTransactionIdAfterDidCommitLoad;
 #if ENABLE(ASYNC_SCROLLING)
     std::unique_ptr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
 #endif
@@ -2862,7 +2862,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<WebCore::InputMode> m_pendingInputModeChange;
-    TransactionID m_firstLayerTreeTransactionIdAfterDidCommitLoad;
     int32_t m_deviceOrientation { 0 };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
@@ -3362,7 +3361,7 @@ private:
     bool m_isLockdownModeExplicitlySet { false };
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    bool m_shouldUpdateLookalikeCharacterStrings { false };
+    bool m_needsInitialLookalikeCharacterStrings { true };
 #endif
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;

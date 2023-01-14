@@ -634,7 +634,9 @@ const AtomString& HTMLInputElement::formControlType() const
 
 bool HTMLInputElement::shouldSaveAndRestoreFormControlState() const
 {
-    return m_inputType->shouldSaveAndRestoreFormControlState();
+    if (!m_inputType->shouldSaveAndRestoreFormControlState())
+        return false;
+    return HTMLTextFormControlElement::shouldSaveAndRestoreFormControlState();
 }
 
 FormControlState HTMLInputElement::saveFormControlState() const

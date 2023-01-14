@@ -538,4 +538,130 @@ REGISTER_TYPED_TEST_SUITE_P(ArgumentCoderDecodingMoveCounterTest,
     DecodeArray, DecodeVector, DecodeVariant, DecodeUniquePtr);
 INSTANTIATE_TYPED_TEST_SUITE_P(ArgumentCoderTest, ArgumentCoderDecodingMoveCounterTest, EncoderTypes, EncoderTypeNames);
 
+
+template<typename T> class ArgumentCoderSpanTest : public ArgumentCoderEncoderDecoderTest<T> { };
+TYPED_TEST_SUITE_P(ArgumentCoderSpanTest);
+
+TYPED_TEST_P(ArgumentCoderSpanTest, SimpleSpan)
+{
+    std::array<uint8_t, 16> data8 { 0, 0, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233 };
+    std::array<uint32_t, 16> data32 { 0, 0, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233 };
+    TestFixture::encoder() << Span<const uint8_t> { data8 } << Span<const uint32_t> { data32 } << Span<const uint64_t> { };
+
+    auto decoder = TestFixture::createDecoder();
+    {
+        auto span = decoder->template decode<Span<const uint8_t>>();
+        ASSERT_TRUE(!!span);
+        ASSERT_EQ(data8.size(), span->size());
+        ASSERT_EQ(data8.size() * sizeof(uint8_t), span->size_bytes());
+        ASSERT_EQ(memcmp(data8.data(), span->data(), span->size_bytes()), 0);
+    }
+    {
+        auto span = decoder->template decode<Span<const uint32_t>>();
+        ASSERT_TRUE(!!span);
+        ASSERT_EQ(data32.size(), span->size());
+        ASSERT_EQ(data32.size() * sizeof(uint32_t), span->size_bytes());
+        ASSERT_EQ(memcmp(data32.data(), span->data(), span->size_bytes()), 0);
+    }
+    {
+        auto span = decoder->template decode<Span<const uint64_t>>();
+        ASSERT_TRUE(!!span);
+        ASSERT_EQ(span->data(), nullptr);
+        ASSERT_EQ(span->size(), 0u);
+    }
+}
+
+template<typename T, size_t S>
+struct EncodedValue {
+    using Type = T;
+    static constexpr size_t Size = S;
+};
+
+template<typename EncodedValueType, typename... EncodedValueTypes>
+static size_t calculateEncodedSize(size_t value, EncodedValueType, EncodedValueTypes...)
+{
+    value = roundUpToMultipleOf<alignof(typename EncodedValueType::Type)>(value) + EncodedValueType::Size * sizeof(typename EncodedValueType::Type);
+    if constexpr (sizeof...(EncodedValueTypes) > 0)
+        return calculateEncodedSize(value, EncodedValueTypes { }...);
+    else
+        return value;
+}
+
+struct alignas(16) AlignedStructure { };
+
+TYPED_TEST_P(ArgumentCoderSpanTest, AlignedSpan)
+{
+    ASSERT_EQ(alignof(AlignedStructure), 16u);
+
+    auto& encoder = TestFixture::encoder();
+    {
+        // This one byte will misalign the encoded data, making proper aligning of AlignedStructure properly testable.
+        encoder << static_cast<uint8_t>(42);
+        ASSERT_EQ(TestFixture::encoderSize(), calculateEncodedSize(TestFixture::headerSize(), EncodedValue<uint8_t, 1> { }));
+        ASSERT_TRUE(!!(TestFixture::encoderSize() % alignof(AlignedStructure)));
+    }
+    {
+        // Span over the array data is encoded. Encoded data now includes the header, the previous byte, the span size, and array data.
+        std::array<AlignedStructure, 2> alignedData { AlignedStructure { }, AlignedStructure { } };
+        encoder << Span<const AlignedStructure> { alignedData };
+        ASSERT_EQ(TestFixture::encoderSize(), calculateEncodedSize(TestFixture::headerSize(),
+            EncodedValue<uint8_t, 1> { }, EncodedValue<uint64_t, 1> { }, EncodedValue<AlignedStructure, 2> { }));
+    }
+
+    auto decoder = TestFixture::createDecoder();
+    ASSERT_EQ(decoder->currentBufferPosition(), TestFixture::headerSize());
+    {
+        auto byte = decoder->template decode<uint8_t>();
+        ASSERT_TRUE(!!byte);
+        ASSERT_EQ(*byte, 42);
+        ASSERT_EQ(decoder->currentBufferPosition(), calculateEncodedSize(TestFixture::headerSize(), EncodedValue<uint8_t, 1> { }));
+    }
+    {
+        auto alignedData = decoder->template decode<Span<const AlignedStructure>>();
+        ASSERT_TRUE(!!alignedData);
+        ASSERT_NE(alignedData->data(), nullptr);
+        ASSERT_EQ(alignedData->size(), 2u);
+        ASSERT_EQ(decoder->currentBufferPosition(), calculateEncodedSize(TestFixture::headerSize(),
+            EncodedValue<uint8_t, 1> { }, EncodedValue<uint64_t, 1> { }, EncodedValue<AlignedStructure, 2> { }));
+    }
+}
+
+TYPED_TEST_P(ArgumentCoderSpanTest, AlignedEmptySpan)
+{
+    ASSERT_EQ(alignof(AlignedStructure), 16u);
+
+    auto& encoder = TestFixture::encoder();
+    {
+        // Only data about the empty span that's encoded is the 64-bit size value, and nothing more.
+        encoder << Span<const AlignedStructure> { };
+        ASSERT_EQ(TestFixture::encoderSize(), calculateEncodedSize(TestFixture::headerSize(), EncodedValue<uint64_t, 1> { }));
+    }
+    {
+        // Another byte is encoded tightly after the span size.
+        encoder << static_cast<uint8_t>(42);
+        ASSERT_EQ(TestFixture::encoderSize(), calculateEncodedSize(TestFixture::headerSize(), EncodedValue<uint64_t, 1> { }, EncodedValue<uint8_t, 1> { }));
+    }
+
+    auto decoder = TestFixture::createDecoder();
+    ASSERT_EQ(decoder->currentBufferPosition(), TestFixture::headerSize());
+    {
+        // A valid but empty span should be decoded, meaning a null data pointer and 0 size.
+        auto alignedData = decoder->template decode<Span<const AlignedStructure>>();
+        ASSERT_TRUE(!!alignedData);
+        ASSERT_EQ(alignedData->data(), nullptr);
+        ASSERT_EQ(alignedData->size(), 0u);
+        ASSERT_EQ(decoder->currentBufferPosition(), calculateEncodedSize(TestFixture::headerSize(), EncodedValue<uint64_t, 1> { }));
+    }
+    {
+        auto byte = decoder->template decode<uint8_t>();
+        ASSERT_TRUE(!!byte);
+        ASSERT_EQ(*byte, 42);
+        ASSERT_EQ(decoder->currentBufferPosition(), calculateEncodedSize(TestFixture::headerSize(), EncodedValue<uint64_t, 1> { }, EncodedValue<uint8_t, 1> { }));
+    }
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ArgumentCoderSpanTest,
+    SimpleSpan, AlignedSpan, AlignedEmptySpan);
+INSTANTIATE_TYPED_TEST_SUITE_P(ArgumentCoderTest, ArgumentCoderSpanTest, EncoderTypes, EncoderTypeNames);
+
 } // namespace TestWebKitAPI

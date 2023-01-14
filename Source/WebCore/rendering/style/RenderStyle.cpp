@@ -2837,7 +2837,7 @@ bool RenderStyle::hasReferenceFilterOnly() const
     if (!hasFilter())
         return false;
     auto& filterOperations = m_rareNonInheritedData->filter->operations;
-    return filterOperations.size() == 1 && filterOperations.at(0)->type() == FilterOperation::REFERENCE;
+    return filterOperations.size() == 1 && filterOperations.at(0)->type() == FilterOperation::Type::Reference;
 }
 
 float RenderStyle::outlineWidth() const

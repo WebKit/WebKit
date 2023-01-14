@@ -7,10 +7,10 @@
 setup({ single_test: true });
 if (window.IPC) { // For compiles with !ENABLE(IPC_TESTING_API)
     const defaultTimeout = 1000;
-    const bufferSize = 400;
+    const bufferSizeLog2 = 9;
     const streamTesterID = 447;
     for (const processTarget of IPC.processTargets) {
-        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSize);
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
         streamConnection.open();
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
             { type: 'uint64_t', value: streamTesterID },

@@ -108,7 +108,7 @@ Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedS
         const auto& filterOperations = style.filter();
         for (auto& operation : filterOperations.operations()) {
             auto& filterOperation = *operation;
-            if (filterOperation.type() == FilterOperation::REFERENCE) {
+            if (filterOperation.type() == FilterOperation::Type::Reference) {
                 const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                 if (!referenceFilterOperation.fragment().isEmpty())
                     referencedResources.append({ referenceFilterOperation.fragment(), SVGNames::filterTag });

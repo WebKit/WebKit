@@ -27,6 +27,19 @@ function test()
         return Array.from(WI.domManager.attachedNodes({filter: (node) => node.layoutContextType === type}));
     }
 
+    function awaitDomNodeWithIdLayoutFlagsChanged(id)
+    {
+        return new Promise((resolve, reject) => {
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutFlagsChanged, function listener(event) {
+                if (event.target.escapedIdSelector !== id)
+                    return;
+
+                WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutFlagsChanged, listener);
+                resolve();
+            });
+        });
+    }
+
     suite.addTestCase({
         name: "CSS.setLayoutContextTypeChangedMode.queryGrid",
         description: "Test that the expected number of grids are instrumented without chagning the LayoutContextTypeChangedMode.",
@@ -92,14 +105,14 @@ function test()
 
             InspectorTest.log("Changing `#normalGrid` to `display: block;`...");
             await Promise.all([
-                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                awaitDomNodeWithIdLayoutFlagsChanged("#normalGrid"),
                 changeElementDisplayValue("normalGrid", "block"),
             ]);
             InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutFlag.Grid).length, 1, "1 grid node should be instrumented.");
 
             InspectorTest.log("Changing `#normalGrid` to `display: grid;`...");
             await Promise.all([
-                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                awaitDomNodeWithIdLayoutFlagsChanged("#normalGrid"),
                 changeElementDisplayValue("normalGrid", "grid"),
             ]);
             InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutFlag.Grid).length, 2, "2 grid nodes should be instrumented.");
@@ -131,14 +144,14 @@ function test()
             // Changing a node to a grid after enabling `All` mode will increase the count.
             InspectorTest.log("Changing `#normalNonGrid` to `display: grid;`...");
             await Promise.all([
-                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                awaitDomNodeWithIdLayoutFlagsChanged("#normalNonGrid"),
                 changeElementDisplayValue("normalNonGrid", "grid"),
             ]);
             InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutFlag.Grid).length, 3, "3 grid nodes should be instrumented.");
 
             InspectorTest.log("Changing `#normalNonGrid` to `display: block;`...");
             await Promise.all([
-                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                awaitDomNodeWithIdLayoutFlagsChanged("#normalNonGrid"),
                 changeElementDisplayValue("normalNonGrid", "block"),
             ]);
             InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutFlag.Grid).length, 2, "2 grid nodes should be instrumented.");

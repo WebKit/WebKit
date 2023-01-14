@@ -685,7 +685,7 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
             return false;
 
         m_scrollingStateTree->insertNode(nodeType, nodeID, parentNodeID, notFound);
-        ScrollingStateNode* newNode = m_scrollingStateTree->stateNodeForID(nodeID);
+        auto newNode = m_scrollingStateTree->stateNodeForID(nodeID);
         ASSERT(newNode);
         ASSERT(!parentNodeID || newNode->parent());
         

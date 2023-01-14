@@ -275,6 +275,8 @@ webrtc::PeerConnectionInterface::SignalingState MockLibWebRTCPeerConnection::sig
     case RTCSignalingState::Closed:
         return SignalingState::kClosed;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void MockLibWebRTCPeerConnection::SetLocalDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription, rtc::scoped_refptr<webrtc::SetLocalDescriptionObserverInterface> observer)

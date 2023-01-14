@@ -308,7 +308,7 @@ public:
     static bool isWebGLProgramHighlighted(WebGLRenderingContextBase&, WebGLProgram&);
 #endif
 
-    static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, ComputedEffectTiming);
+    static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationName(WebAnimation&);
     static void didSetWebAnimationEffect(WebAnimation&);
     static void didChangeWebAnimationEffectTiming(WebAnimation&);
@@ -517,7 +517,7 @@ private:
     static bool isWebGLProgramHighlightedImpl(InstrumentingAgents&, WebGLProgram&);
 #endif
 
-    static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, ComputedEffectTiming);
+    static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
     static void didSetWebAnimationEffectImpl(InstrumentingAgents&, WebAnimation&);
     static void didChangeWebAnimationEffectTimingImpl(InstrumentingAgents&, WebAnimation&);
@@ -1505,7 +1505,7 @@ inline bool InspectorInstrumentation::isWebGLProgramHighlighted(WebGLRenderingCo
 }
 #endif
 
-inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, ComputedEffectTiming computedTiming)
+inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(target.element.document()))

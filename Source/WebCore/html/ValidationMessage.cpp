@@ -54,7 +54,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ValidationMessage::ValidationMessage(HTMLElement& element)
+ValidationMessage::ValidationMessage(HTMLFormControlElement& element)
     : m_element(element)
 {
     ASSERT(m_element);
@@ -77,7 +77,7 @@ ValidationMessageClient* ValidationMessage::validationMessageClient() const
     return 0;
 }
 
-void ValidationMessage::updateValidationMessage(HTMLElement& element, const String& message)
+void ValidationMessage::updateValidationMessage(const String& message)
 {
     // We want to hide the validation message as soon as the user starts
     // typing, even if a constraint is still violated. Thefore, we hide the message instead
@@ -103,8 +103,6 @@ void ValidationMessage::updateValidationMessage(HTMLElement& element, const Stri
         requestToHideMessage();
         return;
     }
-
-    m_element = element;
     setMessage(updatedMessage);
 }
 

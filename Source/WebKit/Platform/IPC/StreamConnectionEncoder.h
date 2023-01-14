@@ -68,6 +68,12 @@ public:
         return true;
     }
 
+    template<typename T, size_t Extent>
+    bool encodeSpan(const Span<T, Extent>& data)
+    {
+        return encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+    }
+
     template<typename T>
     StreamConnectionEncoder& operator<<(T&& t)
     {

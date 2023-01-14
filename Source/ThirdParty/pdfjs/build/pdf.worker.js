@@ -101,7 +101,7 @@ class WorkerMessageHandler {
       docId,
       apiVersion
     } = docParams;
-    const workerVersion = '3.1.81';
+    const workerVersion = '3.2.146';
     if (apiVersion !== workerVersion) {
       throw new Error(`The API version "${apiVersion}" does not match ` + `the Worker version "${workerVersion}".`);
     }
@@ -1250,6 +1250,18 @@ class FeatureTest {
   }
   static get isOffscreenCanvasSupported() {
     return shadow(this, "isOffscreenCanvasSupported", typeof OffscreenCanvas !== "undefined");
+  }
+  static get platform() {
+    if (typeof navigator === "undefined") {
+      return shadow(this, "platform", {
+        isWin: false,
+        isMac: false
+      });
+    }
+    return shadow(this, "platform", {
+      isWin: navigator.platform.includes("Win"),
+      isMac: navigator.platform.includes("Mac")
+    });
   }
 }
 exports.FeatureTest = FeatureTest;
@@ -3108,12 +3120,13 @@ class Page {
     if (this.xfaData) {
       return this.xfaData.bbox;
     }
-    const box = this._getInheritableProperty(name, true);
+    let box = this._getInheritableProperty(name, true);
     if (Array.isArray(box) && box.length === 4) {
-      if (box[2] - box[0] !== 0 && box[3] - box[1] !== 0) {
+      box = _util.Util.normalizeRect(box);
+      if (box[2] - box[0] > 0 && box[3] - box[1] > 0) {
         return box;
       }
-      (0, _util.warn)(`Empty /${name} entry.`);
+      (0, _util.warn)(`Empty, or invalid, /${name} entry.`);
     }
     return null;
   }
@@ -3135,18 +3148,14 @@ class Page {
       cropBox,
       mediaBox
     } = this;
-    let view;
-    if (cropBox === mediaBox || (0, _util.isArrayEqual)(cropBox, mediaBox)) {
-      view = mediaBox;
-    } else {
+    if (cropBox !== mediaBox && !(0, _util.isArrayEqual)(cropBox, mediaBox)) {
       const box = _util.Util.intersect(cropBox, mediaBox);
-      if (box && box[2] - box[0] !== 0 && box[3] - box[1] !== 0) {
-        view = box;
-      } else {
-        (0, _util.warn)("Empty /CropBox and /MediaBox intersection.");
+      if (box && box[2] - box[0] > 0 && box[3] - box[1] > 0) {
+        return (0, _util.shadow)(this, "view", box);
       }
+      (0, _util.warn)("Empty /CropBox and /MediaBox intersection.");
     }
-    return (0, _util.shadow)(this, "view", view || mediaBox);
+    return (0, _util.shadow)(this, "view", mediaBox);
   }
   get rotate() {
     let rotate = this._getInheritableProperty("Rotate") || 0;
@@ -5514,7 +5523,14 @@ class WidgetAnnotation extends Annotation {
       value = value[0];
     }
     (0, _util.assert)(typeof value === "string", "Expected `value` to be a string.");
-    value = value.trim();
+    if (!this.data.combo) {
+      value = value.trim();
+    } else {
+      const option = this.data.options.find(({
+        exportValue
+      }) => value === exportValue) || this.data.options[0];
+      value = option && option.displayValue || "";
+    }
     if (value === "") {
       return `/Tx BMC q ${colors}Q EMC`;
     }
@@ -7124,9 +7140,15 @@ class StampAnnotation extends MarkupAnnotation {
 class FileAttachmentAnnotation extends MarkupAnnotation {
   constructor(params) {
     super(params);
-    const file = new _file_spec.FileSpec(params.dict.get("FS"), params.xref);
+    const {
+      dict,
+      xref
+    } = params;
+    const file = new _file_spec.FileSpec(dict.get("FS"), xref);
     this.data.annotationType = _util.AnnotationType.FILEATTACHMENT;
     this.data.file = file.serializable;
+    const name = dict.get("Name");
+    this.data.name = name instanceof _primitives.Name ? (0, _util.stringToPDFString)(name.name) : "PushPin";
   }
 }
 
@@ -23456,7 +23478,7 @@ class CFFParser {
     }
     let stackSize = state.stackSize;
     const stack = state.stack;
-    const length = data.length;
+    let length = data.length;
     for (let j = 0; j < length;) {
       const value = data[j++];
       let validationCommand = null;
@@ -23537,6 +23559,11 @@ class CFFParser {
       } else if (value === 0 && j === data.length) {
         data[j - 1] = 14;
         validationCommand = CharstringValidationData[14];
+      } else if (value === 9) {
+        data.copyWithin(j - 1, j, -1);
+        j -= 1;
+        length -= 1;
+        continue;
       } else {
         validationCommand = CharstringValidationData[value];
       }
@@ -23588,6 +23615,9 @@ class CFFParser {
           state.firstStackClearing = false;
         }
       }
+    }
+    if (length < data.length) {
+      data.fill(14, length);
     }
     state.stackSize = stackSize;
     return true;
@@ -63432,19 +63462,18 @@ class XRef {
       }
       return skipped;
     }
+    const gEndobjRegExp = /\b(endobj|\d+\s+\d+\s+obj|xref|trailer)\b/g;
+    const gStartxrefRegExp = /\b(startxref|\d+\s+\d+\s+obj)\b/g;
     const objRegExp = /^(\d+)\s+(\d+)\s+obj\b/;
-    const endobjRegExp = /\bendobj[\b\s]$/;
-    const nestedObjRegExp = /\s+(\d+\s+\d+\s+obj[\b\s<])$/;
-    const CHECK_CONTENT_LENGTH = 25;
     const trailerBytes = new Uint8Array([116, 114, 97, 105, 108, 101, 114]);
     const startxrefBytes = new Uint8Array([115, 116, 97, 114, 116, 120, 114, 101, 102]);
-    const objBytes = new Uint8Array([111, 98, 106]);
     const xrefBytes = new Uint8Array([47, 88, 82, 101, 102]);
     this.entries.length = 0;
     this._cacheMap.clear();
     const stream = this.stream;
     stream.pos = 0;
     const buffer = stream.getBytes(),
+      bufferStr = (0, _util.bytesToString)(buffer),
       length = buffer.length;
     let position = stream.start;
     const trailers = [],
@@ -63474,8 +63503,8 @@ class XRef {
       } else if (m = objRegExp.exec(token)) {
         const num = m[1] | 0,
           gen = m[2] | 0;
+        const startPos = position + token.length;
         let contentLength,
-          startPos = position + token.length,
           updateEntries = false;
         if (!this.entries[num]) {
           updateEntries = true;
@@ -63501,22 +63530,17 @@ class XRef {
             uncompressed: true
           };
         }
-        while (startPos < length) {
-          const endPos = startPos + skipUntil(buffer, startPos, objBytes) + 4;
+        gEndobjRegExp.lastIndex = startPos;
+        const match = gEndobjRegExp.exec(bufferStr);
+        if (match) {
+          const endPos = gEndobjRegExp.lastIndex + 1;
           contentLength = endPos - position;
-          const checkPos = Math.max(endPos - CHECK_CONTENT_LENGTH, startPos);
-          const tokenStr = (0, _util.bytesToString)(buffer.subarray(checkPos, endPos));
-          if (endobjRegExp.test(tokenStr)) {
-            break;
-          } else {
-            const objToken = nestedObjRegExp.exec(tokenStr);
-            if (objToken && objToken[1]) {
-              (0, _util.warn)('indexObjects: Found new "obj" inside of another "obj", ' + 'caused by missing "endobj" -- trying to recover.');
-              contentLength -= objToken[1].length;
-              break;
-            }
+          if (match[1] !== "endobj") {
+            (0, _util.warn)(`indexObjects: Found "${match[1]}" inside of another "obj", ` + 'caused by missing "endobj" -- trying to recover.');
+            contentLength -= match[1].length + 1;
           }
-          startPos = endPos;
+        } else {
+          contentLength = length - position;
         }
         const content = buffer.subarray(position, position + contentLength);
         const xrefTagOffset = skipUntil(content, 0, xrefBytes);
@@ -63527,17 +63551,19 @@ class XRef {
         position += contentLength;
       } else if (token.startsWith("trailer") && (token.length === 7 || /\s/.test(token[7]))) {
         trailers.push(position);
-        const contentLength = skipUntil(buffer, position, startxrefBytes);
-        if (position + contentLength >= length) {
-          const endPos = position + skipUntil(buffer, position, objBytes) + 4;
-          const checkPos = Math.max(endPos - CHECK_CONTENT_LENGTH, position);
-          const tokenStr = (0, _util.bytesToString)(buffer.subarray(checkPos, endPos));
-          const objToken = nestedObjRegExp.exec(tokenStr);
-          if (objToken && objToken[1]) {
-            (0, _util.warn)('indexObjects: Found first "obj" after "trailer", ' + 'caused by missing "startxref" -- trying to recover.');
-            position = endPos - objToken[1].length;
-            continue;
+        const startPos = position + token.length;
+        let contentLength;
+        gStartxrefRegExp.lastIndex = startPos;
+        const match = gStartxrefRegExp.exec(bufferStr);
+        if (match) {
+          const endPos = gStartxrefRegExp.lastIndex + 1;
+          contentLength = endPos - position;
+          if (match[1] !== "startxref") {
+            (0, _util.warn)(`indexObjects: Found "${match[1]}" after "trailer", ` + 'caused by missing "startxref" -- trying to recover.');
+            contentLength -= match[1].length + 1;
           }
+        } else {
+          contentLength = length - position;
         }
         position += contentLength;
       } else {
@@ -63606,8 +63632,8 @@ class XRef {
   readXRef(recoveryMode = false) {
     const stream = this.stream;
     const startXRefParsedCache = new Set();
-    try {
-      while (this.startXRefQueue.length) {
+    while (this.startXRefQueue.length) {
+      try {
         const startXRef = this.startXRefQueue[0];
         if (startXRefParsedCache.has(startXRef)) {
           (0, _util.warn)("readXRef - skipping XRef table since it was already parsed.");
@@ -63656,15 +63682,16 @@ class XRef {
         } else if (obj instanceof _primitives.Ref) {
           this.startXRefQueue.push(obj.num);
         }
-        this.startXRefQueue.shift();
+      } catch (e) {
+        if (e instanceof _core_utils.MissingDataException) {
+          throw e;
+        }
+        (0, _util.info)("(while reading XRef): " + e);
       }
-      return this.topDict;
-    } catch (e) {
-      if (e instanceof _core_utils.MissingDataException) {
-        throw e;
-      }
-      (0, _util.info)("(while reading XRef): " + e);
       this.startXRefQueue.shift();
+    }
+    if (this.topDict) {
+      return this.topDict;
     }
     if (recoveryMode) {
       return undefined;
@@ -64467,8 +64494,8 @@ Object.defineProperty(exports, "WorkerMessageHandler", ({
   }
 }));
 var _worker = __w_pdfjs_require__(1);
-const pdfjsVersion = '3.1.81';
-const pdfjsBuild = '0766898d5';
+const pdfjsVersion = '3.2.146';
+const pdfjsBuild = '3fd2a3548';
 })();
 
 /******/ 	return __webpack_exports__;

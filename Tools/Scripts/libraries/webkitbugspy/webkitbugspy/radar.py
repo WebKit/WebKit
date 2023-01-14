@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -200,6 +200,7 @@ class Tracker(GenericTracker):
             username=radar.originator.dsid,
             email=radar.originator.email,
         )
+        issue._milestone = radar.milestone.name
 
         if member == 'watchers':
             issue._watchers = []

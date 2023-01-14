@@ -36,16 +36,3 @@ enum class WritingDirection : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WritingDirection> {
-    using values = EnumValues<
-        WebCore::WritingDirection,
-        WebCore::WritingDirection::Natural,
-        WebCore::WritingDirection::LeftToRight,
-        WebCore::WritingDirection::RightToLeft
-    >;
-};
-
-} // namespace WTF

@@ -2147,7 +2147,7 @@ bool KeyframeEffect::ticksContinouslyWhileActive() const
     return true;
 }
 
-Seconds KeyframeEffect::timeToNextTick(BasicEffectTiming timing) const
+Seconds KeyframeEffect::timeToNextTick(const BasicEffectTiming& timing) const
 {
     if (timing.phase == AnimationEffectPhase::Active) {
         // CSS Animations need to trigger "animationiteration" events even if there is no need to

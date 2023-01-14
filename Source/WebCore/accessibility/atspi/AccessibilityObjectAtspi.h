@@ -87,7 +87,7 @@ public:
     WEBCORE_EXPORT unsigned childCount() const;
     WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> children() const;
     WEBCORE_EXPORT AccessibilityObjectAtspi* childAt(unsigned) const;
-    WEBCORE_EXPORT uint64_t state() const;
+    WEBCORE_EXPORT OptionSet<Atspi::State> states() const;
     bool isDefunct() const;
     void stateChanged(const char*, bool);
     WEBCORE_EXPORT HashMap<String, String> attributes() const;
@@ -175,6 +175,7 @@ private:
     void buildAttributes(GVariantBuilder*) const;
     void buildRelationSet(GVariantBuilder*) const;
     void buildInterfaces(GVariantBuilder*) const;
+    void buildStates(GVariantBuilder*) const;
 
     bool focus() const;
     float opacity() const;
@@ -235,7 +236,7 @@ private:
         bool matchAttributes(AccessibilityObjectAtspi&);
 
         struct {
-            uint64_t value { 0 };
+            OptionSet<Atspi::State> value;
             uint16_t type { 0 };
         } states;
 

@@ -39,20 +39,19 @@ static Ref<WebKit::SharedMemory> createMemory(size_t size)
     return memory.releaseNonNull();
 }
 
-StreamConnectionBuffer::StreamConnectionBuffer(size_t memorySize)
-    : m_dataSize(memorySize - headerSize())
-    , m_sharedMemory(createMemory(memorySize))
+StreamConnectionBuffer::StreamConnectionBuffer(unsigned dataSizeLog2)
+    : m_dataSize(static_cast<size_t>(1u) << dataSizeLog2)
+    , m_sharedMemory(createMemory(m_dataSize + headerSize()))
 {
-    ASSERT(m_dataSize > 0);
-    ASSERT(m_dataSize <= maximumSize());
+    ASSERT(dataSizeLog2 < 31u); // Currently expected to be not that big, and offset to fit in size_t with the tag bits.
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 }
 
 StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memory)
     : m_dataSize(memory->size() - headerSize())
     , m_sharedMemory(WTFMove(memory))
 {
-    ASSERT(m_dataSize > 0);
-    ASSERT(m_dataSize <= maximumSize());
+    ASSERT(sharedMemorySizeIsValid(m_sharedMemory->size()));
 }
 
 StreamConnectionBuffer::StreamConnectionBuffer(StreamConnectionBuffer&&) = default;
@@ -85,9 +84,7 @@ std::optional<StreamConnectionBuffer::Handle> StreamConnectionBuffer::Handle::de
     auto handle = decoder.decode<WebKit::SharedMemory::Handle>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    if (UNLIKELY(handle->size() <= headerSize()))
-        return std::nullopt;
-    if (UNLIKELY(handle->size() > headerSize() + maximumSize()))
+    if (UNLIKELY(!sharedMemorySizeIsValid(handle->size())))
         return std::nullopt;
     return Handle { WTFMove(*handle) };
 }

@@ -80,11 +80,14 @@ void GStreamerWebRTCProvider::initializeAudioEncodingCapabilities()
 
 void GStreamerWebRTCProvider::initializeVideoEncodingCapabilities()
 {
+    registerWebKitGStreamerVideoEncoder();
     m_videoEncodingCapabilities = GStreamerRegistryScanner::singleton().videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
-    m_videoEncodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2()](const auto& codec) {
+    m_videoEncodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2(), isSupportingH265 = isSupportingH265()](const auto& codec) {
         if (!isSupportingVP9Profile0 && codec.sdpFmtpLine == "profile-id=0"_s)
             return true;
         if (!isSupportingVP9Profile2 && codec.sdpFmtpLine == "profile-id=2"_s)
+            return true;
+        if (!isSupportingH265 && codec.mimeType == "video/H265"_s)
             return true;
 
         return false;
@@ -99,10 +102,12 @@ void GStreamerWebRTCProvider::initializeAudioDecodingCapabilities()
 void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
 {
     m_videoDecodingCapabilities = GStreamerRegistryScanner::singleton().videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Decoding);
-    m_videoDecodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2()](const auto& codec) {
+    m_videoDecodingCapabilities->codecs.removeAllMatching([isSupportingVP9Profile0 = isSupportingVP9Profile0(), isSupportingVP9Profile2 = isSupportingVP9Profile2(), isSupportingH265 = isSupportingH265()](const auto& codec) {
         if (!isSupportingVP9Profile0 && codec.sdpFmtpLine == "profile-id=0"_s)
             return true;
         if (!isSupportingVP9Profile2 && codec.sdpFmtpLine == "profile-id=2"_s)
+            return true;
+        if (!isSupportingH265 && codec.mimeType == "video/H265"_s)
             return true;
 
         return false;

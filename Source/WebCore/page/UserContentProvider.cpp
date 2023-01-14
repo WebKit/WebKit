@@ -26,6 +26,8 @@
 #include "config.h"
 #include "UserContentProvider.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -102,14 +104,27 @@ static bool contentRuleListsEnabled(const DocumentLoader& documentLoader)
 
     return true;
 }
-    
+
+static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, const Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
+{
+    if (RefPtr frame = initiatingDocumentLoader.frame(); !frame || !frame->isMainFrame())
+        return;
+
+    if (auto adjustedURL = page.chrome().client().sanitizeLookalikeCharacters(url); adjustedURL != url)
+        results.summary.redirectActions.append({ { ContentExtensions::RedirectAction::URLAction { adjustedURL.string() } }, adjustedURL });
+}
+
 ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
 {
-    if (!contentRuleListsEnabled(initiatingDocumentLoader))
-        return { };
+    ContentRuleListResults results;
+    if (contentRuleListsEnabled(initiatingDocumentLoader))
+        results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom);
 
-    return userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom);
+    if (resourceType.contains(ContentExtensions::ResourceType::Document))
+        sanitizeLookalikeCharactersIfNeeded(results, page, url, initiatingDocumentLoader);
+
+    return results;
 }
-#endif
+#endif // ENABLE(CONTENT_EXTENSIONS)
 
 } // namespace WebCore

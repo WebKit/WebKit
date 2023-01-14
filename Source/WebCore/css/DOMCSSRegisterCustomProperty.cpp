@@ -51,14 +51,12 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!syntax)
         return Exception { SyntaxError, "Invalid property syntax definition."_s };
 
+    if (!syntax->isUniversal() && descriptor.initialValue.isNull())
+        return Exception { SyntaxError, "An initial value is mandatory except for the '*' syntax."_s };
+
     RefPtr<CSSCustomPropertyValue> initialValue;
     if (!descriptor.initialValue.isNull()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
-        auto styleResolver = Style::Resolver::create(document);
-
-        // We need to initialize this so that we can successfully parse computationally dependent values (like em units).
-        // We don't actually need the values to be accurate, since they will be rejected later anyway
-        auto style = styleResolver->defaultStyleForElement(nullptr);
 
         HashSet<CSSPropertyID> dependencies;
         CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, true /* isInitial */, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
@@ -66,10 +64,11 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         if (!dependencies.isEmpty())
             return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
 
-        auto parentStyle = RenderStyle::clone(*style);
-        Style::Builder dummyBuilder(*style, { document, parentStyle }, { }, { });
+        // We don't need to provide a real context style since only computationally independent values are allowed (no 'em' etc).
+        auto placeholderStyle = RenderStyle::create();
+        Style::Builder builder { placeholderStyle, { document, RenderStyle::defaultStyle() }, { }, { } };
 
-        initialValue = CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenizer.tokenRange(), dummyBuilder.state(), { document });
+        initialValue = CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenizer.tokenRange(), builder.state(), { document });
 
         if (!initialValue)
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };

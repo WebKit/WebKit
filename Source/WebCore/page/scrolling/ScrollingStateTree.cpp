@@ -106,7 +106,7 @@ ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeT
 {
     LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " createUnparentedNode " << newNodeID);
 
-    if (auto* node = stateNodeForID(newNodeID)) {
+    if (auto node = stateNodeForID(newNodeID)) {
         if (node->nodeType() == nodeType) {
             // If the node exists and is parented, unparent it. It may already be in m_unparentedNodes.
             unparentNode(newNodeID);
@@ -133,9 +133,9 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
     LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " in parent " << parentID << " at " << childIndex);
     ASSERT(newNodeID);
 
-    if (auto* node = stateNodeForID(newNodeID)) {
-        auto* parent = stateNodeForID(parentID);
-        if (nodeTypeAndParentMatch(*node, nodeType, parent)) {
+    if (auto node = stateNodeForID(newNodeID)) {
+        auto parent = stateNodeForID(parentID);
+        if (nodeTypeAndParentMatch(*node, nodeType, parent.get())) {
             if (!parentID)
                 return newNodeID;
 
@@ -176,7 +176,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
-        auto* parent = stateNodeForID(parentID);
+        auto parent = stateNodeForID(parentID);
         if (!parent) {
             ASSERT_NOT_REACHED();
             return 0;
@@ -314,7 +314,7 @@ void ScrollingStateTree::addNode(ScrollingStateNode& node)
 
 void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode& node)
 {
-    auto* parent = node.parent();
+    auto parent = node.parent();
 
     recursiveNodeWillBeRemoved(node);
 
@@ -347,10 +347,10 @@ void ScrollingStateTree::willRemoveNode(ScrollingStateNode& node)
     setHasChangedProperties();
 }
 
-ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID) const
+RefPtr<ScrollingStateNode> ScrollingStateTree::stateNodeForID(ScrollingNodeID nodeID) const
 {
-    auto* node = scrollLayerID ? m_stateNodeMap.get(scrollLayerID) : nullptr;
-    ASSERT(!node || node->scrollingNodeID() == scrollLayerID);
+    RefPtr node = nodeID ? m_stateNodeMap.get(nodeID) : nullptr;
+    RELEASE_ASSERT(!node || node->scrollingNodeID() == nodeID);
     return node;
 }
 
@@ -372,7 +372,7 @@ static void reconcileLayerPositionsRecursive(ScrollingStateNode& currentNode, co
 
 void ScrollingStateTree::reconcileViewportConstrainedLayerPositions(ScrollingNodeID scrollingNodeID, const LayoutRect& layoutViewport, ScrollingLayerPositionAction action)
 {
-    if (auto* scrollingNode = stateNodeForID(scrollingNodeID))
+    if (auto scrollingNode = stateNodeForID(scrollingNodeID))
         reconcileLayerPositionsRecursive(*scrollingNode, layoutViewport, action);
 }
 

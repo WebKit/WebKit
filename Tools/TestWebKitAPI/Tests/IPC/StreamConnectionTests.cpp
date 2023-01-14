@@ -45,7 +45,7 @@ using TestObjectIdentifier = ObjectIdentifier<TestObjectIdentifierTag>;
 
 struct MessageInfo {
     IPC::MessageName messageName;
-    UInt128 destinationID;
+    uint64_t destinationID;
 };
 
 struct MockStreamTestMessage1 {
@@ -171,7 +171,8 @@ public:
     void SetUp() override
     {
         WTF::initializeMainThread();
-        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(10000);
+        constexpr unsigned bufferSizeLog2 = 14;
+        auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(bufferSizeLog2);
         auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), *m_workQueue);
         m_clientConnection = WTFMove(clientConnection);
         m_serverConnection = WTFMove(serverConnection);

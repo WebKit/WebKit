@@ -75,33 +75,43 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const Span<T, Extent>& span)
     {
-        if constexpr (Extent == WTF::dynamic_extent)
-            encoder << static_cast<uint64_t>(span.size());
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(span.data()), span.size() * sizeof(T), alignof(T));
+        static_assert(Extent, "Can't encode a fixed size of 0");
+
+        if constexpr (Extent == WTF::dynamic_extent) {
+            auto size = static_cast<uint64_t>(span.size());
+            encoder << size;
+            if (!size)
+                return;
+        }
+        encoder.encodeSpan(span);
     }
+
     template<typename Decoder>
     static std::optional<Span<T, Extent>> decode(Decoder& decoder)
     {
-        std::optional<uint64_t> size;
+        static_assert(Extent, "Can't decode a fixed size of 0");
+
+        size_t size = Extent;
         if constexpr (Extent == WTF::dynamic_extent) {
-            size = decoder.template decode<uint64_t>();
-            if (!size)
+            auto decodedSize = decoder.template decode<uint64_t>();
+            if (!decodedSize)
                 return std::nullopt;
-            if (!*size)
-                return Span<T, Extent>();
-        } else {
-            size = Extent;
-            static_assert(Extent, "Can't decode a fixed size of 0");
+            if (!*decodedSize)
+                return Span<T, Extent> { };
+
+            if (!isInBounds<size_t>(*decodedSize))
+                return std::nullopt;
+            size = static_cast<size_t>(*decodedSize);
         }
 
-        auto dataSize = CheckedSize { *size } * sizeof(T);
-        if (UNLIKELY(dataSize.hasOverflowed()))
+        auto data = decoder.template decodeSpan<T>(size);
+        if (!data.data() || data.size() != size)
             return std::nullopt;
 
-        const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(T));
-        if (!data)
-            return std::nullopt;
-        return Span<T, Extent>(reinterpret_cast<const T*>(data), static_cast<size_t>(*size));
+        if constexpr (Extent == WTF::dynamic_extent)
+            return data;
+        else
+            return Span<T, Extent> { data.data(), Extent };
     }
 };
 

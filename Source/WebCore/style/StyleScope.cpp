@@ -108,7 +108,7 @@ void Scope::createDocumentResolver()
 
     SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
-    m_resolver = Resolver::create(m_document);
+    m_resolver = Resolver::create(m_document, Resolver::ScopeType::Document);
 
     m_document.fontSelector().buildStarted();
 
@@ -129,7 +129,7 @@ void Scope::createOrFindSharedShadowTreeResolver()
     auto result = documentScope().m_sharedShadowTreeResolvers.ensure(WTFMove(key), [&] {
         SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
-        m_resolver = Resolver::create(m_document);
+        m_resolver = Resolver::create(m_document, Resolver::ScopeType::ShadowTree);
 
         m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);

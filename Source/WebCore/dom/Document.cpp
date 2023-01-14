@@ -112,7 +112,6 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
-#include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLNameCollection.h"
@@ -1003,7 +1002,7 @@ static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& do
     if (Document::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::Valid)
         return HTMLUnknownElement::create(name, document);
 
-    auto element = HTMLMaybeFormAssociatedCustomElement::create(name, document);
+    auto element = HTMLElement::create(name, document);
     element->setIsCustomElementUpgradeCandidate();
     return element;
 }
@@ -1204,7 +1203,7 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
         auto* registry = window->customElementRegistry();
         if (UNLIKELY(registry)) {
             if (RefPtr elementInterface = registry->findInterface(name)) {
-                auto element = elementInterface->createElement(document);
+                auto element = HTMLElement::create(name, document);
                 element->setIsCustomElementUpgradeCandidate();
                 element->enqueueToUpgrade(*elementInterface);
                 return element;

@@ -612,7 +612,7 @@ FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverage
     return unionRect(coverageRect, expandedRect);
 }
 
-String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
+String GraphicsLayer::animationNameForTransition(AnimatedProperty property)
 {
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
     return makeString("-|transition", static_cast<int>(property), '-');
@@ -694,9 +694,9 @@ static inline const FilterOperations& filterOperationsAt(const KeyframeValueList
 int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
 {
 #if ENABLE(FILTERS_LEVEL_2)
-    ASSERT(valueList.property() == AnimatedPropertyFilter || valueList.property() == AnimatedPropertyWebkitBackdropFilter);
+    ASSERT(valueList.property() == AnimatedProperty::Filter || valueList.property() == AnimatedProperty::WebkitBackdropFilter);
 #else
-    ASSERT(valueList.property() == AnimatedPropertyFilter);
+    ASSERT(valueList.property() == AnimatedProperty::Filter);
 #endif
 
     if (valueList.size() < 2)

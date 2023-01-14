@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -65,7 +65,11 @@ GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_VARIABLE = YES
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
-WARNING_CFLAGS = -Wall -W -Wconditional-uninitialized -Wformat=2 -Wno-unused-parameter -Wundef;
+WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) $(WK_FIXME_WARNING_CFLAGS);
+
+// Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
+WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
+
 GCC_PREFIX_HEADER = WebKitTestRunnerPrefix.h
 
 DEBUG_DEFINES = NDEBUG;

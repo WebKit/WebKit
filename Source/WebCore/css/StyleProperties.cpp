@@ -184,7 +184,7 @@ String StyleProperties::commonShorthandChecks(const StylePropertyShorthand& shor
         auto value = property.value();
 
         // Don't serialize if longhands have different CSS-wide keywords.
-        if (!value->isCSSWideKeyword() || value->isImplicitInitialValue()) {
+        if (!isCSSWideKeyword(valueID(*value)) || value->isImplicitInitialValue()) {
             if (specialKeyword)
                 return emptyString();
             allSpecialKeywords = false;

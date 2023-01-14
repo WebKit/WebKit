@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -234,7 +234,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         issue._link = '{}/issues/{}'.format(self.url, issue.id)
         issue._project = self.name
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels'):
+        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels', 'milestone'):
             response = self.request(path='issues/{}'.format(issue.id))
             if response:
                 issue._title = response['title']
@@ -243,6 +243,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 issue._description = response['body']
                 issue._opened = response['state'] != 'closed'
                 issue._assignee = self.user(username=response['assignee']['login']) if response.get('assignee') else None
+                issue._milestone = (response.get('milestone') or {}).get('title', '')
 
                 issue._labels = []
                 for label in response.get('labels', []):
@@ -571,6 +572,11 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         error_messages = []
         for error in json.get('errors', []):
             error_message = '---\tERROR\t---\n'
+
+            if not isinstance(error, dict):
+                error_message += str(error) + '\n'
+                error_messages.append(error_message)
+                continue
 
             code = error.get('code')
             if code:

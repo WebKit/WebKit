@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -113,6 +113,10 @@ class RadarModel(object):
             self.name = user.name
             self.email = user.email
 
+    class Milestone(object):
+        def __init__(self, name):
+            self.name = name
+
     def __init__(self, client, issue):
         from datetime import datetime, timedelta
 
@@ -125,7 +129,7 @@ class RadarModel(object):
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
         self.substate = 'Investigate' if issue['opened'] else None
-        self.milestone = '?'
+        self.milestone = self.Milestone(issue.get('milestone', '?'))
         self.priority = 2
         self.resolution = 'Unresolved' if issue['opened'] else 'Software Changed'
         self.originator = self.Person(Radar.transform_user(issue['creator']))

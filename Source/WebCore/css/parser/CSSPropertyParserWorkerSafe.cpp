@@ -223,6 +223,8 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
             return nullptr;
         format = arg.value().toString();
     }
+    if (!range.atEnd())
+        return nullptr;
 
     return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 }
@@ -232,13 +234,13 @@ static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)
     CSSParserTokenRange args = CSSPropertyParserHelpers::consumeFunction(range);
     if (args.peek().type() == StringToken) {
         auto& arg = args.consumeIncludingWhitespace();
-        if (!args.atEnd())
+        if (!args.atEnd() || !range.atEnd())
             return nullptr;
         return CSSFontFaceSrcLocalValue::create(arg.value().toAtomString());
     }
     if (args.peek().type() == IdentToken) {
         AtomString familyName = CSSPropertyParserHelpers::concatenateFamilyName(args);
-        if (familyName.isNull() || !args.atEnd())
+        if (familyName.isNull() || !args.atEnd() || !range.atEnd())
             return nullptr;
         return CSSFontFaceSrcLocalValue::create(WTFMove(familyName));
     }
@@ -249,16 +251,26 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, const CSSPar
 {
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
 
-    do {
+    auto consumeSrcListComponent = [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
         const CSSParserToken& token = range.peek();
-        RefPtr<CSSValue> parsedValue;
+        if (token.type() == CSSParserTokenType::UrlToken || token.functionId() == CSSValueUrl)
+            return consumeFontFaceSrcURI(range, context);
         if (token.functionId() == CSSValueLocal)
-            parsedValue = consumeFontFaceSrcLocal(range);
-        else
-            parsedValue = consumeFontFaceSrcURI(range, context);
-        if (parsedValue)
+            return consumeFontFaceSrcLocal(range);
+        return nullptr;
+    };
+    while (!range.atEnd()) {
+        auto begin = range.begin();
+        while (!range.atEnd() && range.peek().type() != CSSParserTokenType::CommaToken)
+            range.consumeComponentValue();
+
+        auto subrange = range.makeSubRange(begin, &range.peek());
+        if (auto parsedValue = consumeSrcListComponent(subrange))
             values->append(parsedValue.releaseNonNull());
-    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+        if (!range.atEnd())
+            range.consumeIncludingWhitespace();
+    }
     return values->size() ? values : nullptr;
 }
 

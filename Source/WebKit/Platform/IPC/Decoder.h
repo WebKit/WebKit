@@ -28,6 +28,7 @@
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -51,7 +52,7 @@ public:
     static std::unique_ptr<Decoder> create(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&&);
     using BufferDeallocator = Function<void(const uint8_t*, size_t)>;
     static std::unique_ptr<Decoder> create(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&&, Vector<Attachment>&&);
-    Decoder(const uint8_t* stream, size_t streamSize, UInt128 destinationID);
+    Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationID);
 
     ~Decoder();
 
@@ -62,7 +63,7 @@ public:
 
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
-    UInt128 destinationID() const { return m_destinationID; }
+    uint64_t destinationID() const { return m_destinationID; }
     bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
@@ -91,6 +92,8 @@ public:
     // The data in the returned pointer here will only be valid for the lifetime of the Decoder object.
     // Returns nullptr on failure.
     WARN_UNUSED_RETURN const uint8_t* decodeFixedLengthReference(size_t, size_t alignment);
+    template<typename T>
+    WARN_UNUSED_RETURN Span<const T> decodeSpan(size_t);
 
     template<typename T>
     WARN_UNUSED_RETURN bool decode(T& t)
@@ -170,8 +173,8 @@ private:
     OptionSet<MessageFlags> m_messageFlags;
     MessageName m_messageName;
 
+    uint64_t m_destinationID;
     bool m_isAllowedWhenWaitingForSyncReplyOverride { false };
-    UInt128 m_destinationID;
 
 #if PLATFORM(MAC)
     ImportanceAssertion m_importanceAssertion;
@@ -223,6 +226,22 @@ inline bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t al
     m_bufferPos += size;
 
     return true;
+}
+
+template<typename T>
+inline Span<const T> Decoder::decodeSpan(size_t size)
+{
+    if (size > std::numeric_limits<size_t>::max() / sizeof(T))
+        return { };
+
+    const uint8_t* alignedPosition = roundUpToMultipleOf<alignof(T)>(m_bufferPos);
+    if (UNLIKELY(!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size * sizeof(T)))) {
+        markInvalid();
+        return { };
+    }
+
+    m_bufferPos = alignedPosition + size * sizeof(T);
+    return { reinterpret_cast<const T*>(alignedPosition), size };
 }
 
 } // namespace IPC

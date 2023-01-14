@@ -105,7 +105,7 @@ void LegacyRenderSVGModelObject::styleDidChange(StyleDifference diff, const Rend
 {
     if (diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
-        if (style().hasTransform() || (oldStyle && oldStyle->hasTransform()))
+        if (style().affectsTransform() || (oldStyle && oldStyle->affectsTransform()))
             setNeedsTransformUpdate();
     }
     RenderElement::styleDidChange(diff, oldStyle);

@@ -65,7 +65,6 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/Font.h>
-#include <WebCore/FontAttributes.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBGetResult.h>
@@ -821,39 +820,39 @@ void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperat
     encoder << filter.type();
 
     switch (filter.type()) {
-    case FilterOperation::NONE:
-    case FilterOperation::REFERENCE:
+    case FilterOperation::Type::None:
+    case FilterOperation::Type::Reference:
         ASSERT_NOT_REACHED();
         return;
-    case FilterOperation::GRAYSCALE:
-    case FilterOperation::SEPIA:
-    case FilterOperation::SATURATE:
-    case FilterOperation::HUE_ROTATE:
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate:
         encoder << downcast<BasicColorMatrixFilterOperation>(filter).amount();
         return;
-    case FilterOperation::INVERT:
-    case FilterOperation::OPACITY:
-    case FilterOperation::BRIGHTNESS:
-    case FilterOperation::CONTRAST:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Opacity:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
         encoder << downcast<BasicComponentTransferFilterOperation>(filter).amount();
         return;
-    case FilterOperation::APPLE_INVERT_LIGHTNESS:
-        ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+    case FilterOperation::Type::AppleInvertLightness:
+        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
         return;
-    case FilterOperation::BLUR:
+    case FilterOperation::Type::Blur:
         encoder << downcast<BlurFilterOperation>(filter).stdDeviation();
         return;
-    case FilterOperation::DROP_SHADOW: {
+    case FilterOperation::Type::DropShadow: {
         const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
         encoder << dropShadowFilter.location();
         encoder << dropShadowFilter.stdDeviation();
         encoder << dropShadowFilter.color();
         return;
     }
-    case FilterOperation::DEFAULT:
+    case FilterOperation::Type::Default:
         encoder << downcast<DefaultFilterOperation>(filter).representedType();
         return;
-    case FilterOperation::PASSTHROUGH:
+    case FilterOperation::Type::Passthrough:
         return;
     }
 
@@ -862,46 +861,46 @@ void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperat
 
 bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
 {
-    FilterOperation::OperationType type;
+    FilterOperation::Type type;
     if (!decoder.decode(type))
         return false;
 
     switch (type) {
-    case FilterOperation::NONE:
-    case FilterOperation::REFERENCE:
+    case FilterOperation::Type::None:
+    case FilterOperation::Type::Reference:
         ASSERT_NOT_REACHED();
         return false;
-    case FilterOperation::GRAYSCALE:
-    case FilterOperation::SEPIA:
-    case FilterOperation::SATURATE:
-    case FilterOperation::HUE_ROTATE: {
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate: {
         double amount;
         if (!decoder.decode(amount))
             return false;
         filter = BasicColorMatrixFilterOperation::create(amount, type);
         return true;
     }
-    case FilterOperation::INVERT:
-    case FilterOperation::OPACITY:
-    case FilterOperation::BRIGHTNESS:
-    case FilterOperation::CONTRAST: {
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Opacity:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast: {
         double amount;
         if (!decoder.decode(amount))
             return false;
         filter = BasicComponentTransferFilterOperation::create(amount, type);
         return true;
     }
-    case FilterOperation::APPLE_INVERT_LIGHTNESS:
-        ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+    case FilterOperation::Type::AppleInvertLightness:
+        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
         return false;
-    case FilterOperation::BLUR: {
+    case FilterOperation::Type::Blur: {
         Length stdDeviation;
         if (!decoder.decode(stdDeviation))
             return false;
         filter = BlurFilterOperation::create(stdDeviation);
         return true;
     }
-    case FilterOperation::DROP_SHADOW: {
+    case FilterOperation::Type::DropShadow: {
         IntPoint location;
         int stdDeviation;
         Color color;
@@ -914,14 +913,14 @@ bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
         filter = DropShadowFilterOperation::create(location, stdDeviation, color);
         return true;
     }
-    case FilterOperation::DEFAULT: {
-        FilterOperation::OperationType representedType;
+    case FilterOperation::Type::Default: {
+        FilterOperation::Type representedType;
         if (!decoder.decode(representedType))
             return false;
         filter = DefaultFilterOperation::create(representedType);
         return true;
     }
-    case FilterOperation::PASSTHROUGH:
+    case FilterOperation::Type::Passthrough:
         filter = PassthroughFilterOperation::create();
         return true;
     }
@@ -1184,75 +1183,6 @@ std::optional<Ref<SecurityOrigin>> ArgumentCoder<Ref<SecurityOrigin>>::decode(De
     if (!origin)
         return std::nullopt;
     return origin.releaseNonNull();
-}
-
-void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
-{
-    encoder << attributes.backgroundColor;
-    encoder << attributes.foregroundColor;
-    encoder << attributes.fontShadow;
-    encoder << attributes.hasUnderline;
-    encoder << attributes.hasStrikeThrough;
-    encoder << attributes.hasMultipleFonts;
-    encoder << attributes.textLists;
-    encoder << attributes.horizontalAlignment;
-    encoder << attributes.subscriptOrSuperscript;
-    encoder << attributes.font;
-}
-
-std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
-{
-    std::optional<Color> backgroundColor;
-    decoder >> backgroundColor;
-    if (!backgroundColor)
-        return std::nullopt;
-
-    std::optional<Color> foregroundColor;
-    decoder >> foregroundColor;
-    if (!foregroundColor)
-        return std::nullopt;
-
-    std::optional<FontShadow> fontShadow;
-    decoder >> fontShadow;
-    if (!fontShadow)
-        return std::nullopt;
-
-    std::optional<bool> hasUnderline;
-    decoder >> hasUnderline;
-    if (!hasUnderline)
-        return std::nullopt;
-
-    std::optional<bool> hasStrikeThrough;
-    decoder >> hasStrikeThrough;
-    if (!hasStrikeThrough)
-        return std::nullopt;
-
-    std::optional<bool> hasMultipleFonts;
-    decoder >> hasMultipleFonts;
-    if (!hasMultipleFonts)
-        return std::nullopt;
-
-    std::optional<Vector<TextList>> textLists;
-    decoder >> textLists;
-    if (!textLists)
-        return std::nullopt;
-
-    std::optional<FontAttributes::HorizontalAlignment> horizontalAlignment;
-    decoder >> horizontalAlignment;
-    if (!horizontalAlignment)
-        return std::nullopt;
-
-    std::optional<FontAttributes::SubscriptOrSuperscript> subscriptOrSuperscript;
-    decoder >> subscriptOrSuperscript;
-    if (!subscriptOrSuperscript)
-        return std::nullopt;
-
-    std::optional<RefPtr<Font>> font;
-    decoder >> font;
-    if (!font)
-        return std::nullopt;
-
-    return { { WTFMove(*font), WTFMove(*backgroundColor), WTFMove(*foregroundColor), WTFMove(*fontShadow), *subscriptOrSuperscript, *horizontalAlignment, WTFMove(*textLists), *hasUnderline, *hasStrikeThrough, *hasMultipleFonts } };
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

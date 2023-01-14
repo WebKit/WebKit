@@ -783,6 +783,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 {
+    // Decompression sessions do not support encrypted content; force layer
+    // creation.
+    if (m_mediaSourcePrivate && m_mediaSourcePrivate->cdmInstance())
+        return true;
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     return isCopyDisplayedPixelBufferAvailable() && [&] {
         if (m_mediaSourcePrivate && anyOf(m_mediaSourcePrivate->sourceBuffers(), [] (auto& sourceBuffer) {
@@ -1202,6 +1206,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& inst
     ALWAYS_LOG(LOGIDENTIFIER);
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->cdmInstanceAttached(instance);
+
+    updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& instance)
@@ -1209,6 +1215,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& inst
     ALWAYS_LOG(LOGIDENTIFIER);
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->cdmInstanceDetached(instance);
+
+    updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance& instance)

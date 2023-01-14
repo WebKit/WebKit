@@ -1627,6 +1627,13 @@ imported/w3c/web-platform-tests/css/selectors/xml-class-selector.xml [ ImageOnly
 webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/child-indexed-no-parent.html [ ImageOnlyFailure ]
 webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 
+# :nth-child(n of S) invalidation
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-class.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-has.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-in-ancestor.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-sibling.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ ImageOnlyFailure ]
+
 # This test is bit heavy for debug
 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html [ Skip ]
 
@@ -5939,6 +5946,11 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multi
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html [ ImageOnlyFailure ]
 
+# New failures after import of css/css-variables
+imported/w3c/web-platform-tests/css/css-variables/variable-declaration-29.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-variables/variable-reference-visited.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-variables/variable-supports-58.html [ ImageOnlyFailure ]
+
 # WPT tests that are timing out.
 imported/w3c/web-platform-tests/FileAPI/url/unicode-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.html [ Skip ]
@@ -5960,10 +5972,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-transitions/non-rendered-element-004.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-variables/variable-reference-refresh.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-variables/variable-transitions-from-no-value.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-variables/variable-transitions-to-no-value.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-variables/variable-transitions-transition-property-variable-before-value.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-variable.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Skip ]

@@ -48,7 +48,6 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static constexpr size_t defaultStreamSize = 1 << 21;
 static constexpr size_t readPixelsInlineSizeLimit = 64 * KB;
 
 namespace {
@@ -74,7 +73,8 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& conn
     : GraphicsContextGL(attributes)
     , m_videoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy))
 {
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultStreamSize);
+    constexpr unsigned connectionBufferSizeLog2 = 21;
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
     m_streamConnection = WTFMove(clientConnection);
     m_connection = &connection;
     m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);

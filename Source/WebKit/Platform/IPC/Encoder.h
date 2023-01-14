@@ -29,7 +29,6 @@
 #include "MessageNames.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
-#include <wtf/Int128.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
@@ -43,7 +42,7 @@ template<typename, typename> struct ArgumentCoder;
 class Encoder final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Encoder(MessageName, UInt128 destinationID);
+    Encoder(MessageName, uint64_t destinationID);
     ~Encoder();
 
     Encoder(const Encoder&) = delete;
@@ -53,7 +52,7 @@ public:
 
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
-    UInt128 destinationID() const { return m_destinationID; }
+    uint64_t destinationID() const { return m_destinationID; }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
 
@@ -69,6 +68,8 @@ public:
     void wrapForTesting(UniqueRef<Encoder>&&);
 
     void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
+    template<typename T, size_t Extent>
+    void encodeSpan(const Span<T, Extent>&);
 
     template<typename T>
     Encoder& operator<<(T&& t)
@@ -96,7 +97,7 @@ private:
     OptionSet<MessageFlags>& messageFlags();
 
     MessageName m_messageName;
-    UInt128 m_destinationID;
+    uint64_t m_destinationID;
 
     uint8_t m_inlineBuffer[512];
 
@@ -108,5 +109,11 @@ private:
 
     Vector<Attachment> m_attachments;
 };
+
+template<typename T, size_t Extent>
+inline void Encoder::encodeSpan(const Span<T, Extent>& data)
+{
+    encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+}
 
 } // namespace IPC

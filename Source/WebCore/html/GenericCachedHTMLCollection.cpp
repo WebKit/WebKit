@@ -75,7 +75,7 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
     case DocAnchors:
         return element.hasTagName(aTag) && element.hasAttributeWithoutSynchronization(nameAttr);
     case FieldSetElements:
-        return element.isFormListedElement();
+        return is<HTMLObjectElement>(element) || is<HTMLFormControlElement>(element);
     case ByClass:
     case ByTag:
     case ByHTMLTag:

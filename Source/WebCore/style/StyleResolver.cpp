@@ -41,6 +41,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "CompositeOperation.h"
+#include "Document.h"
 #include "ElementRuleCollector.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -134,15 +135,21 @@ private:
     std::unique_ptr<RenderStyle> m_userAgentAppearanceStyle;
 };
 
-Ref<Resolver> Resolver::create(Document& document)
+Ref<Resolver> Resolver::create(Document& document, ScopeType scopeType)
 {
-    return adoptRef(*new Resolver(document));
+    return adoptRef(*new Resolver(document, scopeType));
 }
 
-Resolver::Resolver(Document& document)
-    : m_ruleSets(*this)
-    , m_document(document)
-    , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
+Resolver::Resolver(Document& document, ScopeType scopeType)
+    : m_document(document)
+    , m_scopeType(scopeType)
+    , m_ruleSets(*this)
+    , m_matchAuthorAndUserStyles(settings().authorAndUserStylesEnabled())
+{
+    initialize();
+}
+
+void Resolver::initialize()
 {
     UserAgentStyle::initDefaultStyleSheet();
 
@@ -152,34 +159,51 @@ Resolver::Resolver(Document& document)
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
-    FrameView* view = m_document.view();
+    FrameView* view = document().view();
     if (view)
         m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType() };
     else
         m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { };
 
-    if (auto* documentElement = m_document.documentElement()) {
-        m_rootDefaultStyle = styleForElement(*documentElement, { m_document.initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).style;
+    if (auto* documentElement = document().documentElement()) {
+        m_rootDefaultStyle = styleForElement(*documentElement, { document().initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).style;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
-        m_document.fontSelector().incrementIsComputingRootStyleFont();
-        m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
+        document().fontSelector().incrementIsComputingRootStyleFont();
+        m_rootDefaultStyle->fontCascade().update(&document().fontSelector());
         m_rootDefaultStyle->fontCascade().primaryFont();
-        m_document.fontSelector().decrementIsComputingRootStyleFont();
+        document().fontSelector().decrementIsComputingRootStyleFont();
     }
 
     if (m_rootDefaultStyle && view)
-        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };
+        m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType(), document(), m_rootDefaultStyle.get() };
 
     m_ruleSets.resetAuthorStyle();
     m_ruleSets.resetUserAgentMediaQueryStyle();
 }
 
+Resolver::~Resolver() = default;
+
+Document& Resolver::document()
+{
+    return *m_document;
+}
+
+const Document& Resolver::document() const
+{
+    return *m_document;
+}
+
+const Settings& Resolver::settings() const
+{
+    return document().settings();
+}
+
 void Resolver::addCurrentSVGFontFaceRules()
 {
-    if (m_document.svgExtensions()) {
-        auto& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
+    if (document().svgExtensions()) {
+        auto& svgFontFaceElements = document().svgExtensions()->svgFontFaceElements();
         for (auto& svgFontFaceElement : svgFontFaceElements)
-            m_document.fontSelector().addFontFaceRule(svgFontFaceElement.fontFaceRule(), svgFontFaceElement.isInUserAgentShadowTree());
+            document().fontSelector().addFontFaceRule(svgFontFaceElement.fontFaceRule(), svgFontFaceElement.isInUserAgentShadowTree());
     }
 }
 
@@ -196,12 +220,7 @@ void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
     auto& animationName = rule->name();
     m_keyframesRuleMap.set(animationName, WTFMove(rule));
-    m_document.keyframesRuleDidChange(animationName);
-}
-
-Resolver::~Resolver()
-{
-    RELEASE_ASSERT(!m_document.isResolvingTreeStyle());
+    document().keyframesRuleDidChange(animationName);
 }
 
 static inline bool isAtShadowBoundary(const Element& element)
@@ -212,7 +231,7 @@ static inline bool isAtShadowBoundary(const Element& element)
 BuilderContext Resolver::builderContext(const State& state)
 {
     return {
-        m_document,
+        document(),
         *state.parentStyle(),
         state.rootElementStyle(),
         state.element()
@@ -293,7 +312,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
                 else
                     keyframeValue.addProperty(resolvedProperty);
             }
-            if (value->isRevertValue())
+            if (isValueID(*value, CSSValueRevert))
                 hasRevert = true;
         }
     }
@@ -482,11 +501,11 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
 
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 {
-    auto* documentElement = m_document.documentElement();
+    auto* documentElement = document().documentElement();
     if (!documentElement || !documentElement->renderStyle())
         return RenderStyle::createPtr();
 
-    auto state = State(*documentElement, m_document.initialContainingBlockStyle());
+    auto state = State(*documentElement, document().initialContainingBlockStyle());
 
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());

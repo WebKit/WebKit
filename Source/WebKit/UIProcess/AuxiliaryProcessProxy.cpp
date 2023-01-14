@@ -254,12 +254,12 @@ void AuxiliaryProcessProxy::addMessageReceiver(IPC::ReceiverName messageReceiver
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void AuxiliaryProcessProxy::addMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID, IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcessProxy::addMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
 
-void AuxiliaryProcessProxy::removeMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID)
+void AuxiliaryProcessProxy::removeMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }

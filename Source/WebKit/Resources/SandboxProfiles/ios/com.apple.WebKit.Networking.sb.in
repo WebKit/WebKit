@@ -49,10 +49,18 @@
 
 (allow socket-option-set
     (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 27 61)))
+
+(allow socket-option-set
+    (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
+            SO_NECP_LISTENUUID
             SO_NOSIGPIPE
-            SO_RCVBUF)))
+            SO_RCVBUF
+            SO_REUSEADDR
+            SO_REUSEPORT)))
 #endif
 
 (allow system-privilege (with grant)

@@ -251,7 +251,7 @@ public:
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
-    TransformationMatrix transformMatrixForProperty(AnimatedPropertyID) const final;
+    TransformationMatrix transformMatrixForProperty(AnimatedProperty) const final;
 
 #if PLATFORM(IOS_FAMILY)
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
@@ -394,8 +394,8 @@ private:
     
     void paintDebugOverlays(const GraphicsLayer*, GraphicsContext&);
 
-    static CSSPropertyID graphicsLayerToCSSProperty(AnimatedPropertyID);
-    static AnimatedPropertyID cssToGraphicsLayerProperty(CSSPropertyID);
+    static CSSPropertyID graphicsLayerToCSSProperty(AnimatedProperty);
+    static AnimatedProperty cssToGraphicsLayerProperty(CSSPropertyID);
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;

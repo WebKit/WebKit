@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,8 +24,9 @@ import sys
 
 from .branch import Branch
 from .command import Command
+from .trace import Trace, Relationship
 from webkitbugspy import Tracker, radar
-from webkitcorepy import run
+from webkitcorepy import arguments, run
 from webkitscmpy import local
 
 
@@ -40,6 +41,12 @@ class CherryPick(Command):
             'argument', nargs=1,
             type=str, default=None,
             help='String representation of a commit to be cherry-picked',
+        )
+        parser.add_argument(
+            '--use-original', '--no-original',
+            dest='original', default=True,
+            help='When cherry-picking a cherry-pick, use the original commit instead of a double cherry-pick.',
+            action=arguments.NoAction,
         )
 
     @classmethod
@@ -58,6 +65,12 @@ class CherryPick(Command):
             # to the user as an error
             sys.stderr.write(str(exception) + '\n')
             return 1
+
+        if args.original:
+            for relation in (Trace.relationships(commit, repository) or []):
+                if relation.type in Relationship.IDENTITY:
+                    commit = relation.commit
+                    break
 
         issue = Tracker.from_string(args.issue) if args.issue else None
         if not issue and commit.issues:

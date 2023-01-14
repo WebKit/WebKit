@@ -17,6 +17,7 @@ PASS syntax:'*', initialValue:'([ brackets ]) { yay (??)}' is valid
 PASS syntax:'*', initialValue:'yep 'this is valid too'' is valid
 PASS syntax:'*', initialValue:'unmatched opening bracket is valid :(' is valid
 PASS syntax:'*', initialValue:'"' is valid
+PASS syntax:'*', initialValue:'default' is valid
 PASS syntax:'<length>', initialValue:'0' is valid
 PASS syntax:'<length>', initialValue:'10px /*:)*/' is valid
 PASS syntax:'<length>', initialValue:' calc(-2px)' is valid
@@ -124,7 +125,6 @@ PASS syntax:'*', initialValue:'inherit' is invalid
 PASS syntax:'*', initialValue:'unset' is invalid
 PASS syntax:'*', initialValue:'revert' is invalid
 PASS syntax:'*', initialValue:'revert-layer' is invalid
-FAIL syntax:'*', initialValue:'default' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 PASS syntax:'<custom-ident>', initialValue:'initial' is invalid
 PASS syntax:'<custom-ident>', initialValue:'inherit' is invalid
 PASS syntax:'<custom-ident>', initialValue:'unset' is invalid

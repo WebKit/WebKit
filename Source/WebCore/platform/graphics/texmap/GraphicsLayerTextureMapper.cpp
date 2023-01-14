@@ -598,7 +598,7 @@ bool GraphicsLayerTextureMapper::filtersCanBeComposited(const FilterOperations& 
         return false;
 
     for (const auto& filterOperation : filters.operations()) {
-        if (filterOperation->type() == FilterOperation::REFERENCE)
+        if (filterOperation->type() == FilterOperation::Type::Reference)
             return false;
     }
 
@@ -609,10 +609,10 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
 {
     ASSERT(!keyframesName.isEmpty());
 
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyTransform && valueList.property() != AnimatedPropertyOpacity))
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedProperty::Transform && valueList.property() != AnimatedProperty::Opacity))
         return false;
 
-    if (valueList.property() == AnimatedPropertyFilter) {
+    if (valueList.property() == AnimatedProperty::Filter) {
         int listIndex = validateFilterOperations(valueList);
         if (listIndex < 0)
             return false;

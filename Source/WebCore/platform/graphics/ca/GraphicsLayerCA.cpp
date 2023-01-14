@@ -255,29 +255,34 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
     }
 }
 
-static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
+static ASCIILiteral propertyIdToString(AnimatedProperty property)
 {
     switch (property) {
-    case AnimatedPropertyTranslate:
-    case AnimatedPropertyScale:
-    case AnimatedPropertyRotate:
-    case AnimatedPropertyTransform:
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Scale:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Transform:
         return "transform"_s;
-    case AnimatedPropertyOpacity:
+    case AnimatedProperty::Opacity:
         return "opacity"_s;
-    case AnimatedPropertyBackgroundColor:
+    case AnimatedProperty::BackgroundColor:
         return "backgroundColor"_s;
-    case AnimatedPropertyFilter:
+    case AnimatedProperty::Filter:
         return "filters"_s;
 #if ENABLE(FILTERS_LEVEL_2)
-    case AnimatedPropertyWebkitBackdropFilter:
+    case AnimatedProperty::WebkitBackdropFilter:
         return "backdropFilters"_s;
 #endif
-    case AnimatedPropertyInvalid:
+    case AnimatedProperty::Invalid:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
     return { };
+}
+
+static bool animatedPropertyIsTransformOrRelated(AnimatedProperty property)
+{
+    return property == AnimatedProperty::Transform || property == AnimatedProperty::Translate || property == AnimatedProperty::Scale || property == AnimatedProperty::Rotate;
 }
 
 static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
@@ -719,9 +724,9 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
 {
     for (auto& animationGroup : m_animationGroups) {
         if ((animatedPropertyIsTransformOrRelated(animationGroup.m_property)
-            || animationGroup.m_property == AnimatedPropertyOpacity
-            || animationGroup.m_property == AnimatedPropertyBackgroundColor
-            || animationGroup.m_property == AnimatedPropertyFilter))
+            || animationGroup.m_property == AnimatedProperty::Opacity
+            || animationGroup.m_property == AnimatedProperty::BackgroundColor
+            || animationGroup.m_property == AnimatedProperty::Filter))
             moveOrCopyLayerAnimation(operation, animationGroup.animationIdentifier(), animationGroup.computedBeginTime(), fromLayer, toLayer);
     }
 }
@@ -1121,12 +1126,12 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
     bool createdAnimations = false;
     if (animatedPropertyIsTransformOrRelated(valueList.property()))
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, boxSize, keyframesShouldUseAnimationWideTimingFunction);
-    else if (valueList.property() == AnimatedPropertyFilter) {
+    else if (valueList.property() == AnimatedProperty::Filter) {
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
     }
 #if ENABLE(FILTERS_LEVEL_2)
-    else if (valueList.property() == AnimatedPropertyWebkitBackdropFilter) {
+    else if (valueList.property() == AnimatedProperty::WebkitBackdropFilter) {
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
     }
@@ -3090,12 +3095,12 @@ void GraphicsLayerCA::updateAnimations()
     auto infiniteDuration = std::numeric_limits<double>::max();
     auto currentTime = Seconds(CACurrentMediaTime());
 
-    auto addAnimationGroup = [&](AnimatedPropertyID property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
+    auto addAnimationGroup = [&](AnimatedProperty property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
         auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, emptyString());
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
 
-        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, UUID::createVersion4()), property, 0, 0, 0_s);
+        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, UUID::createVersion4()), property, 0, 0_s);
         animationGroup.m_beginTime = animationGroupBeginTime;
 
         setAnimationOnLayer(animationGroup);
@@ -3125,7 +3130,7 @@ void GraphicsLayerCA::updateAnimations()
     };
 
     enum class TransformationMatrixSource { UseIdentityMatrix, AskClient };
-    auto makeBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) -> LayerPropertyAnimation* {
+    auto makeBaseValueTransformAnimation = [&](AnimatedProperty property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) -> LayerPropertyAnimation* {
         // A base value transform animation can either be set to the identity matrix or to read the underlying
         // value from the GraphicsLayerClient. If we didn't explicitly ask for an identity matrix, we can skip
         // the addition of this base value transform animation since it will be a no-op.
@@ -3143,7 +3148,7 @@ void GraphicsLayerCA::updateAnimations()
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
 
-        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, UUID::createVersion4()), property, 0, 0, 0_s);
+        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, UUID::createVersion4()), property, 0, 0_s);
         if (delay)
             animation.m_beginTime = currentTime - animationGroupBeginTime;
 
@@ -3151,7 +3156,7 @@ void GraphicsLayerCA::updateAnimations()
         return &m_baseValueTransformAnimations.last();
     };
 
-    auto addBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) {
+    auto addBaseValueTransformAnimation = [&](AnimatedProperty property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) {
         // Additivity will depend on the source of the matrix, if it was explicitly provided as an identity matrix, it
         // is the initial base value transform animation and must override the current transform value for this layer.
         // Otherwise, it is meant to apply the underlying value for one specific transform-related property and be additive
@@ -3194,16 +3199,16 @@ void GraphicsLayerCA::updateAnimations()
 
     for (auto& animation : m_animations) {
         switch (animation.m_property) {
-        case AnimatedPropertyTranslate:
+        case AnimatedProperty::Translate:
             translateAnimation = &animation;
             break;
-        case AnimatedPropertyScale:
+        case AnimatedProperty::Scale:
             scaleAnimation = &animation;
             break;
-        case AnimatedPropertyRotate:
+        case AnimatedProperty::Rotate:
             rotateAnimation = &animation;
             break;
-        case AnimatedPropertyTransform:
+        case AnimatedProperty::Transform:
             // In the case of animations targeting the "transform" CSS property, there may be several
             // animations created for a single KeyframeEffect, one for each transform component. In that
             // case the animation index starts at 0 and increases for each component. If we encounter an
@@ -3214,15 +3219,15 @@ void GraphicsLayerCA::updateAnimations()
                 transformAnimations.clear();
             transformAnimations.append(&animation);
             break;
-        case AnimatedPropertyOpacity:
-        case AnimatedPropertyBackgroundColor:
-        case AnimatedPropertyFilter:
+        case AnimatedProperty::Opacity:
+        case AnimatedProperty::BackgroundColor:
+        case AnimatedProperty::Filter:
 #if ENABLE(FILTERS_LEVEL_2)
-        case AnimatedPropertyWebkitBackdropFilter:
+        case AnimatedProperty::WebkitBackdropFilter:
 #endif
             addLeafAnimation(animation);
             break;
-        case AnimatedPropertyInvalid:
+        case AnimatedProperty::Invalid:
             ASSERT_NOT_REACHED();
         }
     }
@@ -3240,9 +3245,9 @@ void GraphicsLayerCA::updateAnimations()
     if (!translateAnimations.isEmpty() || !scaleAnimations.isEmpty() || !rotateAnimations.isEmpty() || !transformAnimations.isEmpty()) {
         // Start with a base identity transform to override the transform applied to the layer and have a
         // sound base to add animations on top of with additivity enabled.
-        addBaseValueTransformAnimation(AnimatedPropertyTransform, TransformationMatrixSource::UseIdentityMatrix);
+        addBaseValueTransformAnimation(AnimatedProperty::Transform, TransformationMatrixSource::UseIdentityMatrix);
 
-        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
+        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedProperty property) {
             if (animations.isEmpty()) {
                 addBaseValueTransformAnimation(property);
                 return;
@@ -3280,10 +3285,10 @@ void GraphicsLayerCA::updateAnimations()
             addAnimationGroup(property, caAnimations);
         };
 
-        addAnimationsForProperty(transformAnimations, AnimatedPropertyTransform);
-        addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
-        addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
-        addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
+        addAnimationsForProperty(transformAnimations, AnimatedProperty::Transform);
+        addAnimationsForProperty(scaleAnimations, AnimatedProperty::Scale);
+        addAnimationsForProperty(rotateAnimations, AnimatedProperty::Rotate);
+        addAnimationsForProperty(translateAnimations, AnimatedProperty::Translate);
     }
 }
 
@@ -3416,7 +3421,7 @@ static bool isKeyframe(const KeyframeValueList& list)
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    ASSERT(!animatedPropertyIsTransformOrRelated(valueList.property()) && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyFilter));
+    ASSERT(!animatedPropertyIsTransformOrRelated(valueList.property()) && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedProperty::Filter));
 
     bool valuesOK;
     
@@ -3439,7 +3444,7 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     if (!valuesOK)
         return false;
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, 0, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
 
     return true;
 }
@@ -3462,7 +3467,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     if (!validMatrices)
         return false;
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, 0, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
     return true;
 }
 
@@ -3538,33 +3543,28 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    FilterOperation::OperationType filterOp = operation->type();
-    int numAnimatedProperties = PlatformCAFilters::numAnimatedFilterProperties(filterOp);
-    
-    // Each filter might need to animate multiple properties, each with their own keyPath. The keyPath is always of the form:
+    auto filterOp = operation->type();
+    if (!PlatformCAFilters::isAnimatedFilterProperty(filterOp))
+        return true;
+
+    // The keyPath is always of the form:
     //
     //      filter.filter_<animationIndex>.<filterPropertyName>
-    //
-    // PlatformCAAnimation tells us how many properties each filter has and we iterate that many times and create an animation
-    // for each. This internalFilterPropertyIndex gets passed to PlatformCAAnimation so it can properly create the property animation
-    // values.
-    for (int internalFilterPropertyIndex = 0; internalFilterPropertyIndex < numAnimatedProperties; ++internalFilterPropertyIndex) {
-        bool valuesOK;
-        RefPtr<PlatformCAAnimation> caAnimation;
-        auto keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
-        
-        if (isKeyframe(valueList)) {
-            caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-            valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
-        } else {
-            caAnimation = createBasicAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-            valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex);
-        }
-        
-        ASSERT_UNUSED(valuesOK, valuesOK);
+    bool valuesOK;
+    RefPtr<PlatformCAAnimation> caAnimation;
+    auto keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp));
 
-        m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, internalFilterPropertyIndex, timeOffset));
+    if (isKeyframe(valueList)) {
+        caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
+    } else {
+        caAnimation = createBasicAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex);
     }
+
+    ASSERT_UNUSED(valuesOK, valuesOK);
+
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
 
     return true;
 }
@@ -3572,9 +3572,9 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
 #if ENABLE(FILTERS_LEVEL_2)
-    ASSERT(valueList.property() == AnimatedPropertyFilter || valueList.property() == AnimatedPropertyWebkitBackdropFilter);
+    ASSERT(valueList.property() == AnimatedProperty::Filter || valueList.property() == AnimatedProperty::WebkitBackdropFilter);
 #else
-    ASSERT(valueList.property() == AnimatedPropertyFilter);
+    ASSERT(valueList.property() == AnimatedProperty::Filter);
 #endif
 
     int listIndex = validateFilterOperations(valueList);
@@ -3590,7 +3590,7 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
 
     // FIXME: We can't currently hardware animate shadows.
     for (int i = 0; i < numAnimations; ++i) {
-        if (operations.at(i)->type() == FilterOperation::DROP_SHADOW)
+        if (operations.at(i)->type() == FilterOperation::Type::DropShadow)
             return false;
     }
 
@@ -3691,7 +3691,7 @@ bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, 
     unsigned toIndex = forwards;
     
     switch (valueList.property()) {
-    case AnimatedPropertyOpacity: {
+    case AnimatedProperty::Opacity: {
         basicAnim->setFromValue(static_cast<const FloatAnimationValue&>(valueList.at(fromIndex)).value());
         basicAnim->setToValue(static_cast<const FloatAnimationValue&>(valueList.at(toIndex)).value());
         break;
@@ -3718,7 +3718,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         switch (valueList.property()) {
-        case AnimatedPropertyOpacity: {
+        case AnimatedProperty::Opacity: {
             const FloatAnimationValue& floatValue = static_cast<const FloatAnimationValue&>(curValue);
             values.append(floatValue.value());
             break;
@@ -3860,7 +3860,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, int internalFilterPropertyIndex)
+bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex)
 {
     ASSERT(valueList.size() == 2);
 
@@ -3890,13 +3890,13 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
         toOperation = defaultToOperation.get();
     }
 
-    basicAnim->setFromValue(fromOperation, internalFilterPropertyIndex);
-    basicAnim->setToValue(toOperation, internalFilterPropertyIndex);
+    basicAnim->setFromValue(fromOperation);
+    basicAnim->setToValue(toOperation);
 
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
     Vector<RefPtr<FilterOperation>> values;
@@ -3923,7 +3923,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
-    keyframeAnim->setValues(values, internalFilterPropertyIndex);
+    keyframeAnim->setValues(values);
     keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
 
     return true;
@@ -3974,13 +3974,13 @@ PlatformCALayer* GraphicsLayerCA::layerForSuperlayer() const
     return m_structuralLayer ? m_structuralLayer.get() : m_layer.get();
 }
 
-PlatformCALayer* GraphicsLayerCA::animatedLayer(AnimatedPropertyID property) const
+PlatformCALayer* GraphicsLayerCA::animatedLayer(AnimatedProperty property) const
 {
     switch (property) {
-    case AnimatedPropertyBackgroundColor:
+    case AnimatedProperty::BackgroundColor:
         return m_contentsLayer.get();
 #if ENABLE(FILTERS_LEVEL_2)
-    case AnimatedPropertyWebkitBackdropFilter:
+    case AnimatedProperty::WebkitBackdropFilter:
         // FIXME: Should be just m_backdropLayer.get(). Also, add an ASSERT(m_backdropLayer) here when https://bugs.webkit.org/show_bug.cgi?id=145322 is fixed.
         return m_backdropLayer ? m_backdropLayer.get() : primaryLayer();
 #endif
@@ -3997,12 +3997,12 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::primaryLayerClones() const
     return m_structuralLayer ? &m_layerClones->structuralLayerClones : &m_layerClones->primaryLayerClones;
 }
 
-GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedPropertyID property) const
+GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty property) const
 {
     if (!m_layerClones)
         return nullptr;
 
-    return (property == AnimatedPropertyBackgroundColor) ? &m_layerClones->contentsLayerClones : primaryLayerClones();
+    return (property == AnimatedProperty::BackgroundColor) ? &m_layerClones->contentsLayerClones : primaryLayerClones();
 }
 
 void GraphicsLayerCA::updateRootRelativeScale()
@@ -4228,19 +4228,19 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
     ts << indent << ")\n";
 }
 
-static TextStream& operator<<(TextStream& textStream, AnimatedPropertyID propertyID)
+static TextStream& operator<<(TextStream& textStream, AnimatedProperty propertyID)
 {
     switch (propertyID) {
-    case AnimatedPropertyInvalid: textStream << "invalid"; break;
-    case AnimatedPropertyTranslate: textStream << "translate"; break;
-    case AnimatedPropertyScale: textStream << "scale"; break;
-    case AnimatedPropertyRotate: textStream << "rotate"; break;
-    case AnimatedPropertyTransform: textStream << "transform"; break;
-    case AnimatedPropertyOpacity: textStream << "opacity"; break;
-    case AnimatedPropertyBackgroundColor: textStream << "background-color"; break;
-    case AnimatedPropertyFilter: textStream << "filter"; break;
+    case AnimatedProperty::Invalid: textStream << "invalid"; break;
+    case AnimatedProperty::Translate: textStream << "translate"; break;
+    case AnimatedProperty::Scale: textStream << "scale"; break;
+    case AnimatedProperty::Rotate: textStream << "rotate"; break;
+    case AnimatedProperty::Transform: textStream << "transform"; break;
+    case AnimatedProperty::Opacity: textStream << "opacity"; break;
+    case AnimatedProperty::BackgroundColor: textStream << "background-color"; break;
+    case AnimatedProperty::Filter: textStream << "filter"; break;
 #if ENABLE(FILTERS_LEVEL_2)
-    case AnimatedPropertyWebkitBackdropFilter: textStream << "backdrop-filter"; break;
+    case AnimatedProperty::WebkitBackdropFilter: textStream << "backdrop-filter"; break;
 #endif
     }
     return textStream;
@@ -4255,7 +4255,6 @@ void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, const char* ca
             textStream.dumpProperty("CA animation", animation.m_animation.get());
             textStream.dumpProperty("property", animation.m_property);
             textStream.dumpProperty("index", animation.m_index);
-            textStream.dumpProperty("subindex", animation.m_subIndex);
             textStream.dumpProperty("time offset", animation.m_timeOffset);
             textStream.dumpProperty("begin time", animation.m_beginTime);
             textStream.dumpProperty("play state", (unsigned)animation.m_playState);
@@ -4873,25 +4872,25 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     return m_layer->backingStoreBytesPerPixel() * size().width() * m_layer->contentsScale() * size().height() * m_layer->contentsScale();
 }
 
-static String animatedPropertyIDAsString(AnimatedPropertyID property)
+static String animatedPropertyIDAsString(AnimatedProperty property)
 {
     switch (property) {
-    case AnimatedPropertyTranslate:
-    case AnimatedPropertyScale:
-    case AnimatedPropertyRotate:
-    case AnimatedPropertyTransform:
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Scale:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Transform:
         return "transform"_s;
-    case AnimatedPropertyOpacity:
+    case AnimatedProperty::Opacity:
         return "opacity"_s;
-    case AnimatedPropertyBackgroundColor:
+    case AnimatedProperty::BackgroundColor:
         return "background-color"_s;
-    case AnimatedPropertyFilter:
+    case AnimatedProperty::Filter:
         return "filter"_s;
 #if ENABLE(FILTERS_LEVEL_2)
-    case AnimatedPropertyWebkitBackdropFilter:
+    case AnimatedProperty::WebkitBackdropFilter:
         return "backdrop-filter"_s;
 #endif
-    case AnimatedPropertyInvalid:
+    case AnimatedProperty::Invalid:
         return "invalid"_s;
     }
     ASSERT_NOT_REACHED();

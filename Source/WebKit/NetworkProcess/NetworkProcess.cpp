@@ -37,6 +37,7 @@
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManager.h"
 #endif
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkContentRuleListManagerMessages.h"
@@ -106,7 +107,6 @@
 #if PLATFORM(COCOA)
 #include "CookieStorageUtilsCF.h"
 #include "LaunchServicesDatabaseObserver.h"
-#include "NetworkConnectionIntegrityHelpers.h"
 #include "NetworkSessionCocoa.h"
 #include <wtf/cocoa/Entitlements.h>
 #endif
@@ -205,7 +205,7 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
-        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));
+        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
         ASSERT_NOT_REACHED();
         return;
     }
@@ -232,7 +232,7 @@ bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Dec
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
-        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));
+        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -334,7 +334,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_ftpEnabled = parameters.ftpEnabled;
 
     for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies)
-        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), [] { });
+        addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), LoadedWebArchive::No, [] { });
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -392,12 +392,25 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         session->storageManager().startReceivingMessageFromConnection(connection.connection());
 }
 
-void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+{
+    auto& pair = m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
+        return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
+    }).iterator->value;
+
+    pair.second.add(WTFMove(firstPartyForCookies));
+
+    if (loadedWebArchive == LoadedWebArchive::Yes)
+        pair.first = LoadedWebArchive::Yes;
+
+    completionHandler();
+}
+
+void NetworkProcess::webProcessWillLoadWebArchive(WebCore::ProcessIdentifier processIdentifier)
 {
     m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
-        return HashSet<RegistrableDomain> { };
-    }).iterator->value.add(WTFMove(firstPartyForCookies));
-    completionHandler();
+        return std::make_pair(LoadedWebArchive::Yes, HashSet<RegistrableDomain> { });
+    }).iterator->value.first = LoadedWebArchive::Yes;
 }
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
@@ -427,11 +440,16 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
         return false;
     }
 
-    if (!decltype(iterator->value)::isValidValue(firstPartyDomain)) {
+    if (iterator->value.first == LoadedWebArchive::Yes)
+        return true;
+
+    auto& set = iterator->value.second;
+    if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
         ASSERT_NOT_REACHED();
         return false;
     }
-    auto result = iterator->value.contains(firstPartyDomain);
+
+    auto result = set.contains(firstPartyDomain);
     ASSERT(result);
     return result;
 }
@@ -2091,7 +2109,7 @@ void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::Res
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
-    UInt128 destinationID = networkDataTask.pendingDownloadID().toUInt64();
+    uint64_t destinationID = networkDataTask.pendingDownloadID().toUInt64();
 
     String suggestedFilename = networkDataTask.suggestedFilename();
 
@@ -2852,14 +2870,5 @@ void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, Comple
     auto* session = networkSession(sessionID);
     completionHandler(session ? session->countNonDefaultSessionSets() : 0);
 }
-
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-
-void NetworkProcess::requestLookalikeCharacterStrings(CompletionHandler<void(const Vector<String>&)>&& completionHandler)
-{
-    WebKit::requestLookalikeCharacterStrings(WTFMove(completionHandler));
-}
-
-#endif
 
 } // namespace WebKit

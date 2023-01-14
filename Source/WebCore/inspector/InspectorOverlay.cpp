@@ -1296,7 +1296,9 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
 
     auto element = downcast<StyledElement>(node);
     auto directionCSSPropertyID = direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows;
-    RefPtr<CSSValue> cssValue = element->cssomStyle().getPropertyCSSValueInternal(directionCSSPropertyID);
+    RefPtr<CSSValue> cssValue;
+    if (auto* inlineStyle = element->inlineStyle())
+        cssValue = inlineStyle->getPropertyCSSValue(directionCSSPropertyID);
 
     if (!cssValue) {
         auto styleRules = element->styleResolver().styleRulesForElement(element);
@@ -1311,7 +1313,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
         }
     }
 
-    if (!cssValue || !is<CSSValueList>(cssValue))
+    if (!is<CSSValueList>(cssValue))
         return { };
     
     Vector<String> trackSizes;

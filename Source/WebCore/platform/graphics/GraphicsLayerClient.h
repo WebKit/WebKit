@@ -40,6 +40,20 @@ class GraphicsLayer;
 class IntPoint;
 class IntRect;
 
+enum class AnimatedProperty : uint8_t {
+    Invalid,
+    Translate,
+    Scale,
+    Rotate,
+    Transform,
+    Opacity,
+    BackgroundColor,
+    Filter,
+#if ENABLE(FILTERS_LEVEL_2)
+    WebkitBackdropFilter,
+#endif
+};
+
 enum class GraphicsLayerPaintingPhase {
     Background            = 1 << 0,
     Foreground            = 1 << 1,
@@ -49,25 +63,6 @@ enum class GraphicsLayerPaintingPhase {
     CompositedScroll      = 1 << 5,
     ChildClippingMask     = 1 << 6,
 };
-
-enum AnimatedPropertyID {
-    AnimatedPropertyInvalid,
-    AnimatedPropertyTranslate,
-    AnimatedPropertyScale,
-    AnimatedPropertyRotate,
-    AnimatedPropertyTransform,
-    AnimatedPropertyOpacity,
-    AnimatedPropertyBackgroundColor,
-    AnimatedPropertyFilter,
-#if ENABLE(FILTERS_LEVEL_2)
-    AnimatedPropertyWebkitBackdropFilter,
-#endif
-};
-
-inline bool animatedPropertyIsTransformOrRelated(AnimatedPropertyID property)
-{
-    return property == AnimatedPropertyTransform || property == AnimatedPropertyTranslate || property == AnimatedPropertyScale || property == AnimatedPropertyRotate;
-}
 
 enum class PlatformLayerTreeAsTextFlags : uint8_t {
     Debug = 1 << 0,
@@ -136,7 +131,7 @@ public:
 
     virtual void logFilledVisibleFreshTile(unsigned) { };
 
-    virtual TransformationMatrix transformMatrixForProperty(AnimatedPropertyID) const { return { }; }
+    virtual TransformationMatrix transformMatrixForProperty(AnimatedProperty) const { return { }; }
 
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not

@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("This test checks getFile() of FileSystemFileHandle.");
 
-var rootHandle, fileHandle, fileObject, writeSize, writeBuffer, fileContent;
+var rootHandle, fileHandle, fileObject, readText, newFileHandle, newFileObject, newReadText, writeSize, writeBuffer, fileContet;
 
 async function read(file) 
 {
@@ -44,6 +44,11 @@ async function test()
         fileObject = await fileHandle.getFile();
         readText = await read(fileObject);
         shouldBe("readText", "fileContent");
+
+        newFileHandle = await rootHandle.getFileHandle("file-handle-getfile.txt", { "create" : false });
+        newFileObject = await newFileHandle.getFile();
+        newReadText = await read(newFileObject);
+        shouldBe("newReadText", "fileContent");
 
         finishTest();
     } catch (error) {

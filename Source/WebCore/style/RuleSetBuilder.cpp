@@ -104,81 +104,81 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
 
 void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
 {
-        switch (rule->type()) {
-        case StyleRuleType::Style:
-            if (m_ruleSet)
-                addStyleRule(downcast<StyleRule>(*rule));
-            return;
+    switch (rule->type()) {
+    case StyleRuleType::Style:
+        if (m_ruleSet)
+            addStyleRule(downcast<StyleRule>(*rule));
+        return;
 
-        case StyleRuleType::Page:
-            if (m_ruleSet)
-                m_ruleSet->addPageRule(downcast<StyleRulePage>(*rule));
-            return;
+    case StyleRuleType::Page:
+        if (m_ruleSet)
+            m_ruleSet->addPageRule(downcast<StyleRulePage>(*rule));
+        return;
 
-        case StyleRuleType::Media: {
-            auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
-                addChildRules(mediaRule.childRules());
-            m_mediaQueryCollector.pop(mediaRule.mediaQueries());
+    case StyleRuleType::Media: {
+        auto& mediaRule = downcast<StyleRuleMedia>(*rule);
+        if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
+            addChildRules(mediaRule.childRules());
+        m_mediaQueryCollector.pop(mediaRule.mediaQueries());
+        return;
+    }
+
+    case StyleRuleType::Container: {
+        auto& containerRule = downcast<StyleRuleContainer>(*rule);
+        auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
+        if (m_ruleSet) {
+            m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
+            m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
+        }
+        addChildRules(containerRule.childRules());
+        if (m_ruleSet)
+            m_currentContainerQueryIdentifier = previousContainerQueryIdentifier;
+        return;
+    }
+
+    case StyleRuleType::LayerBlock:
+    case StyleRuleType::LayerStatement: {
+        disallowDynamicMediaQueryEvaluationIfNeeded();
+
+        auto& layerRule = downcast<StyleRuleLayer>(*rule);
+        if (layerRule.isStatement()) {
+            // Statement syntax just registers the layers.
+            registerLayers(layerRule.nameList());
             return;
         }
+        // Block syntax.
+        pushCascadeLayer(layerRule.name());
+        addChildRules(layerRule.childRules());
+        popCascadeLayer(layerRule.name());
+        return;
+    }
+    case StyleRuleType::CounterStyle:
+    case StyleRuleType::FontFace:
+    case StyleRuleType::FontPaletteValues:
+    case StyleRuleType::FontFeatureValues:
+    case StyleRuleType::Keyframes:
+    case StyleRuleType::Property:
+        disallowDynamicMediaQueryEvaluationIfNeeded();
+        if (m_resolver)
+            m_collectedResolverMutatingRules.append({ *rule, m_currentCascadeLayerIdentifier });
+        return;
 
-        case StyleRuleType::Container: {
-            auto& containerRule = downcast<StyleRuleContainer>(*rule);
-            auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
-            if (m_ruleSet) {
-                m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
-                m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
-            }
-            addChildRules(containerRule.childRules());
-            if (m_ruleSet)
-                m_currentContainerQueryIdentifier = previousContainerQueryIdentifier;
-            return;
-        }
+    case StyleRuleType::Supports:
+        if (downcast<StyleRuleSupports>(*rule).conditionIsSupported())
+            addChildRules(downcast<StyleRuleSupports>(*rule).childRules());
+        return;
 
-        case StyleRuleType::LayerBlock:
-        case StyleRuleType::LayerStatement: {
-            disallowDynamicMediaQueryEvaluationIfNeeded();
+    case StyleRuleType::Import:
+    case StyleRuleType::Margin:
+    case StyleRuleType::Namespace:
+    case StyleRuleType::FontFeatureValuesBlock:
+        return;
 
-            auto& layerRule = downcast<StyleRuleLayer>(*rule);
-            if (layerRule.isStatement()) {
-                // Statement syntax just registers the layers.
-                registerLayers(layerRule.nameList());
-                return;
-            }
-            // Block syntax.
-            pushCascadeLayer(layerRule.name());
-            addChildRules(layerRule.childRules());
-            popCascadeLayer(layerRule.name());
-            return;
-        }
-        case StyleRuleType::CounterStyle:
-        case StyleRuleType::FontFace:
-        case StyleRuleType::FontPaletteValues:
-        case StyleRuleType::FontFeatureValues:
-        case StyleRuleType::Keyframes:
-        case StyleRuleType::Property:
-            disallowDynamicMediaQueryEvaluationIfNeeded();
-            if (m_resolver)
-                m_collectedResolverMutatingRules.append({ *rule, m_currentCascadeLayerIdentifier });
-            return;
-
-        case StyleRuleType::Supports:
-            if (downcast<StyleRuleSupports>(*rule).conditionIsSupported())
-                addChildRules(downcast<StyleRuleSupports>(*rule).childRules());
-            return;
-
-        case StyleRuleType::Import:
-        case StyleRuleType::Margin:
-        case StyleRuleType::Namespace:
-        case StyleRuleType::FontFeatureValuesBlock:
-            return;
-
-        case StyleRuleType::Unknown:
-        case StyleRuleType::Charset:
-        case StyleRuleType::Keyframe:
-            ASSERT_NOT_REACHED();
-            return;
+    case StyleRuleType::Unknown:
+    case StyleRuleType::Charset:
+    case StyleRuleType::Keyframe:
+        ASSERT_NOT_REACHED();
+        return;
     }
 }
 
@@ -391,15 +391,19 @@ void RuleSetBuilder::addMutatingRulesToResolver()
             continue;
         }
         if (is<StyleRuleCounterStyle>(rule)) {
+            if (m_resolver->scopeType() == Resolver::ScopeType::ShadowTree)
+                continue;
             auto& registry = m_resolver->document().styleScope().counterStyleRegistry();
             registry.addCounterStyle(downcast<StyleRuleCounterStyle>(rule.get()).descriptors());
             // FIXME: we probably need a cache solultion like fontSelector (invalidateMatchedDeclarations)
             // KeyFrame does it differently, search for keyframesRuleDidChange. (rdar://103018993)
-            // FIXME: Use the shadow tree scope if applicable (or just skip). (rdar://30318695)
             continue;
         }
         if (is<StyleRuleProperty>(rule)) {
-            // FIXME: Use the shadow tree scope if applicable (or just skip).
+            // "A @property is invalid if it occurs in a stylesheet inside of a shadow tree, and must be ignored."
+            // https://drafts.css-houdini.org/css-properties-values-api/#at-property-rule
+            if (m_resolver->scopeType() == Resolver::ScopeType::ShadowTree)
+                continue;
             auto& registry = m_resolver->document().styleScope().customPropertyRegistry();
             registry.registerFromStylesheet(downcast<StyleRuleProperty>(rule.get()).descriptor());
             continue;
