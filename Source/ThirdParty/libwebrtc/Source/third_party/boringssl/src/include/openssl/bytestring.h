@@ -51,6 +51,7 @@ struct cbs_st {
   // Defining any constructors requires we explicitly default the others.
   cbs_st() = default;
   cbs_st(const cbs_st &) = default;
+  cbs_st &operator=(const cbs_st &) = default;
 #endif
 };
 
