@@ -866,7 +866,6 @@ void vp8_update_coef_probs(VP8_COMP *cpi) {
 #if !(CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING)
   vp8_writer *const w = cpi->bc;
 #endif
-  int savings = 0;
 
   vpx_clear_system_state();
 
@@ -940,8 +939,6 @@ void vp8_update_coef_probs(VP8_COMP *cpi) {
 #if !(CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING)
             vp8_write_literal(w, newp, 8);
 #endif
-
-            savings += s;
           }
 
         } while (++t < ENTROPY_NODES);
