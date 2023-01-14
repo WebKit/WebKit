@@ -41,13 +41,13 @@ public:
         FloatRect visualRect;
         bool isLeftPositioned { true };
     };
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, float enclosingContentLogicalTop, float enclosingContentLogicalBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
         , m_lineBoxLogicalRect(lineBoxLogicalRect)
-        , m_enclosingContentTop(enclosingContentTop)
-        , m_enclosingContentBottom(enclosingContentBottom)
+        , m_enclosingContentLogicalTop(enclosingContentLogicalTop)
+        , m_enclosingContentLogicalBottom(enclosingContentLogicalBottom)
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
@@ -72,8 +72,8 @@ public:
 
     FloatRect lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
 
-    float enclosingContentTop() const { return m_enclosingContentTop; }
-    float enclosingContentBottom() const { return m_enclosingContentBottom; }
+    float enclosingContentLogicalTop() const { return m_enclosingContentLogicalTop; }
+    float enclosingContentLogicalBottom() const { return m_enclosingContentLogicalBottom; }
 
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
@@ -102,8 +102,8 @@ private:
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
-    float m_enclosingContentTop { 0 };
-    float m_enclosingContentBottom { 0 };
+    float m_enclosingContentLogicalTop { 0 };
+    float m_enclosingContentLogicalBottom { 0 };
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0.f };

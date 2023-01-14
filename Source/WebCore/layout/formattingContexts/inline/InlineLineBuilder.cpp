@@ -355,6 +355,8 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
     auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
+    auto contentIsTruncatedInBlockDirection = (!isLastLine && lineInput.ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection) || lineInput.ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
+    auto lineNeedsTrailingEllipsis = m_line.isContentTruncated() || contentIsTruncatedInBlockDirection;
 
     return { committedRange
         , partialOverflowingContent
@@ -374,7 +376,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , m_line.nonSpanningInlineLevelBoxCount()
         , computedVisualOrder(m_line)
         , inlineBaseDirection
-        , m_line.isContentTruncated()
+        , lineNeedsTrailingEllipsis
         , m_line.runs() };
 }
 

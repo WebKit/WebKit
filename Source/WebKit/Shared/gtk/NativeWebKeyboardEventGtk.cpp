@@ -46,11 +46,11 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& te
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEvent(WebEvent::KeyDown, { }, WallTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 229, GDK_KEY_VoidSymbol, true, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), { }, false)
+    : WebKeyboardEvent(WebEvent(WebEventType::KeyDown, { }, WallTime::now()), text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 229, GDK_KEY_VoidSymbol, true, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), { }, false)
 {
 }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(Type type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isKeypad, OptionSet<WebEventModifier> modifiers)
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebEventType type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isKeypad, OptionSet<WebEventModifier> modifiers)
     : WebKeyboardEvent(WebEvent(type, modifiers, WallTime::now()), text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, std::nullopt, std::nullopt, WTFMove(commands), isKeypad)
 {
 }

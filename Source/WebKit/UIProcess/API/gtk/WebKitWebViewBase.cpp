@@ -2929,10 +2929,10 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         webEventButtons |= 2;
 
     std::optional<FloatSize> movementDelta;
-    WebEvent::Type webEventType;
+    WebEventType webEventType;
     switch (type) {
     case MouseEventType::Press:
-        webEventType = WebEvent::MouseDown;
+        webEventType = WebEventType::MouseDown;
         priv->inputMethodFilter.cancelComposition();
 #if !USE(GTK4)
         if (webEventButton == WebMouseEventButton::RightButton) {
@@ -2957,12 +2957,12 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
             gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
     case MouseEventType::Release:
-        webEventType = WebEvent::MouseUp;
+        webEventType = WebEventType::MouseUp;
         if (!gtk_widget_has_focus(GTK_WIDGET(webViewBase)) && gtk_widget_is_focus(GTK_WIDGET(webViewBase)))
             gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
     case MouseEventType::Motion:
-        webEventType = WebEvent::MouseMove;
+        webEventType = WebEventType::MouseMove;
         if (buttons & GDK_BUTTON1_MASK)
             webEventButton = WebMouseEventButton::LeftButton;
         else if (buttons & GDK_BUTTON2_MASK)
@@ -3073,7 +3073,7 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
         auto filterResult = priv->inputMethodFilter.filterKeyEvent(GDK_KEY_PRESS, keyval, keycode, modifiers);
         if (!filterResult.handled) {
             priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
-                WebEvent::KeyDown,
+                WebEventType::KeyDown,
                 filterResult.keyText.isNull() ? PlatformKeyboardEvent::singleCharacterString(keyval) : filterResult.keyText,
                 PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
                 PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
@@ -3089,7 +3089,7 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
     if (type != KeyEventType::Press) {
         if (!priv->inputMethodFilter.filterKeyEvent(GDK_KEY_RELEASE, keyval, keycode, modifiers).handled) {
             priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
-                WebEvent::KeyUp,
+                WebEventType::KeyUp,
                 PlatformKeyboardEvent::singleCharacterString(keyval),
                 PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
                 PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),

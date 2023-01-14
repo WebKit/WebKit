@@ -194,14 +194,14 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
     GdkModifierType state = static_cast<GdkModifierType>(0);
     gdk_event_get_state(event, &state);
 
-    WebEvent::Type type = static_cast<WebEvent::Type>(0);
+    WebEventType type = static_cast<WebEventType>(0); // FIXME: Why not WebEventType::NoType?
     FloatSize movementDelta;
 
     switch (gdk_event_get_event_type(const_cast<GdkEvent*>(event))) {
     case GDK_MOTION_NOTIFY:
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
-        type = WebEvent::MouseMove;
+        type = WebEventType::MouseMove;
         if (delta)
             movementDelta = delta.value();
         break;
@@ -210,7 +210,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
     case GDK_3BUTTON_PRESS:
 #endif
     case GDK_BUTTON_PRESS: {
-        type = WebEvent::MouseDown;
+        type = WebEventType::MouseDown;
         guint eventButton;
         gdk_event_get_button(event, &eventButton);
         auto modifier = stateModifierForGdkButton(eventButton);
@@ -218,7 +218,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
         break;
     }
     case GDK_BUTTON_RELEASE: {
-        type = WebEvent::MouseUp;
+        type = WebEventType::MouseUp;
         guint eventButton;
         gdk_event_get_button(event, &eventButton);
         auto modifier = stateModifierForGdkButton(eventButton);
@@ -244,7 +244,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
 WebMouseEvent WebEventFactory::createWebMouseEvent(const IntPoint& position)
 {
     // Mouse events without GdkEvent are crossing events, handled as a mouse move.
-    return WebMouseEvent({ WebEvent::MouseMove, { }, WallTime::now() }, WebMouseEventButton::NoButton, 0, position, position, 0, 0, 0, 0);
+    return WebMouseEvent({ WebEventType::MouseMove, { }, WallTime::now() }, WebMouseEventButton::NoButton, 0, position, position, 0, 0, 0, 0);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
@@ -337,7 +337,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
     }
 #endif
 
-    return WebWheelEvent({ WebEvent::Wheel, modifiersForEvent(event), wallTimeForEvent(event) },
+    return WebWheelEvent({ WebEventType::Wheel, modifiersForEvent(event), wallTimeForEvent(event) },
         position,
         globalPosition,
         delta,
@@ -358,7 +358,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
     GdkEventType type = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
 
     return WebKeyboardEvent(
-        { type == GDK_KEY_RELEASE ? WebEvent::KeyUp : WebEvent::KeyDown, modifiersForEvent(event), wallTimeForEvent(event) },
+        { type == GDK_KEY_RELEASE ? WebEventType::KeyUp : WebEventType::KeyDown, modifiersForEvent(event), wallTimeForEvent(event) },
         text.isNull() ? PlatformKeyboardEvent::singleCharacterString(keyval) : text,
         PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
         PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
@@ -376,20 +376,20 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
 #if ENABLE(TOUCH_EVENTS)
 WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
-    WebEvent::Type type = WebEvent::NoType;
+    auto type = WebEventType::NoType;
     GdkEventType eventType = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
     switch (eventType) {
     case GDK_TOUCH_BEGIN:
-        type = WebEvent::TouchStart;
+        type = WebEventType::TouchStart;
         break;
     case GDK_TOUCH_UPDATE:
-        type = WebEvent::TouchMove;
+        type = WebEventType::TouchMove;
         break;
     case GDK_TOUCH_END:
-        type = WebEvent::TouchEnd;
+        type = WebEventType::TouchEnd;
         break;
     case GDK_TOUCH_CANCEL:
-        type = WebEvent::TouchCancel;
+        type = WebEventType::TouchCancel;
         break;
     default:
         ASSERT_NOT_REACHED();

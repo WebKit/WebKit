@@ -102,7 +102,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 }
 
 
-- (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type wasCancelled:(BOOL)cancelled
+- (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEventType)type wasCancelled:(BOOL)cancelled
 {
     auto modifiers = WebIOSEventFactory::webEventModifiersForUIKeyModifierFlags(self.modifierFlags);
     BOOL isRightButton = modifiers.contains(WebKit::WebEventModifier::ControlKey) || (_pressedButtonMask && (*_pressedButtonMask & UIEventButtonMaskSecondary));
@@ -117,7 +117,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 
     // FIXME: 'buttons' should report any buttons that are still down in the case when one button is released from a chord.
     auto buttons = [&] {
-        if (!_touching || type == WebKit::WebEvent::Type::MouseUp)
+        if (!_touching || type == WebKit::WebEventType::MouseUp)
             return 0;
         if (isRightButton)
             return 2;
@@ -137,7 +137,7 @@ static String pointerTypeForUITouchType(UITouchType type)
     _touching = YES;
     _pressedButtonMask = [event _buttonMask];
 
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseDown wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseDown wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     self.state = UIGestureRecognizerStateChanged;
@@ -145,7 +145,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseMove wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     self.state = UIGestureRecognizerStateChanged;
@@ -153,7 +153,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseUp wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
@@ -164,7 +164,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp wasCancelled:YES];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseUp wasCancelled:YES];
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
@@ -184,7 +184,7 @@ static String pointerTypeForUITouchType(UITouchType type)
         _lastLocation = [self locationInView:self.view];
     }
 
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseMove wasCancelled:NO];
     
     if (shouldBeginGesture)
         self.state = UIGestureRecognizerStateBegan;
@@ -198,7 +198,7 @@ static String pointerTypeForUITouchType(UITouchType type)
     }
 
     _cancelledOrExited = NO;
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseMove wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     if (_currentHoverEvent == event && [touches containsObject:_currentTouch.get()])
@@ -208,7 +208,7 @@ static String pointerTypeForUITouchType(UITouchType type)
 - (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     _cancelledOrExited = YES;
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseMove wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     if (_currentHoverEvent == event) {

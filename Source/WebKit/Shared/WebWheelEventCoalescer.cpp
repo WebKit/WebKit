@@ -94,11 +94,11 @@ WebWheelEventAndSteps WebWheelEventCoalescer::coalesce(const WebWheelEventAndSte
     if (a.rawPlatformDelta() && b.rawPlatformDelta())
         mergedRawPlatformScrollingDelta = a.rawPlatformDelta().value() + b.rawPlatformDelta().value();
 
-    auto event = WebWheelEvent({ WebEvent::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.directionInvertedFromDevice(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.scrollCount(), mergedUnacceleratedScrollingDelta, b.ioHIDEventTimestamp(), mergedRawPlatformScrollingDelta, b.momentumEndType());
+    auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.directionInvertedFromDevice(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas(), b.scrollCount(), mergedUnacceleratedScrollingDelta, b.ioHIDEventTimestamp(), mergedRawPlatformScrollingDelta, b.momentumEndType());
 #elif PLATFORM(GTK) || USE(LIBWPE)
-    auto event = WebWheelEvent({ WebEvent::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas());
+    auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity(), b.phase(), b.momentumPhase(), b.hasPreciseScrollingDeltas());
 #else
-    auto event = WebWheelEvent({ WebEvent::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity());
+    auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity());
 #endif
     return { event, aEventAndSteps.processingSteps };
 }

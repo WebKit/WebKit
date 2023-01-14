@@ -85,7 +85,7 @@ public:
 #endif
 
 private:
-    static bool isWheelEventType(Type);
+    static bool isWheelEventType(WebEventType);
 
     WebCore::IntPoint m_position;
     WebCore::IntPoint m_globalPosition;

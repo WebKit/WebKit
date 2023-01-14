@@ -116,18 +116,24 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
-    auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation) {
-        if (type == ClassChangeType::Remove)
-            return isNegation == IsNegation::No;
-        return isNegation == IsNegation::Yes;
+    auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
+        if (matchElement == MatchElement::AnySibling)
+            return true;
+        return type == ClassChangeType::Remove ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
+    };
+
+    auto invalidateAfterChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
+        if (matchElement == MatchElement::AnySibling)
+            return true;
+        return type == ClassChangeType::Add ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };
 
     for (auto& classChange : classChanges) {
         if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
             for (auto& invalidationRuleSet : *invalidationRuleSets) {
-                if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation))
+                if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
                     Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
-                else
+                if (invalidateAfterChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
                     Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
             }
         }

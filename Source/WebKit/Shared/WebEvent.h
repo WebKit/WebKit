@@ -44,47 +44,47 @@ class Encoder;
 
 namespace WebKit {
 
-class WebEvent {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum Type : int8_t {
-        NoType = -1,
-        
-        // WebMouseEvent
-        MouseDown,
-        MouseUp,
-        MouseMove,
-        MouseForceChanged,
-        MouseForceDown,
-        MouseForceUp,
+enum class WebEventType : int8_t {
+    NoType = -1,
+    
+    // WebMouseEvent
+    MouseDown,
+    MouseUp,
+    MouseMove,
+    MouseForceChanged,
+    MouseForceDown,
+    MouseForceUp,
 
-        // WebWheelEvent
-        Wheel,
+    // WebWheelEvent
+    Wheel,
 
-        // WebKeyboardEvent
-        KeyDown,
-        KeyUp,
-        RawKeyDown,
-        Char,
+    // WebKeyboardEvent
+    KeyDown,
+    KeyUp,
+    RawKeyDown,
+    Char,
 
 #if ENABLE(TOUCH_EVENTS)
-        // WebTouchEvent
-        TouchStart,
-        TouchMove,
-        TouchEnd,
-        TouchCancel,
+    // WebTouchEvent
+    TouchStart,
+    TouchMove,
+    TouchEnd,
+    TouchCancel,
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-        GestureStart,
-        GestureChange,
-        GestureEnd,
+    GestureStart,
+    GestureChange,
+    GestureEnd,
 #endif
-    };
+};
+
+class WebEvent {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    WebEvent(WebEventType, OptionSet<WebEventModifier>, WallTime timestamp);
     
-    WebEvent(Type, OptionSet<WebEventModifier>, WallTime timestamp);
-    
-    Type type() const { return static_cast<Type>(m_type); }
+    WebEventType type() const { return m_type; }
 
     bool shiftKey() const { return m_modifiers.contains(WebEventModifier::ShiftKey); }
     bool controlKey() const { return m_modifiers.contains(WebEventModifier::ControlKey); }
@@ -103,9 +103,11 @@ protected:
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebEvent&);
 
 private:
-    Type m_type;
+    WebEventType m_type;
     OptionSet<WebEventModifier> m_modifiers;
     WallTime m_timestamp;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, WebEventType);
 
 } // namespace WebKit

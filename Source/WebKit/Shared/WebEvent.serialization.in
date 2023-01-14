@@ -29,12 +29,12 @@
 };
 
 class WebKit::WebEvent {
-    WebKit::WebEvent::Type type();
+    WebKit::WebEventType type();
     OptionSet<WebKit::WebEventModifier> modifiers();
     WallTime timestamp();
 };
 
-[Nested] enum class WebKit::WebEvent::Type : int8_t {
+enum class WebKit::WebEventType : int8_t {
     NoType,
     MouseDown,
     MouseUp,

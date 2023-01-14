@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,30 @@
  */
 
 #include "config.h"
-#include "WebTouchEvent.h"
 
-#if ENABLE(TOUCH_EVENTS)
+#include "IPCTestUtilities.h"
+#include "StreamConnectionWorkQueue.h"
+#include "Test.h"
 
-#include "ArgumentCoders.h"
+namespace TestWebKitAPI {
 
-namespace WebKit {
-
-#if !PLATFORM(IOS_FAMILY)
-
-WebTouchEvent::WebTouchEvent(WebEvent&& event, Vector<WebPlatformTouchPoint>&& touchPoints)
-    : WebEvent(WTFMove(event))
-    , m_touchPoints(WTFMove(touchPoints))
-{
-    ASSERT(isTouchEventType(type()));
-}
-
-bool WebTouchEvent::isTouchEventType(WebEventType type)
-{
-    return type == WebEventType::TouchStart || type == WebEventType::TouchMove || type == WebEventType::TouchEnd || type == WebEventType::TouchCancel;
-}
-
-#endif // !PLATFORM(IOS_FAMILY)
-
-bool WebTouchEvent::allTouchPointsAreReleased() const
-{
-    for (const auto& touchPoint : touchPoints()) {
-        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
-            return false;
+class StreamConnectionWorkQueueTest : public ::testing::Test {
+public:
+    void SetUp() override
+    {
+        WTF::initializeMainThread();
     }
+};
 
-    return true;
+TEST_F(StreamConnectionWorkQueueTest, IsCurrentAtStopNoCrash)
+{
+    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue");
+    for (int i = 0; i < 10000; ++i) {
+        queue->dispatch([&] {
+            assertIsCurrent(queue);
+        });
+    }
+    queue->stopAndWaitForCompletion();
 }
 
-} // namespace WebKit
-
-#endif // ENABLE(TOUCH_EVENTS)
+}

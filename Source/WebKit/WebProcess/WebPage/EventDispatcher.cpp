@@ -230,7 +230,7 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebTouchEvent& tou
             ASSERT(!queuedEvents.isEmpty());
             auto& lastEventAndCallback = queuedEvents.last();
             // Coalesce touch move events.
-            if (touchEvent.type() == WebEvent::TouchMove && lastEventAndCallback.first.type() == WebEvent::TouchMove && !completionHandler && !lastEventAndCallback.second)
+            if (touchEvent.type() == WebEventType::TouchMove && lastEventAndCallback.first.type() == WebEventType::TouchMove && !completionHandler && !lastEventAndCallback.second)
                 queuedEvents.last() = { touchEvent, nullptr };
             else
                 queuedEvents.append({ touchEvent, WTFMove(completionHandler) });
@@ -294,9 +294,9 @@ void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestu
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
-void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEvent::Type eventType, bool didHandleEvent)
+void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEventType eventType, bool didHandleEvent)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(eventType), didHandleEvent), pageID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(eventType, didHandleEvent), pageID);
 }
 #endif
 

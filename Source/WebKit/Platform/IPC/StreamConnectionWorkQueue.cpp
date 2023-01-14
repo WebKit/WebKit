@@ -85,7 +85,7 @@ void StreamConnectionWorkQueue::stopAndWaitForCompletion(WTF::Function<void()>&&
     {
         Locker locker { m_lock };
         m_cleanupFunction = WTFMove(cleanupFunction);
-        processingThread = WTFMove(m_processingThread);
+        processingThread = m_processingThread;
     }
     m_shouldQuit = true;
     if (!processingThread)
@@ -93,6 +93,10 @@ void StreamConnectionWorkQueue::stopAndWaitForCompletion(WTF::Function<void()>&&
     ASSERT(Thread::current().uid() != processingThread->uid());
     wakeUp();
     processingThread->waitForCompletion();
+    {
+        Locker locker { m_lock };
+        m_processingThread = nullptr;
+    }
 }
 
 void StreamConnectionWorkQueue::wakeUp()

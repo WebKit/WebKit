@@ -47,8 +47,8 @@ public:
     LineBoxIteratorModernPath& operator=(const LineBoxIteratorModernPath&) = default;
     LineBoxIteratorModernPath& operator=(LineBoxIteratorModernPath&&) = default;
 
-    float contentLogicalTop() const { return line().enclosingContentTop(); }
-    float contentLogicalBottom() const { return line().enclosingContentBottom(); }
+    float contentLogicalTop() const { return line().enclosingContentLogicalTop(); }
+    float contentLogicalBottom() const { return line().enclosingContentLogicalBottom(); }
     float logicalTop() const { return line().lineBoxLogicalRect().y(); }
     float logicalBottom() const { return line().lineBoxLogicalRect().maxY(); }
     float logicalWidth() const { return line().lineBoxLogicalRect().width(); }

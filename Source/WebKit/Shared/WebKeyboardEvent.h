@@ -80,7 +80,7 @@ public:
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebKeyboardEvent&);
 
-    static bool isKeyboardEventType(Type);
+    static bool isKeyboardEventType(WebEventType);
 
 private:
     String m_text;

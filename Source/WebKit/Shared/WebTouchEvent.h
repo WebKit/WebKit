@@ -112,7 +112,7 @@ public:
         , m_gestureScale(gestureScale)
         , m_gestureRotation(gestureRotation)
     {
-        ASSERT(type() == TouchStart || type() == TouchMove || type() == TouchEnd || type() == TouchCancel);
+        ASSERT(type() == WebEventType::TouchStart || type() == WebEventType::TouchMove || type() == WebEventType::TouchEnd || type() == WebEventType::TouchCancel);
     }
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
@@ -197,7 +197,7 @@ public:
     bool allTouchPointsAreReleased() const;
 
 private:
-    static bool isTouchEventType(Type);
+    static bool isTouchEventType(WebEventType);
 
     Vector<WebPlatformTouchPoint> m_touchPoints;
 };

@@ -52,7 +52,7 @@ public:
     const FloatRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
 
-    EnclosingTopAndBottom enclosingTopAndBottom() const { return m_enclosingTopAndBottom; }
+    EnclosingTopAndBottom enclosingLogicalTopAndBottom() const { return m_enclosingLogicalTopAndBottom; }
 
     float baseline() const { return m_aligmentBaseline; }
     FontBaseline baselineType() const { return m_baselineType; }
@@ -74,7 +74,7 @@ private:
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
-    EnclosingTopAndBottom m_enclosingTopAndBottom;
+    EnclosingTopAndBottom m_enclosingLogicalTopAndBottom;
     float m_aligmentBaseline { 0.f };
     float m_contentVisualOffsetInInlineDirection { 0.f };
     float m_contentLogicalWidth { 0.f };
@@ -84,11 +84,11 @@ private:
     std::optional<FloatRect> m_ellipsisVisualRect { };
 };
 
-inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect)
+inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_scrollableOverflow(scrollableOverflow)
-    , m_enclosingTopAndBottom(enclosingTopAndBottom)
+    , m_enclosingLogicalTopAndBottom(enclosingLogicalTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)
     , m_contentVisualOffsetInInlineDirection(contentVisualOffsetInInlineDirection)
     , m_contentLogicalWidth(contentLogicalWidth)

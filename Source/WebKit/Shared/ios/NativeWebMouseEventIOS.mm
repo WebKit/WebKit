@@ -38,7 +38,7 @@ NativeWebMouseEvent::NativeWebMouseEvent(::WebEvent *event)
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(Type type, WebMouseEventButton button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier> modifiers, WallTime timestamp, double force, GestureWasCancelled gestureWasCancelled, const String& pointerType)
+NativeWebMouseEvent::NativeWebMouseEvent(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier> modifiers, WallTime timestamp, double force, GestureWasCancelled gestureWasCancelled, const String& pointerType)
     : WebMouseEvent({ type, modifiers, timestamp }, button, buttons, position, globalPosition, deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, WebCore::mousePointerID, pointerType, gestureWasCancelled)
 {
 }

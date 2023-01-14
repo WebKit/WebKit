@@ -61,22 +61,22 @@ private:
         delete this;
     }
     
-    bool mouseEvent(PageBanner* pageBanner, WebEvent::Type type, WebMouseEventButton button, const IntPoint& position) override
+    bool mouseEvent(PageBanner* pageBanner, WebEventType type, WebMouseEventButton button, const IntPoint& position) override
     {
         switch (type) {
-        case WebEvent::MouseDown: {
+        case WebEventType::MouseDown: {
             if (!m_client.mouseDown)
                 return false;
 
             return m_client.mouseDown(toAPI(pageBanner), toAPI(position), toAPI(button), m_client.base.clientInfo);
         }
-        case WebEvent::MouseUp: {
+        case WebEventType::MouseUp: {
             if (!m_client.mouseUp)
                 return false;
 
             return m_client.mouseUp(toAPI(pageBanner), toAPI(position), toAPI(button), m_client.base.clientInfo);
         }
-        case WebEvent::MouseMove: {
+        case WebEventType::MouseMove: {
             if (button == WebMouseEventButton::NoButton) {
                 if (!m_client.mouseMoved)
                     return false;

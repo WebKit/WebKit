@@ -59,27 +59,27 @@ public:
     {
         // PlatformEvent
         switch (webEvent.type()) {
-        case WebEvent::MouseDown:
+        case WebEventType::MouseDown:
             m_type = WebCore::PlatformEvent::MousePressed;
             m_force = WebCore::ForceAtClick;
             break;
-        case WebEvent::MouseUp:
+        case WebEventType::MouseUp:
             m_type = WebCore::PlatformEvent::MouseReleased;
             m_force = WebCore::ForceAtClick;
             break;
-        case WebEvent::MouseMove:
+        case WebEventType::MouseMove:
             m_type = WebCore::PlatformEvent::MouseMoved;
             m_force = webEvent.force();
             break;
-        case WebEvent::MouseForceChanged:
+        case WebEventType::MouseForceChanged:
             m_type = WebCore::PlatformEvent::MouseForceChanged;
             m_force = webEvent.force();
             break;
-        case WebEvent::MouseForceDown:
+        case WebEventType::MouseForceDown:
             m_type = WebCore::PlatformEvent::MouseForceDown;
             m_force = WebCore::ForceAtForceClick;
             break;
-        case WebEvent::MouseForceUp:
+        case WebEventType::MouseForceUp:
             m_type = WebCore::PlatformEvent::MouseForceUp;
             m_force = WebCore::ForceAtForceClick;
             break;
@@ -189,16 +189,16 @@ public:
     {
         // PlatformEvent
         switch (webEvent.type()) {
-        case WebEvent::KeyDown:
+        case WebEventType::KeyDown:
             m_type = WebCore::PlatformEvent::KeyDown;
             break;
-        case WebEvent::KeyUp:
+        case WebEventType::KeyUp:
             m_type = WebCore::PlatformEvent::KeyUp;
             break;
-        case WebEvent::RawKeyDown:
+        case WebEventType::RawKeyDown:
             m_type = WebCore::PlatformEvent::RawKeyDown;
             break;
-        case WebEvent::Char:
+        case WebEventType::Char:
             m_type = WebCore::PlatformEvent::Char;
             break;
         default:
@@ -326,16 +326,16 @@ public:
     {
         // PlatformEvent
         switch (webEvent.type()) {
-        case WebEvent::TouchStart: 
+        case WebEventType::TouchStart:
             m_type = WebCore::PlatformEvent::TouchStart;
             break;
-        case WebEvent::TouchMove: 
+        case WebEventType::TouchMove:
             m_type = WebCore::PlatformEvent::TouchMove;
             break;
-        case WebEvent::TouchEnd: 
+        case WebEventType::TouchEnd:
             m_type = WebCore::PlatformEvent::TouchEnd;
             break;
-        case WebEvent::TouchCancel:
+        case WebEventType::TouchCancel:
             m_type = WebCore::PlatformEvent::TouchCancel;
             break;
         default:
@@ -379,13 +379,13 @@ public:
     WebKit2PlatformGestureEvent(const WebGestureEvent& webEvent)
     {
         switch (webEvent.type()) {
-        case WebEvent::GestureStart:
+        case WebEventType::GestureStart:
             m_type = WebCore::PlatformEvent::GestureStart;
             break;
-        case WebEvent::GestureChange:
+        case WebEventType::GestureChange:
             m_type = WebCore::PlatformEvent::GestureChange;
             break;
-        case WebEvent::GestureEnd:
+        case WebEventType::GestureEnd:
             m_type = WebCore::PlatformEvent::GestureEnd;
             break;
         default:

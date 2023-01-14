@@ -67,9 +67,9 @@ WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsig
     ASSERT(isMouseEventType(type()));
 }
 
-bool WebMouseEvent::isMouseEventType(Type type)
+bool WebMouseEvent::isMouseEventType(WebEventType type)
 {
-    return type == MouseDown || type == MouseUp || type == MouseMove || type == MouseForceUp || type == MouseForceDown || type == MouseForceChanged;
+    return type == WebEventType::MouseDown || type == WebEventType::MouseUp || type == WebEventType::MouseMove || type == WebEventType::MouseForceUp || type == WebEventType::MouseForceDown || type == WebEventType::MouseForceChanged;
 }
 
 WebMouseEventButton mouseButton(const WebCore::NavigationAction& navigationAction)
