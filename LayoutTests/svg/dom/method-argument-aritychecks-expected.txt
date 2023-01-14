@@ -1,0 +1,34 @@
+Check that incorrect number of arguments throw TypeError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SVGAnimationElement
+
+beginElementAt(float offset)
+PASS animateElm.beginElementAt() threw exception TypeError: Not enough arguments.
+PASS animateElm.beginElementAt(0) did not throw exception.
+
+endElementAt(float offset)
+PASS animateElm.endElementAt() threw exception TypeError: Not enough arguments.
+PASS animateElm.endElementAt(0) did not throw exception.
+
+
+SVGFEDropShadowElement
+
+setStdDeviation(float stdDeviationX, float stdDeviationY)
+PASS dropShadow.setStdDeviation() threw exception TypeError: Not enough arguments.
+PASS dropShadow.setStdDeviation(0) threw exception TypeError: Not enough arguments.
+PASS dropShadow.setStdDeviation(0, 0) did not throw exception.
+
+
+SVGFEGaussianBlurElement
+
+setStdDeviation(float stdDeviationX, float stdDeviationY)
+PASS gaussian.setStdDeviation() threw exception TypeError: Not enough arguments.
+PASS gaussian.setStdDeviation(0) threw exception TypeError: Not enough arguments.
+PASS gaussian.setStdDeviation(0, 0) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: TypeError: The provided value is non-finite
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x241
+  RenderBlock {HTML} at (0,0) size 800x241
+    RenderBody {BODY} at (8,8) size 784x225
+      RenderText {#text} at (0,0) size 710x19
+        text run at (0,0) width 710: "Test for WK100322: ElementTimeControl should check for invalid values. This test passes if it does not crash."
+      RenderSVGRoot {svg} at (8,28) size 100x100
+        RenderSVGRect {rect} at (8,28) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderText {#text} at (0,0) size 0x0
