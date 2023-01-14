@@ -87,7 +87,7 @@ static unsigned short currentlyPressedMouseButtons()
     return static_cast<unsigned short>([NSEvent pressedMouseButtons]);
 }
 
-static WebEvent::Type mouseEventTypeForEvent(NSEvent* event)
+static WebEventType mouseEventTypeForEvent(NSEvent* event)
 {
     switch ([event type]) {
     case NSEventTypeLeftMouseDragged:
@@ -96,17 +96,17 @@ static WebEvent::Type mouseEventTypeForEvent(NSEvent* event)
     case NSEventTypeMouseMoved:
     case NSEventTypeOtherMouseDragged:
     case NSEventTypeRightMouseDragged:
-        return WebEvent::MouseMove;
+        return WebEventType::MouseMove;
     case NSEventTypeLeftMouseDown:
     case NSEventTypeRightMouseDown:
     case NSEventTypeOtherMouseDown:
-        return WebEvent::MouseDown;
+        return WebEventType::MouseDown;
     case NSEventTypeLeftMouseUp:
     case NSEventTypeRightMouseUp:
     case NSEventTypeOtherMouseUp:
-        return WebEvent::MouseUp;
+        return WebEventType::MouseUp;
     default:
-        return WebEvent::MouseMove;
+        return WebEventType::MouseMove;
     }
 }
 
@@ -319,16 +319,16 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     NSPoint position = pointForEvent(event, windowView);
     NSPoint globalPosition = globalPointForEvent(event);
 
-    WebEvent::Type type = mouseEventTypeForEvent(event);
+    WebEventType type = mouseEventTypeForEvent(event);
     if ([event type] == NSEventTypePressure) {
         // Since AppKit doesn't send mouse events for force down or force up, we have to use the current pressure
         // event and lastPressureEvent to detect if this is MouseForceDown, MouseForceUp, or just MouseForceChanged.
         if (lastPressureEvent.stage == 1 && event.stage == 2)
-            type = WebEvent::MouseForceDown;
+            type = WebEventType::MouseForceDown;
         else if (lastPressureEvent.stage == 2 && event.stage == 1)
-            type = WebEvent::MouseForceUp;
+            type = WebEventType::MouseForceUp;
         else
-            type = WebEvent::MouseForceChanged;
+            type = WebEventType::MouseForceChanged;
     }
 
     WebMouseEventButton button = mouseButtonForEvent(event);
@@ -429,14 +429,14 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         rawPlatformDelta = std::nullopt;
     }
 
-    return WebWheelEvent({ WebEvent::Wheel, modifiers, timestamp }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
+    return WebWheelEvent({ WebEventType::Wheel, modifiers, timestamp }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
         granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
         scrollCount, unacceleratedScrollingDelta, ioHIDEventWallTime, rawPlatformDelta, momentumEndType);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
 {
-    WebEvent::Type type             = isKeyUpEvent(event) ? WebEvent::KeyUp : WebEvent::KeyDown;
+    WebEventType type               = isKeyUpEvent(event) ? WebEventType::KeyUp : WebEventType::KeyDown;
     String text                     = textFromEvent(event, replacesSoftSpace);
     String unmodifiedText           = unmodifiedTextFromEvent(event, replacesSoftSpace);
     String key                      = WebCore::keyForKeyEvent(event);

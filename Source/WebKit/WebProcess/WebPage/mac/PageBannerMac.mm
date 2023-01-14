@@ -150,9 +150,9 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
     if (!m_mouseDownInBanner && (positionInBannerSpace.y() < 0 || positionInBannerSpace.y() > m_height))
         return false;
 
-    if (mouseEvent.type() == WebEvent::MouseDown)
+    if (mouseEvent.type() == WebEventType::MouseDown)
         m_mouseDownInBanner = true;
-    else if (mouseEvent.type() == WebEvent::MouseUp)
+    else if (mouseEvent.type() == WebEventType::MouseUp)
         m_mouseDownInBanner = false;
 
     return m_client->mouseEvent(this, mouseEvent.type(), mouseEvent.button(), positionInBannerSpace);

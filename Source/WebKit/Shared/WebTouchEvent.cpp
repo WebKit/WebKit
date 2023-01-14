@@ -41,9 +41,9 @@ WebTouchEvent::WebTouchEvent(WebEvent&& event, Vector<WebPlatformTouchPoint>&& t
     ASSERT(isTouchEventType(type()));
 }
 
-bool WebTouchEvent::isTouchEventType(Type type)
+bool WebTouchEvent::isTouchEventType(WebEventType type)
 {
-    return type == TouchStart || type == TouchMove || type == TouchEnd || type == TouchCancel;
+    return type == WebEventType::TouchStart || type == WebEventType::TouchMove || type == WebEventType::TouchEnd || type == WebEventType::TouchCancel;
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

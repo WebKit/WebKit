@@ -146,9 +146,9 @@ WebKeyboardEvent::~WebKeyboardEvent()
 {
 }
 
-bool WebKeyboardEvent::isKeyboardEventType(Type type)
+bool WebKeyboardEvent::isKeyboardEventType(WebEventType type)
 {
-    return type == RawKeyDown || type == KeyDown || type == KeyUp || type == Char;
+    return type == WebEventType::RawKeyDown || type == WebEventType::KeyDown || type == WebEventType::KeyUp || type == WebEventType::Char;
 }
 
 } // namespace WebKit

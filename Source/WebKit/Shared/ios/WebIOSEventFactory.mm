@@ -84,7 +84,7 @@ static OptionSet<WebKit::WebEventModifier> modifiersForEvent(::WebEvent *event)
 
 WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
 {
-    WebKit::WebEvent::Type type = (event.type == WebEventKeyUp) ? WebKit::WebEvent::KeyUp : WebKit::WebEvent::KeyDown;
+    WebKit::WebEventType type = (event.type == WebEventKeyUp) ? WebKit::WebEventType::KeyUp : WebKit::WebEventType::KeyDown;
     String text;
     String unmodifiedText;
     bool autoRepeat;
@@ -135,7 +135,7 @@ WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     // This currently only supports synthetic mouse moved events with no button pressed.
     ASSERT_ARG(event, event.type == WebEventMouseMoved);
 
-    auto type = WebKit::WebEvent::MouseMove;
+    auto type = WebKit::WebEventType::MouseMove;
     auto button = WebKit::WebMouseEventButton::NoButton;
     unsigned short buttons = 0;
     auto position = WebCore::IntPoint(event.locationInWindow);
@@ -179,7 +179,7 @@ WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *eve
     wheelTicks.scale(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep()));
     auto timestamp = MonotonicTime::fromRawSeconds(event.timestamp).approximateWallTime();
     return {
-        { WebKit::WebEvent::Wheel, OptionSet<WebKit::WebEventModifier> { }, timestamp },
+        { WebKit::WebEventType::Wheel, OptionSet<WebKit::WebEventModifier> { }, timestamp },
         scrollLocation,
         scrollLocation,
         delta,

@@ -79,9 +79,9 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 }
 #endif
 
-bool WebWheelEvent::isWheelEventType(Type type)
+bool WebWheelEvent::isWheelEventType(WebEventType type)
 {
-    return type == Wheel;
+    return type == WebEventType::Wheel;
 }
 
 } // namespace WebKit

@@ -34,20 +34,20 @@
 
 namespace WebKit {
 
-static inline WebEvent::Type webEventTypeForNSEvent(NSEvent *event)
+static inline WebEventType webEventTypeForNSEvent(NSEvent *event)
 {
     switch (event.phase) {
     case NSEventPhaseBegan:
-        return WebEvent::GestureStart;
+        return WebEventType::GestureStart;
     case NSEventPhaseChanged:
-        return WebEvent::GestureChange;
+        return WebEventType::GestureChange;
     case NSEventPhaseEnded:
     case NSEventPhaseCancelled:
-        return WebEvent::GestureEnd;
+        return WebEventType::GestureEnd;
     default:
         break;
     }
-    return WebEvent::Type::NoType;
+    return WebEventType::NoType;
 }
 
 static NSPoint pointForEvent(NSEvent *event, NSView *windowView)

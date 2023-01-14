@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-bool WebGestureEvent::isGestureEventType(Type type) const
+bool WebGestureEvent::isGestureEventType(WebEventType type) const
 {
-    return type == GestureStart || type == GestureChange || type == GestureEnd;
+    return type == WebEventType::GestureStart || type == WebEventType::GestureChange || type == WebEventType::GestureEnd;
 }
     
 } // namespace WebKit

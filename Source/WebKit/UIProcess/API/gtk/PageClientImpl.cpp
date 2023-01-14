@@ -250,7 +250,7 @@ WebCore::IntRect PageClientImpl::rootViewToAccessibilityScreen(const WebCore::In
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
-    if (wasEventHandled || event.type() != WebEvent::Type::KeyDown || !event.nativeEvent())
+    if (wasEventHandled || event.type() != WebEventType::KeyDown || !event.nativeEvent())
         return;
 
     // Always consider arrow keys as handled, otherwise the GtkWindow key bindings will move the focus.

@@ -2086,13 +2086,13 @@ static NSUInteger modifierFlagsFromWebEvent(const WebEvent& event)
 static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventType)
 {
     switch (event.type()) {
-    case WebEvent::KeyDown:
+    case WebEventType::KeyDown:
         eventType = NSEventTypeKeyDown;
         return true;
-    case WebEvent::KeyUp:
+    case WebEventType::KeyUp:
         eventType = NSEventTypeKeyUp;
         return true;
-    case WebEvent::MouseDown:
+    case WebEventType::MouseDown:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEventButton::LeftButton:
             eventType = NSEventTypeLeftMouseDown;
@@ -2103,7 +2103,7 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         default:
             return false;
         }
-    case WebEvent::MouseUp:
+    case WebEventType::MouseUp:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEventButton::LeftButton:
             eventType = NSEventTypeLeftMouseUp;
@@ -2114,7 +2114,7 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         default:
             return false;
         }
-    case WebEvent::MouseMove:
+    case WebEventType::MouseMove:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEventButton::LeftButton:
             eventType = NSEventTypeLeftMouseDragged;
@@ -2188,7 +2188,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     NSEvent *nsEvent = nsEventForWebMouseEvent(event);
 
     switch (event.type()) {
-    case WebEvent::MouseMove:
+    case WebEventType::MouseMove:
         mouseMovedInContentArea();
 
         if (targetScrollbar) {
@@ -2214,7 +2214,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             return true;
         }
         break;
-    case WebEvent::MouseDown:
+    case WebEventType::MouseDown:
         switch (event.button()) {
         case WebMouseEventButton::LeftButton:
             if (targetScrollbar)
@@ -2230,7 +2230,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             return false;
         }
         break;
-    case WebEvent::MouseUp:
+    case WebEventType::MouseUp:
         switch (event.button()) {
         case WebMouseEventButton::LeftButton:
             if (targetScrollbar)
@@ -2269,7 +2269,7 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event({ WebEvent::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::RightButton, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::RightButton, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
     return handleContextMenuEvent(event);
 }
 
@@ -2327,7 +2327,7 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     NSEvent *fakeEvent = [NSEvent keyEventWithType:eventType location:NSZeroPoint modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:0 characters:event.text() charactersIgnoringModifiers:event.unmodifiedText() isARepeat:event.isAutoRepeat() keyCode:event.nativeVirtualKeyCode()];
     
     switch (event.type()) {
-    case WebEvent::KeyDown:
+    case WebEventType::KeyDown:
         return [m_pdfLayerController keyDown:fakeEvent];
     default:
         return false;
@@ -2416,7 +2416,7 @@ void PDFPlugin::clickedLink(NSURL *url)
         return;
 
     RefPtr<Event> coreEvent;
-    if (m_lastMouseEvent.type() != WebEvent::NoType)
+    if (m_lastMouseEvent.type() != WebEventType::NoType)
         coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(m_lastMouseEvent), 0, 0);
 
     frame->loader().changeLocation(coreURL, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);

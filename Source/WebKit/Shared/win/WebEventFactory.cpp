@@ -72,7 +72,7 @@ static int verticalScrollLines()
     return scrollLines;
 }
 
-static inline int clickCount(WebEvent::Type type, WebMouseEventButton button, const POINT& position, double timeStampSeconds)
+static inline int clickCount(WebEventType type, WebMouseEventButton button, const POINT& position, double timeStampSeconds)
 {
     static int gLastClickCount;
     static double gLastClickTime;
@@ -83,7 +83,7 @@ static inline int clickCount(WebEvent::Type type, WebMouseEventButton button, co
         || (std::abs(lastClickPosition.y - position.y) > (::GetSystemMetrics(SM_CYDOUBLECLK) / 2))
         || ((timeStampSeconds - gLastClickTime) * 1000.0 > getDoubleClickTime());
 
-    if (type == WebEvent::MouseDown) {
+    if (type == WebEventType::MouseDown) {
         if (!cancelPreviousClick && (button == lastClickButton))
             ++gLastClickCount;
         else {
@@ -92,7 +92,7 @@ static inline int clickCount(WebEvent::Type type, WebMouseEventButton button, co
         }
         gLastClickTime = timeStampSeconds;
         lastClickButton = button;
-    } else if (type == WebEvent::MouseMove) {
+    } else if (type == WebEventType::MouseMove) {
         if (cancelPreviousClick) {
             gLastClickCount = 0;
             lastClickPosition.x = 0;
@@ -133,25 +133,25 @@ static inline OptionSet<WebEventModifier> modifiersForCurrentKeyState()
     return modifiers;
 }
 
-static inline WebEvent::Type keyboardEventTypeForEvent(UINT message)
+static inline WebEventType keyboardEventTypeForEvent(UINT message)
 {
     switch (message) {
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN:
-        return WebEvent::RawKeyDown;
+        return WebEventType::RawKeyDown;
         break;
     case WM_SYSKEYUP:
     case WM_KEYUP:
-        return WebEvent::KeyUp;
+        return WebEventType::KeyUp;
         break;
     case WM_IME_CHAR:
     case WM_SYSCHAR:
     case WM_CHAR:
-        return WebEvent::Char;
+        return WebEventType::Char;
         break;
     default:
         ASSERT_NOT_REACHED();
-        return WebEvent::Char;
+        return WebEventType::Char;
     }
 }
 
@@ -167,9 +167,9 @@ static inline bool isSystemKeyEvent(UINT message)
     }
 }
 
-static bool isKeypadEvent(WPARAM wParam, LPARAM lParam, WebEvent::Type type)
+static bool isKeypadEvent(WPARAM wParam, LPARAM lParam, WebEventType type)
 {
-    if (type != WebEvent::RawKeyDown && type != WebEvent::KeyUp)
+    if (type != WebEventType::RawKeyDown && type != WebEventType::KeyUp)
         return false;
 
     switch (wParam) {
@@ -209,27 +209,27 @@ static bool isKeypadEvent(WPARAM wParam, LPARAM lParam, WebEvent::Type type)
     }
 }
 
-static String textFromEvent(WPARAM wparam, WebEvent::Type type)
+static String textFromEvent(WPARAM wparam, WebEventType type)
 {
-    if (type != WebEvent::Char)
+    if (type != WebEventType::Char)
         return String();
 
     UChar c = static_cast<UChar>(wparam);
     return String(&c, 1);
 }
 
-static String unmodifiedTextFromEvent(WPARAM wparam, WebEvent::Type type)
+static String unmodifiedTextFromEvent(WPARAM wparam, WebEventType type)
 {
-    if (type != WebEvent::Char)
+    if (type != WebEventType::Char)
         return String();
 
     UChar c = static_cast<UChar>(wparam);
     return String(&c, 1);
 }
 
-static String keyIdentifierFromEvent(WPARAM wparam, WebEvent::Type type)
+static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
 {
-    if (type == WebEvent::Char)
+    if (type == WebEventType::Char)
         return String();
 
     unsigned short keyCode = static_cast<unsigned short>(wparam);
@@ -334,11 +334,11 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEvent::Type type)
 
 WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
 {
-    WebEvent::Type type;
+    WebEventType type;
     WebMouseEventButton button = WebMouseEventButton::NoButton;
     switch (message) {
     case WM_MOUSEMOVE:
-        type = WebEvent::MouseMove;
+        type = WebEventType::MouseMove;
         if (wParam & MK_LBUTTON)
             button = WebMouseEventButton::LeftButton;
         else if (wParam & MK_MBUTTON)
@@ -347,7 +347,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
             button = WebMouseEventButton::RightButton;
         break;
     case WM_MOUSELEAVE:
-        type = WebEvent::MouseMove;
+        type = WebEventType::MouseMove;
         if (wParam & MK_LBUTTON)
             button = WebMouseEventButton::LeftButton;
         else if (wParam & MK_MBUTTON)
@@ -361,34 +361,34 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
         break;
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
-        type = WebEvent::MouseDown;
+        type = WebEventType::MouseDown;
         button = WebMouseEventButton::LeftButton;
         break;
     case WM_MBUTTONDOWN:
     case WM_MBUTTONDBLCLK:
-        type = WebEvent::MouseDown;
+        type = WebEventType::MouseDown;
         button = WebMouseEventButton::MiddleButton;
         break;
     case WM_RBUTTONDOWN:
     case WM_RBUTTONDBLCLK:
-        type = WebEvent::MouseDown;
+        type = WebEventType::MouseDown;
         button = WebMouseEventButton::RightButton;
         break;
     case WM_LBUTTONUP:
-        type = WebEvent::MouseUp;
+        type = WebEventType::MouseUp;
         button = WebMouseEventButton::LeftButton;
         break;
     case WM_MBUTTONUP:
-        type = WebEvent::MouseUp;
+        type = WebEventType::MouseUp;
         button = WebMouseEventButton::MiddleButton;
         break;
     case WM_RBUTTONUP:
-        type = WebEvent::MouseUp;
+        type = WebEventType::MouseUp;
         button = WebMouseEventButton::RightButton;
         break;
     default:
         ASSERT_NOT_REACHED();
-        type = WebEvent::KeyDown;
+        type = WebEventType::KeyDown;
     }
 
     POINT position = point(lParam);
@@ -445,7 +445,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
         }
     }
 
-    return WebWheelEvent( { WebEvent::Wheel, modifiers, WallTime::now() }, position, globalPosition, FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
+    return WebWheelEvent( { WebEventType::Wheel, modifiers, WallTime::now() }, position, globalPosition, FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
 }
 
 static WindowsKeyNames& windowsKeyNames()
@@ -456,7 +456,7 @@ static WindowsKeyNames& windowsKeyNames()
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
-    WebEvent::Type type = keyboardEventTypeForEvent(message);
+    auto type = keyboardEventTypeForEvent(message);
     String text = textFromEvent(wparam, type);
     String unmodifiedText = unmodifiedTextFromEvent(wparam, type);
     String key = message == WM_CHAR ? windowsKeyNames().domKeyFromChar(wparam) : windowsKeyNames().domKeyFromParams(wparam, lparam);

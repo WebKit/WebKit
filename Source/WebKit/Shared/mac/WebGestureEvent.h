@@ -59,7 +59,7 @@ public:
     float gestureRotation() const { return m_gestureRotation; }
     
 private:
-    bool isGestureEventType(Type) const;
+    bool isGestureEventType(WebEventType) const;
 
     WebCore::IntPoint m_position;
     float m_gestureScale;

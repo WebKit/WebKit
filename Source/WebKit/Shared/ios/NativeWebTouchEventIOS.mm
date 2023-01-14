@@ -37,17 +37,17 @@ namespace WebKit {
 
 #if ENABLE(TOUCH_EVENTS)
 
-static inline WebEvent::Type webEventTypeForUIWebTouchEventType(UIWebTouchEventType type)
+static inline WebEventType webEventTypeForUIWebTouchEventType(UIWebTouchEventType type)
 {
     switch (type) {
     case UIWebTouchEventTouchBegin:
-        return WebEvent::TouchStart;
+        return WebEventType::TouchStart;
     case UIWebTouchEventTouchChange:
-        return WebEvent::TouchMove;
+        return WebEventType::TouchMove;
     case UIWebTouchEventTouchEnd:
-        return WebEvent::TouchEnd;
+        return WebEventType::TouchEnd;
     case UIWebTouchEventTouchCancel:
-        return WebEvent::TouchCancel;
+        return WebEventType::TouchCancel;
     }
 }
 

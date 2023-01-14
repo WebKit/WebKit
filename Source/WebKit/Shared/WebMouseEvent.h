@@ -92,7 +92,7 @@ public:
     GestureWasCancelled gestureWasCancelled() const { return m_gestureWasCancelled; }
 
 private:
-    static bool isMouseEventType(Type);
+    static bool isMouseEventType(WebEventType);
 
     WebMouseEventButton m_button { WebMouseEventButton::NoButton };
     unsigned short m_buttons { 0 };

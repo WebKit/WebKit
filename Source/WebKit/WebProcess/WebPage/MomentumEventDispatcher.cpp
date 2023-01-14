@@ -178,7 +178,7 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
     // FIXME: Ideally we would stick legitimate rawPlatformDeltas on the event,
     // but currently nothing will consume them, and we'd have to keep track of them separately.
     WebWheelEvent syntheticEvent(
-        { WebEvent::Wheel, m_lastIncomingEvent->modifiers(), time },
+        { WebEventType::Wheel, m_lastIncomingEvent->modifiers(), time },
         m_currentGesture.initiatingEvent->position(),
         m_currentGesture.initiatingEvent->globalPosition(),
         appKitAcceleratedDelta,
