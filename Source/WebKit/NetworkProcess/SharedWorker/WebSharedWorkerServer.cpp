@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebSharedWorkerServer.h"
 
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
@@ -142,7 +143,7 @@ void WebSharedWorkerServer::createContextConnection(const WebCore::RegistrableDo
         RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::createContextConnection should now have created a connection");
 
         // FIXME: Add a check that the process this firstPartyForCookies came from was allowed to use it as a firstPartyForCookies.
-        m_session.networkProcess().addAllowedFirstPartyForCookies(remoteProcessIdentifier, WebCore::RegistrableDomain(firstPartyForCookies), [] { });
+        m_session.networkProcess().addAllowedFirstPartyForCookies(remoteProcessIdentifier, WebCore::RegistrableDomain(firstPartyForCookies), LoadedWebArchive::No, [] { });
 
         ASSERT(m_pendingContextConnectionDomains.contains(registrableDomain));
         m_pendingContextConnectionDomains.remove(registrableDomain);

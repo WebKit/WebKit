@@ -28,8 +28,10 @@
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 
@@ -95,6 +97,68 @@ TEST(WebArchive, CreateCustomScheme)
 
     Util::run(&done);
     done = false;
+}
+
+static RetainPtr<NSData> webArchiveAccessingCookies()
+{
+    HTTPServer server({ { "/"_s, { "<script>document.cookie</script>"_s } } }, HTTPServer::Protocol::HttpsProxy);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:server.httpsProxyConfiguration()]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<NSData> webArchive;
+    [webView createWebArchiveDataWithCompletionHandler:^(NSData *result, NSError *error) {
+        webArchive = result;
+    }];
+    while (!webArchive)
+        Util::spinRunLoop();
+    return webArchive;
+}
+
+TEST(WebArchive, CookieAccessAfterLoadRequest)
+{
+    auto webArchive = webArchiveAccessingCookies();
+
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CookieAccessTest.webarchive"];
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    BOOL success = [webArchive writeToFile:path atomically:YES];
+    EXPECT_TRUE(success);
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path isDirectory:NO]]];
+    [webView _test_waitForDidFinishNavigation];
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+}
+
+TEST(WebArchive, CookieAccessAfterLoadData)
+{
+    auto webArchive = webArchiveAccessingCookies();
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadData:webArchive.get() MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    [webView _test_waitForDidFinishNavigation];
+}
+
+#if WK_HAVE_C_SPI
+TEST(WebArchive, CookieAccessAfterLoadWebArchiveData)
+{
+    auto webArchive = webArchiveAccessingCookies();
+    auto webView = adoptNS([WKWebView new]);
+    auto wkData = adoptWK(WKDataCreate(static_cast<const unsigned char*>(webArchive.get().bytes), webArchive.get().length));
+    WKPageLoadWebArchiveData(webView.get()._pageRefForTransitionToWKWebView, wkData.get());
+    [webView _test_waitForDidFinishNavigation];
+}
+#endif // WK_HAVE_C_SPI
+
+TEST(WebArchive, ApplicationXWebarchiveMIMETypeDoesNotLoadHTML)
+{
+    HTTPServer server({ { "/"_s, { { { "Content-Type"_s, "application/x-webarchive"_s } }, "Not web archive content, should not load"_s } } });
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFailProvisionalNavigation];
 }
 
 } // namespace TestWebKitAPI

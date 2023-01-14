@@ -5528,6 +5528,7 @@
 		5C2D5747257FFA1200679A72 /* WKContextDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextDownloadClient.h; sourceTree = "<group>"; };
 		5C2EBDF92564352000D55B05 /* WKDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownloadClient.h; sourceTree = "<group>"; };
 		5C359C0C21547321009E7948 /* WKDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeprecated.h; sourceTree = "<group>"; };
+		5C37A5BE2970DB6000D222A0 /* LoadedWebArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadedWebArchive.h; sourceTree = "<group>"; };
 		5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePoliciesData.cpp; sourceTree = "<group>"; };
 		5C411D9B27CED4200068241A /* UnifiedSource121.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource121.cpp; sourceTree = "<group>"; };
 		5C411D9C27CED4200068241A /* UnifiedSource123.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource123.cpp; sourceTree = "<group>"; };
@@ -8378,6 +8379,7 @@
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContext.cpp */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				F476894628D2B5CD00073641 /* LayerTreeContext.serialization.in */,
+				5C37A5BE2970DB6000D222A0 /* LoadedWebArchive.h */,
 				2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */,
 				2D10875F1D2C573E00B85F82 /* LoadParameters.h */,
 				462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */,
