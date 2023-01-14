@@ -127,6 +127,10 @@ static bool ignoreWatchdogForDebugging = false;
     _fullscreenInterface = *fullscreenInterface;
 }
 
+#if PLATFORM(WATCHOS)
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+#endif
+
 - (void)playerViewControllerWillStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
@@ -200,6 +204,10 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     if (self.fullscreenInterface)
         self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
+
+#if PLATFORM(WATCHOS)
+IGNORE_WARNINGS_END
+#endif
 
 - (BOOL)playerViewControllerShouldStartPictureInPictureFromInlineWhenEnteringBackground:(AVPlayerViewController *)playerViewController
 {
