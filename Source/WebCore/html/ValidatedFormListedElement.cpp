@@ -58,8 +58,6 @@ using namespace HTMLNames;
 ValidatedFormListedElement::ValidatedFormListedElement(HTMLFormElement* form)
     : FormListedElement { form }
 {
-    if (supportsReadOnly())
-        ASSERT(readOnlyBarsFromConstraintValidation());
 }
 
 ValidatedFormListedElement::~ValidatedFormListedElement() = default;
@@ -274,8 +272,8 @@ void ValidatedFormListedElement::parseAttribute(const QualifiedName& name, const
 {
     if (name == disabledAttr && asHTMLElement().canBeActuallyDisabled())
         parseDisabledAttribute(value);
-    else if (name == readonlyAttr && readOnlyBarsFromConstraintValidation())
-        parseReadOnlyAttribute(value);
+    else if (name == readonlyAttr)
+        parseReadonlyAttribute(value);
     else
         FormListedElement::parseAttribute(name, value);
 }
@@ -292,10 +290,8 @@ void ValidatedFormListedElement::parseDisabledAttribute(const AtomString& value)
     }
 }
 
-void ValidatedFormListedElement::parseReadOnlyAttribute(const AtomString& value)
+void ValidatedFormListedElement::parseReadonlyAttribute(const AtomString& value)
 {
-    ASSERT(readOnlyBarsFromConstraintValidation());
-
     bool newHasReadOnlyAttribute = !value.isNull();
     if (m_hasReadOnlyAttribute != newHasReadOnlyAttribute) {
         bool newMatchesReadWrite = supportsReadOnly() && !newHasReadOnlyAttribute;

@@ -183,7 +183,7 @@ void FormAssociatedCustomElement::didUpgrade()
 
     parseFormAttribute(element.attributeWithoutSynchronization(formAttr));
     parseDisabledAttribute(element.attributeWithoutSynchronization(disabledAttr));
-    parseReadOnlyAttribute(element.attributeWithoutSynchronization(readonlyAttr));
+    parseReadonlyAttribute(element.attributeWithoutSynchronization(readonlyAttr));
 
     setDataListAncestorState(TriState::Indeterminate);
     updateWillValidateAndValidity();

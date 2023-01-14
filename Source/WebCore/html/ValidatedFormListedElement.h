@@ -103,7 +103,7 @@ protected:
     void removedFromAncestor(Node::RemovalType, ContainerNode&);
     void parseAttribute(const QualifiedName&, const AtomString&);
     void parseDisabledAttribute(const AtomString&);
-    void parseReadOnlyAttribute(const AtomString&);
+    void parseReadonlyAttribute(const AtomString&);
 
     virtual void disabledAttributeChanged();
     virtual void disabledStateChanged();
