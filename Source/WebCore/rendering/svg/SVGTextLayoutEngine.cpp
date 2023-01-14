@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  * Copyright (C) Apple 2023. All rights reserved.
- * Copyright (C) Google 2014. All rights reserved.
+ * Copyright (C) Google 2014-2017. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -206,9 +206,10 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderSVGTextPath& textPath, SVGTe
     float totalLength = lineLayout.m_chunkLayoutBuilder.totalLength();
     unsigned totalCharacters = lineLayout.m_chunkLayoutBuilder.totalCharacters();
 
-    if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing)
-        m_textPathSpacing = (desiredTextLength - totalLength) / totalCharacters;
-    else
+    if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing) {
+        if (totalCharacters > 1)
+            m_textPathSpacing = (desiredTextLength - totalLength) / (totalCharacters - 1);
+    } else
         m_textPathScaling = desiredTextLength / totalLength;
 }
 

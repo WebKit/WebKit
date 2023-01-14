@@ -86,13 +86,13 @@ layer at (0,0) size 450x500
               RenderSVGContainer {g} at (200,213) size 50x24
                 RenderSVGRect {rect} at (200,215) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [x=200.00] [y=5.00] [width=50.00] [height=20.00]
                 RenderSVGPath {line} at (224,213) size 2x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=3.00] [x2=225.00] [y2=27.00]
-        RenderSVGText {text} at (202,8) size 46x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 45x14
-            chunk 1 (middle anchor) text run 1 at (202.50,19.00) startOffset 0 endOffset 1 width 8.00: "B"
-            chunk 1 (middle anchor) text run 2 at (215.50,19.00) startOffset 1 endOffset 2 width 5.00: "a"
+        RenderSVGText {text} at (200,8) size 50x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x14
+            chunk 1 (middle anchor) text run 1 at (200.00,19.00) startOffset 0 endOffset 1 width 8.00: "B"
+            chunk 1 (middle anchor) text run 2 at (214.25,19.00) startOffset 1 endOffset 2 width 5.00: "a"
             chunk 1 (middle anchor) text run 3 at (225.50,19.00) startOffset 2 endOffset 3 width 3.00: "t"
-            chunk 1 (middle anchor) text run 4 at (233.50,19.00) startOffset 3 endOffset 4 width 3.00: "i"
-            chunk 1 (middle anchor) text run 5 at (241.50,19.00) startOffset 4 endOffset 5 width 6.00: "k"
+            chunk 1 (middle anchor) text run 4 at (234.75,19.00) startOffset 3 endOffset 4 width 3.00: "i"
+            chunk 1 (middle anchor) text run 5 at (244.00,19.00) startOffset 4 endOffset 5 width 6.00: "k"
         RenderSVGText {text} at (127,29) size 196x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 196x14
             chunk 1 (middle anchor) text run 1 at (127.00,40.00) startOffset 0 endOffset 38 width 196.00: "textLength=\"50\" lengthAdjust=\"spacing\""
