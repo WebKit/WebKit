@@ -1636,10 +1636,8 @@ webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/child-indexed-
 webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 
 # :nth-child(n of S) invalidation
-imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-class.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-has.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-in-ancestor.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-sibling.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ ImageOnlyFailure ]
 
 # This test is bit heavy for debug
