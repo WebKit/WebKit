@@ -233,40 +233,24 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
 
 bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
 {
-    auto isNegative = [&](auto& value) {
-        // Calc is supposed to clamp but let's just let the value through as we deal with negative values just fine.
-        if (value.isCalculated())
-            return false;
-        // FIXME: The spec allows negative values for some features but we use the legacy behavior for now.
-        return value.doubleValue() < 0;
-    };
-
     auto validateValue = [&](auto& value) {
         auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
         switch (schema.valueType) {
         case FeatureSchema::ValueType::Integer:
-            if (!primitiveValue || !primitiveValue->isInteger())
-                return false;
-            return !isNegative(*primitiveValue);
+            return primitiveValue && primitiveValue->isInteger();
 
         case FeatureSchema::ValueType::Number:
-            if (!primitiveValue || !primitiveValue->isNumberOrInteger())
-                return false;
-            return !isNegative(*primitiveValue);
+            return primitiveValue && primitiveValue->isNumberOrInteger();
 
         case FeatureSchema::ValueType::Length:
             if (!primitiveValue)
                 return false;
             if (primitiveValue->isInteger() && !primitiveValue->intValue())
                 return true;
-            if (!primitiveValue->isLength())
-                return false;
-            return !isNegative(*primitiveValue);
+            return primitiveValue->isLength();
 
         case FeatureSchema::ValueType::Resolution:
-            if (!primitiveValue || !primitiveValue->isResolution())
-                return false;
-            return primitiveValue->doubleValue() > 0;
+            return primitiveValue && primitiveValue->isResolution();
 
         case FeatureSchema::ValueType::Identifier:
             return primitiveValue && primitiveValue->isValueID() && schema.valueIdentifiers.contains(primitiveValue->valueID());
