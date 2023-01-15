@@ -89,6 +89,34 @@ static int connectionOptions()
     return IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer;
 }
 
+static bool isSandboxEnabled(const ProcessLauncher::LaunchOptions& launchOptions)
+{
+#if !USE(SYSTEM_MALLOC)
+    if (RUNNING_ON_VALGRIND)
+        return false;
+#endif
+
+    if (const char* sandboxEnv = g_getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS")) {
+        if (!strcmp(sandboxEnv, "1"))
+            return false;
+    }
+
+#if !ENABLE(2022_GLIB_API)
+    if (const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX")) {
+        if (!strcmp(sandboxEnv, "1"))
+            return true;
+
+        static bool once = false;
+        if (!once) {
+            g_warning("WEBKIT_FORCE_SANDBOX no longer allows disabling the sandbox. Use WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 instead.");
+            once = true;
+        }
+    }
+#endif
+
+    return launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
+}
+
 void ProcessLauncher::launchProcess()
 {
     IPC::SocketPair socketPair = IPC::createPlatformConnection(connectionOptions());
@@ -187,16 +215,7 @@ void ProcessLauncher::launchProcess()
     GRefPtr<GSubprocess> process;
 
 #if OS(LINUX)
-    const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX");
-    bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
-
-    if (sandboxEnv)
-        sandboxEnabled = !strcmp(sandboxEnv, "1");
-
-#if !USE(SYSTEM_MALLOC)
-    if (RUNNING_ON_VALGRIND)
-        sandboxEnabled = false;
-#endif
+    bool sandboxEnabled = isSandboxEnabled(m_launchOptions);
 
     if (sandboxEnabled && isFlatpakSpawnUsable())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
