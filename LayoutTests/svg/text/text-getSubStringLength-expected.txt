@@ -1,0 +1,8 @@
+
+FAIL SVGTextContentElement.getSubStringLength, BiDi. assert_approx_equals: Sum of the parts equal the total. expected 37.7734375 +/- 0.01 but got 68.5293140411377
+FAIL SVGTextContentElement.getSubStringLength, multiple text-chunks. assert_approx_equals: Sum of the parts equal the total. expected 11.5546875 +/- 0.01 but got 22.2265625
+PASS SVGTextContentElement.getSubStringLength, 0-length
+W3C نشاط
+AB
+Text
+

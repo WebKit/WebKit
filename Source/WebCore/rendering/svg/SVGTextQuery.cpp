@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -144,6 +146,7 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
     startPosition -= queryData->processedCharacters;
     endPosition -= queryData->processedCharacters;
 
+    startPosition = std::max<unsigned>(0, startPosition);
     if (startPosition >= endPosition)
         return false;
 
