@@ -3809,6 +3809,8 @@ imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOn
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
 
 # AVIF tests
+webkit.org/b/247831 fast/images/avif-as-image.html [ ImageOnlyFailure ]
+webkit.org/b/247831 fast/images/avif-heif-container-as-image.html [ ImageOnlyFailure ]
 webkit.org/b/247831 fast/images/avif-image-decoding.html [ Failure ]
 webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
 
