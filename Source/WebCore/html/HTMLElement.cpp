@@ -576,10 +576,10 @@ void HTMLElement::applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttri
 void HTMLElement::addParsedWidthAndHeightToAspectRatioList(double width, double height, MutableStyleProperties& style)
 {
     auto ratioList = CSSValueList::createSlashSeparated();
-    ratioList->append(CSSValuePool::singleton().createValue(width, CSSUnitType::CSS_NUMBER));
-    ratioList->append(CSSValuePool::singleton().createValue(height, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSPrimitiveValue::create(width, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSPrimitiveValue::create(height, CSSUnitType::CSS_NUMBER));
     auto list = CSSValueList::createSpaceSeparated();
-    list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAuto));
+    list->append(CSSPrimitiveValue::create(CSSValueAuto));
     list->append(ratioList);
 
     style.setProperty(CSSPropertyAspectRatio, RefPtr<CSSValue>(WTFMove(list)));

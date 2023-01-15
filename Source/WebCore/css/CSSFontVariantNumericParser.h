@@ -81,7 +81,7 @@ public:
     RefPtr<CSSValue> finalizeValue()
     {
         if (!m_result->length())
-            return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+            return CSSPrimitiveValue::create(CSSValueNormal);
         return WTFMove(m_result);
     }
 

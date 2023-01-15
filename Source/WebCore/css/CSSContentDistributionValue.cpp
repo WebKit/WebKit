@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSContentDistributionValue.h"
 
-#include "CSSValueList.h"
-
 namespace WebCore {
 
 CSSContentDistributionValue::CSSContentDistributionValue(CSSValueID distribution, CSSValueID position, CSSValueID overflow)
@@ -42,22 +40,21 @@ CSSContentDistributionValue::~CSSContentDistributionValue() = default;
 
 String CSSContentDistributionValue::customCSSText() const
 {
-    auto& cssValuePool = CSSValuePool::singleton();
-    auto list = CSSValueList::createSpaceSeparated();
+    StringBuilder builder;
     if (m_distribution != CSSValueInvalid)
-        list->append(distribution());
+        builder.append(nameLiteral(m_distribution));
     if (m_position != CSSValueInvalid) {
-        if (m_position == CSSValueFirstBaseline || m_position == CSSValueLastBaseline) {
-            CSSValueID preference = m_position == CSSValueFirstBaseline ? CSSValueFirst : CSSValueLast;
-            list->append(cssValuePool.createIdentifierValue(preference));
-            list->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
-        } else {
+        if (m_position == CSSValueFirstBaseline)
+            builder.append(builder.isEmpty() ? "" : " ", "first baseline");
+        else if (m_position == CSSValueLastBaseline)
+            builder.append(builder.isEmpty() ? "" : " ", "last baseline");
+        else {
             if (m_overflow != CSSValueInvalid)
-                list->append(overflow());
-            list->append(position());
+                builder.append(builder.isEmpty() ? "" : " ", nameLiteral(m_overflow));
+            builder.append(builder.isEmpty() ? "" : " ", nameLiteral(m_position));
         }
     }
-    return list->customCSSText();
+    return builder.toString();
 }
 
 bool CSSContentDistributionValue::equals(const CSSContentDistributionValue& other) const

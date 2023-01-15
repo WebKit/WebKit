@@ -33,7 +33,6 @@
 #include "CSSAtRuleID.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertyValue.h"
-#include "CSSFontFamily.h"
 #include "CSSFontFeatureValuesRule.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSKeyframeRule.h"
@@ -801,9 +800,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::FontPaletteValues);
     auto properties = createStyleProperties(declarations, m_context.mode);
 
-    AtomString fontFamily;
-    if (auto fontFamilyValue = properties->getPropertyCSSValue(CSSPropertyFontFamily))
-        fontFamily = AtomString { downcast<CSSPrimitiveValue>(*fontFamilyValue).fontFamily().familyName };
+    AtomString fontFamily { properties->getPropertyValue(CSSPropertyFontFamily) };
 
     std::optional<FontPaletteIndex> basePalette;
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
@@ -829,7 +826,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
         }
     }
 
-    return StyleRuleFontPaletteValues::create(AtomString { name->stringValue() }, AtomString { fontFamily }, WTFMove(basePalette), WTFMove(overrideColors));
+    return StyleRuleFontPaletteValues::create(AtomString { name->stringValue() }, fontFamily, WTFMove(basePalette), WTFMove(overrideColors));
 }
 
 RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

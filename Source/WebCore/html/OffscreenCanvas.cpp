@@ -524,16 +524,6 @@ void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
     }
 }
 
-CSSValuePool& OffscreenCanvas::cssValuePool()
-{
-    auto* scriptExecutionContext = canvasBaseScriptExecutionContext();
-    if (scriptExecutionContext->isWorkerGlobalScope())
-        return downcast<WorkerGlobalScope>(*scriptExecutionContext).cssValuePool();
-
-    ASSERT(scriptExecutionContext->isDocument());
-    return CSSValuePool::singleton();
-}
-
 void OffscreenCanvas::createImageBuffer() const
 {
     m_hasCreatedImageBuffer = true;

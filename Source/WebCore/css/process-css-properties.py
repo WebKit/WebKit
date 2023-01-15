@@ -4507,7 +4507,7 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                         to.write(f"{default_string};")
 
                 to.write(f"{range_string}.consumeIncludingWhitespace();")
-                to.write(f"return CSSValuePool::singleton().createIdentifierValue({return_expression.return_value});")
+                to.write(f"return CSSPrimitiveValue::create({return_expression.return_value});")
 
         to.write(f"default:")
         with to.indent():

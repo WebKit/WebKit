@@ -47,11 +47,6 @@ String CSSOffsetRotateValue::customCSSText() const
     return builder.toString();
 }
 
-Ref<CSSOffsetRotateValue> CSSOffsetRotateValue::initialValue()
-{
-    return CSSOffsetRotateValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), nullptr);
-}
-
 bool CSSOffsetRotateValue::isInitialValue() const
 {
     return m_modifier && m_modifier->valueID() == CSSValueAuto

@@ -29,6 +29,7 @@
 #include "config.h"
 #include "UserAgentStyle.h"
 
+#include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "FullscreenManager.h"

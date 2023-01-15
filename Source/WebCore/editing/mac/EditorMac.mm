@@ -118,7 +118,7 @@ void Editor::platformPasteFont()
         backgroundColor = colorFromCocoaColor(nsBackgroundColor);
     if (!backgroundColor.isValid())
         backgroundColor = Color::transparentBlack;
-    style->setProperty(CSSPropertyBackgroundColor, CSSPrimitiveValue::create(backgroundColor));
+    style->setProperty(CSSPropertyBackgroundColor, CSSValuePool::singleton().createColorValue(backgroundColor));
 
     if (NSFont *font = dynamic_objc_cast<NSFont>([fontAttributes objectForKey:NSFontAttributeName])) {
         // FIXME: Need more sophisticated escaping code if we want to handle family names
@@ -142,7 +142,7 @@ void Editor::platformPasteFont()
             foregroundColor = Color::transparentBlack;
     } else
         foregroundColor = Color::black;
-    style->setProperty(CSSPropertyColor, CSSPrimitiveValue::create(foregroundColor));
+    style->setProperty(CSSPropertyColor, CSSValuePool::singleton().createColorValue(foregroundColor));
 
     FontShadow fontShadow;
     if (NSShadow *nsFontShadow = dynamic_objc_cast<NSShadow>([fontAttributes objectForKey:NSShadowAttributeName]))

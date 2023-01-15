@@ -29,8 +29,8 @@ namespace WebCore {
 
 class CSSValueList : public CSSValue {
 public:
-    typedef Vector<Ref<CSSValue>, 4>::iterator iterator;
-    typedef Vector<Ref<CSSValue>, 4>::const_iterator const_iterator;
+    using const_iterator = Vector<Ref<CSSValue>, 4>::const_iterator;
+    using iterator = const_iterator;
 
     static Ref<CSSValueList> createCommaSeparated()
     {
@@ -55,8 +55,6 @@ public:
 
     const_iterator begin() const { return m_values.begin(); }
     const_iterator end() const { return m_values.end(); }
-    iterator begin() { return m_values.begin(); }
-    iterator end() { return m_values.end(); }
     size_t size() const { return m_values.size(); }
 
     void append(Ref<CSSValue>&&);

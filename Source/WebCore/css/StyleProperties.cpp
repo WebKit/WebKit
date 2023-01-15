@@ -1443,12 +1443,12 @@ bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSPropert
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
 {
-    return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
+    return setProperty(CSSProperty(propertyID, CSSPrimitiveValue::create(identifier), important));
 }
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSPropertyID identifier, bool important)
 {
-    return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
+    return setProperty(CSSProperty(propertyID, CSSPrimitiveValue::create(identifier), important));
 }
 
 bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context)

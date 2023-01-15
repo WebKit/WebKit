@@ -61,6 +61,8 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         transformStyleOptimized3DEnabled = true;
 #endif
     }
+
+    StaticCSSValuePool::init();
 }
 
 CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, const String& charset)

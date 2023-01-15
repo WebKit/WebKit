@@ -57,23 +57,21 @@ public:
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
-RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&, CSSValuePool&);
-RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&);
 
 #if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode, CSSValuePool&);
-RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange&, CSSValuePool&);
-RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&);
 #endif
 
 #if !ENABLE(VARIATION_FONTS)
-RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange&);
 #endif
 
 } // namespace CSSPropertyParserHelpersWorkerSafe

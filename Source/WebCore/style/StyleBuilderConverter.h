@@ -931,7 +931,7 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
             result *= 3;
         else if (primitiveValue.valueID() == CSSValueThick)
             result *= 5;
-        Ref<CSSPrimitiveValue> emsValue(CSSPrimitiveValue::create(result, CSSUnitType::CSS_EMS));
+        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EMS);
         width = convertComputedLength<float>(builderState, emsValue);
         break;
     }

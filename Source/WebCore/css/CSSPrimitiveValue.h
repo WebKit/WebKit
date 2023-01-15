@@ -48,7 +48,6 @@ class Rect;
 class RenderStyle;
 class RenderView;
 
-struct CSSFontFamily;
 struct Length;
 struct LengthSize;
 
@@ -118,16 +117,19 @@ public:
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 
-    static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
-    static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
+    static inline Ref<CSSPrimitiveValue> create(CSSValueID);
+    static Ref<CSSPrimitiveValue> create(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
+    static Ref<CSSPrimitiveValue> createCustomIdent(const String& value) { return CSSPrimitiveValue::create(value, CSSUnitType::CustomIdent); }
 
-    static Ref<CSSPrimitiveValue> create(double value, CSSUnitType type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
+    static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
     static Ref<CSSPrimitiveValue> create(const String& value, CSSUnitType type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&);
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&, CSSPropertyID);
+
+    static inline CSSPrimitiveValue& implicitInitialValue();
 
     ~CSSPrimitiveValue();
 
@@ -173,7 +175,6 @@ public:
     const Color& color() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR); return *m_value.color; }
     Counter* counterValue() const { return primitiveUnitType() != CSSUnitType::CSS_COUNTER ? nullptr : m_value.counter; }
     CSSCalcValue* cssCalcValue() const { return primitiveUnitType() != CSSUnitType::CSS_CALC ? nullptr : m_value.calc; }
-    const CSSFontFamily& fontFamily() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY); return *m_value.fontFamily; }
     Pair* pairValue() const { return primitiveUnitType() != CSSUnitType::CSS_PAIR ? nullptr : m_value.pair; }
     CSSPropertyID propertyID() const { return primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID ? m_value.propertyID : CSSPropertyInvalid; }
     Quad* quadValue() const { return primitiveUnitType() != CSSUnitType::CSS_QUAD ? nullptr : m_value.quad; }
@@ -205,10 +206,9 @@ private:
     friend class StaticCSSValuePool;
     friend LazyNeverDestroyed<CSSPrimitiveValue>;
 
-    CSSPrimitiveValue(CSSValueID);
-    CSSPrimitiveValue(CSSPropertyID);
-    CSSPrimitiveValue(const Color&);
-    CSSPrimitiveValue(const Length&);
+    explicit CSSPrimitiveValue(CSSPropertyID);
+    explicit CSSPrimitiveValue(const Color&);
+    explicit CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle&);
     CSSPrimitiveValue(const LengthSize&, const RenderStyle&);
     CSSPrimitiveValue(const String&, CSSUnitType);
@@ -220,14 +220,20 @@ private:
     enum ImplicitInitialValueTag { ImplicitInitialValue };
     CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
-    template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
+    template<typename T> explicit CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(T, CSSPropertyID); // Defined in CSSPrimitiveValueMappings.h
-    template<typename T> CSSPrimitiveValue(RefPtr<T>&&);
-    template<typename T> CSSPrimitiveValue(Ref<T>&&);
+    template<typename T> explicit CSSPrimitiveValue(RefPtr<T>&&);
+    template<typename T> explicit CSSPrimitiveValue(Ref<T>&&);
 
-    static void create(int); // compile-time guard
-    static void create(unsigned); // compile-time guard
-    template<typename T> operator T*(); // compile-time guard
+    static void create(int) = delete; // compile-time guard
+    static void create(unsigned) = delete; // compile-time guard
+    static void create(const AtomString&) = delete; // compile-time guard
+    static void create(AtomString&&) = delete; // compile-time guard
+    static void create(const Color&) = delete; // compile-time guard
+    static void create(Color&&) = delete; // compile-time guard
+    static void create(const String&) = delete; // compile-time guard
+    static void create(String&&) = delete; // compile-time guard
+    template<typename T> operator T*() = delete; // compile-time guard
 
     void init(const Length&);
     void init(const LengthSize&, const RenderStyle&);
@@ -251,7 +257,6 @@ private:
     NEVER_INLINE String formatInfiniteOrNanValue(ASCIILiteral suffix) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
-    static constexpr bool isResolution(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
 
     union {
@@ -266,7 +271,6 @@ private:
         Pair* pair;
         CSSBasicShape* shape;
         CSSCalcValue* calc;
-        const CSSFontFamily* fontFamily;
     } m_value;
 };
 
@@ -318,13 +322,6 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }
 
-constexpr bool CSSPrimitiveValue::isResolution(CSSUnitType type)
-{
-    return type == CSSUnitType::CSS_DPPX
-        || type == CSSUnitType::CSS_DPI
-        || type == CSSUnitType::CSS_DPCM;
-}
-
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 {
     return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewporCSSUnitType;
@@ -332,6 +329,7 @@ constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)
 {
+    // FIXME: This allocates a new CSSPrimitiveValue for all valueID cases, without taking advantage of the StaticCSSValuePool!
     return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
 }
 

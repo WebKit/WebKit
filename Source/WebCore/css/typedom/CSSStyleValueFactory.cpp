@@ -337,7 +337,7 @@ RefPtr<CSSStyleValue> CSSStyleValueFactory::constructStyleValueForCustomProperty
     }, [&](const StyleColor& colorValue) -> RefPtr<CSSStyleValue> {
         if (colorValue.isCurrentColor())
             return CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueCurrentcolor));
-        return CSSStyleValue::create(CSSPrimitiveValue::create(colorValue.absoluteColor()));
+        return CSSStyleValue::create(CSSValuePool::singleton().createColorValue(colorValue.absoluteColor()));
     }, [&](const URL& urlValue) -> RefPtr<CSSStyleValue> {
         return CSSStyleValue::create(CSSPrimitiveValue::create(urlValue.string(), CSSUnitType::CSS_URI));
     }, [&](const String& identValue) -> RefPtr<CSSStyleValue> {

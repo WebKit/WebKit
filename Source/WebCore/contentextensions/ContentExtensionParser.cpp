@@ -205,8 +205,6 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
 bool isValidCSSSelector(const String& selector)
 {
     ASSERT(isMainThread());
-    initializeCommonAtomStrings();
-    QualifiedName::init();
     ProcessWarming::initializeNames();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);

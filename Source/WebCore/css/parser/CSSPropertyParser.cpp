@@ -186,7 +186,7 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
         m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
     else {
         ASSERT(setFromShorthand);
-        m_parsedProperties->append(CSSProperty(property, CSSValuePool::singleton().createImplicitInitialValue(), important, setFromShorthand, shorthandIndex, true));
+        m_parsedProperties->append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important, setFromShorthand, shorthandIndex, true));
     }
 }
 
@@ -233,7 +233,7 @@ static RefPtr<CSSPrimitiveValue> maybeConsumeCSSWideKeyword(CSSParserTokenRange&
         return nullptr;
 
     range = rangeCopy;
-    return CSSValuePool::singleton().createIdentifierValue(valueID);
+    return CSSPrimitiveValue::create(valueID);
 }
 
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context)
@@ -619,7 +619,7 @@ bool CSSPropertyParser::consumeFont(bool important)
         // Instead, we store sentinel values, later replaced by environment-sensitive values
         // inside Style::BuilderCustom and Style::BuilderConverter.
         for (auto property : fontShorthand())
-            addProperty(property, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(systemFont), important, true);
+            addProperty(property, CSSPropertyFont, CSSPrimitiveValue::create(systemFont), important, true);
 
         return true;
     }
@@ -638,13 +638,13 @@ bool CSSPropertyParser::consumeFont(bool important)
     for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
         if (consumeIdent<CSSValueNormal>(range))
             continue;
-        if (!fontStyle && (fontStyle = consumeFontStyle(range, m_context.mode, CSSValuePool::singleton())))
+        if (!fontStyle && (fontStyle = consumeFontStyle(range, m_context.mode)))
             continue;
         if (!fontVariantCaps && (fontVariantCaps = consumeIdent<CSSValueSmallCaps>(range)))
             continue;
         if (!fontWeight && (fontWeight = consumeFontWeight(range)))
             continue;
-        if (!fontStretch && (fontStretch = consumeFontStretchKeywordValue(range, CSSValuePool::singleton())))
+        if (!fontStretch && (fontStretch = consumeFontStretchKeywordValue(range)))
             continue;
         break;
     }
@@ -672,7 +672,7 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     auto reset = [&] (CSSPropertyID property, CSSValueID initialValue) {
         ASSERT(initialValue != CSSValueInvalid);
-        addProperty(property, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(initialValue), important, true);
+        addProperty(property, CSSPropertyFont, CSSPrimitiveValue::create(initialValue), important, true);
     };
     auto add = [&] (CSSPropertyID property, RefPtr<CSSValue>& value) {
         if (value)
@@ -707,7 +707,7 @@ bool CSSPropertyParser::consumeTextDecorationSkip(bool important)
             addProperty(CSSPropertyTextDecorationSkipInk, CSSPropertyTextDecorationSkip, skip.releaseNonNull(), important);
             return m_range.atEnd();
         case CSSValueInk:
-            addProperty(CSSPropertyTextDecorationSkipInk, CSSPropertyTextDecorationSkip, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important);
+            addProperty(CSSPropertyTextDecorationSkipInk, CSSPropertyTextDecorationSkip, CSSPrimitiveValue::create(CSSValueAuto), important);
             return m_range.atEnd();
         default:
             ASSERT_NOT_REACHED();
@@ -798,8 +798,8 @@ bool CSSPropertyParser::consumeFontSynthesis(bool important)
     // none | [ weight || style || small-caps ]
     if (m_range.peek().id() == CSSValueNone) {
         addProperty(CSSPropertyFontSynthesisSmallCaps, CSSPropertyFontSynthesis, consumeIdent(m_range).releaseNonNull(), important);
-        addProperty(CSSPropertyFontSynthesisStyle, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
-        addProperty(CSSPropertyFontSynthesisWeight, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyFontSynthesisStyle, CSSPropertyFontSynthesis, CSSPrimitiveValue::create(CSSValueNone), important);
+        addProperty(CSSPropertyFontSynthesisWeight, CSSPropertyFontSynthesis, CSSPrimitiveValue::create(CSSValueNone), important);
         return m_range.atEnd();
     }
 
@@ -836,9 +836,9 @@ bool CSSPropertyParser::consumeFontSynthesis(bool important)
         }
     }
 
-    addProperty(CSSPropertyFontSynthesisWeight, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(foundWeight ? CSSValueAuto : CSSValueNone), important);
-    addProperty(CSSPropertyFontSynthesisStyle, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(foundStyle ? CSSValueAuto : CSSValueNone), important);
-    addProperty(CSSPropertyFontSynthesisSmallCaps, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(foundSmallCaps ? CSSValueAuto : CSSValueNone), important);
+    addProperty(CSSPropertyFontSynthesisWeight, CSSPropertyFontSynthesis, CSSPrimitiveValue::create(foundWeight ? CSSValueAuto : CSSValueNone), important);
+    addProperty(CSSPropertyFontSynthesisStyle, CSSPropertyFontSynthesis, CSSPrimitiveValue::create(foundStyle ? CSSValueAuto : CSSValueNone), important);
+    addProperty(CSSPropertyFontSynthesisSmallCaps, CSSPropertyFontSynthesis, CSSPrimitiveValue::create(foundSmallCaps ? CSSValueAuto : CSSValueNone), important);
     
     return true;
 }
@@ -883,7 +883,7 @@ bool CSSPropertyParser::consumeColumns(bool important)
 
     // If both values are auto, set column-width explicitly to auto so the shorthand serializes correctly.
     if (!columnWidth && !columnCount)
-        columnWidth = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        columnWidth = CSSPrimitiveValue::create(CSSValueAuto);
 
     addProperty(CSSPropertyColumnWidth, CSSPropertyColumns, WTFMove(columnWidth), important);
     addProperty(CSSPropertyColumnCount, CSSPropertyColumns, WTFMove(columnCount), important);
@@ -1042,9 +1042,9 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
 static Ref<CSSValue> initialCSSValueForAnimationLonghand(CSSPropertyID longhand)
 {
     return WTF::switchOn(initialValueForLonghand(longhand), [](CSSValueID value) -> Ref<CSSValue> {
-        return CSSValuePool::singleton().createIdentifierValue(value);
+        return CSSPrimitiveValue::create(value);
     }, [](InitialNumericValue value) -> Ref<CSSValue> {
-        return CSSValuePool::singleton().createValue(value.number, value.type);
+        return CSSPrimitiveValue::create(value.number, value.type);
     });
 }
 
@@ -1215,7 +1215,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
     if (m_range.peek().id() == CSSValueNone) {
         flexGrow = 0;
         flexShrink = 0;
-        flexBasis = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        flexBasis = CSSPrimitiveValue::create(CSSValueAuto);
         m_range.consumeIncludingWhitespace();
     } else {
         unsigned index = 0;
@@ -1446,7 +1446,7 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
         return false;
 
     CSSPropertyID genericBreakProperty = mapFromLegacyBreakProperty(property);
-    addProperty(genericBreakProperty, property, CSSValuePool::singleton().createIdentifierValue(value), important);
+    addProperty(genericBreakProperty, property, CSSPrimitiveValue::create(value), important);
     return true;
 }
 
@@ -1457,7 +1457,7 @@ bool CSSPropertyParser::consumeLegacyTextOrientation(bool important)
     RefPtr<CSSPrimitiveValue> keyword;
     auto valueID = m_range.peek().id();
     if (valueID == CSSValueSidewaysRight) {
-        keyword = CSSValuePool::singleton().createIdentifierValue(CSSValueSideways);
+        keyword = CSSPrimitiveValue::create(CSSValueSideways);
         consumeIdentRaw(m_range);
     } else if (CSSParserFastPaths::isKeywordValidForStyleProperty(CSSPropertyTextOrientation, valueID, m_context))
         keyword = consumeIdent(m_range);
@@ -1716,7 +1716,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                 continue;
             }
             if (!parsedLonghand[i])
-                addBackgroundValue(longhands[i], CSSValuePool::singleton().createImplicitInitialValue());
+                addBackgroundValue(longhands[i], Ref { CSSPrimitiveValue::implicitInitialValue() });
         }
     } while (consumeCommaIncludingWhitespace(m_range));
     if (!m_range.atEnd())
@@ -1755,8 +1755,8 @@ bool CSSPropertyParser::consumeOverflowShorthand(bool important)
     if (!m_range.atEnd())
         return false;
 
-    addProperty(CSSPropertyOverflowX, CSSPropertyOverflow, CSSValuePool::singleton().createIdentifierValue(xValueID), important);
-    addProperty(CSSPropertyOverflowY, CSSPropertyOverflow, CSSValuePool::singleton().createIdentifierValue(yValueID), important);
+    addProperty(CSSPropertyOverflowX, CSSPropertyOverflow, CSSPrimitiveValue::create(xValueID), important);
+    addProperty(CSSPropertyOverflowY, CSSPropertyOverflow, CSSPrimitiveValue::create(yValueID), important);
     return true;
 }
 
@@ -1779,7 +1779,7 @@ bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthand
         if (!endValue)
             return false;
     } else {
-        endValue = isCustomIdentValue(*startValue) ? startValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        endValue = isCustomIdentValue(*startValue) ? startValue : CSSPrimitiveValue::create(CSSValueAuto);
     }
     if (!m_range.atEnd())
         return false;
@@ -1814,11 +1814,11 @@ bool CSSPropertyParser::consumeGridAreaShorthand(bool important)
     if (!m_range.atEnd())
         return false;
     if (!columnStartValue)
-        columnStartValue = isCustomIdentValue(*rowStartValue) ? rowStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        columnStartValue = isCustomIdentValue(*rowStartValue) ? rowStartValue : CSSPrimitiveValue::create(CSSValueAuto);
     if (!rowEndValue)
-        rowEndValue = isCustomIdentValue(*rowStartValue) ? rowStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        rowEndValue = isCustomIdentValue(*rowStartValue) ? rowStartValue : CSSPrimitiveValue::create(CSSValueAuto);
     if (!columnEndValue)
-        columnEndValue = isCustomIdentValue(*columnStartValue) ? columnStartValue : CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        columnEndValue = isCustomIdentValue(*columnStartValue) ? columnStartValue : CSSPrimitiveValue::create(CSSValueAuto);
 
     addProperty(CSSPropertyGridRowStart, CSSPropertyGridArea, rowStartValue.releaseNonNull(), important);
     addProperty(CSSPropertyGridColumnStart, CSSPropertyGridArea, columnStartValue.releaseNonNull(), important);
@@ -1853,7 +1853,7 @@ bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID 
         // Handle template-rows's track-size.
         RefPtr<CSSValue> value = consumeGridTrackSize(m_range, m_context.mode);
         if (!value)
-            value = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+            value = CSSPrimitiveValue::create(CSSValueAuto);
         templateRows->append(*value);
 
         // This will handle the trailing/leading <custom-ident>* in the grammar.
@@ -1870,7 +1870,7 @@ bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID 
         if (!columnsValue || !m_range.atEnd())
             return false;
     } else {
-        columnsValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+        columnsValue = CSSPrimitiveValue::create(CSSValueNone);
     }
     addProperty(CSSPropertyGridTemplateRows, shorthandId, templateRows.releaseNonNull(), important);
     addProperty(CSSPropertyGridTemplateColumns, shorthandId, columnsValue.releaseNonNull(), important);
@@ -1885,9 +1885,9 @@ bool CSSPropertyParser::consumeGridTemplateShorthand(CSSPropertyID shorthandId, 
 
     // 1- 'none' case.
     if (rowsValue && m_range.atEnd()) {
-        addProperty(CSSPropertyGridTemplateRows, shorthandId, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
-        addProperty(CSSPropertyGridTemplateColumns, shorthandId, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
-        addProperty(CSSPropertyGridTemplateAreas, shorthandId, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateRows, shorthandId, CSSPrimitiveValue::create(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateColumns, shorthandId, CSSPrimitiveValue::create(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateAreas, shorthandId, CSSPrimitiveValue::create(CSSValueNone), important);
         return true;
     }
 
@@ -1904,7 +1904,7 @@ bool CSSPropertyParser::consumeGridTemplateShorthand(CSSPropertyID shorthandId, 
 
         addProperty(CSSPropertyGridTemplateRows, shorthandId, rowsValue.releaseNonNull(), important);
         addProperty(CSSPropertyGridTemplateColumns, shorthandId, columnsValue.releaseNonNull(), important);
-        addProperty(CSSPropertyGridTemplateAreas, shorthandId, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateAreas, shorthandId, CSSPrimitiveValue::create(CSSValueNone), important);
         return true;
     }
 
@@ -1949,9 +1949,9 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     if (consumeGridTemplateShorthand(CSSPropertyGrid, important)) {
         // It can only be specified the explicit or the implicit grid properties in a single grid declaration.
         // The sub-properties not specified are set to their initial value, as normal for shorthands.
-        addProperty(CSSPropertyGridAutoFlow, CSSPropertyGrid, CSSValuePool::singleton().createIdentifierValue(CSSValueRow), important);
-        addProperty(CSSPropertyGridAutoColumns, CSSPropertyGrid, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important);
-        addProperty(CSSPropertyGridAutoRows, CSSPropertyGrid, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important);
+        addProperty(CSSPropertyGridAutoFlow, CSSPropertyGrid, CSSPrimitiveValue::create(CSSValueRow), important);
+        addProperty(CSSPropertyGridAutoColumns, CSSPropertyGrid, CSSPrimitiveValue::create(CSSValueAuto), important);
+        addProperty(CSSPropertyGridAutoRows, CSSPropertyGrid, CSSPrimitiveValue::create(CSSValueAuto), important);
 
         return true;
     }
@@ -1966,11 +1966,11 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     
     if (m_range.peek().id() == CSSValueAutoFlow || m_range.peek().id() == CSSValueDense) {
         // 2- [ auto-flow && dense? ] <grid-auto-rows>? / <grid-template-columns>
-        gridAutoFlow = consumeImplicitGridAutoFlow(m_range, CSSValuePool::singleton().createIdentifierValue(CSSValueRow));
+        gridAutoFlow = consumeImplicitGridAutoFlow(m_range, CSSPrimitiveValue::create(CSSValueRow));
         if (!gridAutoFlow || m_range.atEnd())
             return false;
         if (consumeSlashIncludingWhitespace(m_range))
-            autoRowsValue = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+            autoRowsValue = CSSPrimitiveValue::create(CSSValueAuto);
         else {
             autoRowsValue = consumeGridTrackList(m_range, m_context, GridAuto);
             if (!autoRowsValue)
@@ -1983,8 +1983,8 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
         templateColumns = consumeGridTemplatesRowsOrColumns(m_range, m_context);
         if (!templateColumns)
             return false;
-        templateRows = CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-        autoColumnsValue = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        templateRows = CSSPrimitiveValue::create(CSSValueNone);
+        autoColumnsValue = CSSPrimitiveValue::create(CSSValueAuto);
     } else {
         // 3- <grid-template-rows> / [ auto-flow && dense? ] <grid-auto-columns>?
         templateRows = consumeGridTemplatesRowsOrColumns(m_range, m_context.mode);
@@ -1992,18 +1992,18 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
             return false;
         if (!consumeSlashIncludingWhitespace(m_range) || m_range.atEnd())
             return false;
-        gridAutoFlow = consumeImplicitGridAutoFlow(m_range, CSSValuePool::singleton().createIdentifierValue(CSSValueColumn));
+        gridAutoFlow = consumeImplicitGridAutoFlow(m_range, CSSPrimitiveValue::create(CSSValueColumn));
         if (!gridAutoFlow)
             return false;
         if (m_range.atEnd())
-            autoColumnsValue = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+            autoColumnsValue = CSSPrimitiveValue::create(CSSValueAuto);
         else {
             autoColumnsValue = consumeGridTrackList(m_range, m_context, GridAuto);
             if (!autoColumnsValue)
                 return false;
         }
-        templateColumns = CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-        autoRowsValue = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        templateColumns = CSSPrimitiveValue::create(CSSValueNone);
+        autoRowsValue = CSSPrimitiveValue::create(CSSValueAuto);
     }
     
     if (!m_range.atEnd())
@@ -2013,7 +2013,7 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     // The sub-properties not specified are set to their initial value, as normal for shorthands.
     addProperty(CSSPropertyGridTemplateColumns, CSSPropertyGrid, templateColumns.releaseNonNull(), important);
     addProperty(CSSPropertyGridTemplateRows, CSSPropertyGrid, templateRows.releaseNonNull(), important);
-    addProperty(CSSPropertyGridTemplateAreas, CSSPropertyGrid, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+    addProperty(CSSPropertyGridTemplateAreas, CSSPropertyGrid, CSSPrimitiveValue::create(CSSValueNone), important);
     addProperty(CSSPropertyGridAutoFlow, CSSPropertyGrid, gridAutoFlow.releaseNonNull(), important);
     addProperty(CSSPropertyGridAutoColumns, CSSPropertyGrid, autoColumnsValue.releaseNonNull(), important);
     addProperty(CSSPropertyGridAutoRows, CSSPropertyGrid, autoRowsValue.releaseNonNull(), important);
@@ -2279,7 +2279,6 @@ bool CSSPropertyParser::consumeOffset(bool important)
 
 bool CSSPropertyParser::consumeListStyleShorthand(bool important)
 {
-    auto& valuePool = CSSValuePool::singleton();
     RefPtr<CSSValue> parsedPosition;
     RefPtr<CSSValue> parsedImage;
     RefPtr<CSSValue> parsedType;
@@ -2318,11 +2317,11 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
     if (noneCount == 2) {
         // Using implicit none for list-style-image is how we serialize "none" instead of "none none".
         parsedImage = nullptr;
-        parsedType = valuePool.createIdentifierValue(CSSValueNone);
+        parsedType = CSSPrimitiveValue::create(CSSValueNone);
     } else if (noneCount == 1) {
         // Use implicit none for list-style-image, but non-implicit for type.
         if (!parsedType)
-            parsedType = valuePool.createIdentifierValue(CSSValueNone);
+            parsedType = CSSPrimitiveValue::create(CSSValueNone);
     }
 
     addProperty(CSSPropertyListStylePosition, CSSPropertyListStyle, WTFMove(parsedPosition), important);

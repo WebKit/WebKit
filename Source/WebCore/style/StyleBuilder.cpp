@@ -369,7 +369,7 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
     // https://drafts.csswg.org/css-variables-2/#invalid-variables
     // ...as if the property’s value had been specified as the unset keyword.
     if (!variableValue || m_state.m_inUnitCycleProperties.get(propertyID))
-        return CSSValuePool::singleton().createValue(CSSValueUnset);
+        return CSSPrimitiveValue::create(CSSValueUnset);
 
     return *variableValue;
 }
