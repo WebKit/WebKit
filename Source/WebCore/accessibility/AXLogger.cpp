@@ -415,6 +415,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXColumnSpanChanged:
         stream << "AXColumnSpanChanged";
         break;
+    case AXObjectCache::AXNotification::AXControlledObjectsChanged:
+        stream << "AXControlledObjectsChanged";
+        break;
     case AXObjectCache::AXNotification::AXCurrentStateChanged:
         stream << "AXCurrentStateChanged";
         break;

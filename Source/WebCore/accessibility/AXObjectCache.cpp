@@ -2085,6 +2085,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXIsAtomicChanged);
     else if (attrName == aria_busyAttr)
         postNotification(element, AXObjectCache::AXElementBusyChanged);
+    else if (attrName == aria_controlsAttr)
+        postNotification(element, AXControlledObjectsChanged);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
         postNotification(element, AXObjectCache::AXValueChanged);
     else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
@@ -3759,6 +3761,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXActiveDescendantChanged:
         case AXRoleChanged:
         case AXColumnSpanChanged:
+        case AXControlledObjectsChanged:
         case AXDescribedByChanged:
         case AXDropEffectChanged:
         case AXElementBusyChanged:

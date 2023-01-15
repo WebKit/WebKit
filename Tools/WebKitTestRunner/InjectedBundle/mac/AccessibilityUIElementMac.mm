@@ -528,7 +528,10 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
-    return elementForAttributeAtIndex(@"AXARIAControls", index);
+    // Per spec, aria-controls is exposed via AXLinkedUIElements on the Mac.
+    // Note that a few other things are exposed via AXLinkedUIElements (aria-flowto), so this function
+    // may provide unexpected results for tests that use a combination of these attributes.
+    return linkedUIElementAtIndex(index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)

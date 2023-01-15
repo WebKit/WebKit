@@ -232,10 +232,6 @@ using namespace WebCore;
 #define NSAccessibilityDocumentEncodingAttribute @"AXDocumentEncoding"
 #endif
 
-#ifndef NSAccessibilityAriaControlsAttribute
-#define NSAccessibilityAriaControlsAttribute @"AXARIAControls"
-#endif
-
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
 
@@ -2646,10 +2642,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:NSAccessibilityDocumentEncodingAttribute])
         return backingObject->documentEncoding();
-
-    // Aria controls element
-    if ([attributeName isEqualToString:NSAccessibilityAriaControlsAttribute])
-        return makeNSArray(backingObject->controlledObjects());
 
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
         AXCoreObject* object = backingObject->focusableAncestor();

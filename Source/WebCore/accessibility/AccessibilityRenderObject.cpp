@@ -1072,8 +1072,6 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
     }
 }
 
-// Linked ui elements could be all the related radio buttons in a group
-// or an internal anchor connection.
 AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::linkedObjects() const
 {
     auto linkedObjects = flowToObjects();
@@ -1086,6 +1084,8 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::linkedObjec
 
     if (roleValue() == AccessibilityRole::RadioButton)
         addRadioButtonGroupMembers(linkedObjects);
+
+    linkedObjects.appendVector(controlledObjects());
 
     return linkedObjects;
 }
