@@ -390,17 +390,35 @@ bool PlatformCAFilters::isAnimatedFilterProperty(FilterOperation::Type type)
 const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Type type)
 {
     switch (type) {
-    case FilterOperation::Type::Grayscale: return "inputAmount";
-    case FilterOperation::Type::Sepia:return "inputColorMatrix";
-    case FilterOperation::Type::Saturate: return "inputAmount";
-    case FilterOperation::Type::HueRotate: return "inputAngle";
-    case FilterOperation::Type::Invert: return "inputColorMatrix";
-    case FilterOperation::Type::Opacity: return "inputColorMatrix";
-    case FilterOperation::Type::Brightness: return "inputColorMatrix";
-    case FilterOperation::Type::Contrast: return "inputColorMatrix";
-    case FilterOperation::Type::Blur: return "inputRadius";
-    default: return "";
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Saturate:
+        return "inputAmount";
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Opacity:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
+        return "inputColorMatrix";
+    case FilterOperation::Type::HueRotate:
+        return "inputAngle";
+    case FilterOperation::Type::Blur:
+        return "inputRadius";
+    default:
+        return "";
     }
+}
+
+FilterOperation::Type PlatformCAFilters::filterOperationTypeFromAnimatedFilterPropertyName(const String& animatedFilterPropertyName)
+{
+    if (animatedFilterPropertyName == "inputAmount"_s)
+        return FilterOperation::Type::Grayscale;
+    if (animatedFilterPropertyName == "inputColorMatrix"_s)
+        return FilterOperation::Type::Sepia;
+    if (animatedFilterPropertyName == "inputAngle"_s)
+        return FilterOperation::Type::HueRotate;
+    if (animatedFilterPropertyName == "inputRadius"_s)
+        return FilterOperation::Type::Blur;
+    return FilterOperation::Type::None;
 }
 
 } // namespace WebCore

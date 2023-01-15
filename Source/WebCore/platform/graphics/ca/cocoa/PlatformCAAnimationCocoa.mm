@@ -149,9 +149,9 @@ CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction& timingFunct
     return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
 }
 
-Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(AnimationType type, KeyPath&& keyPath)
 {
-    return adoptRef(*new PlatformCAAnimationCocoa(type, keyPath));
+    return adoptRef(*new PlatformCAAnimationCocoa(type, WTFMove(keyPath)));
 }
 
 Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(PlatformAnimationRef animation)
@@ -159,21 +159,22 @@ Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(PlatformAnimationRef a
     return adoptRef(*new PlatformCAAnimationCocoa(animation));
 }
 
-PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, const String& keyPath)
+PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, KeyPath&& keyPath)
     : PlatformCAAnimation(type)
+    , m_keyPath(WTFMove(keyPath))
 {
     switch (type) {
     case Basic:
-        m_animation = [CABasicAnimation animationWithKeyPath:keyPath];
+        m_animation = [CABasicAnimation animationWithKeyPath:m_keyPath.string()];
         break;
     case Group:
         m_animation = [CAAnimationGroup animation];
         break;
     case Keyframe:
-        m_animation = [CAKeyframeAnimation animationWithKeyPath:keyPath];
+        m_animation = [CAKeyframeAnimation animationWithKeyPath:m_keyPath.string()];
         break;
     case Spring:
-        m_animation = [CASpringAnimation animationWithKeyPath:keyPath];
+        m_animation = [CASpringAnimation animationWithKeyPath:m_keyPath.string()];
         break;
     }
 }
@@ -196,6 +197,13 @@ PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(PlatformAnimationRef animatio
     }
     
     m_animation = caAnimation;
+
+    m_keyPath = [&]() -> KeyPath {
+        if (animationType() == Group)
+            return { AnimatedProperty::Invalid };
+        ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
+        return { [static_cast<CAPropertyAnimation *>(m_animation.get()) keyPath] };
+    }();
 }
 
 PlatformCAAnimationCocoa::~PlatformCAAnimationCocoa()
@@ -204,7 +212,8 @@ PlatformCAAnimationCocoa::~PlatformCAAnimationCocoa()
 
 Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::copy() const
 {
-    auto animation = create(animationType(), keyPath());
+    auto keyPathCopy = keyPath();
+    auto animation = create(animationType(), WTFMove(keyPathCopy));
     
     animation->setBeginTime(beginTime());
     animation->setDuration(duration());
@@ -238,13 +247,9 @@ PlatformAnimationRef PlatformCAAnimationCocoa::platformAnimation() const
     return m_animation.get();
 }
 
-String PlatformCAAnimationCocoa::keyPath() const
+const PlatformCAAnimation::KeyPath& PlatformCAAnimationCocoa::keyPath() const
 {
-    if (animationType() == Group)
-        return emptyString();
-
-    ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
-    return [static_cast<CAPropertyAnimation *>(m_animation.get()) keyPath];
+    return m_keyPath;
 }
 
 CFTimeInterval PlatformCAAnimationCocoa::beginTime() const

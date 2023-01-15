@@ -125,7 +125,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     encoder << additive;
     encoder << reverseTimingFunctions;
     encoder << hasExplicitBeginTime;
-    
+
     encoder << keyValues;
     encoder << keyTimes;
     encoder << timingFunctions;
@@ -195,16 +195,17 @@ std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::
 
     return WTFMove(properties);
 }
-    
-Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, const String& keyPath)
+
+Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, KeyPath&& keyPath)
 {
-    return adoptRef(*new PlatformCAAnimationRemote(type, keyPath));
+    return adoptRef(*new PlatformCAAnimationRemote(type, WTFMove(keyPath)));
 }
 
 Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
 {
-    auto animation = create(animationType(), keyPath());
-    
+    auto keyPathCopy = keyPath();
+    auto animation = create(animationType(), WTFMove(keyPathCopy));
+
     animation->setBeginTime(beginTime());
     animation->setDuration(duration());
     animation->setSpeed(speed());
@@ -218,7 +219,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
     animation->setValueFunction(valueFunction());
 
     downcast<PlatformCAAnimationRemote>(animation.get()).setHasExplicitBeginTime(hasExplicitBeginTime());
-    
+
     // Copy the specific Basic or Keyframe values.
     if (animationType() == Keyframe) {
         animation->copyValuesFrom(*this);
@@ -234,14 +235,14 @@ Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
     return animation;
 }
 
-PlatformCAAnimationRemote::PlatformCAAnimationRemote(AnimationType type, const String& keyPath)
+PlatformCAAnimationRemote::PlatformCAAnimationRemote(AnimationType type, KeyPath&& keyPath)
     : PlatformCAAnimation(type)
 {
-    m_properties.keyPath = keyPath;
+    m_properties.keyPath = WTFMove(keyPath);
     m_properties.animationType = type;
 }
 
-String PlatformCAAnimationRemote::keyPath() const
+const PlatformCAAnimationRemote::KeyPath& PlatformCAAnimationRemote::keyPath() const
 {
     return m_properties.keyPath;
 }
@@ -587,7 +588,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
     RetainPtr<CAAnimation> caAnimation;
     switch (properties.animationType) {
     case PlatformCAAnimation::Basic: {
-        auto basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath];
+        auto basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath.string()];
 
         if (properties.keyValues.size() > 1) {
             [basicAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0]).get()];
@@ -613,7 +614,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         break;
     }
     case PlatformCAAnimation::Keyframe: {
-        auto keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:properties.keyPath];
+        auto keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:properties.keyPath.string()];
 
         if (properties.keyValues.size()) {
             [keyframeAnimation setValues:createNSArray(properties.keyValues, [] (auto& value) {
@@ -640,7 +641,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         break;
     }
     case PlatformCAAnimation::Spring: {
-        auto springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
+        auto springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath.string()];
 
         if (properties.keyValues.size() > 1) {
             [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0]).get()];
@@ -719,7 +720,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
     ts << "type=";
     ts << animation.animationType;
     ts << " keyPath=";
-    ts << animation.keyPath;
+    ts << animation.keyPath.string();
 
     if (animation.beginTime)
         ts.dumpProperty("beginTime", animation.beginTime);

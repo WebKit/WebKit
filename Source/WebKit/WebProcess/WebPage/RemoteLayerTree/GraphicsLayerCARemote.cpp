@@ -78,9 +78,9 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Ref<WebCore::M
 }
 #endif
 
-Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, PlatformCAAnimation::KeyPath&& keyPath)
 {
-    return PlatformCAAnimationRemote::create(type, keyPath);
+    return PlatformCAAnimationRemote::create(type, WTFMove(keyPath));
 }
 
 void GraphicsLayerCARemote::moveToContext(RemoteLayerTreeContext& context)

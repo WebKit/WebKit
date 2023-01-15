@@ -258,7 +258,7 @@ private:
 #if ENABLE(MODEL_ELEMENT)
     virtual Ref<PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner);
 #endif
-    virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
+    virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, PlatformCAAnimation::KeyPath&&);
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;
@@ -278,9 +278,9 @@ private:
     bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     // Return autoreleased animation (use RetainPtr?)
-    Ref<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    Ref<PlatformCAAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
-    Ref<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createBasicAnimation(const Animation*, PlatformCAAnimation::KeyPath&&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createKeyframeAnimation(const Animation*, PlatformCAAnimation::KeyPath&&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<PlatformCAAnimation> createSpringAnimation(const Animation*, PlatformCAAnimation::KeyPath&&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     
     const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const Animation&, bool keyframesShouldUseAnimationWideTimingFunction);

@@ -47,7 +47,7 @@ class RemoteLayerTreeHost;
 
 class PlatformCAAnimationRemote final : public WebCore::PlatformCAAnimation {
 public:
-    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(AnimationType, KeyPath&&);
 
     virtual ~PlatformCAAnimationRemote() { }
 
@@ -55,7 +55,7 @@ public:
 
     Ref<PlatformCAAnimation> copy() const override;
 
-    String keyPath() const override;
+    const KeyPath& keyPath() const override;
 
     CFTimeInterval beginTime() const override;
     void setBeginTime(CFTimeInterval) override;
@@ -129,7 +129,6 @@ public:
 
     void didStart(CFTimeInterval beginTime) { m_properties.beginTime = beginTime; }
 
-
     using KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>;
 
     struct Properties {
@@ -153,7 +152,7 @@ public:
         void encode(IPC::Encoder&) const;
         static std::optional<Properties> decode(IPC::Decoder&);
 
-        String keyPath;
+        PlatformCAAnimation::KeyPath keyPath;
         PlatformCAAnimation::AnimationType animationType;
 
         CFTimeInterval beginTime;
@@ -187,7 +186,7 @@ public:
     static void updateLayerAnimations(CALayer *, RemoteLayerTreeHost*, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove);
 
 private:
-    PlatformCAAnimationRemote(AnimationType, const String& keyPath);
+    PlatformCAAnimationRemote(AnimationType, KeyPath&&);
 
     Properties m_properties;
 };

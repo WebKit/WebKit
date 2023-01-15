@@ -37,7 +37,7 @@ namespace WebCore {
 
 class PlatformCAAnimationWin final : public PlatformCAAnimation {
 public:
-    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(AnimationType, KeyPath&&);
 
     virtual ~PlatformCAAnimationWin();
 
@@ -47,7 +47,7 @@ public:
 
     PlatformAnimationRef platformAnimation() const;
     
-    String keyPath() const override;
+    const KeyPath& keyPath() const override;
     
     CFTimeInterval beginTime() const override;
     void setBeginTime(CFTimeInterval) override;
@@ -116,9 +116,10 @@ public:
     void copyAnimationsFrom(const PlatformCAAnimation&) final;
 
 private:
-    PlatformCAAnimationWin(AnimationType, const String& keyPath);
+    PlatformCAAnimationWin(AnimationType, KeyPath&&);
 
     RetainPtr<CACFAnimationRef> m_animation;
+    KeyPath m_keyPath;
 };
 
 } // namespace WebCore

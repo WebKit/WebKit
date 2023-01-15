@@ -42,6 +42,7 @@ public:
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
     static bool isAnimatedFilterProperty(FilterOperation::Type);
     static const char* animatedFilterPropertyName(FilterOperation::Type);
+    static FilterOperation::Type filterOperationTypeFromAnimatedFilterPropertyName(const String&);
 
     WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation*);
 

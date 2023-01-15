@@ -143,13 +143,14 @@ static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunctio
     return CACFTimingFunctionGetFunctionWithName(kCACFTimingFunctionLinear);
 }
 
-Ref<PlatformCAAnimation> PlatformCAAnimationWin::create(AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationWin::create(AnimationType type, KeyPath&& keyPath)
 {
-    return adoptRef(*new PlatformCAAnimationWin(type, keyPath));
+    return adoptRef(*new PlatformCAAnimationWin(type, WTFMove(keyPath)));
 }
 
-PlatformCAAnimationWin::PlatformCAAnimationWin(AnimationType type, const String& keyPath)
+PlatformCAAnimationWin::PlatformCAAnimationWin(AnimationType type, KeyPath&& keyPath)
     : PlatformCAAnimation(type)
+    , m_keyPath(WTFMove(keyPath))
 {
     if (type == Basic)
         m_animation = adoptCF(CACFAnimationCreate(kCACFBasicAnimation));
@@ -158,12 +159,13 @@ PlatformCAAnimationWin::PlatformCAAnimationWin(AnimationType type, const String&
     else if (type == Group)
         m_animation = adoptCF(CACFAnimationCreate(kCACFAnimationGroup));
     
-    CACFAnimationSetKeyPath(m_animation.get(), keyPath.createCFString().get());
+    CACFAnimationSetKeyPath(m_animation.get(), m_keyPath.string().createCFString().get());
 }
 
 Ref<PlatformCAAnimation> PlatformCAAnimationWin::copy() const
 {
-    auto animation = create(animationType(), keyPath());
+    auto keyPathCopy = keyPath();
+    auto animation = create(animationType(), WTFMove(keyPathCopy));
     
     animation->setBeginTime(beginTime());
     animation->setDuration(duration());
@@ -198,9 +200,9 @@ PlatformAnimationRef PlatformCAAnimationWin::platformAnimation() const
     return m_animation.get();
 }
 
-String PlatformCAAnimationWin::keyPath() const
+const PlatformCAAnimation::KeyPath& PlatformCAAnimationWin::keyPath() const
 {
-    return CACFAnimationGetKeyPath(m_animation.get());
+    return m_keyPath;
 }
 
 CFTimeInterval PlatformCAAnimationWin::beginTime() const

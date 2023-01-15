@@ -28,12 +28,19 @@
 #include "Color.h"
 #include "FilterOperation.h"
 #include "FloatPoint3D.h"
+#include "GraphicsLayerClient.h"
+#include "PlatformCAFilters.h"
 #include "TransformationMatrix.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
+
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
 namespace WebCore {
 
@@ -46,6 +53,26 @@ public:
     enum FillModeType { NoFillMode, Forwards, Backwards, Both };
     enum ValueFunctionType { NoValueFunction, RotateX, RotateY, RotateZ, ScaleX, ScaleY, ScaleZ, Scale, TranslateX, TranslateY, TranslateZ, Translate };
 
+    struct KeyPath {
+        AnimatedProperty animatedProperty { AnimatedProperty::Invalid };
+        FilterOperation::Type filterOperationType { FilterOperation::Type::None };
+        int index { 0 };
+
+        KeyPath(AnimatedProperty animatedProperty = AnimatedProperty::Invalid, FilterOperation::Type filterOperationType = FilterOperation::Type::None, int index = 0)
+            : animatedProperty(animatedProperty)
+            , filterOperationType(filterOperationType)
+            , index(index)
+        {
+        }
+
+        WEBCORE_EXPORT KeyPath(const String&);
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<PlatformCAAnimation::KeyPath> decode(Decoder&);
+
+        WEBCORE_EXPORT String string() const;
+    };
+
     virtual ~PlatformCAAnimation() = default;
 
     virtual bool isPlatformCAAnimationCocoa() const { return false; }
@@ -55,7 +82,7 @@ public:
     virtual Ref<PlatformCAAnimation> copy() const = 0;
     
     AnimationType animationType() const { return m_type; }
-    virtual String keyPath() const = 0;
+    virtual const KeyPath& keyPath() const = 0;
     
     virtual CFTimeInterval beginTime() const = 0;
     virtual void setBeginTime(CFTimeInterval) = 0;
@@ -142,6 +169,26 @@ protected:
 private:
     AnimationType m_type;
 };
+
+template<class Encoder>
+void PlatformCAAnimation::KeyPath::encode(Encoder& encoder) const
+{
+    encoder << animatedProperty << filterOperationType << index;
+}
+
+template<class Decoder>
+std::optional<PlatformCAAnimation::KeyPath> PlatformCAAnimation::KeyPath::decode(Decoder& decoder)
+{
+    PlatformCAAnimation::KeyPath keyPath;
+    if (!decoder.decode(keyPath.animatedProperty))
+        return std::nullopt;
+    if (!decoder.decode(keyPath.filterOperationType))
+        return std::nullopt;
+    if (!decoder.decode(keyPath.index))
+        return std::nullopt;
+
+    return keyPath;
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCAAnimation::AnimationType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCAAnimation::FillModeType);

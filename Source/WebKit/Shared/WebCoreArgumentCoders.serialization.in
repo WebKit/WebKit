@@ -2614,3 +2614,18 @@ enum class WebCore::AutocapitalizeType : uint8_t {
     Sentences,
     AllCharacters
 };
+
+header: <WebCore/GraphicsLayerClient.h>
+[CustomHeader] enum class WebCore::AnimatedProperty : uint8_t {
+    Invalid,
+    Translate,
+    Scale,
+    Rotate,
+    Transform,
+    Opacity,
+    BackgroundColor,
+    Filter,
+#if ENABLE(FILTERS_LEVEL_2)
+    WebkitBackdropFilter
+#endif
+};

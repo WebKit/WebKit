@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformCAAnimation.h"
 
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -74,6 +75,66 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::ValueFunctionType va
 bool PlatformCAAnimation::isBasicAnimation() const
 {
     return animationType() == Basic || animationType() == Spring;
+}
+
+PlatformCAAnimation::KeyPath::KeyPath(const String& stringRepresentation)
+{
+    if (stringRepresentation == "transform"_s)
+        animatedProperty = AnimatedProperty::Transform;
+    else if (stringRepresentation == "opacity"_s)
+        animatedProperty = AnimatedProperty::Opacity;
+    else if (stringRepresentation == "backgroundColor"_s)
+        animatedProperty = AnimatedProperty::BackgroundColor;
+    else if (stringRepresentation.startsWith("filters.filter_"_s)) {
+        size_t underscoreIndex = 15;
+        auto dotIndex = stringRepresentation.find('.', underscoreIndex);
+        if (dotIndex == notFound || dotIndex <= underscoreIndex)
+            return;
+
+        auto indexString = stringRepresentation.substring(underscoreIndex, dotIndex - underscoreIndex);
+        auto parsedIndex = parseInteger<int>(indexString);
+        if (!parsedIndex)
+            return;
+
+        auto filterOperationTypeString = stringRepresentation.substring(dotIndex + 1);
+        auto parsedFilterOperationType = PlatformCAFilters::filterOperationTypeFromAnimatedFilterPropertyName(filterOperationTypeString);
+        if (parsedFilterOperationType == FilterOperation::Type::None)
+            return;
+
+        animatedProperty = AnimatedProperty::Filter;
+        filterOperationType = parsedFilterOperationType;
+        index = *parsedIndex;
+    }
+#if ENABLE(FILTERS_LEVEL_2)
+    else if (stringRepresentation == "backdropFilters"_s)
+        animatedProperty = AnimatedProperty::WebkitBackdropFilter;
+#endif
+}
+
+String PlatformCAAnimation::KeyPath::string() const
+{
+    switch (animatedProperty) {
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Scale:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Transform:
+        return "transform"_s;
+    case AnimatedProperty::Opacity:
+        return "opacity"_s;
+    case AnimatedProperty::BackgroundColor:
+        return "backgroundColor"_s;
+    case AnimatedProperty::Filter:
+        return makeString("filters.filter_", index, ".", PlatformCAFilters::animatedFilterPropertyName(filterOperationType));
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedProperty::WebkitBackdropFilter:
+        return "backdropFilters"_s;
+#endif
+    case AnimatedProperty::Invalid:
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+    ASSERT_NOT_REACHED();
+    return emptyString();
 }
 
 } // namespace WebCore

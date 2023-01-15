@@ -48,7 +48,7 @@ void setHasExplicitBeginTime(CAAnimation *, bool);
 
 class PlatformCAAnimationCocoa final : public PlatformCAAnimation {
 public:
-    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(AnimationType, KeyPath&&);
     WEBCORE_EXPORT static Ref<PlatformCAAnimation> create(PlatformAnimationRef);
 
     virtual ~PlatformCAAnimationCocoa();
@@ -59,7 +59,7 @@ public:
 
     PlatformAnimationRef platformAnimation() const;
     
-    String keyPath() const override;
+    const KeyPath& keyPath() const override;
     
     CFTimeInterval beginTime() const override;
     void setBeginTime(CFTimeInterval) override;
@@ -128,10 +128,11 @@ public:
     void copyAnimationsFrom(const PlatformCAAnimation&) final;
 
 private:
-    PlatformCAAnimationCocoa(AnimationType, const String& keyPath);
+    PlatformCAAnimationCocoa(AnimationType, KeyPath&&);
     PlatformCAAnimationCocoa(PlatformAnimationRef);
 
     RetainPtr<CAAnimation> m_animation;
+    KeyPath m_keyPath;
 };
 
 } // namespace WebCore
