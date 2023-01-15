@@ -339,11 +339,6 @@ void View::frameDisplayed()
     m_client->frameDisplayed(*this);
 }
 
-void View::handleDownloadRequest(DownloadProxy& download)
-{
-    m_client->handleDownloadRequest(*this, download);
-}
-
 void View::willStartLoad()
 {
     m_client->willStartLoad(*this);

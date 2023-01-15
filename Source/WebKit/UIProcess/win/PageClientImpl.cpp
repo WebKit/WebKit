@@ -237,11 +237,6 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
     notImplemented();
 }
 
-void PageClientImpl::handleDownloadRequest(DownloadProxy& download)
-{
-    notImplemented();
-}
-
 void PageClientImpl::didCommitLoadForMainFrame(const String& /* mimeType */, bool /* useCustomContentProvider */ )
 {
     notImplemented();

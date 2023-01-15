@@ -53,7 +53,6 @@ struct CompositionUnderline;
 }
 
 namespace WebKit {
-class DownloadProxy;
 class TouchGestureController;
 class WebKitWebResourceLoadManager;
 class WebPageGroup;
@@ -76,7 +75,6 @@ public:
     // Client methods
     void setClient(std::unique_ptr<API::ViewClient>&&);
     void frameDisplayed();
-    void handleDownloadRequest(WebKit::DownloadProxy&);
     void willStartLoad();
     void didChangePageID();
     void didReceiveUserMessage(WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);

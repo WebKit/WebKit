@@ -23,6 +23,7 @@
 #include "APIDownloadClient.h"
 #include "DownloadProxy.h"
 #include "WebErrors.h"
+#include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -317,11 +318,16 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
             G_TYPE_STRING);
 }
 
-WebKitDownload* webkitDownloadCreate(DownloadProxy* downloadProxy)
+GRefPtr<WebKitDownload> webkitDownloadCreate(DownloadProxy& downloadProxy, WebKitWebView* webView)
 {
     ASSERT(downloadProxy);
-    WebKitDownload* download = WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, NULL));
-    download->priv->download = downloadProxy;
+    GRefPtr<WebKitDownload> download = adoptGRef(WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, nullptr)));
+    download->priv->download = &downloadProxy;
+    if (webView) {
+        download->priv->webView = webView;
+        g_object_add_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&download->priv->webView));
+    }
+    attachDownloadClientToDownload(GRefPtr<WebKitDownload> { download }, downloadProxy);
     return download;
 }
 
@@ -341,12 +347,6 @@ void webkitDownloadSetResponse(WebKitDownload* download, WebKitURIResponse* resp
 {
     download->priv->response = response;
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_RESPONSE]);
-}
-
-void webkitDownloadSetWebView(WebKitDownload* download, WebKitWebView* webView)
-{
-    download->priv->webView = webView;
-    g_object_add_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&download->priv->webView));
 }
 
 bool webkitDownloadIsCancelled(WebKitDownload* download)
@@ -393,7 +393,7 @@ void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourc
         g_timer_stop(download->priv->timer.get());
 
     g_signal_emit(download, signals[FAILED], 0, webError.get());
-    g_signal_emit(download, signals[FINISHED], 0, NULL);
+    g_signal_emit(download, signals[FINISHED], 0, nullptr);
 }
 
 void webkitDownloadCancelled(WebKitDownload* download)
@@ -414,7 +414,7 @@ void webkitDownloadFinished(WebKitDownload* download)
     }
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
-    g_signal_emit(download, signals[FINISHED], 0, NULL);
+    g_signal_emit(download, signals[FINISHED], 0, nullptr);
 }
 
 String webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename, bool& allowOverwrite)
@@ -549,7 +549,7 @@ void webkit_download_cancel(WebKitDownload* download)
 
     download->priv->isCancelled = true;
     download->priv->download->cancel([download = Ref { *download->priv->download }] (auto*) {
-        download->client().legacyDidCancel(download.get());
+        download->client().didFinish(download.get());
     });
 }
 

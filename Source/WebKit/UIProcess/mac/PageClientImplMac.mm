@@ -31,7 +31,6 @@
 #import "APIHitTestResult.h"
 #import "AppKitSPI.h"
 #import "DataReference.h"
-#import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
 #import "Logging.h"
 #import "NativeWebGestureEvent.h"
@@ -290,10 +289,6 @@ void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
-{
-}
-
-void PageClientImpl::handleDownloadRequest(DownloadProxy&)
 {
 }
 

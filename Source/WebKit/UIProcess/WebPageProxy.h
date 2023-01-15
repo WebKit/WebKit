@@ -1437,7 +1437,6 @@ public:
 
     WebPageCreationParameters creationParameters(WebProcessProxy&, DrawingAreaProxy&, RefPtr<API::WebsitePolicies>&& = nullptr);
 
-    void handleDownloadRequest(DownloadProxy&);
     void resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&&);
     void downloadRequest(WebCore::ResourceRequest&&, CompletionHandler<void(DownloadProxy*)>&&);
     void dataTaskWithRequest(WebCore::ResourceRequest&&, CompletionHandler<void(API::DataTask&)>&&);
