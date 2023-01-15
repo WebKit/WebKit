@@ -157,7 +157,7 @@ public:
         Vector<WebCore::GraphicsLayer::PlatformLayerID> children;
 
         Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
-        HashSet<String> keyPathsOfAnimationsToRemove;
+        HashSet<String> keysOfAnimationsToRemove;
 
         WebCore::FloatPoint3D position;
         WebCore::FloatPoint3D anchorPoint { 0.5, 0.5, 0 };
