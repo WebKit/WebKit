@@ -255,7 +255,10 @@ egl::Error DisplayEGL::initialize(egl::Display *display)
 
     void *eglHandle =
         reinterpret_cast<void *>(mDisplayAttributes.get(EGL_PLATFORM_ANGLE_EGL_HANDLE_ANGLE, 0));
-    ANGLE_TRY(mEGL->initialize(display->getNativeDisplayId(), getEGLPath(), eglHandle));
+    EGLAttrib platformType =
+        mDisplayAttributes.get(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, 0);
+    ANGLE_TRY(
+        mEGL->initialize(platformType, display->getNativeDisplayId(), getEGLPath(), eglHandle));
 
     gl::Version eglVersion(mEGL->majorVersion, mEGL->minorVersion);
     if (eglVersion < gl::Version(1, 4))
