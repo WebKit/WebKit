@@ -120,14 +120,14 @@ static inline bool computeInkOverflowForInlineLevelBox(const RenderStyle& style,
     auto inflateWithBoxShadow = [&] {
         auto topBoxShadow = LayoutUnit { };
         auto bottomBoxShadow = LayoutUnit { };
-        style.getBoxShadowBlockDirectionExtent(topBoxShadow, bottomBoxShadow);
+        style.getBoxShadowVerticalExtent(topBoxShadow, bottomBoxShadow);
 
         auto leftBoxShadow = LayoutUnit { };
         auto rightBoxShadow = LayoutUnit { };
-        style.getBoxShadowInlineDirectionExtent(leftBoxShadow, rightBoxShadow);
+        style.getBoxShadowHorizontalExtent(leftBoxShadow, rightBoxShadow);
         if (!topBoxShadow && !bottomBoxShadow && !leftBoxShadow && !rightBoxShadow)
             return;
-        inkOverflow.inflate(leftBoxShadow.toFloat(), topBoxShadow.toFloat(), rightBoxShadow.toFloat(), bottomBoxShadow.toFloat());
+        inkOverflow.inflate(-leftBoxShadow.toFloat(), -topBoxShadow.toFloat(), rightBoxShadow.toFloat(), bottomBoxShadow.toFloat());
         hasVisualOverflow = true;
     };
     inflateWithBoxShadow();
