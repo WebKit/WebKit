@@ -2247,16 +2247,16 @@ ForceWebGLUsesLowPower:
 
 FormAssociatedCustomElementsEnabled:
   type: bool
-  status: stable
+  status: testable
   humanReadableName: "Form-associated custom elements"
   humanReadableDescription: "Support for form-associated custom elements"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 # FIXME: This should be reconciled with 'FrameFlattening'.
 FrameFlatteningEnabled:
