@@ -33,7 +33,6 @@ class IntRect;
 }
 
 namespace WebKit {
-class DownloadProxy;
 class WebKitPopupMenu;
 class WebKitWebResourceLoadManager;
 struct WebPopupItem;
@@ -51,7 +50,6 @@ private:
     bool isGLibBasedAPI() override { return true; }
 
     void frameDisplayed(WKWPE::View&) override;
-    void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) override;
     void willStartLoad(WKWPE::View&) override;
     void didChangePageID(WKWPE::View&) override;
     void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&) override;

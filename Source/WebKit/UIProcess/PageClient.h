@@ -145,7 +145,6 @@ enum class UndoOrRedo : bool;
 enum class TapHandlingResult : uint8_t;
 
 class ContextMenuContextData;
-class DownloadProxy;
 class DrawingAreaProxy;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
@@ -276,8 +275,6 @@ public:
     virtual void removeAllPDFHUDs() = 0;
 #endif
     
-    virtual void handleDownloadRequest(DownloadProxy&) = 0;
-
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void (bool)>&&) { return false; }
     virtual void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler) { completionHandler(std::nullopt); }

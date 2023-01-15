@@ -28,7 +28,10 @@ if (window.accessibilityController) {
             output += `aria-controls textbox->listbox : ${controlled.isEqual(listbox)}\n`;
 
             frame1.contentDocument.getElementById("controller").setAttribute("aria-controls", "listbox2");
-            controlled = controller.ariaControlsElementAtIndex(0);
+            await waitFor(() => {
+                controlled = controller.ariaControlsElementAtIndex(0);
+                return controlled.domIdentifier === "listbox2";
+            });
             output += `controller controls role after change: ${controlled.domIdentifier}\n`;
             debug(output);
             finishJSTest(); 

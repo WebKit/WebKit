@@ -99,7 +99,6 @@ private:
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
-    void handleDownloadRequest(DownloadProxy&) override;
     void didChangeContentSize(const WebCore::IntSize&) override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     void didFirstVisuallyNonEmptyLayoutForMainFrame() override;

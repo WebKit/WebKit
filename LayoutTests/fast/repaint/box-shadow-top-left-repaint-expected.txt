@@ -1,0 +1,12 @@
+XXXXX
+XXXXX
+(repaint rects
+  (rect 0 25 50 135)
+  (rect 0 25 750 25)
+  (rect 0 25 750 135)
+  (rect 0 185 50 175)
+  (rect 0 185 160 25)
+  (rect 25 185 150 175)
+  (rect 0 25 800 25)
+)
+

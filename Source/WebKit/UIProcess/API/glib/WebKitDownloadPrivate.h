@@ -19,15 +19,16 @@
 
 #pragma once
 
+#include "DownloadProxy.h"
 #include "WebKitDownload.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/glib/GRefPtr.h>
 
-WebKitDownload* webkitDownloadCreate(WebKit::DownloadProxy*);
+GRefPtr<WebKitDownload> webkitDownloadCreate(WebKit::DownloadProxy&, WebKitWebView* = nullptr);
 void webkitDownloadStarted(WebKitDownload*);
 bool webkitDownloadIsCancelled(WebKitDownload*);
 void webkitDownloadSetResponse(WebKitDownload*, WebKitURIResponse*);
-void webkitDownloadSetWebView(WebKitDownload*, WebKitWebView*);
 void webkitDownloadNotifyProgress(WebKitDownload*, guint64 bytesReceived);
 void webkitDownloadFailed(WebKitDownload*, const WebCore::ResourceError&);
 void webkitDownloadCancelled(WebKitDownload*);

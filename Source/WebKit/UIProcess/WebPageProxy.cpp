@@ -3698,7 +3698,6 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
         }
 
         downloadID = download.downloadID();
-        handleDownloadRequest(download);
         m_decidePolicyForResponseRequest = { };
     }
     
@@ -6745,11 +6744,6 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
         return;
 
     send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia));
-}
-
-void WebPageProxy::handleDownloadRequest(DownloadProxy& download)
-{
-    pageClient().handleDownloadRequest(download);
 }
 
 void WebPageProxy::resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&& completionHandler)

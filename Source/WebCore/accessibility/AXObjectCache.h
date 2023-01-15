@@ -288,6 +288,7 @@ public:
         AXColumnCountChanged,
         AXColumnIndexChanged,
         AXColumnSpanChanged,
+        AXControlledObjectsChanged,
         AXCurrentStateChanged,
         AXDescribedByChanged,
         AXDisabledStateChanged,

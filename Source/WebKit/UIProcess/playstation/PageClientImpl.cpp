@@ -107,10 +107,6 @@ void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useC
     notImplemented();
 }
 
-void PageClientImpl::handleDownloadRequest(DownloadProxy&)
-{
-}
-
 void PageClientImpl::didChangeContentSize(const WebCore::IntSize& size)
 {
     notImplemented();

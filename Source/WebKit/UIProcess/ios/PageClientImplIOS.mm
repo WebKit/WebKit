@@ -31,7 +31,6 @@
 #import "APIData.h"
 #import "ApplicationStateTracker.h"
 #import "DataReference.h"
-#import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
 #import "EndowmentStateTracker.h"
 #import "FrameInfoData.h"
@@ -263,10 +262,6 @@ void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useC
     [m_webView _hidePasswordView];
     [m_webView _setHasCustomContentView:useCustomContentProvider loadedMIMEType:mimeType];
     [m_contentView _didCommitLoadForMainFrame];
-}
-
-void PageClientImpl::handleDownloadRequest(DownloadProxy&)
-{
 }
 
 void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)

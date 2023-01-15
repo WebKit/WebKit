@@ -23,7 +23,6 @@
 #include "APIDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitURIResponsePrivate.h"
-#include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/UserAgent.h>
@@ -33,26 +32,19 @@
 using namespace WebCore;
 using namespace WebKit;
 
-class LegacyDownloadClient final : public API::DownloadClient {
+class DownloadClient final : public API::DownloadClient {
 public:
-    explicit LegacyDownloadClient(WebKitWebContext* webContext)
-        : m_webContext(webContext)
+    explicit DownloadClient(GRefPtr<WebKitDownload>&& download)
+        : m_download(WTFMove(download))
     {
     }
 
 private:
-    void legacyDidStart(DownloadProxy& downloadProxy) override
-    {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        webkitDownloadStarted(download.get());
-        webkitWebContextDownloadStarted(m_webContext, download.get());
-    }
-
     void willSendRequest(DownloadProxy& downloadProxy, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) override
     {
+        ASSERT(m_download);
         if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
-            GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-            auto* webView = webkit_download_get_web_view(download.get());
+            auto* webView = webkit_download_get_web_view(m_download.get());
             request.setHTTPUserAgent(webView ? webkitWebViewGetPage(webView).userAgentForURL(request.url()) : WebPageProxy::standardUserAgent());
         }
 
@@ -61,75 +53,73 @@ private:
 
     void didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge) override
     {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        if (webkitDownloadIsCancelled(download.get()))
+        ASSERT(m_download);
+        if (webkitDownloadIsCancelled(m_download.get()))
             return;
 
         // FIXME: Add API to handle authentication of downloads without a web view associted.
-        if (auto* webView = webkit_download_get_web_view(download.get()))
+        if (auto* webView = webkit_download_get_web_view(m_download.get()))
             webkitWebViewHandleAuthenticationChallenge(webView, &authenticationChallenge);
     }
 
     void didReceiveResponse(DownloadProxy& downloadProxy, const ResourceResponse& resourceResponse)
     {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        if (webkitDownloadIsCancelled(download.get()))
+        ASSERT(m_download);
+        if (webkitDownloadIsCancelled(m_download.get()))
             return;
 
         GRefPtr<WebKitURIResponse> response = adoptGRef(webkitURIResponseCreateForResourceResponse(resourceResponse));
-        webkitDownloadSetResponse(download.get(), response.get());
+        webkitDownloadSetResponse(m_download.get(), response.get());
     }
 
     void didReceiveData(DownloadProxy& downloadProxy, uint64_t length, uint64_t, uint64_t) override
     {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        webkitDownloadNotifyProgress(download.get(), length);
+        ASSERT(m_download);
+        webkitDownloadNotifyProgress(m_download.get(), length);
     }
 
     void decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const ResourceResponse& resourceResponse, const String& filename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler) override
     {
+        ASSERT(m_download);
         didReceiveResponse(downloadProxy, resourceResponse);
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         bool allowOverwrite = false;
-        String destination = webkitDownloadDecideDestinationWithSuggestedFilename(download.get(), filename.utf8(), allowOverwrite);
+        String destination = webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), allowOverwrite);
         completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
     }
 
     void didCreateDestination(DownloadProxy& downloadProxy, const String& path) override
     {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        webkitDownloadDestinationCreated(download.get(), path);
+        ASSERT(m_download);
+        webkitDownloadDestinationCreated(m_download.get(), path);
     }
 
     void didFail(DownloadProxy& downloadProxy, const ResourceError& error, API::Data*) override
     {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        if (webkitDownloadIsCancelled(download.get())) {
+        ASSERT(m_download);
+        if (webkitDownloadIsCancelled(m_download.get())) {
             // Cancellation takes precedence over other errors.
-            webkitDownloadCancelled(download.get());
+            webkitDownloadCancelled(m_download.get());
         } else
-            webkitDownloadFailed(download.get(), error);
-        webkitWebContextRemoveDownload(&downloadProxy);
-    }
-
-    void legacyDidCancel(DownloadProxy& downloadProxy) override
-    {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        webkitDownloadCancelled(download.get());
-        webkitWebContextRemoveDownload(&downloadProxy);
+            webkitDownloadFailed(m_download.get(), error);
+        m_download = nullptr;
     }
 
     void didFinish(DownloadProxy& downloadProxy) override
     {
-        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
-        webkitDownloadFinished(download.get());
-        webkitWebContextRemoveDownload(&downloadProxy);
+        ASSERT(m_download);
+        webkitDownloadFinished(m_download.get());
+        m_download = nullptr;
     }
 
-    WebKitWebContext* m_webContext;
+    void processDidCrash(DownloadProxy&) override
+    {
+        m_download = nullptr;
+    }
+
+    GRefPtr<WebKitDownload> m_download;
 };
 
-void attachDownloadClientToContext(WebKitWebContext* webContext)
+void attachDownloadClientToDownload(GRefPtr<WebKitDownload>&& download, DownloadProxy& downloadProxy)
 {
-    webkitWebContextGetProcessPool(webContext).setLegacyDownloadClient(adoptRef(*new LegacyDownloadClient(webContext)));
+    downloadProxy.setClient(adoptRef(*new DownloadClient(WTFMove(download))));
 }

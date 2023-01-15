@@ -17,11 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitDownloadClient_h
-#define WebKitDownloadClient_h
+#pragma once
 
-#include "WebKitWebContext.h"
+#include "DownloadProxy.h"
+#include "WebKitDownload.h"
+#include <wtf/glib/GRefPtr.h>
 
-void attachDownloadClientToContext(WebKitWebContext*);
+void attachDownloadClientToDownload(GRefPtr<WebKitDownload>&&, WebKit::DownloadProxy&);
 
-#endif

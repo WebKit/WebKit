@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DownloadProxy.h"
 #include "WebKitUserContentManager.h"
 #include "WebKitWebContext.h"
 #include "WebKitWebsitePolicies.h"
@@ -33,9 +32,6 @@
 #include <WebCore/ResourceRequest.h>
 
 WebKit::WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext*);
-WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
-WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
-void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
 void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitUserContentManager*, WebKitWebView*, WebKitWebsitePolicies*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);

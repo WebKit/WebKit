@@ -21,7 +21,6 @@
 #include "WebKitWebContext.h"
 
 #include "APIAutomationClient.h"
-#include "APIDownloadClient.h"
 #include "APIInjectedBundleClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
@@ -32,7 +31,6 @@
 #include "TextCheckerState.h"
 #include "WebAutomationSession.h"
 #include "WebKitAutomationSessionPrivate.h"
-#include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitGeolocationManagerPrivate.h"
@@ -446,7 +444,6 @@ static void webkitWebContextConstructed(GObject* object)
 #endif
 
     attachInjectedBundleClientToContext(webContext);
-    attachDownloadClientToContext(webContext);
 
     priv->geolocationManager = adoptGRef(webkitGeolocationManagerCreate(priv->processPool->supplement<WebGeolocationManagerProxy>()));
     priv->notificationProvider = makeUnique<WebKitNotificationProvider>(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
@@ -462,7 +459,6 @@ static void webkitWebContextDispose(GObject* object)
     if (!priv->clientsDetached) {
         priv->clientsDetached = true;
         priv->processPool->setInjectedBundleClient(nullptr);
-        priv->processPool->setLegacyDownloadClient(nullptr);
     }
 
     if (priv->faviconDatabase) {
@@ -1009,14 +1005,6 @@ void webkit_web_context_set_network_proxy_settings(WebKitWebContext* context, We
 }
 #endif
 
-typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;
-
-static DownloadsMap& downloadsMap()
-{
-    static NeverDestroyed<DownloadsMap> downloads;
-    return downloads;
-}
-
 /**
  * webkit_web_context_download_uri:
  * @context: a #WebKitWebContext
@@ -1036,7 +1024,17 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
     g_return_val_if_fail(uri, nullptr);
 
-    GRefPtr<WebKitDownload> download = webkitWebContextStartDownload(context, uri, nullptr);
+    WebCore::ResourceRequest request(String::fromUTF8(uri));
+    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
+    auto& downloadProxy = context->priv->processPool->download(websiteDataStore, nullptr, request);
+    auto download = webkitDownloadCreate(downloadProxy);
+    downloadProxy.setDidStartCallback([context = GRefPtr<WebKitWebContext> { context }, download = download.get()](auto* downloadProxy) {
+        if (!downloadProxy)
+            return;
+
+        webkitDownloadStarted(download);
+        webkitWebContextDownloadStarted(context.get(), download);
+    });
     return download.leakRef();
 }
 
@@ -1934,29 +1932,6 @@ const gchar* webkit_web_context_get_time_zone_override(WebKitWebContext* context
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)
 {
     g_signal_emit(context, signals[INITIALIZE_NOTIFICATION_PERMISSIONS], 0);
-}
-
-WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)
-{
-    GRefPtr<WebKitDownload> download = downloadsMap().get(downloadProxy);
-    if (download)
-        return download.get();
-
-    download = adoptGRef(webkitDownloadCreate(downloadProxy));
-    downloadsMap().set(downloadProxy, download.get());
-    return download.get();
-}
-
-WebKitDownload* webkitWebContextStartDownload(WebKitWebContext* context, const char* uri, WebPageProxy* initiatingPage)
-{
-    WebCore::ResourceRequest request(String::fromUTF8(uri));
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-    return webkitWebContextGetOrCreateDownload(&context->priv->processPool->download(websiteDataStore, initiatingPage, request));
-}
-
-void webkitWebContextRemoveDownload(DownloadProxy* downloadProxy)
-{
-    downloadsMap().remove(downloadProxy);
 }
 
 void webkitWebContextDownloadStarted(WebKitWebContext* context, WebKitDownload* download)

@@ -74,7 +74,6 @@ std::optional<WebKitScriptDialogType> webkitWebViewGetCurrentScriptDialogType(We
 void webkitWebViewMakePermissionRequest(WebKitWebView*, WebKitPermissionRequest*);
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
 void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>);
-void webkitWebViewHandleDownloadRequest(WebKitWebView*, WebKit::DownloadProxy*);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
 WebKit::WebKitWebResourceLoadManager* webkitWebViewGetWebResourceLoadManager(WebKitWebView*);
 void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKitWebResource*, WebCore::ResourceRequest&&);

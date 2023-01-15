@@ -1,9 +1,9 @@
 # Timeouts
+accessibility/aria-controls-with-tabs.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 accessibility/slider-with-lost-renderer.html [ Timeout ]
 
 # Text failures
-accessibility/aria-controls-with-tabs.html [ Failure ]
 accessibility/aria-current.html [ Failure ]
 accessibility/aria-roles.html [ Failure ]
 accessibility/dialog-showModal.html [ Failure ]

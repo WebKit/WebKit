@@ -1,0 +1,61 @@
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+Upgraded form-associated custom elements without an owner:
+FAIL $("noowner-upgrade1").restoredState should be foo (of type string). Was undefined (of type undefined).
+FAIL $("noowner-upgrade2").restoredState should be bar (of type string). Was undefined (of type undefined).
+FAIL isFormDataEqual($("noowner-upgrade3").restoredState, __formData2) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+FAIL isFormDataEqual($("noowner-upgrade4").restoredState, __formData1) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+
+Upgraded form-associated custom elements with a form owner:
+FAIL isFormDataEqual($("upgrade1").restoredState, __formData2) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+FAIL $("upgrade2").restoredState should be foo (of type string). Was undefined (of type undefined).
+FAIL isFormDataEqual($("upgrade3").restoredState, __formData1) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+FAIL $("upgrade4").restoredState should be bar (of type string). Was undefined (of type undefined).
+
+Predefined form-associated custom elements without an owner:
+FAIL $("noowner-predefined1").restoredState should be foo (of type string). Was undefined (of type undefined).
+FAIL $("noowner-predefined2").restoredState should be bar (of type string). Was undefined (of type undefined).
+FAIL isFormDataEqual($("noowner-predefined3").restoredState, __formData1) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+FAIL isFormDataEqual($("noowner-predefined4").restoredState, __formData2) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+
+Predefined form-associated custom elements with a form owner:
+FAIL $("predefined1").restoredState should be foo (of type string). Was undefined (of type undefined).
+FAIL isFormDataEqual($("predefined2").restoredState, __formData1) should be true. Threw exception TypeError: Spread syntax requires ...iterable not be null or undefined
+FAIL $("predefined3").restoredState should be bar (of type string). Was undefined (of type undefined).
+FAIL $("predefined4").restoredState should be foo (of type string). Was undefined (of type undefined).
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+
+

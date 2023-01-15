@@ -1,0 +1,23 @@
+<style>
+body {
+  margin: 0px;
+}
+
+div {
+  padding: 50px;
+  margin: 50px;
+  font-family: Ahem;
+  font-size: 10px;
+}
+</style>
+<!-- Pass if green box shadow shows up on all sides. -->
+<div><span id=box_shadow_horizontal>XXXXX</span></div>
+<div style="writing-mode: vertical-lr"><span id=box_shadow_vertical>XXXXX</span></div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+repaintTest = function() {
+  box_shadow_horizontal.style.boxShadow = "-50px -25px 0px 50px green";
+  box_shadow_vertical.style.boxShadow = "-50px -25px 0px 50px green";
+};
+runRepaintTest();
+</script>

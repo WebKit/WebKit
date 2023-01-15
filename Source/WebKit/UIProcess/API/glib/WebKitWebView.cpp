@@ -459,11 +459,6 @@ GRefPtr<WebKitOptionMenu> WebKitWebViewClient::showOptionMenu(WebKitPopupMenu& p
     return nullptr;
 }
 
-void WebKitWebViewClient::handleDownloadRequest(WKWPE::View&, DownloadProxy& downloadProxy)
-{
-    webkitWebViewHandleDownloadRequest(m_webView, &downloadProxy);
-}
-
 void WebKitWebViewClient::frameDisplayed(WKWPE::View&)
 {
     {
@@ -2616,13 +2611,6 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestRes
     g_signal_emit(webView, signals[MOUSE_TARGET_CHANGED], 0, priv->mouseTargetHitTestResult.get(), toPlatformModifiers(modifiers));
 }
 
-void webkitWebViewHandleDownloadRequest(WebKitWebView* webView, DownloadProxy* downloadProxy)
-{
-    ASSERT(downloadProxy);
-    GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
-    webkitDownloadSetWebView(download.get(), webView);
-}
-
 #if PLATFORM(GTK)
 void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 {
@@ -4448,7 +4436,17 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     g_return_val_if_fail(uri, nullptr);
 
-    GRefPtr<WebKitDownload> download = webkitWebContextStartDownload(webView->priv->context.get(), uri, &getPage(webView));
+    auto& page = getPage(webView);
+    auto& downloadProxy = page.process().processPool().download(page.websiteDataStore(), &page, ResourceRequest { String::fromUTF8(uri) });
+    auto download = webkitDownloadCreate(downloadProxy, webView);
+    downloadProxy.setDidStartCallback([context = GRefPtr<WebKitWebContext> { webView->priv->context }, download = download.get()](auto* downloadProxy) {
+        if (!downloadProxy)
+            return;
+
+        webkitDownloadStarted(download);
+        webkitWebContextDownloadStarted(context.get(), download);
+    });
+
     return download.leakRef();
 }
 
