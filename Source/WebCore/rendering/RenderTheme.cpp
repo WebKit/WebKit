@@ -145,8 +145,17 @@ StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, cons
         return autoAppearance;
     }
 
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+
     if (appearance == StyleAppearance::TextField) {
-        if (is<HTMLInputElement>(*element) && downcast<HTMLInputElement>(*element).isSearchField())
+        if (inputElement && inputElement->isSearchField())
+            return appearance;
+        style.setEffectiveAppearance(autoAppearance);
+        return autoAppearance;
+    }
+
+    if (appearance == StyleAppearance::SliderVertical) {
+        if (inputElement && inputElement->isRangeControl())
             return appearance;
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
@@ -506,21 +515,20 @@ static RefPtr<ControlPart> createProgressBarPartForRenderer(const RenderObject& 
 static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& renderer)
 {
     auto type = renderer.style().effectiveAppearance();
-    if (type != StyleAppearance::SliderHorizontal && type != StyleAppearance::SliderVertical)
-        return nullptr;
+    ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);
 
-    auto* input = dynamicDowncast<HTMLInputElement>(renderer.node());
-    if (!input || !input->isRangeControl())
-        return nullptr;
+    ASSERT(is<HTMLInputElement>(renderer.node()));
+    auto& input = downcast<HTMLInputElement>(*renderer.node());
+    ASSERT(input.isRangeControl());
 
     IntSize thumbSize;
-    if (const auto* thumbRenderer = input->sliderThumbElement()->renderer()) {
+    if (const auto* thumbRenderer = input.sliderThumbElement()->renderer()) {
         const auto& thumbStyle = thumbRenderer->style();
         thumbSize = IntSize { thumbStyle.width().intValue(), thumbStyle.height().intValue() };
     }
 
     IntRect trackBounds;
-    if (const auto* trackRenderer = input->sliderTrackElement()->renderer()) {
+    if (const auto* trackRenderer = input.sliderTrackElement()->renderer()) {
         trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
 
         // We can ignoring transforms because transform is handled by the graphics context.
@@ -532,12 +540,12 @@ static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& 
 
     Vector<double> tickRatios;
 #if ENABLE(DATALIST_ELEMENT)
-    if (auto dataList = input->dataList()) {
-        double minimum = input->minimum();
-        double maximum = input->maximum();
+    if (auto dataList = input.dataList()) {
+        double minimum = input.minimum();
+        double maximum = input.maximum();
 
         for (auto& optionElement : dataList->suggestions()) {
-            auto optionValue = input->listOptionValueAsDouble(optionElement);
+            auto optionValue = input.listOptionValueAsDouble(optionElement);
             if (!optionValue)
                 continue;
             double tickRatio = (*optionValue - minimum) / (maximum - minimum);
