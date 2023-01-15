@@ -42,6 +42,40 @@ document.execCommand('delete');
 shouldBeFalse('textarea.validity.tooLong');
 
 debug('');
+debug('Dirty value and longer than maxLength (with "readonly" attribute)');
+textarea = document.createElement('textarea');
+document.body.appendChild(textarea);
+textarea.defaultValue = 'abcde';
+textarea.maxLength = 3;
+textarea.focus();
+textarea.setSelectionRange(5, 5); // Move the cursor at the end.
+document.execCommand('delete');
+shouldBe('textarea.value.length', '4');
+textarea.readOnly = true;
+shouldBeTrue('textarea.validity.tooLong');
+textarea.readOnly = false;
+// Make the value <= maxLength.
+document.execCommand('delete');
+shouldBeFalse('textarea.validity.tooLong');
+
+debug('');
+debug('Dirty value and longer than maxLength (with "disabled" attribute)');
+textarea = document.createElement('textarea');
+document.body.appendChild(textarea);
+textarea.defaultValue = 'abcde';
+textarea.maxLength = 3;
+textarea.focus();
+textarea.setSelectionRange(5, 5); // Move the cursor at the end.
+document.execCommand('delete');
+shouldBe('textarea.value.length', '4');
+textarea.disabled = true;
+shouldBeTrue('textarea.validity.tooLong');
+textarea.disabled = false;
+// Make the value <= maxLength.
+document.execCommand('delete');
+shouldBeFalse('textarea.validity.tooLong');
+
+debug('');
 debug('Sets a value via DOM property');
 textarea = document.createElement('textarea');
 document.body.appendChild(textarea);
