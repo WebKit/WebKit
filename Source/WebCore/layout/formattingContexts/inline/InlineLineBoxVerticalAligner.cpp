@@ -366,7 +366,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
     rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);
 }
 
-InlineLevelBox::LayoutBounds LineBoxVerticalAligner::layoutBoundsForInlineBoxSubtree(const LineBox& lineBox, const InlineLevelBox& inlineBox) const
+InlineLevelBox::LayoutBounds LineBoxVerticalAligner::layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const
 {
     // https://w3c.github.io/csswg-drafts/css2/#propdef-vertical-align
     //
@@ -376,34 +376,32 @@ InlineLevelBox::LayoutBounds LineBoxVerticalAligner::layoutBoundsForInlineBoxSub
     // The aligned subtree of an inline element contains that element and the aligned subtrees of all children
     // inline elements whose computed vertical-align value is not top or bottom.
     // The top of the aligned subtree is the highest of the tops of the boxes in the subtree, and the bottom is analogous.
-    ASSERT(inlineBox.isInlineBox());
+    ASSERT(nonRootInlineLevelBoxes[inlineBoxIndex].isInlineBox());
     auto& formattingGeometry = this->formattingGeometry();
     auto enclosingLayoutBounds = InlineLevelBox::LayoutBounds { };
-    for (auto& childLayoutBox : childrenOfType<ElementBox>(downcast<ElementBox>(inlineBox.layoutBox()))) {
-        if (!childLayoutBox.isInFlow())
-            continue;
-        auto& inlineLevelBox = lineBox.inlineLevelBoxForLayoutBox(childLayoutBox);
-        if (!formattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox) || inlineLevelBox.hasLineBoxRelativeAlignment())
-            continue;
-        auto ascent = inlineLevelBox.ascent();
-        auto descent = inlineLevelBox.descent().value_or(0.f);
-        if (inlineLevelBox.isInlineBox()) {
-            auto subtreeLayoutBounds = layoutBoundsForInlineBoxSubtree(lineBox, inlineLevelBox);
-            ascent = subtreeLayoutBounds.ascent;
-            descent = subtreeLayoutBounds.descent;
+    auto& inlineBoxParent = nonRootInlineLevelBoxes[inlineBoxIndex].layoutBox().parent();
+    for (size_t index = inlineBoxIndex + 1; index < nonRootInlineLevelBoxes.size(); ++index) {
+        auto& descendantInlineLevelBox = nonRootInlineLevelBoxes[index];
+        if (&descendantInlineLevelBox.layoutBox().parent() == &inlineBoxParent) {
+            // We are at the end of the descendant list.
+            break;
         }
-        enclosingLayoutBounds.ascent = std::max(ascent, enclosingLayoutBounds.ascent);
-        enclosingLayoutBounds.descent = std::max(descent, enclosingLayoutBounds.descent);
+        if (!formattingGeometry.inlineLevelBoxAffectsLineBox(descendantInlineLevelBox) || descendantInlineLevelBox.hasLineBoxRelativeAlignment())
+            continue;
+        enclosingLayoutBounds.ascent = std::max(descendantInlineLevelBox.ascent(), enclosingLayoutBounds.ascent);
+        enclosingLayoutBounds.descent = std::max(descendantInlineLevelBox.descent().value_or(0.f), enclosingLayoutBounds.descent);
     }
     return enclosingLayoutBounds;
 }
 
 void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight) const
 {
-    Vector<InlineLevelBox*> lineBoxRelativeInlineLevelBoxes;
-    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+    Vector<size_t> lineBoxRelativeInlineLevelBoxes;
+    auto& nonRootInlineLevelBoxes = lineBox.nonRootInlineLevelBoxes();
+    for (size_t index = 0; index < nonRootInlineLevelBoxes.size(); ++index) {
+        auto& inlineLevelBox = nonRootInlineLevelBoxes[index];
         if (inlineLevelBox.hasLineBoxRelativeAlignment()) {
-            lineBoxRelativeInlineLevelBoxes.append(&inlineLevelBox);
+            lineBoxRelativeInlineLevelBoxes.append(index);
             continue;
         }
         auto& layoutBox = inlineLevelBox.layoutBox();
@@ -458,30 +456,31 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
         inlineLevelBox.setLogicalTop(logicalTop);
     }
 
-    for (auto* inlineLevelBox : lineBoxRelativeInlineLevelBoxes) {
+    for (auto index : lineBoxRelativeInlineLevelBoxes) {
+        auto& inlineLevelBox = nonRootInlineLevelBoxes[index];
         auto logicalTop = InlineLayoutUnit { };
-        switch (inlineLevelBox->verticalAlign().type) {
+        switch (inlineLevelBox.verticalAlign().type) {
         case VerticalAlign::Top: {
-            auto ascent = inlineLevelBox->layoutBounds() ? inlineLevelBox->layoutBounds()->ascent : inlineLevelBox->ascent();
-            if (inlineLevelBox->isInlineBox())
-                ascent = std::max(layoutBoundsForInlineBoxSubtree(lineBox, *inlineLevelBox).ascent, ascent);
+            auto ascent = inlineLevelBox.layoutBounds() ? inlineLevelBox.layoutBounds()->ascent : inlineLevelBox.ascent();
+            if (inlineLevelBox.isInlineBox())
+                ascent = std::max(layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index).ascent, ascent);
             // Note that this logical top is not relative to the parent inline box.
-            logicalTop = ascent - inlineLevelBox->ascent();
+            logicalTop = ascent - inlineLevelBox.ascent();
             break;
         }
         case VerticalAlign::Bottom: {
-            auto descent = inlineLevelBox->layoutBounds() ? inlineLevelBox->layoutBounds()->descent : inlineLevelBox->descent().value_or(0.f);
-            if (inlineLevelBox->isInlineBox())
-                descent = std::max(layoutBoundsForInlineBoxSubtree(lineBox, *inlineLevelBox).descent, descent);
+            auto descent = inlineLevelBox.layoutBounds() ? inlineLevelBox.layoutBounds()->descent : inlineLevelBox.descent().value_or(0.f);
+            if (inlineLevelBox.isInlineBox())
+                descent = std::max(layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index).descent, descent);
             // Note that this logical top is not relative to the parent inline box.
-            logicalTop = lineBoxLogicalHeight - (inlineLevelBox->ascent() + descent);
+            logicalTop = lineBoxLogicalHeight - (inlineLevelBox.ascent() + descent);
             break;
         }
         default:
             ASSERT_NOT_REACHED();
             break;
         }
-        inlineLevelBox->setLogicalTop(logicalTop);
+        inlineLevelBox.setLogicalTop(logicalTop);
     }
 }
 
