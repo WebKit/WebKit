@@ -68,6 +68,9 @@ static constexpr ASCIILiteral headerPrefixesToIgnoreAfterRevalidation[] = {
 
 static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
 {
+    if (header.startsWithIgnoringASCIICase("content-security-"_s))
+        return true;
+
     for (auto& headerToIgnore : headersToIgnoreAfterRevalidation) {
         if (equalIgnoringASCIICase(header, headerToIgnore))
             return false;
