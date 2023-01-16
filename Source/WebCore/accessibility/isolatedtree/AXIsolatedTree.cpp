@@ -387,7 +387,7 @@ void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AXCoreObject& axObjec
 void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<AXPropertyName>& properties)
 {
     AXTRACE("AXIsolatedTree::updateNodeProperties"_s);
-    AXLOG(makeString("Updating properties ", Span { reinterpret_cast<const UChar*>(properties.data()), properties.size() }, " for objectID ", axObject.objectID().loggingString()));
+    AXLOG(makeString("Updating properties ", properties, " for objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
     AXPropertyMap propertyMap;

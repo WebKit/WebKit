@@ -108,7 +108,7 @@ public:
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
     // FIXME: When this is incremented, remove LegacyCertificateInfoType.
-    static constexpr unsigned version = 16;
+    static const unsigned version = 16;
 
     String basePathIsolatedCopy() const;
     String versionPath() const;

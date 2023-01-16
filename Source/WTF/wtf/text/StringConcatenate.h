@@ -51,8 +51,8 @@ public:
     {
     }
 
-    unsigned length() const { return 1; }
-    bool is8Bit() const { return true; }
+    unsigned length() { return 1; }
+    bool is8Bit() { return true; }
     template<typename CharacterType> void writeTo(CharacterType* destination) const { *destination = m_character; }
 
 private:
@@ -148,26 +148,104 @@ public:
     }
 };
 
-template<> class StringTypeAdapter<StringView, void> {
+template<> class StringTypeAdapter<ASCIILiteral, void> : public StringTypeAdapter<const char*, void> {
 public:
-    StringTypeAdapter(const StringView& string)
+    StringTypeAdapter(ASCIILiteral characters)
+        : StringTypeAdapter<const char*, void> { characters }
+    {
+    }
+};
+
+template<typename CharType, size_t N>
+class StringTypeAdapter<Vector<CharType, N>, void> {
+public:
+    using CharTypeForString = std::conditional_t<sizeof(CharType) == sizeof(LChar), LChar, UChar>;
+    static_assert(sizeof(CharTypeForString) == sizeof(CharType));
+
+    StringTypeAdapter(const Vector<CharType, N>& vector)
+        : m_vector { vector }
+    {
+    }
+
+    size_t length() const { return m_vector.size(); }
+    bool is8Bit() const { return sizeof(CharType) == 1; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, characters(), length()); }
+
+private:
+    const CharTypeForString* characters() const
+    {
+        return reinterpret_cast<const CharTypeForString*>(m_vector.data());
+    }
+
+    const Vector<CharType, N>& m_vector;
+};
+
+template<> class StringTypeAdapter<StringImpl*, void> {
+public:
+    StringTypeAdapter(StringImpl* string)
+        : m_string { string }
+    {
+    }
+
+    unsigned length() const { return m_string ? m_string->length() : 0; }
+    bool is8Bit() const { return !m_string || m_string->is8Bit(); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        StringView { m_string }.getCharacters(destination);
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
+    }
+
+private:
+    StringImpl* const m_string;
+};
+
+template<> class StringTypeAdapter<AtomStringImpl*, void> : public StringTypeAdapter<StringImpl*, void> {
+public:
+    StringTypeAdapter(AtomStringImpl* string)
+        : StringTypeAdapter<StringImpl*, void> { static_cast<StringImpl*>(string) }
+    {
+    }
+};
+
+template<> class StringTypeAdapter<String, void> : public StringTypeAdapter<StringImpl*, void> {
+public:
+    StringTypeAdapter(const String& string)
+        : StringTypeAdapter<StringImpl*, void> { string.impl() }
+    {
+    }
+};
+
+template<> class StringTypeAdapter<AtomString, void> : public StringTypeAdapter<String, void> {
+public:
+    StringTypeAdapter(const AtomString& string)
+        : StringTypeAdapter<String, void> { string.string() }
+    {
+    }
+};
+
+template<> class StringTypeAdapter<StringImpl&, void> {
+public:
+    StringTypeAdapter(StringImpl& string)
         : m_string { string }
     {
     }
 
     unsigned length() const { return m_string.length(); }
     bool is8Bit() const { return m_string.is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { m_string.getCharacters(destination); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        StringView { m_string }.getCharacters(destination);
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
+    }
 
 private:
-    StringView m_string;
+    StringImpl& m_string;
 };
 
-template<typename T>
-class StringTypeAdapter<T, std::enable_if_t<std::is_constructible_v<StringView, const T&>>> : public StringTypeAdapter<StringView, void> {
+template<> class StringTypeAdapter<AtomStringImpl&, void> : public StringTypeAdapter<StringImpl&, void> {
 public:
-    StringTypeAdapter(const T& string)
-        : StringTypeAdapter<StringView, void> { StringView { string } }
+    StringTypeAdapter(StringImpl& string)
+        : StringTypeAdapter<StringImpl&, void> { string }
     {
     }
 };
@@ -280,17 +358,17 @@ public:
     {
     }
 
-    unsigned length() const
+    unsigned length()
     {
         return m_indentation.value * N;
     }
 
-    bool is8Bit() const
+    bool is8Bit()
     {
         return true;
     }
 
-    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    template<typename CharacterType> void writeTo(CharacterType* destination)
     {
         std::fill_n(destination, m_indentation.value * N, ' ');
     }
@@ -332,24 +410,33 @@ private:
     const ASCIICaseConverter& m_converter;
 };
 
-template<typename... Adapters>
-inline bool are8Bit(const Adapters&... adapters)
+template<typename Adapter>
+inline bool are8Bit(Adapter adapter)
 {
-    return (... && adapters.is8Bit());
+    return adapter.is8Bit();
 }
 
-template<typename ResultType, typename... Adapters>
-inline void stringTypeAdapterAccumulator(ResultType* result, const Adapters&... adapters)
+template<typename Adapter, typename... Adapters>
+inline bool are8Bit(Adapter adapter, Adapters ...adapters)
 {
-    unsigned offset = 0;
-    (..., [&] {
-        adapters.writeTo(result + offset);
-        offset += adapters.length();
-    }());
+    return adapter.is8Bit() && are8Bit(adapters...);
 }
 
-template<typename... StringTypeAdapters>
-RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool areAllAdapters8Bit, const StringTypeAdapters&... adapters)
+template<typename ResultType, typename Adapter>
+inline void stringTypeAdapterAccumulator(ResultType* result, Adapter adapter)
+{
+    adapter.writeTo(result);
+}
+
+template<typename ResultType, typename Adapter, typename... Adapters>
+inline void stringTypeAdapterAccumulator(ResultType* result, Adapter adapter, Adapters ...adapters)
+{
+    adapter.writeTo(result);
+    stringTypeAdapterAccumulator(result + adapter.length(), adapters...);
+}
+
+template<typename StringTypeAdapter, typename... StringTypeAdapters>
+RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool areAllAdapters8Bit, StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {
     ASSERT(length <= String::MaxLength);
     if (areAllAdapters8Bit) {
@@ -359,7 +446,7 @@ RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool a
             return nullptr;
 
         if (buffer)
-            stringTypeAdapterAccumulator(buffer, adapters...);
+            stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
         return resultImpl;
     }
@@ -370,37 +457,37 @@ RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool a
         return nullptr;
 
     if (buffer)
-        stringTypeAdapterAccumulator(buffer, adapters...);
+        stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
     return resultImpl;
 }
 
 template<typename Func, typename... StringTypes>
-auto handleWithAdapters(Func&& func, const StringTypes&... strings) -> decltype(auto)
+auto handleWithAdapters(Func&& func, StringTypes&& ...strings) -> decltype(auto)
 {
-    return func(StringTypeAdapter<StringTypes>(strings)...);
+    return func(StringTypeAdapter<StringTypes>(std::forward<StringTypes>(strings))...);
 }
 
-template<typename... StringTypeAdapters>
-String tryMakeStringFromAdapters(const StringTypeAdapters&... adapters)
+template<typename StringTypeAdapter, typename... StringTypeAdapters>
+String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapters.length()...);
+    auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
     if (sum.hasOverflowed())
         return String();
 
-    bool areAllAdapters8Bit = are8Bit(adapters...);
-    return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapters...);
+    bool areAllAdapters8Bit = are8Bit(adapter, adapters...);
+    return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapter, adapters...);
 }
 
 template<typename... StringTypes>
-String tryMakeString(const StringTypes&... strings)
+String tryMakeString(StringTypes ...strings)
 {
     return tryMakeStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
 template<typename... StringTypes>
-String makeString(const StringTypes&... strings)
+String makeString(StringTypes... strings)
 {
     String result = tryMakeString(strings...);
     if (!result)
@@ -408,40 +495,40 @@ String makeString(const StringTypes&... strings)
     return result;
 }
 
-template<typename... StringTypeAdapters>
-AtomString tryMakeAtomStringFromAdapters(const StringTypeAdapters&... adapters)
+template<typename StringTypeAdapter, typename... StringTypeAdapters>
+AtomString tryMakeAtomStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapters.length()...);
+    auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
     if (sum.hasOverflowed())
         return AtomString();
 
     unsigned length = sum;
     ASSERT(length <= String::MaxLength);
 
-    bool areAllAdapters8Bit = are8Bit(adapters...);
+    bool areAllAdapters8Bit = are8Bit(adapter, adapters...);
     constexpr size_t maxLengthToUseStackVariable = 64;
     if (length < maxLengthToUseStackVariable) {
         if (areAllAdapters8Bit) {
             LChar buffer[maxLengthToUseStackVariable];
-            stringTypeAdapterAccumulator(buffer, adapters...);
+            stringTypeAdapterAccumulator(buffer, adapter, adapters...);
             return AtomString { buffer, length };
         }
         UChar buffer[maxLengthToUseStackVariable];
-        stringTypeAdapterAccumulator(buffer, adapters...);
+        stringTypeAdapterAccumulator(buffer, adapter, adapters...);
         return AtomString { buffer, length };
     }
-    return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapters...).get();
+    return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapter, adapters...).get();
 }
 
 template<typename... StringTypes>
-AtomString tryMakeAtomString(const StringTypes&... strings)
+AtomString tryMakeAtomString(StringTypes ...strings)
 {
     return tryMakeAtomStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
 template<typename... StringTypes>
-AtomString makeAtomString(const StringTypes&... strings)
+AtomString makeAtomString(StringTypes... strings)
 {
     AtomString result = tryMakeAtomString(strings...);
     if (result.isNull())
