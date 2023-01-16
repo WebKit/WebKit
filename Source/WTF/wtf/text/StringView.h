@@ -67,11 +67,21 @@ public:
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
     StringView(const char*, unsigned length);
-    StringView(ASCIILiteral);
-    ALWAYS_INLINE StringView(Span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
-    ALWAYS_INLINE StringView(Span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
+    StringView(const ASCIILiteral&);
+    ALWAYS_INLINE StringView(const Span<const LChar>& characters) : StringView(characters.data(), characters.size()) { }
+    ALWAYS_INLINE StringView(const Span<const UChar>& characters) : StringView(characters.data(), characters.size()) { }
 
-    ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
+    template<typename CharType, size_t N>
+    StringView(const CharType(&characters)[N])
+        : StringView { characters, N - 1 }
+    {
+        ASSERT(!characters[N - 1]);
+    }
+
+    ALWAYS_INLINE static StringView fromLatin1(const char* characters)
+    {
+        return { characters, static_cast<unsigned>(characters ? strlen(characters) : 0) };
+    }
 
     static StringView empty();
 
@@ -196,9 +206,6 @@ public:
     struct UnderlyingString;
 
 private:
-    // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
-    explicit StringView(const char*);
-
     friend bool equal(StringView, StringView);
     friend bool equal(StringView, StringView, unsigned length);
     friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
@@ -372,17 +379,12 @@ inline StringView::StringView(const UChar* characters, unsigned length)
     initialize(characters, length);
 }
 
-inline StringView::StringView(const char* characters)
-{
-    initialize(reinterpret_cast<const LChar*>(characters), characters ? strlen(characters) : 0);
-}
-
 inline StringView::StringView(const char* characters, unsigned length)
 {
     initialize(reinterpret_cast<const LChar*>(characters), length);
 }
 
-inline StringView::StringView(ASCIILiteral string)
+inline StringView::StringView(const ASCIILiteral& string)
 {
     initialize(string.characters8(), string.length());
 }
@@ -673,21 +675,6 @@ inline void StringView::invalidate(const StringImpl&)
 }
 
 #endif
-
-template<> class StringTypeAdapter<StringView, void> {
-public:
-    StringTypeAdapter(StringView string)
-        : m_string { string }
-    {
-    }
-
-    unsigned length() { return m_string.length(); }
-    bool is8Bit() { return m_string.is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharacters(destination); }
-
-private:
-    StringView m_string;
-};
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>& buffer, StringView string)
 {
