@@ -213,7 +213,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
 void PlatformCALayerRemote::didCommit()
 {
     m_properties.addedAnimations.clear();
-    m_properties.keyPathsOfAnimationsToRemove.clear();
+    m_properties.keysOfAnimationsToRemove.clear();
     m_properties.resetChangedProperties();
 }
 
@@ -420,7 +420,7 @@ void PlatformCALayerRemote::removeAnimationForKey(const String& key)
             return pair.first == key;
         });
     }
-    m_properties.keyPathsOfAnimationsToRemove.add(key);
+    m_properties.keysOfAnimationsToRemove.add(key);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 }
 

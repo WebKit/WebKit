@@ -40,7 +40,7 @@ String CSSFontFeatureValuesRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@font-feature-values ");
-    auto joinFontFamiliesWithSeparator = [&builder] (const auto& elements, String separator) {
+    auto joinFontFamiliesWithSeparator = [&builder] (const auto& elements, ASCIILiteral separator) {
         bool first = true;
         for (auto element : elements) {
             if (!first)

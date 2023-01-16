@@ -31,7 +31,6 @@
 
 #include "ApplePayButtonSystemImage.h"
 #include "CSSCalcValue.h"
-#include "CSSFontFamily.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
@@ -4682,13 +4681,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(const Color& color)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_RGBCOLOR);
     m_value.color = new Color(color);
-}
-
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSFontFamily fontFamily)
-    : CSSValue(PrimitiveClass)
-{
-    setPrimitiveUnitType(CSSUnitType::CSS_FONT_FAMILY);
-    m_value.fontFamily = new CSSFontFamily(WTFMove(fontFamily));
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(VectorEffect e)

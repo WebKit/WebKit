@@ -29,7 +29,6 @@
 
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "CSSFontFamily.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
@@ -209,7 +208,7 @@ HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, const QualifiedNa
 
 HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, CSSValueID primitiveValue, const QualifiedName& tagName)
     : m_propertyID(id)
-    , m_primitiveValue(CSSPrimitiveValue::createIdentifier(primitiveValue))
+    , m_primitiveValue(CSSPrimitiveValue::create(primitiveValue))
     , m_tagName(&tagName)
 {
     ASSERT(primitiveValue != CSSValueInvalid);
@@ -389,7 +388,7 @@ RefPtr<CSSValue> HTMLFontSizeEquivalent::attributeValueAsCSSValue(Element* eleme
     CSSValueID size;
     if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
         return nullptr;
-    return CSSPrimitiveValue::createIdentifier(size);
+    return CSSPrimitiveValue::create(size);
 }
 
 float EditingStyle::NoFontDelta = 0.0f;
@@ -603,14 +602,14 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
 
     Ref<CSSValueList> valueList = CSSValueList::createSpaceSeparated();
     if (underlineChange() == TextDecorationChange::Add)
-        valueList->append(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline));
+        valueList->append(CSSPrimitiveValue::create(CSSValueUnderline));
     if (strikeThroughChange() == TextDecorationChange::Add)
-        valueList->append(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough));
+        valueList->append(CSSPrimitiveValue::create(CSSValueLineThrough));
 
     if (valueList->length())
         style->setProperty(CSSPropertyTextDecorationLine, valueList.ptr());
     else
-        style->setProperty(CSSPropertyTextDecorationLine, CSSValuePool::singleton().createIdentifierValue(CSSValueNone));
+        style->setProperty(CSSPropertyTextDecorationLine, CSSPrimitiveValue::create(CSSValueNone));
 
     return style;
 }
@@ -683,9 +682,8 @@ void EditingStyle::overrideTypingStyleAt(const EditingStyle& style, const Positi
     if (!m_mutableStyle)
         m_mutableStyle = MutableStyleProperties::create();
 
-    auto& cssValuePool = CSSValuePool::singleton();
-    Ref<CSSPrimitiveValue> underline = cssValuePool.createIdentifierValue(CSSValueUnderline);
-    Ref<CSSPrimitiveValue> lineThrough = cssValuePool.createIdentifierValue(CSSValueLineThrough);
+    Ref<CSSPrimitiveValue> underline = CSSPrimitiveValue::create(CSSValueUnderline);
+    Ref<CSSPrimitiveValue> lineThrough = CSSPrimitiveValue::create(CSSValueLineThrough);
     RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     RefPtr<CSSValueList> valueList;
     if (value && value->isValueList()) {
@@ -892,14 +890,14 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
                 if (!newInlineStyle)
                     return true;
                 newValueList->removeAll(CSSValueUnderline);
-                extractedValueList->append(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline));
+                extractedValueList->append(CSSPrimitiveValue::create(CSSValueUnderline));
             }
 
             if (shouldRemoveStrikeThrough && valueList->hasValue(CSSValueLineThrough)) {
                 if (!newInlineStyle)
                     return true;
                 newValueList->removeAll(CSSValueLineThrough);
-                extractedValueList->append(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough));
+                extractedValueList->append(CSSPrimitiveValue::create(CSSValueLineThrough));
             }
 
             if (extractedValueList->length()) {
@@ -1265,13 +1263,11 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, boo
 
 static void mergeTextDecorationValues(CSSValueList& mergedValue, const CSSValueList& valueToMerge)
 {
-    auto& cssValuePool = CSSValuePool::singleton();
-
     if (valueToMerge.hasValue(CSSValueUnderline) && !mergedValue.hasValue(CSSValueUnderline))
-        mergedValue.append(cssValuePool.createIdentifierValue(CSSValueUnderline));
+        mergedValue.append(CSSPrimitiveValue::create(CSSValueUnderline));
 
     if (valueToMerge.hasValue(CSSValueLineThrough) && !mergedValue.hasValue(CSSValueLineThrough))
-        mergedValue.append(cssValuePool.createIdentifierValue(CSSValueLineThrough));
+        mergedValue.append(CSSPrimitiveValue::create(CSSValueLineThrough));
 }
 
 void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideMode mode)
@@ -1329,26 +1325,16 @@ void EditingStyle::mergeStyleFromRules(StyledElement& element)
     m_mutableStyle = WTFMove(styleFromMatchedRules);
 }
 
-static String familyNameFromCSSPrimitiveValue(const CSSPrimitiveValue& primitiveValue)
-{
-    if (!primitiveValue.isFontFamily())
-        return { };
-    return primitiveValue.fontFamily().familyName;
-}
-
 static String loneFontFamilyName(const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value))
-        return familyNameFromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value));
-
+        return downcast<CSSPrimitiveValue>(value).stringValue();
     if (!is<CSSValueList>(value) || downcast<CSSValueList>(value).length() != 1)
         return { };
-
     auto& item = *downcast<CSSValueList>(value).item(0);
     if (!is<CSSPrimitiveValue>(item))
         return { };
-
-    return familyNameFromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(item));
+    return downcast<CSSPrimitiveValue>(item).stringValue();
 }
 
 void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element, StandardFontFamilySerializationMode standardFontFamilySerializationMode)
@@ -1491,18 +1477,17 @@ bool EditingStyle::convertPositionStyle()
     if (!m_mutableStyle)
         return false;
 
-    auto& cssValuePool = CSSValuePool::singleton();
-    RefPtr<CSSPrimitiveValue> sticky = cssValuePool.createIdentifierValue(CSSValueSticky);
+    RefPtr<CSSPrimitiveValue> sticky = CSSPrimitiveValue::create(CSSValueSticky);
     if (m_mutableStyle->propertyMatches(CSSPropertyPosition, sticky.get())) {
-        m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool.createIdentifierValue(CSSValueStatic), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
+        m_mutableStyle->setProperty(CSSPropertyPosition, CSSPrimitiveValue::create(CSSValueStatic), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
         return false;
     }
-    RefPtr<CSSPrimitiveValue> fixed = cssValuePool.createIdentifierValue(CSSValueFixed);
+    RefPtr<CSSPrimitiveValue> fixed = CSSPrimitiveValue::create(CSSValueFixed);
     if (m_mutableStyle->propertyMatches(CSSPropertyPosition, fixed.get())) {
-        m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool.createIdentifierValue(CSSValueAbsolute), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
+        m_mutableStyle->setProperty(CSSPropertyPosition, CSSPrimitiveValue::create(CSSValueAbsolute), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
         return true;
     }
-    RefPtr<CSSPrimitiveValue> absolute = cssValuePool.createIdentifierValue(CSSValueAbsolute);
+    RefPtr<CSSPrimitiveValue> absolute = CSSPrimitiveValue::create(CSSValueAbsolute);
     if (m_mutableStyle->propertyMatches(CSSPropertyPosition, absolute.get()))
         return true;
     return false;
@@ -1511,7 +1496,7 @@ bool EditingStyle::convertPositionStyle()
 bool EditingStyle::isFloating()
 {
     RefPtr<CSSValue> v = m_mutableStyle->getPropertyCSSValue(CSSPropertyFloat);
-    RefPtr<CSSPrimitiveValue> noneValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+    RefPtr<CSSPrimitiveValue> noneValue = CSSPrimitiveValue::create(CSSValueNone);
     return v && !v->equals(*noneValue);
 }
 
@@ -1738,16 +1723,15 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
         if (is<CSSValueList>(value))
             valueList = downcast<CSSValueList>(value.get());
 
-        auto& cssValuePool = CSSValuePool::singleton();
         bool hasUnderline = valueList && valueList->hasValue(CSSValueUnderline);
         bool hasLineThrough = valueList && valueList->hasValue(CSSValueLineThrough);
 
         if (shouldStyleWithCSS) {
             valueList = valueList ? valueList->copy() : CSSValueList::createSpaceSeparated();
             if (shouldAddUnderline && !hasUnderline)
-                valueList->append(cssValuePool.createIdentifierValue(CSSValueUnderline));
+                valueList->append(CSSPrimitiveValue::create(CSSValueUnderline));
             if (shouldAddStrikeThrough && !hasLineThrough)
-                valueList->append(cssValuePool.createIdentifierValue(CSSValueLineThrough));
+                valueList->append(CSSPrimitiveValue::create(CSSValueLineThrough));
             mutableStyle->setProperty(CSSPropertyTextDecorationLine, valueList.get());
         } else {
             m_applyUnderline = shouldAddUnderline && !hasUnderline;

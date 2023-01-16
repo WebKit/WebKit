@@ -111,7 +111,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , name(other.name)
     , children(other.children)
     , addedAnimations(other.addedAnimations)
-    , keyPathsOfAnimationsToRemove(other.keyPathsOfAnimationsToRemove)
+    , keysOfAnimationsToRemove(other.keysOfAnimationsToRemove)
     , position(other.position)
     , anchorPoint(other.anchorPoint)
     , bounds(other.bounds)
@@ -178,7 +178,7 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 
     if (changedProperties & AnimationsChanged) {
         encoder << addedAnimations;
-        encoder << keyPathsOfAnimationsToRemove;
+        encoder << keysOfAnimationsToRemove;
     }
 
     if (changedProperties & PositionChanged)
@@ -333,7 +333,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(result.addedAnimations))
             return false;
 
-        if (!decoder.decode(result.keyPathsOfAnimationsToRemove))
+        if (!decoder.decode(result.keysOfAnimationsToRemove))
             return false;
     }
 
@@ -957,7 +957,7 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             for (const auto& keyAnimationPair : layerProperties.addedAnimations)
                 ts.dumpProperty("animation " +  keyAnimationPair.first, keyAnimationPair.second);
 
-            for (const auto& name : layerProperties.keyPathsOfAnimationsToRemove)
+            for (const auto& name : layerProperties.keysOfAnimationsToRemove)
                 ts.dumpProperty("removed animation", name);
         }
 

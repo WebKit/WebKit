@@ -317,8 +317,7 @@
             "contextsAllowed": ["attribute"],
             "standard": {
                 "url": "https://webidl.spec.whatwg.org/#LegacyLenientSetter"
-            },
-            "unsupported": true
+            }
         },
         "LegacyLenientThis": {
             "contextsAllowed": ["attribute"],

@@ -54,15 +54,13 @@ Ref<EditingStyle> FontChanges::createEditingStyle() const
 
 Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
 {
-    String familyNameForCSS;
-    if (!!m_fontFamily)
-        familyNameForCSS = platformFontFamilyNameForCSS();
-
     auto style = MutableStyleProperties::create();
-    auto& cssValuePool = CSSValuePool::singleton();
 
-    if (!!familyNameForCSS)
-        style->setProperty(CSSPropertyFontFamily, cssValuePool.createFontFamilyValue(familyNameForCSS));
+    if (!m_fontFamily.isNull()) {
+        AtomString familyNameForCSS { platformFontFamilyNameForCSS() };
+        if (!familyNameForCSS.isNull())
+            style->setProperty(CSSPropertyFontFamily, CSSValuePool::singleton().createFontFamilyValue(familyNameForCSS));
+    }
 
     if (m_italic)
         style->setProperty(CSSPropertyFontStyle, *m_italic ? CSSValueItalic : CSSValueNormal);
@@ -71,10 +69,10 @@ Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
         style->setProperty(CSSPropertyFontWeight, *m_bold ? CSSValueBold : CSSValueNormal);
 
     if (m_fontSize)
-        style->setProperty(CSSPropertyFontSize, cssValuePool.createValue(*m_fontSize, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(*m_fontSize, CSSUnitType::CSS_PX));
 
     if (m_fontSizeDelta)
-        style->setProperty(CSSPropertyWebkitFontSizeDelta, cssValuePool.createValue(*m_fontSizeDelta, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyWebkitFontSizeDelta, CSSPrimitiveValue::create(*m_fontSizeDelta, CSSUnitType::CSS_PX));
 
     return style;
 }
@@ -85,11 +83,10 @@ static RefPtr<CSSValueList> cssValueListForShadow(const FontShadow& shadow)
         return nullptr;
 
     auto list = CSSValueList::createCommaSeparated();
-    auto& cssValuePool = CSSValuePool::singleton();
-    auto width = cssValuePool.createValue(shadow.offset.width(), CSSUnitType::CSS_PX);
-    auto height = cssValuePool.createValue(shadow.offset.height(), CSSUnitType::CSS_PX);
-    auto blurRadius = cssValuePool.createValue(shadow.blurRadius, CSSUnitType::CSS_PX);
-    auto color = cssValuePool.createValue(shadow.color);
+    auto width = CSSPrimitiveValue::create(shadow.offset.width(), CSSUnitType::CSS_PX);
+    auto height = CSSPrimitiveValue::create(shadow.offset.height(), CSSUnitType::CSS_PX);
+    auto blurRadius = CSSPrimitiveValue::create(shadow.blurRadius, CSSUnitType::CSS_PX);
+    auto color = CSSValuePool::singleton().createColorValue(shadow.color);
     list->prepend(CSSShadowValue::create(WTFMove(width), WTFMove(height), WTFMove(blurRadius), { }, { }, WTFMove(color)));
     return list.ptr();
 }
@@ -112,10 +109,10 @@ Ref<EditingStyle> FontAttributeChanges::createEditingStyle() const
     auto& cssValuePool = CSSValuePool::singleton();
 
     if (m_backgroundColor)
-        style->setProperty(CSSPropertyBackgroundColor, cssValuePool.createValue(*m_backgroundColor));
+        style->setProperty(CSSPropertyBackgroundColor, cssValuePool.createColorValue(*m_backgroundColor));
 
     if (m_foregroundColor)
-        style->setProperty(CSSPropertyColor, cssValuePool.createValue(*m_foregroundColor));
+        style->setProperty(CSSPropertyColor, cssValuePool.createColorValue(*m_foregroundColor));
 
     if (m_shadow) {
         if (auto shadowValue = cssValueListForShadow(*m_shadow))

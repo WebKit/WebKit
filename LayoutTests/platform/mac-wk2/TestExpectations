@@ -1709,7 +1709,6 @@ imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip 
 imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
 
 webkit.org/b/240987 fast/images/heic-as-background-image.html [ ImageOnlyFailure ]
-webkit.org/b/240987 fast/images/avif-heif-container-as-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
 

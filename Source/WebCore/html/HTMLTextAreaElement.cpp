@@ -414,17 +414,17 @@ String HTMLTextAreaElement::validationMessage() const
 
 bool HTMLTextAreaElement::valueMissing() const
 {
-    return willValidate() && valueMissing({ });
+    return valueMissing({ });
 }
 
 bool HTMLTextAreaElement::tooShort() const
 {
-    return willValidate() && tooShort({ }, CheckDirtyFlag);
+    return tooShort({ }, CheckDirtyFlag);
 }
 
 bool HTMLTextAreaElement::tooLong() const
 {
-    return willValidate() && tooLong({ }, CheckDirtyFlag);
+    return tooLong({ }, CheckDirtyFlag);
 }
 
 bool HTMLTextAreaElement::valueMissing(StringView value) const

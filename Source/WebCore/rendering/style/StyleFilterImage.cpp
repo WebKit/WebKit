@@ -73,7 +73,7 @@ bool StyleFilterImage::equalInputImages(const StyleFilterImage& other) const
 
 Ref<CSSValue> StyleFilterImage::computedStyleValue(const RenderStyle& style) const
 {
-    return CSSFilterImageValue::create(m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::createIdentifier(CSSValueNone)), ComputedStyleExtractor::valueForFilter(style, m_filterOperations));
+    return CSSFilterImageValue::create(m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone)), ComputedStyleExtractor::valueForFilter(style, m_filterOperations));
 }
 
 bool StyleFilterImage::isPending() const

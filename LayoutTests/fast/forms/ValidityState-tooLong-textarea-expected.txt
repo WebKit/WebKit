@@ -17,6 +17,16 @@ PASS textarea.value.length is 4
 PASS textarea.validity.tooLong is true
 PASS textarea.validity.tooLong is false
 
+Dirty value and longer than maxLength (with "readonly" attribute)
+PASS textarea.value.length is 4
+PASS textarea.validity.tooLong is true
+PASS textarea.validity.tooLong is false
+
+Dirty value and longer than maxLength (with "disabled" attribute)
+PASS textarea.value.length is 4
+PASS textarea.validity.tooLong is true
+PASS textarea.validity.tooLong is false
+
 Sets a value via DOM property
 PASS textarea.validity.tooLong is false
 

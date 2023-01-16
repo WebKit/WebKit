@@ -2263,11 +2263,6 @@ fast/images/animated-webp.html [ Skip ]
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 
-# libavif does not render resources/green-313x313.avif and resources/green-400x400.avif correctly.
-# See https://github.com/AOMediaCodec/av1-avif/issues/195
-fast/images/avif-as-image.html [ ImageOnlyFailure ]
-fast/images/avif-heif-container-as-image.html [ ImageOnlyFailure ]
-
 # Only applicable on platforms with JPEG XL support
 fast/images/jpegxl-image-decoding.html [ Skip ]
 fast/images/jpegxl-as-image.html [ Skip ]
@@ -4705,9 +4700,11 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-per
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-fixed.html [ ImageOnlyFailure ]
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation.html [ ImageOnlyFailure ]
 
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-negative-range-001.html [ ImageOnlyFailure ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/negation-001.html [ ImageOnlyFailure ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/negation-002.html [ ImageOnlyFailure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-invalid-media-type-layer-001.html [ ImageOnlyFailure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image.html [ ImageOnlyFailure ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-normal-with-meta-dark.html [ ImageOnlyFailure ]
 
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/formatting-context/shape-outside-formatting-context.tentative.html [ ImageOnlyFailure ]

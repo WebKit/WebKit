@@ -38,7 +38,6 @@ namespace WebCore {
 class PlatformCAAnimationWin final : public PlatformCAAnimation {
 public:
     static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
-    static Ref<PlatformCAAnimation> create(PlatformAnimationRef);
 
     virtual ~PlatformCAAnimationWin();
 
@@ -118,7 +117,6 @@ public:
 
 private:
     PlatformCAAnimationWin(AnimationType, const String& keyPath);
-    PlatformCAAnimationWin(PlatformAnimationRef);
 
     RetainPtr<CACFAnimationRef> m_animation;
 };

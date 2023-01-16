@@ -578,7 +578,6 @@
                 "font-property": true,
                 "high-priority": true,
                 "parser-function-requires-context-mode": true,
-                "parser-function-requires-value-pool": true,
                 "parser-function": "consumeFontStyle",
                 "parser-grammar-unused": "normal | italic | [ oblique <angle>? ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
@@ -9626,7 +9625,6 @@
                     {
                         "enable-if": "ENABLE_VARIATION_FONTS",
                         "parser-function": "consumeFontStretchRange",
-                        "parser-function-requires-value-pool": true,
                         "parser-grammar-unused": "auto | [ <font-stretch-absolute> | <percentage [0,inf]> ]{1,2}",
                         "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers and referencing style properties grammars (actual grammar uses <'font-stretch'>{1,2})."
                     },
@@ -9656,7 +9654,6 @@
                         "enable-if": "ENABLE_VARIATION_FONTS",
                         "parser-function": "consumeFontStyleRange",
                         "parser-function-requires-context-mode": true,
-                        "parser-function-requires-value-pool": true,
                         "parser-grammar-unused": "auto | normal | italic | [ oblique [ <angle>{1,2} ]? ]",
                         "parser-grammar-unused-reason": "Needs support for ordered groups, optionals and '{A,B}' multipliers."
                     },
@@ -9811,13 +9808,11 @@
                     {
                         "enable-if": "ENABLE_VARIATION_FONTS",
                         "parser-function": "consumeFontWeightAbsoluteRange",
-                        "parser-function-requires-value-pool": true,
                         "parser-grammar-unused": "auto | <font-weight-absolute>{1,2}",
                         "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers and arbitrary ranges on <number>."
                     },
                     {
                         "enable-if": "!ENABLE_VARIATION_FONTS",
-                        "parser-function-requires-value-pool": true,
                         "parser-function": "consumeFontWeightAbsolute",
                         "parser-grammar-unused": "<font-weight-absolute>",
                         "parser-grammar-unused-reason": "Needs support for arbitrary ranges on <number>."

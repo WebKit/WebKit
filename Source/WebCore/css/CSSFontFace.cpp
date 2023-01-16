@@ -351,7 +351,7 @@ String CSSFontFace::family() const
     auto firstFamily = dynamicDowncast<CSSPrimitiveValue>(familyList->item(0));
     if (!firstFamily || !firstFamily->isFontFamily())
         return { };
-    return firstFamily->fontFamily().familyName;
+    return firstFamily->stringValue();
 }
 
 String CSSFontFace::style() const

@@ -18,9 +18,9 @@ PASS rect.width.animVal.value is 180
 PASS rect.width.baseVal.value is 300
 PASS rect.width.animVal.value is 180
 PASS rect.width.baseVal.value is 300
-FAIL rect.width.animVal.value should be close to 30. Was 180.
+PASS rect.width.animVal.value is 30
 PASS rect.width.baseVal.value is 300
-FAIL rect.width.animVal.value should be close to 30. Was 180.
+PASS rect.width.animVal.value is 30
 PASS rect.width.baseVal.value is 300
 PASS rect.width.animVal.value is 30
 PASS rect.width.baseVal.value is 300

@@ -175,7 +175,7 @@ FunctionsEGL::~FunctionsEGL()
     SafeDelete(mFnPtrs);
 }
 
-egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
+egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType nativeDisplay)
 {
 #define ANGLE_GET_PROC_OR_ERROR(MEMBER, NAME)                                           \
     do                                                                                  \
@@ -210,7 +210,15 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->surfaceAttribPtr, eglSurfaceAttrib);
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapIntervalPtr, eglSwapInterval);
 
-    mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
+    if (platformType != 0)
+    {
+        mEGLDisplay = getPlatformDisplay(platformType, nativeDisplay);
+    }
+    else
+    {
+        mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
+    }
+
     if (mEGLDisplay != EGL_NO_DISPLAY)
     {
         if (mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
@@ -370,6 +378,32 @@ egl::Error FunctionsEGL::terminate()
         return egl::NoError();
     }
     return egl::Error(mFnPtrs->getErrorPtr());
+}
+
+EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
+                                            EGLNativeDisplayType nativeDisplay)
+{
+    // As in getNativeDisplay(), querying EGL_EXTENSIONS string and loading it into the mExtensions
+    // vector will at this point retrieve the client extensions since mEGLDisplay is still
+    // EGL_NO_DISPLAY. This is desired, and mExtensions will later be reinitialized with the display
+    // extensions once the display is created and initialized.
+    const char *extensions = queryString(EGL_EXTENSIONS);
+    if (!extensions)
+    {
+        return EGL_NO_DISPLAY;
+    }
+    angle::SplitStringAlongWhitespace(extensions, &mExtensions);
+
+    bool hasPlatformBaseEXT = hasExtension("EGL_EXT_platform_base");
+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplayEXTPtr;
+    if (!hasPlatformBaseEXT ||
+        !SetPtr(&getPlatformDisplayEXTPtr, getProcAddress("eglGetPlatformDisplayEXT")))
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    return getPlatformDisplayEXTPtr(static_cast<EGLenum>(platformType),
+                                    reinterpret_cast<void *>(nativeDisplay), nullptr);
 }
 
 EGLDisplay FunctionsEGL::getNativeDisplay(int *major, int *minor)

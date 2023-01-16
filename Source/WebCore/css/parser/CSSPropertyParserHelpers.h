@@ -111,28 +111,23 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, Val
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
 
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
-RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange&, ValueRange, CSSValuePool&);
 
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
-RefPtr<CSSPrimitiveValue> consumeAngleWorkerSafe(CSSParserTokenRange&, CSSParserMode, CSSValuePool&, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 
 RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
 
-RefPtr<CSSPrimitiveValue> consumeFontWeightNumberWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
+RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 
 std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
 RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 template<CSSValueID, CSSValueID...> bool identMatches(CSSValueID id);
 template<CSSValueID... allowedIdents> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
-template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
 template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&, Predicate&&, Args&&...);
 template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&, Predicate&&, Args&&...);
-template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange&, CSSValuePool&, Predicate&&, Args&&...);
 
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
@@ -358,14 +353,9 @@ template<CSSValueID... names> std::optional<CSSValueID> consumeIdentRaw(CSSParse
 
 template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
 {
-    return consumeIdentWorkerSafe<names...>(range, CSSValuePool::singleton());
-}
-
-template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange& range, CSSValuePool& cssValuePool)
-{
     if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
         return nullptr;
-    return cssValuePool.createIdentifierValue(range.consumeIncludingWhitespace().id());
+    return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
 }
 
 template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
@@ -379,14 +369,9 @@ template<typename Predicate, typename... Args> std::optional<CSSValueID> consume
 
 template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
 {
-    return consumeIdentWorkerSafe(range, CSSValuePool::singleton(), std::forward<Predicate>(predicate), std::forward<Args>(args)...);
-}
-
-template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange& range, CSSValuePool& cssValuePool, Predicate&& predicate, Args&&... args)
-{
     if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
         range.consumeIncludingWhitespace();
-        return cssValuePool.createIdentifierValue(keyword);
+        return CSSPrimitiveValue::create(keyword);
     }
     return nullptr;
 }
@@ -413,7 +398,7 @@ inline SystemFontDatabase::FontShorthand lowerFontShorthand(CSSValueID valueID)
 template<typename... Args>
 Ref<CSSPrimitiveValue> createPrimitiveValuePair(Args&&... args)
 {
-    return CSSValuePool::singleton().createValue(Pair::create(std::forward<Args>(args)...));
+    return CSSPrimitiveValue::create(Pair::create(std::forward<Args>(args)...));
 }
 
 inline void assignOrDowngradeToListAndAppend(RefPtr<CSSValue>& result, Ref<CSSValue>&& value)

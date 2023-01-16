@@ -41,8 +41,8 @@ CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(Ref<CSSPrimitiveValue>&& repe
 
 CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue)
     : CSSValue(BackgroundRepeatClass)
-    , m_xValue(CSSValuePool::singleton().createIdentifierValue(repeatXValue))
-    , m_yValue(CSSValuePool::singleton().createIdentifierValue(repeatYValue))
+    , m_xValue(CSSPrimitiveValue::create(repeatXValue))
+    , m_yValue(CSSPrimitiveValue::create(repeatYValue))
 {
 }
 

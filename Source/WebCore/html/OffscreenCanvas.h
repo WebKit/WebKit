@@ -43,15 +43,14 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
 #if ENABLE(WEBGL)
 #include "WebGLContextAttributes.h"
 #endif
 
-
 namespace WebCore {
 
 class CanvasRenderingContext;
-class CSSValuePool;
 class DeferredPromise;
 class HTMLCanvasElement;
 class ImageBitmap;
@@ -150,13 +149,10 @@ public:
 
     void commitToPlaceholderCanvas();
 
-    CSSValuePool& cssValuePool();
-
     using RefCounted::ref;
     using RefCounted::deref;
 
 private:
-
     OffscreenCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
 
     bool isOffscreenCanvas() const final { return true; }
