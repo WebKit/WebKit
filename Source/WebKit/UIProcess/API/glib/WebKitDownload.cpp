@@ -320,7 +320,6 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
 
 GRefPtr<WebKitDownload> webkitDownloadCreate(DownloadProxy& downloadProxy, WebKitWebView* webView)
 {
-    ASSERT(downloadProxy);
     GRefPtr<WebKitDownload> download = adoptGRef(WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, nullptr)));
     download->priv->download = &downloadProxy;
     if (webView) {
