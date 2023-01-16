@@ -32,6 +32,10 @@
 #include "LibWebRTCVPXVideoDecoder.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "VideoDecoderGStreamer.h"
+#endif
+
 namespace WebCore {
 
 VideoDecoder::CreatorFunction VideoDecoder::s_customCreator = nullptr;
@@ -51,9 +55,10 @@ void VideoDecoder::create(const String& codecName, const Config& config, CreateC
 }
 
 
-void VideoDecoder::createLocalDecoder(const String& codecName, const Config&, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+void VideoDecoder::createLocalDecoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
 {
 #if USE(LIBWEBRTC)
+    UNUSED_PARAM(config);
     if (codecName == "vp8"_s) {
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
@@ -66,8 +71,12 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config&, Cr
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
+#elif USE(GSTREAMER)
+    if (GStreamerVideoDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback)))
+        return;
 #else
     UNUSED_PARAM(codecName);
+    UNUSED_PARAM(config);
     UNUSED_PARAM(outputCallback);
     UNUSED_PARAM(postCallback);
 #endif

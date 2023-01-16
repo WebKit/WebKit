@@ -6494,9 +6494,11 @@ WebCodecsEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)": true
+      "USE(GSTREAMER)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)": true
+      "USE(GSTREAMER)": true
       default: false
 
 WebGL2Enabled:
