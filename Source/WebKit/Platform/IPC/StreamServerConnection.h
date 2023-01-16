@@ -136,6 +136,8 @@ private:
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
 
+    bool m_isOpen { false };
+
     friend class StreamConnectionWorkQueue;
 };
 
