@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>datalist ancestor doesn't affect constraint validation in precustomized state</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<form id="theForm">
+    <datalist>
+        <x-foo></x-foo>
+    </datalist>
+</form>
+
+<script>
+test(() => {
+    const callbackHistory = [];
+
+    customElements.define("x-foo", class extends HTMLElement {
+        static formAssociated = true;
+
+        constructor() {
+            super();
+
+            window.el = this;
+            window.internals = this.attachInternals();
+
+            window.willValidateInConstructor = internals.willValidate;
+            window.matchesDisabledInConstructor = this.matches(":disabled");
+            window.matchesEnabledInConstructor = this.matches(":enabled");
+            window.matchesValidInConstructor = this.matches(":valid");
+            window.matchesInvalidInConstructor = this.matches(":invalid");
+        }
+
+        formAssociatedCallback(form) {
+            callbackHistory.push(`formAssociatedCallback: ${form.id}`);
+        }
+
+        formDisabledCallback(isDisabled) {
+            callbackHistory.push(`formDisabledCallback: ${isDisabled}`);
+        }
+    });
+
+    assert_true(willValidateInConstructor);
+    assert_false(matchesDisabledInConstructor);
+    assert_false(matchesEnabledInConstructor);
+    assert_false(matchesValidInConstructor);
+    assert_false(matchesInvalidInConstructor);
+
+    assert_false(internals.willValidate);
+    assert_false(el.matches(":disabled"));
+    assert_true(el.matches(":enabled"));
+    assert_false(el.matches(":valid"));
+    assert_false(el.matches(":invalid"));
+
+    assert_array_equals(callbackHistory, ["formAssociatedCallback: theForm"]);
+});
+</script>

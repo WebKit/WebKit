@@ -245,11 +245,11 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
 bool HTMLFormElement::validateInteractively()
 {
     for (auto& listedElement : m_listedElements) {
-        if (is<HTMLFormControlElement>(*listedElement))
-            downcast<HTMLFormControlElement>(*listedElement).hideVisibleValidationMessage();
+        if (auto* control = listedElement->asValidatedFormListedElement())
+            control->hideVisibleValidationMessage();
     }
 
-    Vector<RefPtr<HTMLFormControlElement>> unhandledInvalidControls;
+    Vector<RefPtr<ValidatedFormListedElement>> unhandledInvalidControls;
     if (!checkInvalidControlsAndCollectUnhandled(unhandledInvalidControls))
         return true;
     // Because the form has invalid controls, we abort the form submission and
@@ -262,21 +262,15 @@ bool HTMLFormElement::validateInteractively()
     Ref<HTMLFormElement> protectedThis(*this);
 
     // Focus on the first focusable control and show a validation message.
+    bool shouldFocus = true;
     for (auto& control : unhandledInvalidControls) {
-        if (control->isConnected() && control->isFocusable()) {
-            control->focusAndShowValidationMessage();
-            break;
-        }
-    }
-
-    // Warn about all of unfocusable controls.
-    if (document().frame()) {
-        for (auto& control : unhandledInvalidControls) {
-            if (control->isConnected() && control->isFocusable())
-                continue;
-            auto message = makeString("An invalid form control with name='", control->name(), "' is not focusable.");
-            document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
-        }
+        if (auto validationAnchor = control->focusableValidationAnchorElement()) {
+            if (shouldFocus) {
+                shouldFocus = false;
+                control->focusAndShowValidationMessage(validationAnchor.releaseNonNull());
+            }
+        } else
+            control->reportNonFocusableControlError();
     }
 
     return false;
@@ -505,17 +499,8 @@ void HTMLFormElement::resetListedFormControlElements()
     // Event handling can cause listed elements to be added or deleted while iterating
     // over this collection. Protect these elements until we are done notifying them of
     // the reset operation.
-    Vector<Ref<HTMLFormControlElement>> listedFormControlElements;
-    listedFormControlElements.reserveInitialCapacity(m_listedElements.size());
-    for (auto& weakElement : m_listedElements) {
-        auto* element = weakElement.get();
-        ASSERT(element);
-        if (is<HTMLFormControlElement>(element))
-            listedFormControlElements.uncheckedAppend(downcast<HTMLFormControlElement>(*element));
-    }
-
-    for (auto& listedElement : listedFormControlElements)
-        listedElement->reset();
+    for (auto& control : copyValidatedListedElementsVector())
+        control->reset();
 }
 
 void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -618,7 +603,7 @@ unsigned HTMLFormElement::formElementIndex(FormListedElement& listedElement)
     for (auto& element : descendants) {
         if (&element == &listedHTMLElement)
             return i;
-        if (!is<HTMLFormControlElement>(element) && !is<HTMLObjectElement>(element))
+        if (!element.isFormListedElement())
             continue;
         if (element.asFormListedElement()->form() != this)
             continue;
@@ -662,7 +647,7 @@ void HTMLFormElement::unregisterFormListedElement(FormListedElement& element)
         resetDefaultButton();
 }
 
-void HTMLFormElement::addInvalidFormControl(const HTMLFormControlElement& formControlElement)
+void HTMLFormElement::addInvalidFormControl(const HTMLElement& formControlElement)
 {
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT(static_cast<const Element&>(formControlElement).matchesInvalidPseudoClass());
@@ -671,10 +656,10 @@ void HTMLFormElement::addInvalidFormControl(const HTMLFormControlElement& formCo
     if (m_invalidFormControls.computesEmpty())
         emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, false }, { CSSSelector::PseudoClassInvalid, true } });
 
-    m_invalidFormControls.add(const_cast<HTMLFormControlElement&>(formControlElement));
+    m_invalidFormControls.add(formControlElement);
 }
 
-void HTMLFormElement::removeInvalidFormControlIfNeeded(const HTMLFormControlElement& formControlElement)
+void HTMLFormElement::removeInvalidFormControlIfNeeded(const HTMLElement& formControlElement)
 {
     if (!m_invalidFormControls.contains(formControlElement))
         return;
@@ -835,22 +820,18 @@ void HTMLFormElement::resetDefaultButton()
 
 bool HTMLFormElement::checkValidity()
 {
-    Vector<RefPtr<HTMLFormControlElement>> controls;
+    Vector<RefPtr<ValidatedFormListedElement>> controls;
     return !checkInvalidControlsAndCollectUnhandled(controls);
 }
 
-bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTMLFormControlElement>>& unhandledInvalidControls)
+bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<ValidatedFormListedElement>>& unhandledInvalidControls)
 {
     Ref<HTMLFormElement> protectedThis(*this);
     // Copy m_listedElements because event handlers called from HTMLFormControlElement::checkValidity() might change m_listedElements.
-    auto elements = copyListedElementsVector();
     bool hasInvalidControls = false;
-    for (auto& element : elements) {
-        if (element->form() == this && is<HTMLFormControlElement>(element)) {
-            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(element.get());
-            if (!control.checkValidity(&unhandledInvalidControls) && control.form() == this)
-                hasInvalidControls = true;
-        }
+    for (auto& control : copyValidatedListedElementsVector()) {
+        if (control->form() == this && !control->checkValidity(&unhandledInvalidControls) && control->form() == this)
+            hasInvalidControls = true;
     }
     return hasInvalidControls;
 }
@@ -988,6 +969,13 @@ Vector<Ref<FormListedElement>> HTMLFormElement::copyListedElementsVector() const
         auto* formListedElement = element->asFormListedElement();
         ASSERT(formListedElement);
         return Ref<FormListedElement>(*formListedElement);
+    });
+}
+
+Vector<Ref<ValidatedFormListedElement>> HTMLFormElement::copyValidatedListedElementsVector() const
+{
+    return WTF::compactMap(m_listedElements, [](auto& weakElement) {
+        return RefPtr { weakElement->asValidatedFormListedElement() };
     });
 }
 

@@ -1,3 +1,3 @@
 
-FAIL Form-related operations and attributes should throw NotSupportedErrors for non-form-associated custom elements. assert_throws_dom: function "() => i.setFormValue('')" threw object "TypeError: i.setFormValue is not a function. (In 'i.setFormValue('')', 'i.setFormValue' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+PASS Form-related operations and attributes should throw NotSupportedErrors for non-form-associated custom elements.
 

@@ -174,8 +174,8 @@ protected:
 
 private:
     void resetFormOwner() final;
-    void refFormAssociatedElement() final { HTMLElement::ref(); }
-    void derefFormAssociatedElement() final { HTMLElement::deref(); }
+    void refFormAssociatedElement() const final { HTMLElement::ref(); }
+    void derefFormAssociatedElement() const final { HTMLElement::deref(); }
     void setFormInternal(HTMLFormElement*) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

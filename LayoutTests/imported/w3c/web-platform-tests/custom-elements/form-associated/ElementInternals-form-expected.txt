@@ -1,5 +1,4 @@
 
-FAIL ElementInternals.form should return the target element's form owner assert_equals: expected (object) Element node <form id="custom-form">
-  <custom-input-parser id="custom... but got (undefined) undefined
-FAIL ElementInternals.form should throws NotSupportedError if the target element is not a form-associated custom element assert_throws_dom: function "() => i.form" did not throw
+PASS ElementInternals.form should return the target element's form owner
+PASS ElementInternals.form should throws NotSupportedError if the target element is not a form-associated custom element
 

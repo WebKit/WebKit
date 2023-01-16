@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Custom elements don't get associated with a form in precustomized state (associated via attribute in constructor)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<form id="theForm"></form>
+<x-foo></x-foo>
+
+<script>
+test(() => {
+    const callbackHistory = [];
+
+    customElements.define("x-foo", class extends HTMLElement {
+        static formAssociated = true;
+
+        constructor() {
+            super();
+
+            window.internals = this.attachInternals();
+
+            this.setAttribute("form", "theForm");
+
+            window.formInConstructor = internals.form;
+
+            theForm.reset();
+        }
+
+        formAssociatedCallback(form) {
+            callbackHistory.push(`formAssociatedCallback: ${form.id}`);
+        }
+
+        formResetCallback() {
+            callbackHistory.push("formResetCallback");
+        }
+    });
+
+    assert_equals(formInConstructor, null);
+    assert_equals(internals.form, theForm);
+    assert_array_equals(callbackHistory, ["formAssociatedCallback: theForm"]);
+});
+</script>

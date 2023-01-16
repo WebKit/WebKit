@@ -229,7 +229,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (!candidateElementId.isNull() && m_ruleSets.features().idsInRules.contains(candidateElementId))
         return false;
 
-    if (is<HTMLFormControlElement>(candidateElement) || is<HTMLFormControlElement>(element))
+    if (candidateElement.isValidatedFormListedElement() || element.isValidatedFormListedElement())
         return false;
 
     // HTMLFormElement can get the :valid/invalid pseudo classes
