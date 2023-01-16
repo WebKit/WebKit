@@ -51,8 +51,7 @@ public:
 
     explicit SendStreamBuffer(const IPC::StreamConnectionBuffer& stream)
         : m_arguments(stream)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {

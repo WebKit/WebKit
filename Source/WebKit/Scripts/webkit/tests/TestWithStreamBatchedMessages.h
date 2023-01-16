@@ -51,8 +51,7 @@ public:
 
     explicit SendString(const String& url)
         : m_arguments(url)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {

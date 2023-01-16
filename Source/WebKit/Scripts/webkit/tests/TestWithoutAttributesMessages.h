@@ -71,8 +71,7 @@ public:
 
     explicit LoadURL(const String& url)
         : m_arguments(url)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -93,8 +92,7 @@ public:
 
     explicit LoadSomething(const String& url)
         : m_arguments(url)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -116,8 +114,7 @@ public:
 
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
         : m_arguments(event)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -139,8 +136,7 @@ public:
 
     explicit AddEvent(const WebKit::WebTouchEvent& event)
         : m_arguments(event)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -162,8 +158,7 @@ public:
 
     explicit LoadSomethingElse(const String& url)
         : m_arguments(url)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -182,10 +177,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_DidReceivePolicyDecision; }
     static constexpr bool isSync = false;
 
-    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
+    explicit DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
         : m_arguments(frameID, listenerID, policyAction)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -202,6 +196,10 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_Close; }
     static constexpr bool isSync = false;
+
+    explicit Close()
+        : m_arguments()
+    { }
 
     const auto& arguments() const
     {
@@ -221,8 +219,7 @@ public:
 
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
         : m_arguments(store)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -240,10 +237,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_SendDoubleAndFloat; }
     static constexpr bool isSync = false;
 
-    SendDoubleAndFloat(double d, float f)
+    explicit SendDoubleAndFloat(double d, float f)
         : m_arguments(d, f)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -261,10 +257,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_SendInts; }
     static constexpr bool isSync = false;
 
-    SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
+    explicit SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
         : m_arguments(ints, intVectors)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -285,10 +280,10 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_CreatePluginReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
-    CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
+
+    explicit CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
         : m_arguments(pluginInstanceID, parameters)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -309,10 +304,10 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
-    RunJavaScriptAlert(uint64_t frameID, const String& message)
+
+    explicit RunJavaScriptAlert(uint64_t frameID, const String& message)
         : m_arguments(frameID, message)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -333,10 +328,10 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_GetPluginsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
+
     explicit GetPlugins(bool refresh)
         : m_arguments(refresh)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -356,10 +351,10 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
+
     explicit GetPluginProcessConnection(const String& pluginPath)
         : m_arguments(pluginPath)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -379,6 +374,11 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+
+    explicit TestMultipleAttributes()
+        : m_arguments()
+    { }
+
     const auto& arguments() const
     {
         return m_arguments;
@@ -395,10 +395,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TestParameterAttributes; }
     static constexpr bool isSync = false;
 
-    TestParameterAttributes(uint64_t foo, double bar, double baz)
+    explicit TestParameterAttributes(uint64_t foo, double bar, double baz)
         : m_arguments(foo, bar, baz)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -418,8 +417,7 @@ public:
 
     explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
         : m_arguments(a)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -439,8 +437,7 @@ public:
 
     explicit SetVideoLayerID(const WebCore::GraphicsLayer::PlatformLayerID& videoLayerID)
         : m_arguments(videoLayerID)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -459,10 +456,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_DidCreateWebProcessConnection; }
     static constexpr bool isSync = false;
 
-    DidCreateWebProcessConnection(const MachSendRight& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
+    explicit DidCreateWebProcessConnection(const MachSendRight& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
         : m_arguments(connectionIdentifier, flags)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -485,10 +481,10 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
+
     explicit InterpretKeyEvent(uint32_t type)
         : m_arguments(type)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -510,8 +506,7 @@ public:
 
     explicit DeprecatedOperation(const IPC::DummyType& dummy)
         : m_arguments(dummy)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -533,8 +528,7 @@ public:
 
     explicit ExperimentalOperation(const IPC::DummyType& dummy)
         : m_arguments(dummy)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {

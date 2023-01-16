@@ -54,7 +54,8 @@ struct MockStreamTestMessage1 {
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
-    std::tuple<> arguments() { return { }; }
+    using Arguments = std::tuple<>;
+    Arguments arguments() { return { }; }
 };
 
 struct MockStreamTestMessageWithAsyncReply1 {
@@ -65,7 +66,8 @@ struct MockStreamTestMessageWithAsyncReply1 {
     // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
-    std::tuple<uint64_t> arguments() { return { contents }; }
+    using Arguments = std::tuple<uint64_t>;
+    Arguments arguments() { return { contents }; }
     using ReplyArguments = std::tuple<uint64_t>;
     MockStreamTestMessageWithAsyncReply1(uint64_t contents)
         : contents(contents)

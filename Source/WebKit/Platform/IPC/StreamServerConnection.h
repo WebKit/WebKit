@@ -148,7 +148,7 @@ bool StreamServerConnection::send(T&& message, ObjectIdentifier<U> destinationID
 template<typename T, typename... Arguments>
 void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequestID, Arguments&&... arguments)
 {
-    if constexpr(T::isReplyStreamEncodable) {
+    if constexpr(MessageTraits<T>::isReplyStreamEncodable) {
         if (m_isDispatchingStreamMessage) {
             auto span = acquireAll();
             {

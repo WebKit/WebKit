@@ -185,10 +185,8 @@ static const Seconds PostAnimationDelay { 100_ms };
 
     if (!CGRectEqualToRect(self.videoLayerFrame, self.bounds)) {
         self.videoLayerFrame = self.bounds;
-        if (auto* mediaPlayerPrivateRemote = self.mediaPlayerPrivateRemote) {
-            MachSendRight fenceSendRight = MachSendRight::adopt([_context createFencePort]);
-            mediaPlayerPrivateRemote->setVideoInlineSizeFenced(WebCore::FloatSize(self.videoLayerFrame.size), fenceSendRight);
-        }
+        if (auto* mediaPlayerPrivateRemote = self.mediaPlayerPrivateRemote)
+            mediaPlayerPrivateRemote->setVideoInlineSizeFenced(WebCore::FloatSize(self.videoLayerFrame.size), MachSendRight::adopt([_context createFencePort]));
     }
 
     auto* videoSublayer = [sublayers objectAtIndex:0];

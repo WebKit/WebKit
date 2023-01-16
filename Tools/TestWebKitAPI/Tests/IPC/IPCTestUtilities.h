@@ -49,7 +49,8 @@ struct MessageInfo {
 struct MockTestMessage1 {
     static constexpr bool isSync = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
-    std::tuple<> arguments() { return { }; }
+    using Arguments = std::tuple<>;
+    Arguments arguments() { return { }; }
 };
 
 struct MockTestMessageWithAsyncReply1 {
@@ -58,7 +59,8 @@ struct MockTestMessageWithAsyncReply1 {
     // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
-    std::tuple<> arguments() { return { }; }
+    using Arguments = std::tuple<>;
+    Arguments arguments() { return { }; }
     using ReplyArguments = std::tuple<uint64_t>;
 };
 

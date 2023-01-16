@@ -54,8 +54,7 @@ public:
 
     explicit LoadURL(const String& url)
         : m_arguments(url)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -77,10 +76,10 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;
     using ReplyArguments = std::tuple<uint64_t>;
+
     explicit TestAsyncMessage(WebKit::TestTwoStateEnum twoStateEnum)
         : m_arguments(twoStateEnum)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -103,6 +102,11 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+
+    explicit TestAsyncMessageWithNoArguments()
+        : m_arguments()
+    { }
+
     const auto& arguments() const
     {
         return m_arguments;
@@ -124,6 +128,11 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool, uint64_t>;
+
+    explicit TestAsyncMessageWithMultipleArguments()
+        : m_arguments()
+    { }
+
     const auto& arguments() const
     {
         return m_arguments;
@@ -145,10 +154,10 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
+
     explicit TestAsyncMessageWithConnection(const int& value)
         : m_arguments(value)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -169,10 +178,10 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
+
     explicit TestSyncMessage(uint32_t param)
         : m_arguments(param)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -192,10 +201,10 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<std::optional<WebKit::TestClassName>>;
+
     explicit TestSynchronousMessage(bool value)
         : m_arguments(value)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {

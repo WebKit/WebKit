@@ -50,8 +50,7 @@ public:
 
     explicit SendImageData(const RefPtr<WebCore::ImageData>& s0)
         : m_arguments(s0)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -72,6 +71,11 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
+
+    explicit ReceiveImageData()
+        : m_arguments()
+    { }
+
     const auto& arguments() const
     {
         return m_arguments;

@@ -168,13 +168,13 @@ private:
 template<typename T, typename U>
 bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
 {
-    static_assert(!T::isSync, "Message is sync!");
+    static_assert(!MessageTraits<T>::isSync, "Message is sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
         return false;
     auto span = tryAcquire(timeout);
     if (!span)
         return false;
-    if constexpr(T::isStreamEncodable) {
+    if constexpr(MessageTraits<T>::isStreamEncodable) {
         if (trySendStream(*span, message))
             return true;
     }
@@ -221,10 +221,10 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
 template<typename T, typename... AdditionalData>
 bool StreamClientConnection::trySendStream(Span& span, T& message, AdditionalData&&... args)
 {
-    StreamConnectionEncoder messageEncoder { T::name(), span.data, span.size };
+    StreamConnectionEncoder messageEncoder { MessageTraits<T>::name(), span.data, span.size };
     if (((messageEncoder << message.arguments()) << ... << std::forward<decltype(args)>(args))) {
         auto wakeUpResult = release(messageEncoder.size());
-        if constexpr(T::isStreamBatched)
+        if constexpr(MessageTraits<T>::isStreamBatched)
             wakeUpServerBatched(wakeUpResult);
         else
             wakeUpServer(wakeUpResult);
@@ -236,13 +236,13 @@ bool StreamClientConnection::trySendStream(Span& span, T& message, AdditionalDat
 template<typename T, typename U>
 StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
 {
-    static_assert(T::isSync, "Message is not sync!");
+    static_assert(MessageTraits<T>::isSync, "Message is not sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
         return { };
     auto span = tryAcquire(timeout);
     if (!span)
         return { };
-    if constexpr(T::isStreamEncodable) {
+    if constexpr(MessageTraits<T>::isStreamEncodable) {
         auto maybeSendResult = trySendSyncStream(message, timeout, *span);
         if (maybeSendResult)
             return WTFMove(*maybeSendResult);
@@ -267,12 +267,12 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         return SendSyncResult<T> { };
 
     auto decoderResult = [&]() -> std::optional<std::unique_ptr<Decoder>> {
-        StreamConnectionEncoder messageEncoder { T::name(), span.data, span.size };
+        StreamConnectionEncoder messageEncoder { MessageTraits<T>::name(), span.data, span.size };
         if (!(messageEncoder << syncRequestID << message.arguments()))
             return std::nullopt;
         auto wakeUpResult = release(messageEncoder.size());
         wakeUpServer(wakeUpResult);
-        if constexpr(T::isReplyStreamEncodable) {
+        if constexpr(MessageTraits<T>::isReplyStreamEncodable) {
             auto replySpan = tryAcquireAll(timeout);
             if (!replySpan)
                 return std::unique_ptr<Decoder> { };
@@ -283,7 +283,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             }
         } else
             m_clientOffset = 0;
-        return m_connection->waitForSyncReply(syncRequestID, T::name(), timeout, { });
+        return m_connection->waitForSyncReply(syncRequestID, MessageTraits<T>::name(), timeout, { });
     }();
     m_connection->popPendingSyncRequestID(syncRequestID);
 

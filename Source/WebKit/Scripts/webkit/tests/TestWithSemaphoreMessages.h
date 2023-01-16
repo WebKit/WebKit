@@ -49,8 +49,7 @@ public:
 
     explicit SendSemaphore(const IPC::Semaphore& s0)
         : m_arguments(s0)
-    {
-    }
+    { }
 
     const auto& arguments() const
     {
@@ -71,6 +70,11 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
+
+    explicit ReceiveSemaphore()
+        : m_arguments()
+    { }
+
     const auto& arguments() const
     {
         return m_arguments;
