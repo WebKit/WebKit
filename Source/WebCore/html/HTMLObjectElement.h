@@ -48,9 +48,6 @@ public:
     static bool checkValidity() { return true; }
     static bool reportValidity() { return true; }
 
-    void setCustomValidity(const String&) final { }
-    String validationMessage() const final { return String(); }
-
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
 
