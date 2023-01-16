@@ -121,7 +121,6 @@ namespace JSC { namespace FTL {
     macro(JSRopeString_fiber2, JSRopeString::offsetOfFiber2()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
-    macro(JSWebAssemblyInstance_moduleRecord, JSWebAssemblyInstance::offsetOfModuleRecord()) \
     macro(NativeExecutable_asString, NativeExecutable::offsetOfAsString()) \
     macro(RegExpObject_regExpAndFlags, RegExpObject::offsetOfRegExpAndFlags()) \
     macro(RegExpObject_lastIndex, RegExpObject::offsetOfLastIndex()) \
@@ -167,8 +166,15 @@ namespace JSC { namespace FTL {
     macro(WeakMapImpl_buffer,  WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer()) \
     macro(WeakMapBucket_value, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfValue()) \
     macro(WeakMapBucket_key, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey()) \
-    macro(WebAssemblyModuleRecord_exportsObject, WebAssemblyModuleRecord::offsetOfExportsObject()) \
     macro(Symbol_symbolImpl, Symbol::offsetOfSymbolImpl()) \
+
+#if ENABLE(WEBASSEMBLY)
+#define FOR_EACH_ABSTRACT_FIELD_WASM(macro) \
+    macro(JSWebAssemblyInstance_moduleRecord, JSWebAssemblyInstance::offsetOfModuleRecord()) \
+    macro(WebAssemblyModuleRecord_exportsObject, WebAssemblyModuleRecord::offsetOfExportsObject())
+#else
+#define FOR_EACH_ABSTRACT_FIELD_WASM(macro)
+#endif
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(ArrayStorage_vector, ArrayStorage::vectorOffset(), sizeof(WriteBarrier<Unknown>)) \
@@ -210,6 +216,7 @@ public:
 
 #define ABSTRACT_FIELD_DECLARATION(name, offset) AbstractHeap name;
     FOR_EACH_ABSTRACT_FIELD(ABSTRACT_FIELD_DECLARATION)
+    FOR_EACH_ABSTRACT_FIELD_WASM(ABSTRACT_FIELD_DECLARATION)
 #undef ABSTRACT_FIELD_DECLARATION
     
     AbstractHeap& JSCell_freeListNext;

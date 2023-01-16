@@ -1204,7 +1204,11 @@ private:
             compileGetPrototypeOf();
             break;
         case GetWebAssemblyInstanceExports:
+#if ENABLE(WEBASSEMBLY)
             compileGetWebAssemblyInstanceExports();
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
             break;
         case AllocatePropertyStorage:
             compileAllocatePropertyStorage();
@@ -1400,7 +1404,11 @@ private:
             compileCallDirectEval();
             break;
         case CallWasm:
+#if ENABLE(WEBASSEMBLY)
             compileCallWasm();
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
             break;
         case VarargsLength:
             compileVarargsLength();
@@ -5190,12 +5198,14 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(m_out.phi(Int64, monoProto, polyProto, slowResult));
     }
 
+#if ENABLE(WEBASSEMBLY)
     void compileGetWebAssemblyInstanceExports()
     {
         LValue base = lowCell(m_node->child1());
         LValue moduleRecord = m_out.loadPtr(base, m_heaps.JSWebAssemblyInstance_moduleRecord);
         setJSValue(m_out.loadPtr(moduleRecord, m_heaps.WebAssemblyModuleRecord_exportsObject));
     }
+#endif
 
     LValue typedArrayLength(LValue base, bool acceptResizable, std::optional<TypedArrayType> typedArrayType)
     {
@@ -11627,6 +11637,7 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(patchpoint);
     }
 
+#if ENABLE(WEBASSEMBLY)
     void compileCallWasm()
     {
         Node* node = m_node;
@@ -11837,6 +11848,7 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
     }
+#endif
 
     void compileVarargsLength()
     {

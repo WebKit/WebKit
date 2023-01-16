@@ -1303,7 +1303,9 @@ public:
     void compileLoadValueFromMapBucket(Node*);
     void compileExtractValueFromWeakMapGet(Node*);
     void compileGetPrototypeOf(Node*);
+#if ENABLE(WEBASSEMBLY)
     void compileGetWebAssemblyInstanceExports(Node*);
+#endif
     void compileIdentity(Node*);
     
     void compileContiguousPutByVal(Node*);

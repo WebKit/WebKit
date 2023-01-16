@@ -16074,9 +16074,9 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
     }
 }
 
+#if ENABLE(WEBASSEMBLY)
 void SpeculativeJIT::compileGetWebAssemblyInstanceExports(Node* node)
 {
-#if ENABLE(WEBASSEMBLY)
     SpeculateCellOperand base(this, node->child1());
     GPRTemporary result(this);
 
@@ -16087,10 +16087,8 @@ void SpeculativeJIT::compileGetWebAssemblyInstanceExports(Node* node)
     loadPtr(Address(resultGPR, WebAssemblyModuleRecord::offsetOfExportsObject()), resultGPR);
 
     cellResult(resultGPR, node);
-#else
-    UNUSED_PARAM(node);
-#endif
 }
+#endif
 
 void SpeculativeJIT::compileIdentity(Node* node)
 {

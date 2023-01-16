@@ -3441,7 +3441,11 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case GetWebAssemblyInstanceExports: {
+#if ENABLE(WEBASSEMBLY)
         compileGetWebAssemblyInstanceExports(node);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
         break;
     }
 
