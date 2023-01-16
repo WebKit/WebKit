@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022 Igalia S.L.
  *
@@ -1519,16 +1520,6 @@ void RenderLayer::setHasVisibleContent()
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = true;
     computeRepaintRects(renderer().containerForRepaint().renderer);
-    if (!isNormalFlowOnly()) {
-        // We don't collect invisible layers in z-order lists if we are not in compositing mode.
-        // As we became visible, we need to dirty our stacking containers ancestors to be properly
-        // collected. FIXME: When compositing, we could skip this dirtying phase.
-        for (auto* sc = stackingContext(); sc; sc = sc->stackingContext()) {
-            sc->dirtyZOrderLists();
-            if (sc->hasVisibleContent())
-                break;
-        }
-    }
 
     if (parent())
         parent()->setAncestorChainHasVisibleDescendant();
