@@ -5192,9 +5192,11 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileGetWebAssemblyInstanceExports()
     {
+#if ENABLE(WEBASSEMBLY)
         LValue base = lowCell(m_node->child1());
         LValue moduleRecord = m_out.loadPtr(base, m_heaps.JSWebAssemblyInstance_moduleRecord);
         setJSValue(m_out.loadPtr(moduleRecord, m_heaps.WebAssemblyModuleRecord_exportsObject));
+#endif
     }
 
     LValue typedArrayLength(LValue base, bool acceptResizable, std::optional<TypedArrayType> typedArrayType)
@@ -11629,6 +11631,7 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileCallWasm()
     {
+#if ENABLE(WEBASSEMBLY)
         Node* node = m_node;
         WebAssemblyFunction* wasmFunction = node->castOperand<WebAssemblyFunction*>();
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
@@ -11853,6 +11856,7 @@ IGNORE_CLANG_WARNINGS_END
                 break;
             }
         }
+#endif
     }
 
     void compileVarargsLength()
