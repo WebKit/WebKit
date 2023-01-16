@@ -128,6 +128,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsUpToVui(Bitstream
   }
   // sps_seq_parameter_set_id: ue(v)
   golomb_ignored = buffer->ReadExponentialGolomb();
+  (void)golomb_ignored; // Ignore -Wunused-but-set-variable warning.
   // chrome_format_idc: ue(v)
   chroma_format_idc = buffer->ReadExponentialGolomb();
   if (chroma_format_idc == 3) {

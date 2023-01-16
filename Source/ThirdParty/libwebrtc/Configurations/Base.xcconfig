@@ -76,7 +76,7 @@ WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) $(WK_FIXME_WARNING_CFLAGS) -Wexit-t
 
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 // -Wno-unknown-warning-option added for -Wno-unused-but-set-parameter.
-WK_FIXME_WARNING_CFLAGS = -Wno-conditional-uninitialized -Wno-missing-field-initializers -Wno-sign-compare -Wno-undef -Wno-unknown-warning-option -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter;
+WK_FIXME_WARNING_CFLAGS = -Wno-conditional-uninitialized -Wno-missing-field-initializers -Wno-sign-compare -Wno-undef -Wno-unknown-warning-option -Wno-unused-but-set-parameter -Wno-unused-parameter;
 
 ENTITLEMENTS_REQUIRED = $(ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_$(USE_INTERNAL_SDK))
 ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
