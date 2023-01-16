@@ -290,7 +290,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {
-        auto parentAscentAndDescent = primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType());
+        auto parentAscentAndDescent = primaryFontMetricsForInlineBox(lineBox.parentInlineBox(inlineLevelBox), lineBox.baselineType());
         setAscentAndDescent(parentAscentAndDescent);
         inlineLevelBox.setLogicalHeight(parentAscentAndDescent.height());
         return;
@@ -304,7 +304,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         inlineLevelBox.setLogicalHeight(marginBoxHeight);
         if (lineBox.baselineType() == IdeographicBaseline) {
             // FIXME: We should rely on the integration baseline.
-            setAscentAndDescent(primaryFontMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent()), lineBox.baselineType()));
+            setAscentAndDescent(primaryFontMetricsForInlineBox(lineBox.parentInlineBox(inlineLevelBox), lineBox.baselineType()));
             return;
         }
         if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration())
@@ -351,7 +351,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
     };
 
     auto lineHasContent = false;
-    for (auto& run : lineContent().runs) {
+    auto& runs = lineContent().runs;
+    for (size_t index = 0; index < runs.size(); ++index) {
+        auto& run = runs[index];
         auto& layoutBox = run.layoutBox();
         auto& style = styleToUse(layoutBox);
         auto runHasContent = [&] () -> bool {
@@ -416,7 +418,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         if (run.isInlineBoxEnd()) {
             // Adjust the logical width when the inline box closes on this line.
             // Note that margin end does not affect the logical width (e.g. positive margin right does not make the run wider).
-            auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
+            auto& inlineBox = lineBox.inlineLevelBoxFor(run);
             ASSERT(inlineBox.isInlineBox());
             // Inline box run is based on margin box. Let's convert it to border box.
             // Negative margin end makes the run have negative width.
@@ -430,7 +432,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isText()) {
-            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
+            auto& parentInlineBox = lineBox.parentInlineBox(run);
             parentInlineBox.setHasContent();
             if (auto fallbackFonts = collectFallbackFonts(parentInlineBox, run, style); !fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
@@ -440,7 +442,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isSoftLineBreak()) {
-            lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
+            lineBox.parentInlineBox(run).setHasContent();
             continue;
         }
         if (run.isHardLineBreak()) {
@@ -449,18 +451,18 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
 
             if (layoutState().inStandardsMode() || InlineFormattingQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
-                lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
+                lineBox.parentInlineBox(run).setHasContent();
             continue;
         }
         if (run.isListMarker()) {
             auto& listMarkerBox = downcast<ElementBox>(layoutBox);
             if (!listMarkerBox.isListMarkerImage()) {
                 // Non-image type of list markers make their parent inline boxes (e.g. root inline box) contentful (and stretch them vertically).
-                lineBox.inlineLevelBoxForLayoutBox(listMarkerBox.parent()).setHasContent();
+                lineBox.parentInlineBox(run).setHasContent();
             }
 
             if (listMarkerBox.isListMarkerOutside())
-                m_outsideListMarkers.append(&listMarkerBox);
+                m_outsideListMarkers.append(index);
 
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(listMarkerBox, style, logicalLeft, formattingContext().geometryForBox(listMarkerBox).borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
@@ -539,7 +541,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             auto& style = isFirstLine() ? textBox.firstLineStyle() : textBox.style();
             auto enclosingAscentDescentForRun = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent->start, textContent->length), style);
 
-            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(textBox.parent());
+            auto& parentInlineBox = lineBox.parentInlineBox(run);
             auto enclosingAscentDescentForInlineBox = inlineBoxBoundsMap.get(&parentInlineBox);
             enclosingAscentDescentForInlineBox.ascent = std::max(enclosingAscentDescentForInlineBox.ascent, -enclosingAscentDescentForRun.ascent);
             enclosingAscentDescentForInlineBox.descent = std::max(enclosingAscentDescentForInlineBox.descent, enclosingAscentDescentForRun.descent);
@@ -727,13 +729,17 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
     auto lineBoxOffset = lineBoxRect.left() - lineContent().lineInitialLogicalLeftIncludingIntrusiveFloats;
     auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
     auto rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat = lineBoxOffset + rootInlineBoxLogicalLeft;
-    for (auto* listMarkerBox : m_outsideListMarkers) {
-        auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxForLayoutBox(*listMarkerBox);
+    for (auto listMarkerBoxIndex : m_outsideListMarkers) {
+        auto& listMarkerRun = lineContent().runs[listMarkerBoxIndex];
+        ASSERT(listMarkerRun.isListMarker());
+        auto& listMarkerBox = downcast<ElementBox>(listMarkerRun.layoutBox());
+        ASSERT(listMarkerBox.isListMarkerOutside());
+        auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxFor(listMarkerRun);
         // Move it to the logical left of the line box (from the logical left of the root inline box).
         auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;
         auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
         auto nestedListMarkerMarginStart = [&] {
-            auto nestedOffset = formattingState.nestedListMarkerOffset(*listMarkerBox);
+            auto nestedOffset = formattingState.nestedListMarkerOffset(listMarkerBox);
             if (nestedOffset == LayoutUnit::min())
                 return 0_lu;
             // Nested list markers (in standards mode) share the same line and have offsets as if they had dedicated lines.
@@ -748,7 +754,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
             // FIXME: We may need to do this in a post-process task after the line box geometry is computed.
             return floatConstraints.left ? std::min(0_lu, std::max(floatConstraints.left->x, nestedOffset)) : nestedOffset;
         }();
-        formattingGeometry.adjustMarginStartForListMarker(*listMarkerBox, nestedListMarkerMarginStart, rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat);
+        formattingGeometry.adjustMarginStartForListMarker(listMarkerBox, nestedListMarkerMarginStart, rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat);
         logicalLeft += nestedListMarkerMarginStart;
         listMarkerInlineLevelBox.setLogicalLeft(logicalLeft);
     }

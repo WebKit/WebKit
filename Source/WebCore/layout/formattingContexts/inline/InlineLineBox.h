@@ -28,6 +28,7 @@
 #include "InlineLevelBox.h"
 #include "InlineLine.h"
 #include "InlineRect.h"
+#include "LayoutElementBox.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
@@ -65,13 +66,14 @@ public:
     bool hasNonInlineBox() const { return m_boxTypes.containsAny({ InlineLevelBox::Type::AtomicInlineLevelBox, InlineLevelBox::Type::LineBreakBox, InlineLevelBox::Type::GenericInlineLevelBox }); }
     bool hasAtomicInlineLevelBox() const { return m_boxTypes.contains(InlineLevelBox::Type::AtomicInlineLevelBox); }
 
-    const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return const_cast<LineBox&>(*this).inlineLevelBoxForLayoutBox(layoutBox); }
-
     InlineRect logicalRectForTextRun(const Line::Run&) const;
     InlineRect logicalRectForLineBreakBox(const Box&) const;
     InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox.logicalRect(); }
     InlineRect logicalBorderBoxForAtomicInlineLevelBox(const Box&, const BoxGeometry&) const;
     InlineRect logicalBorderBoxForInlineBox(const Box&, const BoxGeometry&) const;
+
+    const InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox) const { return const_cast<LineBox&>(*this).inlineLevelBoxFor(layoutBox); }
+    const InlineLevelBox& inlineLevelBoxFor(const Line::Run& lineRun) const { return const_cast<LineBox&>(*this).inlineLevelBoxFor(lineRun); }
 
     const InlineLevelBox& rootInlineBox() const { return m_rootInlineBox; }
     using InlineLevelBoxList = Vector<InlineLevelBox>;
@@ -93,7 +95,15 @@ private:
 
     InlineLevelBox& rootInlineBox() { return m_rootInlineBox; }
 
-    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return &layoutBox == &m_rootInlineBox.layoutBox() ? m_rootInlineBox : m_nonRootInlineLevelBoxList[m_nonRootInlineLevelBoxMap.get(&layoutBox)]; }
+    const InlineLevelBox& parentInlineBox(const InlineLevelBox& inlineLevelBox) const { return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox); }
+    InlineLevelBox& parentInlineBox(const InlineLevelBox&);
+
+    const InlineLevelBox& parentInlineBox(const Line::Run& lineRun) const { return const_cast<LineBox&>(*this).parentInlineBox(lineRun); }
+    InlineLevelBox& parentInlineBox(const Line::Run&);
+
+    InlineLevelBox& inlineLevelBoxFor(const Line::Run&);
+    InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox);
+
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 
     void setLogicalRect(const InlineRect& logicalRect) { m_logicalRect = logicalRect; }
@@ -114,6 +124,31 @@ private:
 
     HashMap<const Box*, size_t> m_nonRootInlineLevelBoxMap;
 };
+
+inline InlineLevelBox* LineBox::inlineLevelBoxFor(const Box& layoutBox)
+{
+    if (&layoutBox == &m_rootInlineBox.layoutBox())
+        return &m_rootInlineBox;
+    auto entry = m_nonRootInlineLevelBoxMap.find(&layoutBox);
+    if (entry == m_nonRootInlineLevelBoxMap.end())
+        return nullptr;
+    return &m_nonRootInlineLevelBoxList[entry->value];
+}
+
+inline InlineLevelBox& LineBox::parentInlineBox(const InlineLevelBox& inlineLevelBox)
+{
+    return *inlineLevelBoxFor(inlineLevelBox.layoutBox().parent());
+}
+
+inline InlineLevelBox& LineBox::parentInlineBox(const Line::Run& lineRun)
+{
+    return *inlineLevelBoxFor(lineRun.layoutBox().parent());
+}
+
+inline InlineLevelBox& LineBox::inlineLevelBoxFor(const Line::Run& lineRun)
+{
+    return *inlineLevelBoxFor(lineRun.layoutBox());
+}
 
 }
 }

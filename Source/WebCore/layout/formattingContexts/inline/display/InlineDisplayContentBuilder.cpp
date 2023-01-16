@@ -462,7 +462,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
         }
         if (lineRun.isInlineBoxStart()) {
             appendInlineBoxDisplayBox(lineRun
-                , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
+                , lineBox.inlineLevelBoxFor(lineRun)
                 , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , lineBox.hasContent()
                 , boxes);
@@ -476,7 +476,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
                 continue;
             }
             appendSpanningInlineBoxDisplayBox(lineRun
-                , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
+                , lineBox.inlineLevelBoxFor(lineRun)
                 , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , boxes);
             continue;
@@ -630,16 +630,17 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     };
     afterInlineBoxContent();
 
-    auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
+    auto* inlineBox = lineBox.inlineLevelBoxFor(layoutBox);
+    ASSERT(inlineBox);
     auto computeInkOverflow = [&] {
         auto inkOverflow = FloatRect { displayBox.visualRectIgnoringBlockDirection() };
-        m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
+        m_contentHasInkOverflow = computeInkOverflowForInlineBox(*inlineBox, !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         displayBox.adjustInkOverflow(inkOverflow);
     };
     computeInkOverflow();
 
     setInlineBoxGeometry(layoutBox, displayBox.visualRectIgnoringBlockDirection(), isFirstBox);
-    if (inlineBox.hasContent())
+    if (inlineBox->hasContent())
         displayBox.setHasContent();
 }
 
@@ -736,7 +737,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 if (!lineBox.hasContent()) {
                     // FIXME: It's expected to not have any inline boxes on empty lines. They make the line taller. We should reconsider this.
                     setInlineBoxGeometry(layoutBox, { { }, { } }, true);
-                } else if (!lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent()) {
+                } else if (!lineBox.inlineLevelBoxFor(lineRun).hasContent()) {
                     appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
                     createdDisplayBoxNodeForElementBoxAndPushToAncestorStack(downcast<ElementBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
                 }
@@ -758,8 +759,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 if (!boxes[index].isNonRootInlineBox())
                     continue;
                 auto& layoutBox = boxes[index].layoutBox();
-                auto isFirstBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox).isFirstBox();
-                auto isLastBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox).isLastBox();
+                auto* inlineLevelBox = lineBox.inlineLevelBoxFor(layoutBox);
+                ASSERT(inlineLevelBox);
+                auto isFirstBox = inlineLevelBox->isFirstBox();
+                auto isLastBox = inlineLevelBox->isLastBox();
                 if (!isFirstBox && !isLastBox)
                     continue;
                 if (isFirstBox) {
@@ -797,7 +800,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
             // Non-empty inline boxes are normally get their display boxes generated when we process their content runs, but
             // these trailing runs have their content on the subsequent line(s).
             appendInlineBoxDisplayBox(lineRun
-                , lineBox.inlineLevelBoxForLayoutBox(lineRun.layoutBox())
+                , lineBox.inlineLevelBoxFor(lineRun)
                 , boxes.last().visualRectIgnoringBlockDirection()
                 , lineBox.hasContent()
                 , boxes);
