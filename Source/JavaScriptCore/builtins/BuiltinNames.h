@@ -159,7 +159,9 @@ namespace JSC {
     macro(regExpBuiltinExec) \
     macro(regExpMatchFast) \
     macro(regExpProtoFlagsGetter) \
+    macro(regExpProtoDotAllGetter) \
     macro(regExpProtoGlobalGetter) \
+    macro(regExpProtoHasIndicesGetter) \
     macro(regExpProtoIgnoreCaseGetter) \
     macro(regExpProtoMultilineGetter) \
     macro(regExpProtoSourceGetter) \

@@ -87,7 +87,9 @@ class JSGlobalObject;
     v(isConstructor, nullptr) \
     v(sameValue, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
+    v(regExpProtoDotAllGetter, nullptr) \
     v(regExpProtoGlobalGetter, nullptr) \
+    v(regExpProtoHasIndicesGetter, nullptr) \
     v(regExpProtoIgnoreCaseGetter, nullptr) \
     v(regExpProtoMultilineGetter, nullptr) \
     v(regExpProtoSourceGetter, nullptr) \

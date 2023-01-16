@@ -226,10 +226,29 @@ function hasObservableSideEffectsForStringReplace(regexp, replacer)
     if (regexpExec !== @regExpBuiltinExec)
         return true;
 
+    var regexpFlags = @tryGetById(regexp, "flags");
+    if (regexpFlags !== @regExpProtoFlagsGetter)
+        return true;
+    
+    // These are accessed by the builtin flags getter.
+    var regexpDotAll = @tryGetById(regexp, "dotAll");
+    if (regexpDotAll !== @regExpProtoDotAllGetter)
+        return true;
     var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
         return true;
-
+    var regexpHasIndices = @tryGetById(regexp, "hasIndices");
+    if (regexpHasIndices !== @regExpProtoHasIndicesGetter)
+        return true;
+    var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
+    if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
+        return true;
+    var regexpMultiline = @tryGetById(regexp, "multiline");
+    if (regexpMultiline !== @regExpProtoMultilineGetter)
+        return true;
+    var regexpSticky = @tryGetById(regexp, "sticky");
+    if (regexpSticky !== @regExpProtoStickyGetter)
+        return true;
     var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;

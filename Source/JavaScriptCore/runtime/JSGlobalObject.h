@@ -583,7 +583,13 @@ public:
     std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_stringPrototypeSymbolReplaceMissWatchpoint;
     std::unique_ptr<ObjectAdaptiveStructureWatchpoint> m_objectPrototypeSymbolReplaceMissWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeExecWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeFlagsWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeDotAllWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeGlobalWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeHasIndicesWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeIgnoreCaseWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeMultilineWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeStickyWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeUnicodeWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_regExpPrototypeSymbolReplaceWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_mapPrototypeSetWatchpoint;
@@ -866,7 +872,13 @@ public:
     JSFunction* typedArrayProtoSort() const { return m_typedArrayProtoSort.get(this); }
     JSFunction* stringProtoSubstringFunction() const;
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
+    GetterSetter* regExpProtoFlagsGetter() const;
+    GetterSetter* regExpProtoDotAllGetter() const;
     GetterSetter* regExpProtoGlobalGetter() const;
+    GetterSetter* regExpProtoHasIndicesGetter() const;
+    GetterSetter* regExpProtoIgnoreCaseGetter() const;
+    GetterSetter* regExpProtoMultilineGetter() const;
+    GetterSetter* regExpProtoStickyGetter() const;
     GetterSetter* regExpProtoUnicodeGetter() const;
     GetterSetter* throwTypeErrorArgumentsCalleeGetterSetter() const { return m_throwTypeErrorArgumentsCalleeGetterSetter.get(this); }
     
