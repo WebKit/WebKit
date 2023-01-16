@@ -22,19 +22,19 @@ PASS Element includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
 PASS Document includes DocumentAndElementEventHandlers: member names are unique
-FAIL Document interface: attribute fullscreenEnabled assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL Document interface: attribute fullscreen assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS Document interface: attribute fullscreenEnabled
+PASS Document interface: attribute fullscreen
 PASS Document interface: operation exitFullscreen()
 PASS Document interface: attribute onfullscreenchange
 PASS Document interface: attribute onfullscreenerror
-FAIL Document interface: attribute fullscreenElement assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS Document interface: attribute fullscreenElement
 PASS Document interface: new Document must inherit property "fullscreenEnabled" with the proper type
 PASS Document interface: new Document must inherit property "fullscreen" with the proper type
 PASS Document interface: new Document must inherit property "exitFullscreen()" with the proper type
 PASS Document interface: new Document must inherit property "onfullscreenchange" with the proper type
 PASS Document interface: new Document must inherit property "onfullscreenerror" with the proper type
 PASS Document interface: new Document must inherit property "fullscreenElement" with the proper type
-FAIL ShadowRoot interface: attribute fullscreenElement assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS ShadowRoot interface: attribute fullscreenElement
 PASS Element interface: operation requestFullscreen(optional FullscreenOptions)
 PASS Element interface: attribute onfullscreenchange
 PASS Element interface: attribute onfullscreenerror

@@ -74,6 +74,7 @@ enum TestConfidence { "high", "kinda-low" };
     attribute USVString usvstringAttr;
     attribute TestObj testObjAttr;
     attribute TestObj? testNullableObjAttr;
+    [LegacyLenientSetter] readonly attribute DOMString legacyLenientSetterTestAttr;
     [LegacyLenientThis] attribute TestObj lenientTestObjAttr;
     [LegacyUnforgeable] readonly attribute DOMString unforgeableAttr;
     attribute [LegacyNullToEmptyString] DOMString stringAttrTreatingNullAsEmptyString;
