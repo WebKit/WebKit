@@ -86,6 +86,8 @@ public:
     void updateAccordingCacheMode();
     void updateAcceptEncodingHeader();
 
+    void disableCachingIfNeeded();
+
     void removeFragmentIdentifierIfNeeded();
 #if ENABLE(CONTENT_EXTENSIONS)
     void applyResults(ContentRuleListResults&&, Page*);
