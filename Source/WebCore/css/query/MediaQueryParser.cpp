@@ -143,7 +143,11 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
         if (identifier == CSSValueOnly || identifier == CSSValueNot || identifier == CSSValueAnd || identifier == CSSValueOr)
             return { };
 
-        return range.consumeIncludingWhitespace().value().convertToASCIILowercaseAtom();
+        auto mediaType = range.consumeIncludingWhitespace().value().convertToASCIILowercaseAtom();
+        if (mediaType == "layer"_s)
+            return { };
+        
+        return mediaType;
     };
 
     auto prefix = consumePrefix();
