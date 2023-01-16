@@ -4200,6 +4200,18 @@
    },
    {
       "emails" : [
+         "karlcow@apple.com",
+         "karl+webkit@la-grange.net"
+      ],
+      "github" : "karlcow",
+      "name" : "Karl Dubost",
+      "nicks" : [
+         "karlcow"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "rackler@apple.com"
       ],
       "github" : "karlrackler",
