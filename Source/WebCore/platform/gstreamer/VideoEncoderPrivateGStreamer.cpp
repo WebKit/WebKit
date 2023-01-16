@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
-#include "GStreamerVideoEncoder.h"
+#include "VideoEncoderPrivateGStreamer.h"
 
-#if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "NotImplemented.h"
@@ -33,8 +33,8 @@
 
 using namespace WebCore;
 
-GST_DEBUG_CATEGORY(webrtc_venc_debug);
-#define GST_CAT_DEFAULT webrtc_venc_debug
+GST_DEBUG_CATEGORY(video_encoder_debug);
+#define GST_CAT_DEFAULT video_encoder_debug
 
 #define KBIT_TO_BIT 1024
 
@@ -50,8 +50,8 @@ typedef enum {
     VARIABLE_BITRATE_MODE = 1,
 } BitrateMode;
 
-#define WEBRTC_VIDEO_ENCODER_TYPE_BITRATE_MODE (webrtcVideoEncoderBitrateModeGetType())
-static GType webrtcVideoEncoderBitrateModeGetType()
+#define VIDEO_ENCODER_TYPE_BITRATE_MODE (videoEncoderBitrateModeGetType())
+static GType videoEncoderBitrateModeGetType()
 {
     static GType bitrateModeGType = 0;
     static const GEnumValue values[] = {
@@ -71,8 +71,8 @@ typedef enum {
     REALTIME_LATENCY_MODE = 1,
 } LatencyMode;
 
-#define WEBRTC_VIDEO_ENCODER_TYPE_LATENCY_MODE (webrtcVideoEncoderLatencyModeGetType())
-static GType webrtcVideoEncoderLatencyModeGetType()
+#define VIDEO_ENCODER_TYPE_LATENCY_MODE (videoEncoderLatencyModeGetType())
+static GType videoEncoderLatencyModeGetType()
 {
     static GType latencyModeGType = 0;
     static const GEnumValue values[] = {
@@ -87,7 +87,7 @@ static GType webrtcVideoEncoderLatencyModeGetType()
 }
 
 using SetBitrateFunc = Function<void(GObject* encoder, const char* propertyName, int bitrate)>;
-using SetupFunc = Function<void(WebKitWebrtcVideoEncoder*)>;
+using SetupFunc = Function<void(WebKitVideoEncoder*)>;
 using SetBitrateModeFunc = Function<void(GstElement*, BitrateMode)>;
 using SetLatencyModeFunc = Function<void(GstElement*, LatencyMode)>;
 
@@ -172,7 +172,7 @@ public:
 
 /* Internal bin structure: videoconvert ! inputCapsFilter ! encoder ! outputCapsFilter ! (optional
    parser) ! capsFilter */
-struct _WebKitWebrtcVideoEncoderPrivate {
+struct _WebKitVideoEncoderPrivate {
     EncoderId encoderId;
     GRefPtr<GstElement> encoder;
     GRefPtr<GstElement> parser;
@@ -187,9 +187,9 @@ struct _WebKitWebrtcVideoEncoderPrivate {
     LatencyMode latencyMode;
 };
 
-#define webkit_webrtc_video_encoder_parent_class parent_class
-WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitWebrtcVideoEncoder, webkit_webrtc_video_encoder, GST_TYPE_BIN,
-    GST_DEBUG_CATEGORY_INIT(webrtc_venc_debug, "webkitwebrtcvideoencoder", 0, "Video encoder for WebRTC"))
+#define webkit_video_encoder_parent_class parent_class
+WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitVideoEncoder, webkit_video_encoder, GST_TYPE_BIN,
+    GST_DEBUG_CATEGORY_INIT(video_encoder_debug, "webkitvideoencoder", 0, "WebKit Video encoder"))
 
 enum {
     PROP_FORMAT = 1,
@@ -201,12 +201,12 @@ enum {
     N_PROPS
 };
 
-static void webrtcVideoEncoderGetProperty(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void videoEncoderGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
-    auto* self = WEBKIT_WEBRTC_VIDEO_ENCODER(object);
+    auto* self = WEBKIT_VIDEO_ENCODER(object);
     auto* priv = self->priv;
 
-    switch (prop_id) {
+    switch (propertyId) {
     case PROP_FORMAT:
         if (priv->encoderId != None) {
             auto encoder = Encoders::definition(priv->encoderId);
@@ -233,12 +233,12 @@ static void webrtcVideoEncoderGetProperty(GObject* object, guint prop_id, GValue
         g_value_set_enum(value, priv->latencyMode);
         break;
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
 
-static void webrtcVideoEncoderSetBitrate(WebKitWebrtcVideoEncoder* self, guint bitrate)
+static void videoEncoderSetBitrate(WebKitVideoEncoder* self, guint bitrate)
 {
     auto* priv = self->priv;
     priv->bitrate = bitrate;
@@ -249,7 +249,7 @@ static void webrtcVideoEncoderSetBitrate(WebKitWebrtcVideoEncoder* self, guint b
     }
 }
 
-static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, EncoderId encoderId, GRefPtr<GstCaps>&& encodedCaps)
+static void videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId, GRefPtr<GstCaps>&& encodedCaps)
 {
     ASSERT(encoderId != EncoderId::None);
 
@@ -369,10 +369,10 @@ static void webrtcVideoEncoderSetEncoder(WebKitWebrtcVideoEncoder* self, Encoder
     gst_bin_sync_children_states(GST_BIN_CAST(self));
     gst_element_set_locked_state(GST_ELEMENT_CAST(self), FALSE);
 
-    webrtcVideoEncoderSetBitrate(self, priv->bitrate);
+    videoEncoderSetBitrate(self, priv->bitrate);
 }
 
-EncoderId webrtcVideoEncoderFindForFormat(WebKitWebrtcVideoEncoder* self, const GRefPtr<GstCaps>& caps)
+EncoderId videoEncoderFindForFormat(WebKitVideoEncoder* self, const GRefPtr<GstCaps>& caps)
 {
     if (!caps)
         return None;
@@ -399,36 +399,36 @@ EncoderId webrtcVideoEncoderFindForFormat(WebKitWebrtcVideoEncoder* self, const 
     return candidates[0].first;
 }
 
-bool webrtcVideoEncoderSupportsFormat(WebKitWebrtcVideoEncoder* self, const GRefPtr<GstCaps>& caps)
+bool videoEncoderSupportsFormat(WebKitVideoEncoder* self, const GRefPtr<GstCaps>& caps)
 {
-    return webrtcVideoEncoderFindForFormat(self, caps) != None;
+    return videoEncoderFindForFormat(self, caps) != None;
 }
 
-bool webrtcVideoEncoderSetFormat(WebKitWebrtcVideoEncoder* self, GRefPtr<GstCaps>&& caps)
+bool videoEncoderSetFormat(WebKitVideoEncoder* self, GRefPtr<GstCaps>&& caps)
 {
-    auto encoderId = webrtcVideoEncoderFindForFormat(self, caps);
+    auto encoderId = videoEncoderFindForFormat(self, caps);
     if (encoderId == None) {
         GST_ERROR_OBJECT(self, "No encoder found for format %" GST_PTR_FORMAT, caps.get());
         return false;
     }
 
-    webrtcVideoEncoderSetEncoder(self, encoderId, WTFMove(caps));
+    videoEncoderSetEncoder(self, encoderId, WTFMove(caps));
     return true;
 }
 
-static void webrtcVideoEncoderSetProperty(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+static void videoEncoderSetProperty(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
-    auto* self = WEBKIT_WEBRTC_VIDEO_ENCODER(object);
+    auto* self = WEBKIT_VIDEO_ENCODER(object);
     auto* priv = self->priv;
 
-    switch (prop_id) {
+    switch (propertyId) {
     case PROP_FORMAT: {
         auto caps = adoptGRef(gst_caps_copy(gst_value_get_caps(value)));
-        webrtcVideoEncoderSetFormat(self, WTFMove(caps));
+        videoEncoderSetFormat(self, WTFMove(caps));
         break;
     }
     case PROP_BITRATE:
-        webrtcVideoEncoderSetBitrate(self, g_value_get_uint(value));
+        videoEncoderSetBitrate(self, g_value_get_uint(value));
         break;
     case PROP_KEYFRAME_INTERVAL:
         if (priv->encoder) {
@@ -451,7 +451,7 @@ static void webrtcVideoEncoderSetProperty(GObject* object, guint prop_id, const 
         }
         break;
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
@@ -483,9 +483,9 @@ static GRefPtr<GstCaps> createSrcPadTemplateCaps()
     return caps;
 }
 
-static void webrtcVideoEncoderConstructed(GObject* encoder)
+static void videoEncoderConstructed(GObject* encoder)
 {
-    auto* self = WEBKIT_WEBRTC_VIDEO_ENCODER(encoder);
+    auto* self = WEBKIT_VIDEO_ENCODER(encoder);
     self->priv->encoderId = None;
 
     self->priv->bitrateMode = CONSTANT_BITRATE_MODE;
@@ -510,20 +510,20 @@ static void webrtcVideoEncoderConstructed(GObject* encoder)
     gst_element_add_pad(GST_ELEMENT_CAST(self), webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr));
 }
 
-static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass* klass)
+static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(klass);
-    objectClass->constructed = webrtcVideoEncoderConstructed;
-    objectClass->get_property = webrtcVideoEncoderGetProperty;
-    objectClass->set_property = webrtcVideoEncoderSetProperty;
+    objectClass->constructed = videoEncoderConstructed;
+    objectClass->get_property = videoEncoderGetProperty;
+    objectClass->set_property = videoEncoderSetProperty;
 
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
-    gst_element_class_set_static_metadata(elementClass, "WebKit WebRTC video encoder", "Codec/Encoder/Video", "Encodes video for streaming", "Igalia");
+    gst_element_class_set_static_metadata(elementClass, "WebKit video encoder", "Codec/Encoder/Video", "Encodes video for streaming", "Igalia");
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
 
     Encoders::registerEncoder(OmxH264, "omxh264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "target-bitrate", setBitrateBitPerSec, "interval-intraframes", [](GstElement* encoder, BitrateMode mode) {
             switch (mode) {
@@ -539,7 +539,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         });
     Encoders::registerEncoder(X264, "x264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream",
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", NUMBER_OF_THREADS, nullptr);
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
 
@@ -576,7 +576,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         });
     Encoders::registerEncoder(OpenH264, "openh264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream",
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
             g_object_set(self->priv->outputCapsFilter.get(), "caps", self->priv->encodedCaps.get(), nullptr);
         }, "bitrate", setBitrateBitPerSec, "gop-size", [](GstElement*, BitrateMode) {
@@ -585,7 +585,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
             notImplemented();
         });
     Encoders::registerEncoder(Vp8, "vp8enc", nullptr, "video/x-vp8", nullptr,
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "keyframe-mode", "disabled");
         }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist", [](GstElement* encoder, BitrateMode mode) {
             switch (mode) {
@@ -609,7 +609,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         });
 
     Encoders::registerEncoder(Vp9, "vp9enc", nullptr, "video/x-vp9", nullptr,
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             auto inputCaps = adoptGRef(gst_caps_new_any());
             const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
             if (const char* profileString = gst_structure_get_string(structure, "profile")) {
@@ -641,7 +641,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         });
 
     Encoders::registerEncoder(VaapiH264, "vah264lpenc", "h264parse", "video/x-h264", nullptr,
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement*, BitrateMode) {
             // Not supported.
@@ -658,7 +658,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         });
 
     Encoders::registerEncoder(VaapiH264, "vah264enc", "h264parse", "video/x-h264", nullptr,
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
             switch (mode) {
@@ -682,7 +682,7 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         });
 
     Encoders::registerEncoder(VaapiH265, "vah265enc", "h265parse", "video/x-h265", nullptr,
-        [](WebKitWebrtcVideoEncoder* self) {
+        [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
             switch (mode) {
@@ -718,11 +718,11 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
     g_object_class_install_property(objectClass, PROP_KEYFRAME_INTERVAL, g_param_spec_uint("keyframe-interval", "Keyframe interval", "The interval between keyframes", 0, G_MAXINT, 0,
         static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
     g_object_class_install_property(objectClass, PROP_BITRATE_MODE, g_param_spec_enum("bitrate-mode", "Bitrate mode",
-        "Bitrate mode", WEBRTC_VIDEO_ENCODER_TYPE_BITRATE_MODE, CONSTANT_BITRATE_MODE, WEBKIT_PARAM_READWRITE));
+        "Bitrate mode", VIDEO_ENCODER_TYPE_BITRATE_MODE, CONSTANT_BITRATE_MODE, WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(objectClass, PROP_LATENCY_MODE, g_param_spec_enum("latency-mode", "Latency mode",
-        "Latency mode", WEBRTC_VIDEO_ENCODER_TYPE_LATENCY_MODE, REALTIME_LATENCY_MODE, WEBKIT_PARAM_READWRITE));
+        "Latency mode", VIDEO_ENCODER_TYPE_LATENCY_MODE, REALTIME_LATENCY_MODE, WEBKIT_PARAM_READWRITE));
 }
 
 #undef NUMBER_OF_THREADS
 
-#endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

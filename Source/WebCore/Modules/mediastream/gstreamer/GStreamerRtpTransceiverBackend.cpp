@@ -111,9 +111,9 @@ static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(cons
 
     if (!codec.sdpFmtpLine.isEmpty()) {
         // Forward each fmtp attribute as codec-<fmtp-name> in the caps so that the downstream
-        // webrtcvideoencoder can take those into account when configuring the encoder. For instance
+        // webkitvideoencoder can take those into account when configuring the encoder. For instance
         // VP9 profile 2 requires a 10bit pixel input format, so a conversion might be needed just
-        // before encoding. This is taken care of in the webrtcvideoencoder itself.
+        // before encoding. This is taken care of in the webkitvideoencoder itself.
         for (auto& attribute : codec.sdpFmtpLine.split(';')) {
             auto components = attribute.split('=');
             auto field = makeString(codecName.convertToASCIILowercase(), '-', components[0]);

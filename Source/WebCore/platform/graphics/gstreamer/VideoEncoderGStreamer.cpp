@@ -26,7 +26,7 @@
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
-#include "GStreamerVideoEncoder.h"
+#include "VideoEncoderPrivateGStreamer.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -170,7 +170,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
     , m_outputCallback(WTFMove(outputCallback))
     , m_postTaskCallback(WTFMove(postTaskCallback))
 {
-    GRefPtr<GstElement> element = gst_element_factory_make("webrtcvideoencoder", nullptr);
+    GRefPtr<GstElement> element = gst_element_factory_make("webkitvideoencoder", nullptr);
     m_harness = GStreamerElementHarness::create(WTFMove(element), [protectedThis = Ref { *this }, this](const GRefPtr<GstBuffer>& outputBuffer) {
         if (protectedThis->m_isClosed)
             return;
@@ -220,7 +220,7 @@ String GStreamerInternalVideoEncoder::initialize(const VideoEncoder::Config& con
 
     // FIXME: Propagate config.frameRate to caps?
 
-    if (!webrtcVideoEncoderSetFormat(WEBKIT_WEBRTC_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps)))
+    if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps)))
         return "Unable to set encoder format"_s;
 
     if (config.bitRate)

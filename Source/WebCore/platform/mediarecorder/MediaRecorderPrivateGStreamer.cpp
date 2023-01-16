@@ -26,9 +26,9 @@
 #include "GStreamerCommon.h"
 #include "GStreamerMediaStreamSource.h"
 #include "GStreamerRegistryScanner.h"
-#include "GStreamerVideoEncoder.h"
 #include "MediaRecorderPrivateOptions.h"
 #include "MediaStreamPrivate.h"
+#include "VideoEncoderPrivateGStreamer.h"
 #include <gst/app/gstappsink.h>
 #include <wtf/Scope.h>
 
@@ -314,7 +314,7 @@ bool MediaRecorderPrivateGStreamer::preparePipeline()
     }), this);
 
     g_signal_connect_swapped(m_pipeline.get(), "element-setup", G_CALLBACK(+[](MediaRecorderPrivateGStreamer* recorder, GstElement* element) {
-        if (WEBKIT_IS_WEBRTC_VIDEO_ENCODER(element)) {
+        if (WEBKIT_IS_VIDEO_ENCODER(element)) {
             recorder->configureVideoEncoder(element);
             return;
         }
