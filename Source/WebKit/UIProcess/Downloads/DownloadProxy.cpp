@@ -37,7 +37,6 @@
 #include "NetworkProcessProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
-#include "WebProcessPool.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceResponseBase.h>

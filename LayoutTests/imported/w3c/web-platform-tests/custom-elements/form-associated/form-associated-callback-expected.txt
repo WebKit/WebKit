@@ -1,7 +1,7 @@
 
-FAIL Associate by parser, customized at element creation assert_equals: expected 3 but got 2
-FAIL Parsed, connected, then upgraded assert_equals: form.elements.length expected 3 but got 2
-FAIL Disassociation assert_equals: form.elements.length before removal expected 3 but got 2
-FAIL Updating "form" content attribute assert_equals: expected (object) null but got (undefined) undefined
-FAIL Updating "id" attribute of form element assert_equals: expected (object) null but got (undefined) undefined
+PASS Associate by parser, customized at element creation
+PASS Parsed, connected, then upgraded
+PASS Disassociation
+PASS Updating "form" content attribute
+PASS Updating "id" attribute of form element
 

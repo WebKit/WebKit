@@ -161,14 +161,13 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
 
     Vector<InlineLevelBox*> lineBoxRelativeInlineLevelBoxes;
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-        auto& layoutBox = inlineLevelBox.layoutBox();
         contentHasAnnotation = contentHasAnnotation || inlineLevelBox.hasAnnotation();
 
         if (inlineLevelBox.hasLineBoxRelativeAlignment()) {
             lineBoxRelativeInlineLevelBoxes.append(&inlineLevelBox);
             continue;
         }
-        auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
+        auto& parentInlineBox = lineBox.parentInlineBox(inlineLevelBox);
         // Logical top is relative to the parent inline box's layout bounds.
         // Note that this logical top is not the final logical top of the inline level box.
         // This is the logical top in the context of the layout bounds geometry which may be very different from the inline box's normal geometry.
@@ -293,8 +292,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
                 ASSERT_NOT_REACHED();
             continue;
         }
-        auto& layoutBox = inlineLevelBox.layoutBox();
-        auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
+        auto& parentInlineBox = lineBox.parentInlineBox(inlineLevelBox);
         auto baselineOffsetFromParentBaseline = InlineLayoutUnit { };
 
         switch (verticalAlign.type) {
@@ -404,8 +402,7 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
             lineBoxRelativeInlineLevelBoxes.append(index);
             continue;
         }
-        auto& layoutBox = inlineLevelBox.layoutBox();
-        auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
+        auto& parentInlineBox = lineBox.parentInlineBox(inlineLevelBox);
         auto logicalTop = InlineLayoutUnit { };
         auto verticalAlign = inlineLevelBox.verticalAlign();
 

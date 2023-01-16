@@ -73,7 +73,7 @@ private:
     const BlockLayoutState& m_blockLayoutState;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
-    Vector<const ElementBox*> m_outsideListMarkers;
+    Vector<size_t> m_outsideListMarkers;
 };
 
 }

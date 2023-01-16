@@ -94,19 +94,15 @@ void RadioNodeList::setValue(const String& value)
 
 bool RadioNodeList::elementMatches(Element& element) const
 {
-    if (!is<HTMLObjectElement>(element) && !is<HTMLFormControlElement>(element))
+    if (!element.isFormListedElement())
         return false;
 
     if (is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isImageButton())
         return false;
 
     if (is<HTMLFormElement>(ownerNode())) {
-        RefPtr<HTMLFormElement> form;
-        if (is<HTMLObjectElement>(element))
-            form = downcast<HTMLObjectElement>(element).form();
-        else
-            form = downcast<HTMLFormControlElement>(element).form();
-        if (!form || form != &ownerNode())
+        RefPtr form = element.asFormListedElement()->form();
+        if (form != &ownerNode())
             return false;
     }
 

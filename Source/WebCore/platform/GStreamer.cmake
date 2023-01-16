@@ -46,6 +46,8 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp
         platform/graphics/gstreamer/TextSinkGStreamer.cpp
         platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
+        platform/graphics/gstreamer/VideoDecoderGStreamer.cpp
+        platform/graphics/gstreamer/VideoEncoderGStreamer.cpp
         platform/graphics/gstreamer/VideoFrameGStreamer.cpp
         platform/graphics/gstreamer/VideoFrameMetadataGStreamer.cpp
         platform/graphics/gstreamer/VideoSinkGStreamer.cpp
@@ -67,6 +69,8 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
 
         platform/gstreamer/GStreamerCodecUtilities.cpp
+        platform/gstreamer/GStreamerElementHarness.cpp
+        platform/gstreamer/VideoEncoderPrivateGStreamer.cpp
 
         platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
 
@@ -89,7 +93,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
-        platform/mediastream/gstreamer/GStreamerVideoEncoder.cpp
         platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp
         platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp
         platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp
@@ -103,6 +106,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/gstreamer/GStreamerElementHarness.h
         platform/graphics/gstreamer/GRefPtrGStreamer.h
         platform/graphics/gstreamer/GStreamerCommon.h
         platform/graphics/gstreamer/GUniquePtrGStreamer.h

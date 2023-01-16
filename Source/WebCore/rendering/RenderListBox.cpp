@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -682,12 +683,6 @@ bool RenderListBox::scroll(ScrollDirection direction, ScrollGranularity granular
 bool RenderListBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, unsigned stepCount, Element**)
 {
     return ScrollableArea::scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, stepCount);
-}
-
-void RenderListBox::valueChanged(unsigned listIndex)
-{
-    selectElement().setSelectedIndex(selectElement().listToOptionIndex(listIndex));
-    selectElement().dispatchFormControlChangeEvent();
 }
 
 ScrollPosition RenderListBox::scrollPosition() const

@@ -1200,46 +1200,14 @@ bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) 
 DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
     auto& downloadProxy = createDownloadProxy(dataStore, request, initiatingPage, { });
-
-    std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
-    if (initiatingPage) {
-#if ENABLE(APP_BOUND_DOMAINS)
-        isAppBound = initiatingPage->isTopFrameNavigatingToAppBoundDomain();
-#endif
-    }
-
-    ResourceRequest updatedRequest(request);
-    // Request's firstPartyForCookies will be used as Original URL of the download request.
-    // We set the value to top level document's URL.
-    if (initiatingPage) {
-        URL initiatingPageURL = URL { initiatingPage->pageLoadState().url() };
-        updatedRequest.setFirstPartyForCookies(initiatingPageURL);
-        updatedRequest.setIsSameSite(areRegistrableDomainsEqual(initiatingPageURL, request.url()));
-        if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
-            updatedRequest.setHTTPUserAgent(initiatingPage->userAgentForURL(request.url()));
-    } else {
-        updatedRequest.setFirstPartyForCookies(URL());
-        updatedRequest.setIsSameSite(false);
-        if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
-            updatedRequest.setHTTPUserAgent(WebPageProxy::standardUserAgent());
-    }
-    updatedRequest.setIsTopSite(false);
-    dataStore.networkProcess().send(Messages::NetworkProcess::DownloadRequest(dataStore.sessionID(), downloadProxy.downloadID(), updatedRequest, isAppBound, suggestedFilename), 0);
-
+    dataStore.download(downloadProxy, suggestedFilename);
     return downloadProxy;
 }
 
 DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart callDownloadDidStart)
 {
     auto& downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage, { });
-
-    SandboxExtension::Handle sandboxExtensionHandle;
-    if (!path.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite))
-            sandboxExtensionHandle = WTFMove(*handle);
-    }
-
-    dataStore.networkProcess().send(Messages::NetworkProcess::ResumeDownload(dataStore.sessionID(), downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle, callDownloadDidStart), 0);
+    dataStore.resumeDownload(downloadProxy, resumeData, path, callDownloadDidStart);
     return downloadProxy;
 }
 
@@ -1453,7 +1421,8 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
 
 DownloadProxy& WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage, const FrameInfoData& frameInfo)
 {
-    return dataStore.networkProcess().createDownloadProxy(dataStore, *this, request, frameInfo, originatingPage);
+    auto client = m_legacyDownloadClient ? Ref<API::DownloadClient>(*m_legacyDownloadClient) : adoptRef(*new API::DownloadClient);
+    return dataStore.createDownloadProxy(WTFMove(client), request, originatingPage, frameInfo);
 }
 
 void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, IPC::MessageReceiver& messageReceiver)

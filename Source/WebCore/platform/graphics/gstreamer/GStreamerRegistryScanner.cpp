@@ -32,8 +32,11 @@
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_WEBRTC)
-#include "GStreamerVideoEncoder.h"
 #include <gst/rtp/rtp.h>
+#endif
+
+#if ENABLE(VIDEO)
+#include "VideoEncoderPrivateGStreamer.h"
 #endif
 
 namespace WebCore {
@@ -857,7 +860,7 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
         if (configuration == Configuration::Decoding)
             element = gst_element_factory_create(codecLookupResult.factory.get(), nullptr);
         else
-            element = gst_element_factory_make("webrtcvideoencoder", nullptr);
+            element = gst_element_factory_make("webkitvideoencoder", nullptr);
 
         if (element) {
             Vector<String> profiles = {
@@ -877,8 +880,8 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
                 auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
                 gst_codec_utils_h264_caps_set_level_and_profile(caps.get(), sps, 3);
 
-                if (WEBKIT_IS_WEBRTC_VIDEO_ENCODER(element.get())) {
-                    if (!webrtcVideoEncoderSupportsFormat(WEBKIT_WEBRTC_VIDEO_ENCODER(element.get()), caps))
+                if (WEBKIT_IS_VIDEO_ENCODER(element.get())) {
+                    if (!videoEncoderSupportsFormat(WEBKIT_VIDEO_ENCODER(element.get()), caps))
                         continue;
                 } else if (!gst_element_factory_can_sink_any_caps(gst_element_get_factory(element.get()), caps.get()))
                     continue;

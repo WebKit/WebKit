@@ -32,6 +32,10 @@
 #include "LibWebRTCVPXVideoEncoder.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "VideoEncoderGStreamer.h"
+#endif
+
 namespace WebCore {
 
 VideoEncoder::CreatorFunction VideoEncoder::s_customCreator = nullptr;
@@ -65,6 +69,9 @@ void VideoEncoder::createLocalEncoder(const String& codecName, const Config& con
         LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::AV1, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
+#elif USE(GSTREAMER)
+    GStreamerVideoEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+    return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(outputCallback);

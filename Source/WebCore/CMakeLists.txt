@@ -1057,6 +1057,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl
+    dom/ValidityStateFlags.idl
     dom/VisibilityState.idl
     dom/WheelEvent.idl
     dom/XMLDocument.idl

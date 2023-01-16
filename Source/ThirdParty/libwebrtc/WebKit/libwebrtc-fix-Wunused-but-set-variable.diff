@@ -1,0 +1,27 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_pps_parser.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_pps_parser.cc
+index 6f13f3b807bb..1df2667d2eae 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_pps_parser.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_pps_parser.cc
+@@ -172,6 +172,10 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
+   // redundant_pic_cnt_present_flag: u(1)
+   pps.redundant_pic_cnt_present_flag = bit_buffer->ReadBits(1);
+ 
++  // Ignore -Wunused-but-set-variable warnings.
++  (void)bits_tmp;
++  (void)golomb_ignored;
++
+   return pps;
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
+index f4628ad63eeb..0d157624f533 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
+@@ -128,6 +128,7 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsUpToVui(Bitstream
+   }
+   // sps_seq_parameter_set_id: ue(v)
+   golomb_ignored = buffer->ReadExponentialGolomb();
++  (void)golomb_ignored; // Ignore -Wunused-but-set-variable warning.
+   // chrome_format_idc: ue(v)
+   chroma_format_idc = buffer->ReadExponentialGolomb();
+   if (chroma_format_idc == 3) {

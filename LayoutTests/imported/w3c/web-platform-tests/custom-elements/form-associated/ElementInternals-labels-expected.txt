@@ -1,5 +1,5 @@
 
-FAIL LABEL association assert_equals: expected Element node <my-control></my-control> but got null
-FAIL LABEL click assert_equals: expected 1 but got 0
-FAIL ElementInternals.labels should throw NotSupportedError if the target element is not a form-associated custom element assert_throws_dom: function "() => i.labels" did not throw
+PASS LABEL association
+PASS LABEL click
+PASS ElementInternals.labels should throw NotSupportedError if the target element is not a form-associated custom element
 

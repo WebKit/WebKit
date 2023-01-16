@@ -31,6 +31,7 @@
 #include "APIWebsiteDataRecord.h"
 #include "AuthenticatorManager.h"
 #include "DeviceIdHashSaltStorage.h"
+#include "DownloadProxy.h"
 #include "GPUProcessProxy.h"
 #include "Logging.h"
 #include "MockAuthenticatorManager.h"
@@ -58,6 +59,7 @@
 #include <WebCore/NotificationResources.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageQuotaManager.h>
@@ -2179,5 +2181,47 @@ void WebsiteDataStore::setEmulatedConditions(std::optional<int64_t>&& bytesPerSe
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+DownloadProxy& WebsiteDataStore::createDownloadProxy(Ref<API::DownloadClient>&& client, const WebCore::ResourceRequest& request, WebPageProxy* originatingPage, const FrameInfoData& frameInfo)
+{
+    return networkProcess().createDownloadProxy(*this, WTFMove(client), request, frameInfo, originatingPage);
+}
+
+void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String& suggestedFilename)
+{
+    std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
+    WebCore::ResourceRequest updatedRequest(downloadProxy.request());
+    // Request's firstPartyForCookies will be used as Original URL of the download request.
+    // We set the value to top level document's URL.
+    if (auto* initiatingPage = downloadProxy.originatingPage()) {
+#if ENABLE(APP_BOUND_DOMAINS)
+        isAppBound = initiatingPage->isTopFrameNavigatingToAppBoundDomain();
+#endif
+
+        URL initiatingPageURL = URL { initiatingPage->pageLoadState().url() };
+        updatedRequest.setFirstPartyForCookies(initiatingPageURL);
+        updatedRequest.setIsSameSite(WebCore::areRegistrableDomainsEqual(initiatingPageURL, downloadProxy.request().url()));
+        if (!updatedRequest.hasHTTPHeaderField(WebCore::HTTPHeaderName::UserAgent))
+            updatedRequest.setHTTPUserAgent(initiatingPage->userAgentForURL(downloadProxy.request().url()));
+    } else {
+        updatedRequest.setFirstPartyForCookies(URL());
+        updatedRequest.setIsSameSite(false);
+        if (!updatedRequest.hasHTTPHeaderField(WebCore::HTTPHeaderName::UserAgent))
+            updatedRequest.setHTTPUserAgent(WebPageProxy::standardUserAgent());
+    }
+    updatedRequest.setIsTopSite(false);
+    networkProcess().send(Messages::NetworkProcess::DownloadRequest(m_sessionID, downloadProxy.downloadID(), updatedRequest, isAppBound, suggestedFilename), 0);
+}
+
+void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const API::Data& resumeData, const String& path, CallDownloadDidStart callDownloadDidStart)
+{
+    SandboxExtension::Handle sandboxExtensionHandle;
+    if (!path.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite))
+            sandboxExtensionHandle = WTFMove(*handle);
+    }
+
+    networkProcess().send(Messages::NetworkProcess::ResumeDownload(m_sessionID, downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle, callDownloadDidStart), 0);
+}
 
 }

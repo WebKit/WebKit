@@ -17,6 +17,7 @@ depends:
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
+- sdk/flite.bst
 - sdk/gi-docgen.bst
 - sdk/graphviz.bst
 - sdk/gst-libav.bst

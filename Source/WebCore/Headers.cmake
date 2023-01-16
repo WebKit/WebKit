@@ -823,6 +823,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/UserActionElementSet.h
     dom/UserGestureIndicator.h
     dom/UserTypingGestureIndicator.h
+    dom/ValidityStateFlags.h
     dom/ViewportArguments.h
     dom/VisibilityChangeClient.h
     dom/VisibilityState.h
@@ -906,11 +907,15 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/CanvasBase.h
     html/CollectionTraversal.h
     html/CollectionType.h
+    html/CustomElementFormValue.h
+    html/DOMFormData.h
     html/DOMTokenList.h
     html/DataListSuggestionInformation.h
     html/EnterKeyHint.h
     html/FeaturePolicy.h
+    html/FormAssociatedCustomElement.h
     html/FormAssociatedElement.h
+    html/FormController.h
     html/FormListedElement.h
     html/HTMLAnchorElement.h
     html/HTMLAnchorElementInlines.h
@@ -933,8 +938,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLEmbedElement.h
     html/HTMLFieldSetElement.h
     html/HTMLFontElement.h
+    html/HTMLMaybeFormAssociatedCustomElement.h
     html/HTMLFormControlElement.h
-    html/HTMLFormControlElementWithState.h
     html/HTMLFormElement.h
     html/HTMLFrameElement.h
     html/HTMLFrameElementBase.h
@@ -1008,6 +1013,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/TypeAhead.h
     html/URLDecomposition.h
     html/URLRegistry.h
+    html/ValidatedFormListedElement.h
+    html/ValidationMessage.h
     html/ValidityState.h
     html/VideoFrameRequestCallback.h
     html/VoidCallback.h

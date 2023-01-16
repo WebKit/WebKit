@@ -49,14 +49,9 @@ function testFormControlBarredFromValidation(control, name)
 
         control.setCustomValidity("error");
         assert_true(control.checkValidity(), "checkValidity() after setting custom validity message to 'error'");
-        // WebKit and Chrome 96 treat <object> differently here. Firefox 95 doesn't.
-        if (control.tagName == "OBJECT") {
-            assert_true(control.validity.valid, "ValidityState.valid after setting custom validity message to 'error'");
-            assert_false(control.validity.customError, "ValidityState.customError after setting custom validity message to 'error'");
-         } else {
-            assert_false(control.validity.valid, "ValidityState.valid after setting custom validity message to 'error'");
-            assert_true(control.validity.customError, "ValidityState.customError after setting custom validity message to 'error'");
-        }
+        // Chrome 110 treats <object> differently here. Firefox 95 doesn't.
+        assert_false(control.validity.valid, "ValidityState.valid after setting custom validity message to 'error'");
+        assert_true(control.validity.customError, "ValidityState.customError after setting custom validity message to 'error'");
         assert_equals(control.validationMessage, "", "validationMessage after setting custom validity message to 'error'");
 
         control.setCustomValidity("");

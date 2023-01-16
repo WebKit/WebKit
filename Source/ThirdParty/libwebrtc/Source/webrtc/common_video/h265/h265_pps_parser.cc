@@ -172,6 +172,10 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
   // redundant_pic_cnt_present_flag: u(1)
   pps.redundant_pic_cnt_present_flag = bit_buffer->ReadBits(1);
 
+  // Ignore -Wunused-but-set-variable warnings.
+  (void)bits_tmp;
+  (void)golomb_ignored;
+
   return pps;
 }
 

@@ -48,9 +48,6 @@ public:
     static bool checkValidity() { return true; }
     static bool reportValidity() { return true; }
 
-    void setCustomValidity(const String&) final { }
-    String validationMessage() const final { return String(); }
-
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
 
@@ -86,16 +83,19 @@ private:
 
     bool hasValidClassId();
 
-    void refFormAssociatedElement() final { ref(); }
-    void derefFormAssociatedElement() final { deref(); }
+    void refFormAssociatedElement() const final { ref(); }
+    void derefFormAssociatedElement() const final { deref(); }
 
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
     FormListedElement* asFormListedElement() final { return this; }
+    ValidatedFormListedElement* asValidatedFormListedElement() final { return nullptr; }
 
     // These functions can be called concurrently for ValidityState.
     HTMLObjectElement& asHTMLElement() final { return *this; }
     const HTMLObjectElement& asHTMLElement() const final { return *this; }
 
+    bool isFormListedElement() const final { return true; }
+    bool isValidatedFormListedElement() const final { return false; }
     bool isFormControlElement() const final { return false; }
 
     bool isEnumeratable() const final { return true; }

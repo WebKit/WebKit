@@ -47,6 +47,10 @@
 #include "VideoFrameCV.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "VideoFrameGStreamer.h"
+#endif
+
 namespace WebCore {
 
 WebCodecsVideoFrame::WebCodecsVideoFrame(ScriptExecutionContext& context)
@@ -207,7 +211,10 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     RefPtr<VideoFrame> videoFrame;
 #if PLATFORM(COCOA)
     videoFrame = VideoFrameCV::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+#elif USE(GSTREAMER)
+    videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D);
 #endif
+
     if (!videoFrame)
         return Exception { InvalidStateError,  "Unable to create frame from buffer"_s };
 

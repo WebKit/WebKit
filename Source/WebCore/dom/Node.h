@@ -588,6 +588,7 @@ protected:
         IsFullscreen = 1 << 29,
         IsIFrameFullscreen = 1 << 30,
 #endif
+        HasFormAssociatedCustomElementInterface = 1U << 31,
     };
 
     enum class TabIndexState : uint8_t {

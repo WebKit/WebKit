@@ -70,6 +70,7 @@ StreamServerConnection::~StreamServerConnection()
 
 void StreamServerConnection::open()
 {
+    ASSERT(!m_isOpen);
     static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag, [] {
@@ -78,11 +79,13 @@ void StreamServerConnection::open()
     // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
     m_connection->addMessageReceiveQueue(*this, { });
     m_connection->open(s_dedicatedConnectionClient.get());
+    m_isOpen = true;
 }
 
 void StreamServerConnection::invalidate()
 {
-    m_connection->removeMessageReceiveQueue({ });
+    if (m_isOpen)
+        m_connection->removeMessageReceiveQueue({ });
     m_connection->invalidate();
 }
 

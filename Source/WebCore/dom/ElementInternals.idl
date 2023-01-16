@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (File or USVString or DOMFormData) FormValue;
+
 [
     GenerateIsReachable=ImplElementRoot,
     GenerateAddOpaqueRoot=element,
@@ -30,6 +32,19 @@
     EnabledBySetting=FormAssociatedCustomElementsEnabled,
 ] interface ElementInternals {
     readonly attribute ShadowRoot? shadowRoot;
+
+    undefined setFormValue(FormValue? value, optional FormValue? state);
+
+    readonly attribute HTMLFormElement? form;
+
+    undefined setValidity(optional ValidityStateFlags flags = {}, optional DOMString message, optional HTMLElement validationAnchor);
+    readonly attribute boolean willValidate;
+    readonly attribute ValidityState validity;
+    readonly attribute DOMString validationMessage;
+    boolean checkValidity();
+    boolean reportValidity();
+
+    readonly attribute NodeList labels;
 
     [CEReactions, Reflect, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? role;
     [CEReactions, Reflect=aria_activedescendant, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute Element? ariaActiveDescendantElement;

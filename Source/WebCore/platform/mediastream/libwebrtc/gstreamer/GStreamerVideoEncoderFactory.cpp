@@ -283,7 +283,7 @@ public:
 
     GRefPtr<GstElement> createEncoder(void)
     {
-        GRefPtr<GstElement> webrtcencoder = gst_element_factory_make("webrtcvideoencoder", NULL);
+        GRefPtr<GstElement> webrtcencoder = gst_element_factory_make("webkitvideoencoder", nullptr);
         g_object_set(webrtcencoder.get(), "format", adoptGRef(gst_caps_from_string(Caps())).get(), NULL);
 
         GRefPtr<GstElement> encoder = nullptr;

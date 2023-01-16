@@ -1,58 +1,58 @@
 
 
 PASS Single value - name is missing
-FAIL Single value - empty name exists this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)
-FAIL Single value - Non-empty name exists this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)
-FAIL Null value should submit nothing this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)
-FAIL Multiple values - name content attribute is ignored this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)
-FAIL setFormValue with an empty FormData should submit nothing this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)
-FAIL Newline normalization - \n in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(v)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \r\n in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL Newline normalization - \n\r in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: this.internals_.setFormValue is not a function. (In 'this.internals_.setFormValue(formData)', 'this.internals_.setFormValue' is undefined)"
-FAIL ElementInternals.setFormValue() should throw NotSupportedError if the target element is not a form-associated custom element assert_throws_dom: function "() => i.setFormValue("test")" threw object "TypeError: i.setFormValue is not a function. (In 'i.setFormValue("test")', 'i.setFormValue' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+PASS Single value - empty name exists
+PASS Single value - Non-empty name exists
+PASS Null value should submit nothing
+PASS Multiple values - name content attribute is ignored
+PASS setFormValue with an empty FormData should submit nothing
+PASS Newline normalization - \n in name (urlencoded)
+PASS Newline normalization - \n in name (formdata)
+PASS Newline normalization - \r in name (urlencoded)
+PASS Newline normalization - \r in name (formdata)
+PASS Newline normalization - \r\n in name (urlencoded)
+PASS Newline normalization - \r\n in name (formdata)
+PASS Newline normalization - \n\r in name (urlencoded)
+PASS Newline normalization - \n\r in name (formdata)
+PASS Newline normalization - \n in value (urlencoded)
+PASS Newline normalization - \n in value (formdata)
+PASS Newline normalization - \r in value (urlencoded)
+PASS Newline normalization - \r in value (formdata)
+PASS Newline normalization - \r\n in value (urlencoded)
+PASS Newline normalization - \r\n in value (formdata)
+PASS Newline normalization - \n\r in value (urlencoded)
+PASS Newline normalization - \n\r in value (formdata)
+PASS Newline normalization - \n in filename (urlencoded)
+PASS Newline normalization - \n in filename (formdata)
+PASS Newline normalization - \r in filename (urlencoded)
+PASS Newline normalization - \r in filename (formdata)
+PASS Newline normalization - \r\n in filename (urlencoded)
+PASS Newline normalization - \r\n in filename (formdata)
+PASS Newline normalization - \n\r in filename (urlencoded)
+PASS Newline normalization - \n\r in filename (formdata)
+PASS Newline normalization - \n in FormData name (urlencoded)
+PASS Newline normalization - \n in FormData name (formdata)
+PASS Newline normalization - \r in FormData name (urlencoded)
+PASS Newline normalization - \r in FormData name (formdata)
+PASS Newline normalization - \r\n in FormData name (urlencoded)
+PASS Newline normalization - \r\n in FormData name (formdata)
+PASS Newline normalization - \n\r in FormData name (urlencoded)
+PASS Newline normalization - \n\r in FormData name (formdata)
+PASS Newline normalization - \n in FormData value (urlencoded)
+PASS Newline normalization - \n in FormData value (formdata)
+PASS Newline normalization - \r in FormData value (urlencoded)
+PASS Newline normalization - \r in FormData value (formdata)
+PASS Newline normalization - \r\n in FormData value (urlencoded)
+PASS Newline normalization - \r\n in FormData value (formdata)
+PASS Newline normalization - \n\r in FormData value (urlencoded)
+PASS Newline normalization - \n\r in FormData value (formdata)
+PASS Newline normalization - \n in FormData filename (urlencoded)
+PASS Newline normalization - \n in FormData filename (formdata)
+PASS Newline normalization - \r in FormData filename (urlencoded)
+PASS Newline normalization - \r in FormData filename (formdata)
+PASS Newline normalization - \r\n in FormData filename (urlencoded)
+PASS Newline normalization - \r\n in FormData filename (formdata)
+PASS Newline normalization - \n\r in FormData filename (urlencoded)
+PASS Newline normalization - \n\r in FormData filename (formdata)
+PASS ElementInternals.setFormValue() should throw NotSupportedError if the target element is not a form-associated custom element
 

@@ -297,7 +297,6 @@ public:
     
     // Downloads.
     DownloadProxy& createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const FrameInfoData&);
-    API::DownloadClient* legacyDownloadClient() { return m_legacyDownloadClient.get(); }
 
     API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }

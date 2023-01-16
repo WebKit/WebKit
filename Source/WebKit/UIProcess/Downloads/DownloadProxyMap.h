@@ -35,6 +35,10 @@
 #include <objc/objc.h>
 #endif
 
+namespace API {
+class DownloadClient;
+}
+
 namespace WebCore {
 class ResourceRequest;
 }
@@ -45,7 +49,6 @@ class DownloadProxy;
 class NetworkProcessProxy;
 class ProcessAssertion;
 class WebPageProxy;
-class WebProcessPool;
 class WebsiteDataStore;
 struct FrameInfoData;
 
@@ -57,7 +60,7 @@ public:
     explicit DownloadProxyMap(NetworkProcessProxy&);
     ~DownloadProxyMap();
 
-    DownloadProxy& createDownloadProxy(WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
+    DownloadProxy& createDownloadProxy(WebsiteDataStore&, Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
     void downloadFinished(DownloadProxy&);
 
     bool isEmpty() const { return m_downloads.isEmpty(); }

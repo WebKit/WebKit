@@ -79,9 +79,11 @@ std::optional<Condition> GenericMediaQueryParser<ConcreteParser>::consumeConditi
     if (range.peek().type() == IdentToken) {
         if (range.peek().id() == CSSValueNot) {
             range.consumeIncludingWhitespace();
-            if (auto query = concreteParser().consumeQueryInParens(range))
-                return Condition { LogicalOperator::Not, { *query } };
-            return { };
+            auto query = concreteParser().consumeQueryInParens(range);
+            if (!query || !range.atEnd())
+                return { };
+
+            return Condition { LogicalOperator::Not, { *query } };
         }
     }
 
@@ -131,6 +133,7 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
     if (range.peek().type() == FunctionToken) {
         auto name = range.peek().value();
         auto functionRange = range.consumeBlock();
+        range.consumeWhitespace();
         return GeneralEnclosed { name.toString(), functionRange.serialize() };
     }
 

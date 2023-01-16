@@ -56,7 +56,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
-#include "GStreamerVideoEncoder.h"
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
@@ -65,6 +64,7 @@
 #endif
 
 #if ENABLE(VIDEO)
+#include "VideoEncoderPrivateGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #endif
 
@@ -335,10 +335,8 @@ bool isThunderRanked()
 
 static void registerInternalVideoEncoder()
 {
-    // TODO: Remove this ifdef, this element doesn't explicitly use MediaStream APIs and can
-    // also be used for WebCodec video encoding.
-#if ENABLE(MEDIA_STREAM)
-    gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER);
+#if ENABLE(VIDEO)
+    gst_element_register(nullptr, "webkitvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_VIDEO_ENCODER);
 #endif
 }
 

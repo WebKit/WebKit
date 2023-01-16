@@ -1,0 +1,4 @@
+
+
+PASS Form-associated custom elements don't get enumerated in form / fieldset collections in precustomized state
+

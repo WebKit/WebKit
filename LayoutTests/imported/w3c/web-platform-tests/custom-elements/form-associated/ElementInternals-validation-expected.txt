@@ -1,16 +1,18 @@
+CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
+CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
+CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
 
 
-FAIL willValidate assert_true: default value is true expected true got undefined
-FAIL willValidate after upgrade assert_true: default value expected true got undefined
-FAIL willValidate should throw NotSupportedError if the target element is not a form-associated custom element assert_throws_dom: function "() => element.i.willValidate" did not throw
-FAIL validity and setValidity() undefined is not an object (evaluating 'validity.valueMissing')
-FAIL "anchor" argument of setValidity() assert_throws_dom: Not a descendant function "() => {
-    control.i.setValidity(flags, m, document.body);
-  }" threw object "TypeError: control.i.setValidity is not a function. (In 'control.i.setValidity(flags, m, document.body)', 'control.i.setValidity' is undefined)" that is not a DOMException NotFoundError: property "code" is equal to undefined, expected 8
-FAIL checkValidity() should throw NotSupportedError if the target element is not a form-associated custom element assert_throws_dom: function "() => element.i.checkValidity()" threw object "TypeError: element.i.checkValidity is not a function. (In 'element.i.checkValidity()', 'element.i.checkValidity' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
-FAIL checkValidity() control.i.checkValidity is not a function. (In 'control.i.checkValidity()', 'control.i.checkValidity' is undefined)
-FAIL reportValidity() should throw NotSupportedError if the target element is not a form-associated custom element assert_throws_dom: function "() => element.i.reportValidity()" threw object "TypeError: element.i.reportValidity is not a function. (In 'element.i.reportValidity()', 'element.i.reportValidity' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
-FAIL reportValidity() control.i.reportValidity is not a function. (In 'control.i.reportValidity()', 'control.i.reportValidity' is undefined)
-FAIL Custom control affects validation at the owner form control.i.checkValidity is not a function. (In 'control.i.checkValidity()', 'control.i.checkValidity' is undefined)
-FAIL Custom control affects :valid :invalid for FORM and FIELDSET assert_true: expected true got false
+PASS willValidate
+PASS willValidate after upgrade
+PASS willValidate after upgrade (document.createElement)
+PASS willValidate should throw NotSupportedError if the target element is not a form-associated custom element
+PASS validity and setValidity()
+PASS "anchor" argument of setValidity()
+PASS checkValidity() should throw NotSupportedError if the target element is not a form-associated custom element
+PASS checkValidity()
+PASS reportValidity() should throw NotSupportedError if the target element is not a form-associated custom element
+PASS reportValidity()
+PASS Custom control affects validation at the owner form
+PASS Custom control affects :valid :invalid for FORM and FIELDSET
 
