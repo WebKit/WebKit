@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.39.4
+================
+
+What's new in WebKitGTK 2.39.4?
+
+  - Fix WebGL when sandbox is enabled.
+  - Fix loading of media documents.
+  - Add new API disable web security.
+  - Disable support for HLS in media backend by default.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Swedish.
+
+================
 WebKitGTK 2.39.3
 ================
 
