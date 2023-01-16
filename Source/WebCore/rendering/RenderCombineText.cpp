@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -99,7 +100,7 @@ void RenderCombineText::combineTextIfNeeded()
 
     // An ancestor element may trigger us to lay out again, even when we're already combined.
     if (m_isCombined)
-        RenderText::setRenderedText(originalText());
+        RenderText::setRenderedText(m_renderedText);
 
     m_isCombined = false;
     m_needsFontUpdate = false;
@@ -185,6 +186,7 @@ void RenderCombineText::combineTextIfNeeded()
 
     if (m_isCombined) {
         static NeverDestroyed<String> objectReplacementCharacterString(&objectReplacementCharacter, 1);
+        m_renderedText = text();
         RenderText::setRenderedText(objectReplacementCharacterString.get());
         m_combinedTextWidth = combinedTextWidth;
         m_combinedTextAscent = glyphOverflow.top;

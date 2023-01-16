@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,6 +54,7 @@ private:
     float m_combinedTextWidth { 0 };
     float m_combinedTextAscent { 0 };
     float m_combinedTextDescent { 0 };
+    String m_renderedText;
     bool m_isCombined : 1;
     bool m_needsFontUpdate : 1;
 };
