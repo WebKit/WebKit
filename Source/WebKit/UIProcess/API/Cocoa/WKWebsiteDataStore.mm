@@ -149,8 +149,9 @@ private:
             return { };
 
         HashMap<WTF::String, bool> result;
-        NSDictionary<NSString *, NSNumber *> *permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
-        for (NSString *key in permissions) {
+        NSDictionary<NSURL *, NSNumber *> *permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
+        for (NSURL *key in permissions) {
+            ASSERT(key.scheme);
             NSNumber *value = permissions[key];
             auto origin = WebCore::SecurityOriginData::fromURL(URL(key));
             result.set(origin.toString(), value.boolValue);
