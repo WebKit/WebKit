@@ -38,6 +38,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKContextMenuElementInfo.h>
+#import <WebKit/_WKHitTestResult.h>
 #import <wtf/BlockPtr.h>
 
 @interface PopoverNotificationListener : NSObject
@@ -254,6 +255,34 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsHitTestResult)
     __block bool gotProposedMenu = false;
     [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
         EXPECT_NOT_NULL(elementInfo.hitTestResult);
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView setUIDelegate:delegate.get()];
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView mouseDownAtPoint:NSMakePoint(10, 10) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&gotProposedMenu);
+}
+
+TEST(ContextMenuTests, HitTestResultDoesNotContainEmptyURLs)
+{
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        _WKHitTestResult *hitTestResult = elementInfo.hitTestResult;
+        EXPECT_NOT_NULL(hitTestResult);
+
+        // simple.html does not contain any links, so every URL in _WKHitTestResult should be nil.
+        EXPECT_NULL(hitTestResult.absoluteImageURL);
+        EXPECT_NULL(hitTestResult.absolutePDFURL);
+        EXPECT_NULL(hitTestResult.absoluteLinkURL);
+        EXPECT_NULL(hitTestResult.absoluteMediaURL);
+
         completion(nil);
         gotProposedMenu = true;
     }];
