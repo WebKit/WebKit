@@ -51,12 +51,12 @@ private:
 Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle, StreamConnectionWorkQueue& workQueue)
 {
     auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
-    auto buffer = StreamConnectionBuffer::map(WTFMove(handle.buffer));
+    auto buffer = StreamServerConnectionBuffer::map(WTFMove(handle.buffer));
     RELEASE_ASSERT(buffer); // FIXME: make callers call this outside constructor.
     return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer), workQueue));
 }
 
-StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
+StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamServerConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
     : m_connection(WTFMove(connection))
     , m_workQueue(workQueue)
     , m_buffer(WTFMove(stream))
@@ -119,88 +119,6 @@ void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder
     m_workQueue.wakeUp();
 }
 
-std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire()
-{
-    ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
-    if (serverLimit == ServerLimit::serverIsSleepingTag)
-        return std::nullopt;
-
-    auto result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
-    if (result.size < minimumMessageSize) {
-        serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
-        result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
-    }
-
-    if (result.size < minimumMessageSize)
-        return std::nullopt;
-
-    return result;
-}
-
-StreamServerConnection::Span StreamServerConnection::acquireAll()
-{
-    return alignedSpan(0, dataSize() - 1);
-}
-
-void StreamServerConnection::release(size_t readSize)
-{
-    ASSERT(readSize);
-    readSize = std::max(readSize, minimumMessageSize);
-    ServerOffset serverOffset = static_cast<ServerOffset>(wrapOffset(alignOffset(m_serverOffset) + readSize));
-
-    ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
-    // If the client wrote over serverOffset, it means the client is waiting.
-    if (oldServerOffset == ServerOffset::clientIsWaitingTag)
-        m_clientWaitSemaphore.signal();
-    else
-        ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
-
-    m_serverOffset = serverOffset;
-}
-
-void StreamServerConnection::releaseAll()
-{
-    sharedServerLimit().store(static_cast<ServerLimit>(0), std::memory_order_release);
-    ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
-    // If the client wrote over serverOffset, it means the client is waiting.
-    if (oldServerOffset == ServerOffset::clientIsWaitingTag)
-        m_clientWaitSemaphore.signal();
-    else
-        ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
-    m_serverOffset = 0;
-}
-
-StreamServerConnection::Span StreamServerConnection::alignedSpan(size_t offset, size_t limit)
-{
-    ASSERT(offset < dataSize());
-    ASSERT(limit < dataSize());
-    size_t aligned = alignOffset(offset);
-    size_t resultSize = 0;
-    if (offset < limit) {
-        if (offset <= aligned && aligned < limit)
-            resultSize = size(aligned, limit);
-    } else if (offset > limit) {
-        if (aligned >= offset || aligned < limit)
-            resultSize = size(aligned, limit);
-    }
-    return { data() + aligned, resultSize };
-}
-
-size_t StreamServerConnection::size(size_t offset, size_t limit)
-{
-    if (offset <= limit)
-        return limit - offset;
-    return dataSize() - offset;
-}
-
-size_t StreamServerConnection::clampedLimit(ServerLimit serverLimit) const
-{
-    ASSERT(!(serverLimit & ServerLimit::serverIsSleepingTag));
-    size_t limit = static_cast<size_t>(serverLimit);
-    ASSERT(limit <= dataSize() - 1);
-    return std::min(limit, dataSize() - 1);
-}
-
 StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
 {
     RefPtr<StreamMessageReceiver> currentReceiver;
@@ -208,10 +126,10 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
     uint8_t currentReceiverName = static_cast<uint8_t>(ReceiverName::Invalid);
 
     for (size_t i = 0; i < messageLimit; ++i) {
-        auto span = tryAcquire();
+        auto span = m_buffer.tryAcquire();
         if (!span)
             return DispatchResult::HasNoMessages;
-        IPC::Decoder decoder { span->data, span->size, m_currentDestinationID };
+        IPC::Decoder decoder { span->data(), span->size(), m_currentDestinationID };
         if (!decoder.isValid()) {
             m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
             return DispatchResult::HasNoMessages;
@@ -266,7 +184,9 @@ bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, Re
         m_currentDestinationID = destinationID;
         currentReceiver = nullptr;
     }
-    release(decoder.currentBufferPosition());
+    auto result = m_buffer.release(decoder.currentBufferPosition());
+    if (result == WakeUpClient::Yes)
+        m_clientWaitSemaphore.signal();
     return true;
 }
 
@@ -280,10 +200,13 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder&& decoder, StreamMess
         m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
         return false;
     }
+    WakeUpClient result = WakeUpClient::No;
     if (decoder.isSyncMessage())
-        releaseAll();
+        result = m_buffer.releaseAll();
     else
-        release(decoder.currentBufferPosition());
+        result = m_buffer.release(decoder.currentBufferPosition());
+    if (result == WakeUpClient::Yes)
+        m_clientWaitSemaphore.signal();
     return true;
 }
 
@@ -315,7 +238,9 @@ bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
     // If receiver does not exist if it has been removed but messages are still pending to be
     // processed. It's ok to skip such messages.
     // FIXME: Note, corresponding skip is not possible at the moment for stream messages.
-    release(decoder.currentBufferPosition());
+    auto result = m_buffer.release(decoder.currentBufferPosition());
+    if (result == WakeUpClient::Yes)
+        m_clientWaitSemaphore.signal();
     return true;
 }
 

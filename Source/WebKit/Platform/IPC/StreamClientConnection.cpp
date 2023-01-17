@@ -69,7 +69,7 @@ StreamClientConnection::StreamConnectionPair StreamClientConnection::create(unsi
     RefPtr<StreamClientConnection> clientConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSizeLog2) };
     StreamServerConnection::Handle serverHandle {
         WTFMove(connectionIdentifiers->client),
-        clientConnection->streamBuffer().createHandle()
+        clientConnection->m_buffer.createHandle()
     };
     return { WTFMove(clientConnection), WTFMove(serverHandle) };
 }
@@ -78,15 +78,27 @@ StreamClientConnection::StreamClientConnection(Ref<Connection> connection, unsig
     : m_connection(WTFMove(connection))
     , m_buffer(bufferSizeLog2)
 {
-    // Read starts from 0 with limit of 0 and reader sleeping.
-    sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);
-    // Write starts from 0 with a limit of the whole buffer.
-    sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
 }
 
 StreamClientConnection::~StreamClientConnection()
 {
     ASSERT(!m_connection->isValid());
+}
+
+void StreamClientConnection::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
+{
+    m_buffer.setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
+}
+
+bool StreamClientConnection::hasSemaphores() const
+{
+    return m_buffer.hasSemaphores();
+}
+
+void StreamClientConnection::setMaxBatchSize(unsigned size)
+{
+    m_maxBatchSize = size;
+    m_buffer.wakeUpServer();
 }
 
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
@@ -100,19 +112,11 @@ void StreamClientConnection::invalidate()
     m_connection->invalidate();
 }
 
-void StreamClientConnection::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
-{
-    m_semaphores = { WTFMove(wakeUp), WTFMove(clientWait) };
-    wakeUpServer(WakeUpServer::Yes);
-}
-
 void StreamClientConnection::wakeUpServer(WakeUpServer wakeUpResult)
 {
     if (wakeUpResult == WakeUpServer::No && !m_batchSize)
         return;
-    if (!m_semaphores)
-        return;
-    m_semaphores->wakeUp.signal();
+    m_buffer.wakeUpServer();
     m_batchSize = 0;
 }
 
@@ -125,7 +129,7 @@ void StreamClientConnection::wakeUpServerBatched(WakeUpServer wakeUpResult)
     }
 }
 
-StreamConnectionBuffer& StreamClientConnection::bufferForTesting()
+StreamClientConnectionBuffer& StreamClientConnection::bufferForTesting()
 {
     return m_buffer;
 }

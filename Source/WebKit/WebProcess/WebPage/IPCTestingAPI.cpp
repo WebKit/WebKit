@@ -268,7 +268,7 @@ public:
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCStreamConnectionBuffer* toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) const { m_streamConnection->connection().streamBuffer().createHandle().encode(encoder); }
+    void encode(IPC::Encoder& encoder) const { m_streamConnection->connection().bufferForTesting().createHandle().encode(encoder); }
 
 private:
     JSIPCStreamConnectionBuffer(JSIPCStreamClientConnection& streamConnection)
@@ -1031,7 +1031,7 @@ bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef c
     if (!streamConnection.trySendDestinationIDIfNeeded(destinationID, timeout))
         return false;
 
-    auto span = streamConnection.tryAcquire(timeout);
+    auto span = streamConnection.bufferForTesting().tryAcquire(timeout);
     if (!span)
         return false;
 
