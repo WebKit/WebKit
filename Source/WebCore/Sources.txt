@@ -857,9 +857,6 @@ css/calc/CSSCalcOperationNode.cpp
 css/calc/CSSCalcPrimitiveValueNode.cpp
 css/calc/CSSCalcSymbolTable.cpp
 css/calc/CSSCalcValue.cpp
-css/color/CSSResolvedColorMix.cpp
-css/color/CSSUnresolvedColor.cpp
-css/color/CSSUnresolvedColorMix.cpp
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSCustomPropertySyntax.cpp
 css/parser/CSSParser.cpp

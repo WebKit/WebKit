@@ -124,7 +124,6 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_STRING:
     case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_UNKNOWN:
-    case CSSUnitType::CSS_UNRESOLVED_COLOR:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_VALUE_ID:
     case CSSUnitType::CustomIdent:
@@ -266,7 +265,6 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_CALC: ts << "calc"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER: ts << "calc_percentage_with_number"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH: ts << "calc_percentage_with_length"; break;
-    case CSSUnitType::CSS_UNRESOLVED_COLOR: ts << "unresolved_color"; break;
     case CSSUnitType::CSS_FONT_FAMILY: ts << "font_family"; break;
     case CSSUnitType::CSS_PROPERTY_ID: ts << "property_id"; break;
     case CSSUnitType::CSS_VALUE_ID: ts << "value_id"; break;

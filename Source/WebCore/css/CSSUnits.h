@@ -121,8 +121,6 @@ enum class CSSUnitType : uint8_t {
 
     CSS_FONT_FAMILY,
 
-    CSS_UNRESOLVED_COLOR,
-
     CSS_PROPERTY_ID,
     CSS_VALUE_ID,
     

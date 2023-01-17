@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #include "ColorFromPrimitiveValue.h"
 
 #include "CSSPrimitiveValue.h"
-#include "CSSUnresolvedColor.h"
 #include "Document.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
@@ -42,8 +41,6 @@ StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style,
 {
     if (value.isRGBColor())
         return value.color();
-    if (value.isUnresolvedColor())
-        return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);
 
     auto identifier = value.valueID();
     switch (identifier) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ template <typename T, typename = void>
 struct HasHueInterpolationMethod : std::false_type { };
 
 template <typename T>
-struct HasHueInterpolationMethod<T, std::void_t<decltype(std::declval<T>().hueInterpolationMethod)>> : std::true_type { };
+struct HasHueInterpolationMethod<T, std::void_t<decltype(T::hueInterpolationMethod)>> : std::true_type { };
 
 template <typename T>
 inline constexpr bool hasHueInterpolationMethod = HasHueInterpolationMethod<T>::value;
@@ -265,9 +265,6 @@ inline constexpr bool operator==(const ColorInterpolationMethod& a, const ColorI
 {
     return a.alphaPremultiplication == b.alphaPremultiplication && a.colorSpace == b.colorSpace;
 }
-
-void serializationForCSS(StringBuilder&, const ColorInterpolationMethod&);
-String serializationForCSS(const ColorInterpolationMethod&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, ColorInterpolationColorSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, HueInterpolationMethod);

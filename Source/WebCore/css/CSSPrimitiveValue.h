@@ -37,7 +37,6 @@ namespace WebCore {
 class CSSBasicShape;
 class CSSCalcValue;
 class CSSToLengthConversionData;
-class CSSUnresolvedColor;
 class Counter;
 class DeprecatedCSSOMPrimitiveValue;
 class FontCascadeDescription;
@@ -113,7 +112,6 @@ public:
     bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::CSS_DPCM; }
     bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
-    bool isUnresolvedColor() const { return primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
@@ -127,7 +125,6 @@ public:
     static Ref<CSSPrimitiveValue> create(const String& value, CSSUnitType type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
-    static Ref<CSSPrimitiveValue> create(Ref<CSSUnresolvedColor>&&);
 
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&);
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&, CSSPropertyID);
@@ -176,7 +173,6 @@ public:
     WEBCORE_EXPORT String stringValue() const;
 
     const Color& color() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR); return *m_value.color; }
-    const CSSUnresolvedColor& unresolvedColor() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR); return *m_value.unresolvedColor; }
     Counter* counterValue() const { return primitiveUnitType() != CSSUnitType::CSS_COUNTER ? nullptr : m_value.counter; }
     CSSCalcValue* cssCalcValue() const { return primitiveUnitType() != CSSUnitType::CSS_CALC ? nullptr : m_value.calc; }
     Pair* pairValue() const { return primitiveUnitType() != CSSUnitType::CSS_PAIR ? nullptr : m_value.pair; }
@@ -216,7 +212,6 @@ private:
     CSSPrimitiveValue(const LengthSize&, const RenderStyle&);
     CSSPrimitiveValue(const String&, CSSUnitType);
     CSSPrimitiveValue(double, CSSUnitType);
-    explicit CSSPrimitiveValue(Ref<CSSUnresolvedColor>&&);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, const Color&);
@@ -272,7 +267,6 @@ private:
         Rect* rect;
         Quad* quad;
         const Color* color;
-        CSSUnresolvedColor* unresolvedColor;
         Pair* pair;
         CSSBasicShape* shape;
         CSSCalcValue* calc;
@@ -414,16 +408,6 @@ inline bool isValueID(const CSSPrimitiveValue& value, CSSValueID id)
 inline bool isValueID(const CSSPrimitiveValue* value, CSSValueID id)
 {
     return valueID(value) == id;
-}
-
-inline bool isValueID(const RefPtr<CSSPrimitiveValue>& value, CSSValueID id)
-{
-    return valueID(value.get()) == id;
-}
-
-inline bool isValueID(const Ref<CSSPrimitiveValue>& value, CSSValueID id)
-{
-    return valueID(value.get()) == id;
 }
 
 inline bool isValueID(const CSSValue& value, CSSValueID id)

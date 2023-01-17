@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,82 +26,9 @@
 #include "config.h"
 #include "ColorInterpolationMethod.h"
 
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
-static constexpr ASCIILiteral serializationForCSS(ColorInterpolationColorSpace interpolationColorSpace)
-{
-    switch (interpolationColorSpace) {
-    case ColorInterpolationColorSpace::HSL:
-        return "hsl"_s;
-    case ColorInterpolationColorSpace::HWB:
-        return "hwb"_s;
-    case ColorInterpolationColorSpace::LCH:
-        return "lch"_s;
-    case ColorInterpolationColorSpace::Lab:
-        return "lab"_s;
-    case ColorInterpolationColorSpace::OKLCH:
-        return "oklch"_s;
-    case ColorInterpolationColorSpace::OKLab:
-        return "oklab"_s;
-    case ColorInterpolationColorSpace::SRGB:
-        return "srgb"_s;
-    case ColorInterpolationColorSpace::SRGBLinear:
-        return "srgb-linear"_s;
-    case ColorInterpolationColorSpace::XYZD50:
-        return "xyz-d50"_s;
-    case ColorInterpolationColorSpace::XYZD65:
-        return "xyz-d65"_s;
-    }
-
-    ASSERT_NOT_REACHED();
-    return ""_s;
-}
-
-static void serializationForCSS(StringBuilder& builder, ColorInterpolationColorSpace interpolationColorSpace)
-{
-    builder.append(serializationForCSS(interpolationColorSpace));
-}
-
-static void serializationForCSS(StringBuilder& builder, HueInterpolationMethod hueInterpolationMethod)
-{
-    switch (hueInterpolationMethod) {
-    case HueInterpolationMethod::Shorter:
-        break;
-    case HueInterpolationMethod::Longer:
-        builder.append(" longer hue");
-        break;
-    case HueInterpolationMethod::Increasing:
-        builder.append(" increasing hue");
-        break;
-    case HueInterpolationMethod::Decreasing:
-        builder.append(" decreasing hue");
-        break;
-    case HueInterpolationMethod::Specified:
-        builder.append(" specified hue");
-        break;
-    }
-}
-
-void serializationForCSS(StringBuilder& builder, const ColorInterpolationMethod& method)
-{
-    WTF::switchOn(method.colorSpace,
-        [&] (auto& type) {
-            serializationForCSS(builder, type.interpolationColorSpace);
-            if constexpr (hasHueInterpolationMethod<decltype(type)>)
-                serializationForCSS(builder, type.hueInterpolationMethod);
-        }
-    );
-}
-
-String serializationForCSS(const ColorInterpolationMethod& method)
-{
-    StringBuilder builder;
-    serializationForCSS(builder, method);
-    return builder.toString();
-}
 
 TextStream& operator<<(TextStream& ts, ColorInterpolationColorSpace interpolationColorSpace)
 {
