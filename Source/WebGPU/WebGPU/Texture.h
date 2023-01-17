@@ -87,6 +87,7 @@ public:
     const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
 
     Device& device() const { return m_device; }
+    void recreateBackingWithStorage() const;
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -96,7 +97,7 @@ private:
     uint32_t arrayLayerCount() const;
     bool validateCreateView(const WGPUTextureViewDescriptor&) const;
 
-    id<MTLTexture> m_texture { nil };
+    mutable id<MTLTexture> m_texture { nil };
 
     const WGPUTextureDescriptor m_descriptor { };
     const Vector<WGPUTextureFormat> m_viewFormats;

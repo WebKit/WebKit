@@ -53,6 +53,7 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
     return {
         [device argumentBuffersSupport],
         false, // To be filled in by the caller.
+        false, // To be filled in by the caller.
         timestampCounterSet,
         statisticCounterSet,
     };
@@ -96,6 +97,7 @@ static HardwareCapabilities apple3(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
+    baseCapabilities.supportsMemorylessTextures = true;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -465,6 +467,7 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
     return {
         previous.argumentBuffersTier,
         previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
+        previous.supportsMemorylessTextures,
         previous.timestampCounterSet,
         previous.statisticCounterSet,
     };

@@ -27,20 +27,24 @@
 #import "TextureView.h"
 
 #import "APIConversions.h"
+#import "Texture.h"
 
 namespace WebGPU {
 
-TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
+TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device, const Ref<Texture>& textureBacking)
     : m_texture(texture)
     , m_descriptor(descriptor)
     , m_renderExtent(renderExtent)
     , m_device(device)
+    , m_textureBacking(textureBacking)
 {
+    ASSERT(textureBacking->isValid() == !m_texture);
 }
 
-TextureView::TextureView(Device& device)
+TextureView::TextureView(Device& device, const Ref<Texture>& textureBacking)
     : m_descriptor { }
     , m_device(device)
+    , m_textureBacking(textureBacking)
 {
 }
 
@@ -48,7 +52,21 @@ TextureView::~TextureView() = default;
 
 void TextureView::setLabel(String&& label)
 {
-    m_texture.label = label;
+    texture().label = label;
+}
+
+void TextureView::recreateBackingWithStorageIfNeeded() const
+{
+    if (!m_textureBacking->isValid() || texture().storageMode != MTLStorageModeMemoryless)
+        return;
+
+    ASSERT(!m_texture);
+    m_textureBacking->recreateBackingWithStorage();
+}
+
+id<MTLTexture> TextureView::texture() const
+{
+    return m_texture ?: m_textureBacking->texture();
 }
 
 } // namespace WebGPU

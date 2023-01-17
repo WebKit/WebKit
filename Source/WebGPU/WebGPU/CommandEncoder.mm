@@ -129,6 +129,12 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
     return true;
 }
 
+static void allocateTextureStorageIfNeeded(TextureView& texture, WGPUStoreOp storeOp, WGPULoadOp loadOp)
+{
+    if (storeOp == WGPUStoreOp_Store || loadOp == WGPULoadOp_Load)
+        texture.recreateBackingWithStorageIfNeeded();
+}
+
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
@@ -152,26 +158,28 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             attachment.clearColor.b,
             attachment.clearColor.a);
 
+        allocateTextureStorageIfNeeded(fromAPI(attachment.view), attachment.resolveTarget ? WGPUStoreOp_Discard : attachment.storeOp, attachment.loadOp);
         mtlAttachment.texture = fromAPI(attachment.view).texture();
         mtlAttachment.level = 0;
         mtlAttachment.slice = 0;
         mtlAttachment.depthPlane = 0;
         mtlAttachment.loadAction = loadAction(attachment.loadOp);
-        mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp);
 
         if (attachment.resolveTarget) {
-            mtlDescriptor.colorAttachments[i].resolveTexture = fromAPI(attachment.resolveTarget).texture();
+            mtlAttachment.resolveTexture = fromAPI(attachment.resolveTarget).texture();
             mtlAttachment.resolveLevel = 0;
             mtlAttachment.resolveSlice = 0;
             mtlAttachment.resolveDepthPlane = 0;
             mtlAttachment.storeAction = MTLStoreActionMultisampleResolve;
-        }
+        } else
+            mtlAttachment.storeAction = storeAction(attachment.storeOp);
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.depthAttachment;
         ASSERT("FIXME: Add support for depthReadOnly" && !attachment->depthReadOnly);
         mtlAttachment.clearDepth = attachment->clearDepth;
+        allocateTextureStorageIfNeeded(fromAPI(attachment->view), attachment->depthStoreOp, attachment->depthLoadOp);
         mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
@@ -181,7 +189,6 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         const auto& mtlAttachment = mtlDescriptor.stencilAttachment;
         ASSERT("FIXME: Add support for stencilReadOnly" && !attachment->stencilReadOnly);
         // FIXME: assign the correct stencil texture
-        // mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.clearStencil = attachment->clearStencil;
         mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);

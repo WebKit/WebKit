@@ -2007,7 +2007,7 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     }
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool isBackedByIOSurface)
+static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool isBackedByIOSurface, bool preferMemorylessStorage)
 {
     // Metal driver requires IOSurface-backed texture to be MTLStorageModeManaged.
     if (isBackedByIOSurface)
@@ -2022,13 +2022,70 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonP
         return MTLStorageModePrivate;
 
     if (deviceHasUnifiedMemory)
-        return MTLStorageModeShared;
+        return preferMemorylessStorage ? MTLStorageModeMemoryless : MTLStorageModeShared;
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     return MTLStorageModeManaged;
 #else
     return MTLStorageModePrivate;
 #endif
+}
+
+static MTLTextureDescriptor *createTextureDescriptor(const WebGPU::Device &device, const WGPUTextureDescriptor &descriptor, IOSurfaceRef ioSurfaceBacking = nullptr, bool prefersMemorylessStorage = false)
+{
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
+
+    textureDescriptor.usage = usage(descriptor.usage);
+
+    switch (descriptor.dimension) {
+    case WGPUTextureDimension_1D:
+        textureDescriptor.width = descriptor.size.width;
+        if (descriptor.size.depthOrArrayLayers > 1) {
+            textureDescriptor.textureType = MTLTextureType1DArray;
+            textureDescriptor.arrayLength = descriptor.size.depthOrArrayLayers;
+        } else
+            textureDescriptor.textureType = MTLTextureType1D;
+        break;
+    case WGPUTextureDimension_2D:
+        textureDescriptor.width = descriptor.size.width;
+        textureDescriptor.height = descriptor.size.height;
+        if (descriptor.size.depthOrArrayLayers > 1) {
+            textureDescriptor.arrayLength = descriptor.size.depthOrArrayLayers;
+            if (descriptor.sampleCount > 1) {
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+                return nil;
+#else
+                textureDescriptor.textureType = MTLTextureType2DMultisampleArray;
+#endif
+            } else
+                textureDescriptor.textureType = MTLTextureType2DArray;
+        } else {
+            if (descriptor.sampleCount > 1)
+                textureDescriptor.textureType = MTLTextureType2DMultisample;
+            else
+                textureDescriptor.textureType = MTLTextureType2D;
+        }
+        break;
+    case WGPUTextureDimension_3D:
+        textureDescriptor.width = descriptor.size.width;
+        textureDescriptor.height = descriptor.size.height;
+        textureDescriptor.depth = descriptor.size.depthOrArrayLayers;
+        textureDescriptor.textureType = MTLTextureType3D;
+        break;
+    case WGPUTextureDimension_Force32:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    textureDescriptor.pixelFormat = Texture::pixelFormat(descriptor.format);
+
+    textureDescriptor.mipmapLevelCount = descriptor.mipLevelCount;
+
+    textureDescriptor.sampleCount = descriptor.sampleCount;
+
+    textureDescriptor.storageMode = storageMode(device.hasUnifiedMemory(), device.baseCapabilities().supportsNonPrivateDepthStencilTextures, ioSurfaceBacking, prefersMemorylessStorage && device.baseCapabilities().supportsMemorylessTextures);
+
+    return textureDescriptor;
 }
 
 Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
@@ -2070,57 +2127,9 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
         return Texture::createInvalid(*this);
     }
 
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
-
-    textureDescriptor.usage = usage(descriptor.usage);
-
-    switch (descriptor.dimension) {
-    case WGPUTextureDimension_1D:
-        textureDescriptor.width = descriptor.size.width;
-        if (descriptor.size.depthOrArrayLayers > 1) {
-            textureDescriptor.textureType = MTLTextureType1DArray;
-            textureDescriptor.arrayLength = descriptor.size.depthOrArrayLayers;
-        } else
-            textureDescriptor.textureType = MTLTextureType1D;
-        break;
-    case WGPUTextureDimension_2D:
-        textureDescriptor.width = descriptor.size.width;
-        textureDescriptor.height = descriptor.size.height;
-        if (descriptor.size.depthOrArrayLayers > 1) {
-            textureDescriptor.arrayLength = descriptor.size.depthOrArrayLayers;
-            if (descriptor.sampleCount > 1) {
-#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-                return Texture::createInvalid(*this);
-#else
-                textureDescriptor.textureType = MTLTextureType2DMultisampleArray;
-#endif
-            } else
-                textureDescriptor.textureType = MTLTextureType2DArray;
-        } else {
-            if (descriptor.sampleCount > 1)
-                textureDescriptor.textureType = MTLTextureType2DMultisample;
-            else
-                textureDescriptor.textureType = MTLTextureType2D;
-        }
-        break;
-    case WGPUTextureDimension_3D:
-        textureDescriptor.width = descriptor.size.width;
-        textureDescriptor.height = descriptor.size.height;
-        textureDescriptor.depth = descriptor.size.depthOrArrayLayers;
-        textureDescriptor.textureType = MTLTextureType3D;
-        break;
-    case WGPUTextureDimension_Force32:
-        ASSERT_NOT_REACHED();
+    MTLTextureDescriptor *textureDescriptor = createTextureDescriptor(*this, descriptor, ioSurfaceBacking, descriptor.usage == WGPUTextureUsage_RenderAttachment);
+    if (!textureDescriptor)
         return Texture::createInvalid(*this);
-    }
-
-    textureDescriptor.pixelFormat = Texture::pixelFormat(descriptor.format);
-
-    textureDescriptor.mipmapLevelCount = descriptor.mipLevelCount;
-
-    textureDescriptor.sampleCount = descriptor.sampleCount;
-
-    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures, ioSurfaceBacking);
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
@@ -2137,6 +2146,12 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
     texture.label = fromAPI(descriptor.label);
 
     return Texture::create(texture, descriptor, WTFMove(viewFormats), *this);
+}
+
+void Texture::recreateBackingWithStorage() const
+{
+    ASSERT(m_texture.storageMode == MTLStorageModeMemoryless && !m_texture.iosurface);
+    m_texture = [m_device->device() newTextureWithDescriptor:createTextureDescriptor(m_device, m_descriptor)];
 }
 
 Texture::Texture(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
@@ -2357,16 +2372,16 @@ static WGPUExtent3D computeRenderExtent(const WGPUExtent3D& baseSize, uint32_t m
 
 Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
+    Ref<Texture> textureBacking = Texture::createInvalid(m_device);
     if (inputDescriptor.nextInChain)
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(m_device, textureBacking);
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
-
     auto descriptor = resolveTextureViewDescriptorDefaults(inputDescriptor);
 
     if (!descriptor || !validateCreateView(*descriptor)) {
         m_device->generateAValidationError("Validation failure."_s);
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(m_device, textureBacking);
     }
 
     auto pixelFormat = Texture::pixelFormat(descriptor->format);
@@ -2376,7 +2391,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     switch (descriptor->dimension) {
     case WGPUTextureViewDimension_Undefined:
         ASSERT_NOT_REACHED();
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(m_device, textureBacking);
     case WGPUTextureViewDimension_1D:
         if (descriptor->arrayLayerCount == 1)
             textureType = MTLTextureType1D;
@@ -2392,7 +2407,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     case WGPUTextureViewDimension_2DArray:
         if (m_descriptor.sampleCount > 1) {
 #if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-            return TextureView::createInvalid(m_device);
+            return TextureView::createInvalid(m_device, textureBacking);
 #else
             textureType = MTLTextureType2DMultisampleArray;
 #endif
@@ -2410,24 +2425,34 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         break;
     case WGPUTextureViewDimension_Force32:
         ASSERT_NOT_REACHED();
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(m_device, textureBacking);
     }
 
     auto levels = NSMakeRange(descriptor->baseMipLevel, descriptor->mipLevelCount);
 
     auto slices = NSMakeRange(descriptor->baseArrayLayer, descriptor->arrayLayerCount);
 
-    id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:pixelFormat textureType:textureType levels:levels slices:slices];
-    if (!texture)
-        return TextureView::createInvalid(m_device);
+    id<MTLTexture> texture;
 
-    texture.label = fromAPI(descriptor->label);
+    if (m_texture.storageMode == MTLStorageModeMemoryless && m_texture.pixelFormat == pixelFormat && m_texture.textureType == textureType && m_texture.mipmapLevelCount == levels.length && m_texture.arrayLength == slices.length && !levels.location && !slices.location) {
+        texture = m_texture;
+        textureBacking = Ref { *this };
+    } else {
+        if (m_texture.storageMode == MTLStorageModeMemoryless)
+            recreateBackingWithStorage();
+
+        texture = [m_texture newTextureViewWithPixelFormat:pixelFormat textureType:textureType levels:levels slices:slices];
+        if (!texture)
+            return TextureView::createInvalid(m_device, textureBacking);
+
+        texture.label = fromAPI(descriptor->label);
+    }
 
     std::optional<WGPUExtent3D> renderExtent;
     if  (m_descriptor.usage & WGPUTextureUsage_RenderAttachment)
         renderExtent = computeRenderExtent(m_descriptor.size, descriptor->baseMipLevel);
 
-    return TextureView::create(texture, *descriptor, renderExtent, m_device);
+    return TextureView::create(texture, *descriptor, renderExtent, m_device, textureBacking);
 }
 
 void Texture::destroy()
