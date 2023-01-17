@@ -2078,9 +2078,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
     int lineNumber = 0;
     int columnNumber = 0;
     String scriptID;
-    if (is<JSEventListener>(eventListener)) {
-        auto& scriptListener = downcast<JSEventListener>(eventListener.get());
-
+    if (auto* scriptListener = dynamicDowncast<JSEventListener>(eventListener.get()); scriptListener && scriptListener->isolatedWorld()) {
         Document* document = nullptr;
         if (auto* scriptExecutionContext = eventTarget.scriptExecutionContext()) {
             if (is<Document>(scriptExecutionContext))
@@ -2091,14 +2089,14 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
         JSC::JSObject* handlerObject = nullptr;
         JSC::JSGlobalObject* globalObject = nullptr;
 
-        JSC::JSLockHolder lock(scriptListener.isolatedWorld().vm());
+        JSC::JSLockHolder lock(scriptListener->isolatedWorld()->vm());
 
         if (document) {
-            handlerObject = scriptListener.ensureJSFunction(*document);
+            handlerObject = scriptListener->ensureJSFunction(*document);
             if (auto frame = document->frame()) {
                 // FIXME: Why do we need the canExecuteScripts check here?
                 if (frame->script().canExecuteScripts(NotAboutToExecuteScript))
-                    globalObject = frame->script().globalObject(scriptListener.isolatedWorld());
+                    globalObject = frame->script().globalObject(*scriptListener->isolatedWorld());
             }
         }
 

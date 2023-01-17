@@ -135,6 +135,10 @@ JSVMClientData::JSVMClientData(VM& vm)
 
 JSVMClientData::~JSVMClientData()
 {
+    m_clients.forEach([](auto& client) {
+        client.willDestroyVM();
+    });
+
     ASSERT(m_worldSet.contains(m_normalWorld.get()));
     ASSERT(m_worldSet.size() == 1);
     ASSERT(m_normalWorld->hasOneRef());

@@ -29,6 +29,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -146,6 +148,13 @@ public:
 
     ExtendedDOMClientIsoSubspaces& clientSubspaces() { return *m_clientSubspaces.get(); }
 
+    class Client : public CanMakeWeakPtr<Client> {
+    public:
+        virtual ~Client() = default;
+        virtual void willDestroyVM() = 0;
+    };
+    void addClient(Client& client) { m_clients.add(client); }
+
 private:
     HashSet<DOMWrapperWorld*> m_worldSet;
     RefPtr<DOMWrapperWorld> m_normalWorld;
@@ -166,6 +175,8 @@ private:
     JSC::GCClient::IsoSubspace m_idbSerializationSpace;
 
     std::unique_ptr<ExtendedDOMClientIsoSubspaces> m_clientSubspaces;
+
+    WeakHashSet<Client> m_clients;
 };
 
 
