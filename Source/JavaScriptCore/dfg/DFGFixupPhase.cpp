@@ -4400,11 +4400,13 @@ private:
         switch (node->arrayMode().type()) {
         case Array::Double:
         case Array::Int32: {
+            Node* searchElementNode = searchElement.node();
+
             if (searchElement->shouldSpeculateCell()) {
                 fixEdge<CellUse>(searchElement);
                 m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
                 m_graph.convertToConstant(node, jsNumber(-1));
-                observeUseKindOnNode<CellUse>(searchElement.node());
+                observeUseKindOnNode<CellUse>(searchElementNode);
                 return;
             }
 
@@ -4412,7 +4414,7 @@ private:
                 fixEdge<OtherUse>(searchElement);
                 m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
                 m_graph.convertToConstant(node, jsNumber(-1));
-                observeUseKindOnNode<OtherUse>(searchElement.node());
+                observeUseKindOnNode<OtherUse>(searchElementNode);
                 return;
             }
 
@@ -4420,7 +4422,7 @@ private:
                 fixEdge<BooleanUse>(searchElement);
                 m_insertionSet.insertCheck(m_graph, m_indexInBlock, node);
                 m_graph.convertToConstant(node, jsNumber(-1));
-                observeUseKindOnNode<BooleanUse>(searchElement.node());
+                observeUseKindOnNode<BooleanUse>(searchElementNode);
                 return;
             }
             break;
