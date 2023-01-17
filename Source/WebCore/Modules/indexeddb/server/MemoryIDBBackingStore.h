@@ -47,6 +47,7 @@ public:
     uint64_t databaseVersion() final;
     void setDatabaseInfo(const IDBDatabaseInfo&);
 
+    void renameObjectStoreForVersionChangeAbort(MemoryObjectStore&, const String& oldName);
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
     void handleLowMemoryWarning() final { };

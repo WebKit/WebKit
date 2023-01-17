@@ -216,7 +216,7 @@ void MemoryBackingStoreTransaction::abort()
     m_originalIndexNames.clear();
 
     for (const auto& iterator : m_originalObjectStoreNames)
-        iterator.key->rename(iterator.value);
+        m_backingStore.renameObjectStoreForVersionChangeAbort(*iterator.key, iterator.value);
     m_originalObjectStoreNames.clear();
 
     for (const auto& objectStore : m_versionChangeAddedObjectStores)
