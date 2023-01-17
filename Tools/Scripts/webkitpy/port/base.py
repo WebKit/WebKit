@@ -422,14 +422,17 @@ class Port(object):
         baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
         fs = self._filesystem
 
+        variant = ''
+        if '?' in test_name:
+            (test_name, variant) = test_name.split('?', 1)
+        if '#' in test_name:
+            (test_name, variant) = test_name.split('#', 1)
+
         baseline_ext_parts = fs.splitext(test_name)
 
         baseline_name_root = baseline_ext_parts[0]
-        if len(baseline_ext_parts) > 1:
-            if '?' in baseline_ext_parts[1]:
-                baseline_name_root += '_' + baseline_ext_parts[1].split('?')[1]
-            if '#' in baseline_ext_parts[1]:
-                baseline_name_root += '_' + baseline_ext_parts[1].split('#')[1]
+        if len(variant):
+            baseline_name_root += "_" + re.sub(r'[|* <>:]', '_', variant)
         baseline_name_root += '-expected'
 
         baselines = []

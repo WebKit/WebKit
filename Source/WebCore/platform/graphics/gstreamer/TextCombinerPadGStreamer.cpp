@@ -152,11 +152,11 @@ static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klas
     gobjectClass->set_property = GST_DEBUG_FUNCPTR(webkitTextCombinerPadSetProperty);
 
     sObjProperties[PROP_PAD_TAGS] =
-        g_param_spec_boxed("tags", "Tags", "The currently active tags on the pad", GST_TYPE_TAG_LIST,
+        g_param_spec_boxed("tags", nullptr, nullptr, GST_TYPE_TAG_LIST,
             static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
     sObjProperties[PROP_INNER_COMBINER_PAD] =
-        g_param_spec_object("inner-combiner-pad", "Internal Combiner Pad", "The internal funnel (or concat) pad associated with this pad", GST_TYPE_PAD,
+        g_param_spec_object("inner-combiner-pad", nullptr, nullptr, GST_TYPE_PAD,
             static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
     g_object_class_install_properties(gobjectClass, N_PROPERTIES, sObjProperties);

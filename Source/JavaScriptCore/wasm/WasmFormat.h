@@ -140,6 +140,13 @@ inline bool isArrayref(Type type)
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Arrayref);
 }
 
+inline bool isStructref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Structref);
+}
+
 inline Type funcrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
@@ -159,7 +166,7 @@ inline bool isRefWithTypeIndex(Type type)
     if (!Options::useWebAssemblyTypedFunctionReferences())
         return false;
 
-    return isRefType(type) && !isExternref(type) && !isFuncref(type) && !isI31ref(type) && !isArrayref(type);
+    return isRefType(type) && !typeIndexIsType(type.index);
 }
 
 // Determine if the ref type has a placeholder type index that is used
@@ -215,6 +222,9 @@ inline bool isSubtype(Type sub, Type parent)
         if (TypeInformation::get(sub.index).expand().is<ArrayType>() && isArrayref(parent))
             return true;
 
+        if (TypeInformation::get(sub.index).expand().is<StructType>() && isStructref(parent))
+            return true;
+
         if (TypeInformation::get(sub.index).expand().is<FunctionSignature>() && isFuncref(parent))
             return true;
 
@@ -245,6 +255,7 @@ inline bool isValidHeapTypeKind(TypeKind kind)
         return true;
     case TypeKind::I31ref:
     case TypeKind::Arrayref:
+    case TypeKind::Structref:
         return Options::useWebAssemblyGC();
     default:
         break;

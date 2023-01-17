@@ -57,7 +57,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     const AtomString& formControlType() const final;
     bool isEnumeratable() const final { return true; }
-    bool supportLabels() const final { return true; }
+    bool isLabelable() const final { return true; }
     bool supportsFocus() const final;
     void reset() final;
 

@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "FetchIdentifier.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -40,7 +41,6 @@ class FormData;
 class NetworkLoadMetrics;
 class ResourceError;
 class ResourceRequest;
-class ResourceResponse;
 class ServiceWorkerGlobalScope;
 class ServiceWorkerGlobalScope;
 class SharedBuffer;

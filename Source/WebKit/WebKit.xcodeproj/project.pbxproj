@@ -1431,6 +1431,8 @@
 		7BDD9DDC28D205C6004CDF48 /* MessageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BDD9DDA28D205C6004CDF48 /* MessageObserver.h */; };
 		7BDD9DDD28D205C6004CDF48 /* WorkQueueMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */; };
 		7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */; };
+		7BE5134B29768F0E00814F18 /* StreamClientConnectionBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE5134929768F0D00814F18 /* StreamClientConnectionBuffer.h */; };
+		7BE5134C29768F0E00814F18 /* StreamServerConnectionBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE5134A29768F0E00814F18 /* StreamServerConnectionBuffer.h */; };
 		7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */; };
 		7BEDA69E28B396BB00B41C7C /* WebCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		7C065F2C1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C065F2A1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h */; };
@@ -5900,6 +5902,8 @@
 		7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterIdentifier.h; sourceTree = "<group>"; };
 		7BE37F9427C7CD51007A6CD3 /* IPCStreamTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTester.h; sourceTree = "<group>"; };
 		7BE37F9527C7CD90007A6CD3 /* IPCStreamTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCStreamTester.cpp; sourceTree = "<group>"; };
+		7BE5134929768F0D00814F18 /* StreamClientConnectionBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamClientConnectionBuffer.h; sourceTree = "<group>"; };
+		7BE5134A29768F0E00814F18 /* StreamServerConnectionBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamServerConnectionBuffer.h; sourceTree = "<group>"; };
 		7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyFunctionsGenerated.cpp; sourceTree = "<group>"; };
 		7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLCocoa.cpp; sourceTree = "<group>"; };
 		7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiverMatcher.h; sourceTree = "<group>"; };
@@ -8847,6 +8851,7 @@
 				93122C852710CCDE001D819F /* SharedFileHandle.h */,
 				7B73123625CC8524003B2796 /* StreamClientConnection.cpp */,
 				7B73123325CC8523003B2796 /* StreamClientConnection.h */,
+				7BE5134929768F0D00814F18 /* StreamClientConnectionBuffer.h */,
 				7B73123425CC8524003B2796 /* StreamConnectionBuffer.cpp */,
 				7B73123125CC8523003B2796 /* StreamConnectionBuffer.h */,
 				7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */,
@@ -8855,6 +8860,7 @@
 				F4299506270E234C0032298B /* StreamMessageReceiver.h */,
 				7B73123725CC8524003B2796 /* StreamServerConnection.cpp */,
 				7B73123825CC8524003B2796 /* StreamServerConnection.h */,
+				7BE5134A29768F0E00814F18 /* StreamServerConnectionBuffer.h */,
 				F48570A22644BEC400C05F71 /* Timeout.h */,
 				7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */,
 			);
@@ -15423,11 +15429,13 @@
 				465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */,
 				935BF80A2936CB8500B41326 /* StorageUtilities.h in Headers */,
 				7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */,
+				7BE5134B29768F0E00814F18 /* StreamClientConnectionBuffer.h in Headers */,
 				7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */,
 				7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */,
 				7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */,
 				F4299507270E234D0032298B /* StreamMessageReceiver.h in Headers */,
 				7B73124125CC8525003B2796 /* StreamServerConnection.h in Headers */,
+				7BE5134C29768F0E00814F18 /* StreamServerConnectionBuffer.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */,
 				448AC24E267135A700B28921 /* SynapseSPI.h in Headers */,

@@ -43,14 +43,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLLabelElement);
 
 using namespace HTMLNames;
 
-static LabelableElement* firstElementWithIdIfLabelable(TreeScope& treeScope, const AtomString& id)
+static HTMLElement* firstElementWithIdIfLabelable(TreeScope& treeScope, const AtomString& id)
 {
-    RefPtr element = treeScope.getElementById(id);
-    if (!is<LabelableElement>(element))
-        return nullptr;
-
-    auto& labelableElement = downcast<LabelableElement>(*element);
-    return labelableElement.supportLabels() ? &labelableElement : nullptr;
+    if (RefPtr element = treeScope.getElementById(id)) {
+        if (auto* labelableElement = dynamicDowncast<HTMLElement>(*element)) {
+            if (labelableElement->isLabelable())
+                return labelableElement;
+        }
+    }
+    return nullptr;
 }
 
 inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document& document)
@@ -64,16 +65,16 @@ Ref<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLLabelElement(tagName, document));
 }
 
-RefPtr<LabelableElement> HTMLLabelElement::control() const
+RefPtr<HTMLElement> HTMLLabelElement::control() const
 {
     auto& controlId = attributeWithoutSynchronization(forAttr);
     if (controlId.isNull()) {
         // Search the children and descendants of the label element for a form element.
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
-        for (auto& labelableElement : descendantsOfType<LabelableElement>(*this)) {
-            if (labelableElement.supportLabels())
-                return const_cast<LabelableElement*>(&labelableElement);
+        for (const auto& labelableElement : descendantsOfType<HTMLElement>(*this)) {
+            if (labelableElement.isLabelable())
+                return const_cast<HTMLElement*>(&labelableElement);
         }
         return nullptr;
     }

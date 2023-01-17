@@ -64,7 +64,6 @@
 #include "HTMLTextFormControlElement.h"
 #include "HTMLVideoElement.h"
 #include "KeyboardEvent.h"
-#include "LabelableElement.h"
 #include "LocalizedStrings.h"
 #include "MathMLElement.h"
 #include "MathMLNames.h"

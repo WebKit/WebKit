@@ -1643,16 +1643,16 @@ DateTimeInputsEditableComponentsEnabled:
 
 DeclarativeShadowDOMEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Declarative Shadow DOM"
   humanReadableDescription: "Enable Declarative Shadow DOM"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DeclarativeShadowDOMInDOMParserEnabled:
   type: bool
@@ -2247,16 +2247,16 @@ ForceWebGLUsesLowPower:
 
 FormAssociatedCustomElementsEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Form-associated custom elements"
   humanReadableDescription: "Support for form-associated custom elements"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This should be reconciled with 'FrameFlattening'.
 FrameFlatteningEnabled:
@@ -6730,6 +6730,20 @@ WebRTCH265CodecEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
+
+WebRTCMediaPipelineAdditionalLoggingEnabled:
+  type: bool
+  status: internal
+  condition: USE(LIBWEBRTC)
+  humanReadableName: "WebRTC Media Pipeline Additional Logging"
+  humanReadableDescription: "Enable WebRTC Media Pipeline Additional Logging"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
     WebCore:
       default: false
 

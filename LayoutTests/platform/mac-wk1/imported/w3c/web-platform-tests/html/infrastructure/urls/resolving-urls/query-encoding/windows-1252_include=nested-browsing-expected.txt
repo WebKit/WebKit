@@ -1,0 +1,6 @@
+
+PASS load nested browsing context <frame src>
+PASS load nested browsing context <iframe src>
+PASS load nested browsing context <object data>
+PASS load nested browsing context <embed src>
+

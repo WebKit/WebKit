@@ -35,6 +35,7 @@
 #include "CSSKeyframesRule.h"
 #include "CSSSelectorParser.h"
 #include "CustomPropertyRegistry.h"
+#include "Document.h"
 #include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"

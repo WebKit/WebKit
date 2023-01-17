@@ -89,8 +89,7 @@ static void webkit_response_policy_decision_class_init(WebKitResponsePolicyDecis
     g_object_class_install_property(objectClass,
         PROP_REQUEST,
         g_param_spec_object("request",
-            _("Response URI request"),
-            _("The URI request that is associated with this policy decision"),
+            nullptr, nullptr,
             WEBKIT_TYPE_URI_REQUEST,
             WEBKIT_PARAM_READABLE));
 
@@ -103,8 +102,7 @@ static void webkit_response_policy_decision_class_init(WebKitResponsePolicyDecis
     g_object_class_install_property(objectClass,
         PROP_RESPONSE,
         g_param_spec_object("response",
-            _("URI response"),
-            _("The URI response that is associated with this policy decision"),
+            nullptr, nullptr,
             WEBKIT_TYPE_URI_RESPONSE,
             WEBKIT_PARAM_READABLE));
 

@@ -29,6 +29,7 @@
 #include "CustomElementRegistry.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "FormAssociatedElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"

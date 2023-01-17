@@ -40,6 +40,7 @@
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
 #include <WebCore/SQLiteFileSystem.h>
+#include <WebCore/StorageEstimate.h>
 #include <wtf/FileSystem.h>
 
 namespace WebKit {

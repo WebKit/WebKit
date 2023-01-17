@@ -44,8 +44,6 @@
 #include "InspectorInstrumentation.h"
 #include "JSNode.h"
 #include "LabelsNodeList.h"
-#include "LegacyInlineTextBox.h"
-#include "LegacyRootInlineBox.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NodeRareData.h"

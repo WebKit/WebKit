@@ -114,7 +114,7 @@ ExceptionOr<bool> ElementInternals::checkValidity()
 ExceptionOr<RefPtr<NodeList>> ElementInternals::labels()
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
-        return downcast<LabelableElement>(element->asHTMLElement()).labels();
+        return element->asHTMLElement().labels();
     return Exception { NotSupportedError };
 }
 

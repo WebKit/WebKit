@@ -99,26 +99,23 @@ class TestResultWriter(object):
         """
         fs = self._filesystem
 
-        # Test names that are acutally process names are treated like they don't have any extension
-        if self.PROCESS_NAME_RE.match(fs.basename(self._test_name)):
-            ext_parts = (self._test_name, '', '')
+        test_name = self._test_name
+        variant = ''
+        if '?' in test_name:
+            (test_name, variant) = test_name.split('?', 1)
+        if '#' in test_name:
+            (test_name, variant) = test_name.split('#', 1)
+
+        # Test names that are actually process names are treated like they don't have any extension
+        if self.PROCESS_NAME_RE.match(fs.basename(test_name)):
+            ext_parts = (test_name, '', '')
         else:
-            ext_parts = fs.splitext(self._test_name)
+            ext_parts = fs.splitext(test_name)
         output_basename = ext_parts[0]
-        extension = ext_parts[1]
 
-        # Find the actual file extension while keeping track of URI fragment or query, if any. Only
-        # the last extra part will be used for naming the output file, eg if self._test_name is
-        # "foo.html?bar#blah" then final output_basename will be "foo_blah" and extension will be
-        # ".html".
-        extra_part = ''
-        for char in ('?', '#'):
-            index = extension.find(char)
-            if index != -1:
-                extension, extra_part = extension[:index], extension[index + 1:]
+        if len(variant):
+            output_basename += "_" + re.sub(r'[|* <>:]', '_', variant)
 
-        if extra_part:
-            output_basename += '_' + extra_part
         return fs.join(self._root_output_dir, output_basename) + modifier
 
     def _write_binary_file(self, path, contents):

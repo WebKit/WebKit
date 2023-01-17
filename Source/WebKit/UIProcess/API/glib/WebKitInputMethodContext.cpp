@@ -230,8 +230,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
     sObjProperties[PROP_INPUT_PURPOSE] =
         g_param_spec_enum(
             "input-purpose",
-            _("Input Purpose"),
-            _("The purpose of the input associated"),
+            nullptr, nullptr,
             WEBKIT_TYPE_INPUT_PURPOSE,
             WEBKIT_INPUT_PURPOSE_FREE_FORM,
             WEBKIT_PARAM_READWRITE);
@@ -246,8 +245,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
     sObjProperties[PROP_INPUT_HINTS] =
         g_param_spec_flags(
             "input-hints",
-            _("Input Hints"),
-            _("The hints of the input associated"),
+            nullptr, nullptr,
             WEBKIT_TYPE_INPUT_HINTS,
             WEBKIT_INPUT_HINT_NONE,
             WEBKIT_PARAM_READWRITE);

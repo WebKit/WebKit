@@ -1651,40 +1651,29 @@ Ref<DeprecatedCSSOMPrimitiveValue> CSSPrimitiveValue::createDeprecatedCSSOMPrimi
 }
 
 // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
-void CSSPrimitiveValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     switch (primitiveUnitType()) {
+    case CSSUnitType::CSS_REMS:
+        dependencies.rootProperties.appendIfNotContains(CSSPropertyFontSize);
+        break;
+    case CSSUnitType::CSS_RLHS:
+        dependencies.rootProperties.appendIfNotContains(CSSPropertyFontSize);
+        dependencies.rootProperties.appendIfNotContains(CSSPropertyLineHeight);
+        break;
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
-        values.add(CSSPropertyFontSize);
+        dependencies.properties.appendIfNotContains(CSSPropertyFontSize);
         break;
     case CSSUnitType::CSS_LHS:
-        values.add(CSSPropertyFontSize);
-        values.add(CSSPropertyLineHeight);
+        dependencies.properties.appendIfNotContains(CSSPropertyFontSize);
+        dependencies.properties.appendIfNotContains(CSSPropertyLineHeight);
         break;
     case CSSUnitType::CSS_CALC:
-        m_value.calc->collectDirectComputationalDependencies(values);
-        break;
-    default:
-        break;
-    }
-}
-
-void CSSPrimitiveValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
-{
-    switch (primitiveUnitType()) {
-    case CSSUnitType::CSS_REMS:
-        values.add(CSSPropertyFontSize);
-        break;
-    case CSSUnitType::CSS_RLHS:
-        values.add(CSSPropertyFontSize);
-        values.add(CSSPropertyLineHeight);
-        break;
-    case CSSUnitType::CSS_CALC:
-        m_value.calc->collectDirectRootComputationalDependencies(values);
+        m_value.calc->collectComputedStyleDependencies(dependencies);
         break;
     default:
         break;

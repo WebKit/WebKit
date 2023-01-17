@@ -68,8 +68,6 @@ private:
 
     String filenameExtension() const override;
 
-    bool hasSingleSecurityOrigin() const override { return true; }
-
     EncodedDataStatus dataChanged(bool allDataReceived) override;
 
     void destroyDecodedData(bool /*destroyAll*/ = true) override;

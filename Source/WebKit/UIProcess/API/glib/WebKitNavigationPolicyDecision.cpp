@@ -115,8 +115,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
         PROP_NAVIGATION_ACTION,
         g_param_spec_boxed(
             "navigation-action",
-            _("Navigation action"),
-            _("The WebKitNavigationAction triggering this decision"),
+            nullptr, nullptr,
             WEBKIT_TYPE_NAVIGATION_ACTION,
             WEBKIT_PARAM_READABLE));
 
@@ -133,8 +132,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
     g_object_class_install_property(objectClass,
                                     PROP_NAVIGATION_TYPE,
                                     g_param_spec_enum("navigation-type",
-                                                      _("Navigation type"),
-                                                      _("The type of navigation triggering this decision"),
+                                                      nullptr, nullptr,
                                                       WEBKIT_TYPE_NAVIGATION_TYPE,
                                                       WEBKIT_NAVIGATION_TYPE_LINK_CLICKED,
                                                       WEBKIT_PARAM_READABLE));
@@ -153,8 +151,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
     g_object_class_install_property(objectClass,
                                     PROP_MOUSE_BUTTON,
                                     g_param_spec_uint("mouse-button",
-                                                      _("Mouse button"),
-                                                      _("The mouse button used if this decision was triggered by a mouse event"),
+                                                      nullptr, nullptr,
                                                       0, G_MAXUINT, 0,
                                                       WEBKIT_PARAM_READABLE));
 
@@ -172,8 +169,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
     g_object_class_install_property(objectClass,
                                     PROP_MODIFIERS,
                                     g_param_spec_uint("modifiers",
-                                                      _("Mouse event modifiers"),
-                                                      _("The modifiers active if this decision was triggered by a mouse event"),
+                                                      nullptr, nullptr,
                                                       0, G_MAXUINT, 0,
                                                       WEBKIT_PARAM_READABLE));
 
@@ -188,8 +184,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
     g_object_class_install_property(objectClass,
                                     PROP_REQUEST,
                                     g_param_spec_object("request",
-                                                      _("Navigation URI request"),
-                                                      _("The URI request that is associated with this navigation"),
+                                                      nullptr, nullptr,
                                                       WEBKIT_TYPE_URI_REQUEST,
                                                       WEBKIT_PARAM_READABLE));
 #endif
@@ -205,8 +200,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
     g_object_class_install_property(objectClass,
                                     PROP_FRAME_NAME,
                                     g_param_spec_string("frame-name",
-                                                      _("Frame name"),
-                                                      _("The name of the new frame this navigation action targets"),
+                                                      nullptr, nullptr,
                                                       0,
                                                       WEBKIT_PARAM_READABLE));
 }

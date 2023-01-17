@@ -99,8 +99,7 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
     g_object_class_install_property(objectClass,
         PROP_ID,
         g_param_spec_uint64("id",
-            _("ID"),
-            _("The unique id for the notification"),
+            nullptr, nullptr,
             0, G_MAXUINT64, 0,
             WEBKIT_PARAM_READABLE));
 
@@ -114,8 +113,7 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
     g_object_class_install_property(objectClass,
         PROP_TITLE,
         g_param_spec_string("title",
-            _("Title"),
-            _("The title for the notification"),
+            nullptr, nullptr,
             nullptr,
             WEBKIT_PARAM_READABLE));
 
@@ -129,8 +127,7 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
     g_object_class_install_property(objectClass,
         PROP_BODY,
         g_param_spec_string("body",
-            _("Body"),
-            _("The body for the notification"),
+            nullptr, nullptr,
             nullptr,
             WEBKIT_PARAM_READABLE));
 
@@ -144,8 +141,7 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
     g_object_class_install_property(objectClass,
         PROP_TAG,
         g_param_spec_string("tag",
-            _("Tag"),
-            _("The tag identifier for the notification"),
+            nullptr, nullptr,
             nullptr,
             WEBKIT_PARAM_READABLE));
 

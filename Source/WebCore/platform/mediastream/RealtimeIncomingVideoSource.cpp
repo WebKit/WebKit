@@ -33,6 +33,8 @@
 
 #if USE(LIBWEBRTC)
 
+#include "FrameRateMonitor.h"
+
 namespace WebCore {
 
 RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
@@ -54,6 +56,20 @@ RealtimeIncomingVideoSource::~RealtimeIncomingVideoSource()
 {
     stop();
     m_videoTrack->UnregisterObserver(this);
+}
+
+void RealtimeIncomingVideoSource::enableFrameRatedMonitoring()
+{
+#if !RELEASE_LOG_DISABLED
+    if (m_frameRateMonitor)
+        return;
+    m_frameRateMonitor = makeUnique<FrameRateMonitor>([this](auto info) {
+        auto frameTime = info.frameTime.secondsSinceEpoch().value();
+        auto lastFrameTime = info.lastFrameTime.secondsSinceEpoch().value();
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame at ", frameTime, " previous frame was at ", lastFrameTime, ", observed frame rate is ", info.observedFrameRate, ", delay since last frame is ", (frameTime - lastFrameTime) * 1000, " ms, frame count is ", info.frameCount);
+    });
+#endif
+
 }
 
 void RealtimeIncomingVideoSource::startProducingData()
@@ -119,6 +135,12 @@ VideoFrameTimeMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const
         metadata.processingDuration = Seconds::fromMilliseconds(frame.processing_time()->Elapsed().ms()).value();
 
     return metadata;
+}
+
+void RealtimeIncomingVideoSource::notifyNewFrame()
+{
+    if (m_frameRateMonitor)
+        m_frameRateMonitor->update();
 }
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ struct WGPUInstanceImpl {
 namespace WebGPU {
 
 class Adapter;
-class Surface;
+class PresentationContext;
 
 // https://gpuweb.github.io/gpuweb/#gpu
 class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
@@ -52,7 +52,7 @@ public:
 
     ~Instance();
 
-    Ref<Surface> createSurface(const WGPUSurfaceDescriptor&);
+    Ref<PresentationContext> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
     void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, Ref<Adapter>&&, String&&)>&& callback);
 

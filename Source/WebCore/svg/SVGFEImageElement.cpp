@@ -63,12 +63,12 @@ SVGFEImageElement::~SVGFEImageElement()
     clearResourceReferences();
 }
 
-bool SVGFEImageElement::hasSingleSecurityOrigin() const
+bool SVGFEImageElement::renderingTaintsOrigin() const
 {
     if (!m_cachedImage)
-        return true;
+        return false;
     auto* image = m_cachedImage->image();
-    return !image || image->hasSingleSecurityOrigin();
+    return image && image->renderingTaintsOrigin();
 }
 
 void SVGFEImageElement::clearResourceReferences()

@@ -2381,7 +2381,7 @@ class RunResultsdbpyTests(shell.ShellCommandNewStyle):
     ]
 
     def __init__(self, **kwargs):
-        super(RunResultsdbpyTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+        super(RunResultsdbpyTests, self).__init__(timeout=15 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -3144,6 +3144,8 @@ class TriggerCrashLogSubmission(shell.Compile):
     name = 'trigger-crash-log-submission'
     description = ['triggering crash log submission']
     descriptionDone = ['Triggered crash log submission']
+    haltOnFailure = False
+    flunkOnFailure = False
     command = ['python3', 'Tools/CISupport/trigger-crash-log-submission']
 
     def __init__(self, **kwargs):
@@ -3159,6 +3161,8 @@ class WaitForCrashCollection(shell.Compile):
     name = 'wait-for-crash-collection'
     description = ['waiting-for-crash-collection-to-quiesce']
     descriptionDone = ['Crash collection has quiesced']
+    haltOnFailure = False
+    flunkOnFailure = False
     command = ['python3', 'Tools/CISupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
 
     def __init__(self, **kwargs):

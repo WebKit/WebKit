@@ -126,8 +126,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
     sObjProperties[PROP_INSPECTED_URI] =
         g_param_spec_string(
             "inspected-uri",
-            _("Inspected URI"),
-            _("The URI that is currently being inspected"),
+            nullptr, nullptr,
             nullptr,
             WEBKIT_PARAM_READABLE);
     /**
@@ -138,8 +137,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
     sObjProperties[PROP_ATTACHED_HEIGHT] =
         g_param_spec_uint(
             "attached-height",
-            _("Attached Height"),
-            _("The height that the inspector view should have when it is attached"),
+            nullptr, nullptr,
             0, G_MAXUINT, 0,
             WEBKIT_PARAM_READABLE);
 
@@ -154,8 +152,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
     sObjProperties[PROP_CAN_ATTACH] =
         g_param_spec_boolean(
             "can-attach",
-            _("Can Attach"),
-            _("Whether the inspector can be attached to the same window that contains the inspected view"),
+            nullptr, nullptr,
             FALSE,
             WEBKIT_PARAM_READABLE);
 

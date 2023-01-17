@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMeterElement);
 using namespace HTMLNames;
 
 HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document& document)
-    : LabelableElement(tagName, document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(meterTag));
 }
@@ -75,7 +75,7 @@ void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomStrin
     if (name == valueAttr || name == minAttr || name == maxAttr || name == lowAttr || name == highAttr || name == optimumAttr)
         didElementStateChange();
     else
-        LabelableElement::parseAttribute(name, value);
+        HTMLElement::parseAttribute(name, value);
 }
 
 double HTMLMeterElement::min() const

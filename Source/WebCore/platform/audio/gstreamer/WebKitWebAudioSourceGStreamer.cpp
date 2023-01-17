@@ -186,22 +186,24 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
     GParamFlags flags = static_cast<GParamFlags>(G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
     g_object_class_install_property(objectClass,
                                     PROP_RATE,
-                                    g_param_spec_float("rate", "rate",
-                                                       "Sample rate", G_MINDOUBLE, G_MAXDOUBLE,
+                                    g_param_spec_float("rate",
+                                                       nullptr, nullptr,
+                                                       G_MINDOUBLE, G_MAXDOUBLE,
                                                        44100.0, flags));
 
     g_object_class_install_property(objectClass,
                                     PROP_BUS,
-                                    g_param_spec_pointer("bus", "bus",
-                                                         "Bus", flags));
+                                    g_param_spec_pointer("bus",
+                                                         nullptr, nullptr,
+                                                         flags));
 
     g_object_class_install_property(objectClass, PROP_DESTINATION, g_param_spec_pointer("destination", "destination",
         "Destination", flags));
 
     g_object_class_install_property(objectClass,
                                     PROP_FRAMES,
-                                    g_param_spec_uint("frames", "frames",
-                                                      "Number of audio frames to pull at each iteration",
+                                    g_param_spec_uint("frames",
+                                                      nullptr, nullptr,
                                                       0, G_MAXUINT8, AudioUtilities::renderQuantumSize, flags));
 }
 

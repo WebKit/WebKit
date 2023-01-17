@@ -31,7 +31,7 @@
 
 #include "FormController.h"
 #include "FormListedElement.h"
-#include "LabelableElement.h"
+#include "HTMLElement.h"
 #include "ValidationMessage.h"
 
 namespace WebCore {
@@ -103,7 +103,7 @@ protected:
     void removedFromAncestor(Node::RemovalType, ContainerNode&);
     void parseAttribute(const QualifiedName&, const AtomString&);
     void parseDisabledAttribute(const AtomString&);
-    void parseReadonlyAttribute(const AtomString&);
+    void parseReadOnlyAttribute(const AtomString&);
 
     virtual void disabledAttributeChanged();
     virtual void disabledStateChanged();

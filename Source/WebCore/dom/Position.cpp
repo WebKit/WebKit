@@ -41,7 +41,6 @@
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
-#include "LegacyInlineTextBox.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"

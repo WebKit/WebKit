@@ -30,7 +30,7 @@ API_SINGLE_HEADER_CHECK = {
     "gtk4": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit/webkit.h> can be included directly.\"
 #endif''',
-    "gtk": '''#if !defined(__WEBKIT2_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "gtk": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit2.h> can be included directly.\"
 #endif''',
     "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
@@ -54,7 +54,7 @@ SHARED_API_SINGLE_HEADER_CHECK = {
     "gtk4": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit/webkit.h> can be included directly.\"
 #endif''',
-    "gtk": '''#if !defined(__WEBKIT2_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "gtk": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit2.h> can be included directly.\"
 #endif''',
     "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)

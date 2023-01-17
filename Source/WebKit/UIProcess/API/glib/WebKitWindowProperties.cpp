@@ -215,8 +215,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_GEOMETRY] =
         g_param_spec_boxed(
             "geometry",
-            _("Geometry"),
-            _("The size and position of the window on the screen."),
+            nullptr, nullptr,
             GDK_TYPE_RECTANGLE,
             paramFlags);
 #endif
@@ -229,8 +228,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_TOOLBAR_VISIBLE] =
         g_param_spec_boolean(
             "toolbar-visible",
-            _("Toolbar Visible"),
-            _("Whether the toolbar should be visible for the window."),
+            nullptr, nullptr,
             TRUE,
             paramFlags);
 
@@ -242,8 +240,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_STATUSBAR_VISIBLE] =
         g_param_spec_boolean(
             "statusbar-visible",
-            _("Statusbar Visible"),
-            _("Whether the statusbar should be visible for the window."),
+            nullptr, nullptr,
             TRUE,
             paramFlags);
 
@@ -255,8 +252,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_SCROLLBARS_VISIBLE] =
         g_param_spec_boolean(
             "scrollbars-visible",
-            _("Scrollbars Visible"),
-            _("Whether the scrollbars should be visible for the window."),
+            nullptr, nullptr,
             TRUE,
             paramFlags);
 
@@ -268,8 +264,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_MENUBAR_VISIBLE] =
         g_param_spec_boolean(
             "menubar-visible",
-            _("Menubar Visible"),
-            _("Whether the menubar should be visible for the window."),
+            nullptr, nullptr,
             TRUE,
             paramFlags);
 
@@ -281,8 +276,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_LOCATIONBAR_VISIBLE] =
         g_param_spec_boolean(
             "locationbar-visible",
-            _("Locationbar Visible"),
-            _("Whether the locationbar should be visible for the window."),
+            nullptr, nullptr,
             TRUE,
             paramFlags);
     /**
@@ -293,8 +287,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_RESIZABLE] =
         g_param_spec_boolean(
             "resizable",
-            _("Resizable"),
-            _("Whether the window can be resized."),
+            nullptr, nullptr,
             TRUE,
             paramFlags);
 
@@ -306,8 +299,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     sObjProperties[PROP_FULLSCREEN] =
         g_param_spec_boolean(
             "fullscreen",
-            _("Fullscreen"),
-            _("Whether window will be displayed fullscreen."),
+            nullptr, nullptr,
             FALSE,
             paramFlags);
 

@@ -120,8 +120,7 @@ static void jsc_value_class_init(JSCValueClass* klass)
         PROP_CONTEXT,
         g_param_spec_object(
             "context",
-            "JSCContext",
-            "JSC Context",
+            nullptr, nullptr,
             JSC_TYPE_CONTEXT,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }

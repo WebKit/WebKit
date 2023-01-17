@@ -38,6 +38,7 @@
 #include "MediaQueryEvaluator.h"
 #include "RuleSetBuilder.h"
 #include "SVGElement.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"

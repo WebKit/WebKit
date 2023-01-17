@@ -29,6 +29,7 @@
 
 #include "CSSFilter.h"
 #include "CSSFilterImageValue.h"
+#include "CSSValuePool.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "ComputedStyleExtractor.h"

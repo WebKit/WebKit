@@ -2148,9 +2148,8 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 
 inline void BuilderCustom::applyInitialCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const AtomString& name)
 {
-    if (registered && registered->initialValue()) {
-        auto initialValue = registered->initialValueCopy();
-        applyValueCustomProperty(builderState, registered, *initialValue);
+    if (registered && registered->initialValue) {
+        applyValueCustomProperty(builderState, registered, const_cast<CSSCustomPropertyValue&>(*registered->initialValue));
         return;
     }
 

@@ -275,8 +275,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_BASE_DATA_DIRECTORY,
         g_param_spec_string(
             "base-data-directory",
-            _("Base Data Directory"),
-            _("The base directory for website data"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
@@ -292,8 +291,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_BASE_CACHE_DIRECTORY,
         g_param_spec_string(
             "base-cache-directory",
-            _("Base Cache Directory"),
-            _("The base directory for caches"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
@@ -312,8 +310,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_LOCAL_STORAGE_DIRECTORY,
         g_param_spec_string(
             "local-storage-directory",
-            _("Local Storage Directory"),
-            _("The directory where local storage data will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -331,8 +328,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_DISK_CACHE_DIRECTORY,
         g_param_spec_string(
             "disk-cache-directory",
-            _("Disk Cache Directory"),
-            _("The directory where HTTP disk cache will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -350,8 +346,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_APPLICATION_CACHE_DIRECTORY,
         g_param_spec_string(
             "offline-application-cache-directory",
-            _("Offline Web Application Cache Directory"),
-            _("The directory where offline web application cache will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -369,8 +364,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_INDEXEDDB_DIRECTORY,
         g_param_spec_string(
             "indexeddb-directory",
-            _("IndexedDB Directory"),
-            _("The directory where IndexedDB databases will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -388,8 +382,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_WEBSQL_DIRECTORY,
         g_param_spec_string(
             "websql-directory",
-            _("WebSQL Directory"),
-            _("The directory where WebSQL databases will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -407,8 +400,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_HSTS_CACHE_DIRECTORY,
         g_param_spec_string(
             "hsts-cache-directory",
-            _("HSTS Cache Directory"),
-            _("The directory where the HTTP Strict-Transport-Security cache will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -426,8 +418,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_ITP_DIRECTORY,
         g_param_spec_string(
             "itp-directory",
-            _("ITP Directory"),
-            _("The directory where Intelligent Tracking Prevention data will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -445,8 +436,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY,
         g_param_spec_string(
             "service-worker-registrations-directory",
-            _("Service Worker Registrations Directory"),
-            _("The directory where service workers registrations will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 
@@ -464,8 +454,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_DOM_CACHE_DIRECTORY,
         g_param_spec_string(
             "dom-cache-directory",
-            _("DOM Cache directory"),
-            _("The directory where DOM cache will be stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_DEPRECATED)));
 #endif
@@ -485,8 +474,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_IS_EPHEMERAL,
         g_param_spec_boolean(
             "is-ephemeral",
-            "Is Ephemeral",
-            _("Whether the WebKitWebsiteDataManager is ephemeral"),
+            nullptr, nullptr,
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }

@@ -279,6 +279,7 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     }
 
     case TypeKind::Arrayref:
+    case TypeKind::Structref:
     case TypeKind::Funcref:
     case TypeKind::Externref:
     case TypeKind::Ref:

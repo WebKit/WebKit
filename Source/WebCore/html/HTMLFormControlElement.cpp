@@ -56,7 +56,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : LabelableElement(tagName, document)
+    : HTMLElement(tagName, document)
     , ValidatedFormListedElement(form)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
@@ -151,7 +151,7 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
             requiredStateChanged();
         }
     } else {
-        LabelableElement::parseAttribute(name, value);
+        HTMLElement::parseAttribute(name, value);
         ValidatedFormListedElement::parseAttribute(name, value);
     }
 }

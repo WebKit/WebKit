@@ -33,14 +33,13 @@
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "PipelineLayout.h"
+#import "PresentationContext.h"
 #import "QuerySet.h"
 #import "Queue.h"
 #import "RenderBundleEncoder.h"
 #import "RenderPipeline.h"
 #import "Sampler.h"
 #import "ShaderModule.h"
-#import "Surface.h"
-#import "SwapChain.h"
 #import "Texture.h"
 #import <algorithm>
 #import <notify.h>
@@ -361,7 +360,7 @@ void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePi
 
 void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback)
 {
-    WebGPU::fromAPI(device).createComputePipelineAsync(*descriptor, [callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::ComputePipeline>&& pipeline, String&& message) {
+    WebGPU::fromAPI(device).createComputePipelineAsync(*descriptor, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::ComputePipeline>&& pipeline, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(pipeline)), message.utf8().data());
     });
 }
@@ -395,7 +394,7 @@ void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipe
 
 void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback)
 {
-    WebGPU::fromAPI(device).createRenderPipelineAsync(*descriptor, [callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::RenderPipeline>&& pipeline, String&& message) {
+    WebGPU::fromAPI(device).createRenderPipelineAsync(*descriptor, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPUCreatePipelineAsyncStatus status, Ref<WebGPU::RenderPipeline>&& pipeline, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(pipeline)), message.utf8().data());
     });
 }
@@ -412,7 +411,7 @@ WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShade
 
 WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSwapChain(surface, *descriptor));
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSwapChain(WebGPU::fromAPI(surface), *descriptor));
 }
 
 WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, const WGPUTextureDescriptor* descriptor)
@@ -454,7 +453,7 @@ bool wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void
 
 bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).popErrorScope([callback = WTFMove(callback)](WGPUErrorType type, String&& message) {
+    return WebGPU::fromAPI(device).popErrorScope([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUErrorType type, String&& message) {
         callback(type, message.utf8().data());
     });
 }
@@ -474,7 +473,7 @@ void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback c
 
 void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).setDeviceLostCallback([callback = WTFMove(callback)](WGPUDeviceLostReason reason, String&& message) {
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUDeviceLostReason reason, String&& message) {
         if (callback)
             callback(reason, message.utf8().data());
     });
@@ -490,7 +489,7 @@ void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback c
 
 void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).setUncapturedErrorCallback([callback = WTFMove(callback)](WGPUErrorType type, String&& message) {
+    return WebGPU::fromAPI(device).setUncapturedErrorCallback([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUErrorType type, String&& message) {
         if (callback)
             callback(type, message.utf8().data());
     });

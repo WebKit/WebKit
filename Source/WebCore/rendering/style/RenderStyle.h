@@ -127,6 +127,10 @@ struct ScrollSnapType;
 
 struct TextEdge;
 
+namespace Style {
+class CustomPropertyRegistry;
+}
+
 using PseudoStyleCache = Vector<std::unique_ptr<RenderStyle>, 4>;
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<const T&>(u); }
@@ -192,10 +196,12 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
-    void deduplicateInheritedCustomProperties(const RenderStyle&);
     const CustomPropertyValueMap& inheritedCustomProperties() const { return m_rareInheritedData->customProperties->values; }
     const CustomPropertyValueMap& nonInheritedCustomProperties() const { return m_rareNonInheritedData->customProperties->values; }
-    const CSSCustomPropertyValue* getCustomProperty(const AtomString&) const;
+    const CSSCustomPropertyValue* customPropertyValue(const AtomString&, const Style::CustomPropertyRegistry&) const;
+    const CSSCustomPropertyValue* customPropertyValueWithoutResolvingInitial(const AtomString&) const;
+
+    void deduplicateInheritedCustomProperties(const RenderStyle&);
     void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
     void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
     bool customPropertiesEqual(const RenderStyle&) const;
@@ -2308,15 +2314,6 @@ inline BorderStyle collapsedBorderStyle(BorderStyle style)
     if (style == BorderStyle::Inset)
         return BorderStyle::Ridge;
     return style;
-}
-
-inline const CSSCustomPropertyValue* RenderStyle::getCustomProperty(const AtomString& name) const
-{
-    for (auto* map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
-        if (auto* val = map->get(name))
-            return val;
-    }
-    return nullptr;
 }
 
 inline bool RenderStyle::hasBackground() const

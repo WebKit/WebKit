@@ -126,7 +126,6 @@ bool AccessibilityUIElement::isInDescriptionListDetail() const { return false; }
 bool AccessibilityUIElement::isInDescriptionListTerm() const { return false; }
 bool AccessibilityUIElement::isInCell() const { return false; }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const { return { }; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }

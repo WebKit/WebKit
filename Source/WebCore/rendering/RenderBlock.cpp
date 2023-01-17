@@ -42,8 +42,6 @@
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
 #include "LayoutRepainter.h"
-#include "LegacyInlineElementBox.h"
-#include "LegacyInlineTextBox.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "OverflowEvent.h"

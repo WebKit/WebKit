@@ -72,8 +72,6 @@ class Encoder;
 class StreamConnectionBuffer {
     WTF_MAKE_NONCOPYABLE(StreamConnectionBuffer);
 public:
-    explicit StreamConnectionBuffer(unsigned dataSizeLog2);
-    StreamConnectionBuffer(StreamConnectionBuffer&&);
     ~StreamConnectionBuffer();
 
     struct Handle {
@@ -81,7 +79,6 @@ public:
         void encode(Encoder&) const;
         static std::optional<Handle> decode(Decoder&);
     };
-    static std::optional<StreamConnectionBuffer> map(Handle&&);
     Handle createHandle();
 
     size_t wrapOffset(size_t offset) const
@@ -125,8 +122,10 @@ public:
     Span<uint8_t> headerForTesting();
     Span<uint8_t> dataForTesting();
 
-private:
+protected:
     StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&);
+    StreamConnectionBuffer(StreamConnectionBuffer&&) = default;
+    StreamConnectionBuffer& operator=(StreamConnectionBuffer&&) = default;
 
     struct Header {
         Atomic<ServerOffset> serverOffset;

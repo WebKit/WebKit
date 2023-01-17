@@ -1351,10 +1351,10 @@ template<typename Context>
 auto FunctionParser<Context>::parseStructTypeIndex(uint32_t& structTypeIndex, const char* operation) -> PartialResult
 {
     uint32_t typeIndex;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for", operation);
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for ", operation);
     WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), operation, " index ", typeIndex, " is out of bound");
     const TypeDefinition& type = m_info.typeSignatures[typeIndex].get();
-    WASM_VALIDATOR_FAIL_IF(!type.is<StructType>(), operation, ": invalid type index", typeIndex);
+    WASM_VALIDATOR_FAIL_IF(!type.is<StructType>(), operation, ": invalid type index ", typeIndex);
 
     structTypeIndex = typeIndex;
     return { };
@@ -1390,7 +1390,7 @@ template<typename Context>
 auto FunctionParser<Context>::parseStructFieldManipulation(StructFieldManipulation& result, const char* operation) -> PartialResult
 {
     StructTypeIndexAndFieldIndex typeIndexAndFieldIndex;
-    WASM_PARSER_FAIL_IF(!parseStructTypeIndexAndFieldIndex(typeIndexAndFieldIndex, operation));
+    WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndexAndFieldIndex(typeIndexAndFieldIndex, operation));
 
     TypedExpression structRef;
     WASM_TRY_POP_EXPRESSION_STACK_INTO(structRef, "struct reference");
@@ -1936,7 +1936,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         case ExtGCOpType::StructGet: {
             StructFieldManipulation structGetInput;
-            WASM_PARSER_FAIL_IF(!parseStructFieldManipulation(structGetInput, "struct.get"));
+            WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, "struct.get"));
 
             ExpressionType result;
             const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->template as<StructType>();
@@ -1950,7 +1950,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "struct.set value");
 
             StructFieldManipulation structSetInput;
-            WASM_PARSER_FAIL_IF(!parseStructFieldManipulation(structSetInput, "struct.set"));
+            WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structSetInput, "struct.set"));
 
             const auto& field = structSetInput.field;
             WASM_PARSER_FAIL_IF(field.mutability != Mutability::Mutable, "the field ", structSetInput.indices.fieldIndex, " can't be set because it is immutable");

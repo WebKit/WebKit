@@ -146,8 +146,7 @@ static void webkit_website_policies_class_init(WebKitWebsitePoliciesClass* findC
         PROP_AUTOPLAY_POLICY,
         g_param_spec_enum(
             "autoplay",
-            "Autoplay Policy",
-            _("The policy to use when deciding to autoplay media"),
+            nullptr, nullptr,
             WEBKIT_TYPE_AUTOPLAY_POLICY,
             WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));

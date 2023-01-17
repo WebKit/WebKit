@@ -32,7 +32,7 @@ class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference 
 public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
-    bool hasSingleSecurityOrigin() const;
+    bool renderingTaintsOrigin() const;
     const AtomString& imageSourceURL() const final;
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }

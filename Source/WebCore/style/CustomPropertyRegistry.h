@@ -39,6 +39,7 @@ public:
     CustomPropertyRegistry(Scope&);
 
     const CSSRegisteredCustomProperty* get(const AtomString&) const;
+    bool isInherited(const AtomString&) const;
 
     bool registerFromAPI(CSSRegisteredCustomProperty&&);
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);

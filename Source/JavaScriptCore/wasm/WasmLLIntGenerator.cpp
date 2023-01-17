@@ -705,6 +705,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Void:
         case TypeKind::Func:
         case TypeKind::Struct:
+        case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
@@ -741,6 +742,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Void:
         case TypeKind::Func:
         case TypeKind::Struct:
+        case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
@@ -807,6 +809,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Void:
         case TypeKind::Func:
         case TypeKind::Struct:
+        case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
@@ -864,6 +867,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Void:
         case TypeKind::Func:
         case TypeKind::Struct:
+        case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::I31ref:

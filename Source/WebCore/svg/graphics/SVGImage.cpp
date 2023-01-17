@@ -93,30 +93,30 @@ inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
     return DocumentSVG::rootElement(*m_page->mainFrame().document());
 }
 
-bool SVGImage::hasSingleSecurityOrigin() const
+bool SVGImage::renderingTaintsOrigin() const
 {
     auto rootElement = this->rootElement();
     if (!rootElement)
-        return true;
+        return false;
 
     // FIXME: Once foreignObject elements within SVG images are updated to not leak cross-origin data
     // (e.g., visited links, spellcheck) we can remove the SVGForeignObjectElement check here and
-    // research if we can remove the Image::hasSingleSecurityOrigin mechanism entirely.
+    // research if we can remove the Image::renderingTaintsOrigin mechanism entirely.
     for (auto& element : descendantsOfType<SVGElement>(*rootElement)) {
         if (is<SVGForeignObjectElement>(element))
-            return false;
+            return true;
         if (is<SVGImageElement>(element)) {
-            if (!downcast<SVGImageElement>(element).hasSingleSecurityOrigin())
-                return false;
+            if (downcast<SVGImageElement>(element).renderingTaintsOrigin())
+                return true;
         } else if (is<SVGFEImageElement>(element)) {
-            if (!downcast<SVGFEImageElement>(element).hasSingleSecurityOrigin())
-                return false;
+            if (downcast<SVGFEImageElement>(element).renderingTaintsOrigin())
+                return true;
         }
     }
 
     // Because SVG image rendering disallows external resources and links,
     // these images effectively are restricted to a single security origin.
-    return true;
+    return false;
 }
 
 void SVGImage::setContainerSize(const FloatSize& size)

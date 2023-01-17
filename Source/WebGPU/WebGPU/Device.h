@@ -50,13 +50,12 @@ class CommandEncoder;
 class ComputePipeline;
 class Instance;
 class PipelineLayout;
+class PresentationContext;
 class QuerySet;
 class RenderBundleEncoder;
 class RenderPipeline;
 class Sampler;
 class ShaderModule;
-class Surface;
-class SwapChain;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
@@ -84,8 +83,8 @@ public:
     void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback);
     Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
     Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
-    Ref<Surface> createSurface(const WGPUSurfaceDescriptor&);
-    Ref<SwapChain> createSwapChain(WGPUSurface, const WGPUSwapChainDescriptor&);
+    Ref<PresentationContext> createSurface(const WGPUSurfaceDescriptor&);
+    Ref<PresentationContext> createSwapChain(PresentationContext&, const WGPUSwapChainDescriptor&);
     Ref<Texture> createTexture(const WGPUTextureDescriptor&);
     void destroy();
     size_t enumerateFeatures(WGPUFeatureName* features);

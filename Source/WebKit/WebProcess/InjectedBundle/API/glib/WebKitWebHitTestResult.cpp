@@ -124,8 +124,7 @@ static void webkit_web_hit_test_result_class_init(WebKitWebHitTestResultClass* k
         PROP_NODE,
         g_param_spec_object(
             "node",
-            _("Node"),
-            _("The WebKitDOMNode"),
+            nullptr, nullptr,
             WEBKIT_DOM_TYPE_NODE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
     G_GNUC_END_IGNORE_DEPRECATIONS;

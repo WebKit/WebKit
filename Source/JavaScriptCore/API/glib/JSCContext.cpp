@@ -185,8 +185,7 @@ static void jsc_context_class_init(JSCContextClass* klass)
         PROP_VIRTUAL_MACHINE,
         g_param_spec_object(
             "virtual-machine",
-            "JSCVirtualMachine",
-            "JSC Virtual Machine",
+            nullptr, nullptr,
             JSC_TYPE_VIRTUAL_MACHINE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }

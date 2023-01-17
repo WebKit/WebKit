@@ -48,7 +48,6 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "ImageOverlay.h"
-#include "LegacyInlineTextBox.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderImage.h"

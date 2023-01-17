@@ -151,9 +151,9 @@ static inline VideoFrame::Rotation toVideoRotation(webrtc::VideoRotation rotatio
     return VideoFrame::Rotation::None;
 }
 
-static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames)
+static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames, bool enableAdditionalLogging)
 {
-    connection.send(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, useRemoteFrames }, 0);
+    connection.send(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, useRemoteFrames, enableAdditionalLogging }, 0);
 }
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
@@ -272,6 +272,13 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess, bool useRemoteFrames)
     webrtc::setVideoEncoderCallbacks(createVideoEncoder, releaseVideoEncoder, initializeVideoEncoder, encodeVideoFrame, registerEncodeCompleteCallback, setEncodeRatesCallback);
 }
 
+void LibWebRTCCodecs::setWebRTCMediaPipelineAdditionalLoggingEnabled(bool enabled)
+{
+    if (!LibWebRTCProvider::webRTCAvailable())
+        return;
+    WebProcess::singleton().libWebRTCCodecs().m_enableAdditionalLogging = enabled;
+}
+
 // May be called on any thread.
 LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(VideoCodecType type)
 {
@@ -296,7 +303,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(VideoCodecType 
         auto* decodePointer = decoder.get();
         {
             Locker locker { m_connectionLock };
-            createRemoteDecoder(*decoder, *m_connection, m_useRemoteFrames);
+            createRemoteDecoder(*decoder, *m_connection, m_useRemoteFrames, m_enableAdditionalLogging);
             setDecoderConnection(*decoder, m_connection.get());
 
             auto decoderIdentifier = decoder->identifier;
@@ -755,7 +762,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
                     while (!decoder->flushCallbacks.isEmpty())
                         decoder->flushCallbacks.takeFirst()();
                 }
-                createRemoteDecoder(*decoder, *connection, m_useRemoteFrames);
+                createRemoteDecoder(*decoder, *connection, m_useRemoteFrames, m_enableAdditionalLogging);
                 setDecoderConnection(*decoder, connection.get());
             }
         }

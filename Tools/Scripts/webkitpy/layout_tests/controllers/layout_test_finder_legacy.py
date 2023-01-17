@@ -145,30 +145,66 @@ class LayoutTestFinder(object):
         expanded = []
         fs = self._port._filesystem
         for f in files:
-            if ".any." not in f:
+            if "web-platform-tests" not in f:
                 expanded.append(f)
                 continue
+            f, variant_separator, passed_variant = f.partition('?')
             opened_file = fs.open_text_file_for_reading(f)
             try:
                 first_line = opened_file.readline()
-                if not first_line or first_line.strip() != TEMPLATED_TEST_HEADER:
+                if not first_line:
                     expanded.append(f)
                     continue
-                variants = []
-                for line in iter(opened_file.readline, ''):
-                    results = re.match(r'<!--\s*META:\s*variant=([?|#]\S+)\s*-->', line)
-                    if not results:
-                        continue
-                    variant = results.group(1)
-                    if variant:
-                        variants.append(variant)
-                if variants:
-                    for variant in variants:
-                        expanded.append(f + variant)
+
+                if first_line.strip() == TEMPLATED_TEST_HEADER:
+                    variants = []
+                    for line in iter(opened_file.readline, ''):
+                        results = re.match(r'<!--\s*META:\s*variant=([?|#]\S+)\s*-->', line)
+                        if not results:
+                            continue
+                        variant = results.group(1)
+                        if variant:
+                            variants.append(variant)
+                    if variants:
+                        for variant in variants:
+                            if not passed_variant or variant.startswith(variant_separator + passed_variant):
+                                expanded.append(f + variant)
+                    else:
+                        expanded.append(f)
                 else:
-                    expanded.append(f)
+                    variants = []
+                    for line in iter(opened_file.readline, ''):
+                        try:
+                            line = line.lstrip()
+                            if not line.startswith("<meta"):
+                                continue
+                            if not re.search(r"name=['\"]?variant['\"]?", line):
+                                continue
+                            start_index = line.find("content=")
+                            if start_index < 0:
+                                continue
+                            start_index += 8
+                            end_chars = ()
+                            if line[start_index] == '"' or line[start_index] == '\'':
+                                end_chars = (line[start_index],)
+                                start_index += 1
+                            else:
+                                end_chars = (' ', '>')
+                            end_index = start_index
+                            while line[end_index] not in end_chars:
+                                end_index += 1
+                            variants.append(line[start_index:end_index])
+                        except IndexError:
+                            continue
+                    if len(variants):
+                        for variant in variants:
+                            if not passed_variant or variant.startswith(variant_separator + passed_variant):
+                                expanded.append(f + variant)
+                    else:
+                        expanded.append(f)
             except UnicodeDecodeError:
-                return files
+                expanded.append(f)
+                continue
         return expanded
 
     def _real_tests(self, paths):

@@ -351,6 +351,8 @@ static unsigned maximumWebProcessRelaunchAttempts = 1;
 static const Seconds audibleActivityClearDelay = 10_s;
 static const Seconds tryCloseTimeoutDelay = 50_ms;
 
+using namespace WebCore;
+
 namespace WebKit {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));

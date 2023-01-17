@@ -33,11 +33,13 @@
 #import "IPCUtilities.h"
 #import "LibWebRTCCodecsMessages.h"
 #import "LibWebRTCCodecsProxyMessages.h"
+#import "Logging.h"
 #import "RemoteVideoFrameIdentifier.h"
 #import "RemoteVideoFrameObjectHeap.h"
 #import "SharedVideoFrame.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/CVUtilities.h>
+#import <WebCore/FrameRateMonitor.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/PixelBufferConformerCV.h>
 #import <WebCore/VideoFrameCV.h>
@@ -93,16 +95,30 @@ void LibWebRTCCodecsProxy::initialize()
     m_connection->addWorkQueueMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName(), m_queue, *this);
 }
 
-auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifier, bool useRemoteFrames)
+auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifier, bool useRemoteFrames, bool enableAdditionalLogging)
 {
     RefPtr<RemoteVideoFrameObjectHeap> videoFrameObjectHeap;
     if (useRemoteFrames)
         videoFrameObjectHeap = m_videoFrameObjectHeap.ptr();
-    return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
+    std::unique_ptr<FrameRateMonitor> frameRateMonitor;
+    if (enableAdditionalLogging) {
+        frameRateMonitor = makeUnique<FrameRateMonitor>([identifier](auto info) {
+            callOnMainRunLoop([identifier, info] {
+                auto frameTime = info.frameTime.secondsSinceEpoch().value();
+                auto lastFrameTime = info.lastFrameTime.secondsSinceEpoch().value();
+                RELEASE_LOG(WebRTC, "LibWebRTCCodecsProxy decoder %" PRIu64 " generated a video frame at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", identifier.toUInt64(), frameTime, lastFrameTime, info.observedFrameRate, (frameTime - lastFrameTime) * 1000, info.frameCount);
+            });
+        });
+    }
+    return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap), frameRateMonitor = WTFMove(frameRateMonitor)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
         if (!pixelBuffer) {
             connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
             return;
         }
+
+        if (frameRateMonitor)
+            frameRateMonitor->update();
+
         auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::VideoFrame::Rotation::None, pixelBuffer);
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);
@@ -115,9 +131,9 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     };
 }
 
-std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames)
+std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
 {
-    auto block = makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames));
+    auto block = makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging));
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/LibWebRTCCodecsProxyAdditions.mm>
@@ -137,15 +153,27 @@ std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDe
     return nullptr;
 }
 
-void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames)
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
 {
     assertIsCurrent(workQueue());
-    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames);
+    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging);
     if (!decoder) {
         ASSERT(IPC::isTestingIPC());
         return;
     }
-    auto result = m_decoders.add(identifier,  makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+
+    std::unique_ptr<FrameRateMonitor> frameRateMonitor;
+    if (enableAdditionalLogging) {
+        frameRateMonitor = makeUnique<FrameRateMonitor>([identifier](auto info) {
+            callOnMainRunLoop([identifier, info] {
+                auto frameTime = info.frameTime.secondsSinceEpoch().value();
+                auto lastFrameTime = info.lastFrameTime.secondsSinceEpoch().value();
+                RELEASE_LOG(WebRTC, "LibWebRTCCodecsProxy decoder %" PRIu64 " received a compressed frame at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", identifier.toUInt64(), frameTime, lastFrameTime, info.observedFrameRate, (frameTime - lastFrameTime) * 1000, info.frameCount);
+            });
+        });
+    }
+
+    auto result = m_decoders.add(identifier,  Decoder { WTFMove(decoder), WTFMove(frameRateMonitor) });
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
@@ -153,58 +181,56 @@ void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, Vide
 void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    auto decoder = m_decoders.take(identifier);
-    if (!decoder) {
+    auto iterator = m_decoders.find(identifier);
+    if (iterator == m_decoders.end()) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
+    m_decoders.remove(iterator);
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
 
 void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier)
 {
-    assertIsCurrent(workQueue());
-    auto decoder = m_decoders.get(identifier);
-    if (!decoder) {
-        ASSERT_IS_TESTING_IPC();
-        return;
-    }
-    decoder->flush();
-    m_connection->send(Messages::LibWebRTCCodecs::FlushDecoderCompleted { identifier }, 0);
+    doDecoderTask(identifier, [&](auto& decoder) {
+        decoder.webrtcDecoder->flush();
+        m_connection->send(Messages::LibWebRTCCodecs::FlushDecoderCompleted { identifier }, 0);
+    });
 }
 
 void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, const IPC::DataReference& data, uint16_t width, uint16_t height)
 {
-    assertIsCurrent(workQueue());
-    auto decoder = m_decoders.get(identifier);
-    if (!decoder) {
-        ASSERT_IS_TESTING_IPC();
-        return;
-    }
-    decoder->setFormat(data.data(), data.size(), width, height);
+    doDecoderTask(identifier, [&](auto& decoder) {
+        decoder.webrtcDecoder->setFormat(data.data(), data.size(), width, height);
+    });
 }
 
 void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    assertIsCurrent(workQueue());
-    auto decoder = m_decoders.get(identifier);
-    if (!decoder) {
-        ASSERT_IS_TESTING_IPC();
-        return;
-    }
-    if (decoder->decodeFrame(timeStamp, data.data(), data.size()))
-        m_connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+    doDecoderTask(identifier, [&](auto& decoder) {
+        if (decoder.frameRateMonitor)
+            decoder.frameRateMonitor->update();
+        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data.data(), data.size()))
+            m_connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+    });
 }
 
 void LibWebRTCCodecsProxy::setFrameSize(VideoDecoderIdentifier identifier, uint16_t width, uint16_t height) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
+    doDecoderTask(identifier, [&](auto& decoder) {
+        decoder.webrtcDecoder->setFrameSize(width, height);
+    });
+}
+
+void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, Function<void(Decoder&)>&& task)
+{
     assertIsCurrent(workQueue());
-    auto decoder = m_decoders.get(identifier);
-    if (!decoder) {
+    auto iterator = m_decoders.find(identifier);
+    if (iterator == m_decoders.end()) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
-    decoder->setFrameSize(width, height);
+    task(iterator->value);
 }
 
 void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB)

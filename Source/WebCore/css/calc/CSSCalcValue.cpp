@@ -301,14 +301,9 @@ void CSSCalcValue::setPermittedValueRange(ValueRange range)
     m_shouldClampToNonNegative = range != ValueRange::All;
 }
 
-void CSSCalcValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
-    m_expression->collectDirectComputationalDependencies(values);
-}
-
-void CSSCalcValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
-{
-    m_expression->collectDirectRootComputationalDependencies(values);
+    m_expression->collectComputedStyleDependencies(dependencies);
 }
 
 String CSSCalcValue::customCSSText() const

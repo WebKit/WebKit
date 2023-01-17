@@ -28,6 +28,8 @@
 #include "Color.h"
 #include "FilterOperation.h"
 #include "FloatPoint3D.h"
+#include "GraphicsLayerClient.h"
+#include "PlatformCAFilters.h"
 #include "TransformationMatrix.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
@@ -130,6 +132,9 @@ public:
     }
 
     bool isBasicAnimation() const;
+
+    WEBCORE_EXPORT static String makeKeyPath(AnimatedProperty, FilterOperation::Type = FilterOperation::Type::None, int = 0);
+    WEBCORE_EXPORT static bool isValidKeyPath(const String&);
 
 protected:
     PlatformCAAnimation(AnimationType type = Basic)

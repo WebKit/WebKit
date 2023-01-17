@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "LabelableElement.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
 class FormAssociatedCustomElement;
 
-class HTMLMaybeFormAssociatedCustomElement final : public LabelableElement {
+class HTMLMaybeFormAssociatedCustomElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLMaybeFormAssociatedCustomElement);
 public:
     static Ref<HTMLMaybeFormAssociatedCustomElement> create(const QualifiedName& tagName, Document&);
@@ -55,7 +55,7 @@ public:
     bool matchesUserInvalidPseudoClass() const final;
 
     bool supportsFocus() const final;
-    bool supportLabels() const final;
+    bool isLabelable() const final;
     bool isDisabledFormControl() const final;
 
     void setInterfaceIsFormAssociated();
@@ -76,7 +76,7 @@ private:
     void finishParsingChildren() final;
 };
 
-static_assert(sizeof(HTMLMaybeFormAssociatedCustomElement) == sizeof(LabelableElement));
+static_assert(sizeof(HTMLMaybeFormAssociatedCustomElement) == sizeof(HTMLElement));
 
 } // namespace WebCore
 

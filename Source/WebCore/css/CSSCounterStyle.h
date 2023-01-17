@@ -27,6 +27,7 @@
 
 #include "CSSCounterStyleDescriptors.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

@@ -66,8 +66,7 @@ public:
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
     void setPermittedValueRange(ValueRange);
 
-    void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const;
-    void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const;
+    void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
     String customCSSText() const;
     bool equals(const CSSCalcValue&) const;

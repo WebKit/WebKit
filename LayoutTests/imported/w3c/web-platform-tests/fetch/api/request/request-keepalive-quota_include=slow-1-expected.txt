@@ -1,0 +1,3 @@
+
+PASS A Keep-Alive fetch() should return its allocated Quota upon promise resolution.
+

@@ -931,7 +931,7 @@ class TestRunResultsdbpyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunResultsdbpyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=120,
+                        timeout=900,
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/libraries/resultsdbpy/resultsdbpy/run-tests', '--verbose', '--no-selenium', '--fast-tests'],
                         )
@@ -944,7 +944,7 @@ class TestRunResultsdbpyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunResultsdbpyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=120,
+                        timeout=900,
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/libraries/resultsdbpy/resultsdbpy/run-tests', '--verbose', '--no-selenium', '--fast-tests'],
                         )

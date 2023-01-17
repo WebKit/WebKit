@@ -12,8 +12,6 @@
 		1C0F41EF280940650005886D /* HardwareCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0F41ED280940650005886D /* HardwareCapabilities.h */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
 		1C33755F27FA23B8002F1644 /* IsValidToUseWith.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */; };
-		1C5319C027BDC6CC00CD127E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C5319BF27BDC6CC00CD127E /* main.swift */; };
-		1C5319C527BDC72700CD127E /* WebGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7E32716AFBA00A5254D /* WebGPU.framework */; };
 		1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C582FF727E04131009B40F0 /* CommandsMixin.mm */; };
 		1C582FFA27E04131009B40F0 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		1C58301827E16823009B40F0 /* APIConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C58301727E16823009B40F0 /* APIConversions.h */; };
@@ -21,7 +19,6 @@
 		1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */; };
 		1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9D273A426D0095F8D5 /* Buffer.mm */; };
 		1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9F273A426D0095F8D5 /* QuerySet.mm */; };
-		1C5ACABF273A426D0095F8D5 /* SwapChain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA1273A426D0095F8D5 /* SwapChain.mm */; };
 		1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA2273A426D0095F8D5 /* ComputePipeline.mm */; };
 		1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA3273A426D0095F8D5 /* Device.mm */; };
 		1C5ACAC2273A426D0095F8D5 /* RenderPassEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAA4273A426D0095F8D5 /* RenderPassEncoder.mm */; };
@@ -32,7 +29,6 @@
 		1C5ACACC273A426E0095F8D5 /* RenderBundleEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAAE273A426D0095F8D5 /* RenderBundleEncoder.mm */; };
 		1C5ACACE273A426E0095F8D5 /* ShaderModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAB0273A426D0095F8D5 /* ShaderModule.mm */; };
 		1C5ACACF273A426E0095F8D5 /* Texture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAB1273A426D0095F8D5 /* Texture.mm */; };
-		1C5ACAD1273A426E0095F8D5 /* Surface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAB3273A426D0095F8D5 /* Surface.mm */; };
 		1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C5ACAD7273A4D700095F8D5 /* BindGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAD5273A4D700095F8D5 /* BindGroup.h */; };
 		1C5ACADF273A55AF0095F8D5 /* BindGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACADE273A55AF0095F8D5 /* BindGroup.mm */; };
@@ -42,6 +38,8 @@
 		1C5ACAE7273A55EF0095F8D5 /* RenderBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAE6273A55EF0095F8D5 /* RenderBundle.mm */; };
 		1C5ACAE9273A55FD0095F8D5 /* Sampler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAE8273A55FD0095F8D5 /* Sampler.mm */; };
 		1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAEA273A560D0095F8D5 /* TextureView.mm */; };
+		1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */; };
+		1C9F7CE029762F51006B5BE9 /* PresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */; };
 		1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
 		1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7E62716AFBA00A5254D /* WebGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1CEBD7F82716B34400A5254D /* WGSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7F72716B34400A5254D /* WGSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -95,13 +93,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1C5319C727BDC72700CD127E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1CEBD7E22716AFBA00A5254D;
-			remoteInfo = WebGPU;
-		};
 		1CEBD8272716CACC00A5254D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
@@ -112,15 +103,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1C5319BB27BDC6CB00CD127E /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		DD05A35B27BF09B60096EFAB /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -141,9 +123,6 @@
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsValidToUseWith.h; sourceTree = "<group>"; };
-		1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C5319BF27BDC6CC00CD127E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommandLinePlayground.xcconfig; sourceTree = "<group>"; };
 		1C5319CD27BDDD6E00CD127E /* MTLTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLTypes.hpp; sourceTree = "<group>"; };
 		1C5319CE27BDDD6E00CD127E /* MTLResourceStateCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLResourceStateCommandEncoder.hpp; sourceTree = "<group>"; };
 		1C5319CF27BDDD6E00CD127E /* MTLIndirectCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIndirectCommandEncoder.hpp; sourceTree = "<group>"; };
@@ -233,8 +212,6 @@
 		1C582FF827E04131009B40F0 /* CommandsMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandsMixin.h; sourceTree = "<group>"; };
 		1C58301727E16823009B40F0 /* APIConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIConversions.h; sourceTree = "<group>"; };
 		1C5ACA92273A41C20095F8D5 /* Instance.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Instance.mm; sourceTree = "<group>"; };
-		1C5ACA96273A426D0095F8D5 /* Surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Surface.h; sourceTree = "<group>"; };
-		1C5ACA97273A426D0095F8D5 /* SwapChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwapChain.h; sourceTree = "<group>"; };
 		1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPipeline.mm; sourceTree = "<group>"; };
 		1C5ACA99273A426D0095F8D5 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		1C5ACA9A273A426D0095F8D5 /* RenderPassEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderPassEncoder.h; sourceTree = "<group>"; };
@@ -244,7 +221,6 @@
 		1C5ACA9E273A426D0095F8D5 /* CommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandEncoder.h; sourceTree = "<group>"; };
 		1C5ACA9F273A426D0095F8D5 /* QuerySet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuerySet.mm; sourceTree = "<group>"; };
 		1C5ACAA0273A426D0095F8D5 /* Instance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instance.h; sourceTree = "<group>"; };
-		1C5ACAA1273A426D0095F8D5 /* SwapChain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SwapChain.mm; sourceTree = "<group>"; };
 		1C5ACAA2273A426D0095F8D5 /* ComputePipeline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComputePipeline.mm; sourceTree = "<group>"; };
 		1C5ACAA3273A426D0095F8D5 /* Device.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Device.mm; sourceTree = "<group>"; };
 		1C5ACAA4273A426D0095F8D5 /* RenderPassEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPassEncoder.mm; sourceTree = "<group>"; };
@@ -262,7 +238,6 @@
 		1C5ACAB0273A426D0095F8D5 /* ShaderModule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShaderModule.mm; sourceTree = "<group>"; };
 		1C5ACAB1273A426D0095F8D5 /* Texture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Texture.mm; sourceTree = "<group>"; };
 		1C5ACAB2273A426D0095F8D5 /* Adapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adapter.h; sourceTree = "<group>"; };
-		1C5ACAB3273A426D0095F8D5 /* Surface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Surface.mm; sourceTree = "<group>"; };
 		1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUExt.h; sourceTree = "<group>"; };
 		1C5ACAD5273A4D700095F8D5 /* BindGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BindGroup.h; sourceTree = "<group>"; };
 		1C5ACAD8273A4DC10095F8D5 /* BindGroupLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BindGroupLayout.h; sourceTree = "<group>"; };
@@ -278,6 +253,8 @@
 		1C5ACAE6273A55EF0095F8D5 /* RenderBundle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderBundle.mm; sourceTree = "<group>"; };
 		1C5ACAE8273A55FD0095F8D5 /* Sampler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Sampler.mm; sourceTree = "<group>"; };
 		1C5ACAEA273A560D0095F8D5 /* TextureView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureView.mm; sourceTree = "<group>"; };
+		1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContext.mm; sourceTree = "<group>"; };
+		1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PresentationContext.h; sourceTree = "<group>"; };
 		1CAB8D382866D9FD00347F21 /* MTLIOCommandQueue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCommandQueue.hpp; sourceTree = "<group>"; };
 		1CAB8D392866D9FD00347F21 /* MTLIOCompressor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCompressor.hpp; sourceTree = "<group>"; };
 		1CAB8D3A2866D9FD00347F21 /* MTLIOCommandBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCommandBuffer.hpp; sourceTree = "<group>"; };
@@ -351,14 +328,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1C5319BA27BDC6CB00CD127E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1C5319C527BDC72700CD127E /* WebGPU.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1CEBD7E02716AFBA00A5254D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -380,14 +349,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C5319BE27BDC6CB00CD127E /* CommandLinePlayground */ = {
-			isa = PBXGroup;
-			children = (
-				1C5319BF27BDC6CC00CD127E /* main.swift */,
-			);
-			path = CommandLinePlayground;
-			sourceTree = "<group>";
-		};
 		1C5319CB27BDDD6E00CD127E /* metal-cpp */ = {
 			isa = PBXGroup;
 			children = (
@@ -548,7 +509,6 @@
 				1CEBD7F92716B38600A5254D /* Configurations */,
 				1CEBD7F62716B33100A5254D /* WGSL */,
 				1CEBD7E52716AFBA00A5254D /* WebGPU */,
-				1C5319BE27BDC6CB00CD127E /* CommandLinePlayground */,
 				1CEBD7E42716AFBA00A5254D /* Products */,
 				1CEBD8252716CACC00A5254D /* Frameworks */,
 			);
@@ -557,7 +517,6 @@
 		1CEBD7E42716AFBA00A5254D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */,
 				1CEBD7F22716B2CC00A5254D /* libwgsl.a */,
 				1CEBD7E32716AFBA00A5254D /* WebGPU.framework */,
 			);
@@ -601,6 +560,8 @@
 				1C531A2427BDDF5500CD127E /* Metal.cpp */,
 				1C5ACADA273A4E710095F8D5 /* PipelineLayout.h */,
 				1C5ACAE4273A55DD0095F8D5 /* PipelineLayout.mm */,
+				1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */,
+				1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */,
 				1C5ACAAC273A426D0095F8D5 /* QuerySet.h */,
 				1C5ACA9F273A426D0095F8D5 /* QuerySet.mm */,
 				1C5ACA9C273A426D0095F8D5 /* Queue.h */,
@@ -617,10 +578,6 @@
 				1C5ACAE8273A55FD0095F8D5 /* Sampler.mm */,
 				1CEBD80D2716C3D800A5254D /* ShaderModule.h */,
 				1C5ACAB0273A426D0095F8D5 /* ShaderModule.mm */,
-				1C5ACA96273A426D0095F8D5 /* Surface.h */,
-				1C5ACAB3273A426D0095F8D5 /* Surface.mm */,
-				1C5ACA97273A426D0095F8D5 /* SwapChain.h */,
-				1C5ACAA1273A426D0095F8D5 /* SwapChain.mm */,
 				1C5ACA99273A426D0095F8D5 /* Texture.h */,
 				1C5ACAB1273A426D0095F8D5 /* Texture.mm */,
 				1C5ACADD273A4F3D0095F8D5 /* TextureView.h */,
@@ -657,7 +614,6 @@
 			isa = PBXGroup;
 			children = (
 				1CEBD7FA2716B3D500A5254D /* Base.xcconfig */,
-				1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */,
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
@@ -733,6 +689,7 @@
 				1C582FFA27E04131009B40F0 /* CommandsMixin.h in Headers */,
 				1C0F41EF280940650005886D /* HardwareCapabilities.h in Headers */,
 				1C33755F27FA23B8002F1644 /* IsValidToUseWith.h in Headers */,
+				1C9F7CE029762F51006B5BE9 /* PresentationContext.h in Headers */,
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 			);
@@ -786,24 +743,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1C5319BC27BDC6CB00CD127E /* CommandLinePlayground */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1C5319C427BDC6CC00CD127E /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */;
-			buildPhases = (
-				1C5319B927BDC6CB00CD127E /* Sources */,
-				1C5319BA27BDC6CB00CD127E /* Frameworks */,
-				1C5319BB27BDC6CB00CD127E /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1C5319C827BDC72700CD127E /* PBXTargetDependency */,
-			);
-			name = CommandLinePlayground;
-			productName = CommandLinePlayground;
-			productReference = 1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */;
-			productType = "com.apple.product-type.tool";
-		};
 		1CEBD7E22716AFBA00A5254D /* WebGPU */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1CEBD7EA2716AFBA00A5254D /* Build configuration list for PBXNativeTarget "WebGPU" */;
@@ -850,13 +789,9 @@
 		1CEBD7DA2716AFBA00A5254D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1400;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1330;
 				TargetAttributes = {
-					1C5319BC27BDC6CB00CD127E = {
-						CreatedOnToolsVersion = 14.0;
-						LastSwiftMigration = 1330;
-					};
 					1CEBD7E22716AFBA00A5254D = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -880,7 +815,6 @@
 			targets = (
 				1CEBD7E22716AFBA00A5254D /* WebGPU */,
 				1CEBD7F12716B2CC00A5254D /* WGSL */,
-				1C5319BC27BDC6CB00CD127E /* CommandLinePlayground */,
 			);
 		};
 /* End PBXProject section */
@@ -955,14 +889,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1C5319B927BDC6CB00CD127E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1C5319C027BDC6CC00CD127E /* main.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1CEBD7DF2716AFBA00A5254D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -980,6 +906,7 @@
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
 				1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */,
 				1C5ACAE5273A55DD0095F8D5 /* PipelineLayout.mm in Sources */,
+				1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */,
 				1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */,
 				1C5ACACB273A426E0095F8D5 /* Queue.mm in Sources */,
 				1C5ACAE7273A55EF0095F8D5 /* RenderBundle.mm in Sources */,
@@ -988,8 +915,6 @@
 				1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */,
 				1C5ACAE9273A55FD0095F8D5 /* Sampler.mm in Sources */,
 				1C5ACACE273A426E0095F8D5 /* ShaderModule.mm in Sources */,
-				1C5ACAD1273A426E0095F8D5 /* Surface.mm in Sources */,
-				1C5ACABF273A426D0095F8D5 /* SwapChain.mm in Sources */,
 				1C5ACACF273A426E0095F8D5 /* Texture.mm in Sources */,
 				1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */,
 			);
@@ -1012,11 +937,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1C5319C827BDC72700CD127E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1CEBD7E22716AFBA00A5254D /* WebGPU */;
-			targetProxy = 1C5319C727BDC72700CD127E /* PBXContainerItemProxy */;
-		};
 		1CEBD8282716CACC00A5254D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
@@ -1025,49 +945,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1C5319C127BDC6CC00CD127E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		1C5319C227BDC6CC00CD127E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		1C5319C327BDC6CC00CD127E /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				SWIFT_VERSION = 5.0;
-			};
-			name = Production;
-		};
 		1CEBD7E82716AFBA00A5254D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */;
@@ -1134,16 +1011,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1C5319C427BDC6CC00CD127E /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1C5319C127BDC6CC00CD127E /* Debug */,
-				1C5319C227BDC6CC00CD127E /* Release */,
-				1C5319C327BDC6CC00CD127E /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		1CEBD7DD2716AFBA00A5254D /* Build configuration list for PBXProject "WebGPU" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

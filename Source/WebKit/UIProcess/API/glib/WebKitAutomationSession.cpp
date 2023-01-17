@@ -280,8 +280,7 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
         PROP_ID,
         g_param_spec_string(
             "id",
-            _("Identifier"),
-            _("The automation session identifier"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 

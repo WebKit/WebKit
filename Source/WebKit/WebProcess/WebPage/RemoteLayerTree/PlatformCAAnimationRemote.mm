@@ -237,6 +237,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
 PlatformCAAnimationRemote::PlatformCAAnimationRemote(AnimationType type, const String& keyPath)
     : PlatformCAAnimation(type)
 {
+    ASSERT(PlatformCAAnimation::isValidKeyPath(keyPath));
     m_properties.keyPath = keyPath;
     m_properties.animationType = type;
 }
@@ -697,6 +698,11 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
 
 static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const String& key, const PlatformCAAnimationRemote::Properties& properties)
 {
+    if (!PlatformCAAnimation::isValidKeyPath(properties.keyPath)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     [layer addAnimation:createAnimation(layer, layerTreeHost, properties).get() forKey:key];
     [layer setInheritsTiming:NO];
 }

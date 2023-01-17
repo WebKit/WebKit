@@ -136,8 +136,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
     g_object_class_install_property(objectClass,
                                     PROP_FILTER,
                                     g_param_spec_object("filter",
-                                                      _("MIME types filter"),
-                                                      _("The filter currently associated with the request"),
+                                                      nullptr, nullptr,
                                                       GTK_TYPE_FILE_FILTER,
                                                       WEBKIT_PARAM_READABLE));
 #endif
@@ -152,8 +151,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
     g_object_class_install_property(objectClass,
                                     PROP_MIME_TYPES,
                                     g_param_spec_boxed("mime-types",
-                                                      _("MIME types"),
-                                                      _("The list of MIME types associated with the request"),
+                                                      nullptr, nullptr,
                                                       G_TYPE_STRV,
                                                       WEBKIT_PARAM_READABLE));
     /**
@@ -167,8 +165,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
     g_object_class_install_property(objectClass,
                                     PROP_SELECT_MULTIPLE,
                                     g_param_spec_boolean("select-multiple",
-                                                       _("Select multiple files"),
-                                                       _("Whether the file chooser should allow selecting multiple files"),
+                                                       nullptr, nullptr,
                                                        FALSE,
                                                        WEBKIT_PARAM_READABLE));
     /**
@@ -181,8 +178,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
     g_object_class_install_property(objectClass,
                                     PROP_SELECTED_FILES,
                                     g_param_spec_boxed("selected-files",
-                                                      _("Selected files"),
-                                                      _("The list of selected files associated with the request"),
+                                                      nullptr, nullptr,
                                                       G_TYPE_STRV,
                                                       WEBKIT_PARAM_READABLE));
 }

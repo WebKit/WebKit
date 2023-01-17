@@ -177,6 +177,7 @@ public:
             case TypeKind::Void:
             case TypeKind::Func:
             case TypeKind::Struct:
+            case TypeKind::Structref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::I31ref:
@@ -219,6 +220,7 @@ public:
             case TypeKind::Void:
             case TypeKind::Func:
             case TypeKind::Struct:
+            case TypeKind::Structref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::I31ref:

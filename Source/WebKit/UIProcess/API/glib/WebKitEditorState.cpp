@@ -90,8 +90,8 @@ static void webkit_editor_state_class_init(WebKitEditorStateClass* editorStateCl
     sObjProperties[PROP_TYPING_ATTRIBUTES] =
         g_param_spec_uint(
             "typing-attributes",
-            _("Typing Attributes"),
-            _("Flags with the typing attributes"),
+            nullptr,
+            nullptr,
             0, G_MAXUINT, 0,
             WEBKIT_PARAM_READABLE);
 

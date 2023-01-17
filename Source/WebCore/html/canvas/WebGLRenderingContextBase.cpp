@@ -5368,7 +5368,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(const char
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid image");
         return false;
     }
-    if (wouldTaintOrigin(image))
+    if (taintsOrigin(image))
         return Exception { SecurityError };
     return true;
 }
@@ -5379,7 +5379,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(const cha
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no canvas");
         return false;
     }
-    if (wouldTaintOrigin(canvas))
+    if (taintsOrigin(canvas))
         return Exception { SecurityError };
     return true;
 }
@@ -5392,7 +5392,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(const char
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no video");
         return false;
     }
-    if (wouldTaintOrigin(video))
+    if (taintsOrigin(video))
         return Exception { SecurityError };
     return true;
 }

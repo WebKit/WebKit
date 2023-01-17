@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "LabelableElement.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ class HTMLLabelElement final : public HTMLElement {
 public:
     static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT RefPtr<LabelableElement> control() const;
+    WEBCORE_EXPORT RefPtr<HTMLElement> control() const;
     WEBCORE_EXPORT HTMLFormElement* form() const;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;

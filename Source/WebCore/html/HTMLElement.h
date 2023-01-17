@@ -96,7 +96,10 @@ public:
     bool willRespondToMouseMoveEvents() const override;
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
+    // Represents "labelable element": https://html.spec.whatwg.org/multipage/forms.html#category-label
     virtual bool isLabelable() const { return false; }
+    WEBCORE_EXPORT RefPtr<NodeList> labels();
+
     virtual FormAssociatedElement* asFormAssociatedElement();
 
     virtual bool isInteractiveContent() const { return false; }

@@ -3340,8 +3340,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     }
     information.identifier = m_lastFocusedElementInformationIdentifier.increment();
 
-    if (is<LabelableElement>(*focusedElement)) {
-        if (auto labels = downcast<LabelableElement>(*focusedElement).labels()) {
+    if (is<HTMLElement>(*focusedElement)) {
+        if (auto labels = downcast<HTMLElement>(*focusedElement).labels()) {
             Vector<Ref<Element>> associatedLabels;
             for (unsigned index = 0; index < labels->length(); ++index) {
                 if (is<Element>(labels->item(index)) && labels->item(index)->renderer())

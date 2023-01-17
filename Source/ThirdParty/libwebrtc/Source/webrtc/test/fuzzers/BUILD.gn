@@ -598,6 +598,10 @@ webrtc_fuzzer_test("rtp_dependency_descriptor_fuzzer") {
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
   ]
+
+  # video_layers_allocation is an rtp header extension and thus can't be longer
+  # than 255 bytes on the wire.
+  libfuzzer_options = [ "max_len=255" ]
 }
 
 webrtc_fuzzer_test("rtp_frame_reference_finder_fuzzer") {

@@ -246,8 +246,7 @@ static void browser_settings_dialog_class_init(BrowserSettingsDialogClass *klass
     g_object_class_install_property(gobjectClass,
                                     PROP_SETTINGS,
                                     g_param_spec_object("settings",
-                                                        "Settings",
-                                                        "The WebKitSettings",
+                                                        NULL, NULL,
                                                         WEBKIT_TYPE_SETTINGS,
                                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 }

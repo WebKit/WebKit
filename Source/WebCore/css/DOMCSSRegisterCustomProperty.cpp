@@ -58,8 +58,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
     if (!descriptor.initialValue.isNull()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
 
-        HashSet<CSSPropertyID> dependencies;
-        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, true /* isInitial */, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
+        auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, tokenizer.tokenRange(), strictCSSParserContext());
 
         if (!dependencies.isEmpty())
             return Exception { SyntaxError, "The given initial value must be computationally independent."_s };

@@ -362,8 +362,7 @@ static void webkit_geolocation_manager_class_init(WebKitGeolocationManagerClass*
     sObjProperties[PROP_ENABLE_HIGH_ACCURACY] =
         g_param_spec_boolean(
             "enable-high-accuracy",
-            _("Enable high accuracy"),
-            _("Whether high accuracy is enabled"),
+            nullptr, nullptr,
             FALSE,
             WEBKIT_PARAM_READABLE);
 

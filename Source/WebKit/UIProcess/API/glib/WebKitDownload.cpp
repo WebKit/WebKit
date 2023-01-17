@@ -165,8 +165,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     sObjProperties[PROP_DESTINATION] =
         g_param_spec_string(
             "destination",
-            _("Destination"),
-            _("The local URI to where the download will be saved"),
+            nullptr, nullptr,
             nullptr,
             WEBKIT_PARAM_READABLE);
 
@@ -178,8 +177,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     sObjProperties[PROP_RESPONSE] =
         g_param_spec_object(
             "response",
-            _("Response"),
-            _("The response of the download"),
+            nullptr, nullptr,
             WEBKIT_TYPE_URI_RESPONSE,
             WEBKIT_PARAM_READABLE);
 
@@ -196,8 +194,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     sObjProperties[PROP_ESTIMATED_PROGRESS] =
         g_param_spec_double(
             "estimated-progress",
-            _("Estimated Progress"),
-            _("Determines the current progress of the download"),
+            nullptr, nullptr,
             0.0, 1.0, 1.0,
             WEBKIT_PARAM_READABLE);
 
@@ -213,8 +210,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     sObjProperties[PROP_ALLOW_OVERWRITE] =
         g_param_spec_boolean(
             "allow-overwrite",
-            _("Allow Overwrite"),
-            _("Whether the destination may be overwritten"),
+            nullptr, nullptr,
             FALSE,
             WEBKIT_PARAM_READWRITE);
 

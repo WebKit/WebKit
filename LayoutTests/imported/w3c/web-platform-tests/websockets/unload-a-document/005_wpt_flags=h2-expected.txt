@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT WebSockets: navigating nested browsing context with a websocket in top-level Test timed out
+Test requires popup blocker disabled
+
+

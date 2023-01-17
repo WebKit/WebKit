@@ -164,8 +164,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
     sObjProperties[PROP_WEB_VIEW] =
         g_param_spec_object(
             "web-view",
-            _("Web View"),
-            _("The web view that will be printed"),
+            nullptr, nullptr,
             WEBKIT_TYPE_WEB_VIEW,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
@@ -177,8 +176,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
     sObjProperties[PROP_PRINT_SETTINGS] =
         g_param_spec_object(
             "print-settings",
-            _("Print Settings"),
-            _("The initial print settings for the print operation"),
+            nullptr, nullptr,
             GTK_TYPE_PRINT_SETTINGS,
             WEBKIT_PARAM_READWRITE);
     /**
@@ -189,8 +187,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
     sObjProperties[PROP_PAGE_SETUP] =
         g_param_spec_object(
             "page-setup",
-            _("Page Setup"),
-            _("The initial page setup for the print operation"),
+            nullptr, nullptr,
             GTK_TYPE_PAGE_SETUP,
             WEBKIT_PARAM_READWRITE);
 

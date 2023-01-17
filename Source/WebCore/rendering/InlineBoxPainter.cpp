@@ -29,7 +29,6 @@
 #include "BorderPainter.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorLineBox.h"
-#include "LegacyInlineFlowBox.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"

@@ -346,7 +346,7 @@ void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompi
 
 void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
 {
-    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback = WTFMove(callback)](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo);
     });
 }

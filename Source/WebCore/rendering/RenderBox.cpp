@@ -53,7 +53,6 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LegacyInlineElementBox.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PathOperation.h"

@@ -499,6 +499,24 @@ TEST(FrameCadenceAdapterTest, OmitsRefreshAfterFrameDropWithTimelyFrameEntry) {
   Mock::VerifyAndClearExpectations(&callback);
 }
 
+TEST(FrameCadenceAdapterTest, AcceptsUnconfiguredLayerFeedback) {
+  // This is a regression test for bugs.webrtc.org/14417.
+  ZeroHertzFieldTrialEnabler enabler;
+  MockCallback callback;
+  GlobalSimulatedTimeController time_controller(Timestamp::Zero());
+  auto adapter = CreateAdapter(enabler, time_controller.GetClock());
+  adapter->Initialize(&callback);
+  adapter->SetZeroHertzModeEnabled(
+      FrameCadenceAdapterInterface::ZeroHertzModeParams{.num_simulcast_layers =
+                                                            1});
+  constexpr int kMaxFps = 10;
+  adapter->OnConstraintsChanged(VideoTrackSourceConstraints{0, kMaxFps});
+  time_controller.AdvanceTime(TimeDelta::Zero());
+
+  adapter->UpdateLayerQualityConvergence(2, false);
+  adapter->UpdateLayerStatus(2, false);
+}
+
 class FrameCadenceAdapterSimulcastLayersParamTest
     : public ::testing::TestWithParam<int> {
  public:
@@ -514,7 +532,7 @@ class FrameCadenceAdapterSimulcastLayersParamTest
     time_controller_.AdvanceTime(TimeDelta::Zero());
     adapter_->SetZeroHertzModeEnabled(
         FrameCadenceAdapterInterface::ZeroHertzModeParams{});
-    const int num_spatial_layers = GetParam();
+    const size_t num_spatial_layers = GetParam();
     adapter_->SetZeroHertzModeEnabled(
         FrameCadenceAdapterInterface::ZeroHertzModeParams{num_spatial_layers});
   }

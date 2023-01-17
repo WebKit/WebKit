@@ -181,7 +181,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
 
 void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
 {
-    UNUSED_PARAM(color);
+    [m_renderCommandEncoder setBlendColorRed:color.r green:color.g blue:color.b alpha:color.a];
 }
 
 void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)

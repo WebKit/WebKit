@@ -236,16 +236,26 @@ RefPtr<CSSCustomPropertyValue> CSSParser::parseCustomPropertyValueWithVariableRe
     if (!resolvedData)
         return nullptr;
 
-    HashSet<CSSPropertyID> dependencies;
-    CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, false, dependencies, resolvedData->tokens(), valueWithReferences.context());
+    auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, resolvedData->tokens(), valueWithReferences.context());
 
     // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
-    for (auto id : dependencies) {
-        if (builderState.inProgressProperties().get(id)) {
-            builderState.inUnitCycleProperties().set(id);
-            return nullptr;
+    bool hasCycles = false;
+    auto checkForCycles = [&](auto& propertyDependencies) {
+        for (auto property : propertyDependencies) {
+            if (builderState.inProgressProperties().get(property)) {
+                builderState.inUnitCycleProperties().set(property);
+                hasCycles = true;
+            }
         }
-    }
+    };
+
+    checkForCycles(dependencies.properties);
+
+    if (builderState.element() == builderState.document().documentElement())
+        checkForCycles(dependencies.rootProperties);
+
+    if (hasCycles)
+        return nullptr;
 
     return CSSPropertyParser::parseTypedCustomPropertyValue(AtomString { name }, syntax, resolvedData->tokens(), builderState, valueWithReferences.context());
 }

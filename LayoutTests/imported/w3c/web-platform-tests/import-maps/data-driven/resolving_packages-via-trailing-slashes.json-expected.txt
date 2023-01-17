@@ -1,0 +1,39 @@
+CONSOLE MESSAGE: Error: assert_unreached: Invalid message: FetchError Reached unreachable code
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test helper: fetching and sanity checking test JSON: packages-via-trailing-slashes.json
+TIMEOUT Package-like scenarios: package main modules: moment Test timed out
+NOTRUN Package-like scenarios: package main modules: lodash-dot
+NOTRUN Package-like scenarios: package main modules: lodash-dotdot
+NOTRUN Package-like scenarios: package submodules: moment/foo
+NOTRUN Package-like scenarios: package submodules: moment/foo?query
+NOTRUN Package-like scenarios: package submodules: moment/foo#fragment
+NOTRUN Package-like scenarios: package submodules: moment/foo?query#fragment
+NOTRUN Package-like scenarios: package submodules: lodash-dot/foo
+NOTRUN Package-like scenarios: package submodules: lodash-dotdot/foo
+NOTRUN Package-like scenarios: package names that end in a slash should just pass through: moment/
+NOTRUN Package-like scenarios: package modules that are not declared should fail: underscore/
+NOTRUN Package-like scenarios: package modules that are not declared should fail: underscore/foo
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/..
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/../path/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/../207
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/../207/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path//
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/WICG/import-maps/issues/207/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path//WICG/import-maps/issues/207/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/../backtrack
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/../../backtrack
+NOTRUN Package-like scenarios: backtracking via ..: mapped/path/../../../backtrack
+NOTRUN Package-like scenarios: backtracking via ..: moment/../backtrack
+NOTRUN Package-like scenarios: backtracking via ..: moment/..
+NOTRUN Package-like scenarios: backtracking via ..: mapped/non-ascii-1/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/non-ascii-1/../%E3%81%8D%E3%81%A4%E3%81%AD/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/non-ascii-1/../きつね/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/non-ascii-2/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/non-ascii-2/../%E3%81%8D%E3%81%A4%E3%81%AD/
+NOTRUN Package-like scenarios: backtracking via ..: mapped/non-ascii-2/../きつね/
+

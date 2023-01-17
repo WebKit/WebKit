@@ -29,7 +29,7 @@
 #import "APIConversions.h"
 #import "Adapter.h"
 #import "HardwareCapabilities.h"
-#import "Surface.h"
+#import "PresentationContext.h"
 #import <cstring>
 #import <wtf/BlockPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -65,9 +65,9 @@ Instance::Instance()
 
 Instance::~Instance() = default;
 
-Ref<Surface> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
+Ref<PresentationContext> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
 {
-    return Surface::create(descriptor);
+    return PresentationContext::create(descriptor);
 }
 
 void Instance::scheduleWork(WorkItem&& workItem)
@@ -464,6 +464,11 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
     return nullptr;
 }
 
+WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
+{
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(instance).createSurface(*descriptor));
+}
+
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
     WebGPU::fromAPI(instance).processEvents();
@@ -478,7 +483,7 @@ void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterO
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WTFMove(callback)](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+    WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data());
     });
 }

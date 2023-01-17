@@ -59,7 +59,7 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGImageElement(tagName, document));
 }
 
-bool SVGImageElement::hasSingleSecurityOrigin() const
+bool SVGImageElement::renderingTaintsOrigin() const
 {
     const RenderImageResource* resource = nullptr;
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -72,10 +72,10 @@ bool SVGImageElement::hasSingleSecurityOrigin() const
     }
 
     if (!resource || !resource->cachedImage())
-        return true;
+        return false;
 
     auto* image = resource->cachedImage()->image();
-    return !image || image->hasSingleSecurityOrigin();
+    return image && image->renderingTaintsOrigin();
 }
 
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)

@@ -1,0 +1,7 @@
+Note: This test takes 20 seconds to run.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT WebSockets: 20s inactivity after handshake Test timed out
+

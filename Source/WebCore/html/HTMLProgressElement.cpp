@@ -41,7 +41,7 @@ const double HTMLProgressElement::IndeterminatePosition = -1;
 const double HTMLProgressElement::InvalidPosition = -2;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document& document)
-    : LabelableElement(tagName, document)
+    : HTMLElement(tagName, document)
     , m_value(0)
     , m_isDeterminate(false)
 {
@@ -86,7 +86,7 @@ void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomSt
     } else if (name == maxAttr)
         didElementStateChange();
     else
-        LabelableElement::parseAttribute(name, value);
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLProgressElement::didAttachRenderers()

@@ -421,8 +421,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
     sObjProperties[PROP_URI] =
         g_param_spec_string(
             "uri",
-            _("URI"),
-            _("The current active URI of the web page"),
+            nullptr, nullptr,
             0,
             WEBKIT_PARAM_READABLE);
 

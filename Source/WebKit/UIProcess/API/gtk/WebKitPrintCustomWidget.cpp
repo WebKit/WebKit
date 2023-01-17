@@ -115,8 +115,7 @@ static void webkit_print_custom_widget_class_init(WebKitPrintCustomWidgetClass* 
         PROP_WIDGET,
         g_param_spec_object(
             "widget",
-            _("Widget"),
-            _("Widget that will be added to the print dialog."),
+            nullptr, nullptr,
             GTK_TYPE_WIDGET,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
@@ -132,8 +131,7 @@ static void webkit_print_custom_widget_class_init(WebKitPrintCustomWidgetClass* 
         PROP_TITLE,
         g_param_spec_string(
             "title",
-            _("Title"),
-            _("Title of the widget that will be added to the print dialog."),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 

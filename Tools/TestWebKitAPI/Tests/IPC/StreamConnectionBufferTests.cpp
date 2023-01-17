@@ -25,20 +25,109 @@
 
 #include "config.h"
 
-#include "StreamConnectionBuffer.h"
+#include "StreamClientConnectionBuffer.h"
+#include "StreamServerConnectionBuffer.h"
 #include "Test.h"
 
 namespace TestWebKitAPI {
 
 TEST(StreamConnectionBufferTests, CreateWorks)
 {
-    IPC::StreamConnectionBuffer b(8);
+    IPC::StreamClientConnectionBuffer b(8);
     EXPECT_NE(b.data(), nullptr);
     EXPECT_EQ(b.dataSize(), 256u);
-
-    IPC::StreamConnectionBuffer b2(24);
+    {
+        auto server = IPC::StreamServerConnectionBuffer::map(b.createHandle());
+        ASSERT_TRUE(server.has_value());
+        EXPECT_EQ(b.dataSize(), server->dataSize());
+    }
+    IPC::StreamClientConnectionBuffer b2(24);
     EXPECT_NE(b2.data(), nullptr);
     EXPECT_EQ(b2.dataSize(), 16777216u);
+    {
+        auto server = IPC::StreamServerConnectionBuffer::map(b2.createHandle());
+        ASSERT_TRUE(server.has_value());
+        EXPECT_EQ(b2.dataSize(), server->dataSize());
+    }
 }
+
+class StreamConnectionBufferTest : public ::testing::TestWithParam<std::tuple<unsigned>> {
+public:
+    unsigned bufferSizeLog2() const
+    {
+        return std::get<0>(GetParam());
+    }
+
+    void SetUp() override
+    {
+        m_client.emplace(bufferSizeLog2());
+        m_maybeServer = IPC::StreamServerConnectionBuffer::map(m_client->createHandle());
+    }
+
+    IPC::StreamClientConnectionBuffer& client() { return *m_client; }
+    IPC::StreamServerConnectionBuffer& server() { return *m_maybeServer; }
+    bool isValid() const { return m_maybeServer.has_value(); }
+
+protected:
+    static constexpr size_t minimumSize = IPC::StreamConnectionEncoder::minimumMessageSize;
+    std::optional<IPC::StreamClientConnectionBuffer> m_client;
+    std::optional<IPC::StreamServerConnectionBuffer> m_maybeServer;
+};
+
+static void fill(Span<uint8_t> span)
+{
+    for (size_t i = 0; i < span.size(); ++i)
+        span[i] = i;
+}
+
+static void expectFilled(Span<uint8_t> span)
+{
+    size_t reportFailureCount = 5;
+    for (size_t i = 0; i < span.size() && reportFailureCount; ++i) {
+        EXPECT_EQ(static_cast<uint8_t>(i), span[i]);
+        if (span[i] != static_cast<uint8_t>(i))
+            reportFailureCount--;
+    }
+}
+
+TEST_P(StreamConnectionBufferTest, ClientStartsFull)
+{
+    ASSERT_TRUE(isValid());
+    auto span = client().tryAcquire(0_s);
+    ASSERT_TRUE(span.has_value());
+    EXPECT_EQ(span->size(), client().dataSize() - 1);
+}
+
+TEST_P(StreamConnectionBufferTest, ServerStartsEmpty)
+{
+    ASSERT_TRUE(isValid());
+    auto span = server().tryAcquire();
+    EXPECT_FALSE(span.has_value());
+}
+
+TEST_P(StreamConnectionBufferTest, ClientWritesFullVisibleInServer)
+{
+    ASSERT_TRUE(isValid());
+    size_t expectedServerSize;
+    {
+        auto span = client().tryAcquire(0_s);
+        ASSERT_TRUE(span.has_value());
+        EXPECT_EQ(span->size(), client().dataSize() - 1);
+        fill(*span);
+        client().release(span->size());
+        expectedServerSize = span->size();
+
+        span = client().tryAcquire(0_s);
+        ASSERT_FALSE(span.has_value());
+    }
+    auto serverSpan = server().tryAcquire();
+    ASSERT_EQ(expectedServerSize, serverSpan->size());
+    expectFilled(*serverSpan);
+}
+
+INSTANTIATE_TEST_SUITE_P(StreamConnectionBufferSizedTests,
+    StreamConnectionBufferTest,
+    testing::Values(4, 5, 9, 14),
+    TestParametersToStringFormatter());
 
 }

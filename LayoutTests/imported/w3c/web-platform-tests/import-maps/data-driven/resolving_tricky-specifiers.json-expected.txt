@@ -1,0 +1,31 @@
+CONSOLE MESSAGE: Error: assert_unreached: Invalid message: FetchError Reached unreachable code
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test helper: fetching and sanity checking test JSON: tricky-specifiers.json
+TIMEOUT Tricky specifiers: explicitly-mapped specifiers that happen to have a slash: package/withslash Test timed out
+NOTRUN Tricky specifiers: specifier with punctuation: .
+NOTRUN Tricky specifiers: specifier with punctuation: ..
+NOTRUN Tricky specifiers: specifier with punctuation: ..\
+NOTRUN Tricky specifiers: specifier with punctuation: %2E
+NOTRUN Tricky specifiers: specifier with punctuation: %2F
+NOTRUN Tricky specifiers: submodule of something not declared with a trailing slash should fail: not-a-package/foo
+NOTRUN Tricky specifiers: module for which only a trailing-slash version is present should fail: only-slash
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/%E3%81%8D%E3%81%A4%E3%81%AD/
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/%E3%81%8D%E3%81%A4%E3%81%AD/bar
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/%E3%81%8D%E3%81%A4%E3%81%AD/fox/
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/%E3%81%8D%E3%81%A4%E3%81%AD/fox/bar
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/きつね/
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/きつね/bar
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/きつね/fox/
+NOTRUN Tricky specifiers: URL-like specifiers are normalized: https://map.example/きつね/fox/bar
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: %E3%81%8D%E3%81%A4%E3%81%AD/
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: %E3%81%8D%E3%81%A4%E3%81%AD/bar
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: %E3%81%8D%E3%81%A4%E3%81%AD/fox/
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: %E3%81%8D%E3%81%A4%E3%81%AD/fox/bar
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: きつね/
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: きつね/bar
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: きつね/fox/
+NOTRUN Tricky specifiers: Bare specifiers are not normalized: きつね/fox/bar
+
