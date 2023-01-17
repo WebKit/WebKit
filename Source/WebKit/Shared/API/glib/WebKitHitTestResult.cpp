@@ -149,8 +149,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_object_class_install_property(objectClass,
                                     PROP_CONTEXT,
                                     g_param_spec_uint("context",
-                                                      _("Context"),
-                                                      _("Flags with the context of the WebKitHitTestResult"),
+                                                      nullptr, nullptr,
                                                       0, G_MAXUINT, 0,
                                                       paramFlags));
 
@@ -163,8 +162,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_object_class_install_property(objectClass,
                                     PROP_LINK_URI,
                                     g_param_spec_string("link-uri",
-                                                        _("Link URI"),
-                                                        _("The link URI"),
+                                                        nullptr, nullptr,
                                                         0,
                                                         paramFlags));
     /**
@@ -176,8 +174,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_object_class_install_property(objectClass,
                                     PROP_LINK_TITLE,
                                     g_param_spec_string("link-title",
-                                                        _("Link Title"),
-                                                        _("The link title"),
+                                                        nullptr, nullptr,
                                                         0,
                                                         paramFlags));
     /**
@@ -189,8 +186,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_object_class_install_property(objectClass,
                                     PROP_LINK_LABEL,
                                     g_param_spec_string("link-label",
-                                                        _("Link Label"),
-                                                        _("The link label"),
+                                                        nullptr, nullptr,
                                                         0,
                                                         paramFlags));
     /**
@@ -202,8 +198,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_object_class_install_property(objectClass,
                                     PROP_IMAGE_URI,
                                     g_param_spec_string("image-uri",
-                                                        _("Image URI"),
-                                                        _("The image URI"),
+                                                        nullptr, nullptr,
                                                         0,
                                                         paramFlags));
     /**
@@ -215,8 +210,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_object_class_install_property(objectClass,
                                     PROP_MEDIA_URI,
                                     g_param_spec_string("media-uri",
-                                                        _("Media URI"),
-                                                        _("The media URI"),
+                                                        nullptr, nullptr,
                                                         0,
                                                         paramFlags));
 }

@@ -218,27 +218,27 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     /* Allows setting the uri using the 'location' property, which is used
      * for example by gst_element_make_from_uri() */
     g_object_class_install_property(oklass, PROP_LOCATION,
-        g_param_spec_string("location", "location", "Location to read from",
+        g_param_spec_string("location", nullptr, nullptr,
             nullptr, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_RESOLVED_LOCATION,
-        g_param_spec_string("resolved-location", "Resolved location", "The location resolved by the server",
+        g_param_spec_string("resolved-location", nullptr, nullptr,
             nullptr, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_KEEP_ALIVE,
-        g_param_spec_boolean("keep-alive", "keep-alive", "Use HTTP persistent connections",
+        g_param_spec_boolean("keep-alive", nullptr, nullptr,
             FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_EXTRA_HEADERS,
-        g_param_spec_boxed("extra-headers", "Extra Headers", "Extra headers to append to the HTTP request",
+        g_param_spec_boxed("extra-headers", nullptr, nullptr,
             GST_TYPE_STRUCTURE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_COMPRESS,
-        g_param_spec_boolean("compress", "Compress", "Allow compressed content encodings",
+        g_param_spec_boolean("compress", nullptr, nullptr,
             FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_METHOD,
-        g_param_spec_string("method", "method", "The HTTP method to use (default: GET)",
+        g_param_spec_string("method", nullptr, nullptr,
             nullptr, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     eklass->set_context = GST_DEBUG_FUNCPTR(webKitWebSrcSetContext);

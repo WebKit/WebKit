@@ -136,8 +136,7 @@ static void webkit_user_message_class_init(WebKitUserMessageClass* klass)
         PROP_NAME,
         g_param_spec_string(
             "name",
-            _("Name"),
-            _("The user message name"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
@@ -155,8 +154,7 @@ static void webkit_user_message_class_init(WebKitUserMessageClass* klass)
         PROP_PARAMETERS,
         g_param_spec_variant(
             "parameters",
-            _("Parameters"),
-            _("The user message parameters"),
+            nullptr, nullptr,
             G_VARIANT_TYPE_ANY,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
@@ -173,8 +171,7 @@ static void webkit_user_message_class_init(WebKitUserMessageClass* klass)
         PROP_FD_LIST,
         g_param_spec_object(
             "fd-list",
-            _("File Descriptor List"),
-            _("The user message list of file descriptors"),
+            nullptr, nullptr,
             G_TYPE_UNIX_FD_LIST,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }

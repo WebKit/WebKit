@@ -708,19 +708,19 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
     auto srcPadTemplateCaps = createSrcPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));
 
-    g_object_class_install_property(objectClass, PROP_FORMAT, g_param_spec_boxed("format", "Format as caps", "Set the caps of the format to be used.", GST_TYPE_CAPS, WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(objectClass, PROP_FORMAT, g_param_spec_boxed("format", nullptr, nullptr, GST_TYPE_CAPS, WEBKIT_PARAM_READWRITE));
 
-    g_object_class_install_property(objectClass, PROP_ENCODER, g_param_spec_object("encoder", "The actual encoder element", "The encoder element", GST_TYPE_ELEMENT, WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(objectClass, PROP_ENCODER, g_param_spec_object("encoder", nullptr, nullptr, GST_TYPE_ELEMENT, WEBKIT_PARAM_READABLE));
 
-    g_object_class_install_property(objectClass, PROP_BITRATE, g_param_spec_uint("bitrate", "Bitrate", "The bitrate in kbit per second", 0, G_MAXINT, 2048,
+    g_object_class_install_property(objectClass, PROP_BITRATE, g_param_spec_uint("bitrate", nullptr, nullptr, 0, G_MAXINT, 2048,
         static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
 
-    g_object_class_install_property(objectClass, PROP_KEYFRAME_INTERVAL, g_param_spec_uint("keyframe-interval", "Keyframe interval", "The interval between keyframes", 0, G_MAXINT, 0,
+    g_object_class_install_property(objectClass, PROP_KEYFRAME_INTERVAL, g_param_spec_uint("keyframe-interval", nullptr, nullptr, 0, G_MAXINT, 0,
         static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
-    g_object_class_install_property(objectClass, PROP_BITRATE_MODE, g_param_spec_enum("bitrate-mode", "Bitrate mode",
-        "Bitrate mode", VIDEO_ENCODER_TYPE_BITRATE_MODE, CONSTANT_BITRATE_MODE, WEBKIT_PARAM_READWRITE));
-    g_object_class_install_property(objectClass, PROP_LATENCY_MODE, g_param_spec_enum("latency-mode", "Latency mode",
-        "Latency mode", VIDEO_ENCODER_TYPE_LATENCY_MODE, REALTIME_LATENCY_MODE, WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(objectClass, PROP_BITRATE_MODE, g_param_spec_enum("bitrate-mode",
+        nullptr, nullptr, VIDEO_ENCODER_TYPE_BITRATE_MODE, CONSTANT_BITRATE_MODE, WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(objectClass, PROP_LATENCY_MODE, g_param_spec_enum("latency-mode",
+        nullptr, nullptr, VIDEO_ENCODER_TYPE_LATENCY_MODE, REALTIME_LATENCY_MODE, WEBKIT_PARAM_READWRITE));
 }
 
 #undef NUMBER_OF_THREADS

@@ -146,8 +146,7 @@ static void webkit_user_content_filter_store_class_init(WebKitUserContentFilterS
         PROP_PATH,
         g_param_spec_string(
             "path",
-            _("Storage directory path"),
-            _("The directory where user content filters are stored"),
+            nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }

@@ -110,8 +110,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
     sObjProperties[PROP_URI] =
         g_param_spec_string(
             "uri",
-            _("URI"),
-            _("The current active URI of the resource"),
+            nullptr, nullptr,
             nullptr,
             WEBKIT_PARAM_READABLE);
 
@@ -123,8 +122,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
     sObjProperties[PROP_RESPONSE] =
         g_param_spec_object(
             "response",
-            _("Response"),
-            _("The response of the resource"),
+            nullptr, nullptr,
             WEBKIT_TYPE_URI_RESPONSE,
             WEBKIT_PARAM_READABLE);
 

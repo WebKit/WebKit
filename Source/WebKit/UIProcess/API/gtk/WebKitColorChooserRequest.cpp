@@ -130,8 +130,7 @@ static void webkit_color_chooser_request_class_init(WebKitColorChooserRequestCla
      */
     sObjProperties[PROP_RGBA] =
         g_param_spec_boxed("rgba",
-            _("Current RGBA color"),
-            _("The current RGBA color for the request"),
+            nullptr, nullptr,
             GDK_TYPE_RGBA,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 

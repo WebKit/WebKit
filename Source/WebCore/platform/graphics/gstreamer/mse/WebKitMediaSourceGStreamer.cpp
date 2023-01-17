@@ -253,15 +253,15 @@ static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
     eklass->send_event = webKitMediaSrcSendEvent;
     g_object_class_install_property(oklass,
         PROP_N_AUDIO,
-        g_param_spec_int("n-audio", "Number Audio", "Total number of audio streams",
+        g_param_spec_int("n-audio", nullptr, nullptr,
         0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
     g_object_class_install_property(oklass,
         PROP_N_VIDEO,
-        g_param_spec_int("n-video", "Number Video", "Total number of video streams",
+        g_param_spec_int("n-video", nullptr, nullptr,
         0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
     g_object_class_install_property(oklass,
         PROP_N_TEXT,
-        g_param_spec_int("n-text", "Number Text", "Total number of text streams",
+        g_param_spec_int("n-text", nullptr, nullptr,
         0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 }
 

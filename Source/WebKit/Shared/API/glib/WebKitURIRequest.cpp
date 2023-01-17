@@ -95,8 +95,7 @@ static void webkit_uri_request_class_init(WebKitURIRequestClass* requestClass)
     sObjProperties[PROP_URI] =
         g_param_spec_string(
             "uri",
-            _("URI"),
-            _("The URI to which the request will be made."),
+            nullptr, nullptr,
             "about:blank",
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 

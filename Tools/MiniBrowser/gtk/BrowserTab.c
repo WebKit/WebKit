@@ -736,8 +736,7 @@ static void browser_tab_class_init(BrowserTabClass *klass)
         PROP_VIEW,
         g_param_spec_object(
             "view",
-            "View",
-            "The web view of this tab",
+            NULL, NULL,
             WEBKIT_TYPE_WEB_VIEW,
             G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 }

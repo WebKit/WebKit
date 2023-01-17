@@ -309,10 +309,10 @@ static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
     oklass->constructed = webKitAudioSinkConstructed;
 
     g_object_class_install_property(oklass, PROP_VOLUME,
-        g_param_spec_double("volume", "Volume", "The audio volume, 1.0=100%", 0, 10, 1,
+        g_param_spec_double("volume", nullptr, nullptr, 0, 10, 1,
             static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
     g_object_class_install_property(oklass, PROP_MUTE,
-        g_param_spec_boolean("mute", "Mute", "Mute the audio channel without changing the volume", FALSE,
+        g_param_spec_boolean("mute", nullptr, nullptr, FALSE,
             static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     GstElementClass* eklass = GST_ELEMENT_CLASS(klass);
