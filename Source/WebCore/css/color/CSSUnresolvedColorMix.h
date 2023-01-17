@@ -27,6 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "ColorInterpolationMethod.h"
+#include "StyleColor.h"
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

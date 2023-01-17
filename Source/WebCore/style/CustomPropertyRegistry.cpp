@@ -27,6 +27,7 @@
 
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "Document.h"
 #include "StyleBuilder.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"

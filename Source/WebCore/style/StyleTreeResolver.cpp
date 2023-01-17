@@ -48,6 +48,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
+#include "StyleBuilder.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"

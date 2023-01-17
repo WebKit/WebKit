@@ -26,7 +26,10 @@
 #include "config.h"
 #include "CSSCounterStyleDescriptors.h"
 
-#include "StyleProperties.h"
+#include "CSSCounterStyleRule.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSValueList.h"
+#include "Pair.h"
 
 #include <utility>
 

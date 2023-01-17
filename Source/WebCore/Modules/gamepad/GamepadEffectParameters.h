@@ -27,6 +27,8 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <wtf/Seconds.h>
+
 namespace WebCore {
 
 struct GamepadEffectParameters {
