@@ -31,6 +31,7 @@
 #import "GameControllerHapticEngines.h"
 #import "GamepadEffectParameters.h"
 #import "Logging.h"
+#import <cmath>
 
 #import "CoreHapticsSoftLink.h"
 
@@ -38,15 +39,10 @@ namespace WebCore {
 
 static double magnitudeToIntensity(double magnitude)
 {
-    if (magnitude <= 0)
-        return 0;
-
-    // Magnitude is a value in the [0; 1] range. Intensity has the same range but with
-    // GameController, intensities below 0.1 don't register. To address this, we scale
-    // the magnitude to be in the [0.1; 1] range.
-    constexpr double newRange = 0.9;
-    constexpr double newMinimum = 0.1;
-    return (std::min(magnitude, 1.0) * newRange) + newMinimum;
+    // GameController doesn't use the intensity as-is and values below 0.1 would end up
+    // not triggering any gamepad vibration. Per GameController developers, we should
+    // pass sqrt(magnitude) to address this issue.
+    return std::sqrt(std::clamp<double>(magnitude, 0, 1));
 }
 
 std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
