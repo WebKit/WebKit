@@ -31,8 +31,6 @@
 #include "HTMLNames.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorTextBox.h"
-#include "LegacyInlineTextBox.h"
-#include "LegacyRootInlineBox.h"
 #include "RenderInline.h"
 #include "TextUnderlineOffset.h"
 

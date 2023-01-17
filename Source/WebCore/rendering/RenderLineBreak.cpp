@@ -29,8 +29,6 @@
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
-#include "LegacyInlineElementBox.h"
-#include "LegacyRootInlineBox.h"
 #include "LineSelection.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"

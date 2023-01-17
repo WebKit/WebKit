@@ -37,7 +37,6 @@
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
 #include "InlineIteratorTextBox.h"
-#include "LegacyInlineTextBox.h"
 #include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGRoot.h"
