@@ -32,8 +32,6 @@ namespace WebCore {
 
 class GeneratedImage : public Image {
 public:
-    bool hasSingleSecurityOrigin() const override { return true; }
-
     void setContainerSize(const FloatSize& size) override { m_size = size; }
     bool usesContainerSize() const override { return true; }
     bool hasRelativeWidth() const override { return true; }

@@ -161,7 +161,7 @@ static bool taintsOrigin(CachedImage& cachedImage)
     if (image->sourceURL().protocolIsData())
         return false;
 
-    if (!image->hasSingleSecurityOrigin())
+    if (image->renderingTaintsOrigin())
         return true;
 
     if (!cachedImage.isCORSSameOrigin())

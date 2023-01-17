@@ -50,7 +50,7 @@ public:
     bool isSVGImage() const final { return true; }
     FloatSize size(ImageOrientation = ImageOrientation::FromImage) const final { return m_intrinsicSize; }
 
-    bool hasSingleSecurityOrigin() const final;
+    bool renderingTaintsOrigin() const final;
 
     bool hasRelativeWidth() const final;
     bool hasRelativeHeight() const final;

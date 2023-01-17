@@ -35,7 +35,7 @@ public:
 
     virtual ~SVGFEImageElement();
 
-    bool hasSingleSecurityOrigin() const;
+    bool renderingTaintsOrigin() const;
 
     const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio->currentValue(); }
     SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }

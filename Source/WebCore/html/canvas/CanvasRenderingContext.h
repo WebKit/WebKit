@@ -94,16 +94,16 @@ public:
 
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
-    bool wouldTaintOrigin(const CanvasPattern*);
-    bool wouldTaintOrigin(const CanvasBase*);
-    bool wouldTaintOrigin(const HTMLImageElement*);
-    bool wouldTaintOrigin(const HTMLVideoElement*);
-    bool wouldTaintOrigin(const ImageBitmap*);
-    bool wouldTaintOrigin(const URL&);
+    bool taintsOrigin(const CanvasPattern*);
+    bool taintsOrigin(const CanvasBase*);
+    bool taintsOrigin(const HTMLImageElement*);
+    bool taintsOrigin(const HTMLVideoElement*);
+    bool taintsOrigin(const ImageBitmap*);
+    bool taintsOrigin(const URL&);
 
     template<class T> void checkOrigin(const T* arg)
     {
-        if (wouldTaintOrigin(arg))
+        if (taintsOrigin(arg))
             m_canvas.setOriginTainted();
     }
     void checkOrigin(const URL&);

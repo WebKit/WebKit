@@ -104,21 +104,21 @@ DestinationColorSpace CanvasRenderingContext::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const CanvasPattern* pattern)
+bool CanvasRenderingContext::taintsOrigin(const CanvasPattern* pattern)
 {
     if (m_canvas.originClean() && pattern && !pattern->originClean())
         return true;
     return false;
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const CanvasBase* sourceCanvas)
+bool CanvasRenderingContext::taintsOrigin(const CanvasBase* sourceCanvas)
 {
     if (m_canvas.originClean() && sourceCanvas && !sourceCanvas->originClean())
         return true;
     return false;
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
+bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
 {
     if (!element || !m_canvas.originClean())
         return false;
@@ -134,9 +134,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
     if (image->sourceURL().protocolIsData())
         return false;
 
-    // FIXME: SVG image shouldn't taint the canvas if their cross-origin data says not to.
-    // https://bugs.webkit.org/show_bug.cgi?id=248437
-    if (image->isSVGImage() && !image->hasSingleSecurityOrigin())
+    if (image->renderingTaintsOrigin())
         return true;
 
     if (cachedImage->isCORSCrossOrigin())
@@ -148,7 +146,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
     return false;
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)
+bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
 {
 #if ENABLE(VIDEO)
     if (!video || !m_canvas.originClean())
@@ -167,7 +165,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)
     return false;
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const ImageBitmap* imageBitmap)
+bool CanvasRenderingContext::taintsOrigin(const ImageBitmap* imageBitmap)
 {
     if (!imageBitmap || !m_canvas.originClean())
         return false;
@@ -175,7 +173,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const ImageBitmap* imageBitmap)
     return !imageBitmap->originClean();
 }
 
-bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
+bool CanvasRenderingContext::taintsOrigin(const URL& url)
 {
     if (!m_canvas.originClean())
         return false;
@@ -188,7 +186,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
 
 void CanvasRenderingContext::checkOrigin(const URL& url)
 {
-    if (wouldTaintOrigin(url))
+    if (taintsOrigin(url))
         m_canvas.setOriginTainted();
 }
 
