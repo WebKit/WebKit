@@ -168,4 +168,8 @@ PASS ECDSA P-521 with SHA-1 verification failure due to altered plaintext
 PASS ECDSA P-521 with SHA-256 verification failure due to altered plaintext
 PASS ECDSA P-521 with SHA-384 verification failure due to altered plaintext
 PASS ECDSA P-521 with SHA-512 verification failure due to altered plaintext
+PASS The signature was truncated by 1 byte verification
+PASS The signature was made using SHA-512, however verification is being done using SHA-1. verification
+PASS Excess padding verification
+PASS Empty signature verification
 

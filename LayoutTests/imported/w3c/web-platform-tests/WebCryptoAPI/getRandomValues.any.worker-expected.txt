@@ -1,6 +1,31 @@
 
 PASS Float arrays
-PASS Integer array
-PASS Large length
-PASS Null arrays
+PASS DataView
+PASS Integer array: Int8Array
+PASS Large length: Int8Array
+PASS Null arrays: Int8Array
+PASS Integer array: Int16Array
+PASS Large length: Int16Array
+PASS Null arrays: Int16Array
+PASS Integer array: Int32Array
+PASS Large length: Int32Array
+PASS Null arrays: Int32Array
+PASS Integer array: BigInt64Array
+PASS Large length: BigInt64Array
+PASS Null arrays: BigInt64Array
+PASS Integer array: Uint8Array
+PASS Large length: Uint8Array
+PASS Null arrays: Uint8Array
+PASS Integer array: Uint8ClampedArray
+PASS Large length: Uint8ClampedArray
+PASS Null arrays: Uint8ClampedArray
+PASS Integer array: Uint16Array
+PASS Large length: Uint16Array
+PASS Null arrays: Uint16Array
+PASS Integer array: Uint32Array
+PASS Large length: Uint32Array
+PASS Null arrays: Uint32Array
+PASS Integer array: BigUint64Array
+PASS Large length: BigUint64Array
+PASS Null arrays: BigUint64Array
 

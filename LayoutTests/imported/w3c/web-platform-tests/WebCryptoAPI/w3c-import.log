@@ -16,7 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/README.md
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/algorithm-discards-context.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.any.js

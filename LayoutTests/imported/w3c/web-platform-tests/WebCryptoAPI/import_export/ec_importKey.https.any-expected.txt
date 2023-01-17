@@ -1,30 +1,51 @@
 
 PASS Good parameters: P-256 bits (spki, buffer(91), {name: ECDSA, namedCurve: P-256}, true, [])
+FAIL Good parameters: P-256 bits (spki, buffer(59, compressed), {name: ECDSA, namedCurve: P-256}, true, []) assert_true: Round trip works expected true got false
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y), {name: ECDSA, namedCurve: P-256}, true, [])
+PASS Good parameters: P-256 bits (raw, buffer(65), {name: ECDSA, namedCurve: P-256}, true, [])
+NOTRUN Good parameters: P-256 bits (raw, buffer(33, compressed), {name: ECDSA, namedCurve: P-256}, true, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDSA, namedCurve: P-256}, true, [sign])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDSA, namedCurve: P-256}, true, [sign])
 PASS Good parameters: P-256 bits (spki, buffer(91), {name: ECDSA, namedCurve: P-256}, false, [])
+PASS Good parameters: P-256 bits (spki, buffer(59, compressed), {name: ECDSA, namedCurve: P-256}, false, [])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y), {name: ECDSA, namedCurve: P-256}, false, [])
+PASS Good parameters: P-256 bits (raw, buffer(65), {name: ECDSA, namedCurve: P-256}, false, [])
+NOTRUN Good parameters: P-256 bits (raw, buffer(33, compressed), {name: ECDSA, namedCurve: P-256}, false, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDSA, namedCurve: P-256}, false, [sign])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDSA, namedCurve: P-256}, false, [sign])
 PASS Good parameters: P-384 bits (spki, buffer(120), {name: ECDSA, namedCurve: P-384}, true, [])
+FAIL Good parameters: P-384 bits (spki, buffer(72, compressed), {name: ECDSA, namedCurve: P-384}, true, []) assert_true: Round trip works expected true got false
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y), {name: ECDSA, namedCurve: P-384}, true, [])
+PASS Good parameters: P-384 bits (raw, buffer(97), {name: ECDSA, namedCurve: P-384}, true, [])
+NOTRUN Good parameters: P-384 bits (raw, buffer(49, compressed), {name: ECDSA, namedCurve: P-384}, true, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDSA, namedCurve: P-384}, true, [sign])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDSA, namedCurve: P-384}, true, [sign])
 PASS Good parameters: P-384 bits (spki, buffer(120), {name: ECDSA, namedCurve: P-384}, false, [])
+PASS Good parameters: P-384 bits (spki, buffer(72, compressed), {name: ECDSA, namedCurve: P-384}, false, [])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y), {name: ECDSA, namedCurve: P-384}, false, [])
+PASS Good parameters: P-384 bits (raw, buffer(97), {name: ECDSA, namedCurve: P-384}, false, [])
+NOTRUN Good parameters: P-384 bits (raw, buffer(49, compressed), {name: ECDSA, namedCurve: P-384}, false, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDSA, namedCurve: P-384}, false, [sign])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDSA, namedCurve: P-384}, false, [sign])
 PASS Good parameters: P-521 bits (spki, buffer(158), {name: ECDSA, namedCurve: P-521}, true, [])
+FAIL Good parameters: P-521 bits (spki, buffer(90, compressed), {name: ECDSA, namedCurve: P-521}, true, []) assert_true: Round trip works expected true got false
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y), {name: ECDSA, namedCurve: P-521}, true, [])
+PASS Good parameters: P-521 bits (raw, buffer(133), {name: ECDSA, namedCurve: P-521}, true, [])
+NOTRUN Good parameters: P-521 bits (raw, buffer(67, compressed), {name: ECDSA, namedCurve: P-521}, true, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDSA, namedCurve: P-521}, true, [sign])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y, d), {name: ECDSA, namedCurve: P-521}, true, [sign])
 PASS Good parameters: P-521 bits (spki, buffer(158), {name: ECDSA, namedCurve: P-521}, false, [])
+PASS Good parameters: P-521 bits (spki, buffer(90, compressed), {name: ECDSA, namedCurve: P-521}, false, [])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y), {name: ECDSA, namedCurve: P-521}, false, [])
+PASS Good parameters: P-521 bits (raw, buffer(133), {name: ECDSA, namedCurve: P-521}, false, [])
+NOTRUN Good parameters: P-521 bits (raw, buffer(67, compressed), {name: ECDSA, namedCurve: P-521}, false, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDSA, namedCurve: P-521}, false, [sign])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y, d), {name: ECDSA, namedCurve: P-521}, false, [sign])
 PASS Good parameters: P-256 bits (spki, buffer(91), {name: ECDH, namedCurve: P-256}, true, [])
+FAIL Good parameters: P-256 bits (spki, buffer(59, compressed), {name: ECDH, namedCurve: P-256}, true, []) assert_true: Round trip works expected true got false
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y), {name: ECDH, namedCurve: P-256}, true, [])
+PASS Good parameters: P-256 bits (raw, buffer(65), {name: ECDH, namedCurve: P-256}, true, [])
+NOTRUN Good parameters: P-256 bits (raw, buffer(33, compressed), {name: ECDH, namedCurve: P-256}, true, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDH, namedCurve: P-256}, true, [deriveKey])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-256}, true, [deriveKey])
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey])
@@ -32,7 +53,10 @@ PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, n
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDH, namedCurve: P-256}, true, [deriveBits])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-256}, true, [deriveBits])
 PASS Good parameters: P-256 bits (spki, buffer(91), {name: ECDH, namedCurve: P-256}, false, [])
+PASS Good parameters: P-256 bits (spki, buffer(59, compressed), {name: ECDH, namedCurve: P-256}, false, [])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y), {name: ECDH, namedCurve: P-256}, false, [])
+PASS Good parameters: P-256 bits (raw, buffer(65), {name: ECDH, namedCurve: P-256}, false, [])
+NOTRUN Good parameters: P-256 bits (raw, buffer(33, compressed), {name: ECDH, namedCurve: P-256}, false, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDH, namedCurve: P-256}, false, [deriveKey])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-256}, false, [deriveKey])
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey])
@@ -40,7 +64,10 @@ PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, n
 PASS Good parameters: P-256 bits (pkcs8, buffer(138), {name: ECDH, namedCurve: P-256}, false, [deriveBits])
 PASS Good parameters: P-256 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-256}, false, [deriveBits])
 PASS Good parameters: P-384 bits (spki, buffer(120), {name: ECDH, namedCurve: P-384}, true, [])
+FAIL Good parameters: P-384 bits (spki, buffer(72, compressed), {name: ECDH, namedCurve: P-384}, true, []) assert_true: Round trip works expected true got false
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y), {name: ECDH, namedCurve: P-384}, true, [])
+PASS Good parameters: P-384 bits (raw, buffer(97), {name: ECDH, namedCurve: P-384}, true, [])
+NOTRUN Good parameters: P-384 bits (raw, buffer(49, compressed), {name: ECDH, namedCurve: P-384}, true, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDH, namedCurve: P-384}, true, [deriveKey])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-384}, true, [deriveKey])
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey])
@@ -48,7 +75,10 @@ PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, n
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDH, namedCurve: P-384}, true, [deriveBits])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-384}, true, [deriveBits])
 PASS Good parameters: P-384 bits (spki, buffer(120), {name: ECDH, namedCurve: P-384}, false, [])
+PASS Good parameters: P-384 bits (spki, buffer(72, compressed), {name: ECDH, namedCurve: P-384}, false, [])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y), {name: ECDH, namedCurve: P-384}, false, [])
+PASS Good parameters: P-384 bits (raw, buffer(97), {name: ECDH, namedCurve: P-384}, false, [])
+NOTRUN Good parameters: P-384 bits (raw, buffer(49, compressed), {name: ECDH, namedCurve: P-384}, false, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDH, namedCurve: P-384}, false, [deriveKey])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-384}, false, [deriveKey])
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey])
@@ -56,7 +86,10 @@ PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, n
 PASS Good parameters: P-384 bits (pkcs8, buffer(185), {name: ECDH, namedCurve: P-384}, false, [deriveBits])
 PASS Good parameters: P-384 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-384}, false, [deriveBits])
 PASS Good parameters: P-521 bits (spki, buffer(158), {name: ECDH, namedCurve: P-521}, true, [])
+FAIL Good parameters: P-521 bits (spki, buffer(90, compressed), {name: ECDH, namedCurve: P-521}, true, []) assert_true: Round trip works expected true got false
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y), {name: ECDH, namedCurve: P-521}, true, [])
+PASS Good parameters: P-521 bits (raw, buffer(133), {name: ECDH, namedCurve: P-521}, true, [])
+NOTRUN Good parameters: P-521 bits (raw, buffer(67, compressed), {name: ECDH, namedCurve: P-521}, true, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDH, namedCurve: P-521}, true, [deriveKey])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-521}, true, [deriveKey])
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey])
@@ -64,7 +97,10 @@ PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, n
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDH, namedCurve: P-521}, true, [deriveBits])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-521}, true, [deriveBits])
 PASS Good parameters: P-521 bits (spki, buffer(158), {name: ECDH, namedCurve: P-521}, false, [])
+PASS Good parameters: P-521 bits (spki, buffer(90, compressed), {name: ECDH, namedCurve: P-521}, false, [])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y), {name: ECDH, namedCurve: P-521}, false, [])
+PASS Good parameters: P-521 bits (raw, buffer(133), {name: ECDH, namedCurve: P-521}, false, [])
+NOTRUN Good parameters: P-521 bits (raw, buffer(67, compressed), {name: ECDH, namedCurve: P-521}, false, []) Compressed point format not supported: DataError: Data provided to an operation does not meet requirements
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDH, namedCurve: P-521}, false, [deriveKey])
 PASS Good parameters: P-521 bits (jwk, object(kty, crv, x, y, d), {name: ECDH, namedCurve: P-521}, false, [deriveKey])
 PASS Good parameters: P-521 bits (pkcs8, buffer(241), {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey])
