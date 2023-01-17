@@ -196,12 +196,12 @@ TEST(PushAPI, firePushEvent)
 }
 
 @interface FirePushEventDataStoreDelegate : NSObject <_WKWebsiteDataStoreDelegate>
-@property (readwrite, copy) NSDictionary<NSURL *, NSNumber *> *permissions;
+@property (readwrite, copy) NSDictionary<NSString *, NSNumber *> *permissions;
 @property (readonly, copy) _WKNotificationData *mostRecentNotification;
 @end
 
 @implementation FirePushEventDataStoreDelegate
-- (NSDictionary<NSURL *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore
+- (NSDictionary<NSString *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore
 {
     return _permissions;
 }
@@ -235,7 +235,7 @@ TEST(PushAPI, firePushEventDataStoreDelegate)
 
     RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
     delegate.get().permissions = @{
-        [NSURL URLWithString:(NSString *)server.origin()] : @YES
+        (NSString *)server.origin() : @YES
     };
     [configuration websiteDataStore]._delegate = delegate.get();
 
