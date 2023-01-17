@@ -10,7 +10,7 @@ PASS accessibilityController.accessibleElementById("table-1").numberAttributeVal
 PASS accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIARowCount") is 8
 PASS accessibilityController.accessibleElementById("row-header").role is "AXRole: AXRow"
 FAIL accessibilityController.accessibleElementById("header-1").role should be AXRole: AXCell. Was AXRole: AXColumnHeader.
-FAIL accessibilityController.accessibleElementById("header-1").sortDirection should be AXAscendingSortDirection (of type string). Was null (of type object).
+PASS accessibilityController.accessibleElementById("header-1").sortDirection is "AXAscendingSortDirection"
 PASS accessibilityController.accessibleElementById("row-1").role is "AXRole: AXRow"
 PASS accessibilityController.accessibleElementById("cell1").role is "AXRole: AXCell"
 PASS accessibilityController.accessibleElementById("cell1").numberAttributeValue("AXARIARowIndex") is 7
