@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,13 +38,13 @@ class HTMLFormControlElement : public HTMLElement, public ValidatedFormListedEle
 public:
     virtual ~HTMLFormControlElement();
 
-    bool isValidatedFormListedElement() const override { return true; }
-    bool isFormListedElement() const override { return true; }
+    bool isValidatedFormListedElement() const final { return true; }
+    bool isFormListedElement() const final { return true; }
 
-    bool matchesValidPseudoClass() const override { return willValidate() && isValidFormControlElement(); }
-    bool matchesInvalidPseudoClass() const override { return willValidate() && !isValidFormControlElement(); }
+    bool matchesValidPseudoClass() const override { return ValidatedFormListedElement::matchesValidPseudoClass(); }
+    bool matchesInvalidPseudoClass() const override { return ValidatedFormListedElement::matchesInvalidPseudoClass(); }
 
-    bool isDisabledFormControl() const override { return isDisabled(); }
+    bool isDisabledFormControl() const final { return isDisabled(); }
     bool supportsFocus() const override { return !isDisabled(); }
 
     WEBCORE_EXPORT String formEnctype() const;
@@ -121,8 +121,8 @@ protected:
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
 private:
-    void refFormAssociatedElement() const override { ref(); }
-    void derefFormAssociatedElement() const override { deref(); }
+    void refFormAssociatedElement() const final { ref(); }
+    void derefFormAssociatedElement() const final { deref(); }
 
     void runFocusingStepsForAutofocus() final;
     HTMLElement* validationAnchorElement() final { return this; }
