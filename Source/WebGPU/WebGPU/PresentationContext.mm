@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "Surface.h"
+#import "PresentationContext.h"
 
 #import "APIConversions.h"
 #import "Adapter.h"
@@ -45,6 +45,8 @@ enum {
     kIOMapWriteCombineCache = kIOWriteCombineCache << kIOMapCacheShift,
 };
 #endif
+
+namespace WebGPU {
 
 static NSDictionary *optionsFor32BitSurface(int width, int height, unsigned pixelFormat)
 {
@@ -86,43 +88,46 @@ static RetainPtr<IOSurfaceRef> createSurfaceFromDescriptor(const WGPUSurfaceDesc
     return createIOSurface(widthHeight->width, widthHeight->height);
 }
 
-IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface surface)
+Ref<PresentationContext> Device::createSurface(const WGPUSurfaceDescriptor& descriptor)
 {
-    return WebGPU::fromAPI(surface).displayBuffer().get();
+    return PresentationContext::create(descriptor);
 }
 
-IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface surface)
+Ref<PresentationContext> Device::createSwapChain(PresentationContext& presentationContext, const WGPUSwapChainDescriptor& descriptor)
 {
-    return WebGPU::fromAPI(surface).drawingBuffer().get();
+    presentationContext.configure(*this, descriptor);
+    return presentationContext;
 }
 
-WGPUSurface wgpuInstanceCreateSurface(WGPUInstance, const WGPUSurfaceDescriptor* descriptor)
-{
-    return WebGPU::releaseToAPI(WebGPU::Surface::create(*descriptor));
-}
-
-namespace WebGPU {
-
-Ref<Surface> Device::createSurface(const WGPUSurfaceDescriptor& descriptor)
-{
-    return Surface::create(descriptor);
-}
-
-Surface::Surface(const WGPUSurfaceDescriptor& descriptor)
+PresentationContext::PresentationContext(const WGPUSurfaceDescriptor& descriptor)
     : m_displayBuffer(createSurfaceFromDescriptor(descriptor))
     , m_drawingBuffer(createSurfaceFromDescriptor(descriptor))
 {
 }
 
-Surface::~Surface() = default;
+PresentationContext::~PresentationContext() = default;
 
-WGPUTextureFormat Surface::getPreferredFormat(const Adapter& adapter)
+WGPUTextureFormat PresentationContext::getPreferredFormat(const Adapter& adapter)
 {
     UNUSED_PARAM(adapter);
     return WGPUTextureFormat_BGRA8Unorm;
 }
 
-RetainPtr<IOSurfaceRef> Surface::nextDrawable()
+void PresentationContext::configure(Device&, const WGPUSwapChainDescriptor&)
+{
+}
+
+void PresentationContext::present()
+{
+    nextDrawable();
+}
+
+TextureView* PresentationContext::getCurrentTextureView()
+{
+    return nullptr;
+}
+
+RetainPtr<IOSurfaceRef> PresentationContext::nextDrawable()
 {
     // FIXME: wait until a buffer is available
     auto nextBuffer = m_drawingBuffer;
@@ -141,7 +146,32 @@ void wgpuSurfaceRelease(WGPUSurface surface)
     WebGPU::fromAPI(surface).deref();
 }
 
+void wgpuSwapChainRelease(WGPUSwapChain swapChain)
+{
+    WebGPU::fromAPI(swapChain).deref();
+}
+
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)
 {
     return WebGPU::fromAPI(surface).getPreferredFormat(WebGPU::fromAPI(adapter));
+}
+
+IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface surface)
+{
+    return WebGPU::fromAPI(surface).displayBuffer().get();
+}
+
+IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface surface)
+{
+    return WebGPU::fromAPI(surface).drawingBuffer().get();
+}
+
+WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
+{
+    return WebGPU::fromAPI(swapChain).getCurrentTextureView();
+}
+
+void wgpuSwapChainPresent(WGPUSwapChain swapChain)
+{
+    WebGPU::fromAPI(swapChain).present();
 }

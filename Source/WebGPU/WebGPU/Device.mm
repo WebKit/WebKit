@@ -33,14 +33,13 @@
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "PipelineLayout.h"
+#import "PresentationContext.h"
 #import "QuerySet.h"
 #import "Queue.h"
 #import "RenderBundleEncoder.h"
 #import "RenderPipeline.h"
 #import "Sampler.h"
 #import "ShaderModule.h"
-#import "Surface.h"
-#import "SwapChain.h"
 #import "Texture.h"
 #import <algorithm>
 #import <notify.h>
@@ -412,7 +411,7 @@ WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShade
 
 WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSwapChain(surface, *descriptor));
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSwapChain(WebGPU::fromAPI(surface), *descriptor));
 }
 
 WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, const WGPUTextureDescriptor* descriptor)

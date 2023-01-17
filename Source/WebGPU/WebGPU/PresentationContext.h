@@ -26,34 +26,48 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
-#import <wtf/MachSendRight.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
+
+struct WGPUSurfaceImpl {
+};
 
 struct WGPUSwapChainImpl {
 };
 
 namespace WebGPU {
 
-class Surface;
+class Adapter;
+class Device;
+class TextureView;
 
-class SwapChain : public WGPUSwapChainImpl, public RefCounted<SwapChain> {
+class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SwapChain> create(WGPUSurface surface, const WGPUSwapChainDescriptor& descriptor)
+    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor& descriptor)
     {
-        return adoptRef(*new SwapChain(surface, descriptor));
+        return adoptRef(*new PresentationContext(descriptor));
     }
 
-    ~SwapChain();
+    ~PresentationContext();
+
+    WGPUTextureFormat getPreferredFormat(const Adapter&);
+
+    void configure(Device&, const WGPUSwapChainDescriptor&);
 
     void present();
+    TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+
+    RetainPtr<IOSurfaceRef> displayBuffer() const { return m_displayBuffer; }
+    RetainPtr<IOSurfaceRef> drawingBuffer() const { return m_drawingBuffer; }
+    RetainPtr<IOSurfaceRef> nextDrawable();
 
 private:
-    SwapChain(WGPUSurface, const WGPUSwapChainDescriptor&);
+    PresentationContext(const WGPUSurfaceDescriptor&);
+    PresentationContext(int, int);
 
-    Ref<Surface> m_surface;
+    RetainPtr<IOSurfaceRef> m_displayBuffer;
     RetainPtr<IOSurfaceRef> m_drawingBuffer;
 };
 
