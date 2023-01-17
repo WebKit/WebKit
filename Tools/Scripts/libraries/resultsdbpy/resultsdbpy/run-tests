@@ -30,6 +30,15 @@ import os
 import sys
 import unittest
 
+module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+tools_dir = os.path.dirname(os.path.dirname(module_dir))
+if os.path.isdir(os.path.join(tools_dir, 'webkitpy')):
+    sys.path.insert(0, tools_dir)
+    import webkitpy
+sys.path.insert(0, module_dir)
+
+import resultsdbpy
+
 from cassandra.cqlengine.management import CQLENG_ALLOW_SCHEMA_MANAGEMENT
 
 def main():

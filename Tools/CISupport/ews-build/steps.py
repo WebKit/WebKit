@@ -2381,7 +2381,7 @@ class RunResultsdbpyTests(shell.ShellCommandNewStyle):
     ]
 
     def __init__(self, **kwargs):
-        super(RunResultsdbpyTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+        super(RunResultsdbpyTests, self).__init__(timeout=15 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
