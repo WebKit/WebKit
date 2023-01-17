@@ -31,7 +31,7 @@
 
 #include "FormController.h"
 #include "FormListedElement.h"
-#include "LabelableElement.h"
+#include "HTMLElement.h"
 #include "ValidationMessage.h"
 
 namespace WebCore {

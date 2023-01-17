@@ -1857,9 +1857,9 @@ bool HTMLInputElement::isEnumeratable() const
     return m_inputType->isEnumeratable();
 }
 
-bool HTMLInputElement::supportLabels() const
+bool HTMLInputElement::isLabelable() const
 {
-    return m_inputType->supportLabels();
+    return m_inputType->isLabelable();
 }
 
 bool HTMLInputElement::shouldAppearChecked() const

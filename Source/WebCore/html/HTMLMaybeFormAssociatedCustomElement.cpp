@@ -36,7 +36,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMaybeFormAssociatedCustomElement);
 using namespace HTMLNames;
 
 HTMLMaybeFormAssociatedCustomElement::HTMLMaybeFormAssociatedCustomElement(const QualifiedName& tagName, Document& document)
-    : LabelableElement { tagName, document }
+    : HTMLElement { tagName, document }
 {
     ASSERT(Document::validateCustomElementName(tagName.localName()) == CustomElementNameValidationStatus::Valid);
 }
@@ -108,7 +108,7 @@ bool HTMLMaybeFormAssociatedCustomElement::supportsFocus() const
     return isFormAssociatedCustomElement() ? !formAssociatedCustomElementUnsafe().isDisabled() : HTMLElement::supportsFocus();
 }
 
-bool HTMLMaybeFormAssociatedCustomElement::supportLabels() const
+bool HTMLMaybeFormAssociatedCustomElement::isLabelable() const
 {
     return isFormAssociatedCustomElement();
 }

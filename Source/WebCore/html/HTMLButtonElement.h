@@ -62,7 +62,7 @@ private:
     bool appendFormData(DOMFormData&) final;
 
     bool isEnumeratable() const final { return true; }
-    bool supportLabels() const final { return true; }
+    bool isLabelable() const final { return true; }
     bool isInteractiveContent() const final { return true; }
 
     bool isSuccessfulSubmitButton() const final;

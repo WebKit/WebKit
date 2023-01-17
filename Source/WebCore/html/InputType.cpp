@@ -929,7 +929,7 @@ bool InputType::isInteractiveContent() const
     return m_type != Type::Hidden;
 }
 
-bool InputType::supportLabels() const
+bool InputType::isLabelable() const
 {
     return m_type != Type::Hidden;
 }

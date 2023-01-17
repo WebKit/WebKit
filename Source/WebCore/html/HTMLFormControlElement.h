@@ -24,7 +24,7 @@
 #pragma once
 
 #include "Autofill.h"
-#include "LabelableElement.h"
+#include "HTMLElement.h"
 #include "ValidatedFormListedElement.h"
 
 #if ENABLE(AUTOCAPITALIZE)
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class HTMLFormControlElement : public LabelableElement, public ValidatedFormListedElement {
+class HTMLFormControlElement : public HTMLElement, public ValidatedFormListedElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElement);
 public:
     virtual ~HTMLFormControlElement();

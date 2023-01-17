@@ -998,7 +998,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/ImageData.h
     html/ImageDocument.h
     html/InputMode.h
-    html/LabelableElement.h
     html/LinkIconCollector.h
     html/LinkIconType.h
     html/LinkRelAttribute.h

@@ -28,19 +28,19 @@
 
 namespace WebCore {
 
-class LabelableElement;
+class HTMLElement;
 
 class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList> {
     WTF_MAKE_ISO_ALLOCATED(LabelsNodeList);
 public:
-    static Ref<LabelsNodeList> create(LabelableElement&, const AtomString&);
+    static Ref<LabelsNodeList> create(HTMLElement&, const AtomString&);
     virtual ~LabelsNodeList();
 
     bool elementMatches(Element&) const final;
     bool isRootedAtTreeScope() const final { return true; }
 
 private:
-    explicit LabelsNodeList(LabelableElement&);
+    explicit LabelsNodeList(HTMLElement&);
 };
 
 } // namespace WebCore

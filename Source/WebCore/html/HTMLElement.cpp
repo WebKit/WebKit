@@ -67,6 +67,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "ImageOverlay.h"
 #include "JSHTMLElement.h"
+#include "LabelsNodeList.h"
 #include "MediaControlsHost.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -1100,6 +1101,14 @@ bool HTMLElement::canBeActuallyDisabled() const
 bool HTMLElement::isActuallyDisabled() const
 {
     return canBeActuallyDisabled() && isDisabledFormControl();
+}
+
+RefPtr<NodeList> HTMLElement::labels()
+{
+    if (!isLabelable())
+        return nullptr;
+
+    return ensureRareData().ensureNodeLists().addCacheWithAtomName<LabelsNodeList>(*this, starAtom());
 }
 
 #if ENABLE(AUTOCAPITALIZE)

@@ -20,14 +20,14 @@
 
 #pragma once
 
-#include "LabelableElement.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
 class ProgressValueElement;
 class RenderProgress;
 
-class HTMLProgressElement final : public LabelableElement {
+class HTMLProgressElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLProgressElement);
 public:
     static const double IndeterminatePosition;
@@ -48,7 +48,7 @@ private:
     virtual ~HTMLProgressElement();
 
     bool shouldAppearIndeterminate() const final;
-    bool supportLabels() const final { return true; }
+    bool isLabelable() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
