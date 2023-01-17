@@ -1,0 +1,7 @@
+Test requires popup blocker disabled
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT WebSockets: navigating top-level browsing context with closed websocket Test timed out
+

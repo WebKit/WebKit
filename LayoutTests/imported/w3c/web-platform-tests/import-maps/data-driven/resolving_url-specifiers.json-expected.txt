@@ -1,0 +1,31 @@
+CONSOLE MESSAGE: Error: assert_unreached: Invalid message: FetchError Reached unreachable code
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test helper: fetching and sanity checking test JSON: url-specifiers.json
+TIMEOUT URL-like specifiers: Ordinary URL-like specifiers: https://example.com/lib/foo.mjs Test timed out
+NOTRUN URL-like specifiers: Ordinary URL-like specifiers: https://///example.com/lib/foo.mjs
+NOTRUN URL-like specifiers: Ordinary URL-like specifiers: /lib/foo.mjs
+NOTRUN URL-like specifiers: Ordinary URL-like specifiers: https://example.com/app/dotrelative/foo.mjs
+NOTRUN URL-like specifiers: Ordinary URL-like specifiers: ../app/dotrelative/foo.mjs
+NOTRUN URL-like specifiers: Ordinary URL-like specifiers: https://example.com/dotdotrelative/foo.mjs
+NOTRUN URL-like specifiers: Ordinary URL-like specifiers: ../dotdotrelative/foo.mjs
+NOTRUN URL-like specifiers: Import map entries just composed from / and .: https://example.com/
+NOTRUN URL-like specifiers: Import map entries just composed from / and .: /
+NOTRUN URL-like specifiers: Import map entries just composed from / and .: ../
+NOTRUN URL-like specifiers: Import map entries just composed from / and .: https://example.com/app/
+NOTRUN URL-like specifiers: Import map entries just composed from / and .: /app/
+NOTRUN URL-like specifiers: Import map entries just composed from / and .: ../app/
+NOTRUN URL-like specifiers: prefix-matched by keys with trailing slashes: /test/foo.mjs
+NOTRUN URL-like specifiers: prefix-matched by keys with trailing slashes: https://example.com/app/test/foo.mjs
+NOTRUN URL-like specifiers: should use the last entry's address when URL-like specifiers parse to the same absolute URL: /test
+NOTRUN URL-like specifiers: backtracking (relative URLs): /test/..
+NOTRUN URL-like specifiers: backtracking (relative URLs): /test/../backtrack
+NOTRUN URL-like specifiers: backtracking (relative URLs): /test/../../backtrack
+NOTRUN URL-like specifiers: backtracking (relative URLs): /test/../../../backtrack
+NOTRUN URL-like specifiers: backtracking (absolute URLs): https://example.com/test/..
+NOTRUN URL-like specifiers: backtracking (absolute URLs): https://example.com/test/../backtrack
+NOTRUN URL-like specifiers: backtracking (absolute URLs): https://example.com/test/../../backtrack
+NOTRUN URL-like specifiers: backtracking (absolute URLs): https://example.com/test/../../../backtrack
+

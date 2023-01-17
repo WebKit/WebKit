@@ -1,0 +1,4 @@
+
+PASS same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache true and destCache false
+PASS same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache false and destCache true
+

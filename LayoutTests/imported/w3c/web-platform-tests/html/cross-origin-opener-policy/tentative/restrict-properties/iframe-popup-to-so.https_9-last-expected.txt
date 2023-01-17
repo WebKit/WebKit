@@ -1,0 +1,5 @@
+
+PASS COOP: restrict-properties to popup COOP: same-origin via an iframe, with cross origin iframe, cross origin popup with window_open
+PASS COOP: restrict-properties to popup COOP: same-origin via an iframe, with cross origin iframe, cross origin popup with anchor
+PASS COOP: restrict-properties to popup COOP: same-origin via an iframe, with cross origin iframe, cross origin popup with form
+

@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: Error: assert_unreached: Invalid message: FetchError Reached unreachable code
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test helper: fetching and sanity checking test JSON: url-specifiers-schemes.json
+TIMEOUT URL-like specifiers: Non-special vs. special schemes: data:text/javascript,console.log('foo') Test timed out
+NOTRUN URL-like specifiers: Non-special vs. special schemes: data:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: about:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: about:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: blob:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: blob:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: blah:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: blah:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: http:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: http:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: https:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: https:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: ftp:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: ftp:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: file:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: file:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: ws:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: ws:text/
+NOTRUN URL-like specifiers: Non-special vs. special schemes: wss:text/foo
+NOTRUN URL-like specifiers: Non-special vs. special schemes: wss:text/
+

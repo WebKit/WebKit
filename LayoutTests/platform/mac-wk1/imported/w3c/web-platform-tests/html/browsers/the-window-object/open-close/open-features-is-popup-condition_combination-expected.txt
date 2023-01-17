@@ -1,0 +1,16 @@
+
+FAIL "location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to true assert_equals: window.locationbar.visible expected true but got false
+FAIL "location,menubar,resizable,scrollbars,status" should set BarProp visibility to true assert_equals: window.locationbar.visible expected true but got false
+FAIL "toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to true assert_equals: window.locationbar.visible expected true but got false
+FAIL "resizable,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "location=no,menubar=no,resizable,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "location,toolbar,resizable,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "location,toolbar,menubar,scrollbars,status" should set BarProp visibility to true assert_equals: window.locationbar.visible expected true but got false
+FAIL "location,toolbar,menubar,resizable=no,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "location,toolbar,menubar,resizable,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "location,toolbar,menubar,resizable,scrollbars" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "popup=1,location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "popup=yes,location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "popup=true,location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to false assert_equals: window.menubar.visible expected false but got true
+FAIL "popup=0,location,toolbar,menubar,resizable,scrollbars" should set BarProp visibility to true assert_equals: window.locationbar.visible expected true but got false
+

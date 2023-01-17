@@ -1864,8 +1864,10 @@ static NSURL *computeTestURL(NSString *pathOrURLString, NSString **relativeTestP
 {
     *relativeTestPath = nil;
 
-    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"] || [pathOrURLString hasPrefix:@"file://"])
-        return [NSURL URLWithString:pathOrURLString];
+    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"] || [pathOrURLString hasPrefix:@"file://"]) {
+        // Use this instead of [NSURL URLWithString:] to properly handle special characters in the input string.
+        return [NSURL URLWithDataRepresentation:[pathOrURLString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
+    }
 
     NSString *absolutePath = [[[NSURL fileURLWithPath:pathOrURLString] absoluteURL] path];
 

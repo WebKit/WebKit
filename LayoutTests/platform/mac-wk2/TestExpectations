@@ -1190,8 +1190,6 @@ webkit.org/b/230105 [ BigSur+ Debug arm64 ] imported/w3c/web-platform-tests/html
 
 webkit.org/b/230691 [ Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html [ Pass Failure ]
 
-webkit.org/b/232105 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html [ Pass Failure Crash ]
-
 webkit.org/b/230113 [ BigSur+ Debug arm64 ] svg/animations/animate-elem-14-t-drt.html [ Pass Crash ]
 
 # rdar://66806059 (REGRESSION (20A2321a-20A2348b): 4 fast hidpi tests are a flaky image failure)
@@ -1794,7 +1792,6 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ BigSur+ ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
 [ Bigsur+ x86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
 [ Monterey+ Debug x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
-[ Monterey+ Debug x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html [ Pass Failure ]
 [ Ventura+ Debug x86_64 ] webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 [ Ventura Debug x86_64 ] editing/caret/color-span-inside-editable-background.html [ Pass ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]

@@ -1,0 +1,37 @@
+CONSOLE MESSAGE: Error: assert_unreached: Invalid message: FetchError Reached unreachable code
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test helper: fetching and sanity checking test JSON: empty-import-map.json
+TIMEOUT valid relative specifiers: ./foo Test timed out
+NOTRUN valid relative specifiers: ./foo/bar
+NOTRUN valid relative specifiers: ./foo/../bar
+NOTRUN valid relative specifiers: ./foo/../../bar
+NOTRUN valid relative specifiers: ../foo
+NOTRUN valid relative specifiers: ../foo/bar
+NOTRUN valid relative specifiers: ../../../foo/bar
+NOTRUN valid relative specifiers: /foo
+NOTRUN valid relative specifiers: /foo/bar
+NOTRUN valid relative specifiers: /../../foo/bar
+NOTRUN valid relative specifiers: /../foo/../bar
+NOTRUN HTTPS scheme absolute URLs: https://fetch-scheme.net
+NOTRUN HTTPS scheme absolute URLs: https:fetch-scheme.org
+NOTRUN HTTPS scheme absolute URLs: https://fetch%2Dscheme.com/
+NOTRUN HTTPS scheme absolute URLs: https://///fetch-scheme.com///
+NOTRUN valid relative URLs that are invalid as specifiers should fail: invalid-specifier
+NOTRUN valid relative URLs that are invalid as specifiers should fail: \invalid-specifier
+NOTRUN valid relative URLs that are invalid as specifiers should fail: :invalid-specifier
+NOTRUN valid relative URLs that are invalid as specifiers should fail: @invalid-specifier
+NOTRUN valid relative URLs that are invalid as specifiers should fail: %2E/invalid-specifier
+NOTRUN valid relative URLs that are invalid as specifiers should fail: %2E%2E/invalid-specifier
+NOTRUN valid relative URLs that are invalid as specifiers should fail: .%2Finvalid-specifier
+NOTRUN invalid absolute URLs should fail: https://invalid-url.com:demo
+NOTRUN invalid absolute URLs should fail: http://[invalid-url.com]/
+NOTRUN non-HTTPS fetch scheme absolute URLs: about:fetch-scheme
+NOTRUN non-fetch scheme absolute URLs: about:fetch-scheme
+NOTRUN non-fetch scheme absolute URLs: mailto:non-fetch-scheme
+NOTRUN non-fetch scheme absolute URLs: import:non-fetch-scheme
+NOTRUN non-fetch scheme absolute URLs: javascript:non-fetch-scheme
+NOTRUN non-fetch scheme absolute URLs: wss:non-fetch-scheme
+

@@ -2207,8 +2207,6 @@ fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scr
 # Push subscription tests don't work without service worker support.
 http/tests/push-api [ Skip ]
 
-webkit.org/b/236126 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html [ Pass Failure ]
-
 # webkit.org/b/236128 [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures 
 imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html [ Pass Failure ]
@@ -2553,6 +2551,14 @@ http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-me
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 
 webkit.org/b/248493 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ Pass Failure ]
+
+# These tests have been flaky on WK1 since their import.
+imported/w3c/web-platform-tests/websockets/cookies/005.html?wss&wpt_flags=https [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode.html?wss [ Pass Failure ]
 
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] transitions/extra-transition.html [ Pass Failure ]

@@ -1,0 +1,12 @@
+
+PASS Refresh header: "1; ufoo"
+PASS <meta>: "1; \"foo\"bar"
+PASS Refresh header: "1; \"foo\"bar"
+PASS <meta>: "; foo"
+PASS Refresh header: "; foo"
+PASS <meta>: ";foo"
+PASS Refresh header: ";foo"
+PASS <meta>: ", foo"
+PASS Refresh header: ", foo"
+PASS <meta>: ",foo"
+

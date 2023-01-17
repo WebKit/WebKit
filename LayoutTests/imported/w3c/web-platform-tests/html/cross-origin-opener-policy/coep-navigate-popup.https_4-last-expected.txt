@@ -1,0 +1,6 @@
+
+PASS Popup navigating to same-origin with coop unsafe-none/coep
+PASS Popup navigating to same-site with coop unsafe-none/coep
+PASS Popup navigating to same-origin with coop unsafe-none/no coep
+PASS Popup navigating to same-site with coop unsafe-none/no coep
+

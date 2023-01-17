@@ -465,6 +465,10 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/named_targeting.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html?include=css [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=css [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1252.html?include=css [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
@@ -5931,8 +5935,8 @@ imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]
 
-# WPT meta name="variant" is not supported. And iframe 'load' event has a bug.
-imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]
+# These tests have been timing out since their import.
+imported/w3c/web-platform-tests/import-maps/data-driven [ Skip ]
 
 # WebKit2 Only
 fullscreen/fullscreen-enter-bottom-padding-animation.html [ Skip ]
@@ -6168,6 +6172,23 @@ imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Ski
 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.html [ DumpJSConsoleLogInStdErr ]
+
+# These tests crash in debug since their import.
+[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_entities01.html?run_type=write_single [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_html5test-com.html?run_type=write_single [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_plain-text-unsafe.html?run_type=write_single [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests2.html?run_type=write_single [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests24.html?run_type=write_single [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit01.html?run_type=write_single [ Skip ]
+
+# Test has been flaky since its import.
+imported/w3c/web-platform-tests/websockets/constructor/014.html?wss [ Failure Pass ]
+
+# These tests are timing out since their import.
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?indexed [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_self [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_parent [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_top [ Skip ]
 
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]

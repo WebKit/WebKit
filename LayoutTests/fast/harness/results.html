@@ -301,15 +301,21 @@ class Utils
 
     static testPrefix(testName)
     {
-        let parts = Utils.splitExtension(testName);
-        let prefix = parts[0];
-        let remains = parts[2];
-        if (remains) {
-            if (remains.includes('?'))
-                prefix += '_' + remains.split('?')[1]
-            else if (remains.includes('#'))
-                prefix += '_' + remains.split('#')[1]
+        let variant = '';
+        let variantSeparatorIndex = testName.indexOf('?');
+        if (variantSeparatorIndex >= 0) {
+            variant = testName.substring(variantSeparatorIndex + 1);
+            testName = testName.substring(0, variantSeparatorIndex);
         }
+        variantSeparatorIndex = testName.indexOf('#');
+        if (variantSeparatorIndex >= 0) {
+            variant = testName.substring(variantSeparatorIndex + 1);
+            testName = testName.substring(0, variantSeparatorIndex);
+        }
+
+        let prefix = Utils.splitExtension(testName)[0];
+        if (variant.length)
+            prefix += '_' + variant.replace(/[\|\* <>:]/g, '_');
         return prefix;
     }
 

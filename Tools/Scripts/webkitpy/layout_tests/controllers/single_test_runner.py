@@ -222,13 +222,16 @@ class SingleTestRunner(object):
 
         fs.maybe_make_directory(output_dir)
 
-        ext_parts = fs.splitext(self._test_name)
+        output_basename = fs.basename(self._test_name)
+        variant = ''
+        if '?' in output_basename:
+            (output_basename, variant) = output_basename.split('?', 1)
+        if '#' in output_basename:
+            (output_basename, variant) = output_basename.split('#', 1)
 
-        output_basename = fs.basename(ext_parts[0])
-        if len(ext_parts) > 1 and '?' in ext_parts[1]:
-            output_basename += '_' + ext_parts[1].split('?')[1]
-        if len(ext_parts) > 1 and '#' in ext_parts[1]:
-            output_basename += '_' + ext_parts[1].split('#')[1]
+        output_basename = fs.splitext(output_basename)[0]
+        if len(variant):
+            output_basename += "_" + re.sub(r'[|* <>:]', '_', variant)
         output_basename += '-expected' + extension
 
         output_path = fs.join(output_dir, output_basename)
