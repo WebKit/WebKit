@@ -68,6 +68,7 @@ public:
     ~LibWebRTCCodecs();
 
     static void setCallbacks(bool useGPUProcess, bool useRemoteFrames);
+    static void setWebRTCMediaPipelineAdditionalLoggingEnabled(bool);
     static void initializeIfNeeded();
 
     std::optional<VideoCodecType> videoCodecTypeFromWebCodec(const String&);
@@ -203,6 +204,7 @@ private:
     bool m_useGPUProcess { false };
     bool m_useRemoteFrames { false };
     bool m_hasVP9ExtensionSupport { false };
+    bool m_enableAdditionalLogging { false };
 };
 
 } // namespace WebKit

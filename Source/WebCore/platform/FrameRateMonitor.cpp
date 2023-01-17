@@ -42,7 +42,7 @@ void FrameRateMonitor::update()
     if (m_observedFrameRate) {
         auto maxDelay = MaxFrameDelayCount / m_observedFrameRate;
         if ((frameTime - lastFrameTime) > maxDelay)
-            m_lateFrameCallback({ MonotonicTime::fromRawSeconds(frameTime), MonotonicTime::fromRawSeconds(lastFrameTime) });
+            m_lateFrameCallback({ MonotonicTime::fromRawSeconds(frameTime), MonotonicTime::fromRawSeconds(lastFrameTime), m_observedFrameRate, m_frameCount });
     }
     m_observedFrameTimeStamps.append(frameTime);
     m_observedFrameTimeStamps.removeAllMatching([&](auto time) {

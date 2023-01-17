@@ -170,6 +170,8 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& webrtcV
     if (!videoFrame)
         return;
 
+    notifyNewFrame();
+
     setIntrinsicSize(IntSize(width, height));
     videoFrameAvailable(*videoFrame, metadataFromVideoFrame(webrtcVideoFrame));
 }

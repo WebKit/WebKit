@@ -121,7 +121,10 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource(Document& doc
     }
     case cricket::MEDIA_TYPE_VIDEO: {
         rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack { static_cast<webrtc::VideoTrackInterface*>(rtcTrack.get()) };
-        return RealtimeIncomingVideoSource::create(WTFMove(videoTrack), fromStdString(rtcTrack->id()));
+        auto source = RealtimeIncomingVideoSource::create(WTFMove(videoTrack), fromStdString(rtcTrack->id()));
+        if (document.settings().webRTCMediaPipelineAdditionalLoggingEnabled())
+            source->enableFrameRatedMonitoring();
+        return source;
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

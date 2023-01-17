@@ -32,15 +32,18 @@
 namespace WebCore {
 
 class FrameRateMonitor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct LateFrameInfo {
         MonotonicTime frameTime;
         MonotonicTime lastFrameTime;
+        double observedFrameRate { 0 };
+        size_t frameCount { 0 };
     };
     using LateFrameCallback = Function<void(LateFrameInfo)>;
     explicit FrameRateMonitor(LateFrameCallback&&);
 
-    void update();
+    WEBCORE_EXPORT void update();
 
     double observedFrameRate() const { return m_observedFrameRate; }
     size_t frameCount() const { return m_frameCount; }
@@ -49,7 +52,7 @@ private:
     LateFrameCallback m_lateFrameCallback;
     Deque<double, 120> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
-    uint64_t m_frameCount { 0 };
+    size_t m_frameCount { 0 };
 };
 
 inline FrameRateMonitor::FrameRateMonitor(LateFrameCallback&& callback)

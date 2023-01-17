@@ -6733,6 +6733,20 @@ WebRTCH265CodecEnabled:
     WebCore:
       default: false
 
+WebRTCMediaPipelineAdditionalLoggingEnabled:
+  type: bool
+  status: internal
+  condition: USE(LIBWEBRTC)
+  humanReadableName: "WebRTC Media Pipeline Additional Logging"
+  humanReadableDescription: "Enable WebRTC Media Pipeline Additional Logging"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: false
+
 # FIXME: This is not relevant for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool
