@@ -1223,7 +1223,7 @@ std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
             return Atspi::Role::TableRow;
         if (m_coreObject->isMathTableCell())
             return Atspi::Role::TableCell;
-        if (m_coreObject->isMathSubscriptSuperscript() || m_coreObject->isMathMultiscript())
+        if (m_coreObject->isMathUnderOver() || m_coreObject->isMathSubscriptSuperscript() || m_coreObject->isMathMultiscript())
             return Atspi::Role::Section;
         if (m_coreObject->isMathFraction())
             return Atspi::Role::MathFraction;
