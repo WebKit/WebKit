@@ -214,7 +214,7 @@ JSEventListener* EventTarget::attributeEventListener(const AtomString& eventType
             continue;
 
         auto& jsListener = downcast<JSEventListener>(listener);
-        if (jsListener.isAttribute() && &jsListener.isolatedWorld() == &isolatedWorld)
+        if (jsListener.isAttribute() && jsListener.isolatedWorld() == &isolatedWorld)
             return &jsListener;
     }
 
