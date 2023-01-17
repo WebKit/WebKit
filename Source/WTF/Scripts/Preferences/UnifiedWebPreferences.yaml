@@ -1643,16 +1643,16 @@ DateTimeInputsEditableComponentsEnabled:
 
 DeclarativeShadowDOMEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Declarative Shadow DOM"
   humanReadableDescription: "Enable Declarative Shadow DOM"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DeclarativeShadowDOMInDOMParserEnabled:
   type: bool
