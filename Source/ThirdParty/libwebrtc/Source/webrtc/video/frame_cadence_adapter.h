@@ -47,7 +47,7 @@ class FrameCadenceAdapterInterface
 
   struct ZeroHertzModeParams {
     // The number of simulcast layers used in this configuration.
-    int num_simulcast_layers = 0;
+    size_t num_simulcast_layers = 0;
   };
 
   // Callback interface used to inform instance owners.
@@ -106,11 +106,11 @@ class FrameCadenceAdapterInterface
   // Updates quality convergence status for an enabled spatial layer.
   // Convergence means QP has dropped to a low-enough level to warrant ceasing
   // to send identical frames at high frequency.
-  virtual void UpdateLayerQualityConvergence(int spatial_index,
+  virtual void UpdateLayerQualityConvergence(size_t spatial_index,
                                              bool converged) = 0;
 
   // Updates spatial layer enabled status.
-  virtual void UpdateLayerStatus(int spatial_index, bool enabled) = 0;
+  virtual void UpdateLayerStatus(size_t spatial_index, bool enabled) = 0;
 
   // Conditionally requests a refresh frame via
   // Callback::RequestRefreshFrame.

@@ -107,10 +107,11 @@ class ZeroHertzAdapterMode : public AdapterMode {
       const FrameCadenceAdapterInterface::ZeroHertzModeParams& params);
 
   // Updates spatial layer quality convergence status.
-  void UpdateLayerQualityConvergence(int spatial_index, bool quality_converged);
+  void UpdateLayerQualityConvergence(size_t spatial_index,
+                                     bool quality_converged);
 
   // Updates spatial layer enabled status.
-  void UpdateLayerStatus(int spatial_index, bool enabled);
+  void UpdateLayerStatus(size_t spatial_index, bool enabled);
 
   // Adapter overrides.
   void OnFrame(Timestamp post_time,
@@ -232,9 +233,9 @@ class FrameCadenceAdapterImpl : public FrameCadenceAdapterInterface {
       absl::optional<ZeroHertzModeParams> params) override;
   absl::optional<uint32_t> GetInputFrameRateFps() override;
   void UpdateFrameRate() override;
-  void UpdateLayerQualityConvergence(int spatial_index,
+  void UpdateLayerQualityConvergence(size_t spatial_index,
                                      bool quality_converged) override;
-  void UpdateLayerStatus(int spatial_index, bool enabled) override;
+  void UpdateLayerStatus(size_t spatial_index, bool enabled) override;
   void ProcessKeyFrameRequest() override;
 
   // VideoFrameSink overrides.
@@ -323,19 +324,22 @@ void ZeroHertzAdapterMode::ReconfigureParameters(
 }
 
 void ZeroHertzAdapterMode::UpdateLayerQualityConvergence(
-    int spatial_index,
+    size_t spatial_index,
     bool quality_converged) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  RTC_DCHECK_LT(spatial_index, layer_trackers_.size());
   RTC_LOG(LS_INFO) << __func__ << " this " << this << " layer " << spatial_index
                    << " quality has converged: " << quality_converged;
+  if (spatial_index >= layer_trackers_.size())
+    return;
   if (layer_trackers_[spatial_index].quality_converged.has_value())
     layer_trackers_[spatial_index].quality_converged = quality_converged;
 }
 
-void ZeroHertzAdapterMode::UpdateLayerStatus(int spatial_index, bool enabled) {
+void ZeroHertzAdapterMode::UpdateLayerStatus(size_t spatial_index,
+                                             bool enabled) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  RTC_DCHECK_LT(spatial_index, layer_trackers_.size());
+  if (spatial_index >= layer_trackers_.size())
+    return;
   if (enabled) {
     if (!layer_trackers_[spatial_index].quality_converged.has_value()) {
       // Assume quality has not converged until hearing otherwise.
@@ -624,14 +628,14 @@ void FrameCadenceAdapterImpl::UpdateFrameRate() {
 }
 
 void FrameCadenceAdapterImpl::UpdateLayerQualityConvergence(
-    int spatial_index,
+    size_t spatial_index,
     bool quality_converged) {
   if (zero_hertz_adapter_.has_value())
     zero_hertz_adapter_->UpdateLayerQualityConvergence(spatial_index,
                                                        quality_converged);
 }
 
-void FrameCadenceAdapterImpl::UpdateLayerStatus(int spatial_index,
+void FrameCadenceAdapterImpl::UpdateLayerStatus(size_t spatial_index,
                                                 bool enabled) {
   if (zero_hertz_adapter_.has_value())
     zero_hertz_adapter_->UpdateLayerStatus(spatial_index, enabled);

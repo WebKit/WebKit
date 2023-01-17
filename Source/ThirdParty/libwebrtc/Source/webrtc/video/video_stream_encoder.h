@@ -450,12 +450,15 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
 
   const absl::optional<int> vp9_low_tier_core_threshold_;
 
+  // Used to cancel any potentially pending tasks to the worker thread.
+  // Refrenced by tasks running on `encoder_queue_` so need to be destroyed
+  // after stopping that queue. Must be created and destroyed on
+  // `worker_queue_`.
+  ScopedTaskSafety task_safety_;
+
   // Public methods are proxied to the task queues. The queues must be destroyed
   // first to make sure no tasks run that use other members.
   rtc::TaskQueue encoder_queue_;
-
-  // Used to cancel any potentially pending tasks to the worker thread.
-  ScopedTaskSafety task_safety_;
 };
 
 }  // namespace webrtc

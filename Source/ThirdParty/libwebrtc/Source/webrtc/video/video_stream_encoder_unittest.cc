@@ -776,11 +776,11 @@ class MockFrameCadenceAdapter : public FrameCadenceAdapterInterface {
   MOCK_METHOD(void, UpdateFrameRate, (), (override));
   MOCK_METHOD(void,
               UpdateLayerQualityConvergence,
-              (int spatial_index, bool converged),
+              (size_t spatial_index, bool converged),
               (override));
   MOCK_METHOD(void,
               UpdateLayerStatus,
-              (int spatial_index, bool enabled),
+              (size_t spatial_index, bool enabled),
               (override));
   MOCK_METHOD(void, ProcessKeyFrameRequest, (), (override));
 };
@@ -9170,7 +9170,7 @@ TEST(VideoStreamEncoderFrameCadenceTest, ActivatesFrameCadenceOnContentType) {
   EXPECT_CALL(*adapter_ptr, SetZeroHertzModeEnabled(Optional(Field(
                                 &FrameCadenceAdapterInterface::
                                     ZeroHertzModeParams::num_simulcast_layers,
-                                Eq(0)))));
+                                Eq(0u)))));
   VideoEncoderConfig config;
   test::FillEncoderConfiguration(kVideoCodecVP8, 1, &config);
   config.content_type = VideoEncoderConfig::ContentType::kScreen;
@@ -9182,7 +9182,7 @@ TEST(VideoStreamEncoderFrameCadenceTest, ActivatesFrameCadenceOnContentType) {
   EXPECT_CALL(*adapter_ptr, SetZeroHertzModeEnabled(Optional(Field(
                                 &FrameCadenceAdapterInterface::
                                     ZeroHertzModeParams::num_simulcast_layers,
-                                Gt(0)))));
+                                Gt(0u)))));
   PassAFrame(encoder_queue, video_stream_encoder_callback, /*ntp_time_ms=*/1);
   factory.DepleteTaskQueues();
   Mock::VerifyAndClearExpectations(adapter_ptr);

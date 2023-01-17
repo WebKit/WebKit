@@ -29,21 +29,7 @@ using xdg_portal::SetupRequestResponseSignal;
 using xdg_portal::SetupSessionRequestHandlers;
 using xdg_portal::StartSessionRequest;
 using xdg_portal::TearDownSession;
-
-RequestResponse ToRequestResponseFromSignal(uint32_t signal_response) {
-  // See:
-  //  https://docs.flatpak.org/en/latest/portal-api-reference.html#gdbus-signal-org-freedesktop-portal-Request.Response
-  switch (signal_response) {
-    case 0:
-      return RequestResponse::kSuccess;
-    case 1:
-      return RequestResponse::kUserCancelled;
-    case 2:
-      return RequestResponse::kError;
-    default:
-      return RequestResponse::kUnknown;
-  }
-}
+using xdg_portal::RequestResponseFromPortalResponse;
 
 }  // namespace
 
@@ -176,7 +162,13 @@ void ScreenCastPortal::OnSessionRequestResponseSignal(
   that->RegisterSessionClosedSignalHandler(
       OnSessionClosedSignal, parameters, that->connection_,
       that->session_handle_, that->session_closed_signal_id_);
-  that->SourcesRequest();
+
+  // Do not continue if we don't get session_handle back. The call above will
+  // already notify the capturer there is a failure, but we would still continue
+  // to make following request and crash on that.
+  if (!that->session_handle_.empty()) {
+    that->SourcesRequest();
+  }
 }
 
 // static
@@ -357,7 +349,7 @@ void ScreenCastPortal::OnStartRequestResponseSignal(GDBusConnection* connection,
                 response_data.receive());
   if (portal_response || !response_data) {
     RTC_LOG(LS_ERROR) << "Failed to start the screen cast session.";
-    that->OnPortalDone(ToRequestResponseFromSignal(portal_response));
+    that->OnPortalDone(RequestResponseFromPortalResponse(portal_response));
     return;
   }
 

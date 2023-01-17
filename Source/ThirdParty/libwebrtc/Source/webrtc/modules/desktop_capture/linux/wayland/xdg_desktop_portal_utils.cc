@@ -33,6 +33,21 @@ std::string RequestResponseToString(RequestResponse request) {
   }
 }
 
+RequestResponse RequestResponseFromPortalResponse(uint32_t portal_response) {
+  // See:
+  //  https://docs.flatpak.org/en/latest/portal-api-reference.html#gdbus-signal-org-freedesktop-portal-Request.Response
+  switch (portal_response) {
+    case 0:
+      return RequestResponse::kSuccess;
+    case 1:
+      return RequestResponse::kUserCancelled;
+    case 2:
+      return RequestResponse::kError;
+    default:
+      return RequestResponse::kUnknown;
+  }
+}
+
 std::string PrepareSignalHandle(absl::string_view token,
                                 GDBusConnection* connection) {
   Scoped<char> sender(
