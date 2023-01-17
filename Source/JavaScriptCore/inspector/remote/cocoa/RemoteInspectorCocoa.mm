@@ -458,7 +458,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     // Must collect target information on the WebThread, Main, or Worker thread since RemoteTargets are
     // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
 
-    if (!target.allowsInspectionByPolicy())
+    if (!target.inspectable())
         return nil;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);

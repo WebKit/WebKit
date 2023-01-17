@@ -75,10 +75,6 @@
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(REMOTE_INSPECTOR)
-#include <JavaScriptCore/JSRemoteInspector.h>
-#endif
-
 namespace WebCore {
 using namespace JSC;
 
@@ -292,40 +288,22 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 
 void JSDOMGlobalObject::finishCreation(VM& vm)
 {
-#if ENABLE(REMOTE_INSPECTOR)
-    bool inspectionPreviouslyFollowedInternalPolicies = JSRemoteInspectorGetInspectionFollowsInternalPolicies();
-    JSRemoteInspectorSetInspectionFollowsInternalPolicies(false);
-#endif
-
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
     addBuiltinGlobals(vm);
 
     RELEASE_ASSERT(classInfo());
-
-#if ENABLE(REMOTE_INSPECTOR)
-    JSRemoteInspectorSetInspectionFollowsInternalPolicies(inspectionPreviouslyFollowedInternalPolicies);
-#endif
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
-#if ENABLE(REMOTE_INSPECTOR)
-    bool inspectionPreviouslyFollowedInternalPolicies = JSRemoteInspectorGetInspectionFollowsInternalPolicies();
-    JSRemoteInspectorSetInspectionFollowsInternalPolicies(false);
-#endif
-
     Base::finishCreation(vm, thisValue);
     ASSERT(inherits(info()));
 
     addBuiltinGlobals(vm);
 
     RELEASE_ASSERT(classInfo());
-
-#if ENABLE(REMOTE_INSPECTOR)
-    JSRemoteInspectorSetInspectionFollowsInternalPolicies(inspectionPreviouslyFollowedInternalPolicies);
-#endif
 }
 
 ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
