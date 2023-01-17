@@ -134,6 +134,7 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
         return;
     }
     case TypeKind::Arrayref:
+    case TypeKind::Structref:
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:

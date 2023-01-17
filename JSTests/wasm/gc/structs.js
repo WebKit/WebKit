@@ -44,6 +44,13 @@ function testStructDeclaration() {
     )
   `);
 
+  instantiate(`
+    (module
+      (type (struct (field i32)))
+      (func (result structref) (ref.null 0))
+    )
+  `);
+
   /*
    * too many fields
    * (module
@@ -87,6 +94,33 @@ function testStructDeclaration() {
       ),
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't parse at byte 15: number of fields for struct type at position 0 is too big 720896 maximum 10000 (evaluating 'new WebAssembly.Module(buffer)')"
+  );
+
+  // Invalid subtyping for structref.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (type (array i32))
+          (func (result structref) (ref.null 0))
+        )
+      `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (I32, mutable) is not a Structref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Invalid subtyping for structref.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (type (struct))
+          (func (result structref) (ref.null 0))
+          (func (result (ref null 0)) (call 0))
+        )
+      `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Structref is not a (), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 }
 
@@ -651,6 +685,45 @@ function testStructGet() {
       "WebAssembly.Module doesn't validate: struct.get index 3 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
     );
   }
+
+  // Test error message for invalid struct.get index.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (func (result i32) (struct.get 5 0 (ref.null 0)))
+        )
+      `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: struct.get index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Test error message for invalid struct.get index.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (type (func))
+          (func (result i32) (struct.get 0 0 (ref.null 0)))
+        )
+      `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: struct.get: invalid type index 0, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Cannot struct.get from a structref.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (type $s (struct (field i32)))
+          (func (result structref) (ref.null 0))
+          (func (result i32) (struct.get 0 0 (call 0)))
+        )
+      `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: struct.get invalid index: Structref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+  );
 }
 
 function testStructSet() {
@@ -987,6 +1060,18 @@ function testStructSet() {
       "WebAssembly.Module doesn't validate: struct.get index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
     );
   }
+
+  // Test error message for invalid struct.set index.
+  assert.throws(
+    () =>
+      compile(`
+        (module
+          (func (result i32) (struct.set 5 0 (ref.null 0) (i32.const 42)))
+        )
+      `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: struct.set index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
 }
 
 testStructDeclaration();

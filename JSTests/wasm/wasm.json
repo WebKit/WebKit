@@ -17,6 +17,7 @@
         "ref_null":  { "type": "varint7", "value":  -20, "b3type": "B3::Int64",  "width": 64 },
         "ref":       { "type": "varint7", "value":  -21, "b3type": "B3::Int64",  "width": 64 },
         "i31ref":    { "type": "varint7", "value":  -22, "b3type": "B3::Void",   "width": 0 },
+        "structref": { "type": "varint7", "value":  -25, "b3type": "B3::Int64",  "width": 0 },
         "arrayref":  { "type": "varint7", "value":  -26, "b3type": "B3::Int64",  "width": 0 },
         "func":      { "type": "varint7", "value":  -32, "b3type": "B3::Void",   "width": 0 },
         "struct":    { "type": "varint7", "value":  -33, "b3type": "B3::Void",   "width": 0 },

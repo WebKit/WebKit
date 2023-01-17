@@ -364,7 +364,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     TypeIndex typeIndex = 0;
-    if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref || typeKind == TypeKind::I31ref || typeKind == TypeKind::Arrayref)) {
+    if (Options::useWebAssemblyTypedFunctionReferences() && isValidHeapTypeKind(typeKind)) {
         typeIndex = static_cast<TypeIndex>(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
