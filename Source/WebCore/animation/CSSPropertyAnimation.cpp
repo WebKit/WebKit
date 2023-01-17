@@ -4025,40 +4025,30 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderSty
     return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
 }
 
-static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const Document* document, const AtomString& customProperty, const CSSCustomPropertyValue* fromValue, const CSSCustomPropertyValue* toValue)
+static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const Document* document, const AtomString& customProperty, const RenderStyle& fromStyle, const RenderStyle& toStyle)
 {
-    // FIXME: it would be convenient if RenderStyle stored the initialValue
-    // for a custom property that was not explicitly set.
-    auto initialValue = [&]() -> const CSSCustomPropertyValue* {
-        if (document) {
-            if (auto registered = document->customPropertyRegistry().get(customProperty))
-                return registered->initialValue();
-        }
-        return nullptr;
-    };
+    // FIXME: When would there be no document?
+    if (!document)
+        return { };
 
-    if (!!fromValue == !!toValue)
-        return { fromValue, toValue };
-    if (!fromValue)
-        return { initialValue(), toValue };
-    return { fromValue, initialValue() };
+    return {
+        fromStyle.customPropertyValue(customProperty, document->customPropertyRegistry()),
+        toStyle.customPropertyValue(customProperty, document->customPropertyRegistry())
+    };
 }
 
 static void blendCustomProperty(const CSSPropertyBlendingClient& client, const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
 {
     CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, customProperty, iterationCompositeOperation, currentIteration };
 
-    {
-        auto [fromValue, toValue] = customPropertyValuesForBlending(client.document(), customProperty, from.nonInheritedCustomProperties().get(customProperty), to.nonInheritedCustomProperties().get(customProperty));
-        if (fromValue && toValue)
-            destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
-    }
+    auto [fromValue, toValue] = customPropertyValuesForBlending(client.document(), customProperty, from, to);
+    if (!fromValue || !toValue)
+        return;
 
-    {
-        auto [fromValue, toValue] = customPropertyValuesForBlending(client.document(), customProperty, from.inheritedCustomProperties().get(customProperty), to.inheritedCustomProperties().get(customProperty));
-        if (fromValue && toValue)
-            destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
-    }
+    if (client.document()->customPropertyRegistry().isInherited(customProperty))
+        destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
+    else
+        destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
 }
 
 void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, AnimatableProperty property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
@@ -4104,7 +4094,7 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
                 return wrapper->requiresBlendingForAccumulativeIteration(a, b);
             return false;
         }, [&] (const AtomString& customProperty) {
-            auto [from, to] = customPropertyValuesForBlending(client.document(), customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            auto [from, to] = customPropertyValuesForBlending(client.document(), customProperty, a, b);
             if (!from || !to)
                 return false;
 
@@ -4146,7 +4136,7 @@ bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const Re
                 return wrapper->equals(a, b);
             return true;
         }, [&] (const AtomString& customProperty) {
-            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a, b);
             if (!aCustomPropertyValue && !bCustomPropertyValue)
                 return true;
             if (!aCustomPropertyValue || !bCustomPropertyValue)
@@ -4192,7 +4182,7 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property
                 return wrapper->canInterpolate(a, b, CompositeOperation::Replace);
             return true;
         }, [&] (const AtomString& customProperty) {
-            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a.getCustomProperty(customProperty), b.getCustomProperty(customProperty));
+            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a, b);
             if (!aCustomPropertyValue || !bCustomPropertyValue || aCustomPropertyValue == bCustomPropertyValue)
                 return false;
             auto& aVariantValue = aCustomPropertyValue->value();

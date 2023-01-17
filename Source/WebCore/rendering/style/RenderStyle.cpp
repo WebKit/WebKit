@@ -30,6 +30,7 @@
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CursorList.h"
+#include "CustomPropertyRegistry.h"
 #include "FloatRoundedRect.h"
 #include "FontCascade.h"
 #include "FontSelector.h"
@@ -1165,13 +1166,11 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
 
         for (auto& watchPropertiesMap : { propertiesA, propertiesB }) {
             for (auto& name : watchPropertiesMap) {
-                RefPtr<CSSValue> valueA;
-                RefPtr<CSSValue> valueB;
+                RefPtr<const CSSValue> valueA;
+                RefPtr<const CSSValue> valueB;
                 if (isCustomPropertyName(name)) {
-                    if (a.getCustomProperty(name))
-                        valueA = CSSCustomPropertyValue::create(*a.getCustomProperty(name));
-                    if (b.getCustomProperty(name))
-                        valueB = CSSCustomPropertyValue::create(*b.getCustomProperty(name));
+                    valueA = a.customPropertyValueWithoutResolvingInitial(name);
+                    valueB = b.customPropertyValueWithoutResolvingInitial(name);
                 } else {
                     CSSPropertyID propertyID = cssPropertyID(name);
                     if (!propertyID)
@@ -2668,6 +2667,25 @@ void RenderStyle::setNonInheritedCustomPropertyValue(const AtomString& name, Ref
     if (existingValue && existingValue->equals(value.get()))
         return;
     m_rareNonInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value));
+}
+
+const CSSCustomPropertyValue* RenderStyle::customPropertyValue(const AtomString& name, const Style::CustomPropertyRegistry& registry) const
+{
+    if (auto* value = customPropertyValueWithoutResolvingInitial(name))
+        return value;
+
+    // Alternatively we could just initialize the registered initial values to each RenderStyle.
+    auto* registered = registry.get(name);
+    return registered ? registered->initialValue.get() : nullptr;
+}
+
+const CSSCustomPropertyValue* RenderStyle::customPropertyValueWithoutResolvingInitial(const AtomString& name) const
+{
+    for (auto* map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
+        if (auto* value = map->get(name))
+            return value;
+    }
+    return nullptr;
 }
 
 bool RenderStyle::customPropertiesEqual(const RenderStyle& other) const

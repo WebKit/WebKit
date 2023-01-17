@@ -42,6 +42,8 @@ CustomPropertyRegistry::CustomPropertyRegistry(Scope& scope)
 
 const CSSRegisteredCustomProperty* CustomPropertyRegistry::get(const AtomString& name) const
 {
+    ASSERT(isCustomPropertyName(name));
+
     // API wins.
     // https://drafts.css-houdini.org/css-properties-values-api/#determining-registration
     if (auto* property = m_propertiesFromAPI.get(name))
@@ -49,6 +51,13 @@ const CSSRegisteredCustomProperty* CustomPropertyRegistry::get(const AtomString&
 
     return m_propertiesFromStylesheet.get(name);
 }
+
+bool CustomPropertyRegistry::isInherited(const AtomString& name) const
+{
+    auto* registered = get(name);
+    return registered ? registered->inherits : true;
+}
+
 
 bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& property)
 {
