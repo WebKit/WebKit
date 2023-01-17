@@ -438,7 +438,15 @@ void RemoteLayerBackingStore::paintContents()
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
-        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), m_displayListBuffer->context());
+        auto& displayListContext = m_displayListBuffer->context();
+
+#if HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
+        GraphicsContextStateSaver stateSaver(displayListContext);
+        displayListContext.scale(FloatSize(1, -1));
+        displayListContext.translate(0, -m_parameters.size.height());
+#endif
+
+        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
         drawInContext(context);
         return;
     }
