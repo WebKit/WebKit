@@ -483,7 +483,7 @@ void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterO
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WTFMove(callback)](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+    WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data());
     });
 }

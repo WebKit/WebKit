@@ -480,7 +480,7 @@ void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, uint64_t signalValue, WGPUQue
 
 void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback)
 {
-    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) {
+    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPUQueueWorkDoneStatus status) {
         callback(status);
     });
 }

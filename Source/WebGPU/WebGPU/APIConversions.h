@@ -47,6 +47,7 @@
 #import "ShaderModule.h"
 #import "Texture.h"
 #import "TextureView.h"
+#import <wtf/BlockPtr.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebGPU {
@@ -171,6 +172,12 @@ inline TextureView& fromAPI(WGPUTextureView textureView)
 inline String fromAPI(const char* string)
 {
     return String::fromUTF8(string);
+}
+
+template<typename R, typename... Args>
+inline BlockPtr<R (Args...)> fromAPI(R (^ __strong &&block)(Args...))
+{
+    return makeBlockPtr(WTFMove(block));
 }
 
 template <typename T>
