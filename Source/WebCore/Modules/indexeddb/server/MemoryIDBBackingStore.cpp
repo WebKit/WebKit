@@ -310,6 +310,18 @@ IDBError MemoryIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
     return IDBError { };
 }
 
+void MemoryIDBBackingStore::renameObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore, const String& oldName)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::renameObjectStoreForVersionChangeAbort");
+
+    auto identifier = objectStore.info().identifier();
+    auto currentName = objectStore.info().name();
+    m_objectStoresByName.remove(currentName);
+    m_objectStoresByName.set(oldName, &objectStore);
+    m_databaseInfo->renameObjectStore(identifier, oldName);
+    objectStore.rename(oldName);
+}
+
 void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");
