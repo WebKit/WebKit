@@ -93,8 +93,7 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
         auto tokenRange = descriptor.initialValue->tokenRange();
 
         // FIXME: This parses twice.
-        HashSet<CSSPropertyID> dependencies;
-        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, true /* isInitial */, dependencies, tokenRange, strictCSSParserContext());
+        auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, tokenRange, strictCSSParserContext());
         if (!dependencies.isEmpty())
             return nullptr;
 

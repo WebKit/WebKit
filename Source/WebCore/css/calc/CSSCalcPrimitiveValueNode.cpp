@@ -201,14 +201,9 @@ double CSSCalcPrimitiveValueNode::computeLengthPx(const CSSToLengthConversionDat
     return 0;
 }
 
-void CSSCalcPrimitiveValueNode::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcPrimitiveValueNode::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
-    m_value->collectDirectComputationalDependencies(values);
-}
-
-void CSSCalcPrimitiveValueNode::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
-{
-    m_value->collectDirectRootComputationalDependencies(values);
+    m_value->collectComputedStyleDependencies(dependencies);
 }
 
 bool CSSCalcPrimitiveValueNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const

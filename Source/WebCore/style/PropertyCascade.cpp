@@ -272,11 +272,10 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
 
     // Check for 'em' units and similar property dependencies.
     if (m_animationLayer->hasFontSize || m_animationLayer->hasLineHeight) {
-        HashSet<CSSPropertyID> dependencies;
-        property.value()->collectDirectComputationalDependencies(dependencies);
-        if (m_animationLayer->hasFontSize && dependencies.contains(CSSPropertyFontSize))
+        auto dependencies = property.value()->computedStyleDependencies();
+        if (m_animationLayer->hasFontSize && dependencies.properties.contains(CSSPropertyFontSize))
             return true;
-        if (m_animationLayer->hasLineHeight && dependencies.contains(CSSPropertyLineHeight))
+        if (m_animationLayer->hasLineHeight && dependencies.properties.contains(CSSPropertyLineHeight))
             return true;
     }
 

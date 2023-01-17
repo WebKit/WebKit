@@ -222,28 +222,23 @@ bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>&
     });
 }
 
-void CSSValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+ComputedStyleDependencies CSSValue::computedStyleDependencies() const
 {
-    if (auto* asList = dynamicDowncast<CSSValueList>(*this)) {
-        for (auto& listValue : *asList)
-            listValue->collectDirectComputationalDependencies(values);
-        return;
-    }
-
-    if (is<CSSPrimitiveValue>(*this))
-        downcast<CSSPrimitiveValue>(*this).collectDirectComputationalDependencies(values);
+    ComputedStyleDependencies dependencies;
+    collectComputedStyleDependencies(dependencies);
+    return dependencies;
 }
 
-void CSSValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     if (auto* asList = dynamicDowncast<CSSValueList>(*this)) {
         for (auto& listValue : *asList)
-            listValue->collectDirectRootComputationalDependencies(values);
+            listValue->collectComputedStyleDependencies(dependencies);
         return;
     }
 
     if (is<CSSPrimitiveValue>(*this))
-        downcast<CSSPrimitiveValue>(*this).collectDirectRootComputationalDependencies(values);
+        downcast<CSSPrimitiveValue>(*this).collectComputedStyleDependencies(dependencies);
 }
 
 bool CSSValue::equals(const CSSValue& other) const

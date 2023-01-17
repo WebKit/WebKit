@@ -1072,16 +1072,10 @@ double CSSCalcOperationNode::computeLengthPx(const CSSToLengthConversionData& co
     }));
 }
 
-void CSSCalcOperationNode::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
+void CSSCalcOperationNode::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     for (auto& child : m_children)
-        child->collectDirectComputationalDependencies(values);
-}
-
-void CSSCalcOperationNode::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& values) const
-{
-    for (auto& child : m_children)
-        child->collectDirectRootComputationalDependencies(values);
+        child->collectComputedStyleDependencies(dependencies);
 }
 
 bool CSSCalcOperationNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
