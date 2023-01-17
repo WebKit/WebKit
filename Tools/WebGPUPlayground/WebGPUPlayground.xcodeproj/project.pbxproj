@@ -1,0 +1,368 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1CC7E81229763E3600479E7B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E81129763E3600479E7B /* main.c */; };
+		1CC7E81D29763E4100479E7B /* AppPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E81C29763E4100479E7B /* AppPlaygroundApp.swift */; };
+		1CC7E81F29763E4100479E7B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E81E29763E4100479E7B /* ContentView.swift */; };
+		1CC7E82129763E4200479E7B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CC7E82029763E4200479E7B /* Assets.xcassets */; };
+		1CC7E82529763E4200479E7B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CC7E82429763E4200479E7B /* Preview Assets.xcassets */; };
+		1CC7E8352976531700479E7B /* WebGPUView+AppKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E8342976531700479E7B /* WebGPUView+AppKit.swift */; };
+		1CC7E8372976532500479E7B /* WebGPUView+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E8362976532500479E7B /* WebGPUView+UIKit.swift */; };
+		1CC7E8392976535800479E7B /* WebGPUCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E8382976535800479E7B /* WebGPUCoordinator.m */; };
+		1CC7E83D29765EA200479E7B /* WebGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CC7E83C29765EA200479E7B /* WebGPU.framework */; };
+		1CC7E83E29765EA200479E7B /* WebGPU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1CC7E83C29765EA200479E7B /* WebGPU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1CC7E84029765F0700479E7B /* WebGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CC7E83C29765EA200479E7B /* WebGPU.framework */; };
+		1CC7E84129765F0700479E7B /* WebGPU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1CC7E83C29765EA200479E7B /* WebGPU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1CC7E80D29763E3500479E7B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		1CC7E83F29765EA200479E7B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1CC7E83E29765EA200479E7B /* WebGPU.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1CC7E84229765F0700479E7B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1CC7E84129765F0700479E7B /* WebGPU.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1CC7E80F29763E3500479E7B /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CC7E81129763E3600479E7B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		1CC7E81A29763E4100479E7B /* AppPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CC7E81C29763E4100479E7B /* AppPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPlaygroundApp.swift; sourceTree = "<group>"; };
+		1CC7E81E29763E4100479E7B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1CC7E82029763E4200479E7B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1CC7E82229763E4200479E7B /* AppPlayground.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AppPlayground.entitlements; sourceTree = "<group>"; };
+		1CC7E82429763E4200479E7B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1CC7E82A29763EB500479E7B /* AppPlayground.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppPlayground.xcconfig; sourceTree = "<group>"; };
+		1CC7E82B29763EBD00479E7B /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		1CC7E82C29763EE800479E7B /* CommandLinePlayground.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommandLinePlayground.xcconfig; sourceTree = "<group>"; };
+		1CC7E82E29763F0500479E7B /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = Configurations/Base.xcconfig; sourceTree = SOURCE_ROOT; };
+		1CC7E82F297652C300479E7B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		1CC7E831297652F000479E7B /* AppPlayground-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppPlayground-Bridging-Header.h"; sourceTree = "<group>"; };
+		1CC7E8342976531700479E7B /* WebGPUView+AppKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebGPUView+AppKit.swift"; sourceTree = "<group>"; };
+		1CC7E8362976532500479E7B /* WebGPUView+UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebGPUView+UIKit.swift"; sourceTree = "<group>"; };
+		1CC7E8382976535800479E7B /* WebGPUCoordinator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebGPUCoordinator.m; sourceTree = "<group>"; };
+		1CC7E83A2976536000479E7B /* WebGPUCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCoordinator.h; sourceTree = "<group>"; };
+		1CC7E83C29765EA200479E7B /* WebGPU.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1CC7E80C29763E3500479E7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CC7E83D29765EA200479E7B /* WebGPU.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1CC7E81729763E4100479E7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CC7E84029765F0700479E7B /* WebGPU.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1CC7E7F029763DB900479E7B = {
+			isa = PBXGroup;
+			children = (
+				1CC7E82929763E4E00479E7B /* Configurations */,
+				1CC7E81029763E3600479E7B /* CommandLinePlayground */,
+				1CC7E81B29763E4100479E7B /* AppPlayground */,
+				1CC7E7FA29763DBA00479E7B /* Products */,
+				1CC7E83B29765EA200479E7B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1CC7E7FA29763DBA00479E7B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7E80F29763E3500479E7B /* CommandLinePlayground */,
+				1CC7E81A29763E4100479E7B /* AppPlayground.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1CC7E81029763E3600479E7B /* CommandLinePlayground */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7E81129763E3600479E7B /* main.c */,
+			);
+			path = CommandLinePlayground;
+			sourceTree = "<group>";
+		};
+		1CC7E81B29763E4100479E7B /* AppPlayground */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7E82329763E4200479E7B /* Preview Content */,
+				1CC7E831297652F000479E7B /* AppPlayground-Bridging-Header.h */,
+				1CC7E82229763E4200479E7B /* AppPlayground.entitlements */,
+				1CC7E81C29763E4100479E7B /* AppPlaygroundApp.swift */,
+				1CC7E82029763E4200479E7B /* Assets.xcassets */,
+				1CC7E82F297652C300479E7B /* config.h */,
+				1CC7E81E29763E4100479E7B /* ContentView.swift */,
+				1CC7E83A2976536000479E7B /* WebGPUCoordinator.h */,
+				1CC7E8382976535800479E7B /* WebGPUCoordinator.m */,
+				1CC7E8342976531700479E7B /* WebGPUView+AppKit.swift */,
+				1CC7E8362976532500479E7B /* WebGPUView+UIKit.swift */,
+			);
+			path = AppPlayground;
+			sourceTree = "<group>";
+		};
+		1CC7E82329763E4200479E7B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7E82429763E4200479E7B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		1CC7E82929763E4E00479E7B /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7E82A29763EB500479E7B /* AppPlayground.xcconfig */,
+				1CC7E82E29763F0500479E7B /* Base.xcconfig */,
+				1CC7E82C29763EE800479E7B /* CommandLinePlayground.xcconfig */,
+				1CC7E82B29763EBD00479E7B /* DebugRelease.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		1CC7E83B29765EA200479E7B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7E83C29765EA200479E7B /* WebGPU.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1CC7E80E29763E3500479E7B /* CommandLinePlayground */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CC7E81329763E3600479E7B /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */;
+			buildPhases = (
+				1CC7E80B29763E3500479E7B /* Sources */,
+				1CC7E80C29763E3500479E7B /* Frameworks */,
+				1CC7E80D29763E3500479E7B /* CopyFiles */,
+				1CC7E83F29765EA200479E7B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CommandLinePlayground;
+			productName = CommandLinePlayground;
+			productReference = 1CC7E80F29763E3500479E7B /* CommandLinePlayground */;
+			productType = "com.apple.product-type.tool";
+		};
+		1CC7E81929763E4100479E7B /* AppPlayground */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CC7E82629763E4200479E7B /* Build configuration list for PBXNativeTarget "AppPlayground" */;
+			buildPhases = (
+				1CC7E81629763E4100479E7B /* Sources */,
+				1CC7E81729763E4100479E7B /* Frameworks */,
+				1CC7E81829763E4100479E7B /* Resources */,
+				1CC7E84229765F0700479E7B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppPlayground;
+			productName = AppPlayground;
+			productReference = 1CC7E81A29763E4100479E7B /* AppPlayground.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1CC7E7F129763DB900479E7B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					1CC7E80E29763E3500479E7B = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					1CC7E81929763E4100479E7B = {
+						CreatedOnToolsVersion = 15.0;
+						LastSwiftMigration = 1500;
+					};
+				};
+			};
+			buildConfigurationList = 1CC7E7F429763DB900479E7B /* Build configuration list for PBXProject "WebGPUPlayground" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1CC7E7F029763DB900479E7B;
+			productRefGroup = 1CC7E7FA29763DBA00479E7B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1CC7E80E29763E3500479E7B /* CommandLinePlayground */,
+				1CC7E81929763E4100479E7B /* AppPlayground */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1CC7E81829763E4100479E7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CC7E82129763E4200479E7B /* Assets.xcassets in Resources */,
+				1CC7E82529763E4200479E7B /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1CC7E80B29763E3500479E7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CC7E81229763E3600479E7B /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1CC7E81629763E4100479E7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CC7E81D29763E4100479E7B /* AppPlaygroundApp.swift in Sources */,
+				1CC7E81F29763E4100479E7B /* ContentView.swift in Sources */,
+				1CC7E8392976535800479E7B /* WebGPUCoordinator.m in Sources */,
+				1CC7E8352976531700479E7B /* WebGPUView+AppKit.swift in Sources */,
+				1CC7E8372976532500479E7B /* WebGPUView+UIKit.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1CC7E80629763DBB00479E7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC7E82B29763EBD00479E7B /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1CC7E80729763DBB00479E7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC7E82B29763EBD00479E7B /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1CC7E81429763E3600479E7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC7E82C29763EE800479E7B /* CommandLinePlayground.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1CC7E81529763E3600479E7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC7E82C29763EE800479E7B /* CommandLinePlayground.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1CC7E82729763E4200479E7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC7E82A29763EB500479E7B /* AppPlayground.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "AppPlayground/AppPlayground-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		1CC7E82829763E4200479E7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC7E82A29763EB500479E7B /* AppPlayground.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "AppPlayground/AppPlayground-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1CC7E7F429763DB900479E7B /* Build configuration list for PBXProject "WebGPUPlayground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CC7E80629763DBB00479E7B /* Debug */,
+				1CC7E80729763DBB00479E7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1CC7E81329763E3600479E7B /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CC7E81429763E3600479E7B /* Debug */,
+				1CC7E81529763E3600479E7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1CC7E82629763E4200479E7B /* Build configuration list for PBXNativeTarget "AppPlayground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CC7E82729763E4200479E7B /* Debug */,
+				1CC7E82829763E4200479E7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1CC7E7F129763DB900479E7B /* Project object */;
+}
