@@ -93,8 +93,11 @@ static bool wildcardMatches(StringView host, const String& hostWithWildcard)
 bool ContentSecurityPolicySource::hostMatches(const URL& url) const
 {
     auto host = url.host();
-    if (m_hostHasWildcard)
+    if (m_hostHasWildcard) {
+        if (m_host.isEmpty())
+            return true;
         return wildcardMatches(host, m_host);
+    }
     return equalIgnoringASCIICase(host, m_host);
 }
 
@@ -140,7 +143,7 @@ bool ContentSecurityPolicySource::portMatches(const URL& url) const
 
 bool ContentSecurityPolicySource::isSchemeOnly() const
 {
-    return m_host.isEmpty();
+    return m_host.isEmpty() && !m_hostHasWildcard;
 }
 
 ContentSecurityPolicySource::operator SecurityOriginData() const
