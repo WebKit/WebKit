@@ -351,6 +351,8 @@ interface TestRunner {
     undefined statisticsSetThirdPartyCNAMEDomain(DOMString cnameURLString, object callback);
     undefined loadedSubresourceDomains(object callback);
 
+    undefined reloadFromOrigin();
+
     // Injected bundle form client.
     undefined installTextDidChangeInTextFieldCallback(object callback);
     undefined installTextFieldDidBeginEditingCallback(object callback);

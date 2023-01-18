@@ -42,6 +42,7 @@ class Document;
 class FrameLoader;
 class Page;
 struct ServiceWorkerRegistrationData;
+enum class CachePolicy : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 
 bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
@@ -85,6 +86,7 @@ public:
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
     void updateAcceptEncodingHeader();
+    void updateCacheModeIfNeeded(CachePolicy);
 
     void disableCachingIfNeeded();
 

@@ -154,6 +154,7 @@ public:
     size_t userScriptInjectedCount() const { return m_userScriptInjectedCount; }
 
     void clearResourceLoadStatistics();
+    void reloadFromOrigin();
 
 private:
     InjectedBundle() = default;
