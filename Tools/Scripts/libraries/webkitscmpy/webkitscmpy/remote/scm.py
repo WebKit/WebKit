@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -52,6 +52,9 @@ class Scm(ScmBase):
             raise NotImplementedError()
 
         def comments(self, pull_request):
+            raise NotImplementedError()
+
+        def review(self, pull_request, comment=None, approve=None):
             raise NotImplementedError()
 
 
