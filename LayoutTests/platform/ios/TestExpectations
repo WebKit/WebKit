@@ -3867,6 +3867,9 @@ webkit.org/b/247831 fast/images/avif-heif-container-as-image.html [ ImageOnlyFai
 webkit.org/b/247831 fast/images/avif-image-decoding.html [ Failure ]
 webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
 
+webkit.org/b/250768 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Failure ]
+webkit.org/b/250768 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Failure ]
+
 # Screen Orientation API doesn't support nested frames yet
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]
 
