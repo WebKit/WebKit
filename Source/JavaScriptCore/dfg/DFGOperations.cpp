@@ -413,7 +413,8 @@ JSC_DEFINE_JIT_OPERATION(operationObjectToStringUntyped, JSString*, (JSGlobalObj
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return objectPrototypeToString(globalObject, JSValue::decode(encodedValue));
+    JSValue thisValue = JSValue::decode(encodedValue).toThis(globalObject, ECMAMode::strict());
+    return objectPrototypeToString(globalObject, thisValue);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobalObject* globalObject, JSObject* object))
@@ -422,7 +423,8 @@ JSC_DEFINE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobal
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return objectPrototypeToStringSlow(globalObject, object);
+    JSValue thisValue = JSValue(object).toThis(globalObject, ECMAMode::strict());
+    return objectPrototypeToString(globalObject, thisValue);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject* globalObject, JSObject* constructor, uint32_t inlineCapacity))
