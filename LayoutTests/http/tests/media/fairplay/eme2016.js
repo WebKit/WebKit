@@ -56,10 +56,10 @@ async function startEME(options) {
     return keys;
 }
 
-async function fetchAndAppend(sourceBuffer, url) {
+async function fetchAndAppend(sourceBuffer, url, silent) {
     let buffer = await fetchBuffer(url);
     sourceBuffer.appendBuffer(buffer);
-    await waitFor(sourceBuffer, 'updateend');
+    await waitFor(sourceBuffer, 'updateend', silent);
 }
 
 async function runAndWaitForLicenseRequest(session, callback) {
@@ -79,7 +79,7 @@ async function fetchAndWaitForLicenseRequest(session, sourceBuffer, url) {
 }
 
 async function fetchAppendAndWaitForEncrypted(video, sourceBuffer, url) {
-    let updateEndPromise = fetchAndAppend(sourceBuffer, url);
+    let updateEndPromise = fetchAndAppend(sourceBuffer, url, true);
     let encryptedEvent = await waitFor(video, 'encrypted');
 
     let session = video.mediaKeys.createSession();
@@ -89,7 +89,8 @@ async function fetchAppendAndWaitForEncrypted(video, sourceBuffer, url) {
     await session.update(response);
     consoleWrite('PROMISE: session.update() resolved');
     await updateEndPromise;
-    return session
+    consoleWrite(`EVENT(updateend)`);
+    return session;
 }
 
 async function createBufferAndAppend(mediaSource, type, url) {

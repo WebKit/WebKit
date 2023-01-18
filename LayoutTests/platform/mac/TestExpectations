@@ -2368,8 +2368,6 @@ imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allow
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 
-webkit.org/b/244928 http/tests/media/fairplay/fps-mse-unmuxed-multiple-keys.html [ Pass Failure ]
-
 webkit.org/b/245092 webaudio/offlineaudiocontext-gc.html [ Pass Failure ]
 
 webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
