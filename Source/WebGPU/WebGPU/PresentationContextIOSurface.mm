@@ -27,7 +27,6 @@
 #import "PresentationContextIOSurface.h"
 
 #import "APIConversions.h"
-#import "Adapter.h"
 
 // borrowed from pal/spi/cocoa/IOTypesSPI.h
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)

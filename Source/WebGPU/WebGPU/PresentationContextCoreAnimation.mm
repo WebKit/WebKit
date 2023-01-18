@@ -27,30 +27,100 @@
 #import "PresentationContextCoreAnimation.h"
 
 #import "APIConversions.h"
-#import "Adapter.h"
+#import "Texture.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebGPU {
 
-PresentationContextCoreAnimation::PresentationContextCoreAnimation(const WGPUSurfaceDescriptor&)
+static CAMetalLayer *layerFromSurfaceDescriptor(const WGPUSurfaceDescriptor& descriptor)
+{
+    ASSERT(descriptor.nextInChain->sType == WGPUSType_SurfaceDescriptorFromMetalLayer);
+    ASSERT(!descriptor.nextInChain->next);
+    const auto& metalDescriptor = *reinterpret_cast<const WGPUSurfaceDescriptorFromMetalLayer*>(descriptor.nextInChain);
+    CAMetalLayer *layer = bridge_id_cast(metalDescriptor.layer);
+    return layer;
+}
+
+PresentationContextCoreAnimation::PresentationContextCoreAnimation(const WGPUSurfaceDescriptor& descriptor)
+    : m_layer(layerFromSurfaceDescriptor(descriptor))
 {
 }
 
 PresentationContextCoreAnimation::~PresentationContextCoreAnimation() = default;
 
-void PresentationContextCoreAnimation::configure(Device&, const WGPUSwapChainDescriptor&)
+void PresentationContextCoreAnimation::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
 {
-    // FIXME: Implement this.
+    m_configuration = std::nullopt;
+
+    if (descriptor.nextInChain)
+        return;
+
+    switch (descriptor.format) {
+    case WGPUTextureFormat_BGRA8Unorm:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_RGBA16Float:
+        break;
+    case WGPUTextureFormat_RGB10A2Unorm:
+        if (device.baseCapabilities().canPresentRGB10A2PixelFormats)
+            break;
+        return;
+    default:
+        return;
+    }
+
+    m_configuration = Configuration(descriptor.width, descriptor.height, fromAPI(descriptor.label), descriptor.format, device);
+
+    m_layer.pixelFormat = Texture::pixelFormat(descriptor.format);
+    if (descriptor.usage == WGPUTextureUsage_RenderAttachment)
+        m_layer.framebufferOnly = YES;
+    m_layer.drawableSize = CGSizeMake(descriptor.width, descriptor.height);
+    m_layer.device = device.device();
+}
+
+auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(CAMetalLayer *layer) -> Configuration::FrameState
+{
+    auto label = this->label.utf8();
+
+    id<CAMetalDrawable> currentDrawable = [layer nextDrawable];
+    id<MTLTexture> texture = currentDrawable.texture;
+
+    WGPUTextureViewDescriptor textureViewDescriptor {
+        nullptr,
+        label.data(),
+        format,
+        WGPUTextureViewDimension_2D,
+        0,
+        1,
+        0,
+        1,
+        WGPUTextureAspect_All,
+    };
+    auto textureView = TextureView::create(texture, textureViewDescriptor, { { width, height, 1 } }, device);
+    return { currentDrawable, textureView.ptr() };
 }
 
 void PresentationContextCoreAnimation::present()
 {
-    // FIXME: Implement this.
+    if (!m_configuration)
+        return;
+
+    if (!m_configuration->currentFrameState)
+        m_configuration->currentFrameState = m_configuration->generateCurrentFrameState(m_layer);
+
+    [m_configuration->currentFrameState->currentDrawable present];
+
+    m_configuration->currentFrameState = std::nullopt;
 }
 
 TextureView* PresentationContextCoreAnimation::getCurrentTextureView()
 {
-    // FIXME: Implement this.
-    return nullptr;
+    if (!m_configuration)
+        return nullptr;
+
+    if (!m_configuration->currentFrameState)
+        m_configuration->currentFrameState = m_configuration->generateCurrentFrameState(m_layer);
+
+    return m_configuration->currentFrameState->currentTextureView.get();
 }
 
 } // namespace WebGPU

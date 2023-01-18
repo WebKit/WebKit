@@ -96,6 +96,7 @@ static HardwareCapabilities apple3(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
+    baseCapabilities.canPresentRGB10A2PixelFormats = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -145,6 +146,7 @@ static HardwareCapabilities apple4(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
+    baseCapabilities.canPresentRGB10A2PixelFormats = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -194,6 +196,7 @@ static HardwareCapabilities apple5(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
+    baseCapabilities.canPresentRGB10A2PixelFormats = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -244,6 +247,7 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
+    baseCapabilities.canPresentRGB10A2PixelFormats = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -293,6 +297,7 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
+    baseCapabilities.canPresentRGB10A2PixelFormats = false;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -343,6 +348,7 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = false;
+    baseCapabilities.canPresentRGB10A2PixelFormats = true;
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
@@ -467,6 +473,7 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
         previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
         previous.timestampCounterSet,
         previous.statisticCounterSet,
+        previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
     };
 }
 

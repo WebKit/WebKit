@@ -27,6 +27,10 @@
 
 #import "PresentationContext.h"
 
+#import <QuartzCore/QuartzCore.h>
+#import <optional>
+#import <wtf/text/WTFString.h>
+
 namespace WebGPU {
 
 class Device;
@@ -51,6 +55,35 @@ public:
 
 private:
     PresentationContextCoreAnimation(const WGPUSurfaceDescriptor&);
+
+    struct Configuration {
+        Configuration(uint32_t width, uint32_t height, String&& label, WGPUTextureFormat format, Device& device)
+            : width(width)
+            , height(height)
+            , label(WTFMove(label))
+            , format(format)
+            , device(device)
+        {
+        }
+
+        struct FrameState {
+            id<CAMetalDrawable> currentDrawable;
+            RefPtr<TextureView> currentTextureView;
+        };
+
+        FrameState generateCurrentFrameState(CAMetalLayer *);
+
+        std::optional<FrameState> currentFrameState;
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        String label;
+        WGPUTextureFormat format { WGPUTextureFormat_Undefined };
+        Ref<Device> device;
+    };
+
+
+    CAMetalLayer *m_layer { nil };
+    std::optional<Configuration> m_configuration;
 };
 
 } // namespace WebGPU
