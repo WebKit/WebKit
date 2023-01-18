@@ -351,7 +351,14 @@ public:
     {
         if (!MediaConstraint::decode(decoder, constraint))
             return false;
-
+        static_assert(std::is_same_v<ValueType, int> || std::is_same_v<ValueType, double>);
+        if constexpr(std::is_same_v<ValueType, int>) {
+            if (!constraint.isInt())
+                return false;
+        } else if constexpr(std::is_same_v<ValueType, double>) {
+            if (!constraint.isDouble())
+                return false;
+        }
         if (!decoder.decode(constraint.m_min))
             return false;
         if (!decoder.decode(constraint.m_max))
@@ -525,6 +532,8 @@ public:
     {
         if (!MediaConstraint::decode(decoder, constraint))
             return false;
+        if (!constraint.isBoolean())
+            return false;
 
         if (!decoder.decode(constraint.m_exact))
             return false;
@@ -610,6 +619,8 @@ public:
     template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, StringConstraint& constraint)
     {
         if (!MediaConstraint::decode(decoder, constraint))
+            return false;
+        if (!constraint.isString())
             return false;
 
         if (!decoder.decode(constraint.m_exact))
