@@ -38,7 +38,7 @@ class StructMember final : public Node {
 public:
     using List = UniqueRefVector<StructMember>;
 
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
+    StructMember(SourceSpan span, const String& name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
         : Node(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -47,12 +47,12 @@ public:
     }
 
     Kind kind() const override;
-    const StringView& name() const { return m_name; }
+    const String& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
     Attribute::List& attributes() { return m_attributes; }
 
 private:
-    StringView m_name;
+    String m_name;
     Attribute::List m_attributes;
     UniqueRef<TypeDecl> m_type;
 };
@@ -63,7 +63,7 @@ class StructDecl final : public Decl {
 public:
     using List = UniqueRefVector<StructDecl>;
 
-    StructDecl(SourceSpan sourceSpan, StringView name, StructMember::List&& members, Attribute::List&& attributes)
+    StructDecl(SourceSpan sourceSpan, const String& name, StructMember::List&& members, Attribute::List&& attributes)
         : Decl(sourceSpan)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -72,12 +72,12 @@ public:
     }
 
     Kind kind() const override;
-    const StringView& name() const { return m_name; }
+    const String& name() const { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     StructMember::List& members() { return m_members; }
 
 private:
-    StringView m_name;
+    String m_name;
     Attribute::List m_attributes;
     StructMember::List m_members;
 };

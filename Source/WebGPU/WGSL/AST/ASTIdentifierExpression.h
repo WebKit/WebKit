@@ -27,7 +27,7 @@
 
 #include "ASTExpression.h"
 
-#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
@@ -35,17 +35,17 @@ class IdentifierExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    IdentifierExpression(SourceSpan span, StringView identifier)
+    IdentifierExpression(SourceSpan span, const String& identifier)
         : Expression(span)
         , m_identifier(identifier)
     {
     }
 
     Kind kind() const override;
-    const StringView& identifier() const { return m_identifier; }
+    const String& identifier() const { return m_identifier; }
 
 private:
-    StringView m_identifier;
+    String m_identifier;
 };
 
 } // namespace WGSL::AST

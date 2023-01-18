@@ -27,14 +27,14 @@
 
 #include "ASTExpression.h"
 
-#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
 class StructureAccess final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructureAccess(SourceSpan span, UniqueRef<Expression>&& base, StringView fieldName)
+    StructureAccess(SourceSpan span, UniqueRef<Expression>&& base, const String& fieldName)
         : Expression(span)
         , m_base(WTFMove(base))
         , m_fieldName(fieldName)
@@ -43,11 +43,11 @@ public:
 
     Kind kind() const override;
     Expression& base() { return m_base.get(); }
-    const StringView& fieldName() const { return m_fieldName; }
+    const String& fieldName() const { return m_fieldName; }
 
 private:
     UniqueRef<Expression> m_base;
-    StringView m_fieldName;
+    String m_fieldName;
 };
 
 } // namespace WGSL::AST

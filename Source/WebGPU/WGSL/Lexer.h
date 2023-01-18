@@ -27,7 +27,6 @@
 
 #include "Token.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -66,9 +65,9 @@ private:
     {
         return { type, m_tokenStartingPosition, currentTokenLength(), literalValue };
     }
-    Token makeIdentifierToken(StringView view)
+    Token makeIdentifierToken(String&& identifier)
     {
-        return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), view };
+        return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTFMove(identifier) };
     }
 
     void shift();

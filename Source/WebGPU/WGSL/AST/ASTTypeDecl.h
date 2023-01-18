@@ -28,7 +28,7 @@
 #include "ASTExpression.h"
 
 #include <wtf/TypeCasts.h>
-#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
@@ -66,17 +66,17 @@ class NamedType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    NamedType(SourceSpan span, StringView&& name)
+    NamedType(SourceSpan span, const String& name)
         : TypeDecl(span)
-        , m_name(WTFMove(name))
+        , m_name(name)
     {
     }
 
     Kind kind() const override;
-    const StringView& name() const { return m_name; }
+    const String& name() const { return m_name; }
 
 private:
-    StringView m_name;
+    String m_name;
 };
 
 class ParameterizedType : public TypeDecl {
@@ -105,7 +105,7 @@ public:
     {
     }
 
-    static std::optional<Base> stringViewToKind(StringView& view)
+    static std::optional<Base> stringToKind(String& view)
     {
         if (view == "vec2"_s)
             return Base::Vec2;
