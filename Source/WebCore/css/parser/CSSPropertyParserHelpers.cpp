@@ -195,7 +195,7 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-        return CSSPrimitiveValue::create(WTFMove(m_calcValue));
+        return CSSPrimitiveValue::create(m_calcValue.releaseNonNull());
     }
 
     RefPtr<CSSPrimitiveValue> consumeValueIfCategory(CalculationCategory category)
@@ -208,7 +208,7 @@ public:
             return nullptr;
         }
         m_sourceRange = m_range;
-        return CSSPrimitiveValue::create(WTFMove(m_calcValue));
+        return CSSPrimitiveValue::create(m_calcValue.releaseNonNull());
     }
 
 private:
@@ -7292,15 +7292,15 @@ RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range, const CSSParserC
     if (consumeIdent<CSSValueRepeatY>(range))
         return CSSBackgroundRepeatValue::create(CSSValueNoRepeat, CSSValueRepeat);
 
-    auto value1 = consumeIdent<CSSValueRepeat, CSSValueNoRepeat, CSSValueRound, CSSValueSpace>(range);
+    auto value1 = consumeIdentRaw<CSSValueRepeat, CSSValueNoRepeat, CSSValueRound, CSSValueSpace>(range);
     if (!value1)
         return nullptr;
 
-    auto value2 = consumeIdent<CSSValueRepeat, CSSValueNoRepeat, CSSValueRound, CSSValueSpace>(range);
+    auto value2 = consumeIdentRaw<CSSValueRepeat, CSSValueNoRepeat, CSSValueRound, CSSValueSpace>(range);
     if (!value2)
         value2 = value1;
 
-    return CSSBackgroundRepeatValue::create(value1.releaseNonNull(), value2.releaseNonNull());
+    return CSSBackgroundRepeatValue::create(*value1, *value2);
 }
 
 RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)

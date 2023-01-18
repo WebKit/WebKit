@@ -367,7 +367,10 @@ static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const N
 
 static Ref<CSSPrimitiveValue> fontSizeAdjustFromStyle(const RenderStyle& style)
 {
-    return CSSPrimitiveValue::create(style.fontSizeAdjust());
+    auto adjust = style.fontSizeAdjust();
+    if (!adjust)
+        return CSSPrimitiveValue::create(CSSValueNone);
+    return CSSPrimitiveValue::create(*adjust, CSSUnitType::CSS_NUMBER);
 }
 
 static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle& style)
@@ -2895,10 +2898,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyMaskComposite: {
         auto& layers = style.maskLayers();
         if (!layers.next())
-            return CSSPrimitiveValue::create(layers.composite(), propertyID);
+            return CSSPrimitiveValue::create(toCSSValueID(layers.composite(), propertyID));
         auto list = CSSValueList::createCommaSeparated();
         for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-            list->append(CSSPrimitiveValue::create(currLayer->composite(), propertyID));
+            list->append(CSSPrimitiveValue::create(toCSSValueID(currLayer->composite(), propertyID)));
         return list;
     }
     case CSSPropertyBackgroundAttachment: {
@@ -3131,9 +3134,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyFlexFlow:
         return getCSSPropertyValuesForShorthandProperties(flexFlowShorthand());
     case CSSPropertyFlexGrow:
-        return CSSPrimitiveValue::create(style.flexGrow());
+        return CSSPrimitiveValue::create(style.flexGrow(), CSSUnitType::CSS_NUMBER);
     case CSSPropertyFlexShrink:
-        return CSSPrimitiveValue::create(style.flexShrink());
+        return CSSPrimitiveValue::create(style.flexShrink(), CSSUnitType::CSS_NUMBER);
     case CSSPropertyFlexWrap:
         return CSSPrimitiveValue::create(style.flexWrap());
     case CSSPropertyJustifyContent:

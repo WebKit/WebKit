@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "ColorTypes.h"
 #include "HTMLNames.h"
 #include "InputMode.h"
 #include "StyledElement.h"
@@ -37,6 +38,7 @@ class FormListedElement;
 class FormAssociatedElement;
 class HTMLFormElement;
 class VisibleSelection;
+
 struct SimpleRange;
 struct TextRecognitionResult;
 

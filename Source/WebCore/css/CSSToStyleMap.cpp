@@ -178,8 +178,8 @@ void CSSToStyleMap::mapFillRepeat(CSSPropertyID propertyID, FillLayer& layer, co
         return;
 
     auto& backgroundRepeatValue = downcast<CSSBackgroundRepeatValue>(value);
-    FillRepeat repeatX = backgroundRepeatValue.xValue();
-    FillRepeat repeatY = backgroundRepeatValue.yValue();
+    auto repeatX = fromCSSValueID<FillRepeat>(backgroundRepeatValue.xValue());
+    auto repeatY = fromCSSValueID<FillRepeat>(backgroundRepeatValue.yValue());
     layer.setRepeat(FillRepeatXY { repeatX, repeatY });
 }
 

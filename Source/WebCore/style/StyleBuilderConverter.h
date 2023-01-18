@@ -1666,12 +1666,12 @@ inline StyleContentAlignmentData BuilderConverter::convertContentAlignmentData(B
     if (!is<CSSContentDistributionValue>(value))
         return alignmentData;
     auto& contentValue = downcast<CSSContentDistributionValue>(value);
-    if (contentValue.distribution()->valueID() != CSSValueInvalid)
-        alignmentData.setDistribution(contentValue.distribution().get());
-    if (contentValue.position()->valueID() != CSSValueInvalid)
-        alignmentData.setPosition(contentValue.position().get());
-    if (contentValue.overflow()->valueID() != CSSValueInvalid)
-        alignmentData.setOverflow(contentValue.overflow().get());
+    if (contentValue.distribution() != CSSValueInvalid)
+        alignmentData.setDistribution(fromCSSValueID<ContentDistribution>(contentValue.distribution()));
+    if (contentValue.position() != CSSValueInvalid)
+        alignmentData.setPosition(fromCSSValueID<ContentPosition>(contentValue.position()));
+    if (contentValue.overflow() != CSSValueInvalid)
+        alignmentData.setOverflow(fromCSSValueID<OverflowAlignment>(contentValue.overflow()));
     return alignmentData;
 }
 

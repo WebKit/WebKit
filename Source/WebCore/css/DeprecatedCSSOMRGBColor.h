@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Color.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include <wtf/Ref.h>
 

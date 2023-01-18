@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,27 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include <wtf/RefPtr.h>
+#include "CSSValue.h"
 
 namespace WebCore {
 
+enum CSSValueID : uint16_t;
+
 class CSSBackgroundRepeatValue final : public CSSValue {
 public:
-    static Ref<CSSBackgroundRepeatValue> create(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue)
-    {
-        return adoptRef(*new CSSBackgroundRepeatValue(WTFMove(repeatXValue), WTFMove(repeatYValue)));
-    }
-
-    static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue)
-    {
-        return adoptRef(*new CSSBackgroundRepeatValue(repeatXValue, repeatYValue));
-    }
+    static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue);
 
     String customCSSText() const;
-
     bool equals(const CSSBackgroundRepeatValue&) const;
 
-    const CSSPrimitiveValue& xValue() const { return m_xValue.get(); }
-    const CSSPrimitiveValue& yValue() const { return m_yValue.get(); }
+    CSSValueID xValue() const { return m_xValue; }
+    CSSValueID yValue() const { return m_yValue; }
 
 private:
-    CSSBackgroundRepeatValue(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue);
     CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
 
-    Ref<CSSPrimitiveValue> m_xValue;
-    Ref<CSSPrimitiveValue> m_yValue;
+    CSSValueID m_xValue;
+    CSSValueID m_yValue;
 };
 
 } // namespace WebCore

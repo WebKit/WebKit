@@ -69,7 +69,10 @@ public:
         auto node = toCalcExpressionNode();
         if (!node)
             return nullptr;
-        return CSSPrimitiveValue::create(CSSCalcValue::create(node.releaseNonNull()));
+        auto value = CSSCalcValue::create(node.releaseNonNull());
+        if (!value)
+            return nullptr;
+        return CSSPrimitiveValue::create(value.releaseNonNull());
     }
 };
 

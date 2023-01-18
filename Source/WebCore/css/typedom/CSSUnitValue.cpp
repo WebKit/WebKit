@@ -264,7 +264,10 @@ RefPtr<CSSValue> CSSUnitValue::toCSSValueWithProperty(CSSPropertyID propertyID) 
         auto sumNode = CSSCalcOperationNode::createSum(Vector { node.releaseNonNull() });
         if (!sumNode)
             return nullptr;
-        return CSSPrimitiveValue::create(CSSCalcValue::create(sumNode.releaseNonNull()));
+        auto value = CSSCalcValue::create(sumNode.releaseNonNull());
+        if (!value)
+            return nullptr;
+        return CSSPrimitiveValue::create(value.releaseNonNull());
     }
     return toCSSValue();
 }
