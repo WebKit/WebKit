@@ -3419,7 +3419,12 @@ void SpeculativeJIT::compile(Node* node)
         compileGetPrototypeOf(node);
         break;
     }
-        
+
+    case GetWebAssemblyInstanceExports: {
+        compileGetWebAssemblyInstanceExports(node);
+        break;
+    }
+
     case GetByOffset: {
         compileGetByOffset(node);
         break;

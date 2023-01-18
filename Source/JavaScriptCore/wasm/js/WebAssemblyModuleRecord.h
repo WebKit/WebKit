@@ -66,6 +66,8 @@ public:
 
     JSObject* exportsObject() const { return m_exportsObject.get(); }
 
+    static ptrdiff_t offsetOfExportsObject() { return OBJECT_OFFSETOF(WebAssemblyModuleRecord, m_exportsObject); }
+
 private:
     WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 

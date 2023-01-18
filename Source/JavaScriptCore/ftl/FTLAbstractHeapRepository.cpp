@@ -38,11 +38,13 @@
 #include "FTLState.h"
 #include "GetterSetter.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSWebAssemblyInstance.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
+#include "WebAssemblyModuleRecord.h"
 
 namespace JSC { namespace FTL {
 

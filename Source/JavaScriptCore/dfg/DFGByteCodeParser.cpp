@@ -3969,6 +3969,29 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         return true;
     }
 
+#if ENABLE(WEBASSEMBLY)
+    case WebAssemblyInstanceExportsIntrinsic: {
+        if (variant.structureSet().isEmpty())
+            return false;
+
+        bool canOptimize = true;
+        variant.structureSet().forEach([&](Structure* structure) {
+            if (structure->typeInfo().type() != WebAssemblyInstanceType)
+                canOptimize = false;
+        });
+        if (!canOptimize)
+            return false;
+
+        // We do not need to actually look up CustomGetterSetter here. Checking Structures or registering watchpoints are enough,
+        // since replacement of CustomGetterSetter always incurs Structure transition.
+        if (!check(variant.conditionSet()))
+            return false;
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), thisNode);
+        set(result, addToGraph(GetWebAssemblyInstanceExports, Edge(thisNode, KnownCellUse)));
+        return true;
+    }
+#endif
+
     default:
         return false;
     }

@@ -1199,6 +1199,9 @@ private:
         case GetPrototypeOf:
             compileGetPrototypeOf();
             break;
+        case GetWebAssemblyInstanceExports:
+            compileGetWebAssemblyInstanceExports();
+            break;
         case AllocatePropertyStorage:
             compileAllocatePropertyStorage();
             break;
@@ -5175,6 +5178,13 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(Int64, monoProto, polyProto, slowResult));
+    }
+
+    void compileGetWebAssemblyInstanceExports()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue moduleRecord = m_out.loadPtr(base, m_heaps.JSWebAssemblyInstance_moduleRecord);
+        setJSValue(m_out.loadPtr(moduleRecord, m_heaps.WebAssemblyModuleRecord_exportsObject));
     }
 
     LValue typedArrayLength(LValue base, bool acceptResizable, std::optional<TypedArrayType> typedArrayType)

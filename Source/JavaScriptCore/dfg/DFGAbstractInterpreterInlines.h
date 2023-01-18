@@ -45,6 +45,7 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSPromiseConstructor.h"
+#include "JSWebAssemblyInstance.h"
 #include "MathCommon.h"
 #include "NumberConstructor.h"
 #include "PutByStatus.h"
@@ -54,6 +55,7 @@
 #include "StringObject.h"
 #include "StructureCache.h"
 #include "StructureRareDataInlines.h"
+#include "WebAssemblyModuleRecord.h"
 #include <wtf/BooleanLattice.h>
 #include <wtf/CheckedArithmetic.h>
 
@@ -4028,7 +4030,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecObject | SpecOther);
         break;
     }
-        
+
+    case GetWebAssemblyInstanceExports: {
+#if ENABLE(WEBASSEMBLY)
+        AbstractValue base = forNode(node->child1());
+        if (base.m_value) {
+            if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(base.m_value)) {
+                if (auto* moduleRecord = instance->moduleRecord()) {
+                    if (auto* exportsObject = moduleRecord->exportsObject()) {
+                        setConstant(node, *m_graph.freeze(exportsObject));
+                        break;
+                    }
+                }
+            }
+        }
+#endif
+        setTypeForNode(node, SpecFinalObject);
+        break;
+    }
+
     case GetByOffset: {
         StorageAccessData& data = node->storageAccessData();
 

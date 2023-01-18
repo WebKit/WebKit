@@ -202,6 +202,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetTypedArrayByteOffset:
     case GetTypedArrayByteOffsetAsInt52:
     case GetPrototypeOf:
+    case GetWebAssemblyInstanceExports:
     case PutStructure:
     case GetByOffset:
     case GetGetterSetterByOffset:

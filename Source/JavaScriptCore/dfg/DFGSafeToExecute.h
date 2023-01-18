@@ -322,6 +322,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case DataViewGetInt:
     case DataViewGetFloat:
     case ResolveRope:
+    case GetWebAssemblyInstanceExports:
         return true;
 
     case GetButterfly:

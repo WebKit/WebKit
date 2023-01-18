@@ -3005,6 +3005,7 @@ private:
         case FilterSetPrivateBrandStatus:
         case InvalidationPoint:
         case CreateArgumentsButterfly:
+        case GetWebAssemblyInstanceExports:
             break;
 #else // not ASSERT_ENABLED
         default:
