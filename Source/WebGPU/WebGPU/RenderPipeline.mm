@@ -544,7 +544,7 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
     WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };
     bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
     bindGroupLayoutDescriptor.entryCount = entries.size();
-    bindGroupLayoutDescriptor.entries = &entries[0];
+    bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
     auto bindGroupLayout = m_device->createBindGroupLayout(bindGroupLayoutDescriptor);
     m_cachedBindGroupLayouts.add(groupIndex + 1, bindGroupLayout);
 
