@@ -2226,6 +2226,7 @@ fast/images/pdf-as-image.html [ Skip ]
 fast/images/pdf-as-tiled-background.html [ Skip ]
 fast/images/pdf-in-canvas.html [ Skip ]
 fast/replaced/pdf-as-image.html [ Skip ]
+fast/replaced/pdf-iframe-load-crash.html [ Skip ]
 webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
 
 http/tests/webshare [ Skip ]
