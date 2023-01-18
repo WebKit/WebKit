@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1773,7 +1774,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // fired as part of the overall process of changing the current playback
     // position.)
     if (!m_paused && m_lastSeekTime <= lastTime)
-        scheduleTimeupdateEvent(false);
+        scheduleTimeupdateEvent(true);
 
     // Explicitly cache vector sizes, as their content is constant from here.
     size_t currentCuesSize = currentCues.size();
