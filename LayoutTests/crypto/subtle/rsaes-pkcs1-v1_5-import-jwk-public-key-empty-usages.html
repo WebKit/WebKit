@@ -11,6 +11,9 @@
 <script>
 description("Test importing a JWK RSAES-PKCS1-v1_5 public key with empty usages");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 var jwkKey = {

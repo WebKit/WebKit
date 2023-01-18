@@ -11,6 +11,9 @@
 <script>
 description("Test exporting a RSAES-PKCS1-v1_5 private key with PKCS8 format.");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 var algorithmKeyGen = {

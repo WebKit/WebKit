@@ -11,6 +11,9 @@
 <script>
 description("Test decrypting using RSAES-PKCS1-v1_5 with an imported key");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 var extractable = false;

@@ -11,6 +11,9 @@
 <script>
 description("Test exporting a RSAES-PKCS1-v1_5 key pair with JWK format.");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 var algorithmKeyGen = {

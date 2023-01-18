@@ -10,6 +10,9 @@
 
 description("Test sending rsa crypto keys via postMessage to a worker.");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 var publicKeyJSON = {

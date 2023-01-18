@@ -11,6 +11,9 @@
 <script>
 description("Test generating an RSA key using RSAES-PKCS1-v1_5 algorithm.");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 var algorithmKeyGen = {

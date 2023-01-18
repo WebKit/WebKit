@@ -9,7 +9,7 @@ PASS crypto.subtle.deriveKey(1, 2) rejected promise  with TypeError: Not enough 
 PASS crypto.subtle.deriveKey(1, 2, 3) rejected promise  with TypeError: Not enough arguments.
 PASS crypto.subtle.deriveKey(1, 2, 3, 4) rejected promise  with TypeError: Not enough arguments.
 PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "AES-CBC", extractable, ["encrypt"]) rejected promise  with TypeError: Member AesKeyParams.length is required and must be an instance of unsigned short.
-PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with NotSupportedError: The operation is not supported..
+PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with NotSupportedError: RSAES-PKCS1-v1_5 support is deprecated.
 PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt"]) rejected promise  with NotSupportedError: The operation is not supported..
 PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, privateKey, {name: "ECDH", namedCurve: "P-256"}, extractable, ["encrypt"]) rejected promise  with NotSupportedError: The operation is not supported..
 PASS crypto.subtle.deriveKey({ name:"ECDH", public:publicKey }, wrongKey, {name: "aes-cbc", length: 128}, extractable, ["encrypt"]) rejected promise  with InvalidAccessError: CryptoKey doesn't match AlgorithmIdentifier.

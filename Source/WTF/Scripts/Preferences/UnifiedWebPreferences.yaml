@@ -1715,6 +1715,19 @@ DefaultTextEncodingName:
     WebCore:
       default: '{ }'
 
+DeprecateRSAESPKCSWebCryptoEnabled:
+  type: bool
+  status: preview
+  humanReadableName: "Deprecate RSAES-PKCS1-v1_5 Web Crypto"
+  humanReadableDescription: "Enable Deprecation of RSAES-PKCS1-v1_5 Web Crypto"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DeprecationReportingEnabled:
   type: bool
   status: testable
