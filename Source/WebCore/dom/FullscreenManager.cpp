@@ -468,19 +468,19 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
         ancestorsInTreeOrder.prepend(ancestor);
     } while ((ancestor = ancestor->document().ownerElement()));
 
-    for (auto ancestor : ancestorsInTreeOrder) {
+    for (auto ancestor : makeReversedRange(ancestorsInTreeOrder)) {
         ancestor->setFullscreenFlag(true);
 
-        if (ancestor == &element)
-            document().resolveStyle(Document::ResolveStyleType::Rebuild);
+        ancestor->document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
         // Remove before adding, so we always add at the end of the top layer.
         if (ancestor->isInTopLayer())
             ancestor->removeFromTopLayer();
         ancestor->addToTopLayer();
-
-        addDocumentToFullscreenChangeEventQueue(ancestor->document());
     }
+
+    for (auto ancestor : ancestorsInTreeOrder)
+        addDocumentToFullscreenChangeEventQueue(ancestor->document());
 
     if (is<HTMLIFrameElement>(element))
         element.setIFrameFullscreenFlag(true);
