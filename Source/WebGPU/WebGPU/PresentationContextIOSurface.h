@@ -25,52 +25,41 @@
 
 #pragma once
 
-#import <wtf/FastMalloc.h>
-#import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/TypeCasts.h>
-
-struct WGPUSurfaceImpl {
-};
-
-struct WGPUSwapChainImpl {
-};
+#import "PresentationContext.h"
 
 namespace WebGPU {
 
-class Adapter;
 class Device;
 class TextureView;
 
-class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
+class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&);
-    static Ref<PresentationContext> createInvalid()
+    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor& descriptor)
     {
-        return adoptRef(*new PresentationContext());
+        return adoptRef(*new PresentationContextIOSurface(descriptor));
     }
 
-    virtual ~PresentationContext();
+    virtual ~PresentationContextIOSurface();
 
-    WGPUTextureFormat getPreferredFormat(const Adapter&);
+    void configure(Device&, const WGPUSwapChainDescriptor&) override;
 
-    virtual void configure(Device&, const WGPUSwapChainDescriptor&);
+    void present() override;
+    TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
 
-    virtual void present();
-    virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+    RetainPtr<IOSurfaceRef> displayBuffer() const { return m_displayBuffer; }
+    RetainPtr<IOSurfaceRef> drawingBuffer() const { return m_drawingBuffer; }
+    RetainPtr<IOSurfaceRef> nextDrawable();
 
-    virtual bool isPresentationContextIOSurface() const { return false; }
-    virtual bool isPresentationContextCoreAnimation() const { return false; }
+    bool isPresentationContextIOSurface() const override { return true; }
 
-protected:
-    PresentationContext();
+private:
+    PresentationContextIOSurface(const WGPUSurfaceDescriptor&);
+
+    RetainPtr<IOSurfaceRef> m_displayBuffer;
+    RetainPtr<IOSurfaceRef> m_drawingBuffer;
 };
 
 } // namespace WebGPU
 
-#define SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebGPU::ToValueTypeName) \
-    static bool isType(const WebGPU::PresentationContext& presentationContext) { return presentationContext.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(PresentationContextIOSurface, isPresentationContextIOSurface());

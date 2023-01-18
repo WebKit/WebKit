@@ -23,54 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "PresentationContextCoreAnimation.h"
 
-#import <wtf/FastMalloc.h>
-#import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/TypeCasts.h>
-
-struct WGPUSurfaceImpl {
-};
-
-struct WGPUSwapChainImpl {
-};
+#import "APIConversions.h"
+#import "Adapter.h"
 
 namespace WebGPU {
 
-class Adapter;
-class Device;
-class TextureView;
+PresentationContextCoreAnimation::PresentationContextCoreAnimation(const WGPUSurfaceDescriptor&)
+{
+}
 
-class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&);
-    static Ref<PresentationContext> createInvalid()
-    {
-        return adoptRef(*new PresentationContext());
-    }
+PresentationContextCoreAnimation::~PresentationContextCoreAnimation() = default;
 
-    virtual ~PresentationContext();
+void PresentationContextCoreAnimation::configure(Device&, const WGPUSwapChainDescriptor&)
+{
+    // FIXME: Implement this.
+}
 
-    WGPUTextureFormat getPreferredFormat(const Adapter&);
+void PresentationContextCoreAnimation::present()
+{
+    // FIXME: Implement this.
+}
 
-    virtual void configure(Device&, const WGPUSwapChainDescriptor&);
-
-    virtual void present();
-    virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
-
-    virtual bool isPresentationContextIOSurface() const { return false; }
-    virtual bool isPresentationContextCoreAnimation() const { return false; }
-
-protected:
-    PresentationContext();
-};
+TextureView* PresentationContextCoreAnimation::getCurrentTextureView()
+{
+    // FIXME: Implement this.
+    return nullptr;
+}
 
 } // namespace WebGPU
-
-#define SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebGPU::ToValueTypeName) \
-    static bool isType(const WebGPU::PresentationContext& presentationContext) { return presentationContext.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()

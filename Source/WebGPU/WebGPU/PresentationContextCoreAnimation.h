@@ -25,52 +25,34 @@
 
 #pragma once
 
-#import <wtf/FastMalloc.h>
-#import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/TypeCasts.h>
-
-struct WGPUSurfaceImpl {
-};
-
-struct WGPUSwapChainImpl {
-};
+#import "PresentationContext.h"
 
 namespace WebGPU {
 
-class Adapter;
 class Device;
 class TextureView;
 
-class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
+class PresentationContextCoreAnimation : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&);
-    static Ref<PresentationContext> createInvalid()
+    static Ref<PresentationContextCoreAnimation> create(const WGPUSurfaceDescriptor& descriptor)
     {
-        return adoptRef(*new PresentationContext());
+        return adoptRef(*new PresentationContextCoreAnimation(descriptor));
     }
 
-    virtual ~PresentationContext();
+    virtual ~PresentationContextCoreAnimation();
 
-    WGPUTextureFormat getPreferredFormat(const Adapter&);
+    void configure(Device&, const WGPUSwapChainDescriptor&) override;
 
-    virtual void configure(Device&, const WGPUSwapChainDescriptor&);
+    void present() override;
+    TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
 
-    virtual void present();
-    virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+    bool isPresentationContextCoreAnimation() const override { return true; }
 
-    virtual bool isPresentationContextIOSurface() const { return false; }
-    virtual bool isPresentationContextCoreAnimation() const { return false; }
-
-protected:
-    PresentationContext();
+private:
+    PresentationContextCoreAnimation(const WGPUSurfaceDescriptor&);
 };
 
 } // namespace WebGPU
 
-#define SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebGPU::ToValueTypeName) \
-    static bool isType(const WebGPU::PresentationContext& presentationContext) { return presentationContext.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(PresentationContextCoreAnimation, isPresentationContextCoreAnimation());
