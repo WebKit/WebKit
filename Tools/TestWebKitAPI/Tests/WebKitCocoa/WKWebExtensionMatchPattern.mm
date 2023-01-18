@@ -144,8 +144,8 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesPattern)
     EXPECT_TRUE([toPattern(@"file:///foo*") matchesPattern:toPattern(@"file:///foo/bar.html")]);
     EXPECT_TRUE([toPattern(@"file:///foo*") matchesPattern:toPattern(@"file:///foo")]);
     EXPECT_TRUE([toPattern(@"file://localhost/foo*") matchesPattern:toPattern(@"file://localhost/foo")]);
-    EXPECT_FALSE([toPattern(@"file://localhost/foo*") matchesPattern:toPattern(@"file:///foo")]);
-    EXPECT_FALSE([toPattern(@"file:///foo*") matchesPattern:toPattern(@"file://localhost/foo")]);
+    EXPECT_TRUE([toPattern(@"file://localhost/foo*") matchesPattern:toPattern(@"file:///foo")]);
+    EXPECT_TRUE([toPattern(@"file:///foo*") matchesPattern:toPattern(@"file://localhost/foo")]);
     EXPECT_TRUE([toPattern(@"file://*/foo*") matchesPattern:toPattern(@"file:///foo/bar.html")]);
     EXPECT_TRUE([toPattern(@"file://*/foo*") matchesPattern:toPattern(@"file://localhost/foo/bar.html")]);
     EXPECT_TRUE([toPattern(@"file://*/foo*") matchesPattern:toPattern(@"file://test.local/foo/bar.html")]);
@@ -272,8 +272,8 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesURL)
     EXPECT_TRUE([toPattern(@"file:///foo*") matchesURL:[NSURL URLWithString:@"file:///foo/bar.html"]]);
     EXPECT_TRUE([toPattern(@"file:///foo*") matchesURL:[NSURL URLWithString:@"file:///foo"]]);
     EXPECT_TRUE([toPattern(@"file://localhost/foo*") matchesURL:[NSURL URLWithString:@"file://localhost/foo"]]);
-    EXPECT_FALSE([toPattern(@"file://localhost/foo*") matchesURL:[NSURL URLWithString:@"file:///foo"]]);
-    EXPECT_FALSE([toPattern(@"file:///foo*") matchesURL:[NSURL URLWithString:@"file://localhost/foo"]]);
+    EXPECT_TRUE([toPattern(@"file://localhost/foo*") matchesURL:[NSURL URLWithString:@"file:///foo"]]);
+    EXPECT_TRUE([toPattern(@"file:///foo*") matchesURL:[NSURL URLWithString:@"file://localhost/foo"]]);
     EXPECT_TRUE([toPattern(@"file://*/foo*") matchesURL:[NSURL URLWithString:@"file:///foo/bar.html"]]);
     EXPECT_TRUE([toPattern(@"file://*/foo*") matchesURL:[NSURL URLWithString:@"file://localhost/foo/bar.html"]]);
     EXPECT_TRUE([toPattern(@"file://*/foo*") matchesURL:[NSURL URLWithString:@"file://test.local/foo/bar.html"]]);
@@ -326,12 +326,15 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesURL)
     EXPECT_FALSE([toPattern(@"<all_urls>") matchesURL:[NSURL URLWithString:@"bookmarks://"]]);
     EXPECT_FALSE([toPattern(@"<all_urls>") matchesURL:[NSURL URLWithString:@"history://"]]);
 
-    // Matches with regex special characters in pattern.
-    EXPECT_TRUE([toPattern(@"*://*/foo?bar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%3Fbar"]]);
+    // Matches with regex and percent encoded special characters in pattern.
+    EXPECT_TRUE([toPattern(@"*://*/foo%3Fbar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%3Fbar"]]);
+    EXPECT_FALSE([toPattern(@"*://*/foo?bar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%3Fbar"]]);
     EXPECT_FALSE([toPattern(@"*://*/foo?bar*") matchesURL:[NSURL URLWithString:@"https://example.com/fobar"]]);
-    EXPECT_TRUE([toPattern(@"*://*/foo[ba]r*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%5Bba%5Dr"]]);
+    EXPECT_TRUE([toPattern(@"*://*/foo%5Bba%5Dr*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%5Bba%5Dr"]]);
+    EXPECT_FALSE([toPattern(@"*://*/foo[ba]r*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%5Bba%5Dr"]]);
     EXPECT_FALSE([toPattern(@"*://*/foo[ba]r*") matchesURL:[NSURL URLWithString:@"https://example.com/fooar"]]);
-    EXPECT_TRUE([toPattern(@"*://*/foo|bar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%7Cbar"]]);
+    EXPECT_TRUE([toPattern(@"*://*/foo%7Cbar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%7Cbar"]]);
+    EXPECT_FALSE([toPattern(@"*://*/foo|bar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo%7Cbar"]]);
     EXPECT_FALSE([toPattern(@"*://*/foo|bar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo"]]);
 }
 
@@ -341,7 +344,7 @@ TEST(WKWebExtensionMatchPattern, PatternDescriptions)
     EXPECT_NS_EQUAL(toPattern(@"*://*/*").description, @"*://*/*");
     EXPECT_NS_EQUAL(toPattern(@"http://*.example.com/*").description, @"http://*.example.com/*");
     EXPECT_NS_EQUAL(toPattern(@"file:///*").description, @"file:///*");
-    EXPECT_NS_EQUAL(toPattern(@"file://localhost/*").description, @"file://localhost/*");
+    EXPECT_NS_EQUAL(toPattern(@"file://localhost/*").description, @"file:///*");
 }
 
 TEST(WKWebExtensionMatchPattern, MatchesAllHosts)

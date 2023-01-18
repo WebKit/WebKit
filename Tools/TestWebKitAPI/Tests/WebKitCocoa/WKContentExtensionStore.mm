@@ -551,8 +551,8 @@ static RetainPtr<TestNavigationDelegate> navigationDelegateAllowingActiveActions
     static auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         preferences._activeContentRuleListActionPatterns = @{
-            @"testidentifier": [NSSet setWithObject:@"*://testhost/*"],
-            @"testidentifier2": [NSSet setWithObject:@"*://testhost/*"],
+            @"testidentifier": [NSSet setWithObject:@"testscheme://testhost/*"],
+            @"testidentifier2": [NSSet setWithObject:@"testscheme://testhost/*"],
         };
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
@@ -1126,13 +1126,13 @@ TEST_F(WKContentRuleListStoreTest, NullPatternSet)
         EXPECT_EQ(preferences._activeContentRuleListActionPatterns.count, 0u);
         switch (delegateAction) {
         case DelegateAction::AllowAll:
-            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://*/*"] forKey:@"testidentifier"];
+            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"testscheme://*/*"] forKey:@"testidentifier"];
             break;
         case DelegateAction::AllowNone:
             preferences._activeContentRuleListActionPatterns = [NSDictionary dictionary];
             break;
         case DelegateAction::AllowTestHost:
-            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://testhost/*"] forKey:@"testidentifier"];
+            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"testscheme://testhost/*"] forKey:@"testidentifier"];
             break;
         }
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
@@ -1177,7 +1177,7 @@ TEST_F(WKContentRuleListStoreTest, ExtensionPath)
 
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://testhost/*"] forKey:@"testidentifier"];
+        preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"testscheme://testhost/*"] forKey:@"testidentifier"];
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 

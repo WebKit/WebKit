@@ -175,16 +175,22 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 - (NSString *)scheme
 {
+    if (_webExtensionMatchPattern->scheme().isNull())
+        return nil;
     return _webExtensionMatchPattern->scheme();
 }
 
 - (NSString *)host
 {
+    if (_webExtensionMatchPattern->host().isNull())
+        return nil;
     return _webExtensionMatchPattern->host();
 }
 
 - (NSString *)path
 {
+    if (_webExtensionMatchPattern->path().isNull())
+        return nil;
     return _webExtensionMatchPattern->path();
 }
 
@@ -226,6 +232,8 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 
 - (BOOL)matchesURL:(NSURL *)urlToMatch options:(_WKWebExtensionMatchPatternOptions)options
 {
+    NSAssert(!(options & _WKWebExtensionMatchPatternOptionsMatchBidirectionally), @"Invalid parameter: WKWebExtensionMatchPatternOptionsMatchBidirectionally is not valid when matching a URL");
+
     return _webExtensionMatchPattern->matchesURL(urlToMatch, toImpl(options));
 }
 

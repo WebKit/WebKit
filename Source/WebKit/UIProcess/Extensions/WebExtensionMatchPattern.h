@@ -28,15 +28,13 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIObject.h"
+#include <WebCore/UserContentURLPattern.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
-OBJC_CLASS NSSet;
-OBJC_CLASS NSString;
-OBJC_CLASS NSURL;
 OBJC_CLASS _WKWebExtensionMatchPattern;
 
 namespace WebKit {
@@ -52,8 +50,8 @@ public:
         return result && result->isValid() ? WTFMove(result) : nullptr;
     }
 
-    static RefPtr<WebExtensionMatchPattern> getOrCreate(NSString *pattern);
-    static RefPtr<WebExtensionMatchPattern> getOrCreate(NSString *scheme, NSString *host, NSString *path);
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& pattern);
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& scheme, const String& host, const String& path);
 
     static Ref<WebExtensionMatchPattern> allURLsMatchPattern();
     static Ref<WebExtensionMatchPattern> allHostsAndSchemesMatchPattern();
@@ -61,8 +59,8 @@ public:
     static bool patternsMatchAllHosts(HashSet<Ref<WebExtensionMatchPattern>>&);
 
     explicit WebExtensionMatchPattern() { }
-    explicit WebExtensionMatchPattern(NSString *pattern, NSError **outError = nullptr);
-    explicit WebExtensionMatchPattern(NSString *scheme, NSString *host, NSString *path, NSError **outError = nullptr);
+    explicit WebExtensionMatchPattern(const String& pattern, NSError **outError = nullptr);
+    explicit WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, NSError **outError = nullptr);
 
     ~WebExtensionMatchPattern() { }
 
@@ -85,18 +83,20 @@ public:
     bool isValid() const { return m_valid; }
     bool isSupported() const;
 
-    NSString *scheme() const { return m_scheme.get(); }
-    NSString *host() const { return m_host.get(); }
-    NSString *path() const { return m_path.get(); }
+    String scheme() const;
+    String host() const;
+    String path() const;
 
     bool matchesAllURLs() const { return m_matchesAllURLs; }
     bool matchesAllHosts() const;
 
-    bool matchesURL(NSURL *, OptionSet<Options> = { });
-    bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { });
+    bool matchesURL(const URL&, OptionSet<Options> = { }) const;
+    bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
 
-    NSString *string() const { return stringWithScheme(nil); }
+    String string() const { return stringWithScheme(nullString()); }
     NSArray *expandedStrings() const;
+
+    const WebCore::UserContentURLPattern& pattern() const { return m_pattern; }
 
     unsigned hash() const { return m_hash; }
 
@@ -105,24 +105,18 @@ public:
 #endif
 
 private:
-    NSString *stringWithScheme(NSString *differentScheme) const;
+    String stringWithScheme(const String& differentScheme) const;
 
-    static bool isValidScheme(NSString *);
-    static bool isValidHost(NSString *);
-    static bool isValidPath(NSString *);
+    static bool isValidScheme(String);
 
-    bool parse(NSString *pattern, NSError **outError = nullptr);
+    bool schemeMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+    bool hostMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+    bool pathMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
 
-    bool schemeMatches(NSString *schemeToMatch, OptionSet<Options> = { });
-    bool hostMatches(NSString *hostToMatch, OptionSet<Options> = { });
-    bool pathMatches(NSString *pathToMatch, OptionSet<Options> = { });
-
-    RetainPtr<NSString> m_scheme;
-    RetainPtr<NSString> m_host;
-    RetainPtr<NSString> m_path;
-    bool m_matchesAllURLs = false;
-    bool m_valid = false;
-    unsigned m_hash = 0;
+    WebCore::UserContentURLPattern m_pattern;
+    bool m_matchesAllURLs { false };
+    bool m_valid { false };
+    unsigned m_hash { 0 };
 };
 
 } // namespace WebKit
