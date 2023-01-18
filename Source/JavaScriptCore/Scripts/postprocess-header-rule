@@ -33,16 +33,6 @@ if [[ "${JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" == "YES" ]]; then
     exit 0
 fi
 
-function process_definitions () {
-    local DEFINITIONS_FILE=$1
-
-    if [[ ! -f "${DEFINITIONS_FILE}" ]]; then
-        return 1
-    fi
-
-    source "${DEFINITIONS_FILE}"
-}
-
 function rewrite_headers () {
     local SOURCE_FILE="${1}"
     local WORK_FILE="${2}.tmp"
@@ -90,15 +80,9 @@ function rewrite_headers () {
         )
     fi
 
-    SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
-
     sed -E "${SED_OPTIONS[@]}" "${SOURCE_FILE}" > "${WORK_FILE}" || exit $?
     cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"
     [[ "${SOURCE_FILE}" -nt "${DEST_FILE}" ]] && touch "${DEST_FILE}" || true
 }
-
-DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
-
-process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
 
 rewrite_headers "${SCRIPT_INPUT_FILE}" "${SCRIPT_OUTPUT_FILE_0}"
