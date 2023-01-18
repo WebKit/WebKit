@@ -628,13 +628,20 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             case Wasm::TypeKind::I32:
             case Wasm::TypeKind::I64:
             case Wasm::TypeKind::F32:
-            case Wasm::TypeKind::F64: {
+            case Wasm::TypeKind::F64:
+            case Wasm::TypeKind::V128: {
                 // If global is immutable, we are not creating a binding internally.
                 // But we need to create a binding just to export it. This binding is not actually connected. But this is OK since it is immutable.
                 if (global.bindingMode == Wasm::GlobalInformation::BindingMode::EmbeddedInInstance) {
-                    uint64_t initialValue = m_instance->instance().loadI64Global(exp.kindIndex);
-                    Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, global.mutability, initialValue);
-                    exportedValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
+                    RefPtr<Wasm::Global> globalRef;
+                    if (global.type.kind == Wasm::TypeKind::V128) {
+                        v128_t initialValue = m_instance->instance().loadV128Global(exp.kindIndex);
+                        globalRef = Wasm::Global::create(global.type, global.mutability, initialValue);
+                    } else {
+                        uint64_t initialValue = m_instance->instance().loadI64Global(exp.kindIndex);
+                        globalRef = Wasm::Global::create(global.type, global.mutability, initialValue);
+                    }
+                    exportedValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), globalRef.releaseNonNull());
                     scope.assertNoException();
                 } else {
                     ASSERT(global.mutability == Wasm::Mutability::Mutable);
