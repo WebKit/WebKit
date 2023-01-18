@@ -51,7 +51,7 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
 
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
 
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
@@ -102,7 +102,7 @@ inline EncodedJSValue arrayGet(Instance* instance, uint32_t typeIndex, EncodedJS
 {
 #if ASSERT_ENABLED
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 #else
     UNUSED_PARAM(instance);
@@ -122,7 +122,7 @@ inline void arraySet(Instance* instance, uint32_t typeIndex, EncodedJSValue arra
     VM& vm = instance->vm();
 
 #if ASSERT_ENABLED
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 #else
     UNUSED_PARAM(typeIndex);
@@ -139,8 +139,8 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
-    Ref<TypeDefinition> structTypeDefinition = instance->module().moduleInformation().typeSignatures[typeIndex];
-    const StructType& structType = *structTypeDefinition->as<StructType>();
+    const TypeDefinition& structTypeDefinition = jsInstance->instance().module().moduleInformation().typeSignatures[typeIndex]->expand();
+    const StructType& structType = *structTypeDefinition.as<StructType>();
 
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
     RELEASE_ASSERT(structValue);

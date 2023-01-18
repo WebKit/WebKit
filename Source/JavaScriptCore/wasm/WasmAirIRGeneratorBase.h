@@ -2476,7 +2476,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCheckedFloatingPointTruncat
 template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 
     ExpressionType tmpForValue;
@@ -2492,7 +2492,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNew(uint32_t typeIndex
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
 
@@ -2517,7 +2517,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(ExtGCOpType arrayG
 {
     ASSERT(arrayGetKind == ExtGCOpType::ArrayGet || arrayGetKind == ExtGCOpType::ArrayGetS || arrayGetKind == ExtGCOpType::ArrayGetU);
 
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
     Wasm::Type resultType = elementType.unpacked();
@@ -2606,7 +2606,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructNew(uint32_t typeInde
     // https://bugs.webkit.org/show_bug.cgi?id=244388
     self().emitCCall(&operationWasmStructNewEmpty, result, instanceValue(), self().addConstant(Types::I32, typeIndex));
 
-    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (unsigned i = 0; i < args.size(); ++i) {
         auto status = self().addStructSet(result, structType, i, args[i]);
         if (!status)
@@ -2624,7 +2624,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructNewDefault(uint32_t t
     // https://bugs.webkit.org/show_bug.cgi?id=244388
     self().emitCCall(&operationWasmStructNewEmpty, result, instanceValue(), self().addConstant(Types::I32, typeIndex));
 
-    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
         ExpressionType tmpForValue;
         if (Wasm::isRefType(structType.field(i).type))

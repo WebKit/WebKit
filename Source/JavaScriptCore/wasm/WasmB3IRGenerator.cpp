@@ -2608,7 +2608,7 @@ Variable* B3IRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, Expr
 auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
 #if ASSERT_ENABLED
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
     ASSERT(toB3Type(elementType.unpacked()) == value->type());
@@ -2631,7 +2631,7 @@ auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Express
 
 auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 
     Value* initValue;
@@ -2647,7 +2647,7 @@ auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, 
 
 auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
     Wasm::Type resultType = elementType.unpacked();
@@ -2728,7 +2728,7 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
 auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
 {
 #if ASSERT_ENABLED
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 #endif
 
@@ -2797,7 +2797,7 @@ auto B3IRGenerator::addStructNew(uint32_t typeIndex, Vector<ExpressionType>& arg
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex));
 
-    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (uint32_t i = 0; i < args.size(); ++i)
         emitStructSet(structValue, i, structType, get(args[i]));
 
@@ -2816,7 +2816,7 @@ auto B3IRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& resu
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex));
 
-    const auto& structType = *m_info.typeSignatures[typeIndex]->template as<StructType>();
+    const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
         Value* initValue;
         if (Wasm::isRefType(structType.field(i).type))
