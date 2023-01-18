@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2010 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -79,7 +79,6 @@ bool SVGPreserveAspectRatioValue::parse(StringParsingBuffer<UChar>& buffer, bool
     return parseInternal(buffer, validate);
 }
 
-template<typename CharacterType> static constexpr CharacterType deferDesc[] =  {'d', 'e', 'f', 'e', 'r'};
 template<typename CharacterType> static constexpr CharacterType noneDesc[] =  {'n', 'o', 'n', 'e'};
 template<typename CharacterType> static constexpr CharacterType meetDesc[] =  {'m', 'e', 'e', 't'};
 template<typename CharacterType> static constexpr CharacterType sliceDesc[] =  {'s', 'l', 'i', 'c', 'e'};
