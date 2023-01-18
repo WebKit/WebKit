@@ -3199,6 +3199,9 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-018.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-019.html [ Skip ]
 
+webkit.org/b/250767 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?mouse [ Skip ]
+webkit.org/b/250767 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?pen [ Skip ]
+
 # :hover simulation not working on iOS
 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-thickness.html [ Skip ]
