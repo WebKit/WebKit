@@ -675,7 +675,15 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     NSString *characters = charCode ? [NSString stringWithCharacters:&charCode.value() length:1] : nil;
     NSString *unmodifiedCharacters = charCodeIgnoringModifiers ? [NSString stringWithCharacters:&charCodeIgnoringModifiers.value() length:1] : nil;
 
-    auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
+    switch (interaction) {
+    case KeyboardInteraction::KeyPress:
+    case KeyboardInteraction::InsertByKey:
+        m_currentModifiers |= changedModifiers;
+        break;
+    case KeyboardInteraction::KeyRelease:
+        m_currentModifiers &= ~changedModifiers;
+        break;
+    }
 
     // FIXME: this timestamp is not even close to matching native events. Find out how to get closer.
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];
@@ -683,16 +691,24 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     NSInteger windowNumber = window.windowNumber;
     NSPoint eventPosition = NSMakePoint(0, window.frame.size.height);
 
+    static constexpr auto characterTransformingModifiers = NSEventModifierFlagShift | NSEventModifierFlagOption;
+    if (characters && (m_currentModifiers & characterTransformingModifiers)) {
+        // `characters` will not automatically include the result of modifier keys when creating an NSEvent; AppKit
+        // expects them to be pre-transformed. Event type is unimportant here as we are more interested in the events
+        // ability to apply modifiers to its characters.
+        characters = [[NSEvent keyEventWithType:NSEventTypeKeyDown location:eventPosition modifierFlags:0 timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode] charactersByApplyingModifiers:m_currentModifiers & characterTransformingModifiers];
+    }
+
+    auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
+
     switch (interaction) {
     case KeyboardInteraction::KeyPress: {
         NSEventType eventType = isStickyModifier ? NSEventTypeFlagsChanged : NSEventTypeKeyDown;
-        m_currentModifiers |= changedModifiers;
         [eventsToBeSent addObject:[NSEvent keyEventWithType:eventType location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         break;
     }
     case KeyboardInteraction::KeyRelease: {
         NSEventType eventType = isStickyModifier ? NSEventTypeFlagsChanged : NSEventTypeKeyUp;
-        m_currentModifiers &= ~changedModifiers;
 
         // When using a physical keyboard, if command is held down, releasing a non-modifier key doesn't send a KeyUp event.
         bool commandKeyHeldDown = m_currentModifiers & NSEventModifierFlagCommand;
@@ -708,7 +724,6 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
         if (isStickyModifier)
             return;
 
-        m_currentModifiers |= changedModifiers;
         [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyDown location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         break;
