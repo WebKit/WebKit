@@ -1037,9 +1037,9 @@ void AccessibilityObjectAtspi::buildAttributes(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "{ss}", it.key.utf8().data(), it.value.utf8().data());
 }
 
-HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> AccessibilityObjectAtspi::relationMap() const
+RelationMap AccessibilityObjectAtspi::relationMap() const
 {
-    HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> map;
+    RelationMap map;
     if (!m_coreObject)
         return map;
 
@@ -1067,32 +1067,32 @@ HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> AccessibilityObjectA
         }
     } else if (!m_coreObject->correspondingControlForLabelElement())
         ariaLabelledByElements = m_coreObject->labelledByObjects();
-    addRelation(Atspi::LabelledBy, ariaLabelledByElements);
+    addRelation(Atspi::Relation::LabelledBy, ariaLabelledByElements);
 
     AccessibilityObject::AccessibilityChildrenVector labelForObjects;
     if (auto* control = m_coreObject->correspondingControlForLabelElement())
         labelForObjects.append(control);
     else
         labelForObjects = m_coreObject->labelForObjects();
-    addRelation(Atspi::LabelFor, labelForObjects);
+    addRelation(Atspi::Relation::LabelFor, labelForObjects);
 
-    addRelation(Atspi::FlowsTo, m_coreObject->flowToObjects());
-    addRelation(Atspi::FlowsFrom, m_coreObject->flowFromObjects());
+    addRelation(Atspi::Relation::FlowsTo, m_coreObject->flowToObjects());
+    addRelation(Atspi::Relation::FlowsFrom, m_coreObject->flowFromObjects());
 
-    addRelation(Atspi::DescribedBy, m_coreObject->describedByObjects());
-    addRelation(Atspi::DescriptionFor, m_coreObject->descriptionForObjects());
+    addRelation(Atspi::Relation::DescribedBy, m_coreObject->describedByObjects());
+    addRelation(Atspi::Relation::DescriptionFor, m_coreObject->descriptionForObjects());
 
-    addRelation(Atspi::ControllerFor, m_coreObject->controlledObjects());
-    addRelation(Atspi::ControlledBy, m_coreObject->controllers());
+    addRelation(Atspi::Relation::ControllerFor, m_coreObject->controlledObjects());
+    addRelation(Atspi::Relation::ControlledBy, m_coreObject->controllers());
 
-    addRelation(Atspi::NodeParentOf, m_coreObject->ownedObjects());
-    addRelation(Atspi::NodeChildOf, m_coreObject->owners());
+    addRelation(Atspi::Relation::NodeParentOf, m_coreObject->ownedObjects());
+    addRelation(Atspi::Relation::NodeChildOf, m_coreObject->owners());
 
-    addRelation(Atspi::Details, m_coreObject->detailedByObjects());
-    addRelation(Atspi::DetailsFor, m_coreObject->detailsForObjects());
+    addRelation(Atspi::Relation::Details, m_coreObject->detailedByObjects());
+    addRelation(Atspi::Relation::DetailsFor, m_coreObject->detailsForObjects());
 
-    addRelation(Atspi::ErrorMessage, m_coreObject->errorMessageObjects());
-    addRelation(Atspi::ErrorFor, m_coreObject->errorMessageForObjects());
+    addRelation(Atspi::Relation::ErrorMessage, m_coreObject->errorMessageObjects());
+    addRelation(Atspi::Relation::ErrorFor, m_coreObject->errorMessageForObjects());
 
     return map;
 }
@@ -1103,7 +1103,7 @@ void AccessibilityObjectAtspi::buildRelationSet(GVariantBuilder* builder) const
         GVariantBuilder arrayBuilder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a(so)"));
         for (const auto& atspiObject : it.value)
             g_variant_builder_add(&arrayBuilder, "@(so)", atspiObject->reference());
-        g_variant_builder_add(builder, "(ua(so))", it.key, &arrayBuilder);
+        g_variant_builder_add(builder, "(ua(so))", static_cast<unsigned>(it.key), &arrayBuilder);
     }
 }
 
