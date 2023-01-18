@@ -67,12 +67,11 @@ static void checkVec4F32Type(WGSL::AST::TypeDecl& type)
 
 namespace TestWGSLAPI {
 
-TEST(WGSLParserTests, Struct)
+static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, const Vector<String>& typeNames)
 {
-    auto shader = WGSL::parseLChar(
-        "struct B {\n"
-        "    a: i32;\n"
-        "}"_s);
+    ASSERT(fieldNames.size() == typeNames.size());
+
+    auto shader = WGSL::parseLChar(program);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -83,12 +82,44 @@ TEST(WGSLParserTests, Struct)
     auto& str = shader->structs()[0];
     EXPECT_EQ(str.name(), "B"_s);
     EXPECT_TRUE(str.attributes().isEmpty());
-    EXPECT_EQ(str.members().size(), 1u);
-    EXPECT_TRUE(str.members()[0].attributes().isEmpty());
-    EXPECT_EQ(str.members()[0].name(), "a"_s);
-    EXPECT_TRUE(is<WGSL::AST::NamedType>(str.members()[0].type()));
-    auto& memberType = downcast<WGSL::AST::NamedType>(str.members()[0].type());
-    EXPECT_EQ(memberType.name(), "i32"_s);
+
+    EXPECT_EQ(str.members().size(), fieldNames.size());
+    for (unsigned i = 0; i < fieldNames.size(); ++i) {
+        EXPECT_TRUE(str.members()[i].attributes().isEmpty());
+        EXPECT_EQ(str.members()[i].name(), fieldNames[i]);
+        EXPECT_TRUE(is<WGSL::AST::NamedType>(str.members()[i].type()));
+        auto& memberType = downcast<WGSL::AST::NamedType>(str.members()[i].type());
+        EXPECT_EQ(memberType.name(), typeNames[i]);
+    }
+}
+
+TEST(WGSLParserTests, Struct)
+{
+    // 1 field, without trailing comma
+    testStruct(
+        "struct B {\n"
+        "    a: i32\n"
+        "}"_s, { "a"_s }, { "i32"_s });
+
+    // 1 field, with trailing comma
+    testStruct(
+        "struct B {\n"
+        "    a: i32,\n"
+        "}"_s, { "a"_s }, { "i32"_s });
+
+    // 2 fields, without trailing comma
+    testStruct(
+        "struct B {\n"
+        "    a: i32,\n"
+        "    b: f32\n"
+        "}"_s, { "a"_s, "b"_s }, { "i32"_s, "f32"_s });
+
+    // 2 fields, with trailing comma
+    testStruct(
+        "struct B {\n"
+        "    a: i32,\n"
+        "    b: f32,\n"
+        "}"_s, { "a"_s, "b"_s }, { "i32"_s, "f32"_s });
 }
 
 TEST(WGSLParserTests, GlobalVariable)
