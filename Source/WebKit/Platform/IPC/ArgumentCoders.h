@@ -117,9 +117,6 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
 
 template<typename... Types>
 struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
-    template<size_t Indices>
-    using ArrayReferenceTupleElementType = std::tuple_element_t<Indices, std::tuple<Types...>>;
-
     template<typename Encoder>
     static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference)
     {
@@ -129,44 +126,45 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
     template<typename Encoder, size_t... Indices>
     static void encode(Encoder& encoder, const ArrayReferenceTuple<Types...>& arrayReference, std::index_sequence<Indices...>)
     {
-        auto size = arrayReference.size();
-        encoder << static_cast<uint64_t>(size);
+        size_t size = arrayReference.size();
+        encoder << size;
         if (UNLIKELY(!size))
             return;
 
-        (encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<Indices>()),
-            size * sizeof(ArrayReferenceTupleElementType<Indices>), alignof(ArrayReferenceTupleElementType<Indices>)) , ...);
+        (..., encoder.encodeSpan(Span { arrayReference.template data<Indices>(), size }));
     }
 
     template<typename Decoder>
     static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder)
     {
-        auto size = decoder.template decode<uint64_t>();
-        if (UNLIKELY(!size))
+        auto decodedSize = decoder.template decode<size_t>();
+        if (UNLIKELY(!decodedSize))
             return std::nullopt;
-        if (UNLIKELY(!*size))
+        if (UNLIKELY(!*decodedSize))
             return ArrayReferenceTuple<Types...> { };
 
-        return decode(decoder, *size);
+        CheckedSize size { *decodedSize };
+        bool anyOverflow = (... || (size * sizeof(Types)).hasOverflowed());
+        if (UNLIKELY(anyOverflow))
+            return std::nullopt;
+
+        return decode(decoder, size);
     }
 
     template<typename Decoder, typename... DataPointerTypes>
-    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, uint64_t size, DataPointerTypes&&... dataPointers)
+    static std::optional<ArrayReferenceTuple<Types...>> decode(Decoder& decoder, size_t size, DataPointerTypes&&... dataPointers)
     {
         constexpr size_t Index = sizeof...(DataPointerTypes);
         static_assert(Index <= sizeof...(Types));
 
         if constexpr (Index < sizeof...(Types)) {
-            using ElementType = ArrayReferenceTupleElementType<Index>;
-            auto dataSize = CheckedSize { size } * sizeof(ElementType);
-            if (UNLIKELY(dataSize.hasOverflowed()))
+            using ElementType = std::tuple_element_t<Index, std::tuple<Types...>>;
+            auto data = decoder.template decodeSpan<ElementType>(size);
+            if (!data.data())
                 return std::nullopt;
-            const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(ElementType));
-            if (UNLIKELY(!data))
-                return std::nullopt;
-            return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., reinterpret_cast<const ElementType*>(data) );
+            return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., data.data());
         } else
-            return ArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., static_cast<size_t>(size) };
+            return ArrayReferenceTuple<Types...> { std::forward<DataPointerTypes>(dataPointers)..., size };
     }
 };
 
@@ -487,35 +485,16 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Encoder>
     static void encode(Encoder& encoder, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
-        encoder << static_cast<uint64_t>(vector.size());
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
+        encoder << vector.span();
     }
 
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        auto decodedSize = decoder.template decode<uint64_t>();
-        if (!decodedSize)
+        auto data = decoder.template decode<Span<const T>>();
+        if (!data)
             return std::nullopt;
-
-        if (!isInBounds<size_t>(decodedSize))
-            return std::nullopt;
-
-        auto size = static_cast<size_t>(*decodedSize);
-
-        // Since we know the total size of the elements, we can allocate the vector in
-        // one fell swoop. Before allocating we must however make sure that the decoder buffer
-        // is big enough.
-        if (!decoder.template bufferIsLargeEnoughToContain<T>(size))
-            return std::nullopt;
-
-        Vector<T, inlineCapacity, OverflowHandler, minCapacity> vector;
-        vector.grow(size);
-
-        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(vector.data()), size * sizeof(T), alignof(T)))
-            return std::nullopt;
-
-        return vector;
+        return std::make_optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>>(*data);
     }
 };
 
@@ -777,8 +756,23 @@ template<> struct ArgumentCoder<StringView> {
 };
 
 template<> struct ArgumentCoder<SHA1::Digest> {
-    static void encode(Encoder&, const SHA1::Digest&);
-    static std::optional<SHA1::Digest> decode(Decoder&);
+    static void encode(Encoder& encoder, const SHA1::Digest& digest)
+    {
+        encoder.encodeSpan(Span { digest.data(), digest.size() });
+    }
+
+    static std::optional<SHA1::Digest> decode(Decoder& decoder)
+    {
+        constexpr size_t size = std::tuple_size_v<SHA1::Digest>;
+        auto data = decoder.template decodeSpan<uint8_t>(size);
+        if (!data.data())
+            return std::nullopt;
+
+        SHA1::Digest digest;
+        static_assert(sizeof(typename decltype(data)::element_type) == 1);
+        memcpy(digest.data(), data.data(), data.size_bytes());
+        return digest;
+    }
 };
 
 template<> struct ArgumentCoder<std::monostate> {
