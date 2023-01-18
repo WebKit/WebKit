@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+async function loadFontFace(fontDeclaration, text, eventName)
+{
+    try {
+        await document.fonts.load(fontDeclaration, text);
+        TestPage.log("PASS: Font should be loaded.");
+    } catch {
+        TestPage.log("FAIL: Font should be loaded.");
+    }
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.FontStyles.ApplyFontVariationInstance");
+
+    function loadFontFace(fontDeclaration, text, eventName)
+    {
+        return Promise.all([
+            InspectorTest.awaitEvent(eventName),
+            InspectorTest.evaluateInPage(`loadFontFace("${fontDeclaration}", "${text}", "${eventName}")`),
+        ]);
+    }
+
+    function addTestCase({name, description, selector, instanceName, expectedInlineStyleProperties})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async setup() {
+                await loadFontFace("normal normal 12px VariableFont", " ", "TestPage-VariableFont1Loaded");
+            },
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
+
+                await cssStyles.refreshIfNeeded();
+
+                let instances = [
+                    {
+                        name: "Default", // Default values for axes on Boxis-VF test font 
+                        values: [
+                            {tag: "wdth", value: 100},
+                            {tag: "trac", value: 0},
+                            {tag: "hght", value: 750}, 
+                            {tag: "desc", value: 0}
+                        ],
+                    },
+                    {
+                        name: "ThinShort",
+                        values: [
+                            {tag: "wdth", value: 0},
+                            {tag: "trac", value: 0},
+                            {tag: "hght", value: 0}, 
+                            {tag: "desc", value: 0}
+                        ],
+                    },
+                ];
+
+                // FIXME: <webkit.org/b/251991> Test a font with named variation instances defined.
+                let variationInstancesMap = new Map;
+                for (let instancePayload of instances)
+                    variationInstancesMap.set(instancePayload.name, WI.FontVariationInstance.fromPayload(instancePayload));
+
+                cssStyles.computedPrimaryFont.variationInstancesMap = variationInstancesMap;
+
+                let fontStyles = new WI.FontStyles(cssStyles);
+
+                let instance = fontStyles.variationInstancesMap.get(instanceName);
+                InspectorTest.expectTrue(instance instanceof WI.FontVariationInstance, `Font has variation instance named ${instanceName}`);
+
+                InspectorTest.log(`INFO: Applying ${instanceName}`);
+                fontStyles.applyFontVariationInstance(instance);
+
+                await cssStyles.refreshIfNeeded();
+
+                InspectorTest.expectEqual(fontStyles.matchingVariationInstanceName, instanceName, `Applied variation instance name matches ${instanceName}.`);
+
+                let properties = cssStyles.inlineStyle.visibleProperties;
+                for (let [name, value] of Object.entries(expectedInlineStyleProperties)) {
+                    let cssProperty = properties.find(cssProperty => cssProperty.name === name) || null;
+
+                    InspectorTest.expectNotNull(cssProperty, `Inline style has CSS property ${name}`);
+                    InspectorTest.expectEqual(cssProperty.value, value, `Found expected CSS declaration ${name}: ${value}`);
+                }
+            },
+        });
+    }
+
+    addTestCase({
+        name: "WI.FontStyles.ApplyFontVariationInstance.InstanceDefault.Create",
+        description: "Instance with axis values identical to defaults gets applied to the corresponding font property and font-variation-settings; create if missing.",
+        selector: "#instance-default-values-create",
+        instanceName: "Default",
+        expectedInlineStyleProperties: {
+            "font-stretch": "100%",
+            "font-variation-settings": "\"trac\" 0, \"hght\" 750, \"desc\" 0",
+        },
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Create",
+        description: "Mixed axes from an instance are written to the corresponding font property and font-variation-settings values; create if missing.",
+        selector: "#instance-mixed-axes-create",
+        instanceName: "ThinShort",
+        expectedInlineStyleProperties: {
+            "font-stretch": "0%",
+            "font-variation-settings": "\"trac\" 0, \"hght\" 0, \"desc\" 0",
+        },
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Update",
+        description: "Mixed axes from an instance are written to the corresponding font property and font-variation-settings values; update if found.",
+        selector: "#instance-mixed-axes-update",
+        instanceName: "ThinShort",
+        expectedInlineStyleProperties: {
+            "font-stretch": "0%",
+            "font-variation-settings": "\"trac\" 0, \"hght\" 0, \"desc\" 0",
+        },
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Update.VariationSettings",
+        description: "Registered axes from an instance are written to font-variation-settings if already declared there.",
+        selector: "#instance-mixed-axes-update-variation-settings",
+        instanceName: "ThinShort",
+        expectedInlineStyleProperties: {
+            "font-variation-settings": "\"wdth\" 0, \"trac\" 0, \"hght\" 0, \"desc\" 0",
+        },
+    });
+
+    addTestCase({
+        name: "WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Replace.VariationSettings",
+        description: "Custom axes declared on font-variation-settings but not defined on an instance get replaced.",
+        selector: "#instance-mixed-axes-replace-variation-settings",
+        instanceName: "ThinShort",
+        expectedInlineStyleProperties: {
+            "font-stretch": "0%",
+            "font-variation-settings": "\"trac\" 0, \"hght\" 0, \"desc\" 0",
+        },
+    });
+
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+
+@font-face {
+    font-family: "VariableFont";
+    src: url("../../animations/font-variations/resources/Boxis-VF.ttf");
+}
+
+div {
+    font-family: VariableFont;
+}
+
+#instance-default-values-create {
+}
+
+#instance-mixed-axes-create {
+}
+
+#instance-mixed-axes-update {
+    font-stretch: 100%;
+    font-variation-settings: "trac" 0;
+}
+
+#instance-mixed-axes-update-variation-settings {
+    font-variation-settings: "wdth" 100;
+}
+
+#instance-mixed-axes-replace-variation-settings {
+    font-variation-settings: "xxxx" 9999;
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Tests for WI.FontStyles.ApplyFontVariationInstance</p>
+
+<div id="instance-default-values-create"></div>
+<div id="instance-mixed-axes-create"></div>
+<div id="instance-mixed-axes-update"></div>
+<div id="instance-mixed-axes-update-variation-settings"></div>
+<div id="instance-mixed-axes-replace-variation-settings"></div>
+
+</body>
+</html>

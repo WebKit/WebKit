@@ -235,4 +235,8 @@ CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph,
 
 CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
 
+#if HAVE(CTFONT_COPY_LOCALIZED_NAME_BY_ID)
+CFStringRef CTFontCopyLocalizedNameByIDWithLanguages(CTFontRef font, FontNameCode nameID, CFArrayRef languages, CFStringRef *actualLanguage);
+#endif
+
 WTF_EXTERN_C_END

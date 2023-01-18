@@ -25,14 +25,15 @@
 
 WI.Font = class Font
 {
-    constructor(name, variationAxes, {synthesizedBold, synthesizedOblique} = {})
+    constructor(name, variationAxes, {variationInstancesMap, synthesizedBold, synthesizedOblique} = {})
     {
         this._name = name;
         this._variationAxes = variationAxes;
 
-        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.Font.synthesizedBold and CSS.Font.synthesizedOblique did not exist yet.
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.Font.synthesizedBold, CSS.Font.synthesizedOblique and CSS.Font.variationInstances did not exist yet.
         this._synthesizedBold = !!synthesizedBold;
         this._synthesizedOblique = !!synthesizedOblique;
+        this._variationInstancesMap = variationInstancesMap ?? new Map;
     }
 
     // Static
@@ -40,22 +41,34 @@ WI.Font = class Font
     static fromPayload(payload)
     {
         let variationAxes = payload.variationAxes.map((axisPayload) => WI.FontVariationAxis.fromPayload(axisPayload));
+        let variationInstancesMap = new Map;
+        for (let instancePayload of payload.variationInstances ?? []) {
+            let instance = WI.FontVariationInstance.fromPayload(instancePayload);
+            variationInstancesMap.set(instance.name, instance);
+        }
 
         let synthesizedBold = payload.synthesizedBold;
         let synthesizedOblique = payload.synthesizedOblique;
 
-        return new WI.Font(payload.displayName, variationAxes, {synthesizedBold, synthesizedOblique});
+        return new WI.Font(payload.displayName, variationAxes, {variationInstancesMap, synthesizedBold, synthesizedOblique});
     }
 
     // Public
 
     get name() { return this._name; }
     get variationAxes() { return this._variationAxes; }
+    get variationInstancesMap() { return this._variationInstancesMap; }
     get synthesizedBold() { return this._synthesizedBold; }
     get synthesizedOblique() { return this._synthesizedOblique; }
 
     variationAxis(tag)
     {
         return this._variationAxes.find((axis) => axis.tag === tag);
+    }
+
+    // Testing
+
+    set variationInstancesMap(map) {
+        this._variationInstancesMap = map;
     }
 };

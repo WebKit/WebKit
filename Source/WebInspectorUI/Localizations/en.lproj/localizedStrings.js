@@ -1092,6 +1092,8 @@ localizedStrings["Node"] = "Node";
 localizedStrings["Node Removed @ DOM Breakpoint"] = "Node Removed";
 localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
+/* Label to indicate that a font variation instance (preset) is not applied. */
+localizedStrings["None @ Font Details Sidebar Instance"] = "None";
 /* Property value for any `normal` CSS value. */
 localizedStrings["Normal @ Font Details Sidebar Property Value"] = "Normal";
 localizedStrings["Not found"] = "Not found";

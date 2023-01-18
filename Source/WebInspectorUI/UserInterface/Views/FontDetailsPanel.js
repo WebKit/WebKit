@@ -89,6 +89,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             }
         }
 
+        this._updateVariationInstanceRow();
+
         this._fontNameRow.value = this.nodeStyles.computedPrimaryFont.name;
 
         // Feature properties
@@ -153,7 +155,19 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             this._basicPropertyRowsMap.set(propertyName, this._createDetailsSectionRowForProperty(propertyName));
         }
 
-        this._basicPropertiesGroup.rows = [...this._basicPropertyRowsMap.values()];
+        if (this._variationInstanceRow) {
+            this._variationInstanceRow.element.remove();
+            this._variationInstanceRow = null;
+        }
+
+        let rows = [];
+        if (this._variationInstanceNames.length) {
+            this._variationInstanceRow = this._createVariationInstanceRow(this._variationInstanceNames);
+            rows.push(this._variationInstanceRow)
+        }
+
+        rows.pushAll(this._basicPropertyRowsMap.values());
+        this._basicPropertiesGroup.rows = rows;
 
         for (let [tag, variationRow] of this._fontVariationRowsMap) {
             variationRow.element.remove();
@@ -170,6 +184,45 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         }
 
         this._fontVariationsGroup.rows = [...this._fontVariationRowsMap.values()];
+    }
+
+    _createVariationInstanceRow(variationInstanceNames)
+    {
+        this._variationInstanceSelectElement = document.createElement("select");
+
+        this._variationInstanceDefaultOptionElement = this._variationInstanceSelectElement.appendChild(document.createElement("option"));
+        this._variationInstanceDefaultOptionElement.textContent = WI.UIString("None", "None @ Font Details Sidebar Instance", "Label to indicate that a font variation instance (preset) is not applied.");
+        this._variationInstanceDefaultOptionElement.disabled = true;
+        this._variationInstanceDefaultOptionElement.selected = this._matchingVariationInstanceName === null;
+
+        for (let name of variationInstanceNames) {
+            let optionElement = this._variationInstanceSelectElement.appendChild(document.createElement("option"));
+            optionElement.value = name;
+            optionElement.textContent = name;
+            optionElement.selected = this._matchingVariationInstanceName === name;
+        }
+
+        this._variationInstanceSelectElement.addEventListener("change", (e) => {
+            this._fontStyles.applyFontVariationInstance(this._fontStyles.variationInstancesMap.get(e.target.value));
+        });
+
+        let row = new WI.DetailsSectionSimpleRow("Instance");
+        row.value = this._variationInstanceSelectElement;
+
+        return row;
+    }
+
+    _updateVariationInstanceRow()
+    {
+        if (!this._variationInstanceSelectElement)
+            return;
+
+        let selectedInstanceIndex = Array.from(this._variationInstanceSelectElement.options).findIndex((optionElement) => optionElement.value === this._matchingVariationInstanceName);
+        if (selectedInstanceIndex === -1)
+            selectedInstanceIndex = 0; // The first <option> is for the disabled "None" instance.
+
+        this._variationInstanceSelectElement.selectedIndex = selectedInstanceIndex;
+        this._variationInstanceDefaultOptionElement.hidden = this._matchingVariationInstanceName !== null;
     }
 
     initialLayout()
@@ -225,6 +278,16 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     get _fontFeaturesMap()
     {
         return this._fontStyles?.featuresMap ?? new Map;
+    }
+
+    get _variationInstanceNames()
+    {
+        return Array.from(this._fontStyles?.variationInstancesMap.keys() ?? []);
+    }
+
+    get _matchingVariationInstanceName()
+    {
+        return this._fontStyles?.matchingVariationInstanceName ?? null;
     }
 
     _createDetailsSectionRowForProperty(propertyName)

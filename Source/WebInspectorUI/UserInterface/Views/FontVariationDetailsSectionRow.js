@@ -59,8 +59,8 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
         this._variationMaxValueElement.textContent = this._formatAxisValueAsString(maximumValue);
 
         this._inputRangeElement.addEventListener("input", (event) => {
-            this.value = event.target.value;
-            this.dispatchEventToListeners(WI.FontVariationDetailsSectionRow.Event.VariationValueChanged, {tag: event.target.name, value: event.target.value});
+            this.value = parseFloat(event.target.value);
+            this.dispatchEventToListeners(WI.FontVariationDetailsSectionRow.Event.VariationValueChanged, {tag: this.tag, value: this.value});
         }, {signal: abortSignal});
 
         this._valueElement = this.element.appendChild(document.createElement("div"));
