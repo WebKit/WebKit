@@ -5,6 +5,7 @@ RUN(controller.play())
 EVENT(playing)
 EXPECTED (controller.paused == 'false') OK
 RUN(controller.currentTime = 5)
+EXPECTED (controller.currentTime == '5') OK
 EXPECTED (video.currentTime == '5') OK
 EXPECTED (video2.currentTime == '5') OK
 EVENT(ended)

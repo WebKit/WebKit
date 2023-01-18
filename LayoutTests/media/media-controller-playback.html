@@ -32,6 +32,7 @@
             testExpected('controller.paused', false);
             controller.addEventListener('ended', ended, true);
             run('controller.currentTime = 5');
+            testExpected('controller.currentTime', 5);
             testExpected('video.currentTime', 5);
             testExpected('video2.currentTime', 5);
         }
