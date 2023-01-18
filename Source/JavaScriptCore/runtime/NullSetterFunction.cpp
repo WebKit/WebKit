@@ -67,7 +67,7 @@ private:
 static bool callerIsStrict(VM& vm, CallFrame* callFrame)
 {
     GetCallerStrictnessFunctor iter;
-    callFrame->iterate(vm, iter);
+    StackVisitor::visit(callFrame, vm, iter);
     return iter.callerIsStrict();
 }
 

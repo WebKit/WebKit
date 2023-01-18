@@ -442,7 +442,7 @@ JSC_DEFINE_HOST_FUNCTION(assertCall, (JSGlobalObject* globalObject, CallFrame* c
     bool iteratedOnce = false;
     CodeBlock* codeBlock = nullptr;
     unsigned line;
-    callFrame->iterate(globalObject->vm(), [&] (StackVisitor& visitor) {
+    StackVisitor::visit(callFrame, globalObject->vm(), [&] (StackVisitor& visitor) {
         if (!iteratedOnce) {
             iteratedOnce = true;
             return IterationStatus::Continue;

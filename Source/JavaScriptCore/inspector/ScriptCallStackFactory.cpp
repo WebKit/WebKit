@@ -116,7 +116,7 @@ Ref<ScriptCallStack> createScriptCallStack(JSC::JSGlobalObject* globalObject, si
         return ScriptCallStack::create();
 
     CreateScriptCallStackFunctor functorIncludingFirstFrame(globalObject, false, maxStackSize);
-    frame->iterate(vm, functorIncludingFirstFrame);
+    StackVisitor::visit(frame, vm, functorIncludingFirstFrame);
     return functorIncludingFirstFrame.takeStack();
 }
 
@@ -133,11 +133,11 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::JSGlobalObject* global
         return ScriptCallStack::create();
 
     CreateScriptCallStackFunctor functorSkippingFirstFrame(globalObject, true, maxStackSize);
-    frame->iterate(vm, functorSkippingFirstFrame);
+    StackVisitor::visit(frame, vm, functorSkippingFirstFrame);
     auto stack = functorSkippingFirstFrame.takeStack();
     if (!stack->size()) {
         CreateScriptCallStackFunctor functorIncludingFirstFrame(globalObject, false, maxStackSize);
-        frame->iterate(vm, functorIncludingFirstFrame);
+        StackVisitor::visit(frame, vm, functorIncludingFirstFrame);
         stack = functorIncludingFirstFrame.takeStack();
     }
     return stack;

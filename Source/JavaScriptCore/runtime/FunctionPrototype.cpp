@@ -148,7 +148,7 @@ static JSValue retrieveArguments(VM& vm, CallFrame* callFrame, JSFunction* funct
 {
     RetrieveArgumentsFunctor functor(vm, functionObj);
     if (callFrame)
-        callFrame->iterate(vm, functor);
+        StackVisitor::visit(callFrame, vm, functor);
     return functor.result();
 }
 
@@ -217,7 +217,7 @@ static JSValue retrieveCallerFunction(VM& vm, CallFrame* callFrame, JSFunction* 
 {
     RetrieveCallerFunctionFunctor functor(functionObj);
     if (callFrame)
-        callFrame->iterate(vm, functor);
+        StackVisitor::visit(callFrame, vm, functor);
     return functor.result();
 }
 

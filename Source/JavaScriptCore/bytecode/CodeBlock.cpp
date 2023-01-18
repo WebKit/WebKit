@@ -2425,8 +2425,9 @@ void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
     }
 
     // Recursive calls won't be inlined.
+    VM& vm = this->vm();
     RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-    vm().topCallFrame->iterate(vm(), functor);
+    StackVisitor::visit(vm.topCallFrame, vm, functor);
 
     if (functor.didRecurse()) {
         dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");

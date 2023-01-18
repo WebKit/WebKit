@@ -1508,7 +1508,7 @@ JSC_DEFINE_HOST_FUNCTION(functionJSCStack, (JSGlobalObject* globalObject, CallFr
     trace.append("--> Stack trace:\n");
 
     FunctionJSCStackFunctor functor(trace);
-    callFrame->iterate(vm, functor);
+    StackVisitor::visit(callFrame, vm, functor);
     fprintf(stderr, "%s", trace.toString().utf8().data());
     return JSValue::encode(jsUndefined());
 }

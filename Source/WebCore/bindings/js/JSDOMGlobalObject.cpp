@@ -735,7 +735,7 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
         };
 
         GetCallerGlobalObjectFunctor iter(skipFirstFrame);
-        callFrame->iterate(vm, iter);
+        StackVisitor::visit(callFrame, vm, iter);
         if (iter.globalObject())
             return *jsCast<JSDOMGlobalObject*>(iter.globalObject());
     }

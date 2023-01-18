@@ -171,7 +171,7 @@ public:
 
         unsigned frameIndex = 0;
         bool isValid = false;
-        callFrame->iterate(vm, [&] (StackVisitor& visitor) {
+        StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
             DollarVMAssertScope assertScope;
 
             if (frameIndex++ != requestedFrameIndex)
@@ -2439,7 +2439,7 @@ JSC_DEFINE_HOST_FUNCTION(functionLLintTrue, (JSGlobalObject* globalObject, CallF
     if (!callFrame)
         return JSValue::encode(jsUndefined());
     CallerFrameJITTypeFunctor functor;
-    callFrame->iterate(vm, functor);
+    StackVisitor::visit(callFrame, vm, functor);
     return JSValue::encode(jsBoolean(functor.jitType() == JITType::InterpreterThunk));
 }
 
@@ -2452,7 +2452,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBaselineJITTrue, (JSGlobalObject* globalObject,
     if (!callFrame)
         return JSValue::encode(jsUndefined());
     CallerFrameJITTypeFunctor functor;
-    callFrame->iterate(vm, functor);
+    StackVisitor::visit(callFrame, vm, functor);
     return JSValue::encode(jsBoolean(functor.jitType() == JITType::BaselineJIT));
 }
 
@@ -2697,7 +2697,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpRegisters, (JSGlobalObject* globalObject, C
     }
 
     unsigned frameIndex = 0;
-    callFrame->iterate(vm, [&] (StackVisitor& visitor) {
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
         DollarVMAssertScope assertScope;
         if (frameIndex++ != requestedFrameIndex)
             return IterationStatus::Continue;
