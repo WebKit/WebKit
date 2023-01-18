@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="UTF-8">
+<style>
+    body, ::backdrop {
+        background: red;
+    }
+
+    iframe {
+        display: block;
+        background: green;
+    }
+
+    .container {
+        display: flex;
+        width: 400px;
+    }
+</style>
+</head>
+<body>
+<script src="../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+    addEventListener("load", () => {
+        document.addEventListener("fullscreenchange", () => {
+            document.documentElement.classList.remove("reftest-wait");
+        });
+        test_driver.bless("fullscreen", () => {
+            iframe.contentDocument.documentElement.requestFullscreen();
+        }, iframe.contentWindow);
+    });
+</script>
+<div class="container">
+    <iframe id="iframe" srcdoc="<button onclick='document.documentElement.requestFullscreen();'>Go fullscreen</button><p>This test passes if background is fully green with no red.</p>"></iframe>
+</div>
+</body>
+</html>
