@@ -179,7 +179,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         double amount = 0;
         if (operation)
             amount = downcast<BasicColorMatrixFilterOperation>(*operation).amount();
-
+        
         value = @(amount);
         break;
     }
@@ -193,7 +193,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         double amount = 1;
         if (operation)
             amount = downcast<BasicColorMatrixFilterOperation>(*operation).amount();
-
+        
         value = @(amount);
         break;
     }
@@ -202,7 +202,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         double amount = 0;
         if (operation)
             amount = downcast<BasicColorMatrixFilterOperation>(*operation).amount();
-
+        
         amount = deg2rad(amount);
         value = @(amount);
         break;
@@ -220,7 +220,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         value = PlatformCAFilters::colorMatrixValueForFilter(type, operation);
         break;
     }
-
+    
     case FilterOperation::Type::Brightness: {
         // Brightness CAFilter: inputColorMatrix
         value = PlatformCAFilters::colorMatrixValueForFilter(type, operation);
@@ -237,7 +237,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         double amount = 0;
         if (operation)
             amount = floatValueForLength(downcast<BlurFilterOperation>(*operation).stdDeviation(), 0);
-
+        
         value = @(amount);
         break;
     }
@@ -387,38 +387,20 @@ bool PlatformCAFilters::isAnimatedFilterProperty(FilterOperation::Type type)
     }
 }
 
-static constexpr auto inputAmountProperty = "inputAmount"_s;
-static constexpr auto inputColorMatrixProperty = "inputColorMatrix"_s;
-static constexpr auto inputAngleProperty = "inputAngle"_s;
-static constexpr auto inputRadiusProperty = "inputRadius"_s;
-
-String PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Type type)
+const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Type type)
 {
     switch (type) {
-    case FilterOperation::Type::Grayscale:
-    case FilterOperation::Type::Saturate:
-        return inputAmountProperty;
-    case FilterOperation::Type::Sepia:
-    case FilterOperation::Type::Invert:
-    case FilterOperation::Type::Opacity:
-    case FilterOperation::Type::Brightness:
-    case FilterOperation::Type::Contrast:
-        return inputColorMatrixProperty;
-    case FilterOperation::Type::HueRotate:
-        return inputAngleProperty;
-    case FilterOperation::Type::Blur:
-        return inputRadiusProperty;
-    default:
-        return emptyString();
+    case FilterOperation::Type::Grayscale: return "inputAmount";
+    case FilterOperation::Type::Sepia:return "inputColorMatrix";
+    case FilterOperation::Type::Saturate: return "inputAmount";
+    case FilterOperation::Type::HueRotate: return "inputAngle";
+    case FilterOperation::Type::Invert: return "inputColorMatrix";
+    case FilterOperation::Type::Opacity: return "inputColorMatrix";
+    case FilterOperation::Type::Brightness: return "inputColorMatrix";
+    case FilterOperation::Type::Contrast: return "inputColorMatrix";
+    case FilterOperation::Type::Blur: return "inputRadius";
+    default: return "";
     }
-}
-
-bool PlatformCAFilters::isValidAnimatedFilterPropertyName(const String& animatedFilterPropertyName)
-{
-    return animatedFilterPropertyName == inputAmountProperty
-        || animatedFilterPropertyName == inputColorMatrixProperty
-        || animatedFilterPropertyName == inputAngleProperty
-        || animatedFilterPropertyName == inputRadiusProperty;
 }
 
 } // namespace WebCore
