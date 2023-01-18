@@ -637,9 +637,9 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (Instance* instance, con
                     throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
                     return;
                 }
-                unboxedValue = bitwise_cast<uint64_t>(value);
             } else
                 RELEASE_ASSERT_NOT_REACHED();
+            unboxedValue = bitwise_cast<uint64_t>(value);
         }
         }
         RETURN_IF_EXCEPTION(scope, void());
