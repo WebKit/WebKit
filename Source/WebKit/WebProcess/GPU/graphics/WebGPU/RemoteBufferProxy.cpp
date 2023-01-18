@@ -50,6 +50,7 @@ void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::We
     auto [data] = sendResult.takeReplyOr(std::nullopt);
     if (!data) {
         // FIXME: Implement error handling.
+        callback();
         return;
     }
 
