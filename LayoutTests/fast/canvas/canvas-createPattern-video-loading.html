@@ -68,10 +68,8 @@
     {
         drawImageToCanvasAndCheckPixels();
 
-        video.currentTime = 1;
-        video.play();
-        await waitForVideoFrameUntil(video, 1);
-        video.pause();
+        video.currentTime = 0.996;
+        await once(video, 'seeked');
 
         drawImageToCanvasAndCheckPixels();
 

@@ -2497,8 +2497,6 @@ webkit.org/b/244277 http/tests/webgpu/webgpu/api/validation/createTexture.html [
 
 webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass Timeout ]
-
 webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]
 
 webkit.org/b/244372 imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html [ Pass Failure ]
