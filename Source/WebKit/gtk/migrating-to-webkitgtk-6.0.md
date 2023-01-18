@@ -17,6 +17,13 @@ of libsoup 2. See [Migrating from libsoup 2](https://libsoup.org/libsoup-3.0/mig
 for guidance on this. After first migrating to webkit2gtk-4.1, then it is
 time to start looking into webkitgtk-6.0.
 
+## Mandatory Web Process Sandbox
+
+The `webkit_web_context_set_sandbox_enabled()` and `webkit_web_context_get_sandbox_enabled()`
+functions have been removed. The web process sandbox is now always enabled. If
+your application's web process needs to access extra directories, use
+[method@WebKit.WebContext.add_path_to_sandbox] to mount them in the sandbox.
+
 ## Mandatory Process Swap on Cross-site Navigation
 
 The `WebKitWebContext:process-swap-on-cross-site-navigation-enabled` property
