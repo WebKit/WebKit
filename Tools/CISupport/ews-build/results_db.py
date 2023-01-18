@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@ import os
 import sys
 import twisted
 import re
+import urllib.parse
 
 from twisted_additions import TwistedAdditions
 from twisted.internet import defer, reactor
@@ -75,7 +76,7 @@ class ResultsDatabase(object):
         if commit:
             params['ref'] = commit
 
-        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/results-summary/{suite}/{test}', params=params, logger=logger)
+        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/results-summary/{urllib.parse.quote(suite)}/{urllib.parse.quote(test)}', params=params, logger=logger)
 
         if not response:
             logger(f'No response from {cls.HOSTNAME}\n')
