@@ -572,10 +572,9 @@ bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference)
 
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference)
 {
-    ASSERT(WTF::isSortedConstExpr(target.begin(), target.end()));
     ASSERT(WTF::isSortedConstExpr(reference.begin(), reference.end()));
     for (auto feature : target) {
-        if (!std::find(reference.begin(), reference.end(), feature))
+        if (!std::binary_search(reference.begin(), reference.end(), feature))
             return true;
     }
     return false;
