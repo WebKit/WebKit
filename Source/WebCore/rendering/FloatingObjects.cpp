@@ -235,7 +235,7 @@ private:
 inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalType& interval)
 {
     const auto& floatingObject = *interval.data();
-    if (!rangesIntersect(interval.low(), interval.high(), m_belowLogicalHeight, LayoutUnit::max()))
+    if (!floatingObject.height() || !rangesIntersect(interval.low(), interval.high(), m_belowLogicalHeight, LayoutUnit::max()))
         return;
 
     // All the objects returned from the tree should be already placed.
@@ -477,7 +477,7 @@ template <FloatingObject::Type FloatTypeValue>
 inline void ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const IntervalType& interval)
 {
     const auto& floatingObject = *interval.data();
-    if (floatingObject.type() != FloatTypeValue || !rangesIntersect(interval.low(), interval.high(), m_lineTop, m_lineBottom))
+    if (floatingObject.type() != FloatTypeValue || !floatingObject.height() || !rangesIntersect(interval.low(), interval.high(), m_lineTop, m_lineBottom))
         return;
 
     // All the objects returned from the tree should be already placed.
