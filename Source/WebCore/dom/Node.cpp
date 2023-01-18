@@ -391,7 +391,7 @@ Node::Node(Document& document, ConstructionType type)
 Node::~Node()
 {
     ASSERT(isMainThread());
-    ASSERT(m_refCountAndParentBit == s_refCountIncrement);
+    RELEASE_ASSERT(m_refCountAndParentBit == s_refCountIncrement);
     ASSERT(m_deletionHasBegun);
     ASSERT(!m_adoptionIsRequired);
 

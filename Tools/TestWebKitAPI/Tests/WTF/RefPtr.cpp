@@ -549,6 +549,31 @@ TEST(WTF_RefPtr, ReleaseNonNullBeforeDeref)
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
 }
 
+struct StoreRefInDestructor : RefCounted<StoreRefInDestructor> {
+    static Ref<StoreRefInDestructor> create()
+    {
+        return adoptRef(*new StoreRefInDestructor);
+    }
+    
+    ~StoreRefInDestructor()
+    {
+        RefPtr<StoreRefInDestructor> protectedThis = this;
+        helperFunction(*this);
+    }
+
+    static void helperFunction(StoreRefInDestructor& obj)
+    {
+        Ref protectedObj = obj;
+    }
+};
+
+TEST(WTF_RefPtr, RefInDestructor)
+{
+    // This test passes if it compiles without an error.
+    RefPtr a = StoreRefInDestructor::create();
+    a = nullptr;
+}
+
 // FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run
 #if! PLATFORM(WIN)
 

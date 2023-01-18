@@ -800,8 +800,6 @@ inline void adopted(Node* node)
 ALWAYS_INLINE void Node::ref() const
 {
     ASSERT(isMainThread());
-    ASSERT(!m_deletionHasBegun);
-    ASSERT(!m_inRemovedLastRefFunction);
     ASSERT(!m_adoptionIsRequired);
     m_refCountAndParentBit += s_refCountIncrement;
 }
@@ -810,8 +808,6 @@ ALWAYS_INLINE void Node::deref() const
 {
     ASSERT(isMainThread());
     ASSERT(refCount());
-    ASSERT(!m_deletionHasBegun);
-    ASSERT(!m_inRemovedLastRefFunction);
     ASSERT(!m_adoptionIsRequired);
     auto updatedRefCount = m_refCountAndParentBit - s_refCountIncrement;
     if (!updatedRefCount) {

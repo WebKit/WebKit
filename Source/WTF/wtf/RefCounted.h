@@ -43,7 +43,6 @@ public:
         applyRefDerefThreadingCheck();
 
 #if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
 #endif
         ++m_refCount;
@@ -51,9 +50,6 @@ public:
 
     bool hasOneRef() const
     {
-#if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT(!m_deletionHasBegun);
-#endif
         return m_refCount == 1;
     }
 
@@ -118,6 +114,7 @@ protected:
 
     ~RefCountedBase()
     {
+        RELEASE_ASSERT(m_refCount == 1);
 #if CHECK_REF_COUNTED_LIFECYCLE
         ASSERT(m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
@@ -130,7 +127,6 @@ protected:
         applyRefDerefThreadingCheck();
 
 #if CHECK_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
 #endif
 

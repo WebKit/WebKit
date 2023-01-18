@@ -47,6 +47,7 @@ public:
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
     ~ThreadSafeRefCountedBase()
     {
+        RELEASE_ASSERT(m_refCount == 1);
         // When this ThreadSafeRefCounted object is a part of another object, derefBase() is never called on this object.
         m_deletionHasBegun = true;
     }
@@ -54,17 +55,11 @@ public:
 
     void ref() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-#endif
         ++m_refCount;
     }
 
     bool hasOneRef() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT(!m_deletionHasBegun);
-#endif
         return refCount() == 1;
     }
 
@@ -77,11 +72,7 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase() const
     {
-        ASSERT(m_refCount);
-
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-#endif
+        ASSERT_WITH_SECURITY_IMPLICATION(m_refCount);
 
         if (UNLIKELY(!--m_refCount)) {
             // Setting m_refCount to 1 here prevents double delete within the destructor but not from another thread
