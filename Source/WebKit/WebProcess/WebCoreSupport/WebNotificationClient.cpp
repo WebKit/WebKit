@@ -110,14 +110,16 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
-    if (!context
-        || (!context->isDocument() && !context->isServiceWorkerGlobalScope())
-        || WebProcess::singleton().sessionID().isEphemeral())
+    if (!context || (!context->isDocument() && !context->isServiceWorkerGlobalScope()))
         return NotificationClient::Permission::Denied;
 
     auto* origin = context->securityOrigin();
     if (!origin)
         return NotificationClient::Permission::Denied;
+
+    bool hasRequestedPermission = m_notificationPermissionRequesters.contains(origin->data());
+    if (WebProcess::singleton().sessionID().isEphemeral())
+        return hasRequestedPermission ? NotificationClient::Permission::Denied : NotificationClient::Permission::Default;
 
     NotificationClient::Permission resultPermission;
     callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
@@ -126,7 +128,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 
     // To reduce fingerprinting, if the origin has not requested permission to use the
     // Notifications API, and the permission state is "denied", return "default" instead.
-    if (resultPermission == NotificationClient::Permission::Denied && !m_notificationPermissionRequesters.contains(context->securityOrigin()->data()))
+    if (resultPermission == NotificationClient::Permission::Denied && !hasRequestedPermission)
         return NotificationClient::Permission::Default;
 
     return resultPermission;

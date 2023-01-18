@@ -8881,6 +8881,11 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
         // this topOrigin has requested permission to use the Notifications API previously.
         if (m_notificationPermissionRequesters.contains(clientOrigin.topOrigin))
             shouldChangeDeniedToPrompt = false;
+
+        if (sessionID().isEphemeral()) {
+            completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied, false);
+            return;
+        }
 #endif
     }
 
