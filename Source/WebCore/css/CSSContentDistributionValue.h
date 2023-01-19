@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+enum CSSValueID : uint16_t;
+
 class CSSContentDistributionValue final : public CSSValue {
 public:
     static Ref<CSSContentDistributionValue> create(CSSValueID distribution, CSSValueID position, CSSValueID overflow);
