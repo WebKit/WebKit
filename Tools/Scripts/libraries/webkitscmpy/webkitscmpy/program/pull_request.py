@@ -110,6 +110,12 @@ class PullRequest(Command):
             help='Automatically open the PR after creating it.',
             action=arguments.NoAction,
         )
+        parser.add_argument(
+            '--ews', '--no-ews',
+            dest='ews', default=None,
+            help='Explicitly enable or disable EWS on the PR',
+            action=arguments.NoAction,
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -474,7 +480,12 @@ class PullRequest(Command):
             pr_issue = existing_pr._metadata['issue']
             labels = pr_issue.labels
             did_remove = False
-            for to_remove in cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else []) + [cls.SKIP_EWS_LABEL]:
+            labels_to_remove = cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else [])
+            if args.ews is not False:
+                # if --no-ews argument is not passed then remove any existing SKIP_EWS_LABEL
+                labels_to_remove += [cls.SKIP_EWS_LABEL]
+
+            for to_remove in labels_to_remove:
                 if to_remove in labels:
                     log.info("Removing '{}' from PR #{}...".format(to_remove, existing_pr.number))
                     labels.remove(to_remove)
@@ -575,6 +586,11 @@ class PullRequest(Command):
                 log.info('Synced PR labels with issue component!')
             else:
                 log.info('No label syncing required')
+            if args.ews is False:
+                # Add SKIP_EWS_LABEL if --no-ews argument was passed
+                labels = pr_issue.labels
+                labels.append(cls.SKIP_EWS_LABEL)
+                pr_issue.set_labels(labels)
 
         if pr.url:
             print(pr.url)
