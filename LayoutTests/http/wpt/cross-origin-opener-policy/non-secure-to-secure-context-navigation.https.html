@@ -11,9 +11,8 @@
 async_test((t) => {
     let bc = new BroadcastChannel('non-secure-to-secure-context-navigation');
     bc.onmessage = t.step_func((event) => {
-        assert_true(win.closed, "Window should be closed");
         assert_equals(event.data, "does_not_have_opener");
-        t.done();
+        t.step_wait_func_done(() => win.closed);
     });
 
     win = open("resources/non-secure-to-secure-context-navigation-popup.html");
