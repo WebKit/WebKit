@@ -206,9 +206,15 @@ bool isValidCSSSelector(const String& selector)
 {
     ASSERT(isMainThread());
     ProcessWarming::initializeNames();
-    CSSParserContext context(HTMLQuirksMode);
-    CSSParser parser(context);
+    CSSParser parser(contentExtensionCSSParserContext());
     return !!parser.parseSelector(selector);
+}
+
+WebCore::CSSParserContext contentExtensionCSSParserContext()
+{
+    WebCore::CSSParserContext context(HTMLQuirksMode);
+    context.hasPseudoClassEnabled = true;
+    return context;
 }
 
 static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject, const String& urlFilter)
