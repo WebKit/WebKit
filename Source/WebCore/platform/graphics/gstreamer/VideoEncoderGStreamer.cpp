@@ -171,7 +171,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
     , m_postTaskCallback(WTFMove(postTaskCallback))
 {
     GRefPtr<GstElement> element = gst_element_factory_make("webkitvideoencoder", nullptr);
-    m_harness = GStreamerElementHarness::create(WTFMove(element), [protectedThis = Ref { *this }, this](const GRefPtr<GstBuffer>& outputBuffer) {
+    m_harness = GStreamerElementHarness::create(WTFMove(element), [protectedThis = Ref { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
         if (protectedThis->m_isClosed)
             return;
 
