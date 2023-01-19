@@ -32,9 +32,14 @@
 
 namespace WebKit {
 
+struct SerializedMember {
+    ASCIILiteral type;
+    ASCIILiteral name;
+};
+
 struct SerializedTypeInfo {
     ASCIILiteral name;
-    Vector<ASCIILiteral> members;
+    Vector<SerializedMember> members;
 };
 
 Vector<SerializedTypeInfo> allSerializedTypes();

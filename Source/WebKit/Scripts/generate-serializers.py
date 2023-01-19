@@ -604,7 +604,10 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
             continue
         result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
         for member in type.members:
+            result.append('            {')
             result.append('            "' + member.type + '"_s,')
+            result.append('            "' + member.name + '"_s')
+            result.append('            },')
         result.append('        } },')
     result.append('    };')
     result.append('}')

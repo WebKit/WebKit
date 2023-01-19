@@ -53,57 +53,57 @@ Vector<SerializedTypeInfo> allSerializedTypes()
 {
     return {
         { "Namespace::Subnamespace::StructName"_s, {
-            "FirstMemberType"_s,
-            "SecondMemberType"_s,
-            "RetainPtr<CFTypeRef>"_s,
+            { "FirstMemberType"_s, "a"_s },
+            { "SecondMemberType"_s, "b"_s },
+            { "RetainPtr<CFTypeRef>"_s, "c"_s }
         } },
         { "Namespace::OtherClass"_s, {
-            "bool"_s,
-            "int"_s,
-            "bool"_s,
-            "RetainPtr<NSArray>"_s,
+            { "bool"_s, "a"_s },
+            { "int"_s, "b"_s },
+            { "bool"_s, "c"_s },
+            { "RetainPtr<NSArray>"_s, "d"_s }
         } },
         { "Namespace::ReturnRefClass"_s, {
-            "double"_s,
-            "double"_s,
-            "std::unique_ptr<int>"_s,
+            { "double"_s, "a"_s },
+            { "double"_s, "b"_s },
+            { "std::unique_ptr<int>"_s, "c"_s }
         } },
         { "Namespace::EmptyConstructorStruct"_s, {
-            "int"_s,
-            "double"_s,
+            { "int"_s, "a"_s },
+            { "double"_s, "b"_s }
         } },
         { "Namespace::EmptyConstructorNullable"_s, {
-            "bool"_s,
-            "MemberType"_s,
-            "OtherMemberType"_s,
+            { "bool"_s, "a"_s },
+            { "MemberType"_s, "b"_s },
+            { "OtherMemberType"_s, "c"_s }
         } },
         { "WithoutNamespace"_s, {
-            "int"_s,
+            { "int"_s, "a"_s }
         } },
         { "WithoutNamespaceWithAttributes"_s, {
-            "int"_s,
+            { "int"_s, "a"_s }
         } },
         { "WebCore::InheritsFrom"_s, {
-            "float"_s,
+            { "float"_s, "a"_s }
         } },
         { "WebCore::InheritanceGrandchild"_s, {
-            "double"_s,
+            { "double"_s, "a"_s }
         } },
         { "Seconds"_s, {
-            "double"_s,
+            { "double"_s, "a"_s }
         } },
         { "CreateUsingClass"_s, {
-            "double"_s,
+            { "double"_s, "a"_s }
         } },
         { "WebCore::FloatBoxExtent"_s, {
-            "float"_s,
-            "float"_s,
-            "float"_s,
-            "float"_s,
+            { "float"_s, "a"_s },
+            { "float"_s, "b"_s },
+            { "float"_s, "c"_s },
+            { "float"_s, "d"_s }
         } },
         { "NullableSoftLinkedMember"_s, {
-            "RetainPtr<DDActionContext>"_s,
-            "RetainPtr<DDActionContext>"_s,
+            { "RetainPtr<DDActionContext>"_s, "a"_s },
+            { "RetainPtr<DDActionContext>"_s, "b"_s }
         } },
     };
 }
