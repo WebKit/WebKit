@@ -43,7 +43,8 @@ public:
     void inheritFrom(const SVGRenderStyle&);
     void copyNonInheritedFrom(const SVGRenderStyle&);
 
-    StyleDifference diff(const SVGRenderStyle&) const;
+    bool changeRequiresRepaint(const SVGRenderStyle& other, bool currentColorDiffers) const;
+    bool changeRequiresLayout(const SVGRenderStyle& other) const;
 
     bool operator==(const SVGRenderStyle&) const;
     bool operator!=(const SVGRenderStyle& other) const { return !(*this == other); }

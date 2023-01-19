@@ -135,17 +135,28 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle& other)
     m_layoutData = other.m_layoutData;
 }
 
-StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
+static bool colorChangeRequiresRepaint(const StyleColor& a, const StyleColor& b, bool currentColorDiffers)
 {
-    // NOTE: All comparisions that may return StyleDifference::Layout have to go before those who return StyleDifference::Repaint
+    if (a != b)
+        return true;
 
+    if (a.isCurrentColor()) {
+        ASSERT(b.isCurrentColor());
+        return currentColorDiffers;
+    }
+
+    return false;
+}
+
+bool SVGRenderStyle::changeRequiresLayout(const SVGRenderStyle& other) const
+{
     // If kerning changes, we need a relayout, to force SVGCharacterData to be recalculated in the SVGRootInlineBox.
     if (m_textData != other.m_textData)
-        return StyleDifference::Layout;
+        return true;
 
     // If markers change, we need a relayout, as marker boundaries are cached in RenderSVGPath.
     if (m_inheritedResourceData != other.m_inheritedResourceData)
-        return StyleDifference::Layout;
+        return true;
 
     // All text related properties influence layout.
     if (m_inheritedFlags.textAnchor != other.m_inheritedFlags.textAnchor
@@ -154,56 +165,55 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
         || m_nonInheritedFlags.flagBits.alignmentBaseline != other.m_nonInheritedFlags.flagBits.alignmentBaseline
         || m_nonInheritedFlags.flagBits.dominantBaseline != other.m_nonInheritedFlags.flagBits.dominantBaseline
         || m_nonInheritedFlags.flagBits.baselineShift != other.m_nonInheritedFlags.flagBits.baselineShift)
-        return StyleDifference::Layout;
+        return true;
 
     // Text related properties influence layout.
-    bool miscNotEqual = m_miscData != other.m_miscData;
-    if (miscNotEqual && m_miscData->baselineShiftValue != other.m_miscData->baselineShiftValue)
-        return StyleDifference::Layout;
+    if (m_miscData->baselineShiftValue != other.m_miscData->baselineShiftValue)
+        return true;
 
     // The x or y properties require relayout.
     if (m_layoutData != other.m_layoutData)
-        return StyleDifference::Layout; 
+        return true; 
 
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
-    if (m_strokeData != other.m_strokeData) {
-        if (m_strokeData->paintType != other.m_strokeData->paintType
-            || m_strokeData->paintColor != other.m_strokeData->paintColor
-            || m_strokeData->paintUri != other.m_strokeData->paintUri
-            || m_strokeData->dashArray != other.m_strokeData->dashArray
-            || m_strokeData->dashOffset != other.m_strokeData->dashOffset
-            || m_strokeData->visitedLinkPaintColor != other.m_strokeData->visitedLinkPaintColor
-            || m_strokeData->visitedLinkPaintUri != other.m_strokeData->visitedLinkPaintUri
-            || m_strokeData->visitedLinkPaintType != other.m_strokeData->visitedLinkPaintType)
-            return StyleDifference::Layout;
-
-        // Only the stroke-opacity case remains, where we only need a repaint.
-        ASSERT(m_strokeData->opacity != other.m_strokeData->opacity);
-        return StyleDifference::Repaint;
-    }
+    if (m_strokeData->paintType != other.m_strokeData->paintType
+        || m_strokeData->paintUri != other.m_strokeData->paintUri
+        || m_strokeData->dashArray != other.m_strokeData->dashArray
+        || m_strokeData->dashOffset != other.m_strokeData->dashOffset
+        || m_strokeData->visitedLinkPaintUri != other.m_strokeData->visitedLinkPaintUri
+        || m_strokeData->visitedLinkPaintType != other.m_strokeData->visitedLinkPaintType)
+        return true;
 
     // vector-effect changes require a re-layout.
     if (m_nonInheritedFlags.flagBits.vectorEffect != other.m_nonInheritedFlags.flagBits.vectorEffect)
-        return StyleDifference::Layout;
+        return true;
 
-    // NOTE: All comparisions below may only return StyleDifference::Repaint
+    return false;
+}
+
+bool SVGRenderStyle::changeRequiresRepaint(const SVGRenderStyle& other, bool currentColorDiffers) const
+{
+    if (m_strokeData->opacity != other.m_strokeData->opacity
+        || colorChangeRequiresRepaint(m_strokeData->paintColor, other.m_strokeData->paintColor, currentColorDiffers)
+        || colorChangeRequiresRepaint(m_strokeData->visitedLinkPaintColor, other.m_strokeData->visitedLinkPaintColor, currentColorDiffers))
+        return true;
 
     // Painting related properties only need repaints. 
-    if (miscNotEqual) {
-        if (m_miscData->floodColor != other.m_miscData->floodColor
-            || m_miscData->floodOpacity != other.m_miscData->floodOpacity
-            || m_miscData->lightingColor != other.m_miscData->lightingColor)
-            return StyleDifference::Repaint;
-    }
+    if (colorChangeRequiresRepaint(m_miscData->floodColor, other.m_miscData->floodColor, currentColorDiffers)
+        || m_miscData->floodOpacity != other.m_miscData->floodOpacity
+        || colorChangeRequiresRepaint(m_miscData->lightingColor, other.m_miscData->lightingColor, currentColorDiffers))
+        return true;
 
     // If fill data changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
-    if (m_fillData->paintType != other.m_fillData->paintType || m_fillData->paintColor != other.m_fillData->paintColor
-        || m_fillData->paintUri != other.m_fillData->paintUri || m_fillData->opacity != other.m_fillData->opacity)
-        return StyleDifference::Repaint;
+    if (m_fillData->paintType != other.m_fillData->paintType 
+        || colorChangeRequiresRepaint(m_fillData->paintColor, other.m_fillData->paintColor, currentColorDiffers)
+        || m_fillData->paintUri != other.m_fillData->paintUri 
+        || m_fillData->opacity != other.m_fillData->opacity)
+        return true;
 
     // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientSTop.
     if (m_stopData != other.m_stopData)
-        return StyleDifference::Repaint;
+        return true;
 
     // Changes of these flags only cause repaints.
     if (m_inheritedFlags.shapeRendering != other.m_inheritedFlags.shapeRendering
@@ -211,15 +221,15 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
         || m_inheritedFlags.fillRule != other.m_inheritedFlags.fillRule
         || m_inheritedFlags.colorInterpolation != other.m_inheritedFlags.colorInterpolation
         || m_inheritedFlags.colorInterpolationFilters != other.m_inheritedFlags.colorInterpolationFilters)
-        return StyleDifference::Repaint;
+        return true;
 
     if (m_nonInheritedFlags.flagBits.bufferedRendering != other.m_nonInheritedFlags.flagBits.bufferedRendering)
-        return StyleDifference::Repaint;
+        return true;
 
     if (m_nonInheritedFlags.flagBits.maskType != other.m_nonInheritedFlags.flagBits.maskType)
-        return StyleDifference::Repaint;
+        return true;
 
-    return StyleDifference::Equal;
+    return false;
 }
 
 }
