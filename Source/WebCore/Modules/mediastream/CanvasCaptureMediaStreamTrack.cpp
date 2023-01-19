@@ -155,8 +155,10 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
 void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const std::optional<FloatRect>&)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
+#if ENABLE(WEBGL)
     if (m_canvas->renderingContext() && m_canvas->renderingContext()->needsPreparationForDisplay())
         return;
+#endif
     scheduleCaptureCanvas();
 }
 
