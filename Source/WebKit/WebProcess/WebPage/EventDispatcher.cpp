@@ -277,7 +277,10 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
     if (!webPage)
         return;
 
-    webPage->wheelEvent(wheelEvent, processingSteps, wheelEventOrigin);
+    bool handled = webPage->wheelEvent(wheelEvent, processingSteps, wheelEventOrigin);
+
+    if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
+        sendDidReceiveEvent(pageID, wheelEvent.type(), handled);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -293,12 +296,10 @@ void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestu
 }
 #endif
 
-#if ENABLE(ASYNC_SCROLLING)
 void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEventType eventType, bool didHandleEvent)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(eventType, didHandleEvent), pageID);
 }
-#endif
 
 void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID)
 {

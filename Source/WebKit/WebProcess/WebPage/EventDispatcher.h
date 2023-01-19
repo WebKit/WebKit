@@ -113,9 +113,7 @@ private:
     void dispatchGestureEvent(WebCore::PageIdentifier, const WebGestureEvent&);
 #endif
 
-#if ENABLE(ASYNC_SCROLLING)
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
-#endif
 
 #if PLATFORM(MAC)
     void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
