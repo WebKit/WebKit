@@ -301,6 +301,7 @@ public:
     ALWAYS_INLINE HashMapBucketType* addNormalized(JSGlobalObject*, JSValue key, JSValue, uint32_t hash);
 
     ALWAYS_INLINE bool remove(JSGlobalObject*, JSValue key);
+    ALWAYS_INLINE bool removeNormalized(JSGlobalObject*, JSValue key, uint32_t hash);
 
     ALWAYS_INLINE uint32_t size() const
     {

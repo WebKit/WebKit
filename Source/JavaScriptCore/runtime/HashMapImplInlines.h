@@ -268,7 +268,20 @@ ALWAYS_INLINE HashMapBucketType* HashMapImpl<HashMapBucketType>::addNormalized(J
 template <typename HashMapBucketType>
 ALWAYS_INLINE bool HashMapImpl<HashMapBucketType>::remove(JSGlobalObject* globalObject, JSValue key)
 {
-    HashMapBucketType** bucket = findBucket(globalObject, key);
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    key = normalizeMapKey(key);
+    uint32_t hash = jsMapHash(globalObject, vm, key);
+    RETURN_IF_EXCEPTION(scope, false);
+    return removeNormalized(globalObject, key, hash);
+}
+
+template <typename HashMapBucketType>
+ALWAYS_INLINE bool HashMapImpl<HashMapBucketType>::removeNormalized(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
+{
+    ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
+
+    HashMapBucketType** bucket = findBucketAlreadyHashedAndNormalized(globalObject, key, hash);
     if (!bucket)
         return false;
 

@@ -532,6 +532,7 @@ namespace JSC { namespace DFG {
     macro(LoadValueFromMapBucket, NodeResultJS) \
     macro(SetAdd, NodeMustGenerate | NodeResultJS) \
     macro(MapSet, NodeMustGenerate | NodeHasVarArgs | NodeResultJS) \
+    macro(MapOrSetDelete, NodeMustGenerate | NodeResultBoolean) \
     /* Nodes for JSWeakMap and JSWeakSet */ \
     macro(WeakMapGet, NodeResultJS) \
     macro(WeakSetAdd, NodeMustGenerate) \

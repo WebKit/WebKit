@@ -3219,6 +3219,22 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return true;
         }
 
+        case JSSetDeleteIntrinsic:
+        case JSMapDeleteIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return false;
+
+            insertChecks();
+            Node* mapOrSet = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+            Node* hash = addToGraph(MapHash, normalizedKey);
+            UseKind useKind = intrinsic == JSSetDeleteIntrinsic ? SetObjectUse : MapObjectUse;
+            Node* resultNode = addToGraph(MapOrSetDelete, Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
+            setResult(resultNode);
+            return true;
+        }
+
         case JSSetAddIntrinsic: {
             if (argumentCountIncludingThis < 2)
                 return false;

@@ -1299,6 +1299,7 @@ public:
     void compileGetMapBucketNext(Node*);
     void compileSetAdd(Node*);
     void compileMapSet(Node*);
+    void compileMapOrSetDelete(Node*);
     void compileWeakMapGet(Node*);
     void compileWeakSetAdd(Node*);
     void compileWeakMapSet(Node*);

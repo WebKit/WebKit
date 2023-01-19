@@ -15576,6 +15576,31 @@ void SpeculativeJIT::compileMapSet(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileMapOrSetDelete(Node* node)
+{
+    SpeculateCellOperand mapOrSet(this, node->child1());
+    JSValueOperand key(this, node->child2());
+    SpeculateInt32Operand hash(this, node->child3());
+
+    GPRReg mapOrSetGPR = mapOrSet.gpr();
+    JSValueRegs keyRegs = key.jsValueRegs();
+    GPRReg hashGPR = hash.gpr();
+
+    if (node->child1().useKind() == MapObjectUse)
+        speculateMapObject(node->child1(), mapOrSetGPR);
+    else if (node->child1().useKind() == SetObjectUse)
+        speculateSetObject(node->child1(), mapOrSetGPR);
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(node->child1().useKind() == MapObjectUse ? operationMapDelete : operationSetDelete, resultGPR, JITCompiler::LinkableConstant::globalObject(m_jit, node), mapOrSetGPR, keyRegs, hashGPR);
+    m_jit.exceptionCheck();
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileWeakMapGet(Node* node)
 {
     GPRTemporary mask(this);

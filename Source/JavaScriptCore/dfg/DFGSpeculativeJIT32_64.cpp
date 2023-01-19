@@ -3763,6 +3763,10 @@ void SpeculativeJIT::compile(Node* node)
         compileMapSet(node);
         break;
 
+    case MapOrSetDelete:
+        compileMapOrSetDelete(node);
+        break;
+
     case WeakMapGet:
         compileWeakMapGet(node);
         break;

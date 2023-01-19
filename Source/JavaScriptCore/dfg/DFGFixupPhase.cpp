@@ -2686,6 +2686,12 @@ private:
             break;
         }
 
+        case MapOrSetDelete: {
+            ASSERT(node->child1().useKind() == MapObjectUse || node->child1().useKind() == SetObjectUse);
+            fixEdge<Int32Use>(node->child3());
+            break;
+        }
+
         case WeakSetAdd: {
             fixEdge<WeakSetObjectUse>(node->child1());
             if (node->child2()->shouldSpeculateObject())
