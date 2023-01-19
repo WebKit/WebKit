@@ -63,7 +63,8 @@ public:
 
 private:
     void initializeParentStack(Element& parent);
-    static CollectedSelectorHashes collectSelectorHashes(const CSSSelector& rightmostSelector);
+    enum class IncludeRightmost : bool { Yes, No };
+    static void collectSelectorHashes(CollectedSelectorHashes&, const CSSSelector& rightmostSelector, IncludeRightmost);
     static Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes&);
 
     struct ParentStackFrame {
