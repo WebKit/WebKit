@@ -495,7 +495,7 @@ public:
     template<FailureAction action>
     bool allocateBuffer(size_t newCapacity)
     {
-        // FIXME: This should ASSERT(!m_buffer) to catch misuse/leaks.
+        // FIXME: This should ASSERT(!m_buffer) to catch misuse/leaks. https://bugs.webkit.org/show_bug.cgi?id=250801
         if (newCapacity > inlineCapacity)
             return Base::template allocateBuffer<action>(newCapacity);
         m_buffer = inlineBuffer();
