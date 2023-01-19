@@ -36,7 +36,4 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString marginWidth;
 
     [CheckSecurityForNode] Document getSVGDocument();
-
-    // FIXME: No other browser has this attribute.
-    [SetterCallWith=CurrentGlobalObject] attribute DOMString? location;
 };
