@@ -66,7 +66,7 @@ public:
 private:
     DOMCache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
 
-    ExceptionOr<Ref<FetchRequest>> requestFromInfo(RequestInfo&&, bool ignoreMethod);
+    ExceptionOr<Ref<FetchRequest>> requestFromInfo(RequestInfo&&, bool ignoreMethod, bool* requestValidationFailed = nullptr);
 
     // ActiveDOMObject
     void stop() final;
