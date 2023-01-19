@@ -1507,8 +1507,22 @@ DNSPrefetchingEnabled:
 DOMAudioSessionEnabled:
   type: bool
   status: testable
-  humanReadableName: "AudioSession"
-  humanReadableDescription: "Enable AudioSession"
+  humanReadableName: "AudioSession API"
+  humanReadableDescription: "Enable AudioSession API"
+  condition: ENABLE(DOM_AUDIO_SESSION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+DOMAudioSessionFullEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "AudioSession full API"
+  humanReadableDescription: "Enable AudioSession full API"
   condition: ENABLE(DOM_AUDIO_SESSION)
   defaultValue:
     WebKitLegacy:

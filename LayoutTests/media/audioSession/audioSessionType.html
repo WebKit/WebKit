@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html><!-- webkit-test-runner [ DOMAudioSessionFullEnabled=false ] -->
 <html>
     <head>
         <meta charset="utf-8">
@@ -26,7 +26,9 @@ async function ensureCategory(expected, counter)
 
 promise_test(async (test) => {
     assert_equals(navigator.audioSession.type, "auto");
-    
+    assert_equals(AudioSession.prototype.state, undefined);
+    assert_equals(AudioSession.prototype.onstatechange, undefined);
+
     if (!window.internals)
         return;
 
