@@ -36,6 +36,7 @@
 #include "FetchBodyConsumer.h"
 #include "FetchLoaderClient.h"
 #include "FetchRequest.h"
+#include "LocalNetworkAccess.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
@@ -103,6 +104,11 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     auto& contentSecurityPolicy = *context.contentSecurityPolicy();
 
     contentSecurityPolicy.upgradeInsecureRequestIfNeeded(fetchRequest, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    if (isLocalNetworkAccessSecureContextRestricted(context, fetchRequest.addressSpace())) {
+        didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by Local Network Access"_s, ResourceError::Type::AccessControl });
+        return;
+    }
 
     if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy.allowConnectToSource(fetchRequest.url())) {
         m_client.didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_s, ResourceError::Type::AccessControl });

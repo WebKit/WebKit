@@ -109,7 +109,6 @@ public:
 
     virtual EventLoopTaskGroup& eventLoop() = 0;
 
-    virtual const URL& url() const = 0;
     enum class ForceUTF8 { No, Yes };
     virtual URL completeURL(const String& url, ForceUTF8 = ForceUTF8::No) const = 0;
 

@@ -41,6 +41,7 @@ class SecurityOriginPolicy;
 class ContentSecurityPolicy;
 struct CrossOriginOpenerPolicy;
 struct PolicyContainer;
+enum class AddressSpace : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 
 enum SandboxFlag {
@@ -68,6 +69,8 @@ typedef int SandboxFlags;
 
 class SecurityContext {
 public:
+    virtual const URL& url() const = 0;
+
     // https://html.spec.whatwg.org/multipage/origin.html#determining-the-creation-sandboxing-flags
     SandboxFlags creationSandboxFlags() const { return m_creationSandboxFlags; }
 
@@ -101,6 +104,9 @@ public:
 
     virtual ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
     void setReferrerPolicy(ReferrerPolicy);
+
+    AddressSpace addressSpace() const { return m_addressSpace; }
+    void setAddressSpace(AddressSpace addressSpace) { m_addressSpace = addressSpace; }
 
     WEBCORE_EXPORT PolicyContainer policyContainer() const;
     virtual void inheritPolicyContainerFrom(const PolicyContainer&);
@@ -153,6 +159,7 @@ private:
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::Default };
+    AddressSpace m_addressSpace;
     SandboxFlags m_creationSandboxFlags { SandboxNone };
     SandboxFlags m_sandboxFlags { SandboxNone };
     OptionSet<MixedContentType> m_mixedContentTypes;

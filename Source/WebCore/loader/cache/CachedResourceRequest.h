@@ -116,6 +116,8 @@ public:
     void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 #endif
 
+    void setAddressSpace(AddressSpace);
+
 private:
     ResourceRequest m_resourceRequest;
     String m_charset;

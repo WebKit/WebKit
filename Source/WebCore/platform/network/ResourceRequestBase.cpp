@@ -125,6 +125,7 @@ void ResourceRequestBase::setURL(const URL& url)
     updateResourceRequest(); 
 
     m_requestData.m_url = url;
+    setAddressSpace(addressSpaceFromURL(url));
     
     m_platformRequestUpdated = false;
 }

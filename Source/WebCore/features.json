@@ -669,6 +669,16 @@
         "description": "Allows defering loading of images until they are visible in the viewport."
     },
     {
+        "name": "Local Network Access",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://wicg.github.io/local-network-access/",
+        "webkit-url": "https://webkit.org/b/250607",
+        "keywords": ["local network", "local network access"],
+        "description": "A mechanism for resources on localhost and local networks to be secured against requests from resources hosted on the public internet."
+    },
+    {
         "name": "Magnetometer",
         "status": {
             "status": "Not Considering"

@@ -344,6 +344,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/plugins/PluginReplacement.h
     Modules/plugins/YouTubePluginReplacement.h
 
+    Modules/private-network-access/PrivateNetworkAccess.h
+
     Modules/push-api/PushCrypto.h
     Modules/push-api/PushDatabase.h
     Modules/push-api/PushMessageCrypto.h

@@ -43,6 +43,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -131,15 +132,8 @@ static bool shouldTreatAsOpaqueOrigin(const URL& url)
     return !LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
 }
 
-static bool isLoopbackIPAddress(StringView host)
+static bool isValidIP4Address(StringView host)
 {
-    // The IPv6 loopback address is 0:0:0:0:0:0:0:1, which compresses to ::1.
-    if (host == "[::1]"_s)
-        return true;
-
-    // Check to see if it's a valid IPv4 address that has the form 127.*.*.*.
-    if (!host.startsWith("127."_s))
-        return false;
     size_t dotsFound = 0;
     for (size_t i = 0; i < host.length(); ++i) {
         if (host[i] == '.') {
@@ -150,6 +144,19 @@ static bool isLoopbackIPAddress(StringView host)
             return false;
     }
     return dotsFound == 3;
+}
+
+static bool isLoopbackIPAddress(StringView host)
+{
+    // The IPv6 loopback address is 0:0:0:0:0:0:0:1, which compresses to ::1.
+    if (host == "[::1]"_s)
+        return true;
+
+    // Check to see if it's a valid IPv4 address that has the form 127.*.*.*.
+    if (!host.startsWith("127."_s))
+        return false;
+
+    return isValidIP4Address(host);
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
@@ -635,6 +642,23 @@ bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(StringView host)
     // FIXME: Ensure that localhost resolves to the loopback address.
     if (equalLettersIgnoringASCIICase(host, "localhost"_s) || host.endsWithIgnoringASCIICase(".localhost"_s))
         return true;
+
+    return false;
+}
+
+bool SecurityOrigin::isLocalNetworkIPv4Address(StringView host)
+{
+    // Private Address Space check for IPv4 addresses. https://www.rfc-editor.org/rfc/rfc1918
+    if ((host.startsWith("10."_s) || host.startsWith("192.168."_s) || host.startsWith("169.254."_s)))
+        return isValidIP4Address(host);
+
+    if (host.startsWith("172."_s) && isValidIP4Address(host)) {
+        auto it = host.split('.').begin();
+        auto secondOctet = parseIntegerDisallowLeadingAndTrailingSpaces<uint8_t>(*(++it)).value_or(0);
+
+        if (secondOctet >= 16 && secondOctet <= 31)
+            return true;
+    }
 
     return false;
 }

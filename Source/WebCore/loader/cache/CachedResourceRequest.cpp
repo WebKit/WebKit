@@ -342,4 +342,9 @@ void CachedResourceRequest::setNavigationServiceWorkerRegistrationData(const std
 }
 #endif
 
+void CachedResourceRequest::setAddressSpace(AddressSpace addressSpace)
+{
+    m_resourceRequest.setAddressSpace(addressSpace);
+}
+
 } // namespace WebCore

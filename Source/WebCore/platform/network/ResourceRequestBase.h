@@ -31,6 +31,7 @@
 #include "FrameLoaderTypes.h"
 #include "HTTPHeaderMap.h"
 #include "IntRect.h"
+#include "LocalNetworkAccess.h"
 #include "ResourceLoadPriority.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
@@ -80,12 +81,14 @@ public:
             , m_priority(priority)
             , m_requester(requester)
             , m_isAppInitiated(isAppInitiated)
+            , m_addressSpace(addressSpaceFromURL(url))
         {
         }
         
         RequestData(const URL& url, ResourceRequestCachePolicy cachePolicy)
             : m_url(url)
             , m_cachePolicy(cachePolicy)
+            , m_addressSpace(addressSpaceFromURL(url))
         {
         }
         
@@ -102,6 +105,7 @@ public:
         ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
         ResourceRequestRequester m_requester { ResourceRequestRequester::Unspecified };
         bool m_isAppInitiated : 1 { true };
+        AddressSpace m_addressSpace { AddressSpace::Public };
     };
 
     ResourceRequestBase(RequestData&& requestData)
@@ -122,6 +126,9 @@ public:
     
     WEBCORE_EXPORT const URL& url() const;
     WEBCORE_EXPORT void setURL(const URL& url);
+
+    AddressSpace addressSpace() const { return m_requestData.m_addressSpace; }
+    void setAddressSpace(AddressSpace addressSpace) { m_requestData.m_addressSpace = addressSpace; }
 
     void redirectAsGETIfNeeded(const ResourceRequestBase &, const ResourceResponse&);
     WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const;

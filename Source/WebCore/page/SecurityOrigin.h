@@ -210,6 +210,7 @@ public:
     void setIsPotentiallyTrustworthy(bool value) { m_isPotentiallyTrustworthy = value; }
 
     WEBCORE_EXPORT static bool isLocalHostOrLoopbackIPAddress(StringView);
+    static bool isLocalNetworkIPv4Address(StringView);
 
     const SecurityOriginData& data() const { return m_data; }
 

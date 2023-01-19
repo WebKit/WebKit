@@ -43,6 +43,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
     "${WEBCORE_DIR}/Modules/indexeddb/shared"
+    "${WEBCORE_DIR}/Modules/local-network-access"
     "${WEBCORE_DIR}/Modules/mediacapabilities"
     "${WEBCORE_DIR}/Modules/mediacontrols"
     "${WEBCORE_DIR}/Modules/mediarecorder"

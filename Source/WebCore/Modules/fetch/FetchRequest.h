@@ -83,6 +83,8 @@ public:
     const String& internalRequestReferrer() const { return m_referrer; }
     const URL& url() const { return m_request.url(); }
 
+    AddressSpace addressSpace() const { return m_request.addressSpace(); }
+
     ResourceRequest resourceRequest() const;
     FetchIdentifier navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier; }
     void setNavigationPreloadIdentifier(FetchIdentifier identifier) { m_navigationPreloadIdentifier = identifier; }

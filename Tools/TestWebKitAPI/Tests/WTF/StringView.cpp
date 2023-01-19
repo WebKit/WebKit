@@ -27,6 +27,7 @@
 
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace TestWebKitAPI {
 
@@ -313,6 +314,31 @@ TEST(WTF, StringViewSplitWithConsecutiveSeparators)
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+}
+
+TEST(WTF, StringViewSplitIP)
+{
+    String referenceHolder;
+    StringView ip = stringViewFromUTF8(referenceHolder, "192.168.0.254");
+    EXPECT_TRUE(ip == "192.168.0.254"_s);
+
+    Vector<String> actual = vectorFromSplitResult(ip.split('.'));
+    Vector<String> expected({ "192"_s, "168"_s, "0"_s, "254"_s });
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    ip = stringViewFromUTF8(referenceHolder, "172.16.0.10");
+    EXPECT_TRUE(ip == "172.16.0.10"_s);
+
+    actual = vectorFromSplitResult(ip.split('.'));
+    expected = Vector<String>({ "172"_s, "16"_s, "0"_s, "10"_s });
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    EXPECT_EQ(16, parseInteger<uint8_t>(actual[1]));
+
 }
 
 TEST(WTF, StringViewEqualBasic)

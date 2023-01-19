@@ -82,4 +82,19 @@ TEST(WTF, ParseIntegerAllowingTrailingJunk)
     EXPECT_EQ(std::nullopt, parseIntegerAllowingTrailingJunk<uint16_t>("65536"_s));
 }
 
+TEST(WTF, ParseIntegerDisallowLeadingAndTrailingSpaces)
+{
+    EXPECT_EQ(std::nullopt, parseIntegerDisallowLeadingAndTrailingSpaces<int>("123 "_s));
+    EXPECT_EQ(std::nullopt, parseIntegerDisallowLeadingAndTrailingSpaces<int>(" 456"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerDisallowLeadingAndTrailingSpaces<int>(" 789 "_s));
+    EXPECT_EQ(0, parseIntegerDisallowLeadingAndTrailingSpaces<int>("0"_s));
+    EXPECT_EQ(1, parseIntegerDisallowLeadingAndTrailingSpaces<int>("1"_s));
+    EXPECT_EQ(3, parseIntegerDisallowLeadingAndTrailingSpaces<int>("3"_s));
+    EXPECT_EQ(-3, parseIntegerDisallowLeadingAndTrailingSpaces<int>("-3"_s));
+    EXPECT_EQ(12345, parseIntegerDisallowLeadingAndTrailingSpaces<int>("12345"_s));
+    EXPECT_EQ(-12345, parseIntegerDisallowLeadingAndTrailingSpaces<int>("-12345"_s));
+    EXPECT_EQ(0U, 0U + *parseIntegerDisallowLeadingAndTrailingSpaces<uint8_t>("0"_s));
+    EXPECT_EQ(std::nullopt, parseIntegerDisallowLeadingAndTrailingSpaces<uint16_t>("-3"_s));
+}
+
 } // namespace TestWebKitAPI

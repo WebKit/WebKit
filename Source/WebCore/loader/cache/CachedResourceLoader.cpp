@@ -60,6 +60,7 @@
 #include "HTTPHeaderField.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
+#include "LocalNetworkAccess.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -583,6 +584,11 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         return false;
     }
 
+    if (document() && isLocalNetworkAccessSecureContextRestricted(*document(), addressSpaceFromURL(url))) {
+        LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by Local Network Access.");
+        return false;
+    }
+
     if (!allowedByContentSecurityPolicy(type, url, options, ContentSecurityPolicy::RedirectResponseReceived::No))
         return false;
 
@@ -865,6 +871,7 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
         if (auto* activeServiceWorker = document->activeServiceWorker())
             request.setSelectedServiceWorkerRegistrationIdentifierIfNeeded(activeServiceWorker->registrationIdentifier());
 #endif
+        request.setAddressSpace(document->addressSpace());
     }
 
     request.setAcceptHeaderIfNone(type);

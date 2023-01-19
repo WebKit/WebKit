@@ -39,12 +39,17 @@ namespace WTF {
 
 template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView, uint8_t base = 10);
 template<typename IntegralType> std::optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView, uint8_t base = 10);
+template<typename IntegralType> std::optional<IntegralType> parseIntegerDisallowLeadingAndTrailingSpaces(StringView, uint8_t base = 10);
 
 enum class TrailingJunkPolicy { Disallow, Allow };
+enum class LeadingAndTrailingSpacesPolicy { Disallow, Allow };
 
-template<typename IntegralType, typename CharacterType> std::optional<IntegralType> parseInteger(const CharacterType* data, size_t length, uint8_t base, TrailingJunkPolicy policy)
+template<typename IntegralType, typename CharacterType> std::optional<IntegralType> parseInteger(const CharacterType* data, size_t length, uint8_t base, TrailingJunkPolicy junkPolicy, LeadingAndTrailingSpacesPolicy spacesPolicy)
 {
     if (!data)
+        return std::nullopt;
+
+    if (isASCIISpace(*data) && spacesPolicy == LeadingAndTrailingSpacesPolicy::Disallow)
         return std::nullopt;
 
     while (length && isASCIISpace(*data)) {
@@ -84,12 +89,18 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
     if (UNLIKELY(value.hasOverflowed()))
         return std::nullopt;
 
-    if (policy == TrailingJunkPolicy::Disallow) {
+    if (junkPolicy == TrailingJunkPolicy::Disallow && spacesPolicy == LeadingAndTrailingSpacesPolicy::Allow) {
         while (length && isASCIISpace(*data)) {
             --length;
             ++data;
         }
         if (length)
+            return std::nullopt;
+    } else if (junkPolicy == TrailingJunkPolicy::Disallow) {
+        if (length)
+            return std::nullopt;
+    } else {
+        if (length && isASCIISpace(*data))
             return std::nullopt;
     }
 
@@ -99,18 +110,27 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
 template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView string, uint8_t base)
 {
     if (string.is8Bit())
-        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Disallow);
-    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Disallow);
+        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Disallow, LeadingAndTrailingSpacesPolicy::Allow);
+    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Disallow, LeadingAndTrailingSpacesPolicy::Allow);
 }
 
 template<typename IntegralType> std::optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView string, uint8_t base)
 {
     if (string.is8Bit())
-        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Allow);
-    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Allow);
+        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Allow, LeadingAndTrailingSpacesPolicy::Allow);
+    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Allow, LeadingAndTrailingSpacesPolicy::Allow);
+}
+
+template<typename IntegralType> std::optional<IntegralType> parseIntegerDisallowLeadingAndTrailingSpaces(StringView string, uint8_t base)
+{
+    if (string.is8Bit())
+        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Disallow, LeadingAndTrailingSpacesPolicy::Disallow);
+
+    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Disallow, LeadingAndTrailingSpacesPolicy::Disallow);
 }
 
 }
 
 using WTF::parseInteger;
 using WTF::parseIntegerAllowingTrailingJunk;
+using WTF::parseIntegerDisallowLeadingAndTrailingSpaces;
