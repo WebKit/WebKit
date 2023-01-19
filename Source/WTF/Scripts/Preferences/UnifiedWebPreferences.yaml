@@ -21,6 +21,49 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+# Web preferences are assigned a `status` which implies a default value and
+# controls the interfaces where the preference is declared.
+#
+# == Web Platform Features ==
+# unstable::
+#   Feature in active development. Unfinished, no promise it is usable or safe.
+#   OFF by default.
+# testable::
+#   Feature in active development. Stable enough for testing, but not ready to ship.
+#   OFF by default. Enabled in test infrastructure only.
+# preview::
+#   Ready to be used in beta contexts like Safari Technology Preview.
+#   OFF by default. May be enabled automatically by clients.
+# stable::
+#   Ready for general use, but should be able to be toggled to support
+#   debugging, A/B testing.
+#   ON by default. Some platforms may deviate from default behavior due to
+#   support or needed dependencies.
+# shipping::
+#   Already in general use, with no UI to toggle. Features in this status may be
+#   cleaned up and removed altogether.
+#   ON by default. Some platforms may deviate from default behavior due to
+#   support or needed dependencies.
+#
+# == Developer Features ==
+# developer::
+#   Tools for web developers, not part of a feature that will ever be enabled
+#   for end users.
+#   OFF by default.
+# internal::
+#   Tools for debugging the WebKit engine. Not generally useful to web developers.
+#   OFF by default.
+#
+# == Embedder Controls ==
+# embedder::
+#   Adjusts WebKit behavior for embedding application needs. Not part of a
+#   web platform feature or a "shipping" feature intended to be always-on.
+#   ANY default value.
+#
+# FIXME: Currently, default values are unchecked. We should audit and refactor
+# features so that their defaults agree with their status's definition, and use
+# the generator to enforce this in the future.
+
 AVFoundationEnabled:
   type: bool
   status: internal
