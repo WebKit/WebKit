@@ -1,4 +1,39 @@
 =================
+WPE WebKit 2.39.4
+=================
+
+What's new in WPE WebKit 2.39.4?
+
+  - Use ANGLE for the WebGL implementation and enable WebGL2.
+  - Add support for background-repeat: space.
+  - Add API to check if a response policy decision is for the main resource.
+  - Add support for the "get computed label" and "get computed role"
+    WebDriver commands.
+  - Add API to support asynchronously returning values from user script messages.
+  - Add API to query the permission state of web features.
+  - Add API to disable Web security.
+  - Add support for client side certificates on WebSocket connections.
+  - Add webkit_web_hit_test_result_get_js_node() to get the JSCValue for the node.
+  - Add WebKitWebFormManager and deprecate WebKitWebPage form related signals.
+  - Make checkbox, radio and inner spin button scale along by page zoom.
+  - Use async scrolling also for keyboard scrolling.
+  - Deprecate the WebKitConsoleMessage API.
+  - Deprecate the event parameter of WebKitWebView::context-menu and
+    WebKitWebView::show-option-menu signals in favor of a getter in
+    WebKitContextMenu and WebKitOptionMenu.
+  - Do not emit context-menu signals for media settings popup menu.
+  - Do not perform position queries on the video sink when a player
+    is for audio only.
+  - Fix WebGL when sandbox is enabled.
+  - Fix loading of media documents.
+  - Fix first party for cookies set on every media request.
+  - Fix gibberish text when loading alternate data.
+  - Fix rendering of checkbox and radio buttons on black backgrounds.
+  - Fix several crashes and rendering issues.
+  - Fix several warnings when building for ARMv7 (32-bits).
+  - Fix web process leak when webkit_download_set_destination is called with empty destination.
+
+=================
 WPE WebKit 2.37.1
 =================
 
