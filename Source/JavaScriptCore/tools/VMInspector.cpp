@@ -435,11 +435,13 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     // Dumping from low memory to high memory.
     bool isWasm = callFrame->isAnyWasmCallee();
     CodeBlock* codeBlock = isWasm ? nullptr : callFrame->codeBlock();
+    unsigned numCalleeLocals = codeBlock ? codeBlock->numCalleeLocals() : 0;
     unsigned numVars = codeBlock ? codeBlock->numVars() : 0;
 
     const Register* it;
     const Register* callFrameTop = callFrame->registers();
-    const Register* startOfLocals = callFrameTop - numVars;
+    const Register* startOfLocals = callFrameTop - numCalleeLocals;
+    const Register* startOfVars = callFrameTop - numVars;
 
     if (nextCallFrame)
         it = nextCallFrame->registers() + static_cast<int>(CallFrameSlot::thisArgument);
@@ -460,12 +462,13 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     if (codeBlock) {
         dataLogF("---------------------------------------------------- Outgoing Args + Misc ---\n");
         
-        while (it < startOfLocals) {
+        while (it < startOfVars) {
             JSValue v = it->jsValue();
-            dataLogF("% 4d                   : %10p  0x%llx %s\n", registerNumber++, it++, (long long)JSValue::encode(v), valueAsString(v).data());
+            String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
+            dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii().data(), it++, (long long)JSValue::encode(v), valueAsString(v).data());
         }
         
-        dataLogF("------------------------------------------------------------------ Locals ---\n");
+        dataLogF("--------------------------------------------------------------- Variables ---\n");
         
         
         size_t numberOfCalleeSaveSlots = CodeBlock::calleeSaveSpaceAsVirtualRegisters(*codeBlock->jitCode()->calleeSaveRegisters());
