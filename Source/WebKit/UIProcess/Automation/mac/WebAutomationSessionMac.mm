@@ -281,9 +281,17 @@ static bool virtualKeyHasStickyModifier(VirtualKey key)
     }
 }
 
-static int keyCodeForCharKey(CharKey key)
+// `keyCode` 0 is `kVK_ANSI_A` in <Carbon/Events.h>, which means events with that `keyCode` will incorrectly report
+// themselves as having a `KeyboardEvent.prototype.code` of `KeyA` in JavaScript due to the mapping in
+// PlatformEventFactoryMac::codeForKeyEvent.
+static constexpr unsigned short unknownKeyCode = USHRT_MAX;
+
+static int keyCodeForCharKey(CharKey charKey)
 {
-    switch (key) {
+    if (charKey.length() != 1)
+        return unknownKeyCode;
+
+    switch (charKey[0]) {
     case 'q':
     case 'Q':
         return kVK_ANSI_Q;
@@ -417,10 +425,10 @@ static int keyCodeForCharKey(CharKey key)
         return kVK_ANSI_Grave;
     }
 
-    return 0;
+    return unknownKeyCode;
 }
 
-static int keyCodeForVirtualKey(VirtualKey key)
+static unsigned short keyCodeForVirtualKey(VirtualKey key)
 {
     // The likely keyCode for the virtual key as defined in <HIToolbox/Events.h>.
     switch (key) {
@@ -457,7 +465,7 @@ static int keyCodeForVirtualKey(VirtualKey key)
     case VirtualKey::Pause:
         // The 'pause' key does not exist on Apple keyboards and has no keyCode.
         // The semantics are unclear so just abort and do nothing.
-        return 0;
+        return unknownKeyCode;
     case VirtualKey::Cancel:
         // The 'cancel' key does not exist on Apple keyboards and has no keyCode.
         // According to the internet its functionality is similar to 'Escape'.
@@ -491,7 +499,7 @@ static int keyCodeForVirtualKey(VirtualKey key)
     case VirtualKey::InsertRight:
         // The 'insert' key does not exist on Apple keyboards and has no keyCode.
         // The semantics are unclear so just abort and do nothing.
-        return 0;
+        return unknownKeyCode;
     case VirtualKey::Delete:
     case VirtualKey::DeleteRight:
         return kVK_ForwardDelete;
@@ -651,29 +659,29 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 
     bool isStickyModifier = false;
     NSEventModifierFlags changedModifiers = 0;
-    int keyCode = 0;
-    std::optional<unichar> charCode;
-    std::optional<unichar> charCodeIgnoringModifiers;
+    unsigned short keyCode = unknownKeyCode;
 
+    NSString *characters;
+    NSString *unmodifiedCharacters;
+
+    // FIXME: consider using AppKit SPI to normalize 'characters', i.e., changing * to Shift-8,
+    // and passing that in to charactersIgnoringModifiers. We could hardcode this for ASCII if needed.
     WTF::switchOn(key,
         [&] (VirtualKey virtualKey) {
             isStickyModifier = virtualKeyHasStickyModifier(virtualKey);
             changedModifiers = eventModifierFlagsForVirtualKey(virtualKey);
             keyCode = keyCodeForVirtualKey(virtualKey);
-            charCode = charCodeForVirtualKey(virtualKey);
-            charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(virtualKey);
+            if (auto charCode = charCodeForVirtualKey(virtualKey))
+                characters = [NSString stringWithCharacters:&charCode.value() length:1];
+            if (auto charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(virtualKey))
+                unmodifiedCharacters = [NSString stringWithCharacters:&charCodeIgnoringModifiers.value() length:1];
         },
         [&] (CharKey charKey) {
             keyCode = keyCodeForCharKey(charKey);
-            charCode = (unichar)charKey;
-            charCodeIgnoringModifiers = (unichar)charKey;
+            characters = charKey;
+            unmodifiedCharacters = charKey;
         }
     );
-
-    // FIXME: consider using AppKit SPI to normalize 'characters', i.e., changing * to Shift-8,
-    // and passing that in to charactersIgnoringModifiers. We could hardcode this for ASCII if needed.
-    NSString *characters = charCode ? [NSString stringWithCharacters:&charCode.value() length:1] : nil;
-    NSString *unmodifiedCharacters = charCodeIgnoringModifiers ? [NSString stringWithCharacters:&charCodeIgnoringModifiers.value() length:1] : nil;
 
     switch (interaction) {
     case KeyboardInteraction::KeyPress:

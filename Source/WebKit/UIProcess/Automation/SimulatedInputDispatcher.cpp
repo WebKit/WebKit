@@ -35,6 +35,10 @@
 #include <WebCore/PointerEventTypeNames.h>
 #include <variant>
 
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+#include <wtf/text/TextBreakIterator.h>
+#endif
+
 namespace WebKit {
 
 SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(SimulatedInputSourceType type)
@@ -363,24 +367,37 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             bool simulatedAnInteraction = false;
             for (auto charKey : b.pressedCharKeys) {
                 if (!a.pressedCharKeys.contains(charKey)) {
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                    ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
+#endif
                     ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one CharKey may differ at a time between two input source states.");
                     if (simulatedAnInteraction)
                         continue;
                     simulatedAnInteraction = true;
 
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, charKey.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#else
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
+#endif
                     m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, charKey, WTFMove(eventDispatchFinished));
                 }
             }
 
             for (auto charKey : a.pressedCharKeys) {
                 if (!b.pressedCharKeys.contains(charKey)) {
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                    ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
+#endif
                     ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one CharKey may differ at a time between two input source states.");
                     if (simulatedAnInteraction)
                         continue;
                     simulatedAnInteraction = true;
-
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, charKey.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#else
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
+#endif
                     m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, charKey, WTFMove(eventDispatchFinished));
                 }
             }
