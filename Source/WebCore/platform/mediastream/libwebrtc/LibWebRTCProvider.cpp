@@ -326,6 +326,8 @@ void LibWebRTCProvider::clearFactory()
 
 rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread)
 {
+    willCreatePeerConnectionFactory();
+
     ASSERT(!m_audioModule);
     auto audioModule = rtc::make_ref_counted<LibWebRTCAudioModule>();
     m_audioModule = audioModule.get();

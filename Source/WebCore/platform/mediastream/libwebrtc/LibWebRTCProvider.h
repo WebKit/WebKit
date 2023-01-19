@@ -142,6 +142,8 @@ private:
     void initializeAudioEncodingCapabilities() final;
     void initializeVideoEncodingCapabilities() final;
 
+    virtual void willCreatePeerConnectionFactory();
+
     std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
     std::optional<MediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const VideoConfiguration&) final;
 
@@ -149,6 +151,10 @@ private:
     bool m_useDTLS10 { false };
     bool m_disableNonLocalhostConnections { false };
 };
+
+inline void LibWebRTCProvider::willCreatePeerConnectionFactory()
+{
+}
 
 inline LibWebRTCAudioModule* LibWebRTCProvider::audioModule()
 {

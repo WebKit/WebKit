@@ -72,6 +72,8 @@ private:
     RefPtr<WebCore::RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void setLoggingLevel(WTFLogLevel) final;
 
+    void willCreatePeerConnectionFactory() final;
+
     WebPage& m_webPage;
 };
 

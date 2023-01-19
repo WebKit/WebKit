@@ -43,6 +43,7 @@
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "LibWebRTCCodecs.h"
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
 #include "Logging.h"
@@ -4328,6 +4329,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     if (settings.showMediaStatsContextMenuItemEnabled())
         settings.setTrackConfigurationEnabled(true);
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPageUpdatePreferencesAdditions.cpp>
+#endif
 
     m_page->settingsDidChange();
 }
