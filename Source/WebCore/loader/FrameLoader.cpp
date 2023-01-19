@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  * Copyright (C) 2011 Kris Jordan <krisjordan@gmail.com>
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2745,7 +2745,10 @@ void FrameLoader::didFirstLayout()
     if (&m_frame != &m_frame.page()->mainFrame())
         return;
 #endif
-    if (m_frame.page() && isBackForwardLoadType(m_loadType))
+    if (!m_frame.page())
+        return;
+
+    if (isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadType::ReloadFromOrigin || m_loadType == FrameLoadType::Reload)
         history().restoreScrollPositionAndViewState();
 
     if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
