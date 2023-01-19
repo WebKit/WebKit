@@ -889,6 +889,9 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
 
 bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
+    if (m_svgStyle->changeRequiresLayout(other.m_svgStyle))
+        return true;
+
     if (m_boxData.ptr() != other.m_boxData.ptr()) {
         if (m_boxData->width() != other.m_boxData->width()
             || m_boxData->minWidth() != other.m_boxData->minWidth()
@@ -1198,6 +1201,11 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
 
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
+    bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
+
+    if (m_svgStyle->changeRequiresRepaint(other.m_svgStyle, currentColorDiffers))
+        return true;
+
     if (!requiresPainting(*this) && !requiresPainting(other))
         return false;
 
@@ -1208,7 +1216,6 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         return true;
 
 
-    bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
     if (m_backgroundData.ptr() != other.m_backgroundData.ptr()) {
         if (!m_backgroundData->isEquivalentForPainting(*other.m_backgroundData, currentColorDiffers))
             return true;
@@ -1277,22 +1284,8 @@ StyleDifference RenderStyle::diff(const RenderStyle& other, OptionSet<StyleDiffe
 {
     changedContextSensitiveProperties = OptionSet<StyleDifferenceContextSensitiveProperty>();
 
-    StyleDifference svgChange = StyleDifference::Equal;
-    if (m_svgStyle != other.m_svgStyle) {
-        svgChange = m_svgStyle->diff(other.m_svgStyle.get());
-        if (svgChange == StyleDifference::Layout)
-            return svgChange;
-    }
-
     if (changeRequiresLayout(other, changedContextSensitiveProperties))
         return StyleDifference::Layout;
-
-    // SVGRenderStyle::diff() might have returned StyleDifference::Repaint, eg. if fill changes.
-    // If eg. the font-size changed at the same time, we're not allowed to return StyleDifference::Repaint,
-    // but have to return StyleDifference::Layout, that's why  this if branch comes after all branches
-    // that are relevant for SVG and might return StyleDifference::Layout.
-    if (svgChange != StyleDifference::Equal)
-        return svgChange;
 
     if (changeRequiresPositionedLayoutOnly(other, changedContextSensitiveProperties))
         return StyleDifference::LayoutPositionedMovementOnly;
