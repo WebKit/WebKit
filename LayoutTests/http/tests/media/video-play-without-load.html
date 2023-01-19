@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function test() {
+  internals.withUserGesture(() => {});
+  v0.requestFullscreen();
+  v0.play();
+  if (window.testRunner)
+      testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+<video id="v0">
+</video>
+<p>PASS if no crash.</p>
+</body>
