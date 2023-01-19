@@ -45,6 +45,7 @@
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "ImageControlsButtonPart.h"
 #include "InnerSpinButtonPart.h"
 #include "LocalizedStrings.h"
 #include "MenuListButtonPart.h"
@@ -596,12 +597,13 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
+        break;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:
     case StyleAppearance::BorderlessAttachment:
-#endif
         break;
+#endif
 
     case StyleAppearance::Listbox:
     case StyleAppearance::TextArea:
@@ -619,15 +621,17 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
+        return ImageControlsButtonPart::create();
 #endif
-        break;
 
     case StyleAppearance::InnerSpinButton:
         return InnerSpinButtonPart::create();
 
 #if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
+        break;
 #endif
+
     case StyleAppearance::SearchFieldDecoration:
     case StyleAppearance::SearchFieldResultsDecoration:
     case StyleAppearance::SearchFieldResultsButton:

@@ -24,10 +24,6 @@
 
 #import "RenderThemeCocoa.h"
 
-#if ENABLE(SERVICE_CONTROLS)
-OBJC_CLASS NSServicesRolloverButtonCell;
-#endif
-
 OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
@@ -188,19 +184,13 @@ private:
     NSMenu *searchMenuTemplate() const;
 
 #if ENABLE(SERVICE_CONTROLS)
-    bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
     IntSize imageControlsButtonSize() const final;
     bool isImageControl(const Element&) const final;
-
-    NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
 #endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
-#if ENABLE(SERVICE_CONTROLS)
-    mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;
-#endif
 
     bool m_isSliderThumbHorizontalPressed { false };
     bool m_isSliderThumbVerticalPressed { false };

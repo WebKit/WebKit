@@ -39,13 +39,12 @@
 #import "GraphicsContext.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLInputElement.h"
-#import "HTMLMediaElement.h"
 #import "HTMLMeterElement.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInImageElement.h"
 #import "Icon.h"
 #import "Image.h"
-#import "ImageBuffer.h"
+#import "ImageControlsButtonMac.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalizedStrings.h"
@@ -53,17 +52,14 @@
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
-#import "RenderLayer.h"
 #import "RenderMedia.h"
 #import "RenderMeter.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderView.h"
-#import "SharedBuffer.h"
 #import "SliderThumbElement.h"
 #import "StringTruncator.h"
 #import "ThemeMac.h"
-#import "TimeRanges.h"
 #import "UTIUtilities.h"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
@@ -76,13 +72,11 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
 #import <pal/spi/mac/NSSearchFieldCellSPI.h>
-#import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
-#import <wtf/text/StringBuilder.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -158,6 +152,9 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
     case StyleAppearance::ColorWell:
 #endif
     case StyleAppearance::DefaultButton:
+#if ENABLE(SERVICE_CONTROLS)
+    case StyleAppearance::ImageControlsButton:
+#endif
     case StyleAppearance::InnerSpinButton:
     case StyleAppearance::Listbox:
     case StyleAppearance::Menulist:
@@ -196,6 +193,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == StyleAppearance::ColorWell
 #endif
         || type == StyleAppearance::DefaultButton
+#if ENABLE(SERVICE_CONTROLS)
+        || type == StyleAppearance::ImageControlsButton
+#endif
         || type == StyleAppearance::InnerSpinButton
         || type == StyleAppearance::Menulist
         || type == StyleAppearance::Meter
@@ -1465,33 +1465,9 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
-{
-    if (!m_servicesRolloverButton) {
-        m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
-        [m_servicesRolloverButton setBezelStyle:NSBezelStyleRoundedDisclosure];
-        [m_servicesRolloverButton setButtonType:NSButtonTypePushOnPushOff];
-        [m_servicesRolloverButton setImagePosition:NSImageOnly];
-        [m_servicesRolloverButton setState:NO];
-    }
-    return m_servicesRolloverButton.get();
-}
-
-bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    paintInfo.context().translate(rect.location());
-    IntRect innerFrame(IntPoint(), rect.size());
-    [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
-    [cell setControlView:nil];
-    return false;
-}
-
 IntSize RenderThemeMac::imageControlsButtonSize() const
 {
-    return IntSize(servicesRolloverButtonCell().cellSize);
+    return ImageControlsButtonMac::servicesRolloverButtonCellSize();
 }
 
 bool RenderThemeMac::isImageControl(const Element& elementPtr) const

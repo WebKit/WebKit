@@ -70,6 +70,7 @@
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/IdentityTransformOperation.h>
 #include <WebCore/Image.h>
+#include <WebCore/ImageControlsButtonPart.h>
 #include <WebCore/InnerSpinButtonPart.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
@@ -1604,21 +1605,25 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
         return WebCore::TextFieldPart::create();
 
     case WebCore::StyleAppearance::CapsLockIndicator:
+        break;
+
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebCore::StyleAppearance::ColorWell:
         return WebCore::ColorWellPart::create();
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case WebCore::StyleAppearance::ImageControlsButton:
+        return WebCore::ImageControlsButtonPart::create();
 #endif
-        break;
 
     case WebCore::StyleAppearance::InnerSpinButton:
         return WebCore::InnerSpinButtonPart::create();
 
 #if ENABLE(DATALIST_ELEMENT)
     case WebCore::StyleAppearance::ListButton:
+        break;
 #endif
+
     case WebCore::StyleAppearance::SearchFieldDecoration:
     case WebCore::StyleAppearance::SearchFieldResultsDecoration:
     case WebCore::StyleAppearance::SearchFieldResultsButton:

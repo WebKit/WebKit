@@ -29,6 +29,7 @@ namespace WebCore {
 
 class ButtonPart;
 class ColorWellPart;
+class ImageControlsButtonPart;
 class InnerSpinButtonPart;
 class MeterPart;
 class MenuListButtonPart;
@@ -54,6 +55,9 @@ public:
     virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) = 0;
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    virtual std::unique_ptr<PlatformControl> createPlatformImageControlsButton(ImageControlsButtonPart&) = 0;
 #endif
     virtual std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) = 0;
