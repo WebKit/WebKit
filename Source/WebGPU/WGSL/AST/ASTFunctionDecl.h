@@ -41,21 +41,21 @@ class Parameter final : public Node {
 public:
     using List = UniqueRefVector<Parameter>;
 
-    Parameter(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
+    Parameter(SourceSpan span, const String& name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
         : Node(span)
-        , m_name(WTFMove(name))
+        , m_name(name)
         , m_type(WTFMove(type))
         , m_attributes(WTFMove(attributes))
     {
     }
 
     Kind kind() const override;
-    const StringView& name() const { return m_name; }
+    const String& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
     Attribute::List& attributes() { return m_attributes; }
 
 private:
-    StringView m_name;
+    String m_name;
     UniqueRef<TypeDecl> m_type;
     Attribute::List m_attributes;
 };
@@ -66,7 +66,7 @@ class FunctionDecl final : public Decl {
 public:
     using List = UniqueRefVector<FunctionDecl>;
 
-    FunctionDecl(SourceSpan sourceSpan, StringView name, Parameter::List&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
+    FunctionDecl(SourceSpan sourceSpan, const String& name, Parameter::List&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
         : Decl(sourceSpan)
         , m_name(name)
         , m_parameters(WTFMove(parameters))
@@ -78,7 +78,7 @@ public:
     }
 
     Kind kind() const override;
-    const StringView& name() const { return m_name; }
+    const String& name() const { return m_name; }
     Parameter::List& parameters() { return m_parameters; }
     Attribute::List& attributes() { return m_attributes; }
     Attribute::List& returnAttributes() { return m_returnAttributes; }
@@ -86,7 +86,7 @@ public:
     CompoundStatement& body() { return m_body; }
 
 private:
-    StringView m_name;
+    String m_name;
     Parameter::List m_parameters;
     Attribute::List m_attributes;
     Attribute::List m_returnAttributes;

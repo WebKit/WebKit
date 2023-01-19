@@ -83,7 +83,6 @@ public:
     void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback);
     Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
     Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
-    Ref<PresentationContext> createSurface(const WGPUSurfaceDescriptor&);
     Ref<PresentationContext> createSwapChain(PresentationContext&, const WGPUSwapChainDescriptor&);
     Ref<Texture> createTexture(const WGPUTextureDescriptor&);
     void destroy();

@@ -315,7 +315,7 @@ CodeBlock* VMInspector::codeBlockForFrame(VM* vm, CallFrame* topCallFrame, unsig
     };
 
     FetchCodeBlockFunctor functor(frameNumber);
-    topCallFrame->iterate(*vm, functor);
+    StackVisitor::visit(topCallFrame, *vm, functor);
     return functor.codeBlock;
 }
 
@@ -356,7 +356,7 @@ void VMInspector::dumpCallFrame(VM* vm, CallFrame* callFrame, unsigned framesToS
     if (!ensureCurrentThreadOwnsJSLock(vm))
         return;
     DumpFrameFunctor functor(DumpFrameFunctor::DumpOne, framesToSkip);
-    callFrame->iterate(*vm, functor);
+    StackVisitor::visit(callFrame, *vm, functor);
 }
 
 void VMInspector::dumpRegisters(CallFrame* callFrame)
@@ -394,7 +394,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogF("-----------------------------------------------------------------------------\n");
     dataLogF("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
 
-    callFrame->iterate(vm, [&] (StackVisitor& visitor) {
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
         if (visitor->callFrame() == callFrame) {
             unsigned line = 0;
             unsigned unusedColumn = 0;
@@ -443,7 +443,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     CallFrame* nextCallFrame = nullptr;
 
     if (topCallFrame) {
-        topCallFrame->iterate(vm, [&] (StackVisitor& visitor) {
+        StackVisitor::visit(topCallFrame, vm, [&] (StackVisitor& visitor) {
             if (callFrame == visitor->callFrame())
                 return IterationStatus::Done;
             nextCallFrame = visitor->callFrame();
@@ -478,7 +478,7 @@ void VMInspector::dumpStack(VM* vm, CallFrame* topCallFrame, unsigned framesToSk
     if (!topCallFrame)
         return;
     DumpFrameFunctor functor(DumpFrameFunctor::DumpAll, framesToSkip);
-    topCallFrame->iterate(*vm, functor);
+    StackVisitor::visit(topCallFrame, *vm, functor);
 }
 
 void VMInspector::dumpValue(JSValue value)

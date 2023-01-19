@@ -401,7 +401,7 @@ WASM_SLOW_PATH_DECL(array_new)
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
     Wasm::UseDefaultValue useDefault = static_cast<Wasm::UseDefaultValue>(instruction.m_useDefault);
 
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex]->expand();
     ASSERT(arraySignature.is<Wasm::ArrayType>());
     Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 

@@ -203,7 +203,7 @@ enum class State : uint64_t {
     ReadOnly                = 1LLU << 43,
 };
 
-enum Relation {
+enum class Relation {
     Null,
     LabelFor,
     LabelledBy,
@@ -227,7 +227,6 @@ enum Relation {
     DetailsFor,
     ErrorMessage,
     ErrorFor,
-    LastDefinedRelation,
 };
 
 enum CoordinateType {

@@ -88,6 +88,13 @@ static ExceptionOr<CryptoAlgorithmIdentifier> toHashIdentifier(JSGlobalObject& s
     return digestParams.returnValue()->identifier;
 }
 
+static bool isRSAESPKCSWebCryptoDeprecated(JSGlobalObject& state)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto* context = globalObject.scriptExecutionContext();
+    return context ? context->settingsValues().deprecateRSAESPKCSWebCryptoEnabled : false;
+}
+
 static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAlgorithmParameters(JSGlobalObject& state, SubtleCrypto::AlgorithmIdentifier algorithmIdentifier, Operations operation)
 {
     VM& vm = state.vm();
@@ -115,6 +122,8 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     case Operations::Decrypt:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
+            if (isRSAESPKCSWebCryptoDeprecated(state))
+                return Exception { NotSupportedError, "RSAES-PKCS1-v1_5 support is deprecated"_s };
             result = makeUnique<CryptoAlgorithmParameters>(params);
             break;
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
@@ -189,6 +198,8 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     case Operations::GenerateKey:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
+            if (isRSAESPKCSWebCryptoDeprecated(state))
+                return Exception { NotSupportedError, "RSAES-PKCS1-v1_5 support is deprecated"_s };
             auto params = convertDictionary<CryptoAlgorithmRsaKeyGenParams>(state, value.get());
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
             result = makeUnique<CryptoAlgorithmRsaKeyGenParams>(params);
@@ -279,6 +290,8 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     case Operations::ImportKey:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
+            if (isRSAESPKCSWebCryptoDeprecated(state))
+                return Exception { NotSupportedError, "RSAES-PKCS1-v1_5 support is deprecated"_s };
             result = makeUnique<CryptoAlgorithmParameters>(params);
             break;
         case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
@@ -482,10 +495,11 @@ static Vector<uint8_t> copyToVector(BufferSource&& data)
     return { data.data(), data.length() };
 }
 
-static bool isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
+static bool isSupportedExportKey(JSGlobalObject& state, CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
+        return !isRSAESPKCSWebCryptoDeprecated(state);
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSA_PSS:
     case CryptoAlgorithmIdentifier::RSA_OAEP:
@@ -932,7 +946,7 @@ void SubtleCrypto::importKey(JSC::JSGlobalObject& state, KeyFormat format, KeyDa
 
 void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromise>&& promise)
 {
-    if (!isSupportedExportKey(key.algorithmIdentifier())) {
+    if (!isSupportedExportKey(*promise->globalObject(), key.algorithmIdentifier())) {
         promise->reject(Exception { NotSupportedError });
         return;
     }
@@ -1003,7 +1017,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
         return;
     }
 
-    if (!isSupportedExportKey(key.algorithmIdentifier())) {
+    if (!isSupportedExportKey(state, key.algorithmIdentifier())) {
         promise->reject(Exception { NotSupportedError });
         return;
     }

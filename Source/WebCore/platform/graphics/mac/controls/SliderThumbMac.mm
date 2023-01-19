@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"

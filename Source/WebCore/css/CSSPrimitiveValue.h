@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +25,6 @@
 #include "CSSUnits.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
-#include "Color.h"
 #include "ExceptionOr.h"
 #include "LayoutUnit.h"
 #include <utility>
@@ -37,6 +36,7 @@ namespace WebCore {
 class CSSBasicShape;
 class CSSCalcValue;
 class CSSToLengthConversionData;
+class Color;
 class Counter;
 class DeprecatedCSSOMPrimitiveValue;
 class FontCascadeDescription;
@@ -118,16 +118,22 @@ public:
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
-    static Ref<CSSPrimitiveValue> create(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
-    static Ref<CSSPrimitiveValue> createCustomIdent(const String& value) { return CSSPrimitiveValue::create(value, CSSUnitType::CustomIdent); }
-
+    static Ref<CSSPrimitiveValue> create(CSSPropertyID);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
-    static Ref<CSSPrimitiveValue> create(const String& value, CSSUnitType type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
-    static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
-    static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
+    static Ref<CSSPrimitiveValue> create(const String&, CSSUnitType);
+    static Ref<CSSPrimitiveValue> create(const Length&);
+    static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
+    static Ref<CSSPrimitiveValue> create(const LengthSize&, const RenderStyle&);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSBasicShape>&&);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>&&);
+    static Ref<CSSPrimitiveValue> create(Ref<Counter>&&);
+    static Ref<CSSPrimitiveValue> create(Ref<Pair>&&);
+    static Ref<CSSPrimitiveValue> create(Ref<Quad>&&);
+    static Ref<CSSPrimitiveValue> create(Ref<Rect>&&);
 
-    template<typename T> static Ref<CSSPrimitiveValue> create(T&&);
-    template<typename T> static Ref<CSSPrimitiveValue> create(T&&, CSSPropertyID);
+    template<typename T> static Ref<CSSPrimitiveValue> create(const T&); // Specializations are in CSSPrimitiveValueMappings.h.
+
+    static Ref<CSSPrimitiveValue> createCustomIdent(const String& value) { return create(value, CSSUnitType::CustomIdent); }
 
     static inline CSSPrimitiveValue& implicitInitialValue();
 
@@ -172,7 +178,7 @@ public:
 
     WEBCORE_EXPORT String stringValue() const;
 
-    const Color& color() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR); return *m_value.color; }
+    const Color& color() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
     Counter* counterValue() const { return primitiveUnitType() != CSSUnitType::CSS_COUNTER ? nullptr : m_value.counter; }
     CSSCalcValue* cssCalcValue() const { return primitiveUnitType() != CSSUnitType::CSS_CALC ? nullptr : m_value.calc; }
     Pair* pairValue() const { return primitiveUnitType() != CSSUnitType::CSS_PAIR ? nullptr : m_value.pair; }
@@ -182,7 +188,12 @@ public:
     CSSBasicShape* shapeValue() const { return primitiveUnitType() != CSSUnitType::CSS_SHAPE ? nullptr : m_value.shape; }
     CSSValueID valueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID ? m_value.valueID : CSSValueInvalid; }
 
-    template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
+    operator unsigned short() const;
+    operator int() const;
+    operator unsigned() const;
+    operator float() const;
+
+    template<typename T> operator T() const; // Specializations are in CSSPrimitiveValueMappings.h.
 
     String customCSSText() const;
 
@@ -212,36 +223,18 @@ private:
     CSSPrimitiveValue(const LengthSize&, const RenderStyle&);
     CSSPrimitiveValue(const String&, CSSUnitType);
     CSSPrimitiveValue(double, CSSUnitType);
+    explicit CSSPrimitiveValue(Ref<CSSBasicShape>&&);
+    explicit CSSPrimitiveValue(Ref<CSSCalcValue>&&);
+    explicit CSSPrimitiveValue(Ref<Counter>&&);
+    explicit CSSPrimitiveValue(Ref<Pair>&&);
+    explicit CSSPrimitiveValue(Ref<Quad>&&);
+    explicit CSSPrimitiveValue(Ref<Rect>&&);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, const Color&);
     CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
     enum ImplicitInitialValueTag { ImplicitInitialValue };
     CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
-
-    template<typename T> explicit CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
-    template<typename T> CSSPrimitiveValue(T, CSSPropertyID); // Defined in CSSPrimitiveValueMappings.h
-    template<typename T> explicit CSSPrimitiveValue(RefPtr<T>&&);
-    template<typename T> explicit CSSPrimitiveValue(Ref<T>&&);
-
-    static void create(int) = delete; // compile-time guard
-    static void create(unsigned) = delete; // compile-time guard
-    static void create(const AtomString&) = delete; // compile-time guard
-    static void create(AtomString&&) = delete; // compile-time guard
-    static void create(const Color&) = delete; // compile-time guard
-    static void create(Color&&) = delete; // compile-time guard
-    static void create(const String&) = delete; // compile-time guard
-    static void create(String&&) = delete; // compile-time guard
-    template<typename T> operator T*() = delete; // compile-time guard
-
-    void init(const Length&);
-    void init(const LengthSize&, const RenderStyle&);
-    void init(Ref<CSSBasicShape>&&);
-    void init(RefPtr<CSSCalcValue>&&);
-    void init(Ref<Counter>&&);
-    void init(Ref<Pair>&&);
-    void init(Ref<Quad>&&);
-    void init(Ref<Rect>&&);
 
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = static_cast<unsigned>(type); }
@@ -266,12 +259,14 @@ private:
         Counter* counter;
         Rect* rect;
         Quad* quad;
-        const Color* color;
+        uint64_t colorAsInteger;
         Pair* pair;
         CSSBasicShape* shape;
         CSSCalcValue* calc;
     } m_value;
 };
+
+template<typename TargetType> constexpr TargetType fromCSSValueID(CSSValueID);
 
 constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
 {
@@ -326,17 +321,6 @@ constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
     return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewporCSSUnitType;
 }
 
-template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)
-{
-    // FIXME: This allocates a new CSSPrimitiveValue for all valueID cases, without taking advantage of the StaticCSSValuePool!
-    return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
-}
-
-template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value, CSSPropertyID propertyID)
-{
-    return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value), propertyID));
-}
-
 template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const
 {
     if (timeUnit == Seconds && primitiveType() == CSSUnitType::CSS_S)
@@ -349,18 +333,6 @@ template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitive
         return value<T>() * 1000;
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-template<typename T> inline CSSPrimitiveValue::CSSPrimitiveValue(RefPtr<T>&& value)
-    : CSSValue(PrimitiveClass)
-{
-    init(WTFMove(value));
-}
-
-template<typename T> inline CSSPrimitiveValue::CSSPrimitiveValue(Ref<T>&& value)
-    : CSSValue(PrimitiveClass)
-{
-    init(WTFMove(value));
 }
 
 inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
@@ -428,6 +400,40 @@ inline bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
 inline bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
 {
     return isValueID(value.get(), id);
+}
+
+inline CSSPrimitiveValue::operator unsigned short() const
+{
+    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
+    return value<unsigned short>();
+}
+
+inline CSSPrimitiveValue::operator int() const
+{
+    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
+    return value<int>();
+}
+
+inline CSSPrimitiveValue::operator unsigned() const
+{
+    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
+    return value<unsigned>();
+}
+
+inline CSSPrimitiveValue::operator float() const
+{
+    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
+    return value<float>();
+}
+
+template<typename ConvertibleType> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const ConvertibleType& value)
+{
+    return create(toCSSValueID(value));
+}
+
+template<typename TargetType> inline CSSPrimitiveValue::operator TargetType() const
+{
+    return fromCSSValueID<TargetType>(valueID());
 }
 
 } // namespace WebCore

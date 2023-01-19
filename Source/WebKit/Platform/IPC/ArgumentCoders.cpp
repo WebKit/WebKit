@@ -45,9 +45,8 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
         return;
     }
 
-    uint32_t length = string.length();
-    encoder << length;
-    encoder.encodeFixedLengthData(string.dataAsUInt8Ptr(), length, 1);
+    encoder << static_cast<uint32_t>(string.length());
+    encoder.encodeSpan(string.bytes());
 }
 template void ArgumentCoder<CString>::encode<Encoder>(Encoder&, const CString&);
 
@@ -63,15 +62,14 @@ std::optional<CString> ArgumentCoder<CString>::decode(Decoder& decoder)
         return CString();
     }
 
-    // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.template bufferIsLargeEnoughToContain<char>(*length))
+    auto data = decoder.template decodeSpan<uint8_t>(*length);
+    if (!data.data())
         return std::nullopt;
 
     char* buffer;
     CString string = CString::newUninitialized(*length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length, 1))
-        return std::nullopt;
-
+    static_assert(sizeof(typename decltype(data)::element_type) == 1);
+    memcpy(buffer, data.data(), data.size_bytes());
     return string;
 }
 template
@@ -92,9 +90,9 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
     encoder << length << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(string.characters8(), length * sizeof(LChar), alignof(LChar));
+        encoder.encodeSpan(Span { string.characters8(), length });
     else
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
+        encoder.encodeSpan(Span { string.characters16(), length });
 }
 template
 void ArgumentCoder<String>::encode<Encoder>(Encoder&, const String&);
@@ -104,16 +102,10 @@ void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEnco
 template<typename CharacterType, typename Decoder>
 static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
-    // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.template bufferIsLargeEnoughToContain<CharacterType>(length))
+    auto data = decoder.template decodeSpan<CharacterType>(length);
+    if (!data.data())
         return std::nullopt;
-    
-    CharacterType* buffer;
-    String string = String::createUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), alignof(CharacterType)))
-        return std::nullopt;
-    
-    return string;
+    return std::make_optional<String>(data);
 }
 
 template<typename Decoder>
@@ -154,27 +146,14 @@ void ArgumentCoder<StringView>::encode(Encoder& encoder, StringView string)
     encoder << length << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(string.characters8(), length * sizeof(LChar), alignof(LChar));
+        encoder.encodeSpan(string.span8());
     else
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
+        encoder.encodeSpan(string.span16());
 }
 template
 void ArgumentCoder<StringView>::encode<Encoder>(Encoder&, StringView);
 template
 void ArgumentCoder<StringView>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, StringView);
-
-void ArgumentCoder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
-{
-    encoder.encodeFixedLengthData(digest.data(), sizeof(digest), 1);
-}
-
-std::optional<SHA1::Digest> ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder)
-{
-    SHA1::Digest digest;
-    if (!decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1))
-        return std::nullopt;
-    return digest;
-}
 
 #if HAVE(AUDIT_TOKEN)
 

@@ -51,7 +51,7 @@ public:
 
 private:
     WebAssemblyInstancePrototype(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

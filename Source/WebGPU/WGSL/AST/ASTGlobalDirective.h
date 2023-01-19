@@ -36,17 +36,17 @@ class GlobalDirective : public Node {
 public:
     using List = UniqueRefVector<GlobalDirective>;
 
-    GlobalDirective(SourceSpan span, StringView name)
+    GlobalDirective(SourceSpan span, const String& name)
         : Node(span)
         , m_name(name)
     {
     }
 
     Kind kind() const override { return Kind::GlobalDirective; }
-    const StringView& name() const { return m_name; }
+    const String& name() const { return m_name; }
 
 private:
-    StringView m_name;
+    String m_name;
 };
 
 } // namespace WGSL::AST

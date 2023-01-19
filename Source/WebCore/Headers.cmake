@@ -1759,6 +1759,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/controls/ControlFactory.h
     platform/graphics/controls/ControlPart.h
     platform/graphics/controls/ControlStyle.h
+    platform/graphics/controls/ImageControlsButtonPart.h
     platform/graphics/controls/InnerSpinButtonPart.h
     platform/graphics/controls/MenuListButtonPart.h
     platform/graphics/controls/MenuListPart.h

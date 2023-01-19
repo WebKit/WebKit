@@ -1353,7 +1353,7 @@ auto FunctionParser<Context>::parseStructTypeIndex(uint32_t& structTypeIndex, co
     uint32_t typeIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for ", operation);
     WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), operation, " index ", typeIndex, " is out of bound");
-    const TypeDefinition& type = m_info.typeSignatures[typeIndex].get();
+    const TypeDefinition& type = m_info.typeSignatures[typeIndex]->expand();
     WASM_VALIDATOR_FAIL_IF(!type.is<StructType>(), operation, ": invalid type index ", typeIndex);
 
     structTypeIndex = typeIndex;
@@ -1377,9 +1377,9 @@ auto FunctionParser<Context>::parseStructTypeIndexAndFieldIndex(StructTypeIndexA
     uint32_t structTypeIndex;
     WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(structTypeIndex, operation));
 
-    const auto& typeDefinition = m_info.typeSignatures[structTypeIndex];
+    const auto& typeDefinition = m_info.typeSignatures[structTypeIndex]->expand();
     uint32_t fieldIndex;
-    WASM_FAIL_IF_HELPER_FAILS(parseStructFieldIndex(fieldIndex, *typeDefinition->template as<StructType>(), operation));
+    WASM_FAIL_IF_HELPER_FAILS(parseStructFieldIndex(fieldIndex, *typeDefinition.template as<StructType>(), operation));
 
     result.fieldIndex = fieldIndex;
     result.structTypeIndex = structTypeIndex;
@@ -1396,10 +1396,10 @@ auto FunctionParser<Context>::parseStructFieldManipulation(StructFieldManipulati
     WASM_TRY_POP_EXPRESSION_STACK_INTO(structRef, "struct reference");
     WASM_VALIDATOR_FAIL_IF(!isRefWithTypeIndex(structRef.type()), operation, " invalid index: ", structRef.type());
     const TypeIndex structTypeIndex = structRef.type().index;
-    const TypeDefinition& structTypeDefinition = TypeInformation::get(structTypeIndex);
+    const TypeDefinition& structTypeDefinition = TypeInformation::get(structTypeIndex).expand();
     WASM_VALIDATOR_FAIL_IF(!structTypeDefinition.is<StructType>(), operation, " type index points into a non struct type");
     const auto& structType = *structTypeDefinition.as<StructType>();
-    WASM_VALIDATOR_FAIL_IF(structRef.type().index != m_info.typeSignatures[typeIndexAndFieldIndex.structTypeIndex]->index(), operation, ": popped struct has a different type index than specified in immeddiate");
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(structRef.type(), Type { TypeKind::RefNull, m_info.typeSignatures[typeIndexAndFieldIndex.structTypeIndex]->index() }), operation, " structref to type ", structRef.type().kind, " expected structref");
 
     result.structReference = structRef;
     result.indices.fieldIndex = typeIndexAndFieldIndex.fieldIndex;
@@ -1781,7 +1781,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new");
             WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new index ", typeIndex, " is out of bounds");
 
-            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get().expand();
             WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new index ", typeIndex, " does not reference an array definition");
             // If this is a packed array, then the value has to have type i32
             const Type unpackedElementType = typeDefinition.as<ArrayType>()->elementType().type.unpacked();
@@ -1803,7 +1803,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new_default");
             WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new_default index ", typeIndex, " is out of bounds");
 
-            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get().expand();
             WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new_default index ", typeIndex, " does not reference an array definition");
             const StorageType elementType = typeDefinition.as<ArrayType>()->elementType().type;
             WASM_VALIDATOR_FAIL_IF(!isDefaultableType(elementType), "array.new_default index ", typeIndex, " does not reference an array definition with a defaultable type");
@@ -1826,7 +1826,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for ", opName);
             WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), opName, " index ", typeIndex, " is out of bounds");
 
-            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get().expand();
             WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), opName, " index ", typeIndex, " does not reference an array definition");
             const StorageType elementType = typeDefinition.as<ArrayType>()->elementType().type;
             // The type of the result will be unpacked if the array is packed.
@@ -1857,7 +1857,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.set");
             WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.set index ", typeIndex, " is out of bounds");
 
-            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get().expand();
             WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.set index ", typeIndex, " does not reference an array definition");
             WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.set index ", typeIndex, " does not reference an array definition");
             const FieldType elementType = typeDefinition.as<ArrayType>()->elementType();
@@ -1896,7 +1896,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new"));
 
             const auto& typeDefinition = m_info.typeSignatures[typeIndex];
-            const auto* structType = typeDefinition->template as<StructType>();
+            const auto* structType = typeDefinition->expand().template as<StructType>();
             WASM_PARSER_FAIL_IF(structType->fieldCount() > m_expressionStack.size(), "struct.new ", typeIndex, " requires ", structType->fieldCount(), " values, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
             Vector<ExpressionType> args;
@@ -1923,15 +1923,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             uint32_t typeIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new_default"));
 
-            const auto& typeDefinition = m_info.typeSignatures[typeIndex];
-            const auto* structType = typeDefinition->template as<StructType>();
+            const auto& typeDefinition = m_info.typeSignatures[typeIndex]->expand();
+            const auto* structType = typeDefinition.template as<StructType>();
 
             for (StructFieldCount i = 0; i < structType->fieldCount(); i++)
                 WASM_PARSER_FAIL_IF(!isDefaultableType(structType->field(i).type), "struct.new_default ", typeIndex, " requires all fields to be defaultable, but field ", i, " has type ", structType->field(i).type);
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addStructNewDefault(typeIndex, result));
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition.index() }, result);
             return { };
         }
         case ExtGCOpType::StructGet: {
@@ -1939,7 +1939,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, "struct.get"));
 
             ExpressionType result;
-            const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->template as<StructType>();
+            const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->expand().template as<StructType>();
             WASM_TRY_ADD_TO_CONTEXT(addStructGet(structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
 
             m_expressionStack.constructAndAppend(structGetInput.field.type.unpacked(), result);
@@ -1956,7 +1956,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(field.mutability != Mutability::Mutable, "the field ", structSetInput.indices.fieldIndex, " can't be set because it is immutable");
             WASM_PARSER_FAIL_IF(!isSubtype(value.type(), field.type.unpacked()), "type mismatch in struct.set");
 
-            const auto& structType = *m_info.typeSignatures[structSetInput.indices.structTypeIndex]->template as<StructType>();
+            const auto& structType = *m_info.typeSignatures[structSetInput.indices.structTypeIndex]->expand().template as<StructType>();
             WASM_TRY_ADD_TO_CONTEXT(addStructSet(structSetInput.structReference, structType, structSetInput.indices.fieldIndex, value));
             return { };
         }

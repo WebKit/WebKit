@@ -121,6 +121,7 @@
     macro(exec) \
     macro(executionCount) \
     macro(exitKind) \
+    macro(exports) \
     macro(fallback) \
     macro(flags) \
     macro(forEach) \

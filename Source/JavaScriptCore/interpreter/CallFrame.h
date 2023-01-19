@@ -319,19 +319,6 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         JS_EXPORT_PRIVATE static JSGlobalObject* globalObjectOfClosestCodeBlock(VM&, CallFrame*);
         String friendlyFunctionName();
 
-        // CallFrame::iterate() expects a Functor that implements the following method:
-        //     IterationStatus operator()(StackVisitor&) const;
-        // FIXME: This method is improper. We rely on the fact that we can call it with a null
-        // receiver. We should always be using StackVisitor directly.
-        // It's only valid to call this from a non-wasm top frame.
-        template <StackVisitor::EmptyEntryFrameAction action = StackVisitor::ContinueIfTopEntryFrameIsEmpty, typename Functor> void iterate(VM& vm, const Functor& functor)
-        {
-            void* rawThis = this;
-            if (!!rawThis)
-                RELEASE_ASSERT(callee().isCell());
-            StackVisitor::visit<action, Functor>(this, vm, functor);
-        }
-
         void dump(PrintStream&) const;
 
         // This function is used in LLDB btjs.

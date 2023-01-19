@@ -79,6 +79,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.integrity = this->integrity.isolatedCopy();
     copy.keepAlive = this->keepAlive;
     copy.clientIdentifier = this->clientIdentifier;
+    copy.resultingClientIdentifier = this->resultingClientIdentifier;
 
     // ResourceLoaderOptions
     copy.sendLoadCallbacks = this->sendLoadCallbacks;

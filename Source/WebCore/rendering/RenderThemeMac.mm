@@ -39,13 +39,12 @@
 #import "GraphicsContext.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLInputElement.h"
-#import "HTMLMediaElement.h"
 #import "HTMLMeterElement.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInImageElement.h"
 #import "Icon.h"
 #import "Image.h"
-#import "ImageBuffer.h"
+#import "ImageControlsButtonMac.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalizedStrings.h"
@@ -53,17 +52,14 @@
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
-#import "RenderLayer.h"
 #import "RenderMedia.h"
 #import "RenderMeter.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderView.h"
-#import "SharedBuffer.h"
 #import "SliderThumbElement.h"
 #import "StringTruncator.h"
 #import "ThemeMac.h"
-#import "TimeRanges.h"
 #import "UTIUtilities.h"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
@@ -76,13 +72,11 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
 #import <pal/spi/mac/NSSearchFieldCellSPI.h>
-#import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
-#import <wtf/text/StringBuilder.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -117,76 +111,6 @@ constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
 }
 
 @end
-
-#if ENABLE(DATALIST_ELEMENT)
-
-static const CGFloat listButtonWidth = 16.0f;
-static const CGFloat listButtonCornerRadius = 5.0f;
-
-@interface WebListButtonCell : NSCell
-@end
-
-@implementation WebListButtonCell
-- (void)drawWithFrame:(NSRect)cellFrame inView:(__unused NSView *)controlView
-{
-    CGFloat listButtonCornerRadius = 5.0f;
-    NSPoint topLeft = NSMakePoint(NSMinX(cellFrame), NSMinY(cellFrame));
-    NSPoint topRight = NSMakePoint(NSMaxX(cellFrame), NSMinY(cellFrame));
-    NSPoint bottomRight = NSMakePoint(NSMaxX(cellFrame), NSMaxY(cellFrame));
-    NSPoint bottomLeft = NSMakePoint(NSMinX(cellFrame), NSMaxY(cellFrame));
-
-    NSBezierPath *path = [NSBezierPath bezierPath];
-    [path moveToPoint:topLeft];
-
-    [path lineToPoint:NSMakePoint(topRight.x - listButtonCornerRadius, topRight.y)];
-    [path curveToPoint:NSMakePoint(topRight.x, topRight.y + listButtonCornerRadius) controlPoint1:topRight controlPoint2:topRight];
-
-    [path lineToPoint:NSMakePoint(bottomRight.x, bottomRight.y - listButtonCornerRadius)];
-    [path curveToPoint:NSMakePoint(bottomRight.x - listButtonCornerRadius, bottomRight.y) controlPoint1:bottomRight controlPoint2:bottomRight];
-
-    [path lineToPoint:bottomLeft];
-    [path lineToPoint:topLeft];
-
-    if ([self userInterfaceLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft) {
-        NSAffineTransform *transform = [NSAffineTransform transform];
-        [transform translateXBy:NSMidX(cellFrame) yBy:NSMidY(cellFrame)];
-        [transform rotateByDegrees:180];
-        [transform translateXBy:-1 * NSMidX(cellFrame) yBy:-1 * NSMidY(cellFrame)];
-        [path transformUsingAffineTransform:transform];
-    }
-
-    // FIXME: Obtain the gradient colors from CoreUI or AppKit
-    RetainPtr<NSGradient> gradient;
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    NSUserAccentColor accentColor = NSColorGetUserAccentColor();
-    if (accentColor == NSUserAccentColorRed)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(212.0 / 255) green:(122.0 / 255) blue:(117.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(189.0 / 255) green:(34.0 / 255) blue:(23.0 / 255) alpha:1.0]]);
-    else if (accentColor == NSUserAccentColorOrange)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(242.0 / 255) green:(185.0 / 255) blue:(113.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(242.0 / 255) green:(145.0 / 255) blue:(17.0 / 255) alpha:1.0]]);
-    else if (accentColor == NSUserAccentColorYellow)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(241.0 / 255) green:(212.0 / 255) blue:(119.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(239.0 / 255) green:(193.0 / 255) blue:(27.0 / 255) alpha:1.0]]);
-    else if (accentColor == NSUserAccentColorGreen)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(132.0 / 255) green:(186.0 / 255) blue:(120.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(46.0 / 255) green:(145.0 / 255) blue:(30.0 / 255) alpha:1.0]]);
-    else if (accentColor == NSUserAccentColorPurple)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(178.0 / 255) green:(128.0 / 255) blue:(175.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(130.0 / 255) green:(43.0 / 255) blue:(123.0 / 255) alpha:1.0]]);
-    else if (accentColor == NSUserAccentColorPink)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(225.0 / 255) green:(126.0 / 255) blue:(165.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(211.0 / 255) green:(42.0 / 255) blue:(105.0 / 255) alpha:1.0]]);
-    else if (accentColor == NSUserAccentColorNoColor)
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(177.0 / 255) green:(177.0 / 255) blue:(182.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(145.0 / 255) green:(145.0 / 255) blue:(150.0 / 255) alpha:1.0]]);
-    else
-#endif
-        gradient = adoptNS([[NSGradient alloc] initWithStartingColor:[NSColor colorWithRed:(114.0 / 255) green:(164.0 / 255) blue:(243.0 / 255) alpha:1.0] endingColor:[NSColor colorWithRed:(45.0 / 255) green:(117.0 / 255) blue:(246.0 / 255) alpha:1.0]]);
-
-    [gradient drawInBezierPath:path angle:90];
-    if ([self isHighlighted]) {
-        NSColor *overlay = [NSColor colorWithWhite:0 alpha:0.1];
-        [overlay setFill];
-        [path fill];
-    }
-}
-@end
-
-#endif // ENABLE(DATALIST_ELEMENT)
 
 namespace WebCore {
 
@@ -228,6 +152,9 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
     case StyleAppearance::ColorWell:
 #endif
     case StyleAppearance::DefaultButton:
+#if ENABLE(SERVICE_CONTROLS)
+    case StyleAppearance::ImageControlsButton:
+#endif
     case StyleAppearance::InnerSpinButton:
     case StyleAppearance::Listbox:
     case StyleAppearance::Menulist:
@@ -266,6 +193,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == StyleAppearance::ColorWell
 #endif
         || type == StyleAppearance::DefaultButton
+#if ENABLE(SERVICE_CONTROLS)
+        || type == StyleAppearance::ImageControlsButton
+#endif
         || type == StyleAppearance::InnerSpinButton
         || type == StyleAppearance::Menulist
         || type == StyleAppearance::Meter
@@ -1013,104 +943,6 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style)
 
 #if ENABLE(DATALIST_ELEMENT)
 
-void RenderThemeMac::paintListButtonForInput(const RenderObject& o, GraphicsContext& context, const FloatRect& r)
-{
-    // We can't paint an NSComboBoxCell since they are not height-resizable.
-    const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
-
-#if HAVE(LARGE_CONTROL_SIZE)
-    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance(), o.style().effectiveAccentColor());
-
-    const FloatSize comboBoxSize { 40, 19 };
-    const FloatSize comboBoxButtonSize { 16, 16 };
-    const FloatPoint comboBoxButtonInset { 5, 1 };
-    constexpr auto comboBoxButtonCornerRadii = 4;
-
-    const FloatSize desiredComboBoxButtonSize { 12, 12 };
-    constexpr auto desiredComboBoxInset = 2;
-
-    float deviceScaleFactor = o.document().deviceScaleFactor();
-
-    auto comboBoxImageBuffer = context.createImageBuffer(comboBoxSize, deviceScaleFactor);
-    if (!comboBoxImageBuffer)
-        return;
-
-    ContextContainer cgContextContainer(comboBoxImageBuffer->context());
-    CGContextRef cgContext = cgContextContainer.context();
-
-    NSString *coreUIState;
-    if (input.isPresentingAttachedView())
-        coreUIState = (__bridge NSString *)kCUIStatePressed;
-    else if (auto* buttonElement = input.dataListButtonElement())
-        coreUIState = (__bridge NSString *)(buttonElement->active() ? kCUIStatePressed : kCUIStateActive);
-    else
-        coreUIState = (__bridge NSString *)kCUIStateActive;
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext options:@{
-    ALLOW_DEPRECATED_DECLARATIONS_END
-        (__bridge NSString *)kCUIWidgetKey : (__bridge NSString *)kCUIWidgetButtonComboBox,
-        (__bridge NSString *)kCUISizeKey : (__bridge NSString *)kCUISizeRegular,
-        (__bridge NSString *)kCUIStateKey : coreUIState,
-        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey : (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
-    }];
-
-    auto comboBoxButtonImageBuffer = context.createImageBuffer(desiredComboBoxButtonSize, deviceScaleFactor);
-    if (!comboBoxButtonImageBuffer)
-        return;
-
-    auto& comboBoxButtonContext = comboBoxButtonImageBuffer->context();
-
-    comboBoxButtonContext.scale(desiredComboBoxButtonSize.width() / comboBoxButtonSize.width());
-    comboBoxButtonContext.clipRoundedRect(FloatRoundedRect(FloatRect(FloatPoint::zero(), comboBoxButtonSize), FloatRoundedRect::Radii(comboBoxButtonCornerRadii)));
-    comboBoxButtonContext.translate(comboBoxButtonInset.scaled(-1));
-    comboBoxButtonContext.drawConsumingImageBuffer(WTFMove(comboBoxImageBuffer), FloatPoint::zero(), ImagePaintingOptions { ImageOrientation::OriginBottomRight });
-
-    FloatPoint listButtonLocation;
-    float listButtonY = r.center().y() - desiredComboBoxButtonSize.height() / 2;
-    if (o.style().isLeftToRightDirection())
-        listButtonLocation = { r.maxX() - desiredComboBoxButtonSize.width() - desiredComboBoxInset, listButtonY };
-    else
-        listButtonLocation = { r.x() + desiredComboBoxInset, listButtonY };
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.drawConsumingImageBuffer(WTFMove(comboBoxButtonImageBuffer), listButtonLocation);
-#else
-    NSCell *listButton = this->listButton();
-
-    NSRect listButtonFrame = NSMakeRect(r.maxX() - listButtonWidth, r.y(), listButtonWidth, r.height());
-    if (!o.style().isLeftToRightDirection()) {
-        listButtonFrame.origin.x = r.x();
-        [listButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionRightToLeft];
-    } else
-        [listButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
-
-    [listButton setHighlighted:input.isPresentingAttachedView()];
-    if (!input.isPresentingAttachedView()) {
-        ASSERT(input.dataListButtonElement());
-        if (auto* buttonElement = input.dataListButtonElement())
-            updatePressedState(listButton, *buttonElement->renderer());
-    }
-
-    [listButton drawWithFrame:listButtonFrame inView:documentViewFor(o)];
-    [listButton setControlView:nil];
-
-    RefPtr<Image> image;
-    float imageScale = 1;
-    if (o.document().deviceScaleFactor() >= 2) {
-        image = Image::loadPlatformResource("ListButtonArrow@2x");
-        imageScale = 2;
-    } else
-        image = Image::loadPlatformResource("ListButtonArrow");
-
-    FloatRect imageRect(0, 0, image->width() / imageScale, image->height() / imageScale);
-    imageRect.setX(NSMidX(listButtonFrame) - imageRect.width() / 2);
-    imageRect.setY(NSMidY(listButtonFrame) - imageRect.height() / 2);
-
-    context.drawImage(*image, imageRect);
-#endif // HAVE(LARGE_CONTROL_SIZE)
-}
-
 void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) const
 {
     // Add a margin to place the button at end of the input field.
@@ -1616,40 +1448,6 @@ NSMenu* RenderThemeMac::searchMenuTemplate() const
     return m_searchMenuTemplate.get();
 }
 
-NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
-{
-    if (!m_sliderThumbHorizontal) {
-        m_sliderThumbHorizontal = adoptNS([[NSSliderCell alloc] init]);
-        [m_sliderThumbHorizontal setSliderType:NSSliderTypeLinear];
-        [m_sliderThumbHorizontal setControlSize:NSControlSizeSmall];
-        [m_sliderThumbHorizontal setFocusRingType:NSFocusRingTypeExterior];
-    }
-
-    return m_sliderThumbHorizontal.get();
-}
-
-NSSliderCell* RenderThemeMac::sliderThumbVertical() const
-{
-    if (!m_sliderThumbVertical) {
-        m_sliderThumbVertical = adoptNS([[NSSliderCell alloc] init]);
-        [m_sliderThumbVertical setSliderType:NSSliderTypeLinear];
-        [m_sliderThumbVertical setControlSize:NSControlSizeSmall];
-        [m_sliderThumbVertical setFocusRingType:NSFocusRingTypeExterior];
-    }
-
-    return m_sliderThumbVertical.get();
-}
-
-#if ENABLE(DATALIST_ELEMENT)
-NSCell *RenderThemeMac::listButton() const
-{
-    if (!m_listButton)
-        m_listButton = adoptNS([[WebListButtonCell alloc] init]);
-
-    return m_listButton.get();
-}
-#endif
-
 String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
@@ -1667,33 +1465,9 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
-{
-    if (!m_servicesRolloverButton) {
-        m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
-        [m_servicesRolloverButton setBezelStyle:NSBezelStyleRoundedDisclosure];
-        [m_servicesRolloverButton setButtonType:NSButtonTypePushOnPushOff];
-        [m_servicesRolloverButton setImagePosition:NSImageOnly];
-        [m_servicesRolloverButton setState:NO];
-    }
-    return m_servicesRolloverButton.get();
-}
-
-bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    paintInfo.context().translate(rect.location());
-    IntRect innerFrame(IntPoint(), rect.size());
-    [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
-    [cell setControlView:nil];
-    return false;
-}
-
 IntSize RenderThemeMac::imageControlsButtonSize() const
 {
-    return IntSize(servicesRolloverButtonCell().cellSize);
+    return ImageControlsButtonMac::servicesRolloverButtonCellSize();
 }
 
 bool RenderThemeMac::isImageControl(const Element& elementPtr) const

@@ -760,8 +760,8 @@ class RunAPITests(TestWithFailureCount):
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
         appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
-        additionalArguments = self.getProperty("additionalArguments", [])
-        for additionalArgument in additionalArguments:
+        additionalArguments = self.getProperty("additionalArguments")
+        for additionalArgument in additionalArguments or []:
             if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
                 self.command += [additionalArgument]
         return shell.Test.start(self)

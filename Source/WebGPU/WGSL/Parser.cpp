@@ -253,6 +253,10 @@ Expected<AST::StructDecl, Error> Parser<Lexer>::parseStructDecl(AST::Attribute::
     while (current().m_type != TokenType::BraceRight) {
         PARSE(member, StructMember);
         members.append(makeUniqueRef<AST::StructMember>(WTFMove(member)));
+        if (current().m_type == TokenType::Comma)
+            consume();
+        else
+            break;
     }
 
     CONSUME_TYPE(BraceRight);
@@ -269,7 +273,6 @@ Expected<AST::StructMember, Error> Parser<Lexer>::parseStructMember()
     CONSUME_TYPE_NAMED(name, Identifier);
     CONSUME_TYPE(Colon);
     PARSE(type, TypeDecl);
-    CONSUME_TYPE(Semicolon);
 
     RETURN_NODE(StructMember, name.m_ident, WTFMove(type), WTFMove(attributes));
 }
@@ -283,19 +286,19 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDecl()
         return parseArrayType();
     if (current().m_type == TokenType::KeywordI32) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "i32"_s });
+        RETURN_NODE_REF(NamedType, "i32"_s);
     }
     if (current().m_type == TokenType::KeywordF32) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "f32"_s });
+        RETURN_NODE_REF(NamedType, "f32"_s);
     }
     if (current().m_type == TokenType::KeywordU32) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "u32"_s });
+        RETURN_NODE_REF(NamedType, "u32"_s);
     }
     if (current().m_type == TokenType::KeywordBool) {
         consume();
-        RETURN_NODE_REF(NamedType, StringView { "bool"_s });
+        RETURN_NODE_REF(NamedType, "bool"_s);
     }
     if (current().m_type == TokenType::Identifier) {
         CONSUME_TYPE_NAMED(name, Identifier);
@@ -306,9 +309,9 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDecl()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDeclAfterIdentifier(StringView&& name, SourcePosition _startOfElementPosition)
+Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDeclAfterIdentifier(String&& name, SourcePosition _startOfElementPosition)
 {
-    if (auto kind = AST::ParameterizedType::stringViewToKind(name)) {
+    if (auto kind = AST::ParameterizedType::stringToKind(name)) {
         CONSUME_TYPE(LT);
         PARSE(elementType, TypeDecl);
         CONSUME_TYPE(GT);

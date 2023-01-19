@@ -1403,6 +1403,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case GetWebAssemblyInstanceExports:
+        def(PureValue(node));
+        return;
+
     case GetPrototypeOf: {
         switch (node->child1().useKind()) {
         case ArrayUse:

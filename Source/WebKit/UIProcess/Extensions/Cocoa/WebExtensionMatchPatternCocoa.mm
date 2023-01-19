@@ -32,7 +32,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "CocoaHelpers.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -42,9 +41,11 @@
 
 namespace WebKit {
 
-static NSString * const allURLsPattern = @"<all_urls>";
-static NSString * const allHostsAndSchemesPattern = @"*://*/*";
-static NSString * const patternFormat = @"%@://%@%@";
+using namespace WTF;
+using namespace WebCore;
+
+static constexpr ASCIILiteral allURLsPattern = "<all_urls>"_s;
+static constexpr ASCIILiteral allHostsAndSchemesPattern = "*://*/*"_s;
 
 WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
 {
@@ -66,32 +67,32 @@ static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
 
 void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
 {
-    auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme));
+    auto canonicalScheme = URLParser::maybeCanonicalizeScheme(String(urlScheme));
     ASSERT(canonicalScheme);
 
     validSchemes().addVoid(canonicalScheme.value());
     supportedSchemes().addVoid(canonicalScheme.value());
 }
 
-RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(NSString *pattern)
+RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& pattern)
 {
-    ASSERT(pattern);
+    ASSERT(!pattern.isEmpty());
 
     return patternCache().ensure(pattern, [&] {
         return create(pattern);
     }).iterator->value;
 }
 
-RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(NSString *scheme, NSString *host, NSString *path)
+RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& scheme, const String& host, const String& path)
 {
-    scheme = scheme.length ? scheme : @"*";
-    host = host.length ? host : @"*";
-    path = path.length ? path : @"/*";
+    String resolvedScheme = !scheme.isEmpty() ? scheme : "*"_s;
+    String resolvedHost = !host.isEmpty() ? host : "*"_s;
+    String resolvedPath = !path.isEmpty() ? path : "/*"_s;
 
-    NSString *pattern = [NSString stringWithFormat:patternFormat, scheme, host, path];
+    String pattern = makeString(resolvedScheme, "://"_s, resolvedHost, resolvedPath);
 
     return patternCache().ensure(pattern, [&] {
-        return create(scheme, host, path);
+        return create(resolvedScheme, resolvedHost, resolvedPath);
     }).iterator->value;
 }
 
@@ -115,105 +116,166 @@ bool WebExtensionMatchPattern::patternsMatchAllHosts(HashSet<Ref<WebExtensionMat
     return false;
 }
 
-WebExtensionMatchPattern::WebExtensionMatchPattern(NSString *pattern, NSError **outError)
-{
-    ASSERT(pattern);
-
-    m_valid = parse(pattern, outError);
-    m_hash = string().hash;
-}
-
 static inline NSError *error(_WKWebExtensionMatchPatternError code, NSString *debugDescription)
 {
     return [NSError errorWithDomain:_WKWebExtensionMatchPatternErrorDomain code:code userInfo:@{ NSDebugDescriptionErrorKey: debugDescription }];
 }
 
-WebExtensionMatchPattern::WebExtensionMatchPattern(NSString *scheme, NSString *host, NSString *path, NSError **outError)
-    : m_scheme(scheme)
-    , m_host(host)
-    , m_path(path)
+WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, NSError **outError)
 {
-    ASSERT(scheme);
-    ASSERT(host);
-    ASSERT(path);
+    ASSERT(!patternString.isNull());
+
+    ASSERT(!m_valid);
+    ASSERT(!m_hash);
+
+    if (outError)
+        *outError = nil;
+
+    m_matchesAllURLs = patternString == allURLsPattern;
+    if (m_matchesAllURLs) {
+        m_valid = true;
+        m_hash = patternString.hash();
+        return;
+    }
+
+    UserContentURLPattern pattern { patternString };
+
+    if (!pattern.scheme().isEmpty() && !isValidScheme(pattern.scheme())) {
+        if (outError)
+            *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the scheme \"%@\" is invalid.", (NSString *)patternString, (NSString *)pattern.scheme()]);
+        return;
+    }
+
+    if (!pattern.isValid()) {
+        switch (pattern.error()) {
+        case UserContentURLPattern::Error::None:
+        case UserContentURLPattern::Error::Invalid:
+            ASSERT_NOT_REACHED();
+            break;
+
+        case UserContentURLPattern::Error::MissingScheme:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a scheme.", (NSString *)patternString]);
+            break;
+
+        case UserContentURLPattern::Error::MissingHost:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a host.", (NSString *)patternString]);
+            break;
+
+        case UserContentURLPattern::Error::InvalidHost:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the host \"%@\" is invalid.", (NSString *)patternString, (NSString *)pattern.host()]);
+            break;
+
+        case UserContentURLPattern::Error::MissingPath:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a path.", (NSString *)patternString]);
+            break;
+        }
+
+        return;
+    }
+
+    m_pattern = WTFMove(pattern);
+    m_valid = true;
+    m_hash = patternString.hash();
+}
+
+WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, NSError **outError)
+{
+    ASSERT(!scheme.isNull());
+    ASSERT(!host.isNull());
+    ASSERT(!path.isNull());
+
+    ASSERT(!m_valid);
+    ASSERT(!m_hash);
     ASSERT(!m_matchesAllURLs);
 
     if (outError)
         *outError = nil;
 
-    m_valid = true;
-
-    auto markInvalid = [&](NSError *error) {
-        if (outError)
-            *outError = error;
-
-        m_valid = false;
-        m_scheme = nil;
-        m_host = nil;
-        m_path = nil;
-        m_hash = 0;
-    };
-
     if (!isValidScheme(scheme)) {
-        markInvalid(error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", scheme]));
+        if (outError)
+            *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", (NSString *)scheme]);
         return;
     }
 
-    if (!isValidHost(host)) {
-        markInvalid(error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"Host \"%@\" is invalid.", host]));
+    UserContentURLPattern pattern { scheme, host, path };
+
+    if (!pattern.isValid()) {
+        switch (pattern.error()) {
+        case UserContentURLPattern::Error::None:
+        case UserContentURLPattern::Error::Invalid:
+            ASSERT_NOT_REACHED();
+            break;
+
+        case UserContentURLPattern::Error::MissingScheme:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"Scheme \"%@\" is invalid.", (NSString *)scheme]);
+            break;
+
+        case UserContentURLPattern::Error::MissingHost:
+        case UserContentURLPattern::Error::InvalidHost:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"Host \"%@\" is invalid.", (NSString *)host]);
+            break;
+
+        case UserContentURLPattern::Error::MissingPath:
+            if (outError)
+                *outError = error(_WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"Path \"%@\" is invalid.", (NSString *)path]);
+            break;
+        }
+
         return;
     }
 
-    if (!isValidPath(path)) {
-        markInvalid(error(_WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"Path \"%@\" is invalid.", path]));
-        return;
-    }
-
-    m_hash = string().hash;
+    m_pattern = WTFMove(pattern);
+    m_valid = true;
+    m_hash = string().hash();
 }
 
 bool WebExtensionMatchPattern::isSupported() const
 {
-    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(m_scheme.get()));
+    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(scheme()));
 }
 
 bool WebExtensionMatchPattern::operator==(const WebExtensionMatchPattern& other) const
 {
-    if (this == &other)
-        return true;
-
-    if (!isValid() && !other.isValid()) {
-        ASSERT(!m_hash && !other.m_hash);
-        return true;
-    }
-
-    if (m_matchesAllURLs && other.m_matchesAllURLs)
-        return true;
-
-    if (m_matchesAllURLs || other.m_matchesAllURLs)
-        return false;
-
-    if (![m_host isEqualToString:other.m_host.get()])
-        return false;
-
-    if (![m_scheme isEqualToString:other.m_scheme.get()])
-        return false;
-
-    if (![m_path isEqualToString:other.m_path.get()])
-        return false;
-
-    ASSERT(m_hash == other.m_hash);
-
-    return true;
+    return this == &other || (m_valid == other.m_valid && m_matchesAllURLs == other.m_matchesAllURLs && m_hash == other.m_hash && m_pattern == other.m_pattern);
 }
 
-NSString *WebExtensionMatchPattern::stringWithScheme(NSString *differentScheme) const
+String WebExtensionMatchPattern::scheme() const
+{
+    if (!isValid() || matchesAllURLs())
+        return nullString();
+    return pattern().scheme();
+}
+
+String WebExtensionMatchPattern::host() const
+{
+    if (!isValid() || matchesAllURLs())
+        return nullString();
+    return pattern().originalHost();
+}
+
+String WebExtensionMatchPattern::path() const
+{
+    if (!isValid() || matchesAllURLs())
+        return nullString();
+    return pattern().path();
+}
+
+String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme) const
 {
     if (!isValid())
-        return nil;
+        return nullString();
 
-    ASSERT(!m_matchesAllURLs || (m_matchesAllURLs && !differentScheme));
-    return m_matchesAllURLs ? allURLsPattern : [NSString stringWithFormat:patternFormat, differentScheme ?: m_scheme.get(), m_host.get(), m_path.get()];
+    ASSERT(!m_matchesAllURLs || (m_matchesAllURLs && differentScheme.isEmpty()));
+
+    if (m_matchesAllURLs)
+        return allURLsPattern;
+    return makeString(differentScheme.isEmpty() ? scheme() : differentScheme, "://"_s, host(), path());
 }
 
 NSArray *WebExtensionMatchPattern::expandedStrings() const
@@ -227,112 +289,48 @@ NSArray *WebExtensionMatchPattern::expandedStrings() const
         for (auto& scheme : supportedSchemes()) {
             if (scheme == "*"_s)
                 continue;
-            [result addObject:[NSString stringWithFormat:patternFormat, (NSString *)scheme, @"*", @"/*"]];
+            [result addObject:(NSString *)makeString(scheme, "://*/*"_s)];
         }
 
         return [result copy];
     }
 
-    if ([m_scheme isEqualToString:@"*"])
-        return @[ stringWithScheme(@"http"), stringWithScheme(@"https") ];
-
-    return @[ string() ];
+    return @[ (NSString *)string() ];
 }
 
 bool WebExtensionMatchPattern::matchesAllHosts() const
 {
-    return isValid() && (m_matchesAllURLs || [m_host isEqualToString:@"*"]);
+    return isValid() && (m_matchesAllURLs || host() == "*"_s);
 }
 
-bool WebExtensionMatchPattern::isValidScheme(NSString *scheme)
+bool WebExtensionMatchPattern::isValidScheme(String scheme)
 {
-    return validSchemes().contains(scheme);
+    return !scheme.isEmpty() && validSchemes().contains(scheme);
 }
 
-bool WebExtensionMatchPattern::isValidHost(NSString *host)
+bool WebExtensionMatchPattern::matchesURL(const URL& urlToMatch, OptionSet<Options> options) const
 {
-    return [host isEqualToString:@"*"] || ![host containsString:@"*"] || ([host hasPrefix:@"*."] && host.length > 2 && ![[host substringFromIndex:2] containsString:@"*"]);
-}
+    ASSERT(!options.contains(Options::MatchBidirectionally));
 
-bool WebExtensionMatchPattern::isValidPath(NSString *path)
-{
-    return [path hasPrefix:@"/"];
-}
+    if (!isValid() || !urlToMatch.isValid())
+        return false;
 
-bool WebExtensionMatchPattern::parse(NSString *pattern, NSError **outError)
-{
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Match_patterns
-
-    // <url-pattern> := <scheme>://<host><path>
-    // <scheme> := '*' | 'http' | 'https' | 'file' | 'ftp'
-    // <host> := '*' | '*.' <any char except '/' and '*'>+
-    // <path> := '/' <any chars>
-
-    if (outError)
-        *outError = nil;
-
-    m_matchesAllURLs = [pattern isEqualToString:allURLsPattern];
     if (m_matchesAllURLs)
-        return true;
+        return supportedSchemes().contains(urlToMatch.protocol().toString());
 
-    NSRange schemeDelimiterRange = [pattern rangeOfString:@"://"];
-    if (schemeDelimiterRange.location == NSNotFound || !schemeDelimiterRange.location) {
-        if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a scheme.", pattern]);
+    if (!options.contains(Options::IgnoreSchemes) && !pattern().matchesScheme(urlToMatch))
         return false;
-    }
 
-    NSString *scheme = [pattern substringToIndex:schemeDelimiterRange.location];
-    if (!isValidScheme(scheme)) {
-        if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidScheme, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the scheme \"%@\" is invalid.", pattern, scheme]);
+    if (!pattern().matchesHost(urlToMatch))
         return false;
-    }
 
-    NSString *hostAndPath = [pattern substringFromIndex:(schemeDelimiterRange.location + schemeDelimiterRange.length)];
-    NSRange hostAndPathDelimitationRange = [hostAndPath rangeOfString:@"/"];
-    if (hostAndPathDelimitationRange.location == NSNotFound) {
-        if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidPath, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a path.", pattern]);
+    if (!options.contains(Options::IgnorePaths) && !pattern().matchesPath(urlToMatch))
         return false;
-    }
-
-    // Host is only required for non-file URL patterns.
-    if (![scheme isEqualToString:@"file"] && !hostAndPathDelimitationRange.location) {
-        if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because it doesn't have a host.", pattern]);
-        return false;
-    }
-
-    NSString *host = [hostAndPath substringToIndex:hostAndPathDelimitationRange.location];
-    if (!isValidHost(host)) {
-        if (outError)
-            *outError = error(_WKWebExtensionMatchPatternErrorInvalidHost, [NSString stringWithFormat:@"\"%@\" cannot be parsed because the host \"%@\" is invalid.", pattern, host]);
-        return false;
-    }
-
-    m_scheme = scheme;
-    m_host = host;
-    m_path = [hostAndPath substringFromIndex:hostAndPathDelimitationRange.location];
 
     return true;
 }
 
-bool WebExtensionMatchPattern::matchesURL(NSURL *urlToMatch, OptionSet<Options> options)
-{
-    if (!isValid() || !urlToMatch || !urlToMatch.scheme || !urlToMatch.path)
-        return false;
-
-    ASSERT(!options.contains(Options::MatchBidirectionally));
-
-    if (m_matchesAllURLs)
-        return supportedSchemes().contains(urlToMatch.scheme);
-
-    // If this is a file URL, the host can be nil. Pass empty string instead of nil to match our non-nil expectations.
-    return schemeMatches(urlToMatch.scheme, options) && hostMatches(urlToMatch.host ?: @"", options) && pathMatches(urlToMatch.path, options);
-}
-
-bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& patternToMatch, OptionSet<Options> options)
+bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& patternToMatch, OptionSet<Options> options) const
 {
     if (!isValid())
         return false;
@@ -340,7 +338,7 @@ bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& pa
     if (*this == patternToMatch)
         return true;
 
-    auto compareAllURLs = ^(const WebExtensionMatchPattern& a, const WebExtensionMatchPattern& b) {
+    auto compareAllURLs = [](const WebExtensionMatchPattern& a, const WebExtensionMatchPattern& b) {
         return a.matchesAllURLs() && (b.matchesAllURLs() || supportedSchemes().contains(b.scheme()));
     };
 
@@ -356,109 +354,43 @@ bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& pa
     if (m_matchesAllURLs || patternToMatch.matchesAllURLs())
         return false;
 
-    return schemeMatches(patternToMatch.scheme(), options) && hostMatches(patternToMatch.host(), options) && pathMatches(patternToMatch.path(), options);
+    return schemeMatches(patternToMatch, options) && hostMatches(patternToMatch, options) && pathMatches(patternToMatch, options);
 }
 
-bool WebExtensionMatchPattern::schemeMatches(NSString *schemeToMatch, OptionSet<Options> options)
+bool WebExtensionMatchPattern::schemeMatches(const WebExtensionMatchPattern& other, OptionSet<Options> options) const
 {
-    ASSERT(m_scheme);
-    ASSERT(schemeToMatch);
-
     if (options.contains(Options::IgnoreSchemes))
         return true;
 
-    if ([m_scheme isEqualToString:schemeToMatch])
+    if (pattern().matchesScheme(other.pattern()))
         return true;
 
-    auto compare = ^(NSString *a, NSString *b) {
-        // If the scheme is *, then it matches either http or https, and not file, or ftp.
-        return [a isEqualToString:@"*"] && [b hasPrefix:@"http"];
-    };
-
-    if (compare(m_scheme.get(), schemeToMatch))
-        return true;
-
-    if (options.contains(Options::MatchBidirectionally) && compare(schemeToMatch, m_scheme.get()))
+    if (options.contains(Options::MatchBidirectionally) && other.pattern().matchesScheme(pattern()))
         return true;
 
     return false;
 }
 
-bool WebExtensionMatchPattern::hostMatches(NSString *hostToMatch, OptionSet<Options> options)
+bool WebExtensionMatchPattern::hostMatches(const WebExtensionMatchPattern& other, OptionSet<Options> options) const
 {
-    ASSERT(m_host);
-    ASSERT(hostToMatch);
-
-    if ([m_host isEqualToString:hostToMatch])
+    if (pattern().matchesHost(other.pattern()))
         return true;
 
-    auto compare = ^(NSString *a, NSString *b) {
-        // If the host is just *, then it matches any host.
-        if ([a isEqualToString:@"*"])
-            return true;
-
-        if ([a hasPrefix:@"*."]) {
-            // Matches "example.com" when the pattern is "*.example.com".
-            NSString *domainSuffix = [a substringFromIndex:2];
-            if ([b isEqualToString:domainSuffix])
-                return true;
-
-            // Matches "www.example.com" when the pattern is "*.example.com".
-            // Does not match "the-example.com" or "www.the-example.com".
-            domainSuffix = [a substringFromIndex:1];
-            if ([b hasSuffix:domainSuffix])
-                return true;
-        }
-
-        return false;
-    };
-
-    if (compare(m_host.get(), hostToMatch))
-        return true;
-
-    if (options.contains(Options::MatchBidirectionally) && compare(hostToMatch, m_host.get()))
+    if (options.contains(Options::MatchBidirectionally) && other.pattern().matchesHost(pattern()))
         return true;
 
     return false;
 }
 
-bool WebExtensionMatchPattern::pathMatches(NSString *pathToMatch, OptionSet<Options> options)
+bool WebExtensionMatchPattern::pathMatches(const WebExtensionMatchPattern& other, OptionSet<Options> options) const
 {
-    ASSERT(m_path);
-    ASSERT(pathToMatch);
-
     if (options.contains(Options::IgnorePaths))
         return true;
 
-    if ([m_path isEqualToString:pathToMatch])
+    if (pattern().matchesPath(other.pattern()))
         return true;
 
-    auto compare = ^(NSString *a, NSString *b) {
-        // Special case matches for any path to avoid the cost of NSRegularExpression.
-        if ([a isEqualToString:@"/*"])
-            return true;
-
-        // If this is not a wildcard pattern, the paths should have been equal in the check above.
-        if (![a containsString:@"*"])
-            return false;
-
-        // In the path section, each '*' matches 0 or more characters.
-        NSString *regExpString = [NSString stringWithFormat:@"^%@$", [escapeCharactersInString(a, @"?+[(){}$|\\.") stringByReplacingOccurrencesOfString:@"*" withString:@".*"]];
-
-        NSError *error;
-        NSRegularExpression *regExp = [NSRegularExpression regularExpressionWithPattern:regExpString options:0 error:&error];
-        if (error)
-            return false;
-
-        if ([regExp firstMatchInString:b options:0 range:NSMakeRange(0, b.length)])
-            return true;
-        return false;
-    };
-
-    if (compare(m_path.get(), pathToMatch))
-        return true;
-
-    if (options.contains(Options::MatchBidirectionally) && compare(pathToMatch, m_path.get()))
+    if (options.contains(Options::MatchBidirectionally) && other.pattern().matchesPath(pattern()))
         return true;
 
     return false;

@@ -173,6 +173,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetTypedArrayByteOffset:
     case GetTypedArrayByteOffsetAsInt52:
     case GetPrototypeOf:
+    case GetWebAssemblyInstanceExports:
     case NotifyWrite:
     case StoreBarrier:
     case FencedStoreBarrier:

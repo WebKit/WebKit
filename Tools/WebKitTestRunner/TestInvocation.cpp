@@ -673,6 +673,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ReloadFromOrigin")) {
+        TestController::singleton().reloadFromOrigin();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode")) {
         TestController::singleton().setStatisticsDebugMode(booleanValue(messageBody));
         return;

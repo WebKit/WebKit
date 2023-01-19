@@ -29,6 +29,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TypeCasts.h>
 
 struct WGPUSurfaceImpl {
 };
@@ -45,30 +46,31 @@ class TextureView;
 class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor& descriptor)
+    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&);
+    static Ref<PresentationContext> createInvalid()
     {
-        return adoptRef(*new PresentationContext(descriptor));
+        return adoptRef(*new PresentationContext());
     }
 
-    ~PresentationContext();
+    virtual ~PresentationContext();
 
     WGPUTextureFormat getPreferredFormat(const Adapter&);
 
-    void configure(Device&, const WGPUSwapChainDescriptor&);
+    virtual void configure(Device&, const WGPUSwapChainDescriptor&);
 
-    void present();
-    TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+    virtual void present();
+    virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
-    RetainPtr<IOSurfaceRef> displayBuffer() const { return m_displayBuffer; }
-    RetainPtr<IOSurfaceRef> drawingBuffer() const { return m_drawingBuffer; }
-    RetainPtr<IOSurfaceRef> nextDrawable();
+    virtual bool isPresentationContextIOSurface() const { return false; }
+    virtual bool isPresentationContextCoreAnimation() const { return false; }
 
-private:
-    PresentationContext(const WGPUSurfaceDescriptor&);
-    PresentationContext(int, int);
-
-    RetainPtr<IOSurfaceRef> m_displayBuffer;
-    RetainPtr<IOSurfaceRef> m_drawingBuffer;
+protected:
+    PresentationContext();
 };
 
 } // namespace WebGPU
+
+#define SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebGPU::ToValueTypeName) \
+    static bool isType(const WebGPU::PresentationContext& presentationContext) { return presentationContext.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

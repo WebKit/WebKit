@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1505,6 +1505,17 @@ Reviewed by NOBODY (OOPS!).
             pr.open()
             self.assertTrue(pr.opened)
 
+    def test_review(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
+
+            pr.review(comment='Looks good!', approve=True)
+            self.assertEqual(pr.comments[-1].content, 'Looks good!')
+            self.assertEqual(len(pr.approvers), 2)
+
 
 class TestNetworkPullRequestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -1622,3 +1633,20 @@ Reviewed by NOBODY (OOPS!).
             self.assertFalse(pr.opened)
             pr.open()
             self.assertTrue(pr.opened)
+
+    def test_whoami(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            self.assertEqual(repo.whoami(), 'timcommitter')
+
+    def test_review(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(pr.approvers, [Contributor('Eager Reviewer', ['ereviewer@webkit.org'])])
+            self.assertEqual(pr.blockers, [Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'])])
+
+            pr.review(comment='Looks good!', approve=True)
+
+            self.assertEqual(pr.comments[-1].content, 'Looks good!')
+            self.assertEqual(len(pr.approvers), 2)

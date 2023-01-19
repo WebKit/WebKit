@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedResourceRequest.h"
 
+#include "CachePolicy.h"
 #include "CachedResourceLoader.h"
 #include "ContentExtensionsBackend.h"
 #include "CrossOriginAccessControl.h"
@@ -222,6 +223,12 @@ void CachedResourceRequest::updateAccordingCacheMode()
         m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataDontLoad);
         break;
     }
+}
+
+void CachedResourceRequest::updateCacheModeIfNeeded(CachePolicy cachePolicy)
+{
+    if (cachePolicy == CachePolicy::Reload && m_options.cache == FetchOptions::Cache::Default && m_options.cachingPolicy == CachingPolicy::AllowCaching)
+        m_options.cache = FetchOptions::Cache::Reload;
 }
 
 void CachedResourceRequest::updateAcceptEncodingHeader()

@@ -124,6 +124,7 @@ svg/filters/feTurbulence-parallel-jobs.html                                     
 svg/filters/feTurbulence-stitchTiles.html                                              [ ImageOnlyFailure ]
 svg/filters/feTurbulence_bad_seeds.html                                                [ ImageOnlyFailure ]
 svg/filters/filter-clip.svg                                                            [ ImageOnlyFailure ]
+svg/filters/filter-geometry-override.svg                                               [ ImageOnlyFailure ]
 svg/filters/filter-image-ref-root.html                                                 [ ImageOnlyFailure ]
 svg/filters/filter-on-filter-for-text.svg                                              [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
@@ -292,6 +293,7 @@ svg/text/text-gradient-positioning.svg                            [ ImageOnlyFai
 svg/wicd/test-scalable-background-image1.xhtml                    [ ImageOnlyFailure ]
 svg/wicd/test-scalable-background-image2.xhtml                    [ ImageOnlyFailure ]
 svg/zoom/page/zoom-background-image-tiled.html                    [ ImageOnlyFailure ]
+svg/zoom/page/zoom-background-image.html                          [ ImageOnlyFailure ]
 svg/zoom/page/zoom-svg-as-background-with-relative-size.html      [ ImageOnlyFailure ]
 svg/zoom/page/zoom-svg-through-object-with-override-size.html     [ ImageOnlyFailure ]
 

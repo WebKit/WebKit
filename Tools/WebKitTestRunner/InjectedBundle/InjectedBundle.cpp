@@ -604,6 +604,12 @@ void InjectedBundle::clearResourceLoadStatistics()
     WKBundleClearResourceLoadStatistics(m_bundle.get());
 }
 
+void InjectedBundle::reloadFromOrigin()
+{
+    m_useWorkQueue = true;
+    postPageMessage("ReloadFromOrigin");
+}
+
 void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilder)
 {
     size_t size = m_pages.size();

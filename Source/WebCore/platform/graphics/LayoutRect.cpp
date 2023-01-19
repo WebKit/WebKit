@@ -164,6 +164,20 @@ void LayoutRect::scale(float xScale, float yScale)
     m_size.scale(xScale, yScale);
 }
 
+void LayoutRect::expandToInfiniteY()
+{
+    LayoutRect infRect = LayoutRect::infiniteRect();
+    setY(infRect.y());
+    setHeight(infRect.height());
+}
+
+void LayoutRect::expandToInfiniteX()
+{
+    LayoutRect infRect = LayoutRect::infiniteRect();
+    setX(infRect.x());
+    setWidth(infRect.width());
+}
+
 LayoutRect unionRect(const Vector<LayoutRect>& rects)
 {
     LayoutRect result;

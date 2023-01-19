@@ -30,18 +30,29 @@
 #import "ControlFactory.h"
 #import "WebControlView.h"
 
+OBJC_CLASS NSServicesRolloverButtonCell;
+
 namespace WebCore {
 
 class ControlFactoryMac final : public ControlFactory {
 public:
     using ControlFactory::ControlFactory;
 
+    static ControlFactoryMac& sharedControlFactory();
+
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
+
+#if ENABLE(SERVICE_CONTROLS)
+    NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
+#endif
 
 private:
     std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) final;
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    std::unique_ptr<PlatformControl> createPlatformImageControlsButton(ImageControlsButtonPart&) final;
 #endif
     std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
@@ -74,6 +85,9 @@ private:
     mutable RetainPtr<NSButtonCell> m_radioCell;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicatorCell;
     mutable RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
+#if ENABLE(SERVICE_CONTROLS)
+    mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButtonCell;
+#endif
     mutable RetainPtr<NSSearchFieldCell> m_searchFieldCell;
     mutable RetainPtr<NSSliderCell> m_sliderCell;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;

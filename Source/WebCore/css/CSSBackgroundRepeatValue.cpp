@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,42 +26,36 @@
 #include "config.h"
 #include "CSSBackgroundRepeatValue.h"
 
-#include "CSSValuePool.h"
-#include "Rect.h"
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(Ref<CSSPrimitiveValue>&& repeatXValue, Ref<CSSPrimitiveValue>&& repeatYValue)
+CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID xValue, CSSValueID yValue)
     : CSSValue(BackgroundRepeatClass)
-    , m_xValue(WTFMove(repeatXValue))
-    , m_yValue(WTFMove(repeatYValue))
+    , m_xValue(xValue)
+    , m_yValue(yValue)
 {
 }
 
-CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue)
-    : CSSValue(BackgroundRepeatClass)
-    , m_xValue(CSSPrimitiveValue::create(repeatXValue))
-    , m_yValue(CSSPrimitiveValue::create(repeatYValue))
+Ref<CSSBackgroundRepeatValue> CSSBackgroundRepeatValue::create(CSSValueID repeatXValue, CSSValueID repeatYValue)
 {
+    return adoptRef(*new CSSBackgroundRepeatValue(repeatXValue, repeatYValue));
 }
 
 String CSSBackgroundRepeatValue::customCSSText() const
 {
     // background-repeat/mask-repeat behave a little like a shorthand, but `repeat no-repeat` is transformed to `repeat-x`.
-    if (!compareCSSValue(m_xValue, m_yValue)) {
-        if (m_xValue->valueID() == CSSValueRepeat && m_yValue->valueID() == CSSValueNoRepeat)
+    if (m_xValue != m_yValue) {
+        if (m_xValue == CSSValueRepeat && m_yValue == CSSValueNoRepeat)
             return nameString(CSSValueRepeatX);
-        if (m_xValue->valueID() == CSSValueNoRepeat && m_yValue->valueID() == CSSValueRepeat)
+        if (m_xValue == CSSValueNoRepeat && m_yValue == CSSValueRepeat)
             return nameString(CSSValueRepeatY);
-        return makeString(m_xValue->cssText(), ' ', m_yValue->cssText());
+        return makeString(nameLiteral(m_xValue), ' ', nameLiteral(m_yValue));
     }
-    return m_xValue->cssText();
+    return nameString(m_xValue);
 }
 
 bool CSSBackgroundRepeatValue::equals(const CSSBackgroundRepeatValue& other) const
 {
-    return compareCSSValue(m_xValue, other.m_xValue) && compareCSSValue(m_yValue, other.m_yValue);
+    return m_xValue == other.m_xValue && m_yValue == other.m_yValue;
 }
 
 } // namespace WebCore

@@ -995,7 +995,6 @@ enum class Hyphens : uint8_t {
 };
 
 enum class SpeakAs : uint8_t {
-    Normal             = 0,
     SpellOut           = 1 << 0,
     Digits             = 1 << 1,
     LiteralPunctuation = 1 << 2,

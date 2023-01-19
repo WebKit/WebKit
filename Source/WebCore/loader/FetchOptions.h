@@ -49,9 +49,9 @@ struct FetchOptions {
     using Redirect = FetchOptionsRedirect;
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool, std::optional<ScriptExecutionContextIdentifier>);
-    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive, clientIdentifier }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, WTFMove(integrity).isolatedCopy(), keepAlive, clientIdentifier }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool, std::optional<ScriptExecutionContextIdentifier>, std::optional<ScriptExecutionContextIdentifier>);
+    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive, clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, WTFMove(integrity).isolatedCopy(), keepAlive, clientIdentifier, resultingClientIdentifier }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
@@ -64,10 +64,13 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     String integrity;
     bool keepAlive { false };
+    // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
     std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
+    // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
+    std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier;
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive, std::optional<ScriptExecutionContextIdentifier> clientIdentifier)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)
@@ -77,6 +80,7 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
     , integrity(WTFMove(integrity))
     , keepAlive(keepAlive)
     , clientIdentifier(clientIdentifier)
+    , resultingClientIdentifier(resultingClientIdentifier)
 {
 }
 

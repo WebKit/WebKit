@@ -451,9 +451,22 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             break;
         }
         default:  {
-            if (Wasm::isRefType(returnType))
+            if (Wasm::isRefType(returnType)) {
+                if (Wasm::isExternref(returnType))
+                    ASSERT(returnType.isNullable());
+                else if (Wasm::isFuncref(returnType)) {
+                    ASSERT(returnType.isNullable());
+                    jit.prepareWasmCallOperation(PinnedRegisterInfo::get().wasmContextInstancePointer);
+                    jit.setupArguments<decltype(operationConvertToFuncref)>(PinnedRegisterInfo::get().wasmContextInstancePointer, JSRInfo::returnValueJSR);
+                    auto call = jit.call(OperationPtrTag);
+                    exceptionChecks.append(jit.emitJumpIfException(vm));
+                    jit.addLinkTask([=](LinkBuffer& linkBuffer) {
+                        linkBuffer.link<OperationPtrTag>(call, operationConvertToFuncref);
+                    });
+                } else if (Wasm::isI31ref(returnType))
+                    RELEASE_ASSERT_NOT_REACHED();
                 jit.moveValueRegs(JSRInfo::returnValueJSR, wasmCallInfo.results[0].location.jsr());
-            else
+            } else
                 // For the JavaScript embedding, imports with these types in their type definition return are a WebAssembly.Module validation error.
                 RELEASE_ASSERT_NOT_REACHED();
         }

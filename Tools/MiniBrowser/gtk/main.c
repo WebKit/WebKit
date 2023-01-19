@@ -63,10 +63,13 @@ static const char *proxy;
 static gboolean darkMode;
 static char* timeZone;
 static gboolean enableITP;
-static gboolean enableSandbox;
 static gboolean exitAfterLoad;
 static gboolean webProcessCrashed;
 static gboolean printVersion;
+
+#if !GTK_CHECK_VERSION(3, 98, 0)
+static gboolean enableSandbox;
+#endif
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -157,7 +160,9 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", NULL },
+#if !GTK_CHECK_VERSION(3, 98, 0)
     { "enable-sandbox", 0, 0, G_OPTION_ARG_NONE, &enableSandbox, "Enable web process sandbox support", NULL },
+#endif
     { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
@@ -686,8 +691,10 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         NULL);
     g_object_unref(manager);
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     if (enableSandbox)
         webkit_web_context_set_sandbox_enabled(webContext, TRUE);
+#endif
 
     if (cookiesPolicy) {
         WebKitCookieManager *cookieManager = webkit_web_context_get_cookie_manager(webContext);

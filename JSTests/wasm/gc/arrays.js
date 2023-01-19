@@ -171,6 +171,16 @@ function testArrayNew() {
         (array.new_canon 0 (i32.const 42) (i32.const 5)))
     )
   `);
+
+  instantiate(`
+    (module
+      ;; Test with subtype as well.
+      (type (array i32))
+      (type (sub 0 (array i32)))
+      (func (result (ref 0))
+        (array.new_canon 1 (i32.const 42) (i32.const 5)))
+    )
+  `);
 }
 
 function testArrayNewDefault() {
@@ -179,6 +189,16 @@ function testArrayNewDefault() {
       (type (array i32))
       (func (result (ref 0))
         (array.new_canon_default 0 (i32.const 5)))
+    )
+  `);
+
+  instantiate(`
+    (module
+      ;; Test with subtype as well.
+      (type (array i32))
+      (type (sub 0 (array i32)))
+      (func (result (ref 0))
+        (array.new_canon_default 1 (i32.const 5)))
     )
   `);
 }
@@ -192,6 +212,21 @@ function testArrayGet() {
           (array.new_canon 0 (i32.const 0) (i32.const 5))
           (i32.const 3)
           (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 0);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        ;; Test with a subtype as well.
+        (type (array i32))
+        (type (sub 0 (array i32)))
+        (func (export "f") (result i32)
+          (array.new_canon 1 (i32.const 0) (i32.const 5))
+          (i32.const 3)
+          (array.get 1))
       )
     `);
     assert.eq(m.exports.f(), 0);
@@ -363,6 +398,25 @@ function testArraySet() {
           (array.set 0 (global.get 0) (i32.const 3) (i32.const 84)))
         (func (export "get") (param i32) (result i32)
           (array.get 0 (global.get 0) (local.get 0)))
+      )
+    `);
+    m.exports.init();
+    assert.eq(m.exports.get(0), 42);
+    assert.eq(m.exports.get(3), 84);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        ;; Test with a subtype as well.
+        (type (array (mut i32)))
+        (type (sub 0 (array (mut i32))))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init")
+          (global.set 0 (array.new_canon 1 (i32.const 42) (i32.const 5)))
+          (array.set 1 (global.get 0) (i32.const 3) (i32.const 84)))
+        (func (export "get") (param i32) (result i32)
+          (array.get 1 (global.get 0) (local.get 0)))
       )
     `);
     m.exports.init();

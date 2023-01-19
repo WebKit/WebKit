@@ -224,6 +224,7 @@
         WGPUPresentMode_Immediate
     };
     swapChain = wgpuDeviceCreateSwapChain(device, surface, &swapChainDescriptor);
+    view.device = ((CAMetalLayer *)view.layer).device;
 }
 
 @end

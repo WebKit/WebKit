@@ -26,25 +26,18 @@
 #pragma once
 
 #include "CSSValue.h"
-#include "CSSValuePool.h"
-#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class CSSContentDistributionValue final : public CSSValue {
 public:
-    static Ref<CSSContentDistributionValue> create(CSSValueID distribution, CSSValueID position, CSSValueID overflow)
-    {
-        return adoptRef(*new CSSContentDistributionValue(distribution, position, overflow));
-    }
-    ~CSSContentDistributionValue();
+    static Ref<CSSContentDistributionValue> create(CSSValueID distribution, CSSValueID position, CSSValueID overflow);
 
-    Ref<CSSPrimitiveValue> distribution() const { return CSSPrimitiveValue::create(m_distribution); }
-    Ref<CSSPrimitiveValue> position() const { return CSSPrimitiveValue::create(m_position); }
-    Ref<CSSPrimitiveValue> overflow() const { return CSSPrimitiveValue::create(m_overflow); }
+    CSSValueID distribution() const { return m_distribution; }
+    CSSValueID position() const { return m_position; }
+    CSSValueID overflow() const { return m_overflow; }
 
     String customCSSText() const;
-
     bool equals(const CSSContentDistributionValue&) const;
 
 private:

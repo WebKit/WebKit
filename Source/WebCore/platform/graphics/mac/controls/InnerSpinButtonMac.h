@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class InnerSpinButtonPart;
+
 class InnerSpinButtonMac : public ControlMac {
 public:
     InnerSpinButtonMac(InnerSpinButtonPart&, ControlFactoryMac&);

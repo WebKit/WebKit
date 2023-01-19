@@ -35,7 +35,7 @@
 #include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
-static JSC_DECLARE_CUSTOM_GETTER(webAssemblyInstanceProtoGetterExports);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstanceProtoGetterExports);
 }
 
 #include "WebAssemblyInstancePrototype.lut.h"
@@ -46,7 +46,6 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance"_
 
 /* Source for WebAssemblyInstancePrototype.lut.h
  @begin prototypeTableWebAssemblyInstance
-  exports webAssemblyInstanceProtoGetterExports ReadOnly|CustomAccessor
  @end
  */
 
@@ -62,20 +61,19 @@ static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalOb
     return result;
 }
 
-JSC_DEFINE_CUSTOM_GETTER(webAssemblyInstanceProtoGetterExports, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_HOST_FUNCTION(webAssemblyInstanceProtoGetterExports, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    JSWebAssemblyInstance* instance = getInstance(globalObject, vm, JSValue::decode(thisValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(instance->moduleRecord()->exportsObject()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSWebAssemblyInstance* instance = getInstance(globalObject, vm, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, JSValue::encode(instance->moduleRecord()->exportsObject()));
 }
 
-WebAssemblyInstancePrototype* WebAssemblyInstancePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+WebAssemblyInstancePrototype* WebAssemblyInstancePrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     auto* object = new (NotNull, allocateCell<WebAssemblyInstancePrototype>(vm)) WebAssemblyInstancePrototype(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
@@ -84,11 +82,12 @@ Structure* WebAssemblyInstancePrototype::createStructure(VM& vm, JSGlobalObject*
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyInstancePrototype::finishCreation(VM& vm)
+void WebAssemblyInstancePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->exports, webAssemblyInstanceProtoGetterExports, PropertyAttribute::ReadOnly, WebAssemblyInstanceExportsIntrinsic);
 }
 
 WebAssemblyInstancePrototype::WebAssemblyInstancePrototype(VM& vm, Structure* structure)

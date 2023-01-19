@@ -1798,6 +1798,11 @@ void TestRunner::loadedSubresourceDomains(JSValueRef callback)
     postMessage("LoadedSubresourceDomains");
 }
 
+void TestRunner::reloadFromOrigin()
+{
+    InjectedBundle::singleton().reloadFromOrigin();
+}
+
 void TestRunner::callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&& domains)
 {
     auto result = makeDomainsValue(domains);

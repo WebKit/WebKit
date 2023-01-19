@@ -74,7 +74,7 @@ private:
     id<MTLDevice> m_device { nil };
     const Ref<Instance> m_instance;
 
-    HardwareCapabilities m_capabilities { };
+    const HardwareCapabilities m_capabilities { };
 };
 
 } // namespace WebGPU

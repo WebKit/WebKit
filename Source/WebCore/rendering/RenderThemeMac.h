@@ -24,10 +24,6 @@
 
 #import "RenderThemeCocoa.h"
 
-#if ENABLE(SERVICE_CONTROLS)
-OBJC_CLASS NSServicesRolloverButtonCell;
-#endif
-
 OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
@@ -136,7 +132,6 @@ private:
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(DATALIST_ELEMENT)
-    void paintListButtonForInput(const RenderObject&, GraphicsContext&, const FloatRect&);
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 #endif
     
@@ -187,31 +182,15 @@ private:
     NSPopUpButtonCell *popupButton() const;
     NSSearchFieldCell *search() const;
     NSMenu *searchMenuTemplate() const;
-    NSSliderCell *sliderThumbHorizontal() const;
-    NSSliderCell *sliderThumbVertical() const;
-#if ENABLE(DATALIST_ELEMENT)
-    NSCell *listButton() const;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
     IntSize imageControlsButtonSize() const final;
     bool isImageControl(const Element&) const final;
-
-    NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
 #endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
-    mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
-    mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
-#if ENABLE(SERVICE_CONTROLS)
-    mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;
-#endif
-#if ENABLE(DATALIST_ELEMENT)
-    mutable RetainPtr<NSCell> m_listButton;
-#endif
 
     bool m_isSliderThumbHorizontalPressed { false };
     bool m_isSliderThumbVerticalPressed { false };

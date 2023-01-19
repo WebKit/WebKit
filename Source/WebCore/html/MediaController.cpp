@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -166,6 +167,7 @@ void MediaController::setCurrentTime(double time)
     time = std::min(time, duration());
     
     // Set the media controller position to the new playback position.
+    m_position = time;
     m_clock->setCurrentTime(time);
     
     // Seek each mediagroup element to the new playback position relative to the media element timeline.

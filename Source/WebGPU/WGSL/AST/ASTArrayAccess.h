@@ -28,7 +28,6 @@
 #include "ASTExpression.h"
 
 #include <wtf/UniqueRef.h>
-#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 

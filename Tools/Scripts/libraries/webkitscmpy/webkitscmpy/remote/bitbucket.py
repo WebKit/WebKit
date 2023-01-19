@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -250,6 +250,8 @@ class BitBucket(Scm):
             )
             if response.status_code // 100 != 2:
                 sys.stderr.write("Failed to add comment to '{}'\n".format(pull_request))
+                return None
+            return pull_request
 
         def comments(self, pull_request):
             for action in reversed(self.repository.request('pull-requests/{}/activities'.format(pull_request.number)) or []):
@@ -263,6 +265,43 @@ class BitBucket(Scm):
                     timestamp=comment.get('updatedDate', comment.get('createdDate')) // 1000,
                     content=comment.get('text'),
                 )
+
+        def review(self, pull_request, comment=None, approve=None):
+            failed = False
+            if comment and not self.comment(pull_request, comment):
+                failed = True
+
+            user_slug = self.repository.whoami()
+            if not user_slug:
+                sys.stderr.write('Failed to determine Bitbucket username for current session\n')
+                return None
+            response = requests.put(
+                'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}/participants/{userSlug}'.format(
+                    domain=self.repository.domain,
+                    project=self.repository.project,
+                    name=self.repository.name,
+                    id=pull_request.number,
+                    userSlug=user_slug,
+                ), json=dict(
+                    user=dict(name=user_slug),
+                    approved=bool(approve),
+                    status={
+                        True: 'APPROVED',
+                        False: 'NEEDS_WORK',
+                    }.get(approve, 'UNAPPROVED'),
+                ),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Failed to {} '{}'\n".format(
+                    'approve' if approve else 'reject',
+                    pull_request,
+                ))
+                return None
+
+            pull_request._approvers = None
+            pull_request._blockers = None
+
+            return None if failed else pull_request
 
 
     @classmethod
@@ -285,6 +324,15 @@ class BitBucket(Scm):
         )
 
         self.pull_requests = self.PRGenerator(self)
+
+    @decorators.Memoize()
+    def whoami(self):
+        url = 'https://{domain}/plugins/servlet/applinks/whoami'.format(domain=self.domain)
+        response = requests.get(url)
+        if response.status_code != 200:
+            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+            return None
+        return response.text.rstrip()
 
     def credentials(self, required=True, validate=False, save_in_keyring=None):
         return None, None

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@ import re
 import time
 
 import json as jsonlib
-from webkitbugspy import mocks as bmocks
+from webkitbugspy import mocks as bmocks, Issue
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
 
@@ -439,6 +439,26 @@ class GitHub(bmocks.GitHub):
                 status_code=404,
                 text=jsonlib.dumps(dict(message='Not found')),
                 url=url,
+            )
+
+        # Add review
+        if method == 'POST' and auth and stripped_url.startswith(pr_base) and stripped_url.endswith('/reviews'):
+            for candidate in self.pull_requests:
+                if stripped_url.split('/')[5] != str(candidate['number']):
+                    continue
+                candidate['reviews'].append(
+                    dict(user=dict(login=auth.username), state=json.get('event', 'COMMENT')),
+                )
+                if 'body' in json:
+                    self.issues[candidate['number']]['comments'].append(
+                        Issue.Comment(user=self.users.get(auth.username), timestamp=int(time.time()), content=json['body']),
+                    )
+                return mocks.Response.fromJson(candidate['reviews'])
+
+            return mocks.Response.fromJson(
+                dict(message='Not found'),
+                url=url,
+                status_code=404,
             )
 
         # Create/update pull-request

@@ -927,6 +927,11 @@ private:
             break;
         }
 
+        case GetWebAssemblyInstanceExports: {
+            setPrediction(SpecFinalObject);
+            break;
+        }
+
         case DateGetTime: {
             setPrediction(SpecFullNumber);
             break;

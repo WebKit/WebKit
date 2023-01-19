@@ -11,6 +11,9 @@
 <script>
 description("Test importing a SPKI RSAES-PKCS1-v1_5 key");
 
+if (window.internals)
+    internals.settings.setDeprecateRSAESPKCSWebCryptoEnabled(false);
+
 jsTestIsAsync = true;
 
 // Generated from OpenSSL

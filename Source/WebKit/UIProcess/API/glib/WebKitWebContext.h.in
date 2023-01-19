@@ -225,12 +225,14 @@ webkit_web_context_register_uri_scheme              (WebKitWebContext           
                                                      gpointer                       user_data,
                                                      GDestroyNotify                 user_data_destroy_func);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_web_context_set_sandbox_enabled              (WebKitWebContext              *context,
                                                      gboolean                       enabled);
 
 WEBKIT_API gboolean
 webkit_web_context_get_sandbox_enabled              (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API void
 webkit_web_context_add_path_to_sandbox              (WebKitWebContext              *context,

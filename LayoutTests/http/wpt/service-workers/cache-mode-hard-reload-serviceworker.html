@@ -1,0 +1,118 @@
+<html>
+<head>
+</head>
+<body>
+<br>
+<div id="logElement">
+<button onclick="clearLog()">clear</button>
+</div>
+<div id="testElement"></div>
+<script>
+var scope = "/WebKit/service-workers/cache-mode-hard-reload-serviceworker.html";
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    logElement.innerHTML += msg + "<br>";
+}
+
+function clearLog() {
+    logElement.innerHTML = "";
+}
+
+let activeWorker;
+async function registerServiceWorkerIfNeeded()
+{
+    var registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope === scope) {
+        if (window.location.search === "?register") {
+            hasServiceWorker = true;
+            if (registration.active)
+                setInterval(() => registration.active.postMessage("ping"), 50);
+            return;
+        }
+        await registration.unregister();
+    }
+
+    var registration = await navigator.serviceWorker.register("cache-mode-hard-reload-serviceworker.js", { scope : scope });
+    hasServiceWorker = true;
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+};
+
+registerServiceWorkerIfNeeded();
+</script>
+<script src="resources/cache-mode-hard-reload-serviceworker.py?first-script-static"></script>
+<script>
+function addScript(url)
+{
+    const script = document.createElement("script");
+    script.setAttribute("src", url);
+    testElement.appendChild(script);
+}
+addScript("resources/cache-mode-hard-reload-serviceworker.py?second-script-dynamic");
+setTimeout(() => addScript("resources/cache-mode-hard-reload-serviceworker.py?third-script-async"), 100);
+setTimeout(() => addScript("resources/cache-mode-hard-reload-serviceworker.py?sixth-script-async"), 1000);
+onload = () => {
+    addScript("resources/cache-mode-hard-reload-serviceworker.py?fourth-script-during-onload");
+    setTimeout(() => {
+        addScript("resources/cache-mode-hard-reload-serviceworker.py?fifth-script-just-after-onload");
+        setTimeout(async () => {
+            activeWorker.postMessage("getState");
+            const state = await new Promise(resolve => navigator.serviceWorker.onmessage = (e) => resolve(e.data));
+            if (state === "startTest") {
+                activeWorker.postMessage("endTest");
+                const results = await new Promise(resolve => navigator.serviceWorker.onmessage = (e) => resolve(e.data));
+                validateResults(results);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+            activeWorker.postMessage("startTest");
+            if (window.testRunner)
+                testRunner.reloadFromOrigin();
+        }, 1000);
+    }, 0);
+}
+
+function validateResult(result)
+{
+    if (result.url === "http://localhost:8800/WebKit/service-workers/cache-mode-hard-reload-serviceworker.html")
+        return result.cache === "reload";
+    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?first-script-static")
+        return result.cache === "reload";
+    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?second-script-dynamic")
+        return result.cache === "reload";
+    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?third-script-async")
+        return result.cache === "reload";
+
+    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fourth-script-during-onload")
+        return result.cache === "reload";
+    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fifth-script-just-after-onload")
+        return result.cache === "reload";
+    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?sixth-script-async")
+        return result.cache === "reload";
+
+}
+
+function validateResults(results)
+{
+    clearLog();
+    for (let result of results)
+        log((validateResult(result) ? "PASS" : "FAIL") + " : " + JSON.stringify(result));
+}
+
+</script>
+</body>
+</html>

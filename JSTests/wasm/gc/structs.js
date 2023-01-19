@@ -228,6 +228,19 @@ function testStructNew() {
     )
   `).exports.main();
 
+  instantiate(`
+    (module
+      ;; Also test with subtype.
+      (type (struct))
+      (type $Empty (sub 0 (struct)))
+      (func (export "main")
+        (drop
+          (struct.new_canon $Empty)
+        )
+      )
+    )
+  `).exports.main();
+
   {
     /*
      * (module
@@ -310,6 +323,19 @@ function testStructNewDefault() {
   instantiate(`
     (module
       (type $Empty (struct))
+      (func (export "main")
+        (drop
+          (struct.new_canon_default $Empty)
+        )
+      )
+    )
+  `).exports.main();
+
+  instantiate(`
+    (module
+      ;; Also test with subtype.
+      (type (struct))
+      (type $Empty (sub 0 (struct)))
       (func (export "main")
         (drop
           (struct.new_canon_default $Empty)
@@ -418,6 +444,22 @@ function testStructGet() {
       )
     `).exports.main;
     assert.eq(main(), 0);
+  }
+
+  {
+    let main = instantiate(`
+      (module
+        ;; Test subtype case as well.
+        (type (struct (field i32)))
+        (type $Point (sub 0 (struct (field $x i32))))
+         (func (export "main") (result i32)
+           (struct.get $Point $x
+             (struct.new_canon $Point (i32.const 37))
+           )
+         )
+      )
+    `).exports.main;
+    assert.eq(main(), 37);
   }
 
   {
@@ -772,6 +814,57 @@ function testStructSet() {
           (call $doTest
             (struct.new_canon $Point (i32.const 0))
           )
+        )
+      )
+    `).exports.main;
+    assert.eq(main(), 37);
+  }
+
+  {
+    let main = instantiate(`
+      (module
+        ;; Test subtype case as well.
+        (type (struct (field (mut i32))))
+        (type $Point (sub 0 (struct (field $x (mut i32)))))
+        (func $doTest (param $p (ref $Point)) (result i32)
+          (struct.set $Point $x
+            (local.get $p)
+            (i32.const 37)
+          )
+          (struct.get $Point $x
+            (local.get $p)
+          )
+        )
+
+        (func (export "main") (result i32)
+          (call $doTest
+            (struct.new_canon $Point (i32.const 0))
+          )
+        )
+      )
+    `).exports.main;
+    assert.eq(main(), 37);
+  }
+
+  // Test actually passing a point that is a subtype to a $Point interface.
+  {
+    let main = instantiate(`
+      (module
+        (type $Point (struct (field $x (mut i32))))
+        (type $Sub (sub 0 (struct (field (mut i32) (mut i32)))))
+        (func $doTest (result i32) (local $p (ref null $Sub))
+          (local.set $p (struct.new_canon $Sub (i32.const 0) (i32.const 1)))
+          (struct.set $Point $x
+            (local.get $p)
+            (i32.const 37)
+          )
+          (struct.get $Point $x
+            (local.get $p)
+          )
+        )
+
+        (func (export "main") (result i32)
+          (call $doTest)
         )
       )
     `).exports.main;

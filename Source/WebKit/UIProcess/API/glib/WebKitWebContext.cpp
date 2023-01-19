@@ -436,6 +436,10 @@ static void webkitWebContextConstructed(GObject* object)
         g_signal_emit(webContext, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
     });
 
+#if ENABLE(2022_GLIB_API)
+    priv->processPool->setSandboxEnabled(true);
+#endif
+
     priv->processModel = WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
 
 #if ENABLE(MEMORY_SAMPLER)
@@ -1318,6 +1322,7 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
         g_critical("Cannot register URI scheme %s more than once", scheme);
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_sandbox_enabled:
  * @context: a #WebKitWebContext
@@ -1342,6 +1347,7 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
 
     context->priv->processPool->setSandboxEnabled(enabled);
 }
+#endif
 
 static bool pathIsBlocked(const char* path)
 {
@@ -1393,6 +1399,7 @@ void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const cha
     context->priv->processPool->addSandboxPath(path, permission);
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_get_sandbox_enabled:
  * @context: a #WebKitWebContext
@@ -1409,6 +1416,7 @@ gboolean webkit_web_context_get_sandbox_enabled(WebKitWebContext* context)
 
     return context->priv->processPool->sandboxEnabled();
 }
+#endif
 
 /**
  * webkit_web_context_get_spell_checking_enabled:

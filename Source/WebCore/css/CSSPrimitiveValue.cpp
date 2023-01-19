@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -313,49 +313,8 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Color& color)
     : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_RGBCOLOR);
-    m_value.color = new Color(color);
-}
-
-CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
-    : CSSValue(PrimitiveClass)
-{
-    init(length);
-}
-
-CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle& style)
-    : CSSValue(PrimitiveClass)
-{
-    switch (length.type()) {
-    case LengthType::Auto:
-    case LengthType::Content:
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FillAvailable:
-    case LengthType::FitContent:
-    case LengthType::Percent:
-        init(length);
-        return;
-    case LengthType::Fixed:
-        setPrimitiveUnitType(CSSUnitType::CSS_PX);
-        m_value.num = adjustFloatForAbsoluteZoom(length.value(), style);
-        return;
-    case LengthType::Calculated:
-        init(CSSCalcValue::create(length.calculationValue(), style));
-        return;
-    case LengthType::Relative:
-    case LengthType::Undefined:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize, const RenderStyle& style)
-    : CSSValue(PrimitiveClass)
-{
-    init(lengthSize, style);
+    static_assert(sizeof(m_value.colorAsInteger) == sizeof(color));
+    new (reinterpret_cast<Color*>(&m_value.colorAsInteger)) Color(color);
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, CSSValueID valueID)
@@ -384,109 +343,46 @@ CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag)
     m_isImplicitInitialValue = true;
 }
 
-void CSSPrimitiveValue::init(const Length& length)
-{
-    switch (length.type()) {
-    case LengthType::Auto:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueAuto;
-        return;
-    case LengthType::Content:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueContent;
-        return;
-    case LengthType::Fixed:
-        setPrimitiveUnitType(CSSUnitType::CSS_PX);
-        m_value.num = length.value();
-        return;
-    case LengthType::Intrinsic:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueIntrinsic;
-        return;
-    case LengthType::MinIntrinsic:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueMinIntrinsic;
-        return;
-    case LengthType::MinContent:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueMinContent;
-        return;
-    case LengthType::MaxContent:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueMaxContent;
-        return;
-    case LengthType::FillAvailable:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueWebkitFillAvailable;
-        return;
-    case LengthType::FitContent:
-        setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-        m_value.valueID = CSSValueFitContent;
-        return;
-    case LengthType::Percent:
-        setPrimitiveUnitType(CSSUnitType::CSS_PERCENTAGE);
-        ASSERT(std::isfinite(length.percent()));
-        m_value.num = length.percent();
-        return;
-    case LengthType::Calculated:
-    case LengthType::Relative:
-    case LengthType::Undefined:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-void CSSPrimitiveValue::init(const LengthSize& lengthSize, const RenderStyle& style)
-{
-    setPrimitiveUnitType(CSSUnitType::CSS_PAIR);
-    m_hasCachedCSSText = false;
-    m_value.pair = &Pair::create(create(lengthSize.width, style), create(lengthSize.height, style)).leakRef();
-}
-
-void CSSPrimitiveValue::init(Ref<Counter>&& counter)
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<Counter>&& counter)
+    : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_COUNTER);
-    m_hasCachedCSSText = false;
     m_value.counter = &counter.leakRef();
 }
 
-void CSSPrimitiveValue::init(Ref<Rect>&& r)
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<Rect>&& rect)
+    : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_RECT);
-    m_hasCachedCSSText = false;
-    m_value.rect = &r.leakRef();
+    m_value.rect = &rect.leakRef();
 }
 
-void CSSPrimitiveValue::init(Ref<Quad>&& quad)
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<Quad>&& quad)
+    : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_QUAD);
-    m_hasCachedCSSText = false;
     m_value.quad = &quad.leakRef();
 }
 
-void CSSPrimitiveValue::init(Ref<Pair>&& p)
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<Pair>&& pair)
+    : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_PAIR);
-    m_hasCachedCSSText = false;
-    m_value.pair = &p.leakRef();
+    m_value.pair = &pair.leakRef();
 }
 
-void CSSPrimitiveValue::init(Ref<CSSBasicShape>&& shape)
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSBasicShape>&& shape)
+    : CSSValue(PrimitiveClass)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_SHAPE);
-    m_hasCachedCSSText = false;
     m_value.shape = &shape.leakRef();
 }
 
-void CSSPrimitiveValue::init(RefPtr<CSSCalcValue>&& c)
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSCalcValue>&& value)
+    : CSSValue(PrimitiveClass)
 {
-    // FIXME (231111): This init should take Ref<CSSCalcValue> instead.
-    if (!c)
-        return;
     setPrimitiveUnitType(CSSUnitType::CSS_CALC);
-    m_hasCachedCSSText = false;
-    m_value.calc = c.leakRef();
+    m_value.calc = &value.leakRef();
 }
 
 CSSPrimitiveValue::~CSSPrimitiveValue()
@@ -520,8 +416,7 @@ void CSSPrimitiveValue::cleanup()
         m_value.pair->deref();
         break;
     case CSSUnitType::CSS_CALC:
-        if (m_value.calc)
-            m_value.calc->deref();
+        m_value.calc->deref();
         break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
@@ -531,9 +426,7 @@ void CSSPrimitiveValue::cleanup()
         m_value.shape->deref();
         break;
     case CSSUnitType::CSS_RGBCOLOR:
-        ASSERT(m_value.color);
-        delete m_value.color;
-        m_value.color = nullptr;
+        std::destroy_at(reinterpret_cast<Color*>(&m_value.colorAsInteger));
         break;
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_NUMBER:
@@ -612,6 +505,11 @@ void CSSPrimitiveValue::cleanup()
     }
 }
 
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSPropertyID propertyID)
+{
+    return adoptRef(*new CSSPrimitiveValue(propertyID));
+}
+
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(double value, CSSUnitType type)
 {
     if (auto values = [type]() -> LazyNeverDestroyed<CSSPrimitiveValue>* {
@@ -632,6 +530,103 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(double value, CSSUnitType type)
             return values[intValue].get();
     }
     return adoptRef(*new CSSPrimitiveValue(value, type));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const String& value, CSSUnitType type)
+{
+    return adoptRef(*new CSSPrimitiveValue(value, type));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const Length& length)
+{
+    switch (length.type()) {
+    case LengthType::Auto:
+        return create(CSSValueAuto);
+    case LengthType::Content:
+        return create(CSSValueContent);
+    case LengthType::Fixed:
+        return create(length.value(), CSSUnitType::CSS_PX);
+    case LengthType::Intrinsic:
+        return create(CSSValueIntrinsic);
+    case LengthType::MinIntrinsic:
+        return create(CSSValueMinIntrinsic);
+    case LengthType::MinContent:
+        return create(CSSValueMinContent);
+    case LengthType::MaxContent:
+        return create(CSSValueMaxContent);
+    case LengthType::FillAvailable:
+        return create(CSSValueWebkitFillAvailable);
+    case LengthType::FitContent:
+        return create(CSSValueFitContent);
+    case LengthType::Percent:
+        ASSERT(std::isfinite(length.percent()));
+        return create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+    case LengthType::Calculated:
+    case LengthType::Relative:
+    case LengthType::Undefined:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const Length& length, const RenderStyle& style)
+{
+    switch (length.type()) {
+    case LengthType::Auto:
+    case LengthType::Content:
+    case LengthType::Intrinsic:
+    case LengthType::MinIntrinsic:
+    case LengthType::MinContent:
+    case LengthType::MaxContent:
+    case LengthType::FillAvailable:
+    case LengthType::FitContent:
+    case LengthType::Percent:
+        return create(length);
+    case LengthType::Fixed:
+        return create(adjustFloatForAbsoluteZoom(length.value(), style), CSSUnitType::CSS_PX);
+    case LengthType::Calculated:
+        // FIXME: Do we have a guarantee that CSSCalcValue::create will not return null here?
+        return create(CSSCalcValue::create(length.calculationValue(), style).releaseNonNull());
+    case LengthType::Relative:
+    case LengthType::Undefined:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const LengthSize& lengthSize, const RenderStyle& style)
+{
+    return create(Pair::create(create(lengthSize.width, style), create(lengthSize.height, style)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSBasicShape>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSCalcValue>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<Counter>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<Pair>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<Quad>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<Rect>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
 }
 
 double CSSPrimitiveValue::computeDegrees() const

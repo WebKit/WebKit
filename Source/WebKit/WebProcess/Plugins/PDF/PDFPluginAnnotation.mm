@@ -39,6 +39,7 @@
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Event.h>
+#import <WebCore/EventLoop.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
@@ -93,7 +94,10 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 
     m_eventListener->setAnnotation(0);
 
-    m_parent->removeChild(*element());
+    m_element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [ weakElement = WeakPtr<Node, WeakPtrImplWithEventTargetData> { element() } ]() {
+        if (RefPtr element = weakElement.get())
+            element->remove();
+    });
 }
 
 void PDFPluginAnnotation::updateGeometry()

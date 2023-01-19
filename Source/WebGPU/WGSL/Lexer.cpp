@@ -198,7 +198,7 @@ Token Lexer<T>::lex()
             while (isValidIdentifierCharacter(m_current))
                 shift();
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
-            StringView view { startOfToken, currentTokenLength() };
+            String view(StringImpl::createWithoutCopying(startOfToken, currentTokenLength()));
             // FIXME: I don't think that true/false/f32/u32/i32/bool need to be their own tokens, they could just be regular identifiers.
             if (view == "true"_s)
                 return makeToken(TokenType::LiteralTrue);
@@ -244,7 +244,7 @@ Token Lexer<T>::lex()
                 || view == "typedef"_s || view == "u8"_s || view == "u16"_s || view == "u64"_s || view == "unless"_s
                 || view == "using"_s || view == "vec"_s || view == "void"_s || view == "while"_s)
                 return makeToken(TokenType::ReservedWord);
-            return makeIdentifierToken(view);
+            return makeIdentifierToken(WTFMove(view));
         }
         break;
     }

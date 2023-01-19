@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class SliderThumbPart;
+
 class SliderThumbMac : public ControlMac {
 public:
     SliderThumbMac(SliderThumbPart&, ControlFactoryMac&, NSSliderCell *);

@@ -199,7 +199,8 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     m_primitiveType = pipeline.primitiveType();
     m_vertexShaderInputBufferCount = pipeline.vertexShaderInputBufferCount();
 
-    [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
+    if (pipeline.renderPipelineState())
+        [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
     if (pipeline.depthStencilState())
         [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
     [m_renderCommandEncoder setCullMode:pipeline.cullMode()];

@@ -228,7 +228,7 @@ AllowSettingAnyXHRHeaderFromFileURLs:
 AllowTopNavigationToDataURLs:
   type: bool
   humanReadableName: "Allow top navigation to data: URLs"
-  status: developer
+  status: embedder
   defaultValue:
     WebKitLegacy:
       default: true
@@ -345,7 +345,7 @@ AlternateFullScreenControlDesignEnabled:
 
 AlternateWebMPlayerEnabled:
   type: bool
-  status: testable
+  status: unstable
   humanReadableName: "Alternate WebM Player"
   humanReadableDescription: "Enable Alternate WebM Player"
   condition: ENABLE(ALTERNATE_WEBM_PLAYER)
@@ -1169,7 +1169,7 @@ CanvasFiltersEnabled:
 
 CanvasUsesAcceleratedDrawing:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Canvas uses accelerated drawing"
   defaultValue:
     WebKitLegacy:
@@ -1715,6 +1715,19 @@ DefaultTextEncodingName:
     WebCore:
       default: '{ }'
 
+DeprecateRSAESPKCSWebCryptoEnabled:
+  type: bool
+  status: preview
+  humanReadableName: "Deprecate RSAES-PKCS1-v1_5 Web Crypto"
+  humanReadableDescription: "Enable Deprecation of RSAES-PKCS1-v1_5 Web Crypto"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DeprecationReportingEnabled:
   type: bool
   status: testable
@@ -1789,7 +1802,7 @@ DeviceWidth:
 
 DiagnosticLoggingEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Diagnostic logging enabled"
   defaultValue:
     WebKitLegacy:
@@ -1868,7 +1881,7 @@ DisabledAdaptationsMetaTagEnabled:
 
 DisallowSyncXHRDuringPageDismissalEnabled:
   type: bool
-  status: embedder
+  status: developer
   humanReadableName: "Disallow sync XHR during page dismissal"
   humanReadableDescription: "Disallow synchronous XMLHttpRequest during page dismissal"
   defaultValue:
@@ -2057,7 +2070,7 @@ FTPDirectoryTemplatePath:
 
 FTPEnabled:
   type: bool
-  status: internal
+  status: developer
   humanReadableName: "FTP support enabled"
   humanReadableDescription: "FTP support enabled"
   defaultValue:
@@ -2261,7 +2274,7 @@ FormAssociatedCustomElementsEnabled:
 # FIXME: This should be reconciled with 'FrameFlattening'.
 FrameFlatteningEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Frame flattening"
   humanReadableDescription: "Enable frame flattening, which adjusts the height of an iframe to fit its contents"
   webcoreBinding: custom
@@ -2273,7 +2286,7 @@ FrameFlatteningEnabled:
 
 FullScreenEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Fullscreen API"
   humanReadableDescription: "Fullscreen API"
   condition: ENABLE(FULLSCREEN_API)
@@ -2437,7 +2450,7 @@ HiddenPageCSSAnimationSuspensionEnabled:
 
 HiddenPageDOMTimerThrottlingAutoIncreases:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Hidden page DOM timer throttling auto-increases"
   webcoreOnChange: hiddenPageDOMTimerThrottlingStateChanged
   defaultValue:
@@ -3451,7 +3464,7 @@ LowPowerVideoAudioBufferSizeEnabled:
 
 MainContentUserGestureOverrideEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Main content user gesture override"
   humanReadableDescription: "Enable main content user gesture override"
   defaultValue:
@@ -3572,7 +3585,7 @@ MediaCaptionFormatTypesAllowedInLockdownMode:
 
 MediaCaptureRequiresSecureConnection:
   type: bool
-  status: preview
+  status: internal
   inspectorOverride: true
   humanReadableName: "Limit Media Capture to Secure Sites"
   humanReadableDescription: "Limit Media Capture to Secure Sites"
@@ -3882,7 +3895,7 @@ MinimumZoomFontSize:
 
 MockCaptureDevicesEnabled:
   type: bool
-  status: embedder
+  status: internal
   webcoreOnChange: mockCaptureDevicesEnabledChanged
   inspectorOverride: true
   condition: ENABLE(MEDIA_STREAM)
@@ -3983,7 +3996,7 @@ MouseEventsSimulationEnabled:
 
 MuteCameraOnMicrophoneInterruptionEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Mute Camera on Microphone Interruption"
   humanReadableDescription: "Mute Camera on Microphone Interruption"
   condition: ENABLE(MEDIA_STREAM)
@@ -4079,7 +4092,7 @@ NeedsStorageAccessFromFileURLsQuirk:
 
 NotificationEventEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "NotificationEvent support"
   humanReadableDescription: "NotificationEvent and ServiceWorkerRegistration.showNotification() support"
   condition: ENABLE(NOTIFICATION_EVENT)
@@ -4327,7 +4340,7 @@ PdfJSViewerEnabled:
 
 PeerConnectionEnabled:
   type: bool
-  status: unstable
+  status: embedder
   humanReadableName: "WebRTC Peer Connection"
   humanReadableDescription: "Enable RTCPeerConnection"
   condition: ENABLE(WEB_RTC)
@@ -4453,7 +4466,7 @@ PluginsEnabled:
 
 PreferFasterClickOverDoubleTap:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Fast clicks beat DTTZ"
   humanReadableDescription: "Prefer a faster click over a double tap"
   webcoreBinding: none
@@ -4630,7 +4643,7 @@ RemoveBackgroundEnabled:
 
 ReplayCGDisplayListsIntoBackingStore:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "CG Display Lists: Replay for Testing"
   humanReadableDescription: "Replay CG Display Lists into layer contents for testing"
   webcoreBinding: none
@@ -5049,7 +5062,7 @@ SelectTrailingWhitespaceEnabled:
 
 SelectionFlippingEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Selection Flipping"
   humanReadableDescription: "Enable Selection Flipping"
   webcoreBinding: none
@@ -5073,7 +5086,7 @@ SerifFontFamily:
 
 ServerTimingEnabled:
   type: bool
-  status: internal
+  status: developer
   humanReadableName: "Server Timing"
   humanReadableDescription: "Enable Server Timing API"
   webcoreBinding: DeprecatedGlobalSettings
@@ -5982,7 +5995,7 @@ UseGPUProcessForDisplayCapture:
 
 UseGPUProcessForMediaEnabled:
   type: bool
-  status: stable
+  status: internal
   humanReadableName: "GPU Process: Media"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   webcoreBinding: none
@@ -6024,7 +6037,7 @@ UseGeneralDirectoryForStorage:
 
 UseGiantTiles:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Use giant tiles"
   defaultValue:
     WebKitLegacy:
@@ -6183,7 +6196,7 @@ VP9DecoderEnabled:
 
 VP9SWDecoderEnabledOnBattery:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "VP9 SW decoder on battery"
   humanReadableDescription: "Enable VP9 SW decoder on battery"
   webcoreBinding: none
@@ -6219,7 +6232,7 @@ VideoQualityIncludesDisplayCompositingEnabled:
 
 ViewGestureDebuggingEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "View gesture debugging"
   humanReadableDescription: "Enable view gesture debugging"
   webcoreBinding: none
@@ -6400,7 +6413,7 @@ WebAnimationsMutableTimelinesEnabled:
 
 WebArchiveDebugModeEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Web Archive debug mode"
   humanReadableDescription: "Enable web archive debug mode"
   webKitLegacyPreferenceKey: WebKitWebArchiveDebugModeEnabledPreferenceKey

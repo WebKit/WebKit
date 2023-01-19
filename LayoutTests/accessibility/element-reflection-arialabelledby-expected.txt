@@ -12,5 +12,8 @@ PASS platformValueForW3CName(axInput5) is "Fifth label"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-First label  Second label  Third label  Fourth label
+First label
+Second label
+Third label
+Fourth label
 Fifth label

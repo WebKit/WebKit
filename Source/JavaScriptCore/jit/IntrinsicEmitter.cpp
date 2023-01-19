@@ -35,8 +35,10 @@
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSTypedArrays.h"
+#include "JSWebAssemblyInstance.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
+#include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
 
@@ -73,6 +75,8 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(StructureStubInfo& stubIn
         TypeInfo info = structure->typeInfo();
         return info.isObject() && !info.overridesGetPrototype();
     }
+    case WebAssemblyInstanceExportsIntrinsic:
+        return structure->typeInfo().type() == WebAssemblyInstanceType;
     default:
         return false;
     }
@@ -218,6 +222,16 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
         else
             jit.moveValue(structure()->storedPrototype(), valueRegs);
         state.succeed();
+        return;
+    }
+
+    case WebAssemblyInstanceExportsIntrinsic: {
+#if ENABLE(WEBASSEMBLY)
+        jit.loadPtr(CCallHelpers::Address(baseGPR, JSWebAssemblyInstance::offsetOfModuleRecord()), valueGPR);
+        jit.loadPtr(CCallHelpers::Address(valueGPR, WebAssemblyModuleRecord::offsetOfExportsObject()), valueGPR);
+        jit.boxCell(valueGPR, valueRegs);
+        state.succeed();
+#endif
         return;
     }
 

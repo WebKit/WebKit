@@ -30,6 +30,7 @@
 
 #import "ButtonMac.h"
 #import "ColorWellMac.h"
+#import "ImageControlsButtonMac.h"
 #import "InnerSpinButtonMac.h"
 #import "MenuListButtonMac.h"
 #import "MenuListMac.h"
@@ -44,6 +45,7 @@
 #import "ToggleButtonMac.h"
 #import "ToggleButtonPart.h"
 #import <pal/spi/mac/NSSearchFieldCellSPI.h>
+#import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -52,6 +54,11 @@ namespace WebCore {
 std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
 {
     return makeUnique<ControlFactoryMac>();
+}
+
+ControlFactoryMac& ControlFactoryMac::sharedControlFactory()
+{
+    return static_cast<ControlFactoryMac&>(ControlFactory::sharedControlFactory());
 }
 
 NSView *ControlFactoryMac::drawingView(const FloatRect& rect, const ControlStyle& style) const
@@ -155,6 +162,20 @@ NSPopUpButtonCell *ControlFactoryMac::popUpButtonCell() const
     return m_popUpButtonCell.get();
 }
 
+#if ENABLE(SERVICE_CONTROLS)
+NSServicesRolloverButtonCell *ControlFactoryMac::servicesRolloverButtonCell() const
+{
+    if (!m_servicesRolloverButtonCell) {
+        m_servicesRolloverButtonCell = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
+        [m_servicesRolloverButtonCell setBezelStyle:NSBezelStyleRoundedDisclosure];
+        [m_servicesRolloverButtonCell setButtonType:NSButtonTypePushOnPushOff];
+        [m_servicesRolloverButtonCell setImagePosition:NSImageOnly];
+        [m_servicesRolloverButtonCell setState:NO];
+    }
+    return m_servicesRolloverButtonCell.get();
+}
+#endif
+
 NSSearchFieldCell *ControlFactoryMac::searchFieldCell() const
 {
     if (!m_searchFieldCell) {
@@ -205,6 +226,13 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonP
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ColorWellPart& part)
 {
     return makeUnique<ColorWellMac>(part, *this, buttonCell());
+}
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformImageControlsButton(ImageControlsButtonPart& part)
+{
+    return makeUnique<ImageControlsButtonMac>(part, *this, servicesRolloverButtonCell());
 }
 #endif
 

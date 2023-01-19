@@ -3189,6 +3189,11 @@ void TestController::clearLoadedSubresourceDomains()
 
 #endif // !PLATFORM(COCOA)
 
+void TestController::reloadFromOrigin()
+{
+    WKPageReloadFromOrigin(m_mainWebView->page());
+}
+
 struct GenericVoidContext {
     explicit GenericVoidContext(TestController& controller)
         : testController(controller)

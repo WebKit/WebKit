@@ -36,25 +36,37 @@ CSSContentDistributionValue::CSSContentDistributionValue(CSSValueID distribution
 {
 }
 
-CSSContentDistributionValue::~CSSContentDistributionValue() = default;
+Ref<CSSContentDistributionValue> CSSContentDistributionValue::create(CSSValueID distribution, CSSValueID position, CSSValueID overflow)
+{
+    return adoptRef(*new CSSContentDistributionValue(distribution, position, overflow));
+}
 
 String CSSContentDistributionValue::customCSSText() const
 {
-    StringBuilder builder;
-    if (m_distribution != CSSValueInvalid)
-        builder.append(nameLiteral(m_distribution));
-    if (m_position != CSSValueInvalid) {
-        if (m_position == CSSValueFirstBaseline)
-            builder.append(builder.isEmpty() ? "" : " ", "first baseline");
-        else if (m_position == CSSValueLastBaseline)
-            builder.append(builder.isEmpty() ? "" : " ", "last baseline");
-        else {
-            if (m_overflow != CSSValueInvalid)
-                builder.append(builder.isEmpty() ? "" : " ", nameLiteral(m_overflow));
-            builder.append(builder.isEmpty() ? "" : " ", nameLiteral(m_position));
-        }
+    auto word1 = m_distribution;
+    CSSValueID word2;
+    CSSValueID word3;
+    switch (m_position) {
+    case CSSValueFirstBaseline:
+        word2 = CSSValueFirst;
+        word3 = CSSValueBaseline;
+        break;
+    case CSSValueLastBaseline:
+        word2 = CSSValueLast;
+        word3 = CSSValueBaseline;
+        break;
+    default:
+        word2 = m_overflow;
+        word3 = m_position;
+        break;
     }
-    return builder.toString();
+    return makeString(
+        word1 == CSSValueInvalid ? ""_s : nameLiteral(word1),
+        word1 != CSSValueInvalid && word2 != CSSValueInvalid ? " "_s : ""_s,
+        word2 == CSSValueInvalid ? ""_s : nameLiteral(word2),
+        word2 != CSSValueInvalid && word3 != CSSValueInvalid ? " "_s : ""_s,
+        word3 == CSSValueInvalid ? ""_s : nameLiteral(word3)
+    );
 }
 
 bool CSSContentDistributionValue::equals(const CSSContentDistributionValue& other) const

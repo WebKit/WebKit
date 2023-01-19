@@ -1089,7 +1089,7 @@ TEST(URLSchemeHandler, DisableCORSCanvas)
     corsfailure = false;
     done = false;
 
-    configuration.get()._corsDisablingPatterns = @[@"*://*/*"];
+    configuration.get()._corsDisablingPatterns = @[@"cors://*/*"];
     {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"cors://host1/main.html"]]];

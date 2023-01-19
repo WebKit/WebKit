@@ -544,6 +544,24 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (Instance* instance, Enco
     return static_cast<float>(JSValue::decode(v).toNumber(globalObject));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance* instance, EncodedJSValue v))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = JSValue::decode(v);
+    WebAssemblyFunction* wasmFunction = nullptr;
+    WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+    if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
+        throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
+        return { };
+    }
+    return v;
+}
+
 JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (Instance* instance, EncodedWasmValue value))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
@@ -609,14 +627,19 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (Instance* instance, con
             unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
             break;
         default: {
-            if (isFuncref(returnType) || isExternref(returnType)) {
-                if (isFuncref(returnType) && !value.isCallable()) {
+            if (isExternref(returnType))
+                ASSERT(returnType.isNullable());
+            else if (isFuncref(returnType)) {
+                ASSERT(returnType.isNullable());
+                WebAssemblyFunction* wasmFunction = nullptr;
+                WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+                if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
                     throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
                     return;
                 }
-                unboxedValue = bitwise_cast<uint64_t>(value);
             } else
                 RELEASE_ASSERT_NOT_REACHED();
+            unboxedValue = bitwise_cast<uint64_t>(value);
         }
         }
         RETURN_IF_EXCEPTION(scope, void());

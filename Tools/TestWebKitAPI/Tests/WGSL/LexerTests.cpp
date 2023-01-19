@@ -148,7 +148,7 @@ TEST(WGSLLexerTests, ComputeShader)
 {
     WGSL::Lexer<LChar> lexer(
         "@block struct B {\n"
-        "    a: i32;\n"
+        "    a: i32,\n"
         "}\n"
         "\n"
         "@group(0) @binding(0)\n"
@@ -172,7 +172,7 @@ TEST(WGSLLexerTests, ComputeShader)
     checkNextTokenIsIdentifier(lexer, "a"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Colon, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordI32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::Semicolon, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
 
     // }
     ++lineNumber;

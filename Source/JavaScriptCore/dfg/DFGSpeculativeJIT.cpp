@@ -60,12 +60,14 @@
 #include "JSMapIterator.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSSetIterator.h"
+#include "JSWebAssemblyInstance.h"
 #include "LLIntThunks.h"
 #include "ProbeContext.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "TypeProfilerLog.h"
 #include "WeakMapImpl.h"
+#include "WebAssemblyModuleRecord.h"
 #include <wtf/BitVector.h>
 #include <wtf/Box.h>
 #include <wtf/MathExtras.h>
@@ -15819,6 +15821,24 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
         return;
     }
     }
+}
+
+void SpeculativeJIT::compileGetWebAssemblyInstanceExports(Node* node)
+{
+#if ENABLE(WEBASSEMBLY)
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    m_jit.loadPtr(CCallHelpers::Address(baseGPR, JSWebAssemblyInstance::offsetOfModuleRecord()), resultGPR);
+    m_jit.loadPtr(CCallHelpers::Address(resultGPR, WebAssemblyModuleRecord::offsetOfExportsObject()), resultGPR);
+
+    cellResult(resultGPR, node);
+#else
+    UNUSED_PARAM(node);
+#endif
 }
 
 void SpeculativeJIT::compileIdentity(Node* node)
