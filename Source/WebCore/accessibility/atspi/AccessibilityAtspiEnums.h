@@ -229,7 +229,7 @@ enum class Relation {
     ErrorFor,
 };
 
-enum CoordinateType {
+enum class CoordinateType {
     ScreenCoordinates,
     WindowCoordinates,
     ParentCoordinates,

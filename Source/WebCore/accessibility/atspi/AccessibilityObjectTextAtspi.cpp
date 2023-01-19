@@ -147,19 +147,19 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             int offset;
             uint32_t coordinateType;
             g_variant_get(parameters, "(iu)", &offset, &coordinateType);
-            auto extents = atspiObject->textExtents(offset, offset + 1, coordinateType);
+            auto extents = atspiObject->textExtents(offset, offset + 1, static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(iiii)", extents.x(), extents.y(), extents.width(), extents.height()));
         } else if (!g_strcmp0(methodName, "GetRangeExtents")) {
             int start, end;
             uint32_t coordinateType;
             g_variant_get(parameters, "(iiu)", &start, &end, &coordinateType);
-            auto extents = atspiObject->textExtents(start, end, coordinateType);
+            auto extents = atspiObject->textExtents(start, end, static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(iiii)", extents.x(), extents.y(), extents.width(), extents.height()));
         } else if (!g_strcmp0(methodName, "GetOffsetAtPoint")) {
             int x, y;
             uint32_t coordinateType;
             g_variant_get(parameters, "(iiu)", &x, &y, &coordinateType);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(i)", atspiObject->offsetAtPoint(IntPoint(x, y), coordinateType)));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(i)", atspiObject->offsetAtPoint(IntPoint(x, y), static_cast<Atspi::CoordinateType>(coordinateType))));
         } else if (!g_strcmp0(methodName, "GetNSelections")) {
             int start, end;
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(i)", atspiObject->selectionBounds(start, end) && start != end ? 1 : 0));
@@ -204,7 +204,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             int start, end, x, y;
             uint32_t coordinateType;
             g_variant_get(parameters, "(iiuii)", &start, &end, &coordinateType, &x, &y);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->scrollToPoint(start, end, coordinateType, x, y)));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->scrollToPoint(start, end, static_cast<Atspi::CoordinateType>(coordinateType), x, y)));
         } else if (!g_strcmp0(methodName, "GetBoundedRanges") || !g_strcmp0(methodName, "ScrollSubstringToPoint"))
             g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
     },
@@ -548,7 +548,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(UChar character
     return index;
 }
 
-IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned length, uint32_t coordinateType) const
+IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned length, Atspi::CoordinateType coordinateType) const
 {
     if (!m_coreObject)
         return { };
@@ -571,7 +571,7 @@ IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-IntRect AccessibilityObjectAtspi::textExtents(int startOffset, int endOffset, uint32_t coordinateType) const
+IntRect AccessibilityObjectAtspi::textExtents(int startOffset, int endOffset, Atspi::CoordinateType coordinateType) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
@@ -593,7 +593,7 @@ IntRect AccessibilityObjectAtspi::textExtents(int startOffset, int endOffset, ui
     return boundsForRange(utf16StartOffset, utf16EndOffset - utf16StartOffset, coordinateType);
 }
 
-int AccessibilityObjectAtspi::offsetAtPoint(const IntPoint& point, uint32_t coordinateType) const
+int AccessibilityObjectAtspi::offsetAtPoint(const IntPoint& point, Atspi::CoordinateType coordinateType) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
@@ -997,7 +997,7 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
     return true;
 }
 
-bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, uint32_t coordinateType, int x, int y) const
+bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, Atspi::CoordinateType coordinateType, int x, int y) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();

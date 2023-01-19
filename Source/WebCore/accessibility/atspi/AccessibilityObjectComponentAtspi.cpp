@@ -41,22 +41,22 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
             int x, y;
             uint32_t coordinateType;
             g_variant_get(parameters, "(iiu)", &x, &y, &coordinateType);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", !!atspiObject->hitTest({ x, y }, coordinateType)));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", !!atspiObject->hitTest({ x, y }, static_cast<Atspi::CoordinateType>(coordinateType))));
         } else if (!g_strcmp0(methodName, "GetAccessibleAtPoint")) {
             int x, y;
             uint32_t coordinateType;
             g_variant_get(parameters, "(iiu)", &x, &y, &coordinateType);
-            auto* wrapper = atspiObject->hitTest({ x, y }, coordinateType);
+            auto* wrapper = atspiObject->hitTest({ x, y }, static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->reference() : AccessibilityAtspi::singleton().nullReference()));
         } else if (!g_strcmp0(methodName, "GetExtents")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);
-            auto rect = atspiObject->elementRect(coordinateType);
+            auto rect = atspiObject->elementRect(static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("((iiii))", rect.x(), rect.y(), rect.width(), rect.height()));
         } else if (!g_strcmp0(methodName, "GetPosition")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);
-            auto rect = atspiObject->elementRect(coordinateType);
+            auto rect = atspiObject->elementRect(static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(ii)", rect.x(), rect.y()));
         } else if (!g_strcmp0(methodName, "GetSize")) {
             auto rect = atspiObject->elementRect(Atspi::CoordinateType::ParentCoordinates);
@@ -78,7 +78,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
             int x, y;
             uint32_t coordinateType;
             g_variant_get(parameters, "(uii)", &coordinateType, &x, &y);
-            atspiObject->scrollToPoint({ x, y }, coordinateType);
+            atspiObject->scrollToPoint({ x, y }, static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", TRUE));
         } else if (!g_strcmp0(methodName, "SetExtents") || !g_strcmp0(methodName, "SetPosition") || !g_strcmp0(methodName, "SetSize"))
             g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
@@ -91,7 +91,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
     { nullptr }
 };
 
-AccessibilityObjectAtspi* AccessibilityObjectAtspi::hitTest(const IntPoint& point, uint32_t coordinateType) const
+AccessibilityObjectAtspi* AccessibilityObjectAtspi::hitTest(const IntPoint& point, Atspi::CoordinateType coordinateType) const
 {
     if (!m_coreObject)
         return nullptr;
@@ -117,7 +117,7 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::hitTest(const IntPoint& poin
     return nullptr;
 }
 
-IntRect AccessibilityObjectAtspi::elementRect(uint32_t coordinateType) const
+IntRect AccessibilityObjectAtspi::elementRect(Atspi::CoordinateType coordinateType) const
 {
     if (!m_coreObject)
         return { };
@@ -198,7 +198,7 @@ void AccessibilityObjectAtspi::scrollToMakeVisible(uint32_t scrollType) const
     liveObject->scrollToMakeVisible({ SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::Yes });
 }
 
-void AccessibilityObjectAtspi::scrollToPoint(const IntPoint& point, uint32_t coordinateType) const
+void AccessibilityObjectAtspi::scrollToPoint(const IntPoint& point, Atspi::CoordinateType coordinateType) const
 {
     if (!m_coreObject)
         return;
