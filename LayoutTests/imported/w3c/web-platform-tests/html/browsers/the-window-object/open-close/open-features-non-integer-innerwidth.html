@@ -67,7 +67,7 @@ function runWindowTests (baselineDimensions) {
         e.source.close();
         assert_equals(data.width, 405, `"${featureString} value after first non-digit will be ignored"`);
       }));
-      var win = window.open(prefixedMessage.url(windowURL), '', featureString);
+      var win = window.open(prefixedMessage.url(windowURL) + '&expected_innerWidth=405', '', featureString);
     }, `features "${feature}" should set "width=405"`);
   });
 }
