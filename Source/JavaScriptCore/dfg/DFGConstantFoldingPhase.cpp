@@ -940,7 +940,7 @@ private:
                 else
                     radix = m_state.forNode(node->child2()).m_value;
 
-                if (!radix.isNumber())
+                if (!radix.isInt32())
                     break;
 
                 if (radix.asNumber() == 0 || radix.asNumber() == 10) {
