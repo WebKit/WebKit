@@ -73,7 +73,7 @@ String CSSVariableReferenceValue::customCSSText() const
     return m_stringValue;
 }
 
-auto CSSVariableReferenceValue::resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange range, Style::BuilderState& builderState) const -> std::pair<FallbackResult, Vector<CSSParserToken>>
+auto CSSVariableReferenceValue::resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange range, CSSValueID functionId, Style::BuilderState& builderState) const -> std::pair<FallbackResult, Vector<CSSParserToken>>
 {
     ASSERT(range.atEnd() || range.peek().type() == CommaToken);
 
@@ -84,19 +84,21 @@ auto CSSVariableReferenceValue::resolveVariableFallback(const AtomString& variab
 
     auto tokens = resolveTokenRange(range, builderState);
 
-    auto* registered = builderState.document().customPropertyRegistry().get(variableName);
-    if (!registered || registered->syntax.isUniversal()) {
-        if (!tokens)
-            return { FallbackResult::None, { } };
+    if (functionId == CSSValueVar) {
+        auto* registered = builderState.document().customPropertyRegistry().get(variableName);
+        if (registered && !registered->syntax.isUniversal()) {
+            // https://drafts.css-houdini.org/css-properties-values-api/#fallbacks-in-var-references
+            // The fallback value must match the syntax definition of the custom property being referenced,
+            // otherwise the declaration is invalid at computed-value time
+            if (!tokens || !CSSPropertyParser::isValidCustomPropertyValueForSyntax(registered->syntax, *tokens, m_context))
+                return { FallbackResult::Invalid, { } };
 
-        return { FallbackResult::Valid, WTFMove(*tokens) };
+            return { FallbackResult::Valid, WTFMove(*tokens) };
+        }
     }
 
-    // https://drafts.css-houdini.org/css-properties-values-api/#fallbacks-in-var-references
-    // The fallback value must match the syntax definition of the custom property being referenced,
-    // otherwise the declaration is invalid at computed-value time
-    if (!tokens || !CSSPropertyParser::isValidCustomPropertyValueForSyntax(registered->syntax, *tokens, m_context))
-        return { FallbackResult::Invalid, { } };
+    if (!tokens)
+        return { FallbackResult::None, { } };
 
     return { FallbackResult::Valid, WTFMove(*tokens) };
 }
@@ -113,7 +115,7 @@ bool CSSVariableReferenceValue::resolveVariableReference(CSSParserTokenRange ran
     builderState.builder().applyCustomProperty(variableName);
 
     // Fallback has to be resolved even when not used to detect cycles and invalid syntax.
-    auto [fallbackResult, fallbackTokens] = resolveVariableFallback(variableName, range, builderState);
+    auto [fallbackResult, fallbackTokens] = resolveVariableFallback(variableName, range, functionId, builderState);
     if (fallbackResult == FallbackResult::Invalid)
         return false;
 

@@ -5955,9 +5955,7 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-nobl
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html [ ImageOnlyFailure ]
 
 # New failures after import of css/css-variables
-imported/w3c/web-platform-tests/css/css-variables/variable-declaration-29.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-variables/variable-reference-visited.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-variables/variable-supports-58.html [ ImageOnlyFailure ]
 
 # WPT tests that are timing out.
 imported/w3c/web-platform-tests/FileAPI/url/unicode-origin.sub.html [ Skip ]

@@ -34,7 +34,7 @@
 #include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParser.h"
 
 namespace WebCore {
 
@@ -43,13 +43,7 @@ bool CSSVariableParser::isValidVariableName(const CSSParserToken& token)
     if (token.type() != IdentToken)
         return false;
 
-    StringView value = token.value();
-    return value.length() >= 2 && value[0] == '-' && value[1] == '-';
-}
-
-bool CSSVariableParser::isValidVariableName(const String& string)
-{
-    return string.length() >= 2 && string[0] == '-' && string[1] == '-';
+    return isCustomPropertyName(token.value());
 }
 
 static bool isValidConstantName(const CSSParserToken& token)

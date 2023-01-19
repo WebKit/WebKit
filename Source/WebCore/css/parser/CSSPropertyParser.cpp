@@ -71,7 +71,7 @@
 
 namespace WebCore {
 
-bool isCustomPropertyName(const String& propertyName)
+bool isCustomPropertyName(StringView propertyName)
 {
     return propertyName.length() > 2 && propertyName.characterAt(0) == '-' && propertyName.characterAt(1) == '-';
 }
