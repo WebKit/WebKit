@@ -301,12 +301,16 @@ protected:
 TEST_P(StreamMessageTest, Send)
 {
     auto cleanup = localReferenceBarrier();
-    for (uint64_t i = 0u; i < 55u; ++i)
-        m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+    for (uint64_t i = 0u; i < 55u; ++i) {
+        auto success = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        EXPECT_TRUE(success);
+    }
     serverQueue().dispatch([&] {
         assertIsCurrent(serverQueue());
-        for (uint64_t i = 100u; i < 160u; ++i)
-            m_serverConnection->send(MockTestMessage1 { }, makeObjectIdentifier<TestObjectIdentifierTag>(i));
+        for (uint64_t i = 100u; i < 160u; ++i) {
+            auto success = m_serverConnection->send(MockTestMessage1 { }, makeObjectIdentifier<TestObjectIdentifierTag>(i));
+            EXPECT_TRUE(success);
+        }
     });
     for (uint64_t i = 100u; i < 160u; ++i) {
         auto message = m_mockClientReceiver.waitForMessage();
@@ -320,15 +324,54 @@ TEST_P(StreamMessageTest, Send)
     }
 }
 
+TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
+{
+    auto other = makeObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
+    {
+        serverQueue().dispatch([&] {
+            assertIsCurrent(serverQueue());
+            m_serverConnection->startReceivingMessages(*m_mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), other.toUInt64());
+        });
+        localReferenceBarrier();
+    }
+    auto cleanup = makeScopeExit([&] {
+        serverQueue().dispatch([&] {
+            assertIsCurrent(serverQueue());
+            m_serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), other.toUInt64());
+        });
+        localReferenceBarrier();
+    });
+
+    for (uint64_t i = 0u; i < 777u; ++i) {
+        auto success = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        EXPECT_TRUE(success);
+        if (i % 77) {
+            success = m_clientConnection->send(MockStreamTestMessage1 { }, other, defaultSendTimeout);
+            EXPECT_TRUE(success);
+        }
+    }
+    for (uint64_t i = 0u; i < 777u; ++i) {
+        auto message = m_mockServerReceiver->waitForMessage();
+        EXPECT_EQ(message.messageName, MockStreamTestMessage1::name());
+        EXPECT_EQ(message.destinationID, defaultDestinationID().toUInt64());
+        if (i % 77) {
+            auto message2 = m_mockServerReceiver->waitForMessage();
+            EXPECT_EQ(message2.messageName, MockStreamTestMessage1::name());
+            EXPECT_EQ(message2.destinationID, other.toUInt64());
+        }
+    }
+}
+
 TEST_P(StreamMessageTest, SendAsyncReply)
 {
     auto cleanup = localReferenceBarrier();
     HashSet<uint64_t> replies;
     for (uint64_t i = 100u; i < 155u; ++i) {
-        m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
+        auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { i }, [&, j = i] (uint64_t value) {
             EXPECT_GE(value, 100u) << j;
             replies.add(value);
         }, defaultDestinationID(), defaultSendTimeout);
+        EXPECT_TRUE(result.isValid());
     }
     while (replies.size() < 55u)
         RunLoop::current().cycle();
@@ -361,7 +404,7 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
             EXPECT_EQ(value, 0u) << j; // Cancel handler returns 0 for uint64_t.
             replies.add(j);
         }, defaultDestinationID(), defaultSendTimeout);
-        ASSERT_NE(0u, result.toUInt64());
+        ASSERT_TRUE(result.isValid());
     }
     m_clientConnection->invalidate();
     workQueueWait.signal();
@@ -378,7 +421,7 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
 
 INSTANTIATE_TEST_SUITE_P(StreamConnectionSizedBuffer,
     StreamMessageTest,
-    testing::Values(7, 8, 9, 14),
+    testing::Values(6, 7, 8, 9, 14),
     TestParametersToStringFormatter());
 
 }
