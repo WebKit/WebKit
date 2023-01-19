@@ -45,18 +45,6 @@ class Events(service.BuildbotService):
 
     EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix)
     MAX_GITHUB_DESCRIPTION = 140
-    SHORT_STEPS = (
-        'configure-build',
-        'validate-change',
-        'configuration',
-        'clean-up-git-repo',
-        'fetch-branch-references',
-        'show-identifier',
-        'update-working-directory',
-        'apply-patch',
-        'kill-old-processes',
-        'set-build-summary',
-    )
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """
@@ -204,49 +192,10 @@ class Events(service.BuildbotService):
         self.sendDataToEWS(data)
 
     @defer.inlineCallbacks
-    def stepStartedGitHub(self, build, state_string):
-        sha = self.extractProperty(build, 'github.head.sha')
-        repository = self.extractProperty(build, 'repository')
-        if not sha or not repository:
-            print('Pull request number defined, but sha is {} and repository {}, which are invalid'.format(sha, repository))
-            print('Not reporting step started to GitHub')
-            return
-
-        if 'WebKit/WebKit' in repository:
-            # Do not report status directly to GitHub for WebKit/WebKit, since we have status-bubbles for that.
-            return
-
-        builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
-
-        data_to_send = dict(
-            owner=(self.extractProperty(build, 'owners') or [None])[0],
-            repo=(self.extractProperty(build, 'github.head.repo.full_name') or '').split('/')[-1],
-            sha=sha,
-            target_url='{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, build.get('builderid'), build.get('number')),
-            state={
-                SUCCESS: 'pending',
-                WARNINGS: 'pending',
-                FAILURE: 'failure',
-                EXCEPTION: 'error',
-            }.get(build.get('results'), 'pending'),
-            description=state_string,
-            context=builder.get('description', '?') + custom_suffix,
-        )
-        self.sendDataToGitHub(repository, sha, data_to_send, user=GitHub.user_for_queue(self.extractProperty(build, 'buildername')))
-
-    @defer.inlineCallbacks
     def stepStarted(self, key, step):
         state_string = step.get('state_string')
         if state_string == 'pending':
             state_string = 'Running {}'.format(step.get('name'))
-
-        build = yield self.master.db.builds.getBuild(step.get('buildid'))
-        if not build.get('properties'):
-            build['properties'] = yield self.master.db.builds.getBuildProperties(step.get('buildid'))
-
-        # We need to force the defered properties to resolve
-        if build['properties'].get('github.number') and build.get('step') not in self.SHORT_STEPS:
-            self.stepStartedGitHub(build, state_string)
 
         data = {
             "type": self.type_prefix + "step",
