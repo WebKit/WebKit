@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .scroller {
+            display: flex;
+            scroll-snap-type: both;
+            width: 0;
+            height: 0;
+            overflow: auto;
+        }
+        
+        .contents {
+            width: 200%;
+            scroll-snap-align: center;
+            width: 100%;
+
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        debug('Test passes if it does not crash');
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
