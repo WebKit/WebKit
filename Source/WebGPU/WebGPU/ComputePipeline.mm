@@ -39,7 +39,7 @@ struct LibraryCreationResult {
     WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
 };
 
-static std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)
+static std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)
 {
     if (shaderModule.library()) {
         if (const auto* pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
@@ -50,7 +50,7 @@ static std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, 
         }
     }
 
-    const auto* ast = shaderModule.ast();
+    auto* ast = shaderModule.ast();
     if (!ast)
         return std::nullopt;
 
@@ -147,7 +147,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     if (descriptor.nextInChain || descriptor.compute.nextInChain)
         return ComputePipeline::createInvalid(*this);
 
-    const ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
+    ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
     const PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
 

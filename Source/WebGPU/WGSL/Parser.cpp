@@ -476,6 +476,10 @@ Expected<AST::FunctionDecl, Error> Parser<Lexer>::parseFunctionDecl(AST::Attribu
     while (current().m_type != TokenType::ParenRight) {
         PARSE(parameter, Parameter);
         parameters.append(makeUniqueRef<AST::Parameter>(WTFMove(parameter)));
+        if (current().m_type == TokenType::Comma)
+            consume();
+        else
+            break;
     }
     CONSUME_TYPE(ParenRight);
 
