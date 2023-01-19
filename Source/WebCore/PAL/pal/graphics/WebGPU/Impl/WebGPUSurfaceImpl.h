@@ -49,7 +49,6 @@ public:
     virtual ~SurfaceImpl();
 
     WGPUSurface backing() const { return m_backing; }
-    MachSendRight displayBufferHandle() const;
     IOSurfaceRef drawingBuffer() const;
 
 private:

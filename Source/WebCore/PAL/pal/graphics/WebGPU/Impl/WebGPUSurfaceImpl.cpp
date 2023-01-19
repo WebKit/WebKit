@@ -56,12 +56,6 @@ void SurfaceImpl::setLabelInternal(const String& label)
     UNUSED_PARAM(label);
 }
 
-MachSendRight SurfaceImpl::displayBufferHandle() const
-{
-    IOSurfaceRef displayBuffer = wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(m_backing);
-    return MachSendRight::adopt(IOSurfaceCreateMachPort(displayBuffer));
-}
-
 IOSurfaceRef SurfaceImpl::drawingBuffer() const
 {
     return wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(m_backing);
