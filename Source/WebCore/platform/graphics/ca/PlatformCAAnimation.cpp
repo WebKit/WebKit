@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformCAAnimation.h"
 
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -74,6 +75,85 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::ValueFunctionType va
 bool PlatformCAAnimation::isBasicAnimation() const
 {
     return animationType() == Basic || animationType() == Spring;
+}
+
+static constexpr auto transformKeyPath = "transform"_s;
+static constexpr auto opacityKeyPath = "opacity"_s;
+static constexpr auto backgroundColorKeyPath = "backgroundColor"_s;
+static constexpr auto filterKeyPathPrefix = "filters.filter_"_s;
+#if ENABLE(FILTERS_LEVEL_2)
+static constexpr auto backdropFiltersKeyPath = "backdropFilters"_s;
+#endif
+
+String PlatformCAAnimation::makeGroupKeyPath()
+{
+    return emptyString();
+}
+
+String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, FilterOperation::Type filterOperationType, int index)
+{
+    switch (animatedProperty) {
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Scale:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Transform:
+        return transformKeyPath;
+    case AnimatedProperty::Opacity:
+        return opacityKeyPath;
+    case AnimatedProperty::BackgroundColor:
+        return backgroundColorKeyPath;
+    case AnimatedProperty::Filter:
+        return makeString(filterKeyPathPrefix, index, ".", PlatformCAFilters::animatedFilterPropertyName(filterOperationType));
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedProperty::WebkitBackdropFilter:
+        return backdropFiltersKeyPath;
+#endif
+    case AnimatedProperty::Invalid:
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
+
+static bool isValidFilterKeyPath(const String& keyPath)
+{
+    if (!keyPath.startsWith(filterKeyPathPrefix))
+        return false;
+
+    size_t underscoreIndex = filterKeyPathPrefix.length();
+    auto dotIndex = keyPath.find('.', underscoreIndex);
+    if (dotIndex == notFound || dotIndex <= underscoreIndex)
+        return false;
+
+    auto indexString = keyPath.substring(underscoreIndex, dotIndex - underscoreIndex);
+    auto parsedIndex = parseInteger<unsigned>(indexString);
+    if (!parsedIndex)
+        return false;
+
+    auto filterOperationTypeString = keyPath.substring(dotIndex + 1);
+    return PlatformCAFilters::isValidAnimatedFilterPropertyName(filterOperationTypeString);
+}
+
+bool PlatformCAAnimation::isValidKeyPath(const String& keyPath, AnimationType type)
+{
+    if (type == AnimationType::Group)
+        return keyPath.isEmpty();
+
+    if (keyPath == transformKeyPath
+        || keyPath == opacityKeyPath
+        || keyPath == backgroundColorKeyPath)
+        return true;
+
+#if ENABLE(FILTERS_LEVEL_2)
+    if (keyPath == backdropFiltersKeyPath)
+        return true;
+#endif
+
+    if (isValidFilterKeyPath(keyPath))
+        return true;
+
+    return false;
 }
 
 } // namespace WebCore

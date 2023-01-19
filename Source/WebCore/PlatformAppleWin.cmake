@@ -84,6 +84,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/ca/GraphicsLayerCA.cpp
     platform/graphics/ca/LayerPool.cpp
+    platform/graphics/ca/PlatformCAAnimation.cpp
     platform/graphics/ca/PlatformCALayer.cpp
     platform/graphics/ca/TileController.cpp
     platform/graphics/ca/TileCoverageMap.cpp
