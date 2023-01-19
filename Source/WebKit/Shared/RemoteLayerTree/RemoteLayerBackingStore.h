@@ -164,7 +164,7 @@ public:
 private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
-    void drawInContext(WebCore::GraphicsContext&);
+    void drawInContext(WebCore::GraphicsContext&, WTF::Function<void()>&& additionalContextSetupCallback = nullptr);
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;

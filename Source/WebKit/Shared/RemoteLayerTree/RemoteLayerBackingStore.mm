@@ -440,14 +440,13 @@ void RemoteLayerBackingStore::paintContents()
     if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         auto& displayListContext = m_displayListBuffer->context();
 
-#if HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
-        GraphicsContextStateSaver stateSaver(displayListContext);
-        displayListContext.scale(FloatSize(1, -1));
-        displayListContext.translate(0, -m_parameters.size.height());
-#endif
-
         BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
-        drawInContext(context);
+        drawInContext(context, [&] {
+#if HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
+            displayListContext.scale(FloatSize(1, -1));
+            displayListContext.translate(0, -m_parameters.size.height());
+#endif
+        });
         return;
     }
 #endif
@@ -456,9 +455,12 @@ void RemoteLayerBackingStore::paintContents()
     drawInContext(context);
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Function<void()>&& additionalContextSetupCallback)
 {
     GraphicsContextStateSaver stateSaver(context);
+
+    if (additionalContextSetupCallback)
+        additionalContextSetupCallback();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
