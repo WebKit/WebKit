@@ -42,40 +42,43 @@ PASS 37) MIME types need to be parsed and serialized: text/html;charset=";charse
 PASS 38) MIME types need to be parsed and serialized: text/html;charset={gbk}
 PASS 39) MIME types need to be parsed and serialized: text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk
 PASS 40) MIME types need to be parsed and serialized: 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789/0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
-PASS 41) MIME types need to be parsed and serialized: !#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
-PASS 42) MIME types need to be parsed and serialized: x/x;x="	 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"
-PASS 43) MIME types need to be parsed and serialized: x/x;test
-PASS 44) MIME types need to be parsed and serialized: x/x;test="\
-PASS 45) MIME types need to be parsed and serialized: x/x;x=
-PASS 46) MIME types need to be parsed and serialized: x/x;x=	
-PASS 47) MIME types need to be parsed and serialized: x/x
+PASS 41) MIME types need to be parsed and serialized: text/html;a]=bar;b[=bar;c=bar
+PASS 42) MIME types need to be parsed and serialized: text/html;valid=";";foo=bar
+PASS 43) MIME types need to be parsed and serialized: text/html;in]valid=";asd=foo";foo=bar
+PASS 44) MIME types need to be parsed and serialized: !#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz;!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=!#$%&'*+-.^_`|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+PASS 45) MIME types need to be parsed and serialized: x/x;x="	 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"
+PASS 46) MIME types need to be parsed and serialized: x/x;test
+PASS 47) MIME types need to be parsed and serialized: x/x;test="\
+PASS 48) MIME types need to be parsed and serialized: x/x;x=
+PASS 49) MIME types need to be parsed and serialized: x/x;x=	
+PASS 50) MIME types need to be parsed and serialized: x/x
 \r	 ;x=x
-PASS 48) MIME types need to be parsed and serialized:
+PASS 51) MIME types need to be parsed and serialized:
 \r	 x/x;x=x
 \r	
-PASS 49) MIME types need to be parsed and serialized: x/x;
+PASS 52) MIME types need to be parsed and serialized: x/x;
 \r	 x=x
 \r	 ;x=y
-PASS 50) MIME types need to be parsed and serialized: text/html;test=ÿ;charset=gbk
-PASS 51) MIME types need to be parsed and serialized: x/x;test=�;x=x
-PASS 52) MIME types need to be parsed and serialized: x/x
-PASS 53) MIME types need to be parsed and serialized: x/x
-PASS 54) MIME types need to be parsed and serialized: x/x
-PASS 55) MIME types need to be parsed and serialized: x/x
-PASS 56) MIME types need to be parsed and serialized:
-PASS 57) MIME types need to be parsed and serialized: 	
-PASS 58) MIME types need to be parsed and serialized: /
-PASS 59) MIME types need to be parsed and serialized: bogus
-PASS 60) MIME types need to be parsed and serialized: bogus/
-PASS 61) MIME types need to be parsed and serialized: bogus/
-PASS 62) MIME types need to be parsed and serialized: bogus/bogus/;
-PASS 63) MIME types need to be parsed and serialized: </>
-PASS 64) MIME types need to be parsed and serialized: (/)
-PASS 65) MIME types need to be parsed and serialized: ÿ/ÿ
-PASS 66) MIME types need to be parsed and serialized: text/html(;doesnot=matter
-PASS 67) MIME types need to be parsed and serialized: {/}
-PASS 68) MIME types need to be parsed and serialized: Ā/Ā
-PASS 69) MIME types need to be parsed and serialized: text /html
-PASS 70) MIME types need to be parsed and serialized: text/ html
-PASS 71) MIME types need to be parsed and serialized: "text/html"
+PASS 53) MIME types need to be parsed and serialized: text/html;test=ÿ;charset=gbk
+PASS 54) MIME types need to be parsed and serialized: x/x;test=�;x=x
+PASS 55) MIME types need to be parsed and serialized: x/x
+PASS 56) MIME types need to be parsed and serialized: x/x
+PASS 57) MIME types need to be parsed and serialized: x/x
+PASS 58) MIME types need to be parsed and serialized: x/x
+PASS 59) MIME types need to be parsed and serialized:
+PASS 60) MIME types need to be parsed and serialized: 	
+PASS 61) MIME types need to be parsed and serialized: /
+PASS 62) MIME types need to be parsed and serialized: bogus
+PASS 63) MIME types need to be parsed and serialized: bogus/
+PASS 64) MIME types need to be parsed and serialized: bogus/
+PASS 65) MIME types need to be parsed and serialized: bogus/bogus/;
+PASS 66) MIME types need to be parsed and serialized: </>
+PASS 67) MIME types need to be parsed and serialized: (/)
+PASS 68) MIME types need to be parsed and serialized: ÿ/ÿ
+PASS 69) MIME types need to be parsed and serialized: text/html(;doesnot=matter
+PASS 70) MIME types need to be parsed and serialized: {/}
+PASS 71) MIME types need to be parsed and serialized: Ā/Ā
+PASS 72) MIME types need to be parsed and serialized: text /html
+PASS 73) MIME types need to be parsed and serialized: text/ html
+PASS 74) MIME types need to be parsed and serialized: "text/html"
 
