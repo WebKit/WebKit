@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ContentExtension.h"
 
+#include "CSSParserContext.h"
 #include "CompiledContentExtension.h"
+#include "ContentExtensionParser.h"
 #include "ContentExtensionsBackend.h"
 #include "StyleSheetContents.h"
 #include <wtf/text/StringBuilder.h>
@@ -98,7 +100,7 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
     css.append(ContentExtensionsBackend::displayNoneCSSRule());
     css.append('}');
 
-    m_globalDisplayNoneStyleSheet = StyleSheetContents::create();
+    m_globalDisplayNoneStyleSheet = StyleSheetContents::create(contentExtensionCSSParserContext());
     m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);
     if (!m_globalDisplayNoneStyleSheet->parseString(css.toString()))
         m_globalDisplayNoneStyleSheet = nullptr;

@@ -29,6 +29,7 @@
 
 #include "Utilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
+#include <WebCore/CSSParserContext.h>
 #include <WebCore/CombinedURLFilters.h>
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/ContentExtensionActions.h>

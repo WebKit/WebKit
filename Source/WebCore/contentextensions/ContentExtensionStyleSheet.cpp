@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "CSSStyleSheet.h"
+#include "ContentExtensionParser.h"
 #include "ContentExtensionsBackend.h"
 #include "Document.h"
 #include "StyleSheetContents.h"
@@ -38,7 +39,7 @@ namespace WebCore {
 namespace ContentExtensions {
 
 ContentExtensionStyleSheet::ContentExtensionStyleSheet(Document& document)
-    : m_styleSheet(CSSStyleSheet::create(StyleSheetContents::create(), document))
+    : m_styleSheet(CSSStyleSheet::create(StyleSheetContents::create(contentExtensionCSSParserContext()), document))
 {
     m_styleSheet->contents().setIsUserStyleSheet(true);
 }

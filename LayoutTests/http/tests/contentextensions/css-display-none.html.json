@@ -37,6 +37,24 @@
     },
     {
         "action": {
+            "type": "css-display-none",
+            "selector": "div:has(.hidden_hasTestNotMatchingEverything)"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": "div:has(.hidden_hasTestMatchingEverything)"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
             "type": "ignore-previous-rules"
         },
         "trigger": {
