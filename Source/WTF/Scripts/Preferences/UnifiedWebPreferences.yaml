@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (c) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -1591,11 +1591,11 @@ DataDetectorTypes:
   condition: ENABLE(DATA_DETECTION)
   defaultValue:
     WebKitLegacy:
-      default: 0
+      default: DataDetectorType::None
     WebKit:
-      default: 0
+      default: DataDetectorType::None
     WebCore:
-      default: '{ }'
+      default: DataDetectorType::None
 
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
@@ -5677,9 +5677,9 @@ SystemLayoutDirection:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      default: 0
+      default: TextDirection::LTR
     WebKit:
-      default: 0
+      default: TextDirection::LTR
     WebCore:
       default: TextDirection::LTR
 
@@ -6154,9 +6154,9 @@ UserInterfaceDirectionPolicy:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      default: 0
+      default: UserInterfaceDirectionPolicy::Content
     WebKit:
-      default: 0
+      default: UserInterfaceDirectionPolicy::Content
     WebCore:
       default: UserInterfaceDirectionPolicy::Content
 

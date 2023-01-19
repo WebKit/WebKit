@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2020 Apple Inc. All rights reserved.
+# Copyright (c) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -82,14 +82,6 @@ CrossOriginCheckInGetMatchedCSSRulesDisabled:
     WebCore:
       default: false
 
-DataDetectorTypes:
-  type: uint32_t
-  refinedType: DataDetectorType
-  condition: ENABLE(DATA_DETECTION)
-  defaultValue:
-    WebCore:
-      default: '{ }'
-
 DefaultVideoPosterURL:
   comment: >-
     Some apps could have a default video poster if it is not set.
@@ -97,12 +89,6 @@ DefaultVideoPosterURL:
   defaultValue:
     WebCore:
       default: '{ }'
-
-DisableScreenSizeOverride:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
 
 DownloadableBinaryFontAllowedTypes:
   comment: >-
@@ -114,13 +100,6 @@ DownloadableBinaryFontAllowedTypes:
     WebCore:
       PLATFORM(WATCHOS): DownloadableBinaryFontAllowedTypes::None
       default: DownloadableBinaryFontAllowedTypes::Any
-
-EditableLinkBehavior:
-  type: uint32_t
-  refinedType: EditableLinkBehavior
-  defaultValue:
-    WebCore:
-      default: EditableLinkBehavior::Default
 
 EditingBehaviorType:
   type: uint32_t
@@ -253,12 +232,6 @@ ImagesEnabled:
     WebCore:
       default: true
 
-IsAccessibilityIsolatedTreeEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 IsPerActivityStateCPUUsageMeasurementEnabled:
   type: bool
   defaultValue:
@@ -294,13 +267,6 @@ IsPostLoadMemoryUsageMeasurementEnabled:
       PLATFORM(COCOA): true
       default: false
 
-JavaScriptRuntimeFlags:
-  type: uint32_t
-  refinedType: JSC::RuntimeFlags
-  defaultValue:
-    WebCore:
-      default: '{ }'
-
 LangAttributeAwareFormControlUIEnabled:
   type: bool
   defaultValue:
@@ -334,13 +300,6 @@ MaximumSourceBufferSize:
   defaultValue:
     WebCore:
       default: 318767104
-
-MediaDeviceIdentifierStorageDirectory:
-  type: String
-  condition: ENABLE(MEDIA_STREAM)
-  defaultValue:
-    WebCore:
-      default: '{ }'
 
 MediaKeysStorageDirectory:
   type: String
@@ -483,13 +442,6 @@ StorageBlockingPolicy:
     WebCore:
       default: StorageBlockingPolicy::AllowAll
 
-SystemLayoutDirection:
-  type: uint32_t
-  refinedType: TextDirection
-  defaultValue:
-    WebCore:
-      default: TextDirection::LTR
-
 TextAutosizingWindowSizeOverrideHeight:
   type: uint32_t
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
@@ -552,13 +504,6 @@ UseAnonymousModeWhenFetchingMaskImages:
   defaultValue:
     WebCore:
       default: true
-
-UserInterfaceDirectionPolicy:
-  type: uint32_t
-  refinedType: UserInterfaceDirectionPolicy
-  defaultValue:
-    WebCore:
-      default: UserInterfaceDirectionPolicy::Content
 
 UserStyleSheetLocation:
   type: String
