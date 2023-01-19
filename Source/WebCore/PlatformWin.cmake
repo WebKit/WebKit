@@ -205,8 +205,8 @@ if (USE_CF)
         loader/archive/cf/LegacyWebArchive.h
     )
 
-    list(APPEND WebCore_LIBRARIES Apple::CoreFoundation)
-    list(APPEND WebCoreTestSupport_LIBRARIES Apple::CoreFoundation)
+    list(APPEND WebCore_LIBRARIES ${COREFOUNDATION_LIBRARY})
+    list(APPEND WebCoreTestSupport_LIBRARIES ${COREFOUNDATION_LIBRARY})
 else ()
     list(APPEND WebCore_SOURCES
         platform/text/Hyphenation.cpp

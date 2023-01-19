@@ -10,15 +10,15 @@ else ()
         win/WebURLAuthenticationChallengeSenderCFNet.cpp
     )
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-        Apple::CFNetwork
-        Apple::CoreGraphics
-        Apple::CoreText
-        Apple::QuartzCore
-        Apple::libdispatch
-        LibXml2::LibXml2
-        LibXslt::LibXslt
-        SQLite::SQLite3
-        ZLIB::ZLIB
+        CFNetwork${DEBUG_SUFFIX}
+        CoreGraphics${DEBUG_SUFFIX}
+        CoreText${DEBUG_SUFFIX}
+        QuartzCore${DEBUG_SUFFIX}
+        libdispatch${DEBUG_SUFFIX}
+        libxml2${DEBUG_SUFFIX}
+        libxslt${DEBUG_SUFFIX}
+        zdll${DEBUG_SUFFIX}
+        SQLite3${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -219,7 +219,7 @@ if (USE_CF)
     )
 
     list(APPEND WebKitLegacy_LIBRARIES
-        Apple::CoreFoundation
+        ${COREFOUNDATION_LIBRARY}
     )
 endif ()
 

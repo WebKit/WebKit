@@ -26,7 +26,7 @@ set(MiniBrowser_FRAMEWORKS
 
 if (USE_CF)
     list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        Apple::CoreFoundation
+        ${COREFOUNDATION_LIBRARY}
     )
 endif ()
 
