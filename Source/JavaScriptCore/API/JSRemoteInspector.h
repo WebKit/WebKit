@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,11 @@ JS_EXPORT void JSRemoteInspectorSetLogToSystemConsole(bool) JSC_API_AVAILABLE(ma
 
 JS_EXPORT bool JSRemoteInspectorGetInspectionEnabledByDefault(void) JSC_API_AVAILABLE(macos(10.11), ios(9.0));
 JS_EXPORT void JSRemoteInspectorSetInspectionEnabledByDefault(bool) JSC_API_DEPRECATED("Use JSGlobalContextSetInspectable on a single JSGlobalContextRef.", macos(10.11, JSC_MAC_TBA), ios(9.0, JSC_IOS_TBA));
+
+// FIXME: <rdar://104354248> SPI annotated with TBA availability information is not usable in WebCore/WebKit on
+// downlevel builds. These SPI are available starting in JSC_MAC_TBA and JSC_IOS_TBA.
+JS_EXPORT bool JSRemoteInspectorGetInspectionFollowsInternalPolicies(void);
+JS_EXPORT void JSRemoteInspectorSetInspectionFollowsInternalPolicies(bool);
 
 #ifdef __cplusplus
 }
