@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "JSRemoteInspector.h"
 #include "RemoteControllableTarget.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
@@ -40,6 +41,8 @@ class JS_EXPORT_PRIVATE RemoteInspectionTarget : public RemoteControllableTarget
 public:
     bool inspectable() const;
     void setInspectable(bool);
+
+    bool allowsInspectionByPolicy() const;
 
 #if USE(CF)
     CFRunLoopRef targetRunLoop() const final { return m_runLoop.get(); }
@@ -60,7 +63,16 @@ public:
     bool remoteControlAllowed() const final;
 
 private:
-    bool m_inspectable { false };
+    enum class Inspectable : uint8_t {
+        Yes,
+        No,
+
+        // For WebKit internal proxies and wrappers, we want to always disable inspection even when internal policies
+        // would otherwise enable inspection.
+        NoIgnoringInternalPolicies,
+    };
+    Inspectable m_inspectable { JSRemoteInspectorGetInspectionFollowsInternalPolicies() ? Inspectable::No : Inspectable::NoIgnoringInternalPolicies };
+
 #if USE(CF)
     RetainPtr<CFRunLoopRef> m_runLoop;
 #endif

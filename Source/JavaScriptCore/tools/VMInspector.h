@@ -67,6 +67,9 @@ public:
     JS_EXPORT_PRIVATE static void forEachVM(Function<IterationStatus(VM&)>&&);
     JS_EXPORT_PRIVATE static void dumpVMs();
 
+    // Returns null if the callFrame doesn't actually correspond to any active VM.
+    JS_EXPORT_PRIVATE static VM* vmForCallFrame(CallFrame*);
+
     Expected<bool, Error> isValidExecutableMemory(void*) WTF_REQUIRES_LOCK(m_lock);
     Expected<CodeBlock*, Error> codeBlockForMachinePC(void*) WTF_REQUIRES_LOCK(m_lock);
 

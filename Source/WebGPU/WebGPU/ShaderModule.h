@@ -65,7 +65,7 @@ public:
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label);
 
-    const WGSL::AST::ShaderModule* ast() const;
+    WGSL::AST::ShaderModule* ast() const;
 
     const PipelineLayout* pipelineLayoutHint(const String&) const;
     const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;

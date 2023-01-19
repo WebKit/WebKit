@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "StackVisitor.h"
+#include "VMEntryRecord.h"
 #include <mutex>
 #include <wtf/Expected.h>
 
@@ -107,6 +108,32 @@ void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
     VMInspector& inspector = instance();
     Locker lock { inspector.getLock() };
     inspector.iterate(func);
+}
+
+// Returns null if the callFrame doesn't actually correspond to any active VM.
+VM* VMInspector::vmForCallFrame(CallFrame* callFrame)
+{
+    VMInspector& inspector = instance();
+    Locker lock { inspector.getLock() };
+
+    auto isOnVMStack = [] (VM& vm, CallFrame* callFrame) -> bool {
+        void* stackBottom = vm.stackPointerAtVMEntry(); // high memory
+        void* stackTop = vm.stackLimit(); // low memory
+        return stackBottom > callFrame && callFrame > stackTop;
+    };
+
+    if (m_recentVM && isOnVMStack(*m_recentVM, callFrame))
+        return m_recentVM;
+
+    VM* ownerVM = nullptr;
+    inspector.iterate([&] (VM& vm) {
+        if (isOnVMStack(vm, callFrame)) {
+            ownerVM = &vm;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    return ownerVM;
 }
 
 WTF_IGNORES_THREAD_SAFETY_ANALYSIS auto VMInspector::isValidExecutableMemory(void* machinePC) -> Expected<bool, Error>
@@ -359,116 +386,140 @@ void VMInspector::dumpCallFrame(VM* vm, CallFrame* callFrame, unsigned framesToS
     StackVisitor::visit(callFrame, *vm, functor);
 }
 
-void VMInspector::dumpRegisters(CallFrame* callFrame)
+SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
 {
-    CodeBlock* codeBlock = callFrame->isAnyWasmCallee() ? nullptr : callFrame->codeBlock();
-    if (!codeBlock) {
-        dataLog("Dumping host frame registers not supported.\n");
+    VM* vmPtr = vmForCallFrame(callFrame);
+    if (!vmPtr) {
+        dataLogLn("Cannot find callFrame on any VM stack.");
         return;
     }
-    VM& vm = codeBlock->vm();
+
+    VM& vm = *vmPtr;
+
     auto valueAsString = [&] (JSValue v) -> CString {
         if (!v.isCell() || VMInspector::isValidCell(&vm.heap, reinterpret_cast<JSCell*>(JSValue::encode(v))))
             return toCString(v);
         return "";
     };
 
-    dataLogF("Register frame: \n\n");
-    dataLogF("-----------------------------------------------------------------------------\n");
-    dataLogF("            use            |   address  |                value               \n");
-    dataLogF("-----------------------------------------------------------------------------\n");
-
-    const Register* it;
-    const Register* end;
-
-    it = callFrame->registers() + (CallFrameSlot::thisArgument + callFrame->argumentCount());
-    end = callFrame->registers() + (CallFrameSlot::thisArgument - 1);
-    while (it > end) {
-        JSValue v = it->jsValue();
-        int registerNumber = it - callFrame->registers();
-        String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
-        dataLogF("[r% 3d %14s]      | %10p | 0x%-16llx %s\n", registerNumber, name.ascii().data(), it, (long long)JSValue::encode(v), valueAsString(v).data());
-        --it;
-    }
-    
-    dataLogF("-----------------------------------------------------------------------------\n");
-    dataLogF("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
-
-    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
-        if (visitor->callFrame() == callFrame) {
-            unsigned line = 0;
-            unsigned unusedColumn = 0;
-            visitor->computeLineAndColumn(line, unusedColumn);
-            dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, visitor->bytecodeIndex().offset(), line);
-            return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
-    });
-
-    --it;
-    dataLogF("[Callee]                   | %10p | 0x%-16llx %s\n", it, (long long)callFrame->callee().rawPtr(), valueAsString(it->jsValue()).data());
-    --it;
-    dataLogF("[CodeBlock]                | %10p | 0x%-16llx ", it, (long long)codeBlock);
-    dataLogLn(codeBlock);
-    --it;
-#if ENABLE(JIT)
-    if (Options::useJIT()) {
-        void* pc = callFrame->returnPCForInspection();
-        dataLogF("[ReturnPC]                 | %10p | %p \n", it, pc);
-    }
-    --it;
-#endif
-    dataLogF("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
-    --it;
-    dataLogF("-----------------------------------------------------------------------------\n");
-
-    size_t numberOfCalleeSaveSlots = CodeBlock::calleeSaveSpaceAsVirtualRegisters(*codeBlock->jitCode()->calleeSaveRegisters());
-    const Register* endOfCalleeSaves = it - numberOfCalleeSaveSlots;
-
-    end = it - codeBlock->numVars();
-    if (it != end) {
-        do {
-            JSValue v = it->jsValue();
-            int registerNumber = it - callFrame->registers();
-            String name = (it > endOfCalleeSaves)
-                ? "CalleeSaveReg"_s
-                : codeBlock->nameForRegister(VirtualRegister(registerNumber));
-            dataLogF("[r% 3d %14s]      | %10p | 0x%-16llx %s\n", registerNumber, name.ascii().data(), it, (long long)JSValue::encode(v), valueAsString(v).data());
-            --it;
-        } while (it != end);
-    }
-    dataLogF("-----------------------------------------------------------------------------\n");
-
     CallFrame* topCallFrame = vm.topCallFrame;
     CallFrame* nextCallFrame = nullptr;
+    EntryFrame* entryFrame = nullptr;
 
+    // Check if frame is an entryFrame.
+    entryFrame = vm.topEntryFrame;
+    while (entryFrame) {
+        if (entryFrame == bitwise_cast<EntryFrame*>(callFrame)) {
+            dataLogLn("CallFrame ", RawPointer(callFrame), " is an EntryFrame.");
+            auto* entryRecord = vmEntryRecord(entryFrame);
+            dataLogLn("    previous entryFrame: ", RawPointer(entryRecord->prevTopEntryFrame()));
+            dataLogLn("    previous topCallFrame: ", RawPointer(entryRecord->prevTopCallFrame()));
+            return;
+        }
+        auto* entryRecord = vmEntryRecord(entryFrame);
+        entryFrame = entryRecord->prevTopEntryFrame();
+    }
+
+    // Find entryFrame and next frame.
     if (topCallFrame) {
         StackVisitor::visit(topCallFrame, vm, [&] (StackVisitor& visitor) {
-            if (callFrame == visitor->callFrame())
+            if (callFrame == visitor->callFrame()) {
+                entryFrame = visitor->entryFrame();
                 return IterationStatus::Done;
+            }
             nextCallFrame = visitor->callFrame();
             return IterationStatus::Continue;
         });
     }
 
-    if (!nextCallFrame) {
-        // Don't know how much space on the stack frame is actually allocated for
-        // this frame. ASAN does not like it if we read beyond the frame.
-        end = it; // Stop the dump
-    } else {
-        end = bitwise_cast<const Register*>(nextCallFrame);
-        RELEASE_ASSERT(static_cast<unsigned>(it - end) < codeBlock->numCalleeLocals() - codeBlock->numVars());
+    // Dumping from low memory to high memory.
+    bool isWasm = callFrame->isAnyWasmCallee();
+    CodeBlock* codeBlock = isWasm ? nullptr : callFrame->codeBlock();
+    unsigned numVars = codeBlock ? codeBlock->numVars() : 0;
+
+    const Register* it;
+    const Register* callFrameTop = callFrame->registers();
+    const Register* startOfLocals = callFrameTop - numVars;
+
+    if (nextCallFrame)
+        it = nextCallFrame->registers() + static_cast<int>(CallFrameSlot::thisArgument);
+    else
+        it = startOfLocals;
+
+    int registerNumber = it - callFrame->registers();
+    const char* frameType = isWasm ? "Wasm" : codeBlock ? "JS" : "native";
+
+    dataLogF("Registers for %s frame 0x%llx (entryFrame ", frameType, (long long)callFrame);
+    if (entryFrame)
+        dataLogF("0x%llx):\n", (long long)entryFrame);
+    else
+        dataLogF("unknown):\n");
+    dataLogF("-----------------------------------------------------------------------------\n");
+    dataLogF("   VirtualRegister     : address      value\n");
+
+    if (codeBlock) {
+        dataLogF("---------------------------------------------------- Outgoing Args + Misc ---\n");
+        
+        while (it < startOfLocals) {
+            JSValue v = it->jsValue();
+            dataLogF("% 4d                   : %10p  0x%llx %s\n", registerNumber++, it++, (long long)JSValue::encode(v), valueAsString(v).data());
+        }
+        
+        dataLogF("------------------------------------------------------------------ Locals ---\n");
+        
+        
+        size_t numberOfCalleeSaveSlots = CodeBlock::calleeSaveSpaceAsVirtualRegisters(*codeBlock->jitCode()->calleeSaveRegisters());
+        const Register* endOfCalleeSaves = callFrameTop - numberOfCalleeSaveSlots;
+        
+        while (it < endOfCalleeSaves) {
+            JSValue v = it->jsValue();
+            String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
+            dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii().data(), it++, (long long)JSValue::encode(v), valueAsString(v).data());
+        }
+        
+        dataLogF("------------------------------------------------------------ Callee Saves ---\n");
+        
+        while (it != callFrameTop) {
+            JSValue v = it->jsValue();
+            dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, "CalleeSaveReg", it++, (long long)JSValue::encode(v), valueAsString(v).data());
+        }
     }
 
-    if (it != end) {
-        do {
-            JSValue v = (*it).jsValue();
-            int registerNumber = it - callFrame->registers();
-            dataLogF("[r% 3d]                     | %10p | 0x%-16llx %s\n", registerNumber, it, (long long)JSValue::encode(v), valueAsString(v).data());
-            --it;
-        } while (it != end);
+    dataLogF("-------------------------------------------------------- CallFrame Header ---\n");
+    
+    dataLogF("% 4d  CallerFrame      : %10p  %p \n", registerNumber++, it++, callFrame->callerFrame());
+    if constexpr (isARM64E())
+        dataLogF("% 4d  ReturnPC         : %10p  %p (pac signed %p) \n", registerNumber++, it++, callFrame->returnPCForInspection(), callFrame->rawReturnPCForInspection());
+    else
+        dataLogF("% 4d  ReturnPC         : %10p  %p \n", registerNumber++, it++, callFrame->returnPCForInspection());
+    dataLogF("% 4d  CodeBlock        : %10p  0x%llx ", registerNumber++, it++, (long long)codeBlock);
+    dataLogLn(codeBlock);
+    long long calleeBits = (long long)callFrame->callee().rawPtr();
+    auto calleeString = valueAsString(it->jsValue()).data();
+    dataLogF("% 4d  Callee           : %10p  0x%llx %s\n", registerNumber++, it++, calleeBits, calleeString);
+    
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
+        if (visitor->callFrame() == callFrame) {
+            unsigned line = 0;
+            unsigned unusedColumn = 0;
+            visitor->computeLineAndColumn(line, unusedColumn);
+            dataLogF("% 2d.1  ReturnVPC        : %10p  %d (line %d)\n", registerNumber, it, visitor->bytecodeIndex().offset(), line);
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    dataLogF("% 2d.2  ArgumentCount    : %10p  %lu \n", registerNumber++, it++, (unsigned long) callFrame->argumentCount());
+    
+    dataLogF("--------------------------------------------------------------- Arguments ---\n");
+    
+    const Register* bottom = callFrame->registers() + (CallFrameSlot::thisArgument + callFrame->argumentCount());
+    while (it <= bottom) {
+        JSValue v = it->jsValue();
+        String name = codeBlock ? codeBlock->nameForRegister(VirtualRegister(registerNumber)) : emptyString();
+        dataLogF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii().data(), it++, (long long)JSValue::encode(v), valueAsString(v).data());
     }
-    dataLogF("-----------------------------------------------------------------------------\n");
+    
+    dataLogF("--------------------------------------------------------------------- End ---\n");
 }
 
 void VMInspector::dumpStack(VM* vm, CallFrame* topCallFrame, unsigned framesToSkip)

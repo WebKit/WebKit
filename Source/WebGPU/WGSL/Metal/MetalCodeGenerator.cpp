@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MetalCodeGenerator.h"
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#include "AST.h"
+#include "MetalFunctionWriter.h"
+#include <wtf/DataLog.h>
+#include <wtf/text/StringBuilder.h>
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUSurface.h"
-#include "WebGPUTextureFormat.h"
-#include <IOSurface/IOSurfaceRef.h>
-#include <WebGPU/WebGPU.h>
-#include <wtf/MachSendRight.h>
+namespace WGSL {
 
-namespace PAL::WebGPU {
+namespace Metal {
 
-class ConvertToBackingContext;
+static constexpr bool dumpMetalCode = false;
 
-class SurfaceImpl final : public Surface {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<SurfaceImpl> create(WGPUSurface surface)
-    {
-        return adoptRef(*new SurfaceImpl(surface));
+static StringView metalCodePrologue()
+{
+    return StringView {
+        "#include <metal_stdlib>\n"
+        "\n"
+        "using namespace metal;\n"
+        "\n"_s
+    };
+
+}
+
+static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
+{
+    if (dumpMetalCode) {
+        dataLogLn("Generated Metal code:");
+        dataLogLn(stringBuilder.toString());
     }
+}
 
-    virtual ~SurfaceImpl();
+RenderMetalCode generateMetalCode(AST::ShaderModule& module)
+{
+    StringBuilder stringBuilder;
+    stringBuilder.append(metalCodePrologue());
 
-    WGPUSurface backing() const { return m_backing; }
-    IOSurfaceRef drawingBuffer() const;
+    auto metalFunctionEntryPoints = Metal::emitMetalFunctions(stringBuilder, module);
 
-private:
-    friend class DowncastConvertToBackingContext;
+    dumpMetalCodeIfNeeded(stringBuilder);
 
-    SurfaceImpl(WGPUSurface);
+    return { WTFMove(stringBuilder), WTFMove(metalFunctionEntryPoints.mangledVertexEntryPointName), WTFMove(metalFunctionEntryPoints.mangledFragmentEntryPointName) };
+}
 
-    SurfaceImpl(const SurfaceImpl&) = delete;
-    SurfaceImpl(SurfaceImpl&&) = delete;
-    SurfaceImpl& operator=(const SurfaceImpl&) = delete;
-    SurfaceImpl& operator=(SurfaceImpl&&) = delete;
-
-    void destroy() final;
-
-    void setLabelInternal(const String&) final;
-
-    WGPUSurface m_backing { nullptr };
-};
-
-} // namespace PAL::WebGPU
-
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+} // namespace Metal
+} // namespace WGSL

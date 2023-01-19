@@ -47,6 +47,6 @@ enum DOMAudioSessionType {
 ] interface DOMAudioSession : EventTarget {
     attribute DOMAudioSessionType type;
 
-    readonly attribute DOMAudioSessionState state;
-    attribute EventHandler onstatechange;
+    [EnabledBySetting=DOMAudioSessionFullEnabled] readonly attribute DOMAudioSessionState state;
+    [EnabledBySetting=DOMAudioSessionFullEnabled] attribute EventHandler onstatechange;
 };

@@ -127,7 +127,7 @@ TEST_P(StreamConnectionBufferTest, ClientWritesFullVisibleInServer)
 
 INSTANTIATE_TEST_SUITE_P(StreamConnectionBufferSizedTests,
     StreamConnectionBufferTest,
-    testing::Values(4, 5, 9, 14),
+    testing::Values(6, 9, 14),
     TestParametersToStringFormatter());
 
 }

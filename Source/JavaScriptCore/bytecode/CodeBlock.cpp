@@ -3160,7 +3160,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
     if (virtualRegister == thisRegister())
         return "this"_s;
     if (virtualRegister.isArgument())
-        return makeString("arguments[", pad(' ', 3, virtualRegister.toArgument()), ']');
+        return makeString("arguments[", virtualRegister.toArgument(), ']');
 
     return emptyString();
 }

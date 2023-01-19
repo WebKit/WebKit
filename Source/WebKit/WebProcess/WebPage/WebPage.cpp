@@ -3193,7 +3193,8 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
 
 void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps)
 {
-    wheelEvent(event, processingSteps, EventDispatcher::WheelEventOrigin::UIProcess);
+    bool handled = wheelEvent(event, processingSteps, EventDispatcher::WheelEventOrigin::UIProcess);
+    send(Messages::WebPageProxy::DidReceiveEvent(event.type(), handled));
 }
 
 bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, EventDispatcher::WheelEventOrigin wheelEventOrigin)
@@ -3210,11 +3211,9 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
         auto platformWheelEvent = platform(wheelEvent);
         return m_page->userInputBridge().handleWheelEvent(platformWheelEvent, processingSteps);
     };
+
     bool handled = dispatchWheelEvent(wheelEvent, processingSteps);
-
-    if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
-        send(Messages::WebPageProxy::DidReceiveEvent(wheelEvent.type(), handled));
-
+    LOG_WITH_STREAM(WheelEvents, stream << "WebPage::wheelEvent - processing steps " << processingSteps << " handled " << handled);
     return handled;
 }
 
@@ -3227,6 +3226,7 @@ void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent
     bool isCancelable = true;
 #endif
     bool handled = this->wheelEvent(wheelEvent, { isCancelable ? WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch : WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch }, EventDispatcher::WheelEventOrigin::UIProcess);
+    // The caller of dispatchWheelEventWithoutScrolling never cares about DidReceiveEvent being sent back.
     completionHandler(handled);
 }
 

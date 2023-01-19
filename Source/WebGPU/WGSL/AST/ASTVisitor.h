@@ -88,8 +88,17 @@ public:
     bool hasError() const;
     Expected<void, Error> result();
 
-    template<typename T> void checkErrorAndVisit(T&);
-    template<typename T> void maybeCheckErrorAndVisit(T*);
+    template<typename T> void checkErrorAndVisit(T& x)
+    {
+        if (!hasError())
+            visit(x);
+    }
+
+    template<typename T> void maybeCheckErrorAndVisit(T* x)
+    {
+        if (!hasError() && x)
+            visit(*x);
+    }
 
 protected:
     void setError(Error error)

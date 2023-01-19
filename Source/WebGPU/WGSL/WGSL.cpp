@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WGSL.h"
 
+#include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
 
 namespace WGSL {
@@ -54,19 +55,19 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<AST::Shad
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-PrepareResult prepare(const AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
-    UNUSED_PARAM(ast);
     UNUSED_PARAM(pipelineLayouts);
-    return { String(), { } };
+    Metal::RenderMetalCode metalCode = Metal::generateMetalCode(ast);
+    return { metalCode.metalSource.toString(), { } };
 }
 
-PrepareResult prepare(const AST::ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(AST::ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
 {
-    UNUSED_PARAM(ast);
     UNUSED_PARAM(entryPointName);
     UNUSED_PARAM(pipelineLayouts);
-    return { String(), { } };
+    Metal::RenderMetalCode metalCode = Metal::generateMetalCode(ast);
+    return { metalCode.metalSource.toString(), { } };
 }
 
 }

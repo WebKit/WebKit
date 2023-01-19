@@ -84,6 +84,10 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
+		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
+		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
+		979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B5297018290050EA2C /* MetalFunctionWriter.cpp */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
@@ -324,6 +328,10 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
+		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
+		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
+		979240B5297018290050EA2C /* MetalFunctionWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalFunctionWriter.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -596,6 +604,7 @@
 			isa = PBXGroup;
 			children = (
 				33EA185C27BC193D00A1DD52 /* AST */,
+				979240B1297018290050EA2C /* Metal */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
@@ -679,6 +688,17 @@
 			path = AST;
 			sourceTree = "<group>";
 		};
+		979240B1297018290050EA2C /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				979240B4297018290050EA2C /* MetalCodeGenerator.cpp */,
+				979240B2297018290050EA2C /* MetalCodeGenerator.h */,
+				979240B5297018290050EA2C /* MetalFunctionWriter.cpp */,
+				979240B3297018290050EA2C /* MetalFunctionWriter.h */,
+			);
+			path = Metal;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -728,6 +748,8 @@
 				3A1337E828FBD56400F29B73 /* ASTVisitor.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
+				979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */,
+				979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */,
 				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
@@ -926,6 +948,8 @@
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,
+				979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */,
+				979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */,
 				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,

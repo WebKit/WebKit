@@ -28,6 +28,8 @@
 
 #if USE(CA)
 
+#include <wtf/text/WTFString.h>
+
 using namespace WebCore;
 
 void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations&)
@@ -41,10 +43,16 @@ bool PlatformCAFilters::isAnimatedFilterProperty(FilterOperation::Type)
     return false;
 }
 
-const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Type)
+String PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Type)
 {
     // Hardware filter animation not implemented on Windows.
-    return "";
+    return emptyString();
+}
+
+bool PlatformCAFilters::isValidAnimatedFilterPropertyName(const String&)
+{
+    // Hardware filter animation not implemented on Windows.
+    return false;
 }
 
 #endif

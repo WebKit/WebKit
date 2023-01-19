@@ -300,13 +300,13 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
     return { { } };
 }
 
-const WGSL::AST::ShaderModule* ShaderModule::ast() const
+WGSL::AST::ShaderModule* ShaderModule::ast() const
 {
-    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> const WGSL::AST::ShaderModule* {
+    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> WGSL::AST::ShaderModule* {
         return successfulCheck.ast.ptr();
-    }, [&](const WGSL::FailedCheck&) -> const WGSL::AST::ShaderModule* {
+    }, [&](const WGSL::FailedCheck&) -> WGSL::AST::ShaderModule* {
         return nullptr;
-    }, [](std::monostate) -> const WGSL::AST::ShaderModule* {
+    }, [](std::monostate) -> WGSL::AST::ShaderModule* {
         ASSERT_NOT_REACHED();
         return nullptr;
     });

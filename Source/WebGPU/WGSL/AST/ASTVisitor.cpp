@@ -40,18 +40,6 @@ Expected<void, Error> Visitor::result()
     return m_expectedError;
 }
 
-template<typename T> void Visitor::checkErrorAndVisit(T& x)
-{
-    if (!hasError())
-        visit(x);
-}
-
-template<typename T> void Visitor::maybeCheckErrorAndVisit(T* x)
-{
-    if (!hasError() && x)
-        visit(*x);
-}
-
 // Shader Module
 
 void Visitor::visit(ShaderModule& shaderModule)

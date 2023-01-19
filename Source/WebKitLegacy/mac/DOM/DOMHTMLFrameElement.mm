@@ -153,14 +153,12 @@
 
 - (NSString *)location
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->location().string();
+    return nullptr;
 }
 
 - (void)setLocation:(NSString *)newLocation
 {
-    WebCore::JSMainThreadNullState state;
-    IMPL->setLocation(newLocation);
+    return;
 }
 
 @end

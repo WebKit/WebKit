@@ -35,8 +35,6 @@ namespace WebCore {
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLFrameElementBase);
 public:
-    WEBCORE_EXPORT URL location() const;
-    WEBCORE_EXPORT void setLocation(const String&);
     void setLocation(JSC::JSGlobalObject&, const String&);
 
     ScrollbarMode scrollingMode() const final;
@@ -51,6 +49,7 @@ protected:
     void didFinishInsertingNode() final;
     void didAttachRenderers() override;
 
+    WEBCORE_EXPORT void setLocation(const String&);
     void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
     AtomString frameURL() const { return m_frameURL; }

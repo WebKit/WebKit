@@ -166,13 +166,6 @@ void HTMLFrameElementBase::didAttachRenderers()
     }
 }
 
-URL HTMLFrameElementBase::location() const
-{
-    if (hasAttributeWithoutSynchronization(srcdocAttr))
-        return aboutSrcDocURL();
-    return document().completeURL(attributeWithoutSynchronization(srcAttr));
-}
-
 void HTMLFrameElementBase::setLocation(const String& str)
 {
     if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)

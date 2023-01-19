@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,21 @@
 
 #pragma once
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#include <wtf/text/StringBuilder.h>
 
-#include "WebGPUIntegralTypes.h"
-#include "WebGPUSurface.h"
-#include "WebGPUTextureFormat.h"
-#include <IOSurface/IOSurfaceRef.h>
-#include <WebGPU/WebGPU.h>
-#include <wtf/MachSendRight.h>
+namespace WGSL {
 
-namespace PAL::WebGPU {
+namespace AST {
+class ShaderModule;
+}
 
-class ConvertToBackingContext;
+namespace Metal {
 
-class SurfaceImpl final : public Surface {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<SurfaceImpl> create(WGPUSurface surface)
-    {
-        return adoptRef(*new SurfaceImpl(surface));
-    }
-
-    virtual ~SurfaceImpl();
-
-    WGPUSurface backing() const { return m_backing; }
-    IOSurfaceRef drawingBuffer() const;
-
-private:
-    friend class DowncastConvertToBackingContext;
-
-    SurfaceImpl(WGPUSurface);
-
-    SurfaceImpl(const SurfaceImpl&) = delete;
-    SurfaceImpl(SurfaceImpl&&) = delete;
-    SurfaceImpl& operator=(const SurfaceImpl&) = delete;
-    SurfaceImpl& operator=(SurfaceImpl&&) = delete;
-
-    void destroy() final;
-
-    void setLabelInternal(const String&) final;
-
-    WGPUSurface m_backing { nullptr };
+struct RenderMetalFunctionEntryPoints {
+    String mangledVertexEntryPointName;
+    String mangledFragmentEntryPointName;
 };
+RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder&, AST::ShaderModule&);
 
-} // namespace PAL::WebGPU
-
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+} // namespace Metal
+} // namespace WGSL

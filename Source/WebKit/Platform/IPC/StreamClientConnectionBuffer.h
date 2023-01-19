@@ -81,6 +81,11 @@ inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(unsigned dataS
     : StreamConnectionBuffer(createMemory(dataSizeLog2))
 {
     ASSERT(dataSizeLog2 < 31u); // Currently expected to be not that big, and offset to fit in size_t with the tag bits.
+    // Currently the minimum message size is 16, and as such 32 bytes is not enough to hold one message.
+    // The problem happens after initial write and read, because after the read the buffer is split between
+    // 15 free bytes and 15 free bytes.
+    ASSERT(dataSizeLog2 > 5);
+
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 
     // Read starts from 0 with limit of 0 and reader sleeping.

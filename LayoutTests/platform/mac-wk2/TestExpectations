@@ -1808,7 +1808,3 @@ webkit.org/b/250784 media/audio-session-category.html [ Pass Failure ]
 [ BigSur+ ] imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Pass Failure Crash ]
 
 webkit.org/b/248997 [ BigSur+ ] http/tests/navigation/fragment-navigation-policy-ignore.html [ Pass Failure ]
-
-webkit.org/b/249407 [ BigSur+ ] media/audioSession/getUserMedia.html [ Failure ]
-
-webkit.org/b/249486 [ BigSur+ ] media/audioSession/audioSessionType.html [ Failure ]
