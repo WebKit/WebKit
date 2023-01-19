@@ -493,13 +493,6 @@ bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
 #endif
 }
 
-bool MediaPlayerPrivateAVFoundation::hasSingleSecurityOrigin() const
-{
-    if (m_resolvedOrigin && m_requestedOrigin)
-        return m_resolvedOrigin->isSameSchemeHostPort(*m_requestedOrigin);
-    return false;
-}
-
 void MediaPlayerPrivateAVFoundation::setResolvedURL(URL&& resolvedURL)
 {
     m_resolvedURL = WTFMove(resolvedURL);

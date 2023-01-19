@@ -239,7 +239,7 @@ private:
     void updateVideoLayerGravity(ShouldAnimate);
 
     bool didPassCORSAccessCheck() const final;
-    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    std::optional<bool> isCrossOrigin(const SecurityOrigin&) const final;
 
     MediaTime getStartDate() const final;
 

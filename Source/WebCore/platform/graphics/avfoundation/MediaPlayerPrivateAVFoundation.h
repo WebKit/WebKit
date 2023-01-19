@@ -215,8 +215,6 @@ protected:
     bool supportsScanning() const override { return true; }
     unsigned long long fileSize() const override { return totalBytes(); }
 
-    bool hasSingleSecurityOrigin() const override;
-
     // Required interfaces for concrete derived classes.
     virtual void createAVAssetForURL(const URL&) = 0;
     virtual void createAVPlayer() = 0;

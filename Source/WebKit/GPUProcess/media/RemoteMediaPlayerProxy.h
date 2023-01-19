@@ -211,7 +211,7 @@ public:
 
     using PerformTaskAtMediaTimeCompletionHandler = CompletionHandler<void(std::optional<MediaTime>, std::optional<MonotonicTime>)>;
     void performTaskAtMediaTime(const MediaTime&, MonotonicTime, PerformTaskAtMediaTimeCompletionHandler&&);
-    void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(std::optional<bool>)>&&);
+    void isCrossOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(std::optional<bool>)>&&);
 
     void setVideoPlaybackMetricsUpdateInterval(double);
 

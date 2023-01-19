@@ -163,8 +163,6 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final { }
     DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
-
-    bool hasSingleSecurityOrigin() const final { return true; }
 };
 
 #if !RELEASE_LOG_DISABLED
@@ -1261,20 +1259,15 @@ void MediaPlayer::setShouldMaintainAspectRatio(bool maintainAspectRatio)
     m_private->setShouldMaintainAspectRatio(maintainAspectRatio);
 }
 
-bool MediaPlayer::hasSingleSecurityOrigin() const
-{
-    return m_private->hasSingleSecurityOrigin();
-}
-
 bool MediaPlayer::didPassCORSAccessCheck() const
 {
     return m_private->didPassCORSAccessCheck();
 }
 
-bool MediaPlayer::wouldTaintOrigin(const SecurityOrigin& origin) const
+bool MediaPlayer::isCrossOrigin(const SecurityOrigin& origin) const
 {
-    if (auto wouldTaint = m_private->wouldTaintOrigin(origin))
-        return *wouldTaint;
+    if (auto crossOrigin = m_private->isCrossOrigin(origin))
+        return *crossOrigin;
 
     if (m_url.protocolIsData())
         return false;

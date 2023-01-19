@@ -534,9 +534,8 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.hasClosedCaptions = state.hasClosedCaptions;
     m_cachedState.hasAvailableVideoFrame = state.hasAvailableVideoFrame;
     m_cachedState.wirelessVideoPlaybackDisabled = state.wirelessVideoPlaybackDisabled;
-    m_cachedState.hasSingleSecurityOrigin = state.hasSingleSecurityOrigin;
     m_cachedState.didPassCORSAccessCheck = state.didPassCORSAccessCheck;
-    m_cachedState.wouldTaintDocumentSecurityOrigin = state.wouldTaintDocumentSecurityOrigin;
+    m_cachedState.documentIsCrossOrigin = state.documentIsCrossOrigin;
 
     if (state.bufferedRanges.length())
         m_cachedBufferedTimeRanges = makeUnique<PlatformTimeRanges>(state.bufferedRanges);
@@ -1106,29 +1105,24 @@ void MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget(bool shouldPlay)
 }
 #endif
 
-bool MediaPlayerPrivateRemote::hasSingleSecurityOrigin() const
-{
-    return m_cachedState.hasSingleSecurityOrigin;
-}
-
 bool MediaPlayerPrivateRemote::didPassCORSAccessCheck() const
 {
     return m_cachedState.didPassCORSAccessCheck;
 }
 
-std::optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin& origin) const
+std::optional<bool> MediaPlayerPrivateRemote::isCrossOrigin(const SecurityOrigin& origin) const
 {
     if (origin.data() == m_documentSecurityOrigin)
-        return m_cachedState.wouldTaintDocumentSecurityOrigin;
+        return m_cachedState.documentIsCrossOrigin;
 
-    if (auto result = m_wouldTaintOriginCache.get(origin.data()))
+    if (auto result = m_isCrossOriginCache.get(origin.data()))
         return result;
 
-    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::WouldTaintOrigin(origin.data()), m_id);
-    auto [wouldTaint] = sendResult.takeReplyOr(std::nullopt);
-    if (wouldTaint)
-        m_wouldTaintOriginCache.add(origin.data(), wouldTaint);
-    return wouldTaint;
+    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::IsCrossOrigin(origin.data()), m_id);
+    auto [crossOrigin] = sendResult.takeReplyOr(std::nullopt);
+    if (crossOrigin)
+        m_isCrossOriginCache.add(origin.data(), crossOrigin);
+    return crossOrigin;
 }
 
 MediaTime MediaPlayerPrivateRemote::mediaTimeForTimeValue(const MediaTime& timeValue) const

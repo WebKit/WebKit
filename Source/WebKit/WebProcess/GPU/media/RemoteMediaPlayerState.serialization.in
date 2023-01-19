@@ -41,7 +41,7 @@ struct WebKit::RemoteMediaPlayerState {
     double liveUpdateInterval;
     uint64_t totalBytes;
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
-    std::optional<bool> wouldTaintDocumentSecurityOrigin;
+    std::optional<bool> documentIsCrossOrigin;
     bool paused;
     bool canSaveMediaData;
     bool hasAudio;
@@ -49,7 +49,6 @@ struct WebKit::RemoteMediaPlayerState {
     bool hasClosedCaptions;
     bool hasAvailableVideoFrame;
     bool wirelessVideoPlaybackDisabled;
-    bool hasSingleSecurityOrigin;
     bool didPassCORSAccessCheck;
 }
 #endif

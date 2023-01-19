@@ -87,7 +87,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @property (readonly) BOOL didPassCORSAccessChecks;
 - (void)finishTasksAndInvalidate;
 - (void)invalidateAndCancel;
-- (BOOL)wouldTaintOrigin:(const WebCore::SecurityOrigin&)origin;
+- (BOOL)isCrossOrigin:(const WebCore::SecurityOrigin&)origin;
 
 - (void)resetWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)flushWithCompletionHandler:(void (^)(void))completionHandler;

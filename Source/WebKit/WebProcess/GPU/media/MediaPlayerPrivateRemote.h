@@ -332,9 +332,8 @@ private:
 
     void setShouldMaintainAspectRatio(bool) final;
 
-    bool hasSingleSecurityOrigin() const final;
     bool didPassCORSAccessCheck() const final;
-    std::optional<bool> wouldTaintOrigin(const WebCore::SecurityOrigin&) const final;
+    std::optional<bool> isCrossOrigin(const WebCore::SecurityOrigin&) const final;
 
     WebCore::MediaPlayer::MovieLoadType movieLoadType() const final;
 
@@ -456,7 +455,7 @@ private:
     HashMap<TrackPrivateRemoteIdentifier, Ref<TextTrackPrivateRemote>> m_textTracks;
 
     WebCore::SecurityOriginData m_documentSecurityOrigin;
-    mutable HashMap<WebCore::SecurityOriginData, std::optional<bool>> m_wouldTaintOriginCache;
+    mutable HashMap<WebCore::SecurityOriginData, std::optional<bool>> m_isCrossOriginCache;
 
     MediaTime m_cachedMediaTime;
     MonotonicTime m_cachedMediaTimeQueryTime;

@@ -330,11 +330,6 @@ webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 
-
-# No CORS support for media elements is implemented yet.
-http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
-http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
-http/tests/security/video-cross-origin-readback.html
 http/tests/security/video-cross-origin-accessfailure.html
 
 # Random crash, like in many media tests.
@@ -1637,8 +1632,6 @@ webkit.org/b/207463 inspector/runtime/getCollectionEntries.html [ Pass Failure ]
 webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html [ Pass Failure ]
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
-
-webkit.org/b/207726 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
 
 webkit.org/b/207978 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Pass Failure ]
 

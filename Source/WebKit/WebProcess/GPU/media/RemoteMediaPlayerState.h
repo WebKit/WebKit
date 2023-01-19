@@ -56,7 +56,7 @@ struct RemoteMediaPlayerState {
     double liveUpdateInterval { 0 };
     uint64_t totalBytes { 0 };
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
-    std::optional<bool> wouldTaintDocumentSecurityOrigin { true };
+    std::optional<bool> documentIsCrossOrigin { true };
     bool paused { true };
     bool canSaveMediaData { false };
     bool hasAudio { false };
@@ -64,7 +64,6 @@ struct RemoteMediaPlayerState {
     bool hasClosedCaptions { false };
     bool hasAvailableVideoFrame { false };
     bool wirelessVideoPlaybackDisabled { false };
-    bool hasSingleSecurityOrigin { false };
     bool didPassCORSAccessCheck { false };
 };
 

@@ -152,17 +152,11 @@ bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
     if (!video || !m_canvas.originClean())
         return false;
 
-    // FIXME: video->wouldTainOrigin is incorrectly implemented, it only checks that the origin
-    // doesn't change, rather than being based on CORS cross-origin data.
-    // This is tracked in https://bugs.webkit.org/show_bug.cgi?id=242889
-    if (!video->didPassCORSAccessCheck() && video->wouldTaintOrigin(*m_canvas.securityOrigin()))
-        return true;
-
+    return video->taintsOrigin(*m_canvas.securityOrigin());
 #else
     UNUSED_PARAM(video);
-#endif
-
     return false;
+#endif
 }
 
 bool CanvasRenderingContext::taintsOrigin(const ImageBitmap* imageBitmap)

@@ -71,6 +71,7 @@ private:
 
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) override;
+    void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     void dataReceived(PlatformMediaResource&, const SharedBuffer&) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
@@ -1094,6 +1095,12 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     completionHandler(ShouldContinuePolicyCheck::Yes);
 }
 
+void CachedResourceStreamingClient::redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+{
+    m_origins.add(SecurityOrigin::create(response.url()));
+    completionHandler(WTFMove(request));
+}
+
 void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const SharedBuffer& data)
 {
     ASSERT(isMainThread());
@@ -1178,7 +1185,7 @@ void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&, const N
     members->responseCondition.notifyOne();
 }
 
-bool webKitSrcWouldTaintOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
+bool webKitSrcIsCrossOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
 {
     DataMutexLocker members { src->priv->dataMutex };
 

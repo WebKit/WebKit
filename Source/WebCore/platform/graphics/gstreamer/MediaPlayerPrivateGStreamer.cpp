@@ -345,7 +345,6 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
     m_readyState = MediaPlayer::ReadyState::HaveNothing;
     m_player->readyStateChanged();
     m_areVolumeAndMuteInitialized = false;
-    m_hasTaintedOrigin = std::nullopt;
 
     if (!m_isDelayingLoad)
         commitLoad();
@@ -801,36 +800,10 @@ unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
     return m_totalBytes;
 }
 
-bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
+std::optional<bool> MediaPlayerPrivateGStreamer::isCrossOrigin(const SecurityOrigin& origin) const
 {
-    if (!m_source)
-        return false;
-
-    if (!WEBKIT_IS_WEB_SRC(m_source.get()))
-        return true;
-
-    GUniqueOutPtr<char> originalURI, resolvedURI;
-    g_object_get(m_source.get(), "location", &originalURI.outPtr(), "resolved-location", &resolvedURI.outPtr(), nullptr);
-    if (!originalURI || !resolvedURI)
-        return false;
-    if (!g_strcmp0(originalURI.get(), resolvedURI.get()))
-        return true;
-
-    Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::createFromString(String::fromUTF8(resolvedURI.get())));
-    Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(String::fromUTF8(originalURI.get())));
-    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
-}
-
-std::optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin& origin) const
-{
-    GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
-    for (auto& responseOrigin : m_origins) {
-        if (!origin.isSameOriginDomain(*responseOrigin)) {
-            GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
-            return true;
-        }
-    }
-    GST_DEBUG_OBJECT(pipeline(), "No valid response origin found");
+    if (WEBKIT_IS_WEB_SRC(m_source.get()))
+        return webKitSrcIsCrossOrigin(WEBKIT_WEB_SRC(m_source.get()), origin);
     return false;
 }
 
@@ -1885,7 +1858,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GST_DEBUG_OBJECT(pipeline(), "Processing HTTP headers: %" GST_PTR_FORMAT, structure);
             if (const char* uri = gst_structure_get_string(structure, "uri")) {
                 URL url { String::fromLatin1(uri) };
-                m_origins.add(SecurityOrigin::create(url));
 
                 if (url != m_url) {
                     GST_DEBUG_OBJECT(pipeline(), "Ignoring HTTP response headers for non-main URI.");

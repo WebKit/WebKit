@@ -6617,6 +6617,13 @@ double HTMLMediaElement::maxFastForwardRate() const
     return m_player ? m_player->maxFastForwardRate() : 0;
 }
 
+bool HTMLMediaElement::taintsOrigin(const SecurityOrigin& origin) const
+{
+    if (didPassCORSAccessCheck())
+        return false;
+    return m_player && m_player->isCrossOrigin(origin);
+}
+
 bool HTMLMediaElement::isFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API)

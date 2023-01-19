@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../media-resources/media-file.js"></script>
+    <script src="resources/canvas-video-crossorigin.js"></script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+    description("Ensure that data can be retrieved from a canvas, even when tainted by a video resource obtained via redirection when CORS is enabled with anonymous.");
+
+    function test()
+    {
+        testDataRetrievalAllowed();
+        finishJSTest();
+    }
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", test);
+
+    video.crossOrigin = "anonymous";
+    var mediaFile = findMediaFile("video", "../../media/resources/test");
+    var type = mimeTypeForExtension(mediaFile.split('.').pop());
+    var url = encodeURIComponent("http://localhost:8080/security/resources/video-cross-origin-allow.py?name=" + mediaFile + "&type=" + type);
+    video.src = "/resources/redirect.py?url=" + url;
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
