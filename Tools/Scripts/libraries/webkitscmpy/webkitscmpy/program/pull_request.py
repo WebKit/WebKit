@@ -481,8 +481,12 @@ class PullRequest(Command):
             labels = pr_issue.labels
             did_remove = False
             labels_to_remove = cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else [])
-            if args.ews is not False:
-                # if --no-ews argument is not passed then remove any existing SKIP_EWS_LABEL
+
+            if existing_pr.draft and args.ews:
+                # on draft PR if --ews argument is passed then remove any existing SKIP_EWS_LABEL
+                labels_to_remove += [cls.SKIP_EWS_LABEL]
+            if (not existing_pr.draft) and args.ews is not False:
+                # on regular PR if --no-ews argument is not passed then remove any existing SKIP_EWS_LABEL
                 labels_to_remove += [cls.SKIP_EWS_LABEL]
 
             for to_remove in labels_to_remove:
@@ -586,8 +590,9 @@ class PullRequest(Command):
                 log.info('Synced PR labels with issue component!')
             else:
                 log.info('No label syncing required')
-            if args.ews is False:
-                # Add SKIP_EWS_LABEL if --no-ews argument was passed
+            is_draft_pr = existing_pr.draft if existing_pr else args.draft
+            if ((args.ews is False) or (args.ews is None and is_draft_pr)):
+                # Add SKIP_EWS_LABEL if --no-ews argument was passed or if it's a draft PR and explicit --ews argument is not passed
                 labels = pr_issue.labels
                 labels.append(cls.SKIP_EWS_LABEL)
                 pr_issue.set_labels(labels)
