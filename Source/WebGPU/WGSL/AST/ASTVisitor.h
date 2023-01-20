@@ -67,6 +67,7 @@ public:
     virtual void visit(StructureAccess&);
     virtual void visit(Uint32Literal&);
     virtual void visit(UnaryExpression&);
+    virtual void visit(BinaryExpression&);
 
     // Statement
     virtual void visit(Statement&);

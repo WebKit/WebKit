@@ -108,6 +108,14 @@ Token Lexer<T>::lex()
         }
         return makeToken(TokenType::Minus);
         break;
+    case '+':
+        shift();
+        if (m_current == '+') {
+            shift();
+            return makeToken(TokenType::PlusPlus);
+        }
+        return makeToken(TokenType::Plus);
+        break;
     case '0': {
         shift();
         double literalValue = 0;

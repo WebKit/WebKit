@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,36 @@
 
 #pragma once
 
-#include "ASTArrayAccess.h"
-#include "ASTAssignmentStatement.h"
-#include "ASTAttribute.h"
-#include "ASTBinaryExpression.h"
-#include "ASTBindingAttribute.h"
-#include "ASTBuiltinAttribute.h"
-#include "ASTCallableExpression.h"
-#include "ASTCompoundStatement.h"
-#include "ASTDecl.h"
 #include "ASTExpression.h"
-#include "ASTFunctionDecl.h"
-#include "ASTGlobalDirective.h"
-#include "ASTGroupAttribute.h"
-#include "ASTIdentifierExpression.h"
-#include "ASTLiteralExpressions.h"
-#include "ASTLocationAttribute.h"
-#include "ASTNode.h"
-#include "ASTReturnStatement.h"
-#include "ASTShaderModule.h"
-#include "ASTStageAttribute.h"
-#include "ASTStatement.h"
-#include "ASTStructureAccess.h"
-#include "ASTStructureDecl.h"
-#include "ASTTypeDecl.h"
-#include "ASTUnaryExpression.h"
-#include "ASTVariableDecl.h"
-#include "ASTVariableQualifier.h"
-#include "ASTVariableStatement.h"
+
+namespace WGSL::AST {
+
+enum class BinaryOperation : uint8_t {
+    Add,
+};
+    
+class BinaryExpression final : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BinaryExpression(SourceSpan span, UniqueRef<Expression>&& lhs, UniqueRef<Expression>&& rhs, BinaryOperation operation)
+        : Expression(span)
+        , m_lhs(WTFMove(lhs))
+        , m_rhs(WTFMove(rhs))
+        , m_operation(operation)
+    {
+    }
+
+    Kind kind() const override;
+    BinaryOperation operation() const { return m_operation; }
+    Expression& lhs() { return m_lhs.get(); }
+    Expression& rhs() { return m_rhs.get(); }
+
+private:
+    UniqueRef<Expression> m_lhs;
+    UniqueRef<Expression> m_rhs;
+    BinaryOperation m_operation;
+};
+
+} // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(BinaryExpression)

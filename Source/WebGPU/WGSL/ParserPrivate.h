@@ -81,11 +81,10 @@ public:
     Expected<UniqueRef<AST::Statement>, Error> parseStatement();
     Expected<AST::CompoundStatement, Error> parseCompoundStatement();
     Expected<AST::ReturnStatement, Error> parseReturnStatement();
-    Expected<UniqueRef<AST::Expression>, Error> parseShortCircuitOrExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseRelationalExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseShiftExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseAdditiveExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseMultiplicativeExpression();
+    Expected<UniqueRef<AST::Expression>, Error> parseRelationalExpression(UniqueRef<AST::Expression>&&);
+    Expected<UniqueRef<AST::Expression>, Error> parseShiftExpression(UniqueRef<AST::Expression>&&);
+    Expected<UniqueRef<AST::Expression>, Error> parseAdditiveExpression(UniqueRef<AST::Expression>&&);
+    Expected<UniqueRef<AST::Expression>, Error> parseMultiplicativeExpression(UniqueRef<AST::Expression>&&);
     Expected<UniqueRef<AST::Expression>, Error> parseUnaryExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseSingularExpression();
     Expected<UniqueRef<AST::Expression>, Error> parsePostfixExpression(UniqueRef<AST::Expression>&& base, SourcePosition startPosition);

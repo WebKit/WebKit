@@ -54,6 +54,7 @@ class Int32Literal;
 class StructureAccess;
 class Uint32Literal;
 class UnaryExpression;
+class BinaryExpression;
 
 class Statement;
 class AssignmentStatement;

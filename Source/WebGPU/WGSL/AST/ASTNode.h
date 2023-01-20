@@ -63,6 +63,7 @@ public:
         StructureAccess,
         Uint32Literal,
         UnaryExpression,
+        BinaryExpression,
 
         ShaderModule,
 

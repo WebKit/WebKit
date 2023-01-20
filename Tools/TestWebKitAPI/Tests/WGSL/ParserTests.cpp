@@ -400,6 +400,50 @@ TEST(WGSLParserTests, UnaryExpression)
     }
 }
 
+TEST(WGSLParserTests, BinaryExpression)
+{
+    auto shader = WGSL::parseLChar(
+        "fn add(x: f32, y: f32) -> f32 {\n"
+        "    return x + y;\n"
+        "}"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structs().isEmpty());
+    EXPECT_TRUE(shader->globalVars().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    {
+        auto& func = shader->functions()[0];
+        EXPECT_TRUE(func.attributes().isEmpty());
+
+        // fn add(x: f32, y: f32) -> f32 {
+        EXPECT_EQ(func.name(), "add"_s);
+        EXPECT_EQ(func.parameters().size(), 2u);
+        EXPECT_TRUE(func.returnAttributes().isEmpty());
+        EXPECT_TRUE(func.maybeReturnType());
+        EXPECT_TRUE(is<WGSL::AST::NamedType>(func.maybeReturnType()));
+
+        EXPECT_EQ(func.body().statements().size(), 1u);
+
+        // return x + y;
+        EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(func.body().statements()[0]));
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[0]);
+        EXPECT_TRUE(retStmt.maybeExpression());
+        EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(retStmt.maybeExpression()));
+        auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(*retStmt.maybeExpression());
+        EXPECT_EQ(binaryExpression.operation(), WGSL::AST::BinaryOperation::Add);
+
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.lhs()));
+        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.lhs());
+        EXPECT_EQ(lhs.identifier(), "x"_s);
+
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.rhs()));
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rhs());
+        EXPECT_EQ(rhs.identifier(), "y"_s);
+    }
+}
 #pragma mark -
 #pragma mark WebGPU Example Shaders
 

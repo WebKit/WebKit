@@ -69,6 +69,7 @@ public:
     void visit(AST::Int32Literal&) override;
     void visit(AST::StructureAccess&) override;
     void visit(AST::UnaryExpression&) override;
+    void visit(AST::BinaryExpression&) override;
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -314,6 +315,16 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
         m_stringBuilder.append("-");
     }
     visit(unary.expression());
+}
+
+void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
+{
+    visit(binary.lhs());
+    switch (binary.operation()) {
+    case AST::BinaryOperation::Add:
+        m_stringBuilder.append(" + ");
+    }
+    visit(binary.rhs());
 }
 
 void FunctionDefinitionWriter::visit(AST::ArrayAccess& access)

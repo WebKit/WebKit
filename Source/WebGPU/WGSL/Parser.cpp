@@ -345,7 +345,8 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseArrayType()
             //
             // The WGSL grammar doesn't specify expression operator precedence so
             // until then just parse AdditiveExpression.
-            PARSE(elementCount, AdditiveExpression);
+            PARSE(elementCountLHS, UnaryExpression);
+            PARSE(elementCount, AdditiveExpression, WTFMove(elementCountLHS));
             maybeElementCount = elementCount.moveToUniquePtr();
         }
         CONSUME_TYPE(GT);
@@ -578,43 +579,42 @@ Expected<AST::ReturnStatement, Error> Parser<Lexer>::parseReturnStatement()
         RETURN_NODE(ReturnStatement, { });
     }
 
-    PARSE(expr, ShortCircuitOrExpression);
+    PARSE(expr, Expression);
     RETURN_NODE(ReturnStatement, expr.moveToUniquePtr());
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShortCircuitOrExpression()
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpression(UniqueRef<AST::Expression>&& lhs)
 {
     // FIXME: fill in
-    return parseRelationalExpression();
+    return parseShiftExpression(WTFMove(lhs));
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpression()
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression(UniqueRef<AST::Expression>&& lhs)
 {
     // FIXME: fill in
-    return parseShiftExpression();
+    return parseAdditiveExpression(WTFMove(lhs));
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression()
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpression(UniqueRef<AST::Expression>&& lhs)
 {
     // FIXME: fill in
-    return parseAdditiveExpression();
+    START_PARSE();
+    if (current().m_type == TokenType::Plus) {
+        consume();
+        PARSE(rhs, UnaryExpression);
+        RETURN_NODE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), AST::BinaryOperation::Add);
+    }
+    return parseMultiplicativeExpression(WTFMove(lhs));
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpression()
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeExpression(UniqueRef<AST::Expression>&& lhs)
 {
     // FIXME: fill in
-    return parseMultiplicativeExpression();
-}
-
-template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeExpression()
-{
-    // FIXME: fill in
-    return parseUnaryExpression();
+    return WTFMove(lhs);
 }
 
 template<typename Lexer>
@@ -749,7 +749,8 @@ template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseExpression()
 {
     // FIXME: Fill in
-    return parseRelationalExpression();
+    PARSE(lhs, UnaryExpression);
+    return parseRelationalExpression(WTFMove(lhs));
 }
 
 template<typename Lexer>

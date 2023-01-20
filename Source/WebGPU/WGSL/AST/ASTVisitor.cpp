@@ -189,6 +189,9 @@ void Visitor::visit(Expression& expression)
     case Expression::Kind::UnaryExpression:
         checkErrorAndVisit(downcast<UnaryExpression>(expression));
         break;
+    case Expression::Kind::BinaryExpression:
+        checkErrorAndVisit(downcast<BinaryExpression>(expression));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled expression kind");
     }
@@ -243,6 +246,12 @@ void Visitor::visit(Uint32Literal&)
 void Visitor::visit(UnaryExpression& unaryExpression)
 {
     checkErrorAndVisit(unaryExpression.expression());
+}
+
+void Visitor::visit(BinaryExpression& binaryExpression)
+{
+    checkErrorAndVisit(binaryExpression.lhs());
+    checkErrorAndVisit(binaryExpression.rhs());
 }
 
 // Statement
