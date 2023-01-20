@@ -167,7 +167,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
     ClassStructPtr thisClass = _isa;
 
     CString jsName = name.ascii();
-    RetainPtr<CFStringRef> fieldName = adoptCF(CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
+    RetainPtr<NSString> fieldName = adoptNS([NSString initWithCString:jsName.data(), encoding:NSASCIIStringEncoding]);
     id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
 #if PLATFORM(IOS_FAMILY)
     IGNORE_WARNINGS_BEGIN("undeclared-selector")
@@ -195,7 +195,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
             if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
                 mappedName = [thisClass webScriptNameForKey:UTF8KeyName];
 
-            if ((mappedName && [mappedName isEqual:(__bridge NSString *)fieldName.get()]) || [keyName isEqual:(__bridge NSString *)fieldName.get()]) {
+            if ((mappedName && [mappedName isEqual:fieldName.get()]) || [keyName isEqual:fieldName.get()]) {
                 auto newField = makeUnique<ObjcField>((__bridge CFStringRef)keyName);
                 field = newField.get();
                 m_fieldCache.add(name.impl(), WTFMove(newField));
@@ -226,7 +226,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
                 if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
                     mappedName = [thisClass webScriptNameForKey:objcIvarName];
 
-                if ((mappedName && [mappedName isEqual:(__bridge NSString *)fieldName.get()]) || !strcmp(objcIvarName, jsName.data())) {
+                if ((mappedName && [mappedName isEqual:fieldName.get()]) || !strcmp(objcIvarName, jsName.data())) {
                     auto newField = makeUnique<ObjcField>(objcIVar);
                     field = newField.get();
                     m_fieldCache.add(name.impl(), WTFMove(newField));
