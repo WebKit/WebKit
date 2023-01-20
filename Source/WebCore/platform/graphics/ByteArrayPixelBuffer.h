@@ -46,8 +46,6 @@ public:
     template<class Decoder> static std::optional<Ref<ByteArrayPixelBuffer>> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT static RefPtr<ByteArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
-
     ByteArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
 
     bool isByteArrayPixelBuffer() const override { return true; }
@@ -61,7 +59,7 @@ template<class Encoder> void ByteArrayPixelBuffer::encode(Encoder& encoder) cons
 
     encoder << m_format;
     encoder << m_size;
-    encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
+    encoder << Span { m_data->data(), m_data->byteLength() };
 }
 
 template<class Decoder> std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelBuffer::decode(Decoder& decoder)
@@ -84,18 +82,15 @@ template<class Decoder> std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelB
     if (computedBufferSize.hasOverflowed())
         return std::nullopt;
 
-    auto bufferSize = computedBufferSize;
-    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+    std::optional<Span<const uint8_t>> data;
+    decoder >> data;
+    if (!data || data->size_bytes() != computedBufferSize.value())
         return std::nullopt;
 
-    auto result = ByteArrayPixelBuffer::tryCreate(WTFMove(*format), *size, bufferSize);
-    if (!result)
+    auto buffer = Uint8ClampedArray::tryCreate(data->data(), data->size_bytes());
+    if (!buffer)
         return std::nullopt;
-
-    if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
-        return std::nullopt;
-
-    return result.releaseNonNull();
+    return ByteArrayPixelBuffer::create(*format, *size, buffer.releaseNonNull());
 }
 
 } // namespace WebCore

@@ -69,18 +69,6 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
     return create(format, size, data.releaseNonNull());
 }
 
-RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
-{
-    ASSERT(supportedPixelFormat(format.pixelFormat));
-    ASSERT(computeBufferSize(format, size) == dataByteLength);
-
-    auto data = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
-    if (!data)
-        return nullptr;
-
-    return create(format, size, data.releaseNonNull());
-}
-
 ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
     : PixelBuffer(format, size, data->data(), data->byteLength())
     , m_data(WTFMove(data))

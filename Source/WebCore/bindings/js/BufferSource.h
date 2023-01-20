@@ -79,31 +79,20 @@ private:
 template<class Encoder>
 void BufferSource::encode(Encoder& encoder) const
 {
-    encoder << static_cast<uint64_t>(length());
-    if (!length())
-        return;
-
-    encoder.encodeFixedLengthData(data(), length() * sizeof(uint8_t), alignof(uint8_t));
+    encoder << Span { data(), length() };
 }
 
 template<class Decoder>
 std::optional<BufferSource> BufferSource::decode(Decoder& decoder)
 {
-    std::optional<uint64_t> size;
-    decoder >> size;
-    if (!size)
-        return std::nullopt;
-    if (!*size)
-        return BufferSource();
-
-    auto dataSize = CheckedSize { *size };
-    if (UNLIKELY(dataSize.hasOverflowed()))
-        return std::nullopt;
-
-    const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(uint8_t));
+    std::optional<Span<const uint8_t>> data;
+    decoder >> data;
     if (!data)
         return std::nullopt;
-    return BufferSource(JSC::ArrayBuffer::tryCreate(static_cast<const void*>(data), dataSize.value()));
+
+    if (data->empty())
+        return BufferSource();
+    return BufferSource(JSC::ArrayBuffer::tryCreate(data->data(), data->size_bytes()));
 }
 
 inline BufferSource toBufferSource(const uint8_t* data, size_t length)
