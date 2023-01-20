@@ -42,6 +42,7 @@ namespace WTF {
     M(Process) \
     M(Threading) \
     M(MemoryPressure) \
+    M(SuspendableWorkQueue) \
 
 #undef DECLARE_LOG_CHANNEL
 #define DECLARE_LOG_CHANNEL(name) \

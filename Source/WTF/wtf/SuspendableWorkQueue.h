@@ -36,8 +36,8 @@ namespace WTF {
 class SuspendableWorkQueue final : public WorkQueue {
 public:
     using QOS = WorkQueue::QOS;
-    WTF_EXPORT_PRIVATE static Ref<SuspendableWorkQueue> create(const char* name, QOS = QOS::Default);
-
+    enum class ShouldLog : bool { No, Yes };
+    WTF_EXPORT_PRIVATE static Ref<SuspendableWorkQueue> create(const char* name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
     WTF_EXPORT_PRIVATE void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
     WTF_EXPORT_PRIVATE void resume();
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
@@ -45,7 +45,7 @@ public:
     WTF_EXPORT_PRIVATE void dispatchSync(Function<void()>&&) final;
 
 private:
-    SuspendableWorkQueue(const char* name, QOS);
+    SuspendableWorkQueue(const char* name, QOS, ShouldLog);
     void invokeAllSuspensionCompletionHandlers() WTF_REQUIRES_LOCK(m_suspensionLock);
     void suspendIfNeeded();
 #if USE(COCOA_EVENT_LOOP)
@@ -53,13 +53,15 @@ private:
 #else
     using WorkQueue::runLoop;
 #endif
+    enum class State : uint8_t { Running, WillSuspend, Suspended };
+    static const char* stateString(State);
 
     Lock m_suspensionLock;
     Condition m_suspensionCondition;
-    enum class State : uint8_t { Running, WillSuspend, Suspended };
     State m_state WTF_GUARDED_BY_LOCK(m_suspensionLock) { State::Running };
     Function<void()> m_suspendFunction WTF_GUARDED_BY_LOCK(m_suspensionLock);
     Vector<CompletionHandler<void()>> m_suspensionCompletionHandlers WTF_GUARDED_BY_LOCK(m_suspensionLock);
+    bool m_shouldLog WTF_GUARDED_BY_LOCK(m_suspensionLock) { false };
 };
 
 } // namespace WTF
