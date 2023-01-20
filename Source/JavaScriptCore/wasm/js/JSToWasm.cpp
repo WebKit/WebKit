@@ -33,7 +33,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "WasmCallingConvention.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmOperations.h"
 #include "WasmToJS.h"
 
@@ -231,6 +231,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
     auto result = makeUnique<InternalFunction>();
     jit.emitFunctionPrologue();
 
+    // |codeBlock| and |this| slots are already initialized by the caller of this function because it is JS->Wasm transition.
     jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&callee)), GPRInfo::nonPreservedNonReturnGPR);
     CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
     jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, calleeSlot.withOffset(PayloadOffset));
@@ -276,14 +277,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
     // If parameters or results contain v128, throw a TypeError.
     // Note: the above error is thrown each time the [[Call]] method is invoked.
     if (Options::useWebAssemblySIMD() && (wasmFrameConvention.argumentsOrResultsIncludeV128)) {
-        GPRReg currentInstanceGPR = InvalidGPRReg;
-        currentInstanceGPR = pinnedRegs.wasmContextInstancePointer;
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, JSCallingConvention::instanceStackOffset), wasmContextInstanceGPR);
-        jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
-        ASSERT(currentInstanceGPR != InvalidGPRReg);
-
+        jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), wasmContextInstanceGPR);
         JIT_COMMENT(jit, "Throw an exception because this function uses v128");
-        emitThrowWasmToJSException(jit, currentInstanceGPR, ExceptionType::TypeErrorInvalidV128Use);
+        emitThrowWasmToJSException(jit, wasmContextInstanceGPR, ExceptionType::TypeErrorInvalidV128Use);
         return result;
     }
 
@@ -299,8 +295,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
             wasmCallingConvention().prologueScratchGPRs[1]
         };
 
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, JSCallingConvention::instanceStackOffset), wasmContextInstanceGPR);
-        jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
+        jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), wasmContextInstanceGPR);
 
         const auto& signature = *typeDefinition.as<FunctionSignature>();
         for (unsigned i = 0; i < signature.argumentCount(); i++) {
@@ -342,16 +337,15 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
         GPRReg size = wasmCallingConvention().prologueScratchGPRs[0];
         GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[1];
-        GPRReg currentInstanceGPR = wasmContextInstanceGPR;
         if (isARM64E()) {
             if (mode == MemoryMode::BoundsChecking)
                 size = pinnedRegs.boundsCheckingSizeRegister;
-            jit.loadPairPtr(currentInstanceGPR, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, size);
+            jit.loadPairPtr(wasmContextInstanceGPR, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, size);
         } else {
             if (mode == MemoryMode::BoundsChecking)
-                jit.loadPairPtr(currentInstanceGPR, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
+                jit.loadPairPtr(wasmContextInstanceGPR, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
             else
-                jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+                jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
         }
         jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, size, scratch, /* validateAuth */ true, /* mayBeNull */ false);
     }

@@ -51,7 +51,7 @@
 #include "ScratchRegisterAllocator.h"
 #include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
 #include "WasmIRGeneratorHelpers.h"
@@ -471,7 +471,7 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, ExpressionType jsCalleeInstance, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -898,7 +898,6 @@ public:
     GPRReg m_memoryBaseGPR { InvalidGPRReg };
     GPRReg m_boundsCheckingSizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
-    GPRReg m_prologueWasmContextGPR { InvalidGPRReg };
     bool m_makesCalls { false };
     bool m_makesTailCalls { false };
 
@@ -1012,17 +1011,21 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
         ASSERT(InvalidGPRReg == pinnedRegs.boundsCheckingSizeRegister);
     }
 
-    m_prologueWasmContextGPR = m_wasmContextInstanceGPR;
-
     m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
 
         {
-            CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
-            jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), calleeSlot.withOffset(PayloadOffset));
-            if constexpr (is32Bit())
+            GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
+            jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), scratchGPR);
+            static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
+            if constexpr (is32Bit()) {
+                CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
+                jit.storePtr(scratchGPR, calleeSlot.withOffset(PayloadOffset));
                 jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
+                jit.storePtr(m_wasmContextInstanceGPR, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
+            } else
+                jit.storePairPtr(m_wasmContextInstanceGPR, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
         }
 
         {
@@ -1059,13 +1062,6 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
             needsOverflowCheck = needsOverflowCheck || needUnderflowCheck;
             bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
 
-            // We need to setup JSWebAssemblyInstance in |this| slot first.
-            if (mayHaveExceptionHandlers) {
-                GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
-                jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfOwner()), scratch);
-                jit.storeCell(scratch, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::thisArgument * sizeof(Register)));
-            }
-
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
             if (needsOverflowCheck) {
@@ -1078,7 +1074,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
                 MacroAssembler::JumpList overflow;
                 if (UNLIKELY(needUnderflowCheck))
                     overflow.append(jit.branchPtr(CCallHelpers::Above, scratch, GPRInfo::callFrameRegister));
-                jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfVM()), scratch2);
+                jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfVM()), scratch2);
                 overflow.append(jit.branchPtr(CCallHelpers::Below, scratch, CCallHelpers::Address(scratch2, VM::offsetOfSoftStackLimit())));
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
@@ -1087,7 +1083,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
         }
     });
 
-    m_instanceValue = { Tmp(m_prologueWasmContextGPR), Types::IPtr };
+    m_instanceValue = { Tmp(m_wasmContextInstanceGPR), Types::IPtr };
 
     append(EntrySwitch);
     m_mainEntrypointStart = m_code.addBlock();
@@ -3176,6 +3172,12 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             if (handle)
                 handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to wasm unlinked function call patchpoint");
+            if (isTailCall) {
+                // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
+                CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+                jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+                jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
+            }
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
             jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex](LinkBuffer& linkBuffer) {
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
@@ -3197,9 +3199,13 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             if (handle)
                 handle->generate(jit, params, this);
             JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
-            if (isTailCall)
+            if (isTailCall) {
+                // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
+                CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+                jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+                jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
                 jit.farJump(params[0].gpr(), WasmEntryPtrTag);
-            else
+            } else
                 jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
         });
     };
@@ -3266,6 +3272,10 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
         emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args));
         return { };
     }
+
+    // We do not need to store the JS instance in |this|
+    // 1. It is not tail-call. So this does not clobber the arguments of this function.
+    // 2. We are not changing instance. Thus, |this| of this function's arguments are the same and will continue to provide a GC root for the JS instance.
 
     auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo);
     auto* patchpoint = data.first;
@@ -3356,7 +3366,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
         });
     }
 
-    return self().emitIndirectCall(calleeInstance, calleeCode, signature, args, results, callType);
+    ExpressionType jsCalleeInstance = self().gPtr();
+    append(Move, Arg::addr(calleeInstance, Instance::offsetOfOwner()), jsCalleeInstance);
+    return self().emitIndirectCall(calleeInstance, calleeCode, jsCalleeInstance, signature, args, results, callType);
 }
 
 template <typename Derived, typename ExpressionType>
@@ -3375,15 +3387,16 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallRef(const TypeDefinitio
     ExpressionType calleeCode = self().gPtr();
     append(Move, Arg::addr(self().extractJSValuePointer(calleeFunction), WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
 
+    auto jsCalleeInstance = self().gPtr();
     auto calleeInstance = self().gPtr();
-    append(Move, Arg::addr(self().extractJSValuePointer(calleeFunction), WebAssemblyFunctionBase::offsetOfInstance()), calleeInstance);
-    append(Move, Arg::addr(calleeInstance, JSWebAssemblyInstance::offsetOfInstance()), calleeInstance);
+    append(Move, Arg::addr(self().extractJSValuePointer(calleeFunction), WebAssemblyFunctionBase::offsetOfInstance()), jsCalleeInstance);
+    append(Move, Arg::addr(jsCalleeInstance, JSWebAssemblyInstance::offsetOfInstance()), calleeInstance);
 
-    return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
+    return emitIndirectCall(calleeInstance, calleeCode, jsCalleeInstance, signature, args, results);
 }
 
 template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, ExpressionType jsCalleeInstance, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -3459,6 +3472,11 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
             prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
             if (exceptionHandle)
                 exceptionHandle->generate(jit, params, this);
+
+            // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
+            CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+            jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+            jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
             jit.farJump(params[0].gpr(), WasmEntryPtrTag);
         });
         return { };
@@ -3469,7 +3487,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
     for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
         results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
 
-    auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { calleeCode, B3::ValueRep::SomeRegister } });
+    // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
+
+    auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { calleeCode, B3::ValueRep::SomeRegister }, { jsCalleeInstance, wasmCalleeInfo.thisArgument } });
     auto* patchpoint = data.first;
     auto exceptionHandle = data.second;
 

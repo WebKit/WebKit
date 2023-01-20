@@ -79,7 +79,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyInstance.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WebAssemblyFunction.h"
 #endif
 
@@ -605,9 +605,9 @@ public:
         if (m_catchableFromWasm && callee.isWasm()) {
             Wasm::Callee* wasmCallee = callee.asWasmCallee();
             if (wasmCallee->hasExceptionHandlers()) {
-                JSWebAssemblyInstance* jsInstance = jsCast<JSWebAssemblyInstance*>(m_callFrame->thisValue());
+                Wasm::Instance* instance = m_callFrame->wasmInstance();
                 unsigned exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
-                m_handler = { wasmCallee->handlerForIndex(jsInstance->instance(), exceptionHandlerIndex, m_wasmTag), wasmCallee };
+                m_handler = { wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag), wasmCallee };
                 if (m_handler.m_valid)
                     return IterationStatus::Done;
             }
@@ -621,14 +621,6 @@ public:
         }
 
         notifyDebuggerOfUnwinding(m_vm, m_callFrame);
-
-#if ENABLE(WEBASSEMBLY)
-        if (callee.isWasm()) {
-            Wasm::Callee* wasmCallee = callee.asWasmCallee();
-            if (wasmCallee->compilationMode() == Wasm::CompilationMode::JSToWasmICMode)
-                m_vm.wasmContext.store(static_cast<Wasm::JSToWasmICCallee*>(wasmCallee)->previousInstance(m_callFrame));
-        }
-#endif
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(visitor);
 

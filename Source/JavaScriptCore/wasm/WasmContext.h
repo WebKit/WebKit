@@ -36,20 +36,9 @@ namespace JSC { namespace Wasm {
 class Instance;
 
 struct Context {
-    Instance* load() const;
-    void store(Instance*);
-
-    Instance** pointerToInstance()
-    {
-        return &instance;
-    }
-
-    static Instance* tryLoadInstanceFromTLS();
-
     uint64_t* scratchBufferForSize(size_t numberOfSlots);
 
 private:
-    Instance* instance { nullptr };
     Vector<UniqueArray<uint64_t>> m_scratchBuffers;
     size_t m_sizeOfLastScratchBuffer { 0 };
     Lock m_scratchBufferLock;

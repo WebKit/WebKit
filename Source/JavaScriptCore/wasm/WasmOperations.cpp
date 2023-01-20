@@ -45,7 +45,7 @@
 #include "ReleaseHeapAccessScope.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmInstance.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmMemory.h"
@@ -274,9 +274,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     OSREntryData& osrEntryData = *context.arg<OSREntryData*>();
     uint32_t functionIndex = osrEntryData.functionIndex();
     uint32_t loopIndex = osrEntryData.loopIndex();
-    Instance* instance = Wasm::Context::tryLoadInstanceFromTLS();
-    if (!instance)
-        instance = context.gpr<Instance*>(Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer);
+    Instance* instance = context.gpr<Instance*>(Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer);
 
     auto returnWithoutOSREntry = [&] {
         context.gpr(GPRInfo::argumentGPR0) = 0;

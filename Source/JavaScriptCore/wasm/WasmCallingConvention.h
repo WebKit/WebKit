@@ -41,6 +41,7 @@
 namespace JSC { namespace Wasm {
 
 constexpr unsigned numberOfLLIntCalleeSaveRegisters = 2;
+constexpr unsigned numberOfLLIntInternalRegisters = 2;
 
 struct ArgumentLocation {
     ArgumentLocation(ValueLocation loc, Width width)
@@ -61,8 +62,9 @@ enum class CallRole : uint8_t {
 };
 
 struct CallInformation {
-    CallInformation(Vector<ArgumentLocation>&& parameters, Vector<ArgumentLocation, 1>&& returnValues, size_t stackOffset)
-        : params(WTFMove(parameters))
+    CallInformation(ArgumentLocation passedThisArgument, Vector<ArgumentLocation>&& parameters, Vector<ArgumentLocation, 1>&& returnValues, size_t stackOffset)
+        : thisArgument(passedThisArgument)
+        , params(WTFMove(parameters))
         , results(WTFMove(returnValues))
         , headerAndArgumentStackSizeInBytes(stackOffset)
     { }
@@ -86,11 +88,12 @@ struct CallInformation {
         return savedRegs;
     }
 
-    bool argumentsIncludeI64 { false };
-    bool resultsIncludeI64 { false };
-    bool argumentsIncludeGCTypeIndex { false };
-    bool resultsIncludeGCTypeIndex { false };
-    bool argumentsOrResultsIncludeV128 { false };
+    bool argumentsIncludeI64 : 1 { false };
+    bool resultsIncludeI64 : 1 { false };
+    bool argumentsIncludeGCTypeIndex : 1 { false };
+    bool resultsIncludeGCTypeIndex : 1 { false };
+    bool argumentsOrResultsIncludeV128 : 1 { false };
+    ArgumentLocation thisArgument;
     Vector<ArgumentLocation> params;
     Vector<ArgumentLocation, 1> results;
     // As a callee this includes CallerFrameAndPC as a caller it does not.
@@ -247,9 +250,12 @@ public:
         bool argumentsOrResultsIncludeV128 = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
-        size_t headerSize = headerSizeInBytes + sizeof(Register);
+        size_t headerSize = headerSizeInBytes;
         if (role == CallRole::Caller)
             headerSize -= sizeof(CallerFrameAndPC);
+
+        ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(headerSize) : ValueLocation::stack(headerSize), widthForBytes(sizeof(void*)) };
+        headerSize += sizeof(Register);
 
         size_t argStackOffset = headerSize;
         Vector<ArgumentLocation> params(signature.argumentCount());
@@ -274,7 +280,7 @@ public:
             results[i] = marshallLocation(role, signature.returnType(i), gpArgumentCount, fpArgumentCount, resultStackOffset);
         }
 
-        CallInformation result(WTFMove(params), WTFMove(results), std::max(argStackOffset, resultStackOffset));
+        CallInformation result(thisArgument, WTFMove(params), WTFMove(results), std::max(argStackOffset, resultStackOffset));
         result.argumentsIncludeI64 = argumentsIncludeI64;
         result.resultsIncludeI64 = resultsIncludeI64;
         result.argumentsIncludeGCTypeIndex = argumentsIncludeGCTypeIndex;
@@ -292,11 +298,6 @@ public:
 class JSCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
-
-    // vmEntryToWasm passes the JSWebAssemblyInstance corresponding to Wasm::Context*'s
-    // instance as the first JS argument when we're not using fast TLS to hold the
-    // Wasm::Context*'s instance.
-    static constexpr ptrdiff_t instanceStackOffset = CallFrameSlot::thisArgument * sizeof(EncodedJSValue);
 
     JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs, RegisterSetBuilder&& calleeSaves)
         : jsrArgs(WTFMove(gprs))
@@ -343,16 +344,19 @@ public:
     {
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
-        size_t stackOffset = headerSizeInBytes + sizeof(Register); // Skip the this value since wasm doesn't use it and we sometimes put the context there.
+        size_t stackOffset = headerSizeInBytes;
         if (role == CallRole::Caller)
             stackOffset -= sizeof(CallerFrameAndPC);
+
+        ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), widthForBytes(sizeof(void*)) };
+        stackOffset += sizeof(Register);
 
         Vector<ArgumentLocation> params;
         for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i)
             params.append(marshallLocation(role, signature.as<FunctionSignature>()->argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
 
         Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { JSRInfo::returnValueJSR }, Width64 } };
-        return CallInformation(WTFMove(params), WTFMove(results), stackOffset);
+        return CallInformation(thisArgument, WTFMove(params), WTFMove(results), stackOffset);
     }
 
     const Vector<JSValueRegs> jsrArgs;

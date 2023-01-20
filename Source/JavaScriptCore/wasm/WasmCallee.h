@@ -132,8 +132,6 @@ public:
 
     using JITCallee::setEntrypoint;
 
-    Wasm::Instance* previousInstance(CallFrame*);
-    static ptrdiff_t previousInstanceOffset(const RegisterAtOffsetList&);
 private:
     JSToWasmICCallee()
         : JITCallee(Wasm::CompilationMode::JSToWasmICMode)

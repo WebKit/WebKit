@@ -33,7 +33,7 @@
 #include "LinkBuffer.h"
 #include "VMEntryRecord.h"
 #include "WasmCallingConvention.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC {

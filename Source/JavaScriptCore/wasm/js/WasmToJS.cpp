@@ -35,7 +35,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ThunkGenerators.h"
 #include "WasmCallingConvention.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include "WasmInstance.h"
 #include "WasmOperations.h"

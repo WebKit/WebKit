@@ -31,6 +31,9 @@
 #include <wtf/EnumClassOperatorOverloads.h>
 
 namespace JSC  {
+namespace Wasm {
+class Instance;
+}
 
 template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
@@ -217,6 +220,11 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         unsigned unsafeCallSiteAsRawBits() const;
         CallSiteIndex callSiteIndex() const;
         CallSiteIndex unsafeCallSiteIndex() const;
+
+#if ENABLE(WEBASSEMBLY)
+        Wasm::Instance* wasmInstance() const;
+#endif
+
     private:
         unsigned callSiteBitsAsBytecodeOffset() const;
 #if ENABLE(WEBASSEMBLY)

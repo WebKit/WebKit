@@ -34,7 +34,7 @@
 #include "LLIntPCRanges.h"
 #include "VMEntryRecord.h"
 #include "VMEntryScope.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmInstance.h"
 #include <wtf/StringPrintStream.h>
 
@@ -351,9 +351,9 @@ void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAl
 }
 
 #if ENABLE(WEBASSEMBLY)
-JSGlobalObject* CallFrame::lexicalGlobalObjectFromWasmCallee(VM& vm) const
+JSGlobalObject* CallFrame::lexicalGlobalObjectFromWasmCallee(VM&) const
 {
-    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject();
+    return wasmInstance()->owner<JSWebAssemblyInstance>()->globalObject();
 }
 #endif
 

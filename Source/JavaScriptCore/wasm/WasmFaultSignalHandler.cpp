@@ -34,7 +34,7 @@
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include "WasmMemory.h"
 #include "WasmThunks.h"
