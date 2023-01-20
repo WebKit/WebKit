@@ -50,11 +50,15 @@ class StyleRuleFontFace;
 class StyleRuleFontFeatureValues;
 class StyleRuleFontPaletteValues;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
+class CSSFontSelector final : public FontSelector, public CSSFontFace::Client, public ActiveDOMObject {
 public:
+    using FontSelector::weakPtrFactory;
+    using FontSelector::WeakValueType;
+    using FontSelector::WeakPtrImplType;
+
     static Ref<CSSFontSelector> create(ScriptExecutionContext&);
     virtual ~CSSFontSelector();
-    
+
     unsigned version() const final { return m_version; }
     unsigned uniqueId() const final { return m_uniqueId; }
 

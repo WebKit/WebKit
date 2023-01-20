@@ -221,7 +221,7 @@ private:
 
     Timer m_purgeTimer;
 
-    HashSet<FontSelector*> m_clients;
+    WeakHashSet<FontSelector> m_clients;
     struct FontDataCaches;
     UniqueRef<FontDataCaches> m_fontDataCaches;
     FontCascadeCache m_fontCascadeCache;

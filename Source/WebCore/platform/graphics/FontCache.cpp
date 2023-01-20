@@ -372,15 +372,14 @@ size_t FontCache::inactiveFontCount()
 
 void FontCache::addClient(FontSelector& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 }
 
 void FontCache::removeClient(FontSelector& client)
 {
-    ASSERT(m_clients.contains(&client));
-
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
 }
 
 void FontCache::invalidate()
@@ -397,7 +396,7 @@ void FontCache::invalidate()
 
     ++m_generation;
 
-    for (auto& client : copyToVectorOf<RefPtr<FontSelector>>(m_clients))
+    for (auto& client : copyToVectorOf<Ref<FontSelector>>(m_clients))
         client->fontCacheInvalidated();
 
     purgeInactiveFontData();

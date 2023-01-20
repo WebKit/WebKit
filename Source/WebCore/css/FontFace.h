@@ -43,7 +43,7 @@ namespace WebCore {
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
-class FontFace final : public RefCounted<FontFace>, public CanMakeWeakPtr<FontFace>, public ActiveDOMObject, private CSSFontFace::Client {
+class FontFace final : public RefCounted<FontFace>, public ActiveDOMObject, public CSSFontFace::Client {
 public:
     struct Descriptors {
         String style;
