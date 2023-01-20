@@ -537,6 +537,8 @@ private:
     int m_widthForTextAutosizing;
     unsigned m_lineCountForTextAutosizing : 2;
 #endif
+    // FIXME: This is temporary until after we remove the forced "line layout codepath" invalidation.
+    std::optional<LayoutUnit> m_previousModernLineLayoutContentBoxLogicalHeight;
 
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
