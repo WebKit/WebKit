@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestSetLikeWithOverriddenOperations : public JSDOMWrapper<TestSetLikeWithOverriddenOperations> {
 public:
     using Base = JSDOMWrapper<TestSetLikeWithOverriddenOperations>;
-    static JSTestSetLikeWithOverriddenOperations* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
-    {
-        JSTestSetLikeWithOverriddenOperations* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikeWithOverriddenOperations>(globalObject->vm())) JSTestSetLikeWithOverriddenOperations(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestSetLikeWithOverriddenOperations* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestSetLikeWithOverriddenOperations* toWrapped(JSC::VM&, JSC::JSValue);

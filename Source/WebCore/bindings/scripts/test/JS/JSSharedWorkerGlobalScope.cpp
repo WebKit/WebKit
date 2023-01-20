@@ -120,6 +120,13 @@ JSSharedWorkerGlobalScope::JSSharedWorkerGlobalScope(VM& vm, Structure* structur
 {
 }
 
+JSSharedWorkerGlobalScope* JSSharedWorkerGlobalScope::create(JSC::VM& vm, JSC::Structure* structure, Ref<SharedWorkerGlobalScope>&& impl, JSC::JSProxy* proxy)
+{
+    JSSharedWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSSharedWorkerGlobalScope>(vm)) JSSharedWorkerGlobalScope(vm, structure, WTFMove(impl));
+    ptr->finishCreation(vm, proxy);
+    return ptr;
+}
+
 void JSSharedWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 {
     Base::finishCreation(vm, proxy);

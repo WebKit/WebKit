@@ -152,6 +152,13 @@ JSExposedStar::JSExposedStar(Structure* structure, JSDOMGlobalObject& globalObje
 {
 }
 
+JSExposedStar* JSExposedStar::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl)
+{
+    JSExposedStar* ptr = new (NotNull, JSC::allocateCell<JSExposedStar>(globalObject->vm())) JSExposedStar(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSExposedStar::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

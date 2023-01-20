@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestNamedSetterNoIdentifier : public JSDOMWrapper<TestNamedSetterNoIdentifier> {
 public:
     using Base = JSDOMWrapper<TestNamedSetterNoIdentifier>;
-    static JSTestNamedSetterNoIdentifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterNoIdentifier>&& impl)
-    {
-        JSTestNamedSetterNoIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterNoIdentifier>(globalObject->vm())) JSTestNamedSetterNoIdentifier(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestNamedSetterNoIdentifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterNoIdentifier>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestNamedSetterNoIdentifier* toWrapped(JSC::VM&, JSC::JSValue);

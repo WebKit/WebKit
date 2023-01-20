@@ -204,6 +204,13 @@ JSTestConditionallyReadWrite::JSTestConditionallyReadWrite(Structure* structure,
 {
 }
 
+JSTestConditionallyReadWrite* JSTestConditionallyReadWrite::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestConditionallyReadWrite>&& impl)
+{
+    JSTestConditionallyReadWrite* ptr = new (NotNull, JSC::allocateCell<JSTestConditionallyReadWrite>(globalObject->vm())) JSTestConditionallyReadWrite(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestConditionallyReadWrite::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

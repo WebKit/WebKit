@@ -129,6 +129,13 @@ JSTestClassWithJSBuiltinConstructor::JSTestClassWithJSBuiltinConstructor(Structu
 {
 }
 
+JSTestClassWithJSBuiltinConstructor* JSTestClassWithJSBuiltinConstructor::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
+{
+    JSTestClassWithJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructor>(globalObject->vm())) JSTestClassWithJSBuiltinConstructor(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestClassWithJSBuiltinConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

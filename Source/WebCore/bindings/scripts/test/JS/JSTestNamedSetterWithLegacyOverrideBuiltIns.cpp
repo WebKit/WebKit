@@ -125,6 +125,13 @@ JSTestNamedSetterWithLegacyOverrideBuiltIns::JSTestNamedSetterWithLegacyOverride
 {
 }
 
+JSTestNamedSetterWithLegacyOverrideBuiltIns* JSTestNamedSetterWithLegacyOverrideBuiltIns::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&& impl)
+{
+    JSTestNamedSetterWithLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyOverrideBuiltIns>(globalObject->vm())) JSTestNamedSetterWithLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedSetterWithLegacyOverrideBuiltIns::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

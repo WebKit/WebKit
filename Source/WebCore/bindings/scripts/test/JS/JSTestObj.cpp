@@ -2649,6 +2649,13 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject& globalObject, Ref<
 {
 }
 
+JSTestObj* JSTestObj::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
+{
+    JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(globalObject->vm())) JSTestObj(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestObj::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

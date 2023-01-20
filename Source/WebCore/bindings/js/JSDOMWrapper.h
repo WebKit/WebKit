@@ -21,13 +21,14 @@
 
 #pragma once
 
-#include "JSDOMGlobalObject.h"
 #include "NodeConstants.h"
 #include <JavaScriptCore/JSDestructibleObject.h>
 #include <wtf/SignedPtr.h>
 
 namespace WebCore {
 
+class DOMWrapperWorld;
+class JSDOMGlobalObject;
 class ScriptExecutionContext;
 
 // JSC allows us to extend JSType. If the highest 3 bits are set, we can add any Object types and they are
@@ -62,8 +63,8 @@ public:
     template<typename, JSC::SubspaceAccess>
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
-    JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
-    ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
+    WEBCORE_EXPORT JSDOMGlobalObject* globalObject() const;
+    WEBCORE_EXPORT ScriptExecutionContext* scriptExecutionContext() const;
 
 protected:
     WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&);

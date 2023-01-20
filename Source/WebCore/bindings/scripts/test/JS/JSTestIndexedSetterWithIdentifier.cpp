@@ -134,6 +134,13 @@ JSTestIndexedSetterWithIdentifier::JSTestIndexedSetterWithIdentifier(Structure* 
 {
 }
 
+JSTestIndexedSetterWithIdentifier* JSTestIndexedSetterWithIdentifier::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestIndexedSetterWithIdentifier>&& impl)
+{
+    JSTestIndexedSetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestIndexedSetterWithIdentifier>(globalObject->vm())) JSTestIndexedSetterWithIdentifier(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestIndexedSetterWithIdentifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

@@ -236,6 +236,13 @@ JSTestPromiseRejectionEvent::JSTestPromiseRejectionEvent(Structure* structure, J
 {
 }
 
+JSTestPromiseRejectionEvent* JSTestPromiseRejectionEvent::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestPromiseRejectionEvent>&& impl)
+{
+    JSTestPromiseRejectionEvent* ptr = new (NotNull, JSC::allocateCell<JSTestPromiseRejectionEvent>(globalObject->vm())) JSTestPromiseRejectionEvent(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestPromiseRejectionEvent::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

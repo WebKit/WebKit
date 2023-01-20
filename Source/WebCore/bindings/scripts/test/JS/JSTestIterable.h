@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestIterable : public JSDOMWrapper<TestIterable> {
 public:
     using Base = JSDOMWrapper<TestIterable>;
-    static JSTestIterable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl)
-    {
-        JSTestIterable* ptr = new (NotNull, JSC::allocateCell<JSTestIterable>(globalObject->vm())) JSTestIterable(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestIterable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestIterable* toWrapped(JSC::VM&, JSC::JSValue);

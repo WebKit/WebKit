@@ -223,6 +223,13 @@ JSTestDefaultToJSON::JSTestDefaultToJSON(Structure* structure, JSDOMGlobalObject
 {
 }
 
+JSTestDefaultToJSON* JSTestDefaultToJSON::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSON>&& impl)
+{
+    JSTestDefaultToJSON* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSON>(globalObject->vm())) JSTestDefaultToJSON(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestDefaultToJSON::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

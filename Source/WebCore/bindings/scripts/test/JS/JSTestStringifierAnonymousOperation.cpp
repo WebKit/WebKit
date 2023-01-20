@@ -130,6 +130,13 @@ JSTestStringifierAnonymousOperation::JSTestStringifierAnonymousOperation(Structu
 {
 }
 
+JSTestStringifierAnonymousOperation* JSTestStringifierAnonymousOperation::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierAnonymousOperation>&& impl)
+{
+    JSTestStringifierAnonymousOperation* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierAnonymousOperation>(globalObject->vm())) JSTestStringifierAnonymousOperation(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestStringifierAnonymousOperation::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestCallTracer : public JSDOMWrapper<TestCallTracer> {
 public:
     using Base = JSDOMWrapper<TestCallTracer>;
-    static JSTestCallTracer* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCallTracer>&& impl)
-    {
-        JSTestCallTracer* ptr = new (NotNull, JSC::allocateCell<JSTestCallTracer>(globalObject->vm())) JSTestCallTracer(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestCallTracer* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCallTracer>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestCallTracer* toWrapped(JSC::VM&, JSC::JSValue);

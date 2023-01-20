@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestNamedSetterWithLegacyUnforgeableProperties : public JSDOMWrapper<TestNamedSetterWithLegacyUnforgeableProperties> {
 public:
     using Base = JSDOMWrapper<TestNamedSetterWithLegacyUnforgeableProperties>;
-    static JSTestNamedSetterWithLegacyUnforgeableProperties* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl)
-    {
-        JSTestNamedSetterWithLegacyUnforgeableProperties* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeableProperties>(globalObject->vm())) JSTestNamedSetterWithLegacyUnforgeableProperties(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestNamedSetterWithLegacyUnforgeableProperties* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestNamedSetterWithLegacyUnforgeableProperties* toWrapped(JSC::VM&, JSC::JSValue);

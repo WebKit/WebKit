@@ -30,13 +30,7 @@ WTF_DECLARE_PTRTAG(TestTaggedWrapperPtrTag)
 class JSTestTaggedWrapper : public JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>> {
 public:
     using Base = JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>;
-    static JSTestTaggedWrapper* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTaggedWrapper>&& impl)
-    {
-        JSTestTaggedWrapper* ptr = new (NotNull, JSC::allocateCell<JSTestTaggedWrapper>(globalObject->vm())) JSTestTaggedWrapper(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestTaggedWrapper* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTaggedWrapper>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestTaggedWrapper* toWrapped(JSC::VM&, JSC::JSValue);

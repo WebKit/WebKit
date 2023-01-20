@@ -95,6 +95,13 @@ JSShadowRealmGlobalScope::JSShadowRealmGlobalScope(VM& vm, Structure* structure,
 {
 }
 
+JSShadowRealmGlobalScope* JSShadowRealmGlobalScope::create(JSC::VM& vm, JSC::Structure* structure, Ref<ShadowRealmGlobalScope>&& impl, JSC::JSProxy* proxy)
+{
+    JSShadowRealmGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSShadowRealmGlobalScope>(vm)) JSShadowRealmGlobalScope(vm, structure, WTFMove(impl));
+    ptr->finishCreation(vm, proxy);
+    return ptr;
+}
+
 void JSShadowRealmGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 {
     Base::finishCreation(vm, proxy);

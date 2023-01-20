@@ -31,13 +31,7 @@ namespace WebCore {
 class JSTestLegacyNoInterfaceObject : public JSDOMWrapper<TestLegacyNoInterfaceObject> {
 public:
     using Base = JSDOMWrapper<TestLegacyNoInterfaceObject>;
-    static JSTestLegacyNoInterfaceObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
-    {
-        JSTestLegacyNoInterfaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyNoInterfaceObject>(globalObject->vm())) JSTestLegacyNoInterfaceObject(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestLegacyNoInterfaceObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestLegacyNoInterfaceObject* toWrapped(JSC::VM&, JSC::JSValue);

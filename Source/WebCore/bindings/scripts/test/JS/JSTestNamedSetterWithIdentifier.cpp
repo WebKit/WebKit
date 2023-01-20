@@ -133,6 +133,13 @@ JSTestNamedSetterWithIdentifier::JSTestNamedSetterWithIdentifier(Structure* stru
 {
 }
 
+JSTestNamedSetterWithIdentifier* JSTestNamedSetterWithIdentifier::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithIdentifier>&& impl)
+{
+    JSTestNamedSetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithIdentifier>(globalObject->vm())) JSTestNamedSetterWithIdentifier(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedSetterWithIdentifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

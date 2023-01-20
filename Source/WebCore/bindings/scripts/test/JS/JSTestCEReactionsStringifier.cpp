@@ -138,6 +138,13 @@ JSTestCEReactionsStringifier::JSTestCEReactionsStringifier(Structure* structure,
 {
 }
 
+JSTestCEReactionsStringifier* JSTestCEReactionsStringifier::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
+{
+    JSTestCEReactionsStringifier* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactionsStringifier>(globalObject->vm())) JSTestCEReactionsStringifier(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestCEReactionsStringifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

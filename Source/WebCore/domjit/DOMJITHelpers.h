@@ -33,6 +33,8 @@
 
 #if ENABLE(JIT)
 
+#include "JSDOMGlobalObject.h"
+
 IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace WebCore { namespace DOMJIT {

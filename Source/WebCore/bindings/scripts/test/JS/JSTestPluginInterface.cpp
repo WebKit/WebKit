@@ -124,6 +124,13 @@ JSTestPluginInterface::JSTestPluginInterface(Structure* structure, JSDOMGlobalOb
 {
 }
 
+JSTestPluginInterface* JSTestPluginInterface::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestPluginInterface>&& impl)
+{
+    JSTestPluginInterface* ptr = new (NotNull, JSC::allocateCell<JSTestPluginInterface>(globalObject->vm())) JSTestPluginInterface(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestPluginInterface::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

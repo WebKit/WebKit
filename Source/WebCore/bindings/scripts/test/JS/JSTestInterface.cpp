@@ -486,6 +486,13 @@ JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject& global
 {
 }
 
+JSTestInterface* JSTestInterface::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
+{
+    JSTestInterface* ptr = new (NotNull, JSC::allocateCell<JSTestInterface>(globalObject->vm())) JSTestInterface(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestInterface::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

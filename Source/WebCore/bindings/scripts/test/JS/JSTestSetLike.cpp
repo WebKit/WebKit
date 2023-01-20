@@ -151,6 +151,13 @@ JSTestSetLike::JSTestSetLike(Structure* structure, JSDOMGlobalObject& globalObje
 {
 }
 
+JSTestSetLike* JSTestSetLike::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLike>&& impl)
+{
+    JSTestSetLike* ptr = new (NotNull, JSC::allocateCell<JSTestSetLike>(globalObject->vm())) JSTestSetLike(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestSetLike::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

@@ -133,6 +133,13 @@ JSTestNamedDeleterWithIdentifier::JSTestNamedDeleterWithIdentifier(Structure* st
 {
 }
 
+JSTestNamedDeleterWithIdentifier* JSTestNamedDeleterWithIdentifier::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterWithIdentifier>&& impl)
+{
+    JSTestNamedDeleterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIdentifier>(globalObject->vm())) JSTestNamedDeleterWithIdentifier(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedDeleterWithIdentifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

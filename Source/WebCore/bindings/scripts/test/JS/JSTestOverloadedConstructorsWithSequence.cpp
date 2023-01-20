@@ -195,6 +195,13 @@ JSTestOverloadedConstructorsWithSequence::JSTestOverloadedConstructorsWithSequen
 {
 }
 
+JSTestOverloadedConstructorsWithSequence* JSTestOverloadedConstructorsWithSequence::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructorsWithSequence>&& impl)
+{
+    JSTestOverloadedConstructorsWithSequence* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequence>(globalObject->vm())) JSTestOverloadedConstructorsWithSequence(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestOverloadedConstructorsWithSequence::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

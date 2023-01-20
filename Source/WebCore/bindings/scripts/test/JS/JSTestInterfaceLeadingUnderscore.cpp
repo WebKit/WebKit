@@ -127,6 +127,13 @@ JSTestInterfaceLeadingUnderscore::JSTestInterfaceLeadingUnderscore(Structure* st
 {
 }
 
+JSTestInterfaceLeadingUnderscore* JSTestInterfaceLeadingUnderscore::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterfaceLeadingUnderscore>&& impl)
+{
+    JSTestInterfaceLeadingUnderscore* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscore>(globalObject->vm())) JSTestInterfaceLeadingUnderscore(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestInterfaceLeadingUnderscore::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

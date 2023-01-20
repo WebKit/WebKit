@@ -126,6 +126,13 @@ JSTestEnabledForContext::JSTestEnabledForContext(Structure* structure, JSDOMGlob
 {
 }
 
+JSTestEnabledForContext* JSTestEnabledForContext::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEnabledForContext>&& impl)
+{
+    JSTestEnabledForContext* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledForContext>(globalObject->vm())) JSTestEnabledForContext(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestEnabledForContext::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

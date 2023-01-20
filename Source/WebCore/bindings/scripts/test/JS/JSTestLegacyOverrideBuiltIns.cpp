@@ -134,6 +134,13 @@ JSTestLegacyOverrideBuiltIns::JSTestLegacyOverrideBuiltIns(Structure* structure,
 {
 }
 
+JSTestLegacyOverrideBuiltIns* JSTestLegacyOverrideBuiltIns::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl)
+{
+    JSTestLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltIns>(globalObject->vm())) JSTestLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestLegacyOverrideBuiltIns::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

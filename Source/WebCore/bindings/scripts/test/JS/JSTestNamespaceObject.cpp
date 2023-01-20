@@ -136,6 +136,13 @@ const ClassInfo JSTestNamespaceObject::s_info = { "TestInterfaceName"_s, &Base::
 JSTestNamespaceObject::JSTestNamespaceObject(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }
 
+JSTestNamespaceObject* JSTestNamespaceObject::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+{
+    JSTestNamespaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestNamespaceObject>(globalObject->vm())) JSTestNamespaceObject(structure, *globalObject);
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamespaceObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

@@ -151,6 +151,13 @@ JSTestOperationConditional::JSTestOperationConditional(Structure* structure, JSD
 {
 }
 
+JSTestOperationConditional* JSTestOperationConditional::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOperationConditional>&& impl)
+{
+    JSTestOperationConditional* ptr = new (NotNull, JSC::allocateCell<JSTestOperationConditional>(globalObject->vm())) JSTestOperationConditional(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestOperationConditional::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

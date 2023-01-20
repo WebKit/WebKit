@@ -133,6 +133,13 @@ JSTestLegacyNoInterfaceObject::JSTestLegacyNoInterfaceObject(Structure* structur
 {
 }
 
+JSTestLegacyNoInterfaceObject* JSTestLegacyNoInterfaceObject::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
+{
+    JSTestLegacyNoInterfaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyNoInterfaceObject>(globalObject->vm())) JSTestLegacyNoInterfaceObject(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestLegacyNoInterfaceObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

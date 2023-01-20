@@ -126,6 +126,13 @@ JSTestNamedAndIndexedSetterThrowingException::JSTestNamedAndIndexedSetterThrowin
 {
 }
 
+JSTestNamedAndIndexedSetterThrowingException* JSTestNamedAndIndexedSetterThrowingException::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedAndIndexedSetterThrowingException>&& impl)
+{
+    JSTestNamedAndIndexedSetterThrowingException* ptr = new (NotNull, JSC::allocateCell<JSTestNamedAndIndexedSetterThrowingException>(globalObject->vm())) JSTestNamedAndIndexedSetterThrowingException(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedAndIndexedSetterThrowingException::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

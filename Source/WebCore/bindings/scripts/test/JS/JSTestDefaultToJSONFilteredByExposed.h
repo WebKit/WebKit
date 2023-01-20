@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestDefaultToJSONFilteredByExposed : public JSDOMWrapper<TestDefaultToJSONFilteredByExposed> {
 public:
     using Base = JSDOMWrapper<TestDefaultToJSONFilteredByExposed>;
-    static JSTestDefaultToJSONFilteredByExposed* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl)
-    {
-        JSTestDefaultToJSONFilteredByExposed* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONFilteredByExposed>(globalObject->vm())) JSTestDefaultToJSONFilteredByExposed(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestDefaultToJSONFilteredByExposed* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestDefaultToJSONFilteredByExposed* toWrapped(JSC::VM&, JSC::JSValue);

@@ -28,6 +28,7 @@
 
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMWindow.h"
 #include "JSRemoteDOMWindow.h"
 #include "SerializedScriptValue.h"
@@ -42,6 +43,16 @@ JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalO
     : Base(globalObject.vm(), structure)
 {
     ASSERT(scriptExecutionContext() || globalObject.classInfo() == JSRemoteDOMWindow::info());
+}
+
+JSDOMGlobalObject* JSDOMObject::globalObject() const
+{
+    return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject());
+}
+
+ScriptExecutionContext* JSDOMObject::scriptExecutionContext() const
+{
+    return globalObject()->scriptExecutionContext();
 }
 
 JSC::JSValue cloneAcrossWorlds(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSC::JSValue value)

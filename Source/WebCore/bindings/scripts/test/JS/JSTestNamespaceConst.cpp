@@ -76,6 +76,13 @@ const ClassInfo JSTestNamespaceConst::s_info = { "TestNamespaceConst"_s, &Base::
 JSTestNamespaceConst::JSTestNamespaceConst(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }
 
+JSTestNamespaceConst* JSTestNamespaceConst::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+{
+    JSTestNamespaceConst* ptr = new (NotNull, JSC::allocateCell<JSTestNamespaceConst>(globalObject->vm())) JSTestNamespaceConst(structure, *globalObject);
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamespaceConst::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

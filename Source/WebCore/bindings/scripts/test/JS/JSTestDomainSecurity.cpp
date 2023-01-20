@@ -157,6 +157,13 @@ JSTestDomainSecurity::JSTestDomainSecurity(Structure* structure, JSDOMGlobalObje
 {
 }
 
+JSTestDomainSecurity* JSTestDomainSecurity::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDomainSecurity>&& impl)
+{
+    JSTestDomainSecurity* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurity>(globalObject->vm())) JSTestDomainSecurity(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestDomainSecurity::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
