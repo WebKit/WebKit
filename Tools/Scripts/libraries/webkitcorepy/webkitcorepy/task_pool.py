@@ -446,6 +446,10 @@ class TaskPool(object):
         try:
             inflight = sys.exc_info()
 
+            if inflight[1]:
+                # We're about to terminate all the workers. Ignore any unprocessed jobs.
+                self.queue.outgoing.cancel_join_thread()
+
             for worker in self.workers:
                 if worker.is_alive():
                     worker.terminate()
