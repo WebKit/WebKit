@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/scripts/release.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/scripts/upload-coverage.sh

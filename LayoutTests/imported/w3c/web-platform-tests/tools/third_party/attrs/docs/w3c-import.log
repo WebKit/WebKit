@@ -16,10 +16,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/Makefile
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/api.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/backward-compatibility.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/changelog.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/comparison.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/conf.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/contributing.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/docutils.conf
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/examples.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/extending.rst
@@ -29,5 +28,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/index.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/init.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/license.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/names.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/overview.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/python-2.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/types.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/why.rst

@@ -16,5 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/config/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/config/argparsing.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/config/compat.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/config/exceptions.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/config/findpaths.py

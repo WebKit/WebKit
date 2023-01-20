@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/001.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/background-origin-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/background_shorthand_css_relative_url.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/beforeunload-on-history-back-1.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/euckr-encode-form.html
@@ -24,6 +25,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/htb-ltr-ltr.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/idbindex_get8.htm
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/idlharness.html
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/moz-css21-float-page-break-inside-avoid-6.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/li-type-unsupported-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/shape-outside-content-box-002.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/worker-constructor.https.html

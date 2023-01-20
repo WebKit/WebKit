@@ -1,3 +1,5 @@
+# mypy: allow-untyped-defs
+
 import json
 import os
 import socket
@@ -26,7 +28,10 @@ from .protocol import (BaseProtocolPart,
                        GenerateTestReportProtocolPart,
                        SetPermissionProtocolPart,
                        VirtualAuthenticatorProtocolPart,
-                       DebugProtocolPart)
+                       WindowProtocolPart,
+                       DebugProtocolPart,
+                       SPCTransactionsProtocolPart,
+                       merge_dicts)
 
 from webdriver.client import Session
 from webdriver import error
@@ -80,10 +85,7 @@ addEventListener("__test_restart", e => {e.preventDefault(); callback(true)})"""
                 # by ignoring it it's possible to reload the test whilst the
                 # harness remains paused
                 pass
-            except (socket.timeout,
-                    error.NoSuchWindowException,
-                    error.UnknownErrorException,
-                    IOError):
+            except (socket.timeout, error.NoSuchWindowException, error.UnknownErrorException, OSError):
                 break
             except Exception:
                 self.logger.error(traceback.format_exc())
@@ -201,6 +203,28 @@ class WebDriverCookiesProtocolPart(CookiesProtocolPart):
         self.logger.info("Deleting all cookies")
         return self.webdriver.send_session_command("DELETE", "cookie")
 
+    def get_all_cookies(self):
+        self.logger.info("Getting all cookies")
+        return self.webdriver.send_session_command("GET", "cookie")
+
+    def get_named_cookie(self, name):
+        self.logger.info("Getting cookie named %s" % name)
+        try:
+            return self.webdriver.send_session_command("GET", "cookie/%s" % name)
+        except error.NoSuchCookieException:
+            return None
+
+class WebDriverWindowProtocolPart(WindowProtocolPart):
+    def setup(self):
+        self.webdriver = self.parent.webdriver
+
+    def minimize(self):
+        self.logger.info("Minimizing")
+        return self.webdriver.window.minimize()
+
+    def set_rect(self, rect):
+        self.logger.info("Restoring")
+        self.webdriver.window.rect = rect
 
 class WebDriverSendKeysProtocolPart(SendKeysProtocolPart):
     def setup(self):
@@ -223,6 +247,9 @@ class WebDriverActionSequenceProtocolPart(ActionSequenceProtocolPart):
 
     def send_actions(self, actions):
         self.webdriver.actions.perform(actions['actions'])
+
+    def release(self):
+        self.webdriver.actions.release()
 
 
 class WebDriverTestDriverProtocolPart(TestDriverProtocolPart):
@@ -263,13 +290,11 @@ class WebDriverSetPermissionProtocolPart(SetPermissionProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
 
-    def set_permission(self, descriptor, state, one_realm):
+    def set_permission(self, descriptor, state):
         permission_params_dict = {
             "descriptor": descriptor,
             "state": state,
         }
-        if one_realm is not None:
-            permission_params_dict["oneRealm"] = one_realm
         self.webdriver.send_session_command("POST", "permissions", permission_params_dict)
 
 
@@ -290,13 +315,22 @@ class WebDriverVirtualAuthenticatorProtocolPart(VirtualAuthenticatorProtocolPart
         return self.webdriver.send_session_command("GET", "webauthn/authenticator/%s/credentials" % authenticator_id)
 
     def remove_credential(self, authenticator_id, credential_id):
-        return self.webdriver.send_session_command("DELETE", "webauthn/authenticator/%s/credentials/%s" % (authenticator_id, credential_id))
+        return self.webdriver.send_session_command("DELETE", f"webauthn/authenticator/{authenticator_id}/credentials/{credential_id}")
 
     def remove_all_credentials(self, authenticator_id):
         return self.webdriver.send_session_command("DELETE", "webauthn/authenticator/%s/credentials" % authenticator_id)
 
     def set_user_verified(self, authenticator_id, uv):
         return self.webdriver.send_session_command("POST", "webauthn/authenticator/%s/uv" % authenticator_id, uv)
+
+
+class WebDriverSPCTransactionsProtocolPart(SPCTransactionsProtocolPart):
+    def setup(self):
+        self.webdriver = self.parent.webdriver
+
+    def set_spc_transaction_mode(self, mode):
+        body = {"mode": mode}
+        return self.webdriver.send_session_command("POST", "secure-payment-confirmation/set-mode", body)
 
 
 class WebDriverDebugProtocolPart(DebugProtocolPart):
@@ -311,16 +345,35 @@ class WebDriverProtocol(Protocol):
                   WebDriverClickProtocolPart,
                   WebDriverCookiesProtocolPart,
                   WebDriverSendKeysProtocolPart,
+                  WebDriverWindowProtocolPart,
                   WebDriverActionSequenceProtocolPart,
                   WebDriverTestDriverProtocolPart,
                   WebDriverGenerateTestReportProtocolPart,
                   WebDriverSetPermissionProtocolPart,
                   WebDriverVirtualAuthenticatorProtocolPart,
+                  WebDriverSPCTransactionsProtocolPart,
                   WebDriverDebugProtocolPart]
 
     def __init__(self, executor, browser, capabilities, **kwargs):
-        super(WebDriverProtocol, self).__init__(executor, browser)
+        super().__init__(executor, browser)
         self.capabilities = capabilities
+        if hasattr(browser, "capabilities"):
+            if self.capabilities is None:
+                self.capabilities = browser.capabilities
+            else:
+                merge_dicts(self.capabilities, browser.capabilities)
+
+        pac = browser.pac
+        if pac is not None:
+            if self.capabilities is None:
+                self.capabilities = {}
+            merge_dicts(self.capabilities, {"proxy":
+                {
+                    "proxyType": "pac",
+                    "proxyAutoconfigUrl": urljoin(executor.server_url("http"), pac)
+                }
+            })
+
         self.url = browser.webdriver_url
         self.webdriver = None
 
@@ -521,7 +574,8 @@ class WebDriverRefTestExecutor(RefTestExecutor):
 
     def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  screenshot_cache=None, close_after_done=True,
-                 debug_info=None, capabilities=None, debug_test=False, **kwargs):
+                 debug_info=None, capabilities=None, debug_test=False,
+                 reftest_screenshot="unexpected", **kwargs):
         """WebDriver-based executor for reftests"""
         RefTestExecutor.__init__(self,
                                  logger,
@@ -529,7 +583,8 @@ class WebDriverRefTestExecutor(RefTestExecutor):
                                  server_config,
                                  screenshot_cache=screenshot_cache,
                                  timeout_multiplier=timeout_multiplier,
-                                 debug_info=debug_info)
+                                 debug_info=debug_info,
+                                 reftest_screenshot=reftest_screenshot)
         self.protocol = self.protocol_cls(self,
                                           browser,
                                           capabilities=capabilities)
@@ -584,6 +639,8 @@ class WebDriverRefTestExecutor(RefTestExecutor):
         self.protocol.base.execute_script(self.wait_script, True)
 
         screenshot = self.protocol.webdriver.screenshot()
+        if screenshot is None:
+            raise ValueError('screenshot is None')
 
         # strip off the data:img/png, part of the url
         if screenshot.startswith("data:image/png;base64,"):

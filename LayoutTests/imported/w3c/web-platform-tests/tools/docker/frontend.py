@@ -1,3 +1,5 @@
+# mypy: allow-untyped-defs
+
 import argparse
 import logging
 import os
@@ -113,6 +115,8 @@ def parser_run():
                         "/home/test/web-platform-tests/")
     parser.add_argument("--privileged", action="store_true",
                         help="Run the image in priviledged mode (required for emulators)")
+    parser.add_argument("--tag", action="store", default="wpt:local",
+                        help="Docker image tag to use (default wpt:local)")
     return parser
 
 
@@ -130,7 +134,7 @@ def run(*args, **kwargs):
     else:
         args.extend(["--mount",
                      "type=bind,source=%s,target=/home/test/web-platform-tests" % wpt_root])
-    args.extend(["-it", "wpt:local"])
+    args.extend(["-it", kwargs["tag"]])
 
     proc = subprocess.Popen(args)
     proc.wait()

@@ -32,13 +32,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-extra.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-vendor.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharness_runner.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-content-shell.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servo.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servodriver.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testloader.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testrunner.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/vcs.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/webdriver_server.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wptcommandline.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wptlogging.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wptrunner.py

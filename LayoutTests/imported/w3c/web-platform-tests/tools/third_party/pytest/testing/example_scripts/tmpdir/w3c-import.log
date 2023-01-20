@@ -14,4 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/tmpdir/tmpdir_fixture.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/tmpdir/tmp_path_fixture.py

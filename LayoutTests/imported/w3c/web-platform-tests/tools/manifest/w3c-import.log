@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/jsonlib.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/log.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/manifest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/manifest/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/sourcefile.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/testpaths.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/manifest/typedata.py

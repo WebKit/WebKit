@@ -15,19 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/build-hello-world.sh
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-armv7l-armel
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-armv7l-armhf
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-invalid-class
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-invalid-data
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-invalid-magic
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-s390x-s390x
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-too-short
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-x86_64-amd64
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-x86_64-i386
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world-x86_64-x32
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/hello-world.c
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/test_manylinux.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/test_markers.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/test_musllinux.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/test_requirements.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/test_specifiers.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/tests/test_structures.py

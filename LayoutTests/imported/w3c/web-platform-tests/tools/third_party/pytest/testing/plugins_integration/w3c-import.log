@@ -24,4 +24,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/plugins_integration/pytest_mock_integration.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/plugins_integration/pytest_trio_integration.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/plugins_integration/pytest_twisted_integration.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/plugins_integration/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/plugins_integration/simple_integration.py

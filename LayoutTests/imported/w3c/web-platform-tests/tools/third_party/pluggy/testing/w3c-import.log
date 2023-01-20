@@ -16,7 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/benchmark.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/conftest.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_deprecations.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_details.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_helpers.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/testing/test_hookcaller.py

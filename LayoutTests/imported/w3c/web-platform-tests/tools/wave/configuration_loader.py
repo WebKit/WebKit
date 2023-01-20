@@ -1,3 +1,5 @@
+# mypy: allow-untyped-defs
+
 import json
 import os
 
@@ -46,14 +48,23 @@ def load(configuration_file_path):
     configuration["hostname"] = configuration.get(
         "browser_host", default_configuration["browser_host"])
 
-    configuration["import_enabled"] = configuration.get(
+    configuration["import_results_enabled"] = configuration.get(
         "wave", default_configuration["wave"]).get(
-        "enable_results_import",
-        default_configuration["wave"]["enable_results_import"])
+        "enable_import_results",
+        default_configuration["wave"]["enable_import_results"])
+
+    configuration["read_sessions_enabled"] = configuration.get(
+        "wave", default_configuration["wave"]).get(
+        "enable_read_sessions",
+        default_configuration["wave"]["enable_read_sessions"])
 
     configuration["persisting_interval"] = configuration.get(
         "wave", default_configuration["wave"]).get(
         "persisting_interval", default_configuration["wave"]["persisting_interval"])
+
+    configuration["event_cache_duration"] = configuration.get(
+        "wave", default_configuration["wave"]).get(
+        "event_cache_duration", default_configuration["wave"]["event_cache_duration"])
 
     configuration["tests_directory_path"] = os.getcwd()
 
@@ -64,6 +75,14 @@ def load(configuration_file_path):
         "wave", default_configuration["wave"]).get(
         "api_titles", default_configuration["wave"]["api_titles"])
 
+    configuration["enable_test_type_selection"] = configuration.get(
+        "wave", default_configuration["wave"]).get(
+        "enable_test_type_selection", default_configuration["wave"]["enable_test_type_selection"])
+
+    configuration["enable_test_file_selection"] = configuration.get(
+        "wave", default_configuration["wave"]).get(
+        "enable_test_file_selection", default_configuration["wave"]["enable_test_file_selection"])
+
     return configuration
 
 
@@ -72,7 +91,7 @@ def load_configuration_file(path):
         return {}
 
     configuration = None
-    with open(path, "r") as configuration_file:
+    with open(path) as configuration_file:
         configuration_file_content = configuration_file.read()
         configuration = json.loads(configuration_file_content)
     return configuration

@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/main.yml
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/release-on-comment.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/prepare-release-pr.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/update-plugin-list.yml

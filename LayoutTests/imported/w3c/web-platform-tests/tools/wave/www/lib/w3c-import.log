@@ -14,7 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/jszip.min.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/keycodes.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/qrcode.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/query-parser.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/screen-console.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/ui.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/utils.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/www/lib/wave-service.js

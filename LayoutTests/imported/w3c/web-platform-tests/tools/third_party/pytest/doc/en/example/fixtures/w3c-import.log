@@ -14,4 +14,20 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/fixture_availability.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/fixture_availability_plugins.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse_flat.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse_multiple_scopes.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse_multiple_scopes.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse_temp_effects.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_autouse_temp_effects.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_dependencies.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_dependencies.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_dependencies_flat.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_dependencies_unclear.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_scope.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_order_scope.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_request_different_scope.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/fixtures/test_fixtures_request_different_scope.svg

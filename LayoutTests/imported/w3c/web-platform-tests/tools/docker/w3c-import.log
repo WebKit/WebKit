@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/docker/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/docker/commands.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/docker/frontend.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/docker/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/docker/retry.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/docker/seccomp.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/docker/start.sh

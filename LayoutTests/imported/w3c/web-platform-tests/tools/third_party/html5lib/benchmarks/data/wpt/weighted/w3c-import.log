@@ -20,8 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/fetch.http.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/filter-turbulence-invalid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/grid-auto-fill-rows-001.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/image-orientation-from-image-content-images-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/masonry-item-placement-006.html
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/moz-css21-table-page-break-inside-avoid-2.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/position-sticky-table-th-bottom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/pre-float-001.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/test-plan.src.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/toBlob.png.html

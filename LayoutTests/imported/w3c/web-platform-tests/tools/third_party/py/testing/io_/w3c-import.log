@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/testing/io_/test_capture.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/testing/io_/test_saferepr.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/testing/io_/test_terminalwriter.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/testing/io_/test_terminalwriter_linewidth.py
