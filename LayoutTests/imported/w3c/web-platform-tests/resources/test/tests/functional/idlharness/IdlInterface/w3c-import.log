@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_exposed_wildcard.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_immutable_prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_interface_mixin.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_partial_interface_of.html

@@ -25,21 +25,6 @@
     const soChild = document.getElementById("so-child");
     const xoChild = document.getElementById("xo-child");
 
-    function receiveMessage(type) {
-      return new Promise((resolve) => {
-        window.addEventListener("message", function listener(event) {
-          if (typeof event.data !== "string") {
-            return;
-          }
-          const data = JSON.parse(event.data);
-          if (data.type === type) {
-            window.removeEventListener("message", listener);
-            resolve(data);
-          }
-        });
-      });
-    }
-
     function requestXOReport() {
       xoChild.contentWindow.postMessage(
         JSON.stringify({ type: "report" }),
@@ -48,22 +33,26 @@
       return receiveMessage(`child-two-report`);
     }
 
-    promise_test(async (t) => {
+    promise_setup(() => {
       soChild.src = "./resources/child-one.html";
       xoChild.src =
         "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/user-activation/resources/child-two.html";
-      const [, unclickedCrossOrigin] = await Promise.all([
+      return Promise.all([
         receiveMessage("child-one-loaded"),
         receiveMessage("child-two-loaded"),
       ]);
+    });
+
+    promise_test(async (t) => {
+      const unclickedCrossOrigin = await requestXOReport();
       const soActivation = soChild.contentWindow.navigator.userActivation;
       assert_false(
         navigator.userActivation.isActive,
-        "navigator.userActivation.isActive must be false"
+        "top-frame navigator.userActivation.isActive must be false"
       );
       assert_false(
         navigator.userActivation.hasBeenActive,
-        "navigator.userActivation.hasBeenActive must be false"
+        "top-frame navigator.userActivation.hasBeenActive must be false"
       );
 
       assert_false(soActivation.isActive, "child-one isActive must be false");
@@ -87,11 +76,11 @@
       const soActivation = soChild.contentWindow.navigator.userActivation;
       assert_true(
         navigator.userActivation.isActive,
-        "navigator.userActivation.isActive must be true"
+        "top-frame navigator.userActivation.isActive must be true"
       );
       assert_true(
         navigator.userActivation.hasBeenActive,
-        "navigator.userActivation.hasBeenActive must be true"
+        "top-frame navigator.userActivation.hasBeenActive must be true"
       );
       assert_true(soActivation.isActive, "child-one isActive must be true");
       assert_true(
@@ -108,34 +97,48 @@
     promise_test(async (t) => {
       await consumeTransientActivation();
       const soActivation = soChild.contentWindow.navigator.userActivation;
+      // Before click...
       assert_false(
         navigator.userActivation.isActive,
-        "navigator.userActivation.isActive must be false"
+        "top-frame navigator.userActivation.isActive must be false"
       );
       assert_true(
         navigator.userActivation.hasBeenActive,
-        "navigator.userActivation.hasBeenActive must be true"
+        "top-frame navigator.userActivation.hasBeenActive must be true"
       );
       assert_false(soActivation.isActive, "child-one isActive must be false");
       assert_true(
         soActivation.hasBeenActive,
         "child-one hasBeenActive must be true"
       );
-      const [, xoActivation] = await Promise.all([
+      const xoActivation = await requestXOReport();
+      assert_false(xoActivation.isActive, "child-two isActive must be false");
+      assert_false(
+        xoActivation.hasBeenActive,
+        "child-two hasBeenActive must be false"
+      );
+
+      // Click!
+      const [, xoActivationAfterClick] = await Promise.all([
         test_driver.click(xoChild),
         receiveMessage("child-two-clicked"),
       ]);
+
+      // After click...
       assert_true(
         navigator.userActivation.isActive,
-        "navigator.userActivation.isActive must be true"
+        "top-frame navigator.userActivation.isActive must be true"
       );
       assert_true(
         navigator.userActivation.hasBeenActive,
-        "navigator.userActivation.hasBeenActive must remain true"
+        "top-frame navigator.userActivation.hasBeenActive must remain true"
       );
-      assert_true(xoActivation.isActive, "child-two isActive must be true");
       assert_true(
-        xoActivation.hasBeenActive,
+        xoActivationAfterClick.isActive,
+        "child-two isActive must be true"
+      );
+      assert_true(
+        xoActivationAfterClick.hasBeenActive,
         "child-two hasBeenActive must be true"
       );
       assert_false(soActivation.isActive, "child-one isActive must be false");

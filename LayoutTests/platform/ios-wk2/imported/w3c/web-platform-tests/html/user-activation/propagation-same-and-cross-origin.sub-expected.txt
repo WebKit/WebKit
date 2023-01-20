@@ -1,0 +1,16 @@
+Check that cross origin iframes don't get activated
+
+Tests that activating a same-origin navigable doesn't activate a cross origin navigable.
+
+Click inside the yellow area.
+Same origin
+
+
+Cross origin
+
+
+
+PASS Check Initial states of user activation are all false
+FAIL Check that activating a same-origin navigable doesn't activate a cross origin navigable assert_true: top-frame navigator.userActivation.isActive must be true expected true got false
+FAIL Clicking on the cross-origin navigable activates parent navigable. assert_true: top-frame navigator.userActivation.hasBeenActive must be true expected true got false
+

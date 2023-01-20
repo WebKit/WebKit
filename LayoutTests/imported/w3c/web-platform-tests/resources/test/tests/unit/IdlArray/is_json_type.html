@@ -37,7 +37,10 @@
         assert_false(idl.is_json_type(typeFrom("Uint16Array")));
         assert_false(idl.is_json_type(typeFrom("Uint32Array")));
         assert_false(idl.is_json_type(typeFrom("Uint8ClampedArray")));
+        assert_false(idl.is_json_type(typeFrom("BigInt64Array")));
+        assert_false(idl.is_json_type(typeFrom("BigUint64Array")));
         assert_false(idl.is_json_type(typeFrom("Float32Array")));
+        assert_false(idl.is_json_type(typeFrom("Float64Array")));
         assert_false(idl.is_json_type(typeFrom("ArrayBuffer")));
         assert_false(idl.is_json_type(typeFrom("DataView")));
     }, 'should return false for all buffer source types');

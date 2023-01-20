@@ -11,8 +11,8 @@ PASS Child1 frame initial state
 PASS Child2 frame initial state
 PASS Grandchild frame initial state
 PASS Parent frame initial state
-PASS Child2 frame final state
-PASS Child1 frame final state
+FAIL Child2 frame final state assert_false: expected false got true
+FAIL Child1 frame final state assert_false: Child1 frame isActive expected false got true
 PASS Grand child frame final state
-PASS Parent frame final state
+FAIL Parent frame final state assert_false: expected false got true
 
