@@ -295,7 +295,7 @@ class Setup(Command):
             log.info('Setting auto update on PR creation...')
             response = Terminal.choose(
                 'Would you like to automatically rebase your branch when creating or\nupdating a pull request?',
-                default='Yes', options=('Yes', 'No', 'Later'),
+                default='No', options=('Yes', 'No', 'Later'),
             )
             if response in ['Yes', 'No']:
                 if run(
