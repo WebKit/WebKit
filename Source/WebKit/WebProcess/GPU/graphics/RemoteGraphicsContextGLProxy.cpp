@@ -35,6 +35,7 @@
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebProcess.h"
 #include <WebCore/BitmapImage.h>
+#include <WebCore/GCGLSpan.h>
 #include <WebCore/ImageBuffer.h>
 #include <wtf/StdLibExtras.h>
 

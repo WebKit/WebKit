@@ -46,6 +46,14 @@
 #endif
 #endif
 
+inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
+
+template<typename T, size_t Extent = gcGLSpanDynamicExtent>
+class GCGLSpan;
+
+template<typename... Types>
+struct GCGLSpanTuple;
+
 namespace WebCore {
 class ImageBuffer;
 class PixelBuffer;
@@ -1603,48 +1611,6 @@ private:
 };
 
 WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&, SerialFunctionDispatcher* = nullptr);
-
-inline GCGLfloat GraphicsContextGL::getFloat(GCGLenum pname)
-{
-    GCGLfloat value[1] { };
-    getFloatv(pname, value);
-    return value[0];
-}
-
-inline GCGLboolean GraphicsContextGL::getBoolean(GCGLenum pname)
-{
-    GCGLboolean value[1] { };
-    getBooleanv(pname, value);
-    return value[0];
-}
-
-inline GCGLint GraphicsContextGL::getInteger(GCGLenum pname)
-{
-    GCGLint value[1] { };
-    getIntegerv(pname, value);
-    return value[0];
-}
-
-inline GCGLint GraphicsContextGL::getIntegeri(GCGLenum pname, GCGLuint index)
-{
-    GCGLint value[4] { };
-    getIntegeri_v(pname, index, value);
-    return value[0];
-}
-
-inline GCGLint GraphicsContextGL::getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname)
-{
-    GCGLint value[1] { };
-    getActiveUniformBlockiv(program, uniformBlockIndex, pname, value);
-    return value[0];
-}
-
-inline GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum internalformat, GCGLenum pname)
-{
-    GCGLint value[1] { };
-    getInternalformativ(target, internalformat, pname, value);
-    return value[0];
-}
 
 inline GCGLOwned::~GCGLOwned()
 {

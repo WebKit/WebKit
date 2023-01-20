@@ -80,9 +80,7 @@
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-#include "ArrayReference.h"
 #include <WebCore/GraphicsContextGL.h>
-#include <WebCore/GraphicsTypesGL.h>
 #endif
 
 #if ENABLE(WEBXR)

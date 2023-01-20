@@ -66,6 +66,8 @@
 #include "JSDOMPromiseDeferred.h"
 #endif
 
+#include "GCGLSpan.h"
+
 namespace JSC {
 class AbstractSlotVisitor;
 }

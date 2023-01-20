@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEUtilities.h"
+#include "GCGLSpan.h"
 #include "GraphicsContextGL.h"
 #include "GraphicsContextGLState.h"
 #include <memory>
