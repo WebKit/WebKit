@@ -15,12 +15,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/AUTHORS
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/CHANGELOG
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/CHANGELOG.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/MANIFEST.in
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/README.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/appveyor.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/RELEASING.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/codecov.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/pyproject.toml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/setup.cfg
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/setup.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/tox.ini

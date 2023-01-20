@@ -78,8 +78,8 @@
          * Trigger user interaction in order to grant additional privileges to
          * a provided function.
          *
-         * See `triggered by user activation
-         * <https://html.spec.whatwg.org/#triggered-by-user-activation>`_.
+         * See `Tracking user activation
+         * <https://html.spec.whatwg.org/multipage/interaction.html#tracking-user-activation>`_.
          *
          * @example
          * var mediaElement = document.createElement('video');
@@ -167,23 +167,6 @@
         },
 
         /**
-         * Consumes the user activation
-         *
-         * Matches the behavior of the `Consume User Activation of window`
-         * as proposed in: https://github.com/w3c/webdriver/pull/1695
-         *
-         * Which corresponds to these steps in HTML:
-         * https://html.spec.whatwg.org/#consume-user-activation
-         *
-         * @param {WindowProxy} context - Browsing context in which to run the
-         *                                call.
-         * @returns {Promise<boolean>} fulfilled when user activation is consumed.
-         */
-        consume_user_activation(context=null) {
-            return window.test_driver_internal.consume_user_activation(context);
-        },
-
-        /**
          * Deletes all cookies.
          *
          * Matches the behaviour of the `Delete All Cookies
@@ -199,6 +182,42 @@
          */
         delete_all_cookies: function(context=null) {
             return window.test_driver_internal.delete_all_cookies(context);
+        },
+
+        /**
+         * Get details for all cookies in the current context.
+         * See https://w3c.github.io/webdriver/#get-all-cookies
+         *
+         * @param {WindowProxy} context - Browsing context in which
+         *                                to run the call, or null for the current
+         *                                browsing context.
+         *
+         * @returns {Promise} Returns an array of cookies objects as defined in the spec:
+         *                    https://w3c.github.io/webdriver/#cookies
+         */
+        get_all_cookies: function(context=null) {
+            return window.test_driver_internal.get_all_cookies(context);
+        },
+
+        /**
+         * Get details for a cookie in the current context by name if it exists.
+         * See https://w3c.github.io/webdriver/#get-named-cookie
+         *
+         * @param {String} name - The name of the cookie to get.
+         * @param {WindowProxy} context - Browsing context in which
+         *                                to run the call, or null for the current
+         *                                browsing context.
+         *
+         * @returns {Promise} Returns the matching cookie as defined in the spec:
+         *                    https://w3c.github.io/webdriver/#cookies
+         *                    Rejected if no such cookie exists.
+         */
+         get_named_cookie: async function(name, context=null) {
+            let cookie = await window.test_driver_internal.get_named_cookie(name, context);
+            if (!cookie) {
+                throw new Error("no such cookie");
+            }
+            return cookie;
         },
 
         /**
@@ -379,24 +398,22 @@
          *
          * @example
          * await test_driver.set_permission({ name: "background-fetch" }, "denied");
-         * await test_driver.set_permission({ name: "push", userVisibleOnly: true }, "granted", true);
+         * await test_driver.set_permission({ name: "push", userVisibleOnly: true }, "granted");
          *
-         * @param {Object} descriptor - a `PermissionDescriptor
-         *                              <https://w3c.github.io/permissions/#dictdef-permissiondescriptor>`_
-         *                              object
+         * @param {PermissionDescriptor} descriptor - a `PermissionDescriptor
+         *                              <https://w3c.github.io/permissions/#dom-permissiondescriptor>`_
+         *                              dictionary.
          * @param {String} state - the state of the permission
-         * @param {boolean} one_realm - Optional. Whether the permission applies to only one realm
          * @param {WindowProxy} context - Browsing context in which
          *                                to run the call, or null for the current
          *                                browsing context.
          * @returns {Promise} fulfilled after the permission is set, or rejected if setting the
          *                    permission fails
          */
-        set_permission: function(descriptor, state, one_realm=false, context=null) {
+        set_permission: function(descriptor, state, context=null) {
             let permission_params = {
               descriptor,
               state,
-              oneRealm: one_realm,
             };
             return window.test_driver_internal.set_permission(permission_params, context);
         },
@@ -650,13 +667,15 @@
             });
         },
 
-        async consume_user_activation () {
-            if (this.in_automation) {
-                throw new Error('Not implemented');
-            }
+        delete_all_cookies: function(context=null) {
+            return Promise.reject(new Error("unimplemented"));
         },
 
-        delete_all_cookies: function(context=null) {
+        get_all_cookies: function(context=null) {
+            return Promise.reject(new Error("unimplemented"));
+        },
+
+        get_named_cookie: function(name, context=null) {
             return Promise.reject(new Error("unimplemented"));
         },
 

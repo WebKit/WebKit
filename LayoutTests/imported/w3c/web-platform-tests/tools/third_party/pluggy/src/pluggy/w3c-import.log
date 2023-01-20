@@ -15,7 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/_callers.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/_hooks.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/_manager.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/_result.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/_tracing.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/callers.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/hooks.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/src/pluggy/manager.py

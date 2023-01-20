@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/markdown.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/paths
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/requirements_install.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/revlist.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/run.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/testfiles.py

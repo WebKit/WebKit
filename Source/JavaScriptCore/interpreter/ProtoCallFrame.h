@@ -69,6 +69,13 @@ public:
     JSValue thisValue() const { return thisArg.Register::jsValue(); }
     void setThisValue(JSValue value) { thisArg = value; }
 
+#if ENABLE(WEBASSEMBLY)
+    void setWasmInstance(Wasm::Instance* instance)
+    {
+        codeBlockValue = bitwise_cast<CallFrame*>(instance);
+    }
+#endif
+
     bool needArityCheck() { return hasArityMismatch; }
 
     JSValue argument(size_t argumentIndex)

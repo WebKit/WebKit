@@ -185,7 +185,7 @@ void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCa
     }, [&](const Ref<FormData>& formData) {
         encoder << false;
         encoder << true;
-        formData->encode(encoder);
+        encoder << formData;
     }, [&](const std::nullptr_t&) {
         encoder << false;
         encoder << false;
@@ -246,10 +246,11 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
         if (!decoder.decode(hasFormDataBody))
             return std::nullopt;
         if (hasFormDataBody) {
-            auto formData = FormData::decode(decoder);
+            std::optional<Ref<WebCore::FormData>> formData;
+            decoder >> formData;
             if (!formData)
                 return std::nullopt;
-            responseBody = formData.releaseNonNull();
+            responseBody = *formData;
         }
     }
 
@@ -1159,32 +1160,6 @@ bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, Se
 }
 
 #endif
-
-void ArgumentCoder<RefPtr<SecurityOrigin>>::encode(Encoder& encoder, const RefPtr<SecurityOrigin>& origin)
-{
-    encoder << *origin;
-}
-
-std::optional<RefPtr<SecurityOrigin>> ArgumentCoder<RefPtr<SecurityOrigin>>::decode(Decoder& decoder)
-{
-    auto origin = SecurityOrigin::decode(decoder);
-    if (!origin)
-        return std::nullopt;
-    return origin;
-}
-
-void ArgumentCoder<Ref<SecurityOrigin>>::encode(Encoder& encoder, const Ref<SecurityOrigin>& origin)
-{
-    encoder << origin.get();
-}
-
-std::optional<Ref<SecurityOrigin>> ArgumentCoder<Ref<SecurityOrigin>>::decode(Decoder& decoder)
-{
-    auto origin = SecurityOrigin::decode(decoder);
-    if (!origin)
-        return std::nullopt;
-    return origin.releaseNonNull();
-}
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

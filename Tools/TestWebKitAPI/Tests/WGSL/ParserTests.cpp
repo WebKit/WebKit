@@ -136,10 +136,10 @@ TEST(WGSLParserTests, GlobalVariable)
     EXPECT_TRUE(shader->functions().isEmpty());
     auto& var = shader->globalVars()[0];
     EXPECT_EQ(var.attributes().size(), 2u);
-    EXPECT_TRUE(is<WGSL::AST::GroupAttribute>(var.attributes()[0]));
-    EXPECT_FALSE(downcast<WGSL::AST::GroupAttribute>(var.attributes()[0]).group());
-    EXPECT_TRUE(is<WGSL::AST::BindingAttribute>(var.attributes()[1]));
-    EXPECT_FALSE(downcast<WGSL::AST::BindingAttribute>(var.attributes()[1]).binding());
+    EXPECT_TRUE(is<WGSL::AST::GroupAttribute>(var.attributes()[0].get()));
+    EXPECT_FALSE(downcast<WGSL::AST::GroupAttribute>(var.attributes()[0].get()).group());
+    EXPECT_TRUE(is<WGSL::AST::BindingAttribute>(var.attributes()[1].get()));
+    EXPECT_FALSE(downcast<WGSL::AST::BindingAttribute>(var.attributes()[1].get()).binding());
     EXPECT_EQ(var.name(), "x"_s);
     EXPECT_TRUE(var.maybeQualifier());
     EXPECT_EQ(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
@@ -167,8 +167,8 @@ TEST(WGSLParserTests, FunctionDecl)
     EXPECT_EQ(shader->functions().size(), 1u);
     auto& func = shader->functions()[0];
     EXPECT_EQ(func.attributes().size(), 1u);
-    EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-    EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Compute);
+    EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0].get()));
+    EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage(), WGSL::AST::StageAttribute::Stage::Compute);
     EXPECT_EQ(func.name(), "main"_s);
     EXPECT_TRUE(func.parameters().isEmpty());
     EXPECT_TRUE(func.returnAttributes().isEmpty());
@@ -210,21 +210,21 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
     {
         auto& func = shader->functions()[0];
         EXPECT_EQ(func.attributes().size(), 1u);
-        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0].get()));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
         EXPECT_EQ(func.name(), "vertexShader"_s);
         EXPECT_EQ(func.parameters().size(), 1u);
         EXPECT_EQ(func.parameters()[0].name(), "x"_s);
         EXPECT_EQ(func.parameters()[0].attributes().size(), 1u);
-        EXPECT_TRUE(is<WGSL::AST::LocationAttribute>(func.parameters()[0].attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::LocationAttribute>(func.parameters()[0].attributes()[0]).location(), 0U);
+        EXPECT_TRUE(is<WGSL::AST::LocationAttribute>(func.parameters()[0].attributes()[0].get()));
+        EXPECT_EQ(downcast<WGSL::AST::LocationAttribute>(func.parameters()[0].attributes()[0].get()).location(), 0U);
         EXPECT_TRUE(is<WGSL::AST::ParameterizedType>(func.parameters()[0].type()));
         auto& paramType = downcast<WGSL::AST::ParameterizedType>(func.parameters()[0].type());
         EXPECT_EQ(paramType.base(), WGSL::AST::ParameterizedType::Base::Vec4);
         EXPECT_TRUE(is<WGSL::AST::NamedType>(paramType.elementType()));
         EXPECT_EQ(downcast<WGSL::AST::NamedType>(paramType.elementType()).name(), "f32"_s);
         EXPECT_EQ(func.returnAttributes().size(), 1u);
-        checkBuiltin(func.returnAttributes()[0], "position"_s);
+        checkBuiltin(func.returnAttributes()[0].get(), "position"_s);
         EXPECT_TRUE(func.maybeReturnType());
         EXPECT_TRUE(is<WGSL::AST::ParameterizedType>(func.maybeReturnType()));
         EXPECT_EQ(func.body().statements().size(), 1u);
@@ -237,13 +237,13 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
     {
         auto& func = shader->functions()[1];
         EXPECT_EQ(func.attributes().size(), 1u);
-        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Fragment);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0].get()));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage(), WGSL::AST::StageAttribute::Stage::Fragment);
         EXPECT_EQ(func.name(), "fragmentShader"_s);
         EXPECT_TRUE(func.parameters().isEmpty());
         EXPECT_EQ(func.returnAttributes().size(), 1u);
-        EXPECT_TRUE(is<WGSL::AST::LocationAttribute>(func.returnAttributes()[0]));
-        EXPECT_FALSE(downcast<WGSL::AST::LocationAttribute>(func.returnAttributes()[0]).location());
+        EXPECT_TRUE(is<WGSL::AST::LocationAttribute>(func.returnAttributes()[0].get()));
+        EXPECT_FALSE(downcast<WGSL::AST::LocationAttribute>(func.returnAttributes()[0].get()).location());
         EXPECT_TRUE(func.maybeReturnType());
         EXPECT_TRUE(is<WGSL::AST::ParameterizedType>(func.maybeReturnType()));
         EXPECT_EQ(func.body().statements().size(), 1u);
@@ -284,8 +284,8 @@ TEST(WGSLParserTests, LocalVariable)
         auto& func = shader->functions()[0];
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
-        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
-        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0].get()));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
 
         // fn main() -> vec4<f32> {
         EXPECT_EQ(func.name(), "main"_s);
@@ -400,6 +400,50 @@ TEST(WGSLParserTests, UnaryExpression)
     }
 }
 
+TEST(WGSLParserTests, BinaryExpression)
+{
+    auto shader = WGSL::parseLChar(
+        "fn add(x: f32, y: f32) -> f32 {\n"
+        "    return x + y;\n"
+        "}"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structs().isEmpty());
+    EXPECT_TRUE(shader->globalVars().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    {
+        auto& func = shader->functions()[0];
+        EXPECT_TRUE(func.attributes().isEmpty());
+
+        // fn add(x: f32, y: f32) -> f32 {
+        EXPECT_EQ(func.name(), "add"_s);
+        EXPECT_EQ(func.parameters().size(), 2u);
+        EXPECT_TRUE(func.returnAttributes().isEmpty());
+        EXPECT_TRUE(func.maybeReturnType());
+        EXPECT_TRUE(is<WGSL::AST::NamedType>(func.maybeReturnType()));
+
+        EXPECT_EQ(func.body().statements().size(), 1u);
+
+        // return x + y;
+        EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(func.body().statements()[0]));
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[0]);
+        EXPECT_TRUE(retStmt.maybeExpression());
+        EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(retStmt.maybeExpression()));
+        auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(*retStmt.maybeExpression());
+        EXPECT_EQ(binaryExpression.operation(), WGSL::AST::BinaryOperation::Add);
+
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.lhs()));
+        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.lhs());
+        EXPECT_EQ(lhs.identifier(), "x"_s);
+
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.rhs()));
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rhs());
+        EXPECT_EQ(rhs.identifier(), "y"_s);
+    }
+}
 #pragma mark -
 #pragma mark WebGPU Example Shaders
 
@@ -438,7 +482,7 @@ TEST(WGSLParserTests, TriangleVert)
         EXPECT_TRUE(func.maybeReturnType());
         checkVec4F32Type(*func.maybeReturnType());
         EXPECT_EQ(func.returnAttributes().size(), 1u);
-        checkBuiltin(func.returnAttributes()[0], "position"_s);
+        checkBuiltin(func.returnAttributes()[0].get(), "position"_s);
     }
 
     // var pos = array<vec2<f32>, 3>(...);

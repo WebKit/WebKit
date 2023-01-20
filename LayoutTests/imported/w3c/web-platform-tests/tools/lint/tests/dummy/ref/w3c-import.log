@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/tests/dummy/ref/absolute.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/tests/dummy/ref/existent_relative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/lint/tests/dummy/ref/existent_relative-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/tests/dummy/ref/existent_relative.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/tests/dummy/ref/existent_root_relative.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/tests/dummy/ref/non_existent_relative.html

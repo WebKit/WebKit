@@ -67,6 +67,7 @@ public:
     virtual void visit(StructureAccess&);
     virtual void visit(Uint32Literal&);
     virtual void visit(UnaryExpression&);
+    virtual void visit(BinaryExpression&);
 
     // Statement
     virtual void visit(Statement&);
@@ -80,6 +81,8 @@ public:
     virtual void visit(ArrayType&);
     virtual void visit(NamedType&);
     virtual void visit(ParameterizedType&);
+    virtual void visit(StructType&);
+    virtual void visit(TypeReference&);
 
     virtual void visit(Parameter&);
     virtual void visit(StructMember&);

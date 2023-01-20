@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/api_handler.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/devices_api_handler.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/general_api_handler.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/results_api_handler.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/sessions_api_handler.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/network/api/tests_api_handler.py

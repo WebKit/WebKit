@@ -128,13 +128,8 @@ IPC::Connection* RemoteAudioDestinationProxy::existingConnection()
 
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 {
-    if (m_gpuProcessConnection && m_destinationID) {
-        m_gpuProcessConnection->connection().sendWithAsyncReply(
-            Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), [] {
-            // Can't remove this from proxyMap() here because the object would have been already deleted.
-        });
-    }
-
+    if (m_gpuProcessConnection && m_destinationID)
+        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), 0);
     stopRenderingThread();
 }
 
@@ -142,30 +137,32 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
 {
     auto* connection = this->connection();
     if (!connection) {
-        RunLoop::current().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+            protectedThis->setIsPlaying(false);
             completionHandler(false);
         });
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
-        setIsPlaying(isPlaying);
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+        protectedThis->setIsPlaying(isPlaying);
         completionHandler(isPlaying);
     });
 }
 
 void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* connection = this->connection();
+    auto* connection = existingConnection();
     if (!connection) {
-        RunLoop::current().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(false);
+        RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+            protectedThis->setIsPlaying(false);
+            completionHandler(true);
         });
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
-        setIsPlaying(isPlaying);
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+        protectedThis->setIsPlaying(isPlaying);
         completionHandler(!isPlaying);
     });
 }

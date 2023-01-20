@@ -77,24 +77,24 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
     });
 }
 
-std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, FormData& formData)
+std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, Ref<FormData>&& formData)
 {
-    ASSERT(!formData.isEmpty());
+    ASSERT(!formData->isEmpty());
 
-    if (auto buffer = formData.asSharedBuffer()) {
+    if (auto buffer = formData->asSharedBuffer()) {
         FetchBody body;
         body.m_consumer.setData(buffer.releaseNonNull());
         return body;
     }
 
-    auto url = formData.asBlobURL();
+    auto url = formData->asBlobURL();
     if (!url.isNull()) {
         // FIXME: Properly set mime type and size of the blob.
         Ref<const Blob> blob = Blob::deserialize(&context, url, { }, { }, 0, { });
         return FetchBody { WTFMove(blob) };
     }
 
-    return FetchBody { Ref { formData } };
+    return FetchBody { WTFMove(formData) };
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)

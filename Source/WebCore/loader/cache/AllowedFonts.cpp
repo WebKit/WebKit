@@ -778,7 +778,37 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& allowedFontHas
         "cbPOcmgPQYPSjbhrGEVCBR/VM7sRRpMyM+T2ogz5jLo="_s,
         "oDdcBUoAQb1Y4qC/f6PffDkEv8T3kP0k4y/z7nD9Du8="_s,
         "QE1ggxk+VpvFwox7G8DhPs6AxuD1pQrY6WM/SPPAkVU="_s,
-        "+YU60zfVI8CzX+esMGJopwNc4P92JHEO2LOcK4iyCjM="_s });
+        "+YU60zfVI8CzX+esMGJopwNc4P92JHEO2LOcK4iyCjM="_s,
+        // font-awesome 4.7.0
+        "qljzPyOaD7AvXHpsRcBD16msmgkzNYBmlOzW1O3A1qg="_s,
+        "Kt78vAQefRj88tQXh53FoJmXqmTWdbejxLbOM9oT8/4="_s,
+        "RE3UNmYV/8ShbQErL6kBNwZdPMtBD6b9Xk3de15P/NU="_s,
+        "ugxZ3rVFD1y0Gz+TYJ7i0NmVQVh33foiPoqKdTNHTwc="_s,
+        "e/yrbbmdXPvxcFygU23ceFhUMsxfpBu9etDwCQM7KXk="_s,
+        "rWFXkmwWIrpOHQPUePFUE2hSS/xG9R5C/g2UX37zI+Q="_s,
+        // font-awesome 3.2.1
+        "GOa1/1EbkO3wmOYqxF7Z1mc6Pu4QFl0N5BZNTQKjp38="_s,
+        "YckPeDM0c8QPlRJ4lwjNzYIG3SaUARA/M9Q4zYOLsfA="_s,
+        "qVleW/O227wHaQK5q96jVgU9aaL+ZlBnBt6bs5oSa48="_s,
+        "FNy48Cs7gcK6qyMGEMNJqUKCu9l2aTdZ6bSoaU1IZFE="_s,
+        "hE8tLlXUXqIk12XzvzO0z9QWsMC9ayZ+FvjH+/bd4sE="_s,
+        // font-awesome 2.0.0
+        "+AOWr19Kg+TClydZbWr6XGkJMldfDP+gTsxQuEI2j/E="_s,
+        "qIyr/3Pxuda3SAYznoLyut+MR33D4ciYbVBCNjztqFw="_s,
+        "WjelroPmneBGeHFs8oeDdIxV3ig/PNu+viyXwV+AIeA="_s,
+        "tNJIRHp7jTHskJs6WfAucrVRJpqjCuXPJu8afrq5qME="_s,
+        // font-awesome 1.0.0
+        "aJmXHqcFloA3EYjbk8dvbFIWqF7D4SnUblDcuHJRYzg="_s,
+        "vQ47JwN2wtUCrB4QocyfnFX52oyW35K8KdREcYGq2u8="_s,
+        "V9tA0sas96RD7azKpRswnWdOs/eTf7tshAo1U7gIBIU="_s,
+        "dF+idgSeiO6zxDQWPk2vXzzWiidIaXARyz8Y6JCWXyU="_s,
+        "2q/PWx1LWzvU8MbfMEXcypiltHdu51Z+gD27SLtlax8="_s,
+        // internal build website fonts/appleicons_ultralight.woff
+        "0vR/heBF2lpWdK/on1m+u85WzVNGnaDe6lilZrVGYgw="_s,
+        // internal build website fonts/appleicons_text.woff
+        "tIMv6b3XcFfkujgiwBrBz8x/PLespHnG6XOfQDsl5Po="_s,
+        // internal build website fonts/appleicons_thin.woff
+        "BeSxgqYI30lPA9+4OhNV5gZdbPSOmr1Uc3Pfh+zxgwY="_s });
 
     return allowedFontHashes;
 }

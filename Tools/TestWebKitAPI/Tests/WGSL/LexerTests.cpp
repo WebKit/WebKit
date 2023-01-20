@@ -349,7 +349,7 @@ TEST(WGSLLexerTests, TriangleVert)
         "        vec2<f32>(-0.5, -0.5),\n"
         "        vec2<f32>(0.5, -0.5)\n"
         "    );\n\n"
-        "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
+        "    return vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);\n"
         "}\n"_s);
 
     unsigned lineNumber = 0;
@@ -445,7 +445,7 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIs(lexer, WGSL::TokenType::Semicolon, lineNumber);
 
     lineNumber += 2;
-    //    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+    //    return vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordReturn, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
@@ -456,6 +456,16 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIs(lexer, WGSL::TokenType::BracketLeft, lineNumber);
     checkNextTokenIsIdentifier(lexer, "VertexIndex"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::BracketRight, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Plus, lineNumber);
+    checkNextTokenIsIdentifier(lexer, "vec2"_s, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
+    checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
+    checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.5, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);

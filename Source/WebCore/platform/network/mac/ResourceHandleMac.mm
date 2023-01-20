@@ -416,9 +416,9 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         if (!equalIgnoringASCIICase(lastHTTPMethod, request.httpMethod())) {
             request.setHTTPMethod(lastHTTPMethod);
     
-            FormData* body = d->m_firstRequest.httpBody();
+            auto body = d->m_firstRequest.httpBody();
             if (!equalLettersIgnoringASCIICase(lastHTTPMethod, "get"_s) && body && !body->isEmpty())
-                request.setHTTPBody(body);
+                request.setHTTPBody(WTFMove(body));
 
             String originalContentType = d->m_firstRequest.httpContentType();
             if (!originalContentType.isEmpty())

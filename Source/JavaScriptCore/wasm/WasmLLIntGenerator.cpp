@@ -34,7 +34,7 @@
 #include "JSCJSValueInlines.h"
 #include "Label.h"
 #include "WasmCallingConvention.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 #include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmFunctionParser.h"
 #include "WasmGeneratorTraits.h"
@@ -396,7 +396,7 @@ private:
         const auto& callingConvention = wasmCallingConvention();
         const uint32_t gprCount = callingConvention.jsrArgs.size();
         const uint32_t fprCount = callingConvention.fprArgs.size();
-        return virtualRegisterForLocal(index - m_codeBlock->m_numArguments + gprCount + fprCount + numberOfLLIntCalleeSaveRegisters);
+        return virtualRegisterForLocal(index - m_codeBlock->m_numArguments + gprCount + fprCount + numberOfLLIntCalleeSaveRegisters + numberOfLLIntInternalRegisters);
     }
 
     ExpressionType jsNullConstant()
@@ -595,9 +595,7 @@ LLIntGenerator::LLIntGenerator(ModuleInformation& info, unsigned functionIndex, 
         m_writer.setInstructionBuffer(WTFMove(buffer));
     }
 
-    m_codeBlock->m_numVars = numberOfLLIntCalleeSaveRegisters;
-    m_stackSize = numberOfLLIntCalleeSaveRegisters;
-    m_maxStackSize = numberOfLLIntCalleeSaveRegisters;
+    m_maxStackSize = m_stackSize = m_codeBlock->m_numVars = numberOfLLIntCalleeSaveRegisters + numberOfLLIntInternalRegisters;
 
     WasmEnter::emit(this);
 }
@@ -794,7 +792,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::RefNull:
         case TypeKind::Ref:
             if (gprIndex < maxGPRIndex)
-                m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + gprIndex++));
+                m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + numberOfLLIntInternalRegisters + gprIndex++));
             else
                 m_results.append(virtualRegisterForArgumentIncludingThis(stackIndex++));
             break;
@@ -802,7 +800,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::F64:
         case TypeKind::V128:
             if (fprIndex < maxFPRIndex)
-                m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + fprIndex++));
+                m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + numberOfLLIntInternalRegisters + fprIndex++));
             else
                 m_results.append(virtualRegisterForArgumentIncludingThis(stackIndex++));
             break;
@@ -1023,7 +1021,7 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     const auto& callingConvention = wasmCallingConvention();
     const uint32_t gprCount = callingConvention.jsrArgs.size();
     const uint32_t fprCount = callingConvention.fprArgs.size();
-    for (uint32_t i = gprCount + fprCount + numberOfLLIntCalleeSaveRegisters; i < m_codeBlock->m_numVars; i++)
+    for (uint32_t i = gprCount + fprCount + numberOfLLIntCalleeSaveRegisters + numberOfLLIntInternalRegisters; i < m_codeBlock->m_numVars; i++)
         osrEntryData.append(virtualRegisterForLocal(i));
     for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
         ControlType& data = m_parser->controlStack()[controlIndex].controlData;

@@ -551,7 +551,7 @@ public:
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
-    WEBCORE_EXPORT void logMediaDiagnosticMessage(const FormData*) const;
+    WEBCORE_EXPORT void logMediaDiagnosticMessage(const RefPtr<FormData>&) const;
 
     PerformanceLoggingClient* performanceLoggingClient() const { return m_performanceLoggingClient.get(); }
 

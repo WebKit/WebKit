@@ -39,7 +39,7 @@ void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
     encoder << request;
     if (request.httpBody()) {
         encoder << true;
-        request.httpBody()->encode(encoder);
+        encoder << request.httpBody();
     } else
         encoder << false;
     encoder << frameInfo;
@@ -66,10 +66,11 @@ std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Deco
     if (!hasHTTPBody)
         return std::nullopt;
     if (*hasHTTPBody) {
-        RefPtr<WebCore::FormData> formData = WebCore::FormData::decode(decoder);
+        std::optional<RefPtr<WebCore::FormData>> formData;
+        decoder >> formData;
         if (!formData)
             return std::nullopt;
-        request.setHTTPBody(WTFMove(formData));
+        request.setHTTPBody(WTFMove(*formData));
     }
     
     std::optional<FrameInfoData> frameInfo;

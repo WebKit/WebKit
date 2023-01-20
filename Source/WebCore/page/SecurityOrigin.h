@@ -30,6 +30,7 @@
 
 #include "ProcessQualified.h"
 #include "SecurityOriginData.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/Markable.h>
@@ -37,6 +38,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+enum OpaqueOriginIdentifierType { };
+using OpaqueOriginIdentifier = ProcessQualified<ObjectIdentifier<OpaqueOriginIdentifierType>>;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
@@ -51,6 +55,7 @@ public:
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(WebCore::SecurityOriginData&&, String&& domain, String&& filePath, Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits>&&, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal);
 
     // QuickLook documents are in non-local origins even when loaded from file: URLs. They need to
     // be allowed to display their own file: URLs in order to perform reloads and same-document
@@ -217,6 +222,7 @@ public:
     template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
 
 private:
+    friend struct IPC::ArgumentCoder<SecurityOrigin, void>;
     WEBCORE_EXPORT SecurityOrigin();
     explicit SecurityOrigin(const URL&);
     explicit SecurityOrigin(const SecurityOrigin*);
@@ -230,9 +236,6 @@ private:
     
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;
-
-    enum OpaqueOriginIdentifierType { };
-    using OpaqueOriginIdentifier = ProcessQualified<ObjectIdentifier<OpaqueOriginIdentifierType>>;
 
     SecurityOriginData m_data;
     String m_domain;
@@ -252,55 +255,6 @@ WEBCORE_EXPORT bool shouldTreatAsPotentiallyTrustworthy(const URL&);
 // Returns true if the Origin header values serialized from these two origins would be the same.
 bool serializedOriginsMatch(const SecurityOrigin&, const SecurityOrigin&);
 bool serializedOriginsMatch(const SecurityOrigin*, const SecurityOrigin*);
-
-template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) const
-{
-    encoder << m_data;
-    encoder << m_domain;
-    encoder << m_filePath;
-    encoder << m_opaqueOriginIdentifier;
-    encoder << m_universalAccess;
-    encoder << m_domainWasSetInDOM;
-    encoder << m_canLoadLocalResources;
-    encoder << m_enforcesFilePathSeparation;
-    encoder << m_needsStorageAccessFromFileURLsQuirk;
-    encoder << m_isPotentiallyTrustworthy;
-    encoder << m_isLocal;
-}
-
-template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Decoder& decoder)
-{
-    std::optional<SecurityOriginData> data;
-    decoder >> data;
-    if (!data)
-        return nullptr;
-
-    auto origin = adoptRef(*new SecurityOrigin);
-    origin->m_data = WTFMove(*data);
-
-    if (!decoder.decode(origin->m_domain))
-        return nullptr;
-    if (!decoder.decode(origin->m_filePath))
-        return nullptr;
-    if (!decoder.decode(origin->m_opaqueOriginIdentifier))
-        return nullptr;
-    if (!decoder.decode(origin->m_universalAccess))
-        return nullptr;
-    if (!decoder.decode(origin->m_domainWasSetInDOM))
-        return nullptr;
-    if (!decoder.decode(origin->m_canLoadLocalResources))
-        return nullptr;
-    if (!decoder.decode(origin->m_enforcesFilePathSeparation))
-        return nullptr;
-    if (!decoder.decode(origin->m_needsStorageAccessFromFileURLsQuirk))
-        return nullptr;
-    if (!decoder.decode(origin->m_isPotentiallyTrustworthy))
-        return nullptr;
-    if (!decoder.decode(origin->m_isLocal))
-        return nullptr;
-
-    return origin;
-}
 
 inline void add(Hasher& hasher, const SecurityOrigin& origin)
 {

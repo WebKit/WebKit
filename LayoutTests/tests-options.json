@@ -4229,6 +4229,9 @@
     "imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.tentative.html": [
         "slow"
     ],

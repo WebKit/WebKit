@@ -19,7 +19,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/LICENSE.APACHE
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/LICENSE.BSD
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/MANIFEST.in
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/README.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/mypy.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/noxfile.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/pyproject.toml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/setup.cfg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/packaging/setup.py

@@ -40,6 +40,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ViolationReportType.h"
+#include <wtf/persistence/PersistentCoders.h>
 
 namespace WebCore {
 
@@ -143,6 +144,41 @@ void sendCOEPCORPViolation(ReportingClient& reportingClient, const URL& embedder
         body.setString("destination"_s, convertEnumerationToString(destination));
     });
     reportingClient.sendReportToEndpoints(embedderURL, { }, { endpoint }, WTFMove(reportFormData), ViolationReportType::CORPViolation);
+}
+
+void CrossOriginEmbedderPolicy::encode(WTF::Persistence::Encoder& encoder) const
+{
+    encoder << value << reportingEndpoint << reportOnlyValue << reportOnlyReportingEndpoint;
+}
+
+std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(WTF::Persistence::Decoder& decoder)
+{
+    std::optional<CrossOriginEmbedderPolicyValue> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+
+    std::optional<String> reportingEndpoint;
+    decoder >> reportingEndpoint;
+    if (!reportingEndpoint)
+        return std::nullopt;
+
+    std::optional<CrossOriginEmbedderPolicyValue> reportOnlyValue;
+    decoder >> reportOnlyValue;
+    if (!reportOnlyValue)
+        return std::nullopt;
+
+    std::optional<String> reportOnlyReportingEndpoint;
+    decoder >> reportOnlyReportingEndpoint;
+    if (!reportOnlyReportingEndpoint)
+        return std::nullopt;
+
+    return { {
+        *value,
+        WTFMove(*reportingEndpoint),
+        *reportOnlyValue,
+        WTFMove(*reportOnlyReportingEndpoint)
+    } };
 }
 
 } // namespace WebCore

@@ -29,7 +29,7 @@
 #include "LLIntCommon.h"
 #include "LLIntData.h"
 #include "LLIntThunks.h"
-#include "WasmContextInlines.h"
+#include "WasmContext.h"
 
 #if LLINT_TRACING
 #include "CatchScope.h"

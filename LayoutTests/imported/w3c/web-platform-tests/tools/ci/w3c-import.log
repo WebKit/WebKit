@@ -27,6 +27,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/make_hosts_file.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/manifest_build.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/regen_certs.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/requirements_build.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/requirements_tc.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/run_tc.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/taskcluster-run.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/update_built.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/website_build.sh

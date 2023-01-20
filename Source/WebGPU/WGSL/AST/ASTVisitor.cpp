@@ -189,6 +189,9 @@ void Visitor::visit(Expression& expression)
     case Expression::Kind::UnaryExpression:
         checkErrorAndVisit(downcast<UnaryExpression>(expression));
         break;
+    case Expression::Kind::BinaryExpression:
+        checkErrorAndVisit(downcast<BinaryExpression>(expression));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled expression kind");
     }
@@ -243,6 +246,12 @@ void Visitor::visit(Uint32Literal&)
 void Visitor::visit(UnaryExpression& unaryExpression)
 {
     checkErrorAndVisit(unaryExpression.expression());
+}
+
+void Visitor::visit(BinaryExpression& binaryExpression)
+{
+    checkErrorAndVisit(binaryExpression.lhs());
+    checkErrorAndVisit(binaryExpression.rhs());
 }
 
 // Statement
@@ -303,6 +312,12 @@ void Visitor::visit(TypeDecl& typeDecl)
     case Node::Kind::ParameterizedType:
         checkErrorAndVisit(downcast<ParameterizedType>(typeDecl));
         break;
+    case Node::Kind::StructType:
+        checkErrorAndVisit(downcast<StructType>(typeDecl));
+        break;
+    case Node::Kind::TypeReference:
+        checkErrorAndVisit(downcast<TypeReference>(typeDecl));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled type declaration kind");
     }
@@ -321,6 +336,14 @@ void Visitor::visit(NamedType&)
 void Visitor::visit(ParameterizedType& parameterizedType)
 {
     checkErrorAndVisit(parameterizedType.elementType());
+}
+
+void Visitor::visit(StructType&)
+{
+}
+
+void Visitor::visit(TypeReference&)
+{
 }
 
 //

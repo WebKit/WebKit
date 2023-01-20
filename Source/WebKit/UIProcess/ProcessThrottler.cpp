@@ -231,7 +231,7 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
 
     m_processIdentifier = pid;
     updateThrottleStateNow();
-    RELEASE_ASSERT(m_assertion);
+    RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeSuspendedAssertion));
 }
     
 void ProcessThrottler::prepareToSuspendTimeoutTimerFired()

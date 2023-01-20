@@ -15,11 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/CHANGELOG.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/HOWTORELEASE.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/MANIFEST.in
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/README.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/appveyor.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/RELEASING.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/codecov.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/pyproject.toml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/setup.cfg
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pluggy/setup.py

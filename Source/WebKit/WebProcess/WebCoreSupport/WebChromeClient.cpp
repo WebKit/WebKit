@@ -332,7 +332,7 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFe
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
 
-    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.resourceRequest(), windowFeatures, navigationActionData), m_page.identifier(), IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.resourceRequest(), windowFeatures, navigationActionData), m_page.identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages, IPC::SendSyncOption::InformPlatformProcessWillSuspend });
     if (!sendResult)
         return nullptr;
 

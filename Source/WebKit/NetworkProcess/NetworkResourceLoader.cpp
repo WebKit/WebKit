@@ -364,10 +364,10 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     if (m_parameters.pageHasResourceLoadClient) {
         std::optional<IPC::FormDataReference> httpBody;
-        if (auto* formData = request.httpBody()) {
+        if (auto formData = request.httpBody()) {
             static constexpr auto maxSerializedRequestSize = 1024 * 1024;
             if (formData->lengthInBytes() <= maxSerializedRequestSize)
-                httpBody = IPC::FormDataReference { formData };
+                httpBody = IPC::FormDataReference { WTFMove(formData) };
         }
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidSendRequest(m_parameters.webPageProxyID, resourceLoadInfo(), request, httpBody), 0);
     }

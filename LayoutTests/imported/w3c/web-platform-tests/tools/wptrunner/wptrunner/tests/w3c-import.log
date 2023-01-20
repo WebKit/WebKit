@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_expectedtree.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_formatters.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_manifestexpected.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_metadata.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_products.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_stability.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/tests/test_testloader.py

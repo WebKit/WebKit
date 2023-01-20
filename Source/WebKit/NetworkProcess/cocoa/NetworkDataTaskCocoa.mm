@@ -563,9 +563,9 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
-        WebCore::FormData* body = m_firstRequest.httpBody();
+        auto body = m_firstRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
-            request.setHTTPBody(body);
+            request.setHTTPBody(WTFMove(body));
         
         String originalContentType = m_firstRequest.httpContentType();
         if (!originalContentType.isEmpty())

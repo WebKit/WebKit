@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 

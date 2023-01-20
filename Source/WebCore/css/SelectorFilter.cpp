@@ -192,12 +192,14 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
 
 void SelectorFilter::collectSelectorHashes(CollectedSelectorHashes& collectedHashes, const CSSSelector& rightmostSelector, IncludeRightmost includeRightmost)
 {
-    auto* selector = &rightmostSelector;
-    auto relation = selector->relation();
+    auto [selector, relation, skipOverSubselectors] = [&] {
+        if (includeRightmost == IncludeRightmost::No)
+            return std::tuple { rightmostSelector.tagHistory(), rightmostSelector.relation(), true };
 
-    // Skip the topmost selector. It is handled quickly by the rule hashes.
-    bool skipOverSubselectors = includeRightmost == IncludeRightmost::No;
-    for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {
+        return std::tuple { &rightmostSelector, CSSSelector::Subselector, false };
+    }();
+
+    for (; selector; selector = selector->tagHistory()) {
         // Only collect identifiers that match ancestors.
         switch (relation) {
         case CSSSelector::Subselector:
@@ -263,6 +265,13 @@ SelectorFilter::Hashes SelectorFilter::collectHashes(const CSSSelector& selector
     CollectedSelectorHashes collectedHashes;
     collectSelectorHashes(collectedHashes, selector, IncludeRightmost::No);
     return chooseSelectorHashesForFilter(collectedHashes);
+}
+
+SelectorFilter::CollectedSelectorHashes SelectorFilter::collectHashesForTesting(const CSSSelector& selector)
+{
+    CollectedSelectorHashes collectedHashes;
+    collectSelectorHashes(collectedHashes, selector, IncludeRightmost::No);
+    return collectedHashes;
 }
 
 }

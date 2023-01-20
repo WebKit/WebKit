@@ -133,7 +133,7 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
     ResourceResponse response;
     response.setType(ResourceResponse::Type::Cors);
     response.setTainting(ResourceResponse::Tainting::Opaque);
-    auto fetchResponse = FetchResponse::create(&context, FetchBody::fromFormData(context, formData), FetchHeaders::Guard::Response, WTFMove(response));
+    auto fetchResponse = FetchResponse::create(&context, FetchBody::fromFormData(context, WTFMove(formData)), FetchHeaders::Guard::Response, WTFMove(response));
     fetchResponse->initializeOpaqueLoadIdentifierForTesting();
     return fetchResponse;
 }

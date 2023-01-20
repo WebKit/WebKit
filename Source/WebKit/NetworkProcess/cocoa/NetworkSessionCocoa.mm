@@ -535,13 +535,13 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
         return;
     }
 
-    auto* body = networkDataTask->firstRequest().httpBody();
+    auto body = networkDataTask->firstRequest().httpBody();
     if (!body) {
         completionHandler(nil);
         return;
     }
 
-    completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
+    completionHandler(WebCore::createHTTPBodyNSInputStream(body.releaseNonNull()).get());
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)

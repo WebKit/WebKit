@@ -41,8 +41,8 @@
 #include "UnlinkedCodeBlock.h"
 
 #if ENABLE(WEBASSEMBLY)
+#include "WasmContext.h"
 #include "WasmMemoryInformation.h"
-#include "WasmContextInlines.h"
 #include "WasmInstance.h"
 #endif
 

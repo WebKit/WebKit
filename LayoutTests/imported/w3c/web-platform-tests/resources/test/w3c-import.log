@@ -21,5 +21,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/nested-testharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tox.ini
-/LayoutTests/imported/w3c/web-platform-tests/resources/test/variants.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/wptserver.py

@@ -44,6 +44,32 @@ enum class PreconnectOnly : bool { No, Yes };
 
 class NetworkLoadParameters {
 public:
+    NetworkLoadParameters() = default;
+    NetworkLoadParameters(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, WTF::ProcessID parentPID, WebCore::ResourceRequest&& request, WebCore::ContentSniffingPolicy contentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ClientCredentialPolicy clientCredentialPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool needsCertificateInfo, bool isMainFrameNavigation, bool isMainResourceNavigationForAnyFrame, WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, PreconnectOnly shouldPreconnectOnly, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
+        : webPageProxyID(webPageProxyID)
+        , webPageID(webPageID)
+        , webFrameID(webFrameID)
+        , topOrigin(WTFMove(topOrigin))
+        , sourceOrigin(WTFMove(sourceOrigin))
+        , parentPID(parentPID)
+        , request(WTFMove(request))
+        , contentSniffingPolicy(contentSniffingPolicy)
+        , contentEncodingSniffingPolicy(contentEncodingSniffingPolicy)
+        , storedCredentialsPolicy(storedCredentialsPolicy)
+        , clientCredentialPolicy(clientCredentialPolicy)
+        , shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
+        , needsCertificateInfo(needsCertificateInfo)
+        , isMainFrameNavigation(isMainFrameNavigation)
+        , isMainResourceNavigationForAnyFrame(isMainResourceNavigationForAnyFrame)
+        , shouldRelaxThirdPartyCookieBlocking(shouldRelaxThirdPartyCookieBlocking)
+        , shouldPreconnectOnly(shouldPreconnectOnly)
+        , isNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain)
+        , hadMainFrameMainResourcePrivateRelayed(hadMainFrameMainResourcePrivateRelayed)
+        , allowPrivacyProxy(allowPrivacyProxy)
+        , networkConnectionIntegrityPolicy(networkConnectionIntegrityPolicy)
+    {
+    }
+    
     WebPageProxyIdentifier webPageProxyID;
     WebCore::PageIdentifier webPageID;
     WebCore::FrameIdentifier webFrameID;

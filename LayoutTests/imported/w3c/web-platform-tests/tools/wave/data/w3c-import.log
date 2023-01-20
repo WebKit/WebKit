@@ -16,5 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/client.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/device.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/event_listener.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/http_polling_client.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/http_polling_event_listener.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/data/session.py

@@ -878,6 +878,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         m_lineLayout = makeUnique<LegacyLineLayout>(*this);
 
     legacyLineLayout()->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+    m_previousModernLineLayoutContentBoxLogicalHeight = { };
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -3724,6 +3725,8 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         return;
     case ModernPath: {
         // FIXME: Implement partial invalidation.
+        if (modernLineLayout())
+            m_previousModernLineLayoutContentBoxLogicalHeight = modernLineLayout()->contentBoxLogicalHeight();
         auto path = UndeterminedPath;
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
             path = ForcedLegacyPath;
@@ -3789,8 +3792,11 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     auto contentBoxTop = borderAndPaddingBefore();
 
     auto computeContentHeight = [&] {
-        if (!hasLines() && hasLineIfEmpty())
+        if (!hasLines() && hasLineIfEmpty()) {
+            if (m_previousModernLineLayoutContentBoxLogicalHeight)
+                return *m_previousModernLineLayoutContentBoxLogicalHeight;
             return lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+        }
 
         return layoutFormattingContextLineLayout.contentBoxLogicalHeight();
     };
@@ -3801,6 +3807,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     };
 
     auto oldBorderBoxBottom = computeBorderBoxBottom();
+    m_previousModernLineLayoutContentBoxLogicalHeight = { };
 
     layoutFormattingContextLineLayout.layout();
 

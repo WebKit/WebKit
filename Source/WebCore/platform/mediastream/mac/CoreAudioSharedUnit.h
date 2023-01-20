@@ -63,7 +63,7 @@ public:
         virtual OSStatus defaultInputDevice(uint32_t*) = 0;
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
-        virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 10_s : 2_s; }
+        virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 20_s : 2_s; }
     };
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();

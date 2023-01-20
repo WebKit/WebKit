@@ -29,6 +29,7 @@
 #include "ASTExpression.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
+#include <wtf/Ref.h>
 
 namespace WGSL {
 
@@ -65,12 +66,12 @@ public:
     // UniqueRef whenever it can return multiple types.
     Expected<UniqueRef<AST::Decl>, Error> parseGlobalDecl();
     Expected<AST::Attribute::List, Error> parseAttributes();
-    Expected<UniqueRef<AST::Attribute>, Error> parseAttribute();
+    Expected<Ref<AST::Attribute>, Error> parseAttribute();
     Expected<AST::StructDecl, Error> parseStructDecl(AST::Attribute::List&&);
     Expected<AST::StructMember, Error> parseStructMember();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(String&&, SourcePosition start);
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseArrayType();
+    Expected<Ref<AST::TypeDecl>, Error> parseTypeDecl();
+    Expected<Ref<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(String&&, SourcePosition start);
+    Expected<Ref<AST::TypeDecl>, Error> parseArrayType();
     Expected<AST::VariableDecl, Error> parseVariableDecl();
     Expected<AST::VariableDecl, Error> parseVariableDeclWithAttributes(AST::Attribute::List&&);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();
@@ -81,11 +82,10 @@ public:
     Expected<UniqueRef<AST::Statement>, Error> parseStatement();
     Expected<AST::CompoundStatement, Error> parseCompoundStatement();
     Expected<AST::ReturnStatement, Error> parseReturnStatement();
-    Expected<UniqueRef<AST::Expression>, Error> parseShortCircuitOrExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseRelationalExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseShiftExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseAdditiveExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseMultiplicativeExpression();
+    Expected<UniqueRef<AST::Expression>, Error> parseRelationalExpression(UniqueRef<AST::Expression>&&);
+    Expected<UniqueRef<AST::Expression>, Error> parseShiftExpression(UniqueRef<AST::Expression>&&);
+    Expected<UniqueRef<AST::Expression>, Error> parseAdditiveExpression(UniqueRef<AST::Expression>&&);
+    Expected<UniqueRef<AST::Expression>, Error> parseMultiplicativeExpression(UniqueRef<AST::Expression>&&);
     Expected<UniqueRef<AST::Expression>, Error> parseUnaryExpression();
     Expected<UniqueRef<AST::Expression>, Error> parseSingularExpression();
     Expected<UniqueRef<AST::Expression>, Error> parsePostfixExpression(UniqueRef<AST::Expression>&& base, SourcePosition startPosition);

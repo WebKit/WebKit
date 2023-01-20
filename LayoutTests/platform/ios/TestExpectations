@@ -3882,3 +3882,6 @@ webkit.org/b/249407 media/audioSession/getUserMedia.html [ Failure ]
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
 
 webkit.org/b/249486 media/audioSession/audioSessionType.html [ Failure ]
+
+# webkit.org/b/250885 CSS3/filters/effect-contrast-hw.html is a constant image failure
+[ Release arm64 ] css3/filters/effect-contrast-hw.html [ ImageOnlyFailure ]

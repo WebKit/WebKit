@@ -21,6 +21,7 @@
 
 #include "BlobData.h"
 #include <variant>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
@@ -139,6 +140,7 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     WEBCORE_EXPORT static Ref<FormData> create(const CString&);
     WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
+    WEBCORE_EXPORT static Ref<FormData> create(bool alwaysStream, Vector<char>&& boundary, Vector<WebCore::FormDataElement>&& elements, int64_t identifier);
     static Ref<FormData> create(const Vector<char>&);
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = EncodingType::FormURLEncoded);
@@ -149,11 +151,6 @@ public:
     // How much of that is intentional? We need better names that explain the difference.
     Ref<FormData> copy() const;
     WEBCORE_EXPORT Ref<FormData> isolatedCopy() const;
-
-    template<typename Encoder>
-    void encode(Encoder&) const;
-    template<typename Decoder>
-    static RefPtr<FormData> decode(Decoder&);
 
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath);
@@ -200,6 +197,7 @@ public:
     WEBCORE_EXPORT URL asBlobURL() const;
 
 private:
+    friend struct IPC::ArgumentCoder<FormData, void>;
     FormData() = default;
     FormData(const FormData&);
 
@@ -224,35 +222,6 @@ inline bool operator==(const FormData& a, const FormData& b)
 inline bool operator!=(const FormData& a, const FormData& b)
 {
     return !(a == b);
-}
-
-template<typename Encoder>
-void FormData::encode(Encoder& encoder) const
-{
-    encoder << m_alwaysStream;
-    encoder << m_boundary;
-    encoder << m_elements;
-    encoder << m_identifier;
-}
-
-template<typename Decoder>
-RefPtr<FormData> FormData::decode(Decoder& decoder)
-{
-    auto data = FormData::create();
-
-    if (!decoder.decode(data->m_alwaysStream))
-        return nullptr;
-
-    if (!decoder.decode(data->m_boundary))
-        return nullptr;
-
-    if (!decoder.decode(data->m_elements))
-        return nullptr;
-
-    if (!decoder.decode(data->m_identifier))
-        return nullptr;
-
-    return data;
 }
 
 } // namespace WebCore

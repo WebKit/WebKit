@@ -28,6 +28,7 @@
 #include "ASTArrayAccess.h"
 #include "ASTAssignmentStatement.h"
 #include "ASTAttribute.h"
+#include "ASTBinaryExpression.h"
 #include "ASTBindingAttribute.h"
 #include "ASTBuiltinAttribute.h"
 #include "ASTCallableExpression.h"

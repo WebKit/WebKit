@@ -1053,9 +1053,18 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             originatingPageID = webPage->webPageProxyIdentifier();
     }
 
-    auto* coreFrame = m_frame->coreFrame();
+    RefPtr coreFrame = m_frame->coreFrame();
     if (!coreFrame)
         return function(PolicyAction::Ignore, requestIdentifier);
+
+    WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
+    if (!documentLoader) {
+        // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
+        // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
+        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader());
+    }
+    if (!documentLoader)
+        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
 
     auto& mouseEventData = navigationAction.mouseEventData();
     NavigationActionData navigationActionData {
@@ -1078,29 +1087,15 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.sourceBackForwardItemIdentifier(),
         navigationAction.lockHistory(),
         navigationAction.lockBackForwardList(),
-        { }, /* clientRedirectSourceForHistory */
-        0, /* effectiveSandboxFlags */
+        documentLoader->clientRedirectSourceForHistory(),
+        coreFrame->loader().effectiveSandboxFlags(),
         navigationAction.privateClickMeasurement(),
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, coreFrame),
+        webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, coreFrame.get()),
 #endif
     };
 
-    WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
-    if (!documentLoader) {
-        // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
-        // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader());
-    }
-    if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
-
-    navigationActionData.clientRedirectSourceForHistory = documentLoader->clientRedirectSourceForHistory();
-    navigationActionData.effectiveSandboxFlags = coreFrame->loader().effectiveSandboxFlags();
-
     // Notify the UIProcess.
-    Ref protector { *coreFrame };
-
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
         auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse));
         if (!sendResult) {

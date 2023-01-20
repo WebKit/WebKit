@@ -15,9 +15,16 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/__init__.pyi
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/__metainfo.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/_builtin.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/_error.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/_std.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/_xmlgen.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/error.pyi
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/iniconfig.pyi
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/io.pyi
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/path.pyi
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/py.typed
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/test.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/py/py/xml.pyi

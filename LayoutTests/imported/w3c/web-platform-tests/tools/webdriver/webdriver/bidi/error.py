@@ -1,3 +1,5 @@
+# mypy: allow-untyped-defs
+
 import collections
 
 from typing import ClassVar, DefaultDict, Optional, Type
@@ -9,10 +11,9 @@ class BidiException(Exception):
     # TODO: Match on error and let it be a class variables only.
     error_code = None  # type: ClassVar[str]
 
-    def __init__(self, error: str, message: str, stacktrace: Optional[str]):
-        super(BidiException, self)
+    def __init__(self, message: str, stacktrace: Optional[str] = None):
+        super()
 
-        self.error = error
         self.message = message
         self.stacktrace = stacktrace
 
@@ -22,9 +23,9 @@ class BidiException(Exception):
 
     def __str__(self):
         """Return the string representation of the object."""
-        message = f"{self.error} ({self.message})"
+        message = f"{self.error_code} ({self.message})"
 
-        if self.stacktrace:
+        if self.stacktrace is not None:
             message += f"\n\nRemote-end stacktrace:\n\n{self.stacktrace}"
 
         return message
@@ -32,6 +33,10 @@ class BidiException(Exception):
 
 class InvalidArgumentException(BidiException):
     error_code = "invalid argument"
+
+
+class NoSuchFrameException(BidiException):
+    error_code = "no such frame"
 
 
 class UnknownCommandException(BidiException):
@@ -48,7 +53,7 @@ def from_error_details(error: str, message: str, stacktrace: Optional[str]) -> B
     Defaults to ``UnknownErrorException`` if `error` is unknown.
     """
     cls = get(error)
-    return cls(error, message, stacktrace)
+    return cls(message, stacktrace)
 
 
 def get(error_code: str) -> Type[BidiException]:

@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitbugspy',
-    version='0.9.1',
+    version='0.9.2',
     description='Library containing a shared API for various bug trackers.',
     long_description=readme(),
     classifiers=[

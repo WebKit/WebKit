@@ -1,0 +1,88 @@
+Test how many selector filter hashes in each category we extract from a selector.
+<pre id=log></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function write(text) {
+    log.textContent += text + "\n";
+}
+
+function test(selector) {
+    const counts = internals.selectorFilterHashCounts(selector);
+    write(`${selector} (${counts.ids}, ${counts.classes}, ${counts.tags}, ${counts.attributes})`);
+}
+
+function run() {
+    write("selector (ids, classes, tags, attributes)")
+
+    test("#a");
+    test(".a");
+    test("a");
+    test("[a]");
+    test("[a=foo]");
+
+    test("#a target");
+    test(".a target");
+    test("a target");
+    test("[a] target");
+    test("[a=foo] target");
+
+    test("#a > target");
+    test(".a > target");
+    test("a > target");
+    test("[a] > target");
+
+    test("#a + target");
+    test(".a + target");
+    test("a + target");
+    test("[a] + target");
+
+    test("#a ~ target");
+    test(".a ~ target");
+    test("a ~ target");
+    test("[a] ~ target");
+
+    test("b#a target");
+    test("b.a target");
+    test("b[a] target");
+
+    test("c[d].e b#a target");
+    test("c[d].e b.a target");
+    test("c[d].e b[a] target");
+
+    test("c[d].e b#a + target");
+    test("c[d].e b.a + target");
+    test("c[d].e b[a] + target");
+
+    test("c[d].e + b#a target");
+    test("c[d].e + b.a target");
+    test("c[d].e + b[a] target");
+
+    test("c[d].e b#a ~ target");
+    test("c[d].e b.a ~ target");
+    test("c[d].e b[a] ~ target");
+
+    test(":not(a)");
+    test(":not(a) target");
+    test(":not(a, .b) target");
+
+    test(":has(a)");
+    test(":has(a) target");
+    test(":has(a, .b) target");
+
+    test(":is(a)");
+    test(":is(a) target");
+    test(":is(a, .b) target");
+    test(":is(a .b) target");
+    test(":is(a + .b) target");
+    test(":is(a .b) + target");
+    test("#c :is(a, .b) target");
+    test("#c :is(a .b) target");
+};
+
+if (window.internals)
+    run();
+else
+    write("This test requires Window.internals");
+</script>

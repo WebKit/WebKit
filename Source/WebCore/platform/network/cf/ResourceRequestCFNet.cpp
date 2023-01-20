@@ -250,9 +250,9 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     } else
         cfRequest = adoptCF(CFURLRequestCreateMutable(0, url.get(), toPlatformRequestCachePolicy(cachePolicy()), timeoutInterval, firstPartyForCookies.get()));
 
-    FormData* formData = httpBody();
+    auto formData = httpBody();
     if (formData && !formData->isEmpty())
-        WebCore::setHTTPBody(cfRequest.get(), formData);
+        WebCore::setHTTPBody(cfRequest.get(), WTFMove(formData));
 
     if (RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(cfRequest.get()))) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.

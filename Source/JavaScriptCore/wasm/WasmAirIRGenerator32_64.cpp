@@ -1156,10 +1156,19 @@ auto AirIRGenerator32::addRethrow(unsigned, ControlType& data) -> PartialResult
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
 
+    // Unfortunately, this operation doesn't use `emitCCall` because of the
+    // extra support in `preparePatchpointForExceptions`--as a result, this
+    // chunk below is platform specific and unlikely to work on architectures
+    // other than arm32
+
     Vector<ConstrainedTmp, 3> patchArgs;
+#if CPU(ARM_THUMB2)
     patchArgs.append(ConstrainedTmp(instanceValue(), B3::ValueRep::reg(GPRInfo::argumentGPR0)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().lo(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR1)));
-    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().hi(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
+    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().lo(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR2)));
+    patchArgs.append(ConstrainedTmp(TypedTmp(data.exception().hi(), Types::I32), B3::ValueRep::reg(GPRInfo::argumentGPR3)));
+#else
+#  error "Unsupported architecture" // see comment above
+#endif
 
     auto handle = preparePatchpointForExceptions(patch, patchArgs);
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {

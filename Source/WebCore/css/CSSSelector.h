@@ -349,7 +349,7 @@ struct PossiblyQuotedIdentifier {
         struct RareData : public RefCounted<RareData> {
             WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
             static Ref<RareData> create(AtomString);
-            ~RareData();
+            WEBCORE_EXPORT ~RareData();
 
             bool matchNth(int count);
 

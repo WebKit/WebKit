@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/config.default.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/configuration_loader.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/package-lock.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/wave/package.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/tox.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/wave/wave_server.py

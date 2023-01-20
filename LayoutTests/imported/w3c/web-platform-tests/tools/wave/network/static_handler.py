@@ -1,7 +1,9 @@
+# mypy: allow-untyped-defs
+
 import os
 
 
-class StaticHandler(object):
+class StaticHandler:
     def __init__(self, web_root, http_port, https_port):
         self.static_dir = os.path.join(
             os.getcwd(), "tools/wave/www")
@@ -13,13 +15,20 @@ class StaticHandler(object):
         file_path = request.request_path
 
         if self._web_root is not None:
+            if not file_path.startswith(self._web_root):
+                response.status = 404
+                return
             file_path = file_path[len(self._web_root):]
 
-        if file_path == "." or file_path == "./" or file_path == "":
+        if file_path == "":
             file_path = "index.html"
 
         file_path = file_path.split("?")[0]
         file_path = os.path.join(self.static_dir, file_path)
+
+        if not os.path.exists(file_path):
+            response.status = 404
+            return
 
         headers = []
 

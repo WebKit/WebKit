@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/chrome_android.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/chrome_ios.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/chrome_spki_certs.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/chromium.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/content_shell.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/edge.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/edge_webdriver.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/edgechromium.py

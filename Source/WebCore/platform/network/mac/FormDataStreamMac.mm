@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-void setHTTPBody(NSMutableURLRequest *request, FormData* formData)
+void setHTTPBody(NSMutableURLRequest *request, const RefPtr<FormData>& formData)
 {
     setHTTPBody(const_cast<CFMutableURLRequestRef>([request _CFURLRequest]), formData);
 }
 
-RetainPtr<NSInputStream> createHTTPBodyNSInputStream(FormData& formData)
+RetainPtr<NSInputStream> createHTTPBodyNSInputStream(Ref<FormData>&& formData)
 {
     return (__bridge NSInputStream *)createHTTPBodyCFReadStream(formData).get();
 }

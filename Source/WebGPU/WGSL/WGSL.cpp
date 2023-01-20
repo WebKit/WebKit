@@ -26,10 +26,32 @@
 #include "config.h"
 #include "WGSL.h"
 
+#include "EntryPointRewriter.h"
 #include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
+#include "PhaseTimer.h"
+#include "ResolveTypeReferences.h"
 
 namespace WGSL {
+
+#define CHECK_PASS(pass, ast, ...) \
+    do { \
+        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+        PhaseTimer phaseTimer(#pass, phaseTimes); \
+        auto result = pass(ast, ##__VA_ARGS__); \
+        if (!result) { \
+            if (dumpPassFailure) \
+                dataLogLn("failed pass: " # pass, Lexer::errorString(result.error(), whlslSource1, whlslSource2)); \
+            return makeUnexpected(Lexer::errorString(result.error(), whlslSource1, whlslSource2)); \
+        } \
+    } while (0)
+
+#define RUN_PASS(pass, ast, ...) \
+    do { \
+        PhaseTimer phaseTimer(#pass, phaseTimes); \
+        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+        pass(ast, ##__VA_ARGS__); \
+    } while (0)
 
 std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&)
 {
@@ -58,8 +80,25 @@ SuccessfulCheck::~SuccessfulCheck() = default;
 PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
     UNUSED_PARAM(pipelineLayouts);
-    Metal::RenderMetalCode metalCode = Metal::generateMetalCode(ast);
-    return { metalCode.metalSource.toString(), { } };
+    PhaseTimes phaseTimes;
+    Metal::RenderMetalCode generatedCode;
+
+    {
+        PhaseTimer phaseTimer("prepare total", phaseTimes);
+
+        RUN_PASS(resolveTypeReferences, ast);
+        RUN_PASS(rewriteEntryPoints, ast);
+
+        dumpASTAtEndIfNeeded(ast);
+
+        {
+            PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
+            generatedCode = Metal::generateMetalCode(ast);
+        }
+    }
+
+    logPhaseTimes(phaseTimes);
+    return { generatedCode.metalSource.toString(), { } };
 }
 
 PrepareResult prepare(AST::ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)

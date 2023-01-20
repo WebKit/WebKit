@@ -78,6 +78,14 @@ inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
     return jsCallee()->globalObject();
 }
 
+#if ENABLE(WEBASSEMBLY)
+inline Wasm::Instance* CallFrame::wasmInstance() const
+{
+    ASSERT(callee().isWasm());
+    return bitwise_cast<Wasm::Instance*>(const_cast<CallFrame*>(this)->uncheckedR(CallFrameSlot::codeBlock).asanUnsafePointer());
+}
+#endif
+
 inline bool CallFrame::isStackOverflowFrame() const
 {
     if (callee().isWasm())

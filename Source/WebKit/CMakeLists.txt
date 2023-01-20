@@ -523,6 +523,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
+    NetworkProcess/NetworkResourceLoadParameters.serialization.in
 
     Shared/EditorState.serialization.in
     Shared/FocusedElementInformation.serialization.in

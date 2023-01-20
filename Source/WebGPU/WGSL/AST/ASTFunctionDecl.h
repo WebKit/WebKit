@@ -41,7 +41,7 @@ class Parameter final : public Node {
 public:
     using List = UniqueRefVector<Parameter>;
 
-    Parameter(SourceSpan span, const String& name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
+    Parameter(SourceSpan span, const String& name, Ref<TypeDecl>&& type, Attribute::List&& attributes)
         : Node(span)
         , m_name(name)
         , m_type(WTFMove(type))
@@ -51,12 +51,12 @@ public:
 
     Kind kind() const override;
     const String& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
+    TypeDecl& type() { return m_type.get(); }
     Attribute::List& attributes() { return m_attributes; }
 
 private:
     String m_name;
-    UniqueRef<TypeDecl> m_type;
+    Ref<TypeDecl> m_type;
     Attribute::List m_attributes;
 };
 
@@ -66,7 +66,7 @@ class FunctionDecl final : public Decl {
 public:
     using List = UniqueRefVector<FunctionDecl>;
 
-    FunctionDecl(SourceSpan sourceSpan, const String& name, Parameter::List&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
+    FunctionDecl(SourceSpan sourceSpan, const String& name, Parameter::List&& parameters, RefPtr<TypeDecl>&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
         : Decl(sourceSpan)
         , m_name(name)
         , m_parameters(WTFMove(parameters))
@@ -90,7 +90,7 @@ private:
     Parameter::List m_parameters;
     Attribute::List m_attributes;
     Attribute::List m_returnAttributes;
-    std::unique_ptr<TypeDecl> m_returnType;
+    RefPtr<TypeDecl> m_returnType;
     CompoundStatement m_body;
 };
 

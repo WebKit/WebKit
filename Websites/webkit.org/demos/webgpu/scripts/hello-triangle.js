@@ -28,52 +28,32 @@ async function helloTriangle() {
     const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
     const layout = device.createPipelineLayout(pipelineLayoutDesc);
 /*
-    FIXME: Use WGSL once compiler is brought up
+    FIXME: Add support for binary expressions to match the metal code
+*/
     const wgslSource = `
-                     @vertex fn vsmain(@builtin(vertex_index) VertexIndex: u32) -> @builtin(position) vec4<f32>
+                     struct Vertex {
+                         @builtin(position) Position: vec4<f32>,
+                         @location(0) color: vec4<f32>,
+                     }
+
+                     @vertex fn vsmain(@builtin(vertex_index) VertexIndex: u32) -> Vertex
                      {
                          var pos: array<vec2<f32>, 3> = array<vec2<f32>, 3>(
                              vec2<f32>( 0.0,  0.5),
                              vec2<f32>(-0.5, -0.5),
                              vec2<f32>( 0.5, -0.5)
                          );
-                         return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+                         var vertex_out : Vertex;
+                         vertex_out.Position = vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+                         vertex_out.color = vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+                         return vertex_out;
                      }
 
-                     @fragment fn fsmain() -> @location(0) vec4<f32>
+                     @fragment fn fsmain(in: Vertex) -> @location(0) vec4<f32>
                      {
-                         return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+                         return in.color;
                      }
     `;
- */
-    const wgslSource = `
-                #include <metal_stdlib>
-                using namespace metal;
-                struct Vertex {
-                   float4 position [[position]];
-                   float4 color;
-                };
-
-                vertex Vertex vsmain(unsigned VertexIndex [[vertex_id]])
-                {
-                   float2 pos[3] = {
-                       float2( 0.0,  0.5),
-                       float2(-0.5, -0.5),
-                       float2( 0.5, -0.5),
-                   };
-
-                   Vertex vout;
-                   vout.position = float4(pos[VertexIndex], 0.0, 1.0);
-                   vout.color = float4(pos[VertexIndex] + float2(0.5, 0.5), 0.0, 1.0);
-                   return vout;
-                }
-
-                fragment float4 fsmain(Vertex in [[stage_in]])
-                {
-                    return in.color;
-                }
-    `;
-
     const shaderModule = device.createShaderModule({ code: wgslSource, isWHLSL: false, hints: [ {layout: layout }, ] });
     
     /* GPUPipelineStageDescriptors */

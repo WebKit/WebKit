@@ -69,6 +69,7 @@ public:
     void visit(AST::Int32Literal&) override;
     void visit(AST::StructureAccess&) override;
     void visit(AST::UnaryExpression&) override;
+    void visit(AST::BinaryExpression&) override;
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -78,6 +79,8 @@ public:
     void visit(AST::ArrayType&) override;
     void visit(AST::NamedType&) override;
     void visit(AST::ParameterizedType&) override;
+    void visit(AST::StructType&) override;
+    void visit(AST::TypeReference&) override;
 
     void visit(AST::Parameter&) override;
 
@@ -104,7 +107,16 @@ void FunctionDefinitionWriter::visit(AST::FunctionDecl& functionDefinition)
     for (auto& parameter : functionDefinition.parameters()) {
         if (!first)
             m_stringBuilder.append(", ");
+        bool isBuiltin = false;
+        for (auto& attribute : parameter.attributes()) {
+            if (attribute->kind() == AST::Node::Kind::BuiltinAttribute) {
+                isBuiltin = true;
+                break;
+            }
+        }
         checkErrorAndVisit(parameter);
+        if (!isBuiltin)
+            m_stringBuilder.append(" [[stage_in]]");
         first = false;
     }
     m_stringBuilder.append(")\n");
@@ -144,6 +156,7 @@ void FunctionDefinitionWriter::visit(AST::VariableDecl& variableDecl)
         m_stringBuilder.append(" = ");
         visit(*variableDecl.maybeInitializer());
     }
+    m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Attribute& attribute)
@@ -217,51 +230,68 @@ void FunctionDefinitionWriter::visit(AST::NamedType& type)
 
 void FunctionDefinitionWriter::visit(AST::ParameterizedType& type)
 {
+    const auto& vec = [&](size_t size) {
+        m_stringBuilder.append("vec<");
+        visit(type.elementType());
+        m_stringBuilder.append(", ", size, ">");
+    };
+
+    const auto& matrix = [&](size_t rows, size_t columns) {
+        m_stringBuilder.append("matrix<");
+        visit(type.elementType());
+        m_stringBuilder.append(", ", columns, ", ", rows, ">");
+    };
+
     switch (type.base()) {
     case AST::ParameterizedType::Base::Vec2:
-        m_stringBuilder.append("vec<");
-        visit(type.elementType());
-        m_stringBuilder.append(", 2>");
+        vec(2);
         break;
     case AST::ParameterizedType::Base::Vec3:
-        m_stringBuilder.append("vec<");
-        visit(type.elementType());
-        m_stringBuilder.append(", 3>");
+        vec(3);
         break;
     case AST::ParameterizedType::Base::Vec4:
-        m_stringBuilder.append("vec<");
-        visit(type.elementType());
-        m_stringBuilder.append(", 4>");
+        vec(4);
         break;
 
     // FIXME: Implement the following types
     case AST::ParameterizedType::Base::Mat2x2:
-        ASSERT_NOT_REACHED();
+        matrix(2, 2);
         break;
     case AST::ParameterizedType::Base::Mat2x3:
-        ASSERT_NOT_REACHED();
+        matrix(2, 3);
         break;
     case AST::ParameterizedType::Base::Mat2x4:
-        ASSERT_NOT_REACHED();
+        matrix(2, 4);
         break;
     case AST::ParameterizedType::Base::Mat3x2:
-        ASSERT_NOT_REACHED();
+        matrix(3, 2);
         break;
     case AST::ParameterizedType::Base::Mat3x3:
-        ASSERT_NOT_REACHED();
+        matrix(3, 3);
         break;
     case AST::ParameterizedType::Base::Mat3x4:
-        ASSERT_NOT_REACHED();
+        matrix(3, 4);
         break;
     case AST::ParameterizedType::Base::Mat4x2:
-        ASSERT_NOT_REACHED();
+        matrix(4, 2);
         break;
     case AST::ParameterizedType::Base::Mat4x3:
-        ASSERT_NOT_REACHED();
+        matrix(4, 3);
         break;
     case AST::ParameterizedType::Base::Mat4x4:
+        matrix(4, 4);
         break;
     }
+}
+
+void FunctionDefinitionWriter::visit(AST::StructType& structType)
+{
+    m_stringBuilder.append(structType.structDecl().name());
+}
+
+void FunctionDefinitionWriter::visit(AST::TypeReference& type)
+{
+    visit(type.type());
 }
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
@@ -316,6 +346,16 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
     visit(unary.expression());
 }
 
+void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
+{
+    visit(binary.lhs());
+    switch (binary.operation()) {
+    case AST::BinaryOperation::Add:
+        m_stringBuilder.append(" + ");
+    }
+    visit(binary.rhs());
+}
+
 void FunctionDefinitionWriter::visit(AST::ArrayAccess& access)
 {
     visit(access.base());
@@ -361,31 +401,29 @@ void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
 
 void FunctionDefinitionWriter::visit(AST::Statement& statement)
 {
-    if (statement.kind() != AST::Node::Kind::CompoundStatement)
-        m_stringBuilder.append(m_indent);
-
     AST::Visitor::visit(statement);
-
-    if (statement.kind() != AST::Node::Kind::CompoundStatement)
-        m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 {
+    m_stringBuilder.append(m_indent);
     if (assignment.maybeLhs()) {
         visit(*assignment.maybeLhs());
         m_stringBuilder.append(" = ");
     }
     visit(assignment.rhs());
+    m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
+    m_stringBuilder.append(m_indent);
     m_stringBuilder.append("return");
     if (statement.maybeExpression()) {
         m_stringBuilder.append(" ");
         visit(*statement.maybeExpression());
     }
+    m_stringBuilder.append(";\n");
 }
 
 RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, AST::ShaderModule& module)

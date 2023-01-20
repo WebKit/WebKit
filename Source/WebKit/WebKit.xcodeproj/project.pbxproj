@@ -6054,6 +6054,7 @@
 		84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MacCatalyst.modulemap; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ShareableBitmap.serialization.in; sourceTree = "<group>"; };
+		863551D229647AB400C2BE98 /* NetworkResourceLoadParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkResourceLoadParameters.serialization.in; sourceTree = "<group>"; };
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
 		8644890C27B47045007A1C66 /* _WKSystemPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSystemPreferences.mm; sourceTree = "<group>"; };
 		8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferencesInternal.h; sourceTree = "<group>"; };
@@ -10957,6 +10958,7 @@
 				51240EBE220B6947005CFC63 /* NetworkResourceLoadMap.h */,
 				5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */,
 				5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */,
+				863551D229647AB400C2BE98 /* NetworkResourceLoadParameters.serialization.in */,
 				5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */,
 				5CA2F7472350E15400BE5194 /* NetworkSchemeRegistry.h */,
 				532159521DBAE6FC0054AA3C /* NetworkSession.cpp */,

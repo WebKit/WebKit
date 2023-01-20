@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/README.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/issue_519.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/junit-10.xsd
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/pytest.ini

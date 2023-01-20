@@ -27,17 +27,16 @@
 
 #include "ASTNode.h"
 
-#include <wtf/UniqueRef.h>
-#include <wtf/UniqueRefVector.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WGSL::AST {
 
-class Attribute : public Node {
+class Attribute : public Node, public RefCounted<Attribute> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    using List = UniqueRefVector<Attribute, 2>;
+    using List = Vector<Ref<Attribute>, 2>;
 
     Attribute(SourceSpan span)
         : Node(span)

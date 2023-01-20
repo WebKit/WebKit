@@ -22,4 +22,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tests/test_revlist.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tests/test_run.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tests/test_testfiles.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tests/test_update_expectations.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tests/test_wpt.py

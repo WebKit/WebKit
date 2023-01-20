@@ -65,7 +65,7 @@ private:
 
     void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, CompletionHandler<void(const WebKit::RemoteAudioDestinationIdentifier)>&&);
 
-    void deleteAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void()>&&);
+    void deleteAudioDestination(RemoteAudioDestinationIdentifier);
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
 #if PLATFORM(COCOA)

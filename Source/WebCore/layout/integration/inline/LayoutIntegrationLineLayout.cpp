@@ -707,12 +707,13 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
         return { };
 
     auto& lines = m_inlineContent->lines;
-    auto* layoutState = flow().view().frameView().layoutContext().layoutState();
-    if (!layoutState || lines.isEmpty()) {
+    if (lines.isEmpty()) {
+        // We should always have at least one line whenever we have inline content.
         ASSERT_NOT_REACHED();
         return { };
     }
-    if (!layoutState->hasLineClamp())
+    auto* layoutState = flow().view().frameView().layoutContext().layoutState();
+    if (!layoutState || !layoutState->hasLineClamp())
         return lines.size() - 1;
 
     auto maximumLines = *layoutState->maximumLineCountForLineClamp();

@@ -57,7 +57,7 @@ public:
     static ExceptionOr<FetchBody> extract(Init&&, String&);
     FetchBody() = default;
 
-    WEBCORE_EXPORT static std::optional<FetchBody> fromFormData(ScriptExecutionContext&, FormData&);
+    WEBCORE_EXPORT static std::optional<FetchBody> fromFormData(ScriptExecutionContext&, Ref<FormData>&&);
 
     void loadingFailed(const Exception&);
     void loadingSucceeded(const String& contentType);

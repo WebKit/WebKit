@@ -1,10 +1,13 @@
+# mypy: allow-untyped-defs
+
 import hashlib
+import itertools
 import json
 import os
 from urllib.parse import urlsplit
 from abc import ABCMeta, abstractmethod
 from queue import Empty
-from collections import defaultdict, deque
+from collections import defaultdict, deque, namedtuple
 
 from . import manifestinclude
 from . import manifestexpected
@@ -25,7 +28,7 @@ def do_delayed_imports():
     from manifest.download import download_from_github  # type: ignore
 
 
-class TestGroupsFile(object):
+class TestGroupsFile:
     """
     Mapping object representing {group name: [test ids]}
     """
@@ -74,7 +77,7 @@ def update_include_for_groups(test_groups, include):
     return new_include
 
 
-class TestChunker(object):
+class TestChunker:
     def __init__(self, total_chunks, chunk_number, **kwargs):
         self.total_chunks = total_chunks
         self.chunk_number = chunk_number
@@ -93,8 +96,7 @@ class Unchunked(TestChunker):
         assert self.total_chunks == 1
 
     def __call__(self, manifest, **kwargs):
-        for item in manifest:
-            yield item
+        yield from manifest
 
 
 class HashChunker(TestChunker):
@@ -125,7 +127,7 @@ class DirectoryHashChunker(TestChunker):
                 yield test_type, test_path, tests
 
 
-class TestFilter(object):
+class TestFilter:
     """Callable that restricts the set of tests in a given manifest according
     to initial criteria"""
     def __init__(self, test_manifests, include=None, exclude=None, manifest_path=None, explicit=False):
@@ -157,7 +159,7 @@ class TestFilter(object):
                 yield test_type, test_path, include_tests
 
 
-class TagFilter(object):
+class TagFilter:
     def __init__(self, tags):
         self.tags = set(tags)
 
@@ -167,7 +169,7 @@ class TagFilter(object):
                 yield test
 
 
-class ManifestLoader(object):
+class ManifestLoader:
     def __init__(self, test_paths, force_manifest_update=False, manifest_download=False,
                  types=None):
         do_delayed_imports()
@@ -201,11 +203,10 @@ class ManifestLoader(object):
 def iterfilter(filters, iter):
     for f in filters:
         iter = f(iter)
-    for item in iter:
-        yield item
+    yield from iter
 
 
-class TestLoader(object):
+class TestLoader:
     """Loads tests according to a WPT manifest and any associated expectation files"""
     def __init__(self,
                  test_manifests,
@@ -359,21 +360,26 @@ def get_test_src(**kwargs):
     return test_source_cls, test_source_kwargs, chunker_kwargs
 
 
-class TestSource(object):
+TestGroup = namedtuple("TestGroup", ["group", "test_type", "metadata"])
+
+
+class TestSource:
     __metaclass__ = ABCMeta
 
     def __init__(self, test_queue):
         self.test_queue = test_queue
-        self.current_group = None
-        self.current_metadata = None
+        self.current_group = TestGroup(None, None, None)
+        self.logger = structured.get_default_logger()
+        if self.logger is None:
+            self.logger = structured.structuredlog.StructuredLogger("TestSource")
 
     @abstractmethod
     #@classmethod (doesn't compose with @abstractmethod in < 3.3)
-    def make_queue(cls, tests, **kwargs):  # noqa: N805
+    def make_queue(cls, tests_by_type, **kwargs):  # noqa: N805
         pass
 
     @abstractmethod
-    def tests_by_group(cls, tests, **kwargs):  # noqa: N805
+    def tests_by_group(cls, tests_by_type, **kwargs):  # noqa: N805
         pass
 
     @classmethod
@@ -381,85 +387,101 @@ class TestSource(object):
         return {"scope": "/"}
 
     def group(self):
-        if not self.current_group or len(self.current_group) == 0:
+        if not self.current_group.group or len(self.current_group.group) == 0:
             try:
-                self.current_group, self.current_metadata = self.test_queue.get(block=False)
+                self.current_group = self.test_queue.get(block=True, timeout=5)
             except Empty:
-                return None, None
-        return self.current_group, self.current_metadata
+                self.logger.warning("Timed out getting test group from queue")
+                return TestGroup(None, None, None)
+        return self.current_group
+
+    @classmethod
+    def add_sentinal(cls, test_queue, num_of_workers):
+        # add one sentinal for each worker
+        for _ in range(num_of_workers):
+            test_queue.put(TestGroup(None, None, None))
 
 
 class GroupedSource(TestSource):
     @classmethod
-    def new_group(cls, state, test, **kwargs):
+    def new_group(cls, state, test_type, test, **kwargs):
         raise NotImplementedError
 
     @classmethod
-    def make_queue(cls, tests, **kwargs):
+    def make_queue(cls, tests_by_type, **kwargs):
         mp = mpcontext.get_context()
         test_queue = mp.Queue()
         groups = []
 
         state = {}
 
-        for test in tests:
-            if cls.new_group(state, test, **kwargs):
-                group_metadata = cls.group_metadata(state)
-                groups.append((deque(), group_metadata))
+        for test_type, tests in tests_by_type.items():
+            for test in tests:
+                if cls.new_group(state, test_type, test, **kwargs):
+                    group_metadata = cls.group_metadata(state)
+                    groups.append(TestGroup(deque(), test_type, group_metadata))
 
-            group, metadata = groups[-1]
-            group.append(test)
-            test.update_metadata(metadata)
+                group, _, metadata = groups[-1]
+                group.append(test)
+                test.update_metadata(metadata)
 
         for item in groups:
             test_queue.put(item)
+        cls.add_sentinal(test_queue, kwargs["processes"])
         return test_queue
 
     @classmethod
-    def tests_by_group(cls, tests, **kwargs):
+    def tests_by_group(cls, tests_by_type, **kwargs):
         groups = defaultdict(list)
         state = {}
         current = None
-        for test in tests:
-            if cls.new_group(state, test, **kwargs):
-                current = cls.group_metadata(state)['scope']
-            groups[current].append(test.id)
+        for test_type, tests in tests_by_type.items():
+            for test in tests:
+                if cls.new_group(state, test_type, test, **kwargs):
+                    current = cls.group_metadata(state)['scope']
+                groups[current].append(test.id)
         return groups
 
 
 class SingleTestSource(TestSource):
     @classmethod
-    def make_queue(cls, tests, **kwargs):
+    def make_queue(cls, tests_by_type, **kwargs):
         mp = mpcontext.get_context()
         test_queue = mp.Queue()
-        processes = kwargs["processes"]
-        queues = [deque([]) for _ in range(processes)]
-        metadatas = [cls.group_metadata(None) for _ in range(processes)]
-        for test in tests:
-            idx = hash(test.id) % processes
-            group = queues[idx]
-            metadata = metadatas[idx]
-            group.append(test)
-            test.update_metadata(metadata)
+        for test_type, tests in tests_by_type.items():
+            processes = kwargs["processes"]
+            queues = [deque([]) for _ in range(processes)]
+            metadatas = [cls.group_metadata(None) for _ in range(processes)]
+            for test in tests:
+                idx = hash(test.id) % processes
+                group = queues[idx]
+                metadata = metadatas[idx]
+                group.append(test)
+                test.update_metadata(metadata)
 
-        for item in zip(queues, metadatas):
-            test_queue.put(item)
+            for item in zip(queues, itertools.repeat(test_type), metadatas):
+                if len(item[0]) > 0:
+                    test_queue.put(TestGroup(*item))
+        cls.add_sentinal(test_queue, kwargs["processes"])
 
         return test_queue
 
     @classmethod
-    def tests_by_group(cls, tests, **kwargs):
-        return {cls.group_metadata(None)['scope']: [t.id for t in tests]}
+    def tests_by_group(cls, tests_by_type, **kwargs):
+        return {cls.group_metadata(None)['scope']:
+                [t.id for t in itertools.chain.from_iterable(tests_by_type.values())]}
 
 
 class PathGroupedSource(GroupedSource):
     @classmethod
-    def new_group(cls, state, test, **kwargs):
+    def new_group(cls, state, test_type, test, **kwargs):
         depth = kwargs.get("depth")
         if depth is True or depth == 0:
             depth = None
         path = urlsplit(test.url).path.split("/")[1:-1][:depth]
-        rv = path != state.get("prev_path")
+        rv = (test_type != state.get("prev_test_type") or
+              path != state.get("prev_path"))
+        state["prev_test_type"] = test_type
         state["prev_path"] = path
         return rv
 
@@ -470,34 +492,38 @@ class PathGroupedSource(GroupedSource):
 
 class GroupFileTestSource(TestSource):
     @classmethod
-    def make_queue(cls, tests, **kwargs):
-        tests_by_group = cls.tests_by_group(tests, **kwargs)
-
-        ids_to_tests = {test.id: test for test in tests}
-
+    def make_queue(cls, tests_by_type, **kwargs):
         mp = mpcontext.get_context()
         test_queue = mp.Queue()
 
-        for group_name, test_ids in tests_by_group.items():
-            group_metadata = {"scope": group_name}
-            group = deque()
+        for test_type, tests in tests_by_type.items():
+            tests_by_group = cls.tests_by_group({test_type: tests},
+                                                **kwargs)
 
-            for test_id in test_ids:
-                test = ids_to_tests[test_id]
-                group.append(test)
-                test.update_metadata(group_metadata)
+            ids_to_tests = {test.id: test for test in tests}
 
-            test_queue.put((group, group_metadata))
+            for group_name, test_ids in tests_by_group.items():
+                group_metadata = {"scope": group_name}
+                group = deque()
+
+                for test_id in test_ids:
+                    test = ids_to_tests[test_id]
+                    group.append(test)
+                    test.update_metadata(group_metadata)
+
+                test_queue.put(TestGroup(group, test_type, group_metadata))
+
+        cls.add_sentinal(test_queue, kwargs["processes"])
 
         return test_queue
 
     @classmethod
-    def tests_by_group(cls, tests, **kwargs):
+    def tests_by_group(cls, tests_by_type, **kwargs):
         logger = kwargs["logger"]
         test_groups = kwargs["test_groups"]
 
         tests_by_group = defaultdict(list)
-        for test in tests:
+        for test in itertools.chain.from_iterable(tests_by_type.values()):
             try:
                 group = test_groups.group_by_test[test.id]
             except KeyError:

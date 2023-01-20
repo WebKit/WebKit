@@ -19,3 +19,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/bench/empty.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/bench/manyparam.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/bench/skip.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/bench/unit_test.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/bench/xunit.py

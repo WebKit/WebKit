@@ -67,6 +67,7 @@ public:
     void visit(StructureAccess&) override;
     void visit(Uint32Literal&) override;
     void visit(UnaryExpression&) override;
+    void visit(BinaryExpression&) override;
 
     // Statement
     void visit(AssignmentStatement&) override;
@@ -78,6 +79,8 @@ public:
     void visit(ArrayType&) override;
     void visit(NamedType&) override;
     void visit(ParameterizedType&) override;
+    void visit(StructType&) override;
+    void visit(TypeReference&) override;
 
     void visit(Parameter&) override;
     void visit(StructMember&) override;
