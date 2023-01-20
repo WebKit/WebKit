@@ -29,6 +29,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
+#include "CSSUnresolvedColor.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "CalculationCategory.h"
@@ -135,6 +136,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_STRING:
     case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_UNKNOWN:
+    case CSSUnitType::CSS_UNRESOLVED_COLOR:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_VALUE_ID:
         return false;
@@ -221,6 +223,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_TURN:
     case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_UNKNOWN:
+    case CSSUnitType::CSS_UNRESOLVED_COLOR:
     case CSSUnitType::CSS_VALUE_ID:
     case CSSUnitType::CSS_VB:
     case CSSUnitType::CSS_VH:
@@ -385,6 +388,13 @@ CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSCalcValue>&& value)
     m_value.calc = &value.leakRef();
 }
 
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSUnresolvedColor>&& unresolvedColor)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_UNRESOLVED_COLOR);
+    m_value.unresolvedColor = &unresolvedColor.leakRef();
+}
+
 CSSPrimitiveValue::~CSSPrimitiveValue()
 {
     cleanup();
@@ -427,6 +437,9 @@ void CSSPrimitiveValue::cleanup()
         break;
     case CSSUnitType::CSS_RGBCOLOR:
         std::destroy_at(reinterpret_cast<Color*>(&m_value.colorAsInteger));
+        break;
+    case CSSUnitType::CSS_UNRESOLVED_COLOR:
+        m_value.unresolvedColor->deref();
         break;
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_NUMBER:
@@ -625,6 +638,11 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<Quad>&& value)
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<Rect>&& value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSUnresolvedColor>&& value)
 {
     return adoptRef(*new CSSPrimitiveValue(WTFMove(value)));
 }
@@ -1318,6 +1336,7 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_CALC:
         case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
         case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
+        case CSSUnitType::CSS_UNRESOLVED_COLOR:
         case CSSUnitType::CSS_FONT_FAMILY:
         case CSSUnitType::CSS_PROPERTY_ID:
         case CSSUnitType::CSS_VALUE_ID:
@@ -1420,6 +1439,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return serializeFontFamily(m_value.string);
     case CSSUnitType::CSS_URI:
         return serializeURL(m_value.string);
+    case CSSUnitType::CSS_UNRESOLVED_COLOR:
+        return m_value.unresolvedColor->serializationForCSS();
     case CSSUnitType::CSS_VALUE_ID:
         // Per the specification, we should lowercase keywords during serialization:
         // https://www.w3.org/TR/cssom-1/#serialize-a-css-component-value
@@ -1629,6 +1650,8 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return m_value.calc && other.m_value.calc && m_value.calc->equals(*other.m_value.calc);
     case CSSUnitType::CSS_SHAPE:
         return m_value.shape && other.m_value.shape && m_value.shape->equals(*other.m_value.shape);
+    case CSSUnitType::CSS_UNRESOLVED_COLOR:
+        return m_value.unresolvedColor && other.m_value.unresolvedColor && m_value.unresolvedColor->equals(*other.m_value.unresolvedColor);
     case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
