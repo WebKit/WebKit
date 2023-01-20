@@ -27,12 +27,18 @@
 
 #include "ASTExpression.h"
 
+#include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
-namespace WGSL::AST {
+namespace WGSL {
+class ResolveTypeReferences;
 
-class TypeDecl : public Node {
+namespace AST {
+
+class StructDecl;
+
+class TypeDecl : public Node, public RefCounted<TypeDecl> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -46,7 +52,7 @@ class ArrayType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    ArrayType(SourceSpan span, std::unique_ptr<TypeDecl>&& elementType, std::unique_ptr<Expression>&& elementCount)
+    ArrayType(SourceSpan span, RefPtr<TypeDecl>&& elementType, std::unique_ptr<Expression>&& elementCount)
         : TypeDecl(span)
         , m_elementType(WTFMove(elementType))
         , m_elementCount(WTFMove(elementCount))
@@ -58,13 +64,14 @@ public:
     Expression* maybeElementCount() const { return m_elementCount.get(); }
 
 private:
-    std::unique_ptr<TypeDecl> m_elementType;
+    RefPtr<TypeDecl> m_elementType;
     std::unique_ptr<Expression> m_elementCount;
 };
 
 class NamedType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
 
+    friend class ::WGSL::ResolveTypeReferences;
 public:
     NamedType(SourceSpan span, const String& name)
         : TypeDecl(span)
@@ -74,9 +81,16 @@ public:
 
     Kind kind() const override;
     const String& name() const { return m_name; }
+    TypeDecl* maybeResolvedReference() const { return m_resolvedReference.get(); }
 
 private:
+    void resolveTypeReference(Ref<TypeDecl>&& typeDecl)
+    {
+        m_resolvedReference = WTFMove(typeDecl);
+    }
+
     String m_name;
+    RefPtr<TypeDecl> m_resolvedReference;
 };
 
 class ParameterizedType : public TypeDecl {
@@ -98,7 +112,7 @@ public:
         Mat4x4
     };
 
-    ParameterizedType(SourceSpan span, Base base, UniqueRef<TypeDecl>&& elementType)
+    ParameterizedType(SourceSpan span, Base base, Ref<TypeDecl>&& elementType)
         : TypeDecl(span)
         , m_base(base)
         , m_elementType(WTFMove(elementType))
@@ -140,10 +154,45 @@ public:
 
 private:
     Base m_base;
-    UniqueRef<TypeDecl> m_elementType;
+    Ref<TypeDecl> m_elementType;
 };
 
-} // namespace WGSL::AST
+class StructType final : public TypeDecl {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    StructType(SourceSpan span, StructDecl& structDecl)
+        : TypeDecl(span)
+        , m_structDecl(structDecl)
+    {
+    }
+
+    Kind kind() const override;
+    StructDecl& structDecl() const { return m_structDecl; }
+
+private:
+    StructDecl& m_structDecl;
+};
+
+class TypeReference final : public TypeDecl {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    TypeReference(SourceSpan span, Ref<TypeDecl>&& type)
+        : TypeDecl(span)
+        , m_type(WTFMove(type))
+    {
+    }
+
+    Kind kind() const override;
+    TypeDecl& type() const { return m_type.get(); }
+
+private:
+    Ref<TypeDecl> m_type;
+};
+
+} // namespace AST
+} // namespace WGSL
 
 #define SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
@@ -157,6 +206,8 @@ static bool isType(const WGSL::AST::Node& node)
     case WGSL::AST::Node::Kind::ArrayType:
     case WGSL::AST::Node::Kind::NamedType:
     case WGSL::AST::Node::Kind::ParameterizedType:
+    case WGSL::AST::Node::Kind::StructType:
+    case WGSL::AST::Node::Kind::TypeReference:
         return true;
     default:
         return false;
@@ -167,3 +218,5 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayType)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(NamedType)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(ParameterizedType)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructType)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(TypeReference)

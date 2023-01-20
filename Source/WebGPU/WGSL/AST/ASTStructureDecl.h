@@ -38,7 +38,7 @@ class StructMember final : public Node {
 public:
     using List = UniqueRefVector<StructMember>;
 
-    StructMember(SourceSpan span, const String& name, UniqueRef<TypeDecl>&& type, Attribute::List&& attributes)
+    StructMember(SourceSpan span, const String& name, Ref<TypeDecl>&& type, Attribute::List&& attributes)
         : Node(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -54,7 +54,7 @@ public:
 private:
     String m_name;
     Attribute::List m_attributes;
-    UniqueRef<TypeDecl> m_type;
+    Ref<TypeDecl> m_type;
 };
 
 class StructDecl final : public Decl {

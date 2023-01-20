@@ -81,6 +81,8 @@ public:
     virtual void visit(ArrayType&);
     virtual void visit(NamedType&);
     virtual void visit(ParameterizedType&);
+    virtual void visit(StructType&);
+    virtual void visit(TypeReference&);
 
     virtual void visit(Parameter&);
     virtual void visit(StructMember&);

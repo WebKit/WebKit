@@ -77,6 +77,8 @@ public:
         ArrayType,
         NamedType,
         ParameterizedType,
+        StructType,
+        TypeReference,
 
         Parameter,
         StructMember,

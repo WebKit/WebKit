@@ -359,6 +359,16 @@ void StringDumper::visit(ParameterizedType& type)
     m_out.print(">");
 }
 
+void StringDumper::visit(StructType& type)
+{
+    m_out.print(type.structDecl().name());
+}
+
+void StringDumper::visit(TypeReference& type)
+{
+    visit(type.type());
+}
+
 void StringDumper::visit(Parameter& parameter)
 {
     m_out.print(m_indent);

@@ -79,6 +79,8 @@ public:
     void visit(ArrayType&) override;
     void visit(NamedType&) override;
     void visit(ParameterizedType&) override;
+    void visit(StructType&) override;
+    void visit(TypeReference&) override;
 
     void visit(Parameter&) override;
     void visit(StructMember&) override;

@@ -29,6 +29,7 @@
 #include "ASTExpression.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
+#include <wtf/Ref.h>
 
 namespace WGSL {
 
@@ -65,12 +66,12 @@ public:
     // UniqueRef whenever it can return multiple types.
     Expected<UniqueRef<AST::Decl>, Error> parseGlobalDecl();
     Expected<AST::Attribute::List, Error> parseAttributes();
-    Expected<UniqueRef<AST::Attribute>, Error> parseAttribute();
+    Expected<Ref<AST::Attribute>, Error> parseAttribute();
     Expected<AST::StructDecl, Error> parseStructDecl(AST::Attribute::List&&);
     Expected<AST::StructMember, Error> parseStructMember();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(String&&, SourcePosition start);
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseArrayType();
+    Expected<Ref<AST::TypeDecl>, Error> parseTypeDecl();
+    Expected<Ref<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(String&&, SourcePosition start);
+    Expected<Ref<AST::TypeDecl>, Error> parseArrayType();
     Expected<AST::VariableDecl, Error> parseVariableDecl();
     Expected<AST::VariableDecl, Error> parseVariableDeclWithAttributes(AST::Attribute::List&&);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();
