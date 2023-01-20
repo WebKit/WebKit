@@ -342,6 +342,16 @@ enum HEVCParameterCodec {
     required DOMPointReadOnly bottomLeft;
 };
 
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary SelectorFilterHashCounts {
+    unsigned long ids;
+    unsigned long classes;
+    unsigned long tags;
+    unsigned long attributes;
+};
+
 typedef (FetchRequest or FetchResponse) FetchObject;
 
 [
@@ -1180,4 +1190,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined acceptTypedArrays(Int32Array target);
 
     boolean consumeTransientActivation();
+
+    SelectorFilterHashCounts selectorFilterHashCounts(DOMString selector);
 };

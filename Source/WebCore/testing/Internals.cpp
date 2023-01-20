@@ -40,6 +40,7 @@
 #include "Blob.h"
 #include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
+#include "CSSParser.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
@@ -197,6 +198,7 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingMomentumCalculator.h"
 #include "SecurityOrigin.h"
+#include "SelectorFilter.h"
 #include "SerializedScriptValue.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerProvider.h"
@@ -6987,6 +6989,18 @@ bool Internals::hasSleepDisabler() const
 void Internals::acceptTypedArrays(Int32Array&)
 {
     // Do nothing.
+}
+
+Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(const String& selector)
+{
+    auto parser = CSSParser { { *contextDocument() } };
+    auto selectorList = parser.parseSelector(selector);
+    if (!selectorList)
+        return { };
+    
+    auto hashes = SelectorFilter::collectHashesForTesting(*selectorList->first());
+
+    return { hashes.ids.size(), hashes.classes.size(), hashes.tags.size(), hashes.attributes.size() };
 }
 
 } // namespace WebCore

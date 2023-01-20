@@ -61,6 +61,8 @@ public:
     };
     static void collectSimpleSelectorHash(CollectedSelectorHashes&, const CSSSelector&);
 
+    WEBCORE_EXPORT static CollectedSelectorHashes collectHashesForTesting(const CSSSelector&);
+
 private:
     void initializeParentStack(Element& parent);
     enum class IncludeRightmost : bool { Yes, No };
