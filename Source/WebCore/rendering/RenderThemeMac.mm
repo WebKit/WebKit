@@ -1470,9 +1470,9 @@ IntSize RenderThemeMac::imageControlsButtonSize() const
     return ImageControlsButtonMac::servicesRolloverButtonCellSize();
 }
 
-bool RenderThemeMac::isImageControl(const Element& elementPtr) const
+bool RenderThemeMac::isImageControlsButton(const Element& element) const
 {
-    return ImageControlsMac::isImageControlsButtonElement(elementPtr);
+    return ImageControlsMac::isImageControlsButtonElement(element);
 }
 #endif
 

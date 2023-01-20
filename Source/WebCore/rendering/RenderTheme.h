@@ -354,7 +354,7 @@ protected:
 #if ENABLE(SERVICE_CONTROLS)
     virtual void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual bool isImageControl(const Element&) const { return false; }
+    virtual bool isImageControlsButton(const Element&) const { return false; }
 #endif
 
     virtual void adjustProgressBarStyle(RenderStyle&, const Element*) const;

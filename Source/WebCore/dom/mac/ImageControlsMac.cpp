@@ -67,7 +67,7 @@ static const AtomString& imageControlsButtonIdentifier()
     return identifier;
 }
 
-bool hasControls(const HTMLElement& element)
+bool hasImageControls(const HTMLElement& element)
 {
     auto shadowRoot = element.shadowRoot();
     if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
@@ -76,17 +76,35 @@ bool hasControls(const HTMLElement& element)
     return shadowRoot->hasElementWithId(*imageControlsElementIdentifier().impl());
 }
 
+static RefPtr<HTMLElement> imageControlsHost(const Node& node)
+{
+    RefPtr host = dynamicDowncast<HTMLElement>(node.shadowHost());
+    if (!host)
+        return nullptr;
+
+    return hasImageControls(*host) ? host : nullptr;
+}
+
 bool isImageControlsButtonElement(const Node& node)
 {
-    return is<Element>(node) && downcast<Element>(node).getIdAttribute() == imageControlsButtonIdentifier();
+    auto host = imageControlsHost(node);
+    if (!host)
+        return false;
+
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
+        return false;
+
+    return element->getIdAttribute() == imageControlsButtonIdentifier();
 }
 
 bool isInsideImageControls(const Node& node)
 {
-    RefPtr host = node.shadowHost();
-    if (!is<HTMLElement>(host.get()) || !hasControls(downcast<HTMLElement>(*host)))
+    auto host = imageControlsHost(node);
+    if (!host)
         return false;
-    return is<Element>(node) && downcast<Element>(node).getIdAttribute() == imageControlsElementIdentifier();
+
+    return host->userAgentShadowRoot()->contains(node);
 }
 
 void createImageControls(HTMLElement& element)
@@ -220,7 +238,7 @@ void destroyImageControls(HTMLElement& element)
     if (RefPtr node = shadowRoot->firstChild()) {
         if (!is<HTMLElement>(*node))
             return;
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasControls(downcast<HTMLElement>(*node)));
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasImageControls(downcast<HTMLElement>(*node)));
         shadowRoot->removeChild(*node);
     }
 
@@ -232,11 +250,6 @@ void destroyImageControls(HTMLElement& element)
         renderImage->setHasShadowControls(false);
     else if (auto* renderAttachment = dynamicDowncast<RenderAttachment>(*renderObject))
         renderAttachment->setHasShadowControls(false);
-}
-
-bool hasImageControls(const HTMLElement& element)
-{
-    return hasControls(element);
 }
 
 #endif // ENABLE(SERVICE_CONTROLS)
