@@ -1,0 +1,25 @@
+<style>
+.container {
+  width: 100px;
+}
+.left {
+  width: 50px;
+  height: 50px;
+
+  float: left;
+  background-color: green;
+}
+.right {
+  width: 50px;
+  height: 50px;
+
+  /* 100% of the 100px container */
+  margin-left: 100%;
+  overflow: hidden;
+  background-color: blue;
+}
+</style>
+<div class=container>
+  <div class=left></div>
+  <div class=right></div>
+</div>

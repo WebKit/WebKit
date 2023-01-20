@@ -1498,6 +1498,9 @@ private:
         case MapSet:
             compileMapSet();
             break;
+        case MapOrSetDelete:
+            compileMapOrSetDelete();
+            break;
         case WeakMapGet:
             compileWeakMapGet();
             break;
@@ -12879,6 +12882,26 @@ IGNORE_CLANG_WARNINGS_END
         LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
 
         setJSValue(vmCall(pointerType(), operationMapSet, weakPointer(globalObject), map, key, value, hash));
+    }
+
+    void compileMapOrSetDelete()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue mapOrSet;
+        if (m_node->child1().useKind() == MapObjectUse)
+            mapOrSet = lowMapObject(m_node->child1());
+        else if (m_node->child1().useKind() == SetObjectUse)
+            mapOrSet = lowSetObject(m_node->child1());
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+
+        LValue key = lowJSValue(m_node->child2());
+        LValue hash = lowInt32(m_node->child3());
+
+        if (m_node->child1().useKind() == MapObjectUse)
+            setBoolean(vmCall(Int32, operationMapDelete, weakPointer(globalObject), mapOrSet, key, hash));
+        else
+            setBoolean(vmCall(Int32, operationSetDelete, weakPointer(globalObject), mapOrSet, key, hash));
     }
 
     void compileWeakMapGet()

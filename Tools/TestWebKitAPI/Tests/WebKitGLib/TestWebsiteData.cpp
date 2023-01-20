@@ -165,14 +165,13 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-    // Base directories are not used by TestMain.
-    g_assert_null(webkit_website_data_manager_get_base_data_directory(test->m_manager));
-    g_assert_null(webkit_website_data_manager_get_base_cache_directory(test->m_manager));
+    g_assert_cmpstr(webkit_website_data_manager_get_base_data_directory(test->m_manager), ==, Test::dataDirectory());
+    g_assert_cmpstr(webkit_website_data_manager_get_base_cache_directory(test->m_manager), ==, Test::dataDirectory());
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.localStorage.myproperty = 42;", nullptr);
-    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
+    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
     g_assert_cmpstr(localStorageDirectory.get(), ==, webkit_website_data_manager_get_local_storage_directory(test->m_manager));
     test->assertFileIsCreated(localStorageDirectory.get());
     g_assert_true(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
@@ -181,23 +180,23 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
-    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "indexeddb", nullptr));
-    test->assertFileIsCreated(indexedDBDirectory.get());
+    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "databases", "indexeddb", nullptr));
     g_assert_cmpstr(indexedDBDirectory.get(), ==, webkit_website_data_manager_get_indexeddb_directory(test->m_manager));
+    test->assertFileIsCreated(indexedDBDirectory.get());
     g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
 
     test->loadURI(kServer->getURIForPath("/appcache").data());
     test->waitUntilLoadFinished();
-    GUniquePtr<char> applicationCacheDirectory(g_build_filename(Test::dataDirectory(), "appcache", nullptr));
+    GUniquePtr<char> applicationCacheDirectory(g_build_filename(Test::dataDirectory(), "applications", nullptr));
     g_assert_cmpstr(applicationCacheDirectory.get(), ==, webkit_website_data_manager_get_offline_application_cache_directory(test->m_manager));
     GUniquePtr<char> applicationCacheDatabase(g_build_filename(applicationCacheDirectory.get(), "ApplicationCache.db", nullptr));
     test->assertFileIsCreated(applicationCacheDatabase.get());
 
-    GUniquePtr<char> diskCacheDirectory(g_build_filename(Test::dataDirectory(), "disk-cache", nullptr));
+    GUniquePtr<char> diskCacheDirectory(g_build_filename(Test::dataDirectory(), nullptr));
     g_assert_cmpstr(diskCacheDirectory.get(), ==, webkit_website_data_manager_get_disk_cache_directory(test->m_manager));
     g_assert_true(g_file_test(diskCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 
-    GUniquePtr<char> hstsCacheDirectory(g_build_filename(Test::dataDirectory(), "hsts", nullptr));
+    GUniquePtr<char> hstsCacheDirectory(g_build_filename(Test::dataDirectory(), nullptr));
     g_assert_cmpstr(hstsCacheDirectory.get(), ==, webkit_website_data_manager_get_hsts_cache_directory(test->m_manager));
     g_assert_true(g_file_test(hstsCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 
@@ -206,14 +205,14 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     test->runJavaScriptAndWaitUntilFinished("navigator.serviceWorker.register('./some-dummy.js');", nullptr);
     GUniquePtr<char> swRegistrationsDirectory(g_build_filename(Test::dataDirectory(), "serviceworkers", nullptr));
-    test->assertFileIsCreated(swRegistrationsDirectory.get());
     g_assert_cmpstr(swRegistrationsDirectory.get(), ==, webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager));
+    test->assertFileIsCreated(swRegistrationsDirectory.get());
     g_assert_true(g_file_test(swRegistrationsDirectory.get(), G_FILE_TEST_IS_DIR));
 
     test->runJavaScriptAndWaitUntilFinished("let domCacheOpened = false; caches.open('my-cache').then(() => { domCacheOpened = true});", nullptr);
-    GUniquePtr<char> domCacheDirectory(g_build_filename(Test::dataDirectory(), "dom-cache", nullptr));
-    test->assertFileIsCreated(domCacheDirectory.get());
+    GUniquePtr<char> domCacheDirectory(g_build_filename(Test::dataDirectory(), "CacheStorage", nullptr));
     g_assert_cmpstr(domCacheDirectory.get(), ==, webkit_website_data_manager_get_dom_cache_directory(test->m_manager));
+    test->assertFileIsCreated(domCacheDirectory.get());
     g_assert_true(g_file_test(domCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 
     // Make sure the cache was opened before asking to clear it to avoid it being re-created behind our backs.
@@ -240,33 +239,15 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager), !=, webkit_website_data_manager_get_service_worker_registrations_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_dom_cache_directory(defaultManager));
 
-    // Using Test::dataDirectory() we get the default configuration but for a differrent prefix.
-    GRefPtr<WebKitWebsiteDataManager> baseDataManager = adoptGRef(webkit_website_data_manager_new("base-data-directory", Test::dataDirectory(), "base-cache-directory", Test::dataDirectory(), nullptr));
-    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(baseDataManager.get()));
-
-    localStorageDirectory.reset(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
-    g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(baseDataManager.get()), ==, localStorageDirectory.get());
-
-    indexedDBDirectory.reset(g_build_filename(Test::dataDirectory(), "databases", "indexeddb", nullptr));
-    g_assert_cmpstr(webkit_website_data_manager_get_indexeddb_directory(baseDataManager.get()), ==, indexedDBDirectory.get());
-
-    applicationCacheDirectory.reset(g_build_filename(Test::dataDirectory(), "applications", nullptr));
-    g_assert_cmpstr(webkit_website_data_manager_get_offline_application_cache_directory(baseDataManager.get()), ==, applicationCacheDirectory.get());
-
-    g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(baseDataManager.get()), ==, itpDirectory.get());
-
-    g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(baseDataManager.get()), ==, swRegistrationsDirectory.get());
-
-    domCacheDirectory.reset(g_build_filename(Test::dataDirectory(), "CacheStorage", nullptr));
-    g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(baseDataManager.get()), ==, domCacheDirectory.get());
-
-    g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
-
     // Any specific configuration provided takes precedence over base dirs.
     indexedDBDirectory.reset(g_build_filename(Test::dataDirectory(), "mycustomindexeddb", nullptr));
     applicationCacheDirectory.reset(g_build_filename(Test::dataDirectory(), "mycustomappcache", nullptr));
-    baseDataManager = adoptGRef(webkit_website_data_manager_new("base-data-directory", Test::dataDirectory(), "base-cache-directory", Test::dataDirectory(),
-        "indexeddb-directory", indexedDBDirectory.get(), "offline-application-cache-directory", applicationCacheDirectory.get(), nullptr));
+    GRefPtr<WebKitWebsiteDataManager> baseDataManager = adoptGRef(webkit_website_data_manager_new(
+        "base-data-directory", Test::dataDirectory(), "base-cache-directory", Test::dataDirectory(),
+        "indexeddb-directory", indexedDBDirectory.get(), "offline-application-cache-directory", applicationCacheDirectory.get(),
+        nullptr));
+    g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(baseDataManager.get()));
+
     g_assert_cmpstr(webkit_website_data_manager_get_indexeddb_directory(baseDataManager.get()), ==, indexedDBDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_offline_application_cache_directory(baseDataManager.get()), ==, applicationCacheDirectory.get());
     // The result should be the same as previous manager.
@@ -274,7 +255,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(baseDataManager.get()), ==, itpDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(baseDataManager.get()), ==, swRegistrationsDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_dom_cache_directory(baseDataManager.get()), ==, domCacheDirectory.get());
-    g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
+    g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, diskCacheDirectory.get());
 
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
@@ -582,10 +563,7 @@ static void prepopulateHstsData()
     // an IP address instead of a domain. In order to be able to test the data manager API with HSTS website data, we
     // prepopulate the HSTS storage using the libsoup API directly.
 
-    GUniquePtr<char> hstsCacheDirectory(g_build_filename(Test::dataDirectory(), "hsts", nullptr));
-    GUniquePtr<char> hstsDatabase(g_build_filename(hstsCacheDirectory.get(), "hsts-storage.sqlite", nullptr));
-    g_mkdir_with_parents(hstsCacheDirectory.get(), 0700);
-
+    GUniquePtr<char> hstsDatabase(g_build_filename(Test::dataDirectory(), "hsts-storage.sqlite", nullptr));
     GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(hstsDatabase.get()));
     GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new("webkitgtk.org", 3600, true));
     soup_hsts_enforcer_set_policy(enforcer.get(), policy.get());

@@ -37,7 +37,6 @@ namespace ImageControlsMac {
 
 #if ENABLE(SERVICE_CONTROLS)
 
-bool hasControls(const HTMLElement&);
 bool isImageControlsButtonElement(const Node&);
 bool isInsideImageControls(const Node&);
 void createImageControls(HTMLElement&);
@@ -46,6 +45,7 @@ void updateImageControls(HTMLElement&);
 void tryCreateImageControls(HTMLElement&);
 void destroyImageControls(HTMLElement&);
 WEBCORE_EXPORT bool hasImageControls(const HTMLElement&);
+
 #endif // ENABLE(SERVICE_CONTROLS)
 
 } // namespace ImageControlsMac

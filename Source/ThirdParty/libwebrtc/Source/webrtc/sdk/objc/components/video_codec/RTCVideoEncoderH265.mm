@@ -36,6 +36,8 @@
 #include "sdk/objc/Framework/Classes/VideoToolbox/nalu_rewriter.h"
 #include "system_wrappers/include/clock.h"
 
+VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_RequiredLowLatency;
+
 @interface RTCVideoEncoderH265 ()
 
 - (void)frameWasEncoded:(OSStatus)status
@@ -407,8 +409,7 @@ void compressionOutputCallback(void* encoder,
   CFDictionarySetValue(encoder_specs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanTrue);
 #endif
 #if HAVE_VTB_REQUIREDLOWLATENCY
-  // We will want to enable this property once working.
-  // CFDictionarySetValue(encoder_specs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+  CFDictionarySetValue(encoder_specs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
 #endif
   OSStatus status = VTCompressionSessionCreate(
       nullptr,  // use default allocator
@@ -417,6 +418,17 @@ void compressionOutputCallback(void* encoder,
       sourceAttributes,
       nullptr,  // use default compressed data allocator
       compressionOutputCallback, nullptr, &_compressionSession);
+  if (status != noErr) {
+    if (encoder_specs)
+      CFDictionaryRemoveValue(encoder_specs, kVTVideoEncoderSpecification_RequiredLowLatency);
+    status = VTCompressionSessionCreate(
+        nullptr,  // use default allocator
+        _width, _height, kCMVideoCodecType_HEVC,
+        encoder_specs,  // use hardware accelerated encoder if available
+        sourceAttributes,
+        nullptr,  // use default compressed data allocator
+        compressionOutputCallback, nullptr, &_compressionSession);
+  }
   if (sourceAttributes) {
     CFRelease(sourceAttributes);
     sourceAttributes = nullptr;

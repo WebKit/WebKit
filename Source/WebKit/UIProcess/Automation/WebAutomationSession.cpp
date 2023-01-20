@@ -52,6 +52,10 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenate.h>
 
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+#include <wtf/text/TextBreakIterator.h>
+#endif
+
 #if ENABLE(WEB_AUTHN)
 #include "VirtualAuthenticatorManager.h"
 #include <WebCore/AuthenticatorTransport.h>
@@ -2105,6 +2109,7 @@ static VirtualKey normalizedVirtualKey(VirtualKey key)
     }
 }
 
+#if !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 static std::optional<UChar32> pressedCharKey(const String& pressedCharKeyString)
 {
     switch (pressedCharKeyString.length()) {
@@ -2120,6 +2125,7 @@ static std::optional<UChar32> pressedCharKey(const String& pressedCharKeyString)
 
     return std::nullopt;
 }
+#endif // !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 void WebAutomationSession::performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, Ref<JSON::Array>&& inputSources, Ref<JSON::Array>&& steps, Ref<WebAutomationSession::PerformInteractionSequenceCallback>&& callback)
@@ -2234,10 +2240,16 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
 
             auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
             if (!!pressedCharKeyString) {
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                if (WTF::numGraphemeClusters(pressedCharKeyString) != 1)
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'.");
+                sourceState.pressedCharKeys.add(pressedCharKeyString);
+#else
                 auto charKey = pressedCharKey(pressedCharKeyString);
                 if (!charKey)
                     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Invalid 'pressedCharKey'.");
                 sourceState.pressedCharKeys.add(*charKey);
+#endif
             }
 
             if (auto pressedVirtualKeysArray = stateObject->getArray("pressedVirtualKeys"_s)) {

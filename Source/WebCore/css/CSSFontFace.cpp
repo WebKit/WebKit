@@ -52,10 +52,10 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
-template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients, T callback)
+template<typename T> void iterateClients(WeakHashSet<CSSFontFace::Client>& clients, T callback)
 {
-    for (auto& client : copyToVectorOf<RefPtr<CSSFontFace::Client>>(clients))
-        callback(*client);
+    for (auto& client : copyToVectorOf<Ref<CSSFontFace::Client>>(clients))
+        callback(client);
 }
 
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
@@ -458,13 +458,13 @@ bool CSSFontFace::computeFailureState() const
 
 void CSSFontFace::addClient(Client& client)
 {
-    m_clients.add(&client);
+    m_clients.add(client);
 }
 
 void CSSFontFace::removeClient(Client& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
 }
 
 void CSSFontFace::initializeWrapper()

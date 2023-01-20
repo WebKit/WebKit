@@ -99,9 +99,13 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
     if (UNLIKELY(!scriptExecutionContext()))
         return;
 
-    auto requestOrException = requestFromInfo(WTFMove(info), options.ignoreMethod);
+    bool requestValidationFailed = false;
+    auto requestOrException = requestFromInfo(WTFMove(info), options.ignoreMethod, &requestValidationFailed);
     if (requestOrException.hasException()) {
-        callback(nullptr);
+        if (requestValidationFailed)
+            callback(nullptr);
+        else
+            callback(requestOrException.releaseException());
         return;
     }
 
@@ -135,9 +139,13 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
 
     ResourceRequest resourceRequest;
     if (info) {
-        auto requestOrException = requestFromInfo(WTFMove(info.value()), options.ignoreMethod);
+        bool requestValidationFailed = false;
+        auto requestOrException = requestFromInfo(WTFMove(info.value()), options.ignoreMethod, &requestValidationFailed);
         if (requestOrException.hasException()) {
-            promise.resolve({ });
+            if (requestValidationFailed)
+                promise.resolve({ });
+            else
+                promise.reject(requestOrException.releaseException());
             return;
         }
         resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
@@ -218,18 +226,28 @@ private:
     CompletionHandler<void(ExceptionOr<Vector<Record>>&&)> m_callback;
 };
 
-ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, bool ignoreMethod)
+ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, bool ignoreMethod, bool* requestValidationFailed)
 {
     RefPtr<FetchRequest> request;
     if (std::holds_alternative<RefPtr<FetchRequest>>(info)) {
         request = std::get<RefPtr<FetchRequest>>(info).releaseNonNull();
-        if (request->method() != "GET"_s && !ignoreMethod)
+        if (request->method() != "GET"_s && !ignoreMethod) {
+            if (requestValidationFailed)
+                *requestValidationFailed = true;
             return Exception { TypeError, "Request method is not GET"_s };
-    } else
-        request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
+        }
+    } else {
+        auto result = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { });
+        if (result.hasException())
+            return result.releaseException();
+        request = result.releaseReturnValue();
+    }
 
-    if (!request->url().protocolIsInHTTPFamily())
+    if (!request->url().protocolIsInHTTPFamily()) {
+        if (requestValidationFailed)
+            *requestValidationFailed = true;
         return Exception { TypeError, "Request url is not HTTP/HTTPS"_s };
+    }
 
     return request.releaseNonNull();
 }

@@ -265,6 +265,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ExtractValueFromWeakMapGet:
     case SetAdd:
     case MapSet:
+    case MapOrSetDelete:
     case WeakMapGet:
     case WeakSetAdd:
     case WeakMapSet:

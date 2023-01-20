@@ -2698,7 +2698,7 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         if (avoidsFloats() && cb.containsFloats())
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInFragment(fragment);
         bool hasInvertedDirection = cb.style().isLeftToRightDirection() != style().isLeftToRightDirection();
-        computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, computedValues.m_extent,
+        computeInlineDirectionMargins(cb, containerLogicalWidth, containerLogicalWidthForAutoMargins, computedValues.m_extent,
             hasInvertedDirection ? computedValues.m_margins.m_end : computedValues.m_margins.m_start,
             hasInvertedDirection ? computedValues.m_margins.m_start : computedValues.m_margins.m_end);
     }
@@ -2944,9 +2944,8 @@ LayoutUnit RenderBox::computeOrTrimInlineMargin(const RenderBlock& containingBlo
     return computeInlineMargin();
 }
 
-void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
+void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
 {
-    
     const RenderStyle& containingBlockStyle = containingBlock.style();
     Length marginStartLength = style().marginStartUsing(&containingBlockStyle);
     Length marginEndLength = style().marginEndUsing(&containingBlockStyle);
@@ -2972,44 +2971,51 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
             marginEndLength = Length(0, LengthType::Fixed);
     }
 
-    // Case One: The object is being centered in the containing block's available logical width.
-    if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
-        || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock.style().textAlign() == TextAlignMode::WebKitCenter)) {
-        // Other browsers center the margin box for align=center elements so we match them here.
-        marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [containerWidth, childWidth, marginStartLength, marginEndLength]() {
-            LayoutUnit marginStartWidth = minimumValueForLength(marginStartLength, containerWidth);
-            LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidth);
-            LayoutUnit centeredMarginBoxStart = std::max<LayoutUnit>(0, (containerWidth - childWidth - marginStartWidth - marginEndWidth) / 2);
-            return centeredMarginBoxStart + marginStartWidth;
-        });
-        marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [containerWidth, childWidth, marginEndLength, marginStart]() {
-            LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidth);
-            return containerWidth - childWidth - marginStart + marginEndWidth;
-        });
+    auto handleMarginAuto = [&] {
+        auto containerWidthForMarginAuto = availableSpaceAdjustedWithFloats.value_or(containerWidth);
+        // Case One: The object is being centered in the containing block's available logical width.
+        auto marginAutoCenter = marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidthForMarginAuto;
+        auto alignModeCenter = containingBlock.style().textAlign() == TextAlignMode::WebKitCenter && !marginStartLength.isAuto() && !marginEndLength.isAuto();
+        if (marginAutoCenter || alignModeCenter) {
+            // Other browsers center the margin box for align=center elements so we match them here.
+            marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [containerWidthForMarginAuto, childWidth, marginStartLength, marginEndLength]() {
+                LayoutUnit marginStartWidth = minimumValueForLength(marginStartLength, containerWidthForMarginAuto);
+                LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidthForMarginAuto);
+                LayoutUnit centeredMarginBoxStart = std::max<LayoutUnit>(0, (containerWidthForMarginAuto - childWidth - marginStartWidth - marginEndWidth) / 2);
+                return centeredMarginBoxStart + marginStartWidth;
+            });
+            marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [containerWidthForMarginAuto, childWidth, marginEndLength, marginStart]() {
+                LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidthForMarginAuto);
+                return containerWidthForMarginAuto - childWidth - marginStart + marginEndWidth;
+            });
+            return true;
+        }
+
+        // Case Two: The object is being pushed to the start of the containing block's available logical width.
+        if (marginEndLength.isAuto() && childWidth < containerWidthForMarginAuto) {
+            marginStart = valueForLength(marginStartLength, containerWidthForMarginAuto);
+            marginEnd = containerWidthForMarginAuto - childWidth - marginStart;
+            return true;
+        }
+
+        // Case Three: The object is being pushed to the end of the containing block's available logical width.
+        auto pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.isLeftToRightDirection() && containingBlockStyle.textAlign() == TextAlignMode::WebKitLeft)
+            || (containingBlockStyle.isLeftToRightDirection() && containingBlockStyle.textAlign() == TextAlignMode::WebKitRight));
+        if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidthForMarginAuto) {
+            marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [containerWidthForMarginAuto, marginEndLength]() {
+                return valueForLength(marginEndLength, containerWidthForMarginAuto);
+            });
+            marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [containerWidthForMarginAuto, childWidth, marginEnd]() {
+                return containerWidthForMarginAuto - childWidth - marginEnd;
+            });
+            return true;
+        }
+        return false;
+    };
+    if (handleMarginAuto())
         return;
-    } 
     
-    // Case Two: The object is being pushed to the start of the containing block's available logical width.
-    if (marginEndLength.isAuto() && childWidth < containerWidth) {
-        marginStart = valueForLength(marginStartLength, containerWidth);
-        marginEnd = containerWidth - childWidth - marginStart;
-        return;
-    } 
-    
-    // Case Three: The object is being pushed to the end of the containing block's available logical width.
-    bool pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.isLeftToRightDirection() && containingBlockStyle.textAlign() == TextAlignMode::WebKitLeft)
-        || (containingBlockStyle.isLeftToRightDirection() && containingBlockStyle.textAlign() == TextAlignMode::WebKitRight));
-    if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidth) {
-        marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [containerWidth, marginEndLength]() {
-            return valueForLength(marginEndLength, containerWidth);
-        });
-        marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [containerWidth, childWidth, marginEnd]() {
-            return containerWidth - childWidth - marginEnd;
-        });
-        return;
-    } 
-    
-    // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3).  In that case
+    // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3). In that case
     // auto margins will just turn into 0.
     marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [containerWidth, marginStartLength] {
         return minimumValueForLength(marginStartLength, containerWidth);
@@ -3132,7 +3138,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
                 computedValues.m_extent = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), isRenderReplaced());
             if (hasPerpendicularContainingBlock) {
                 bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb.style(), &style());
-                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), computedValues.m_extent,
+                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), { }, computedValues.m_extent,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
             }
@@ -3195,7 +3201,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
         if (hasPerpendicularContainingBlock) {
             bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb.style(), &style());
-            computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), heightResult,
+            computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), { }, heightResult,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
         }

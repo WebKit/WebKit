@@ -26,6 +26,9 @@
 #include "config.h"
 #include "CSSBackgroundRepeatValue.h"
 
+#include "CSSValueKeywords.h"
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID xValue, CSSValueID yValue)

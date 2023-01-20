@@ -153,7 +153,7 @@ private:
 
 CSSPropertyID cssPropertyID(StringView);
 WEBCORE_EXPORT CSSValueID cssValueKeywordID(StringView);
-bool isCustomPropertyName(const String&);
+bool isCustomPropertyName(StringView);
 
 bool isInitialValueForLonghand(CSSPropertyID, const CSSValue&);
 ASCIILiteral initialValueTextForLonghand(CSSPropertyID);

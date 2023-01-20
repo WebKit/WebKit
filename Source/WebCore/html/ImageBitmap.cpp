@@ -173,17 +173,7 @@ static bool taintsOrigin(CachedImage& cachedImage)
 #if ENABLE(VIDEO)
 static bool taintsOrigin(SecurityOrigin* origin, HTMLVideoElement& video)
 {
-    if (!video.hasSingleSecurityOrigin())
-        return true;
-
-    if (!video.player() || video.player()->didPassCORSAccessCheck())
-        return false;
-
-    auto url = video.currentSrc();
-    if (url.protocolIsData())
-        return false;
-
-    return !origin->canRequest(url);
+    return video.taintsOrigin(*origin);
 }
 #endif
 

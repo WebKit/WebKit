@@ -48,6 +48,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << treatAsSameOriginNavigation;
     encoder << hasOpenedFrames;
     encoder << openedByDOMWithOpener;
+    encoder << hasOpener;
     encoder << requesterOrigin;
     encoder << targetBackForwardItemIdentifier;
     encoder << sourceBackForwardItemIdentifier;
@@ -124,6 +125,11 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!openedByDOMWithOpener)
         return std::nullopt;
 
+    std::optional<bool> hasOpener;
+    decoder >> hasOpener;
+    if (!hasOpener)
+        return std::nullopt;
+
     std::optional<WebCore::SecurityOriginData> requesterOrigin;
     decoder >> requesterOrigin;
     if (!requesterOrigin)
@@ -171,7 +177,7 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
 
     return { { WTFMove(navigationType), modifiers, WTFMove(*mouseButton), WTFMove(*syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
-        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedByDOMWithOpener, WTFMove(*requesterOrigin),
+        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedByDOMWithOpener, *hasOpener, WTFMove(*requesterOrigin),
         WTFMove(*targetBackForwardItemIdentifier), WTFMove(*sourceBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory), *effectiveSandboxFlags, WTFMove(*privateClickMeasurement),
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         WTFMove(*webHitTestResultData),

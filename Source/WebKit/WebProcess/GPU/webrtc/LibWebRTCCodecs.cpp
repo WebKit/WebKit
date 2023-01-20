@@ -40,6 +40,7 @@
 #include <WebCore/CVUtilities.h>
 #include <WebCore/LibWebRTCDav1dDecoder.h>
 #include <WebCore/LibWebRTCMacros.h>
+#include <WebCore/Page.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #include <WebCore/VideoFrameCV.h>
@@ -94,6 +95,11 @@ std::optional<VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const 
 
     // FIXME: Expose H265 if available.
     return { };
+}
+
+void LibWebRTCCodecs::setHasVP9ExtensionSupport(bool hasVP9ExtensionSupport)
+{
+    m_hasVP9ExtensionSupport = hasVP9ExtensionSupport;
 }
 
 #endif
@@ -190,7 +196,11 @@ void LibWebRTCCodecs::initializeIfNeeded()
     static std::once_flag doInitializationOnce;
     std::call_once(doInitializationOnce, [] {
         callOnMainRunLoopAndWait([] {
+#if HAVE(AUDIT_TOKEN)
+            WebProcess::singleton().ensureGPUProcessConnection().auditToken();
+#else
             WebProcess::singleton().ensureGPUProcessConnection();
+#endif
         });
     });
 }

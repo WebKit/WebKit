@@ -53,17 +53,6 @@ static constexpr int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
 
 static constexpr int daysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-static bool isLeapYear(int year)
-{
-    if (year % 4)
-        return false;
-    if (!(year % 400))
-        return true;
-    if (!(year % 100))
-        return false;
-    return true;
-}
-
 // 'month' is 0-based.
 static int maxDayOfMonth(int year, int month)
 {

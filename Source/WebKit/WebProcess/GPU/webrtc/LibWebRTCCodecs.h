@@ -148,7 +148,7 @@ public:
     bool supportVP9VTB() const { return m_supportVP9VTB; }
     void setLoggingLevel(WTFLogLevel);
 
-    void setHasVP9ExtensionSupport(bool hasVP9ExtensionSupport) { m_hasVP9ExtensionSupport = hasVP9ExtensionSupport; }
+    void setHasVP9ExtensionSupport(bool);
     bool hasVP9ExtensionSupport() const { return m_hasVP9ExtensionSupport; }
 
 private:

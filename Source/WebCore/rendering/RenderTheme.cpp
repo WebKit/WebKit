@@ -374,11 +374,6 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
     if (!elementPtr)
         return StyleAppearance::None;
 
-#if ENABLE(SERVICE_CONTROLS)
-    if (isImageControl(*elementPtr))
-        return StyleAppearance::ImageControlsButton;
-#endif
-
     Ref element = *elementPtr;
 
     if (is<HTMLInputElement>(element)) {
@@ -419,8 +414,14 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         return StyleAppearance::None;
     }
 
-    if (is<HTMLButtonElement>(element))
+    if (is<HTMLButtonElement>(element)) {
+#if ENABLE(SERVICE_CONTROLS)
+        if (isImageControlsButton(element.get()))
+            return StyleAppearance::ImageControlsButton;
+#endif
+
         return StyleAppearance::Button;
+    }
 
     if (is<HTMLSelectElement>(element)) {
 #if PLATFORM(IOS_FAMILY)

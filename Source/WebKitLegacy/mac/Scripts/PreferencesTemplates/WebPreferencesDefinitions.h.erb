@@ -36,7 +36,7 @@
 #if <%= @pref.condition %>
 <%-   end -%>
 <%-   if @pref.defaultValues.size() == 1 -%>
-#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= @pref.defaultValues['default'] %>
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= @pref.downcast %><%= @pref.defaultValues['default'] %><%= ")" if @pref.downcast %>
 <%-   else -%>
 <%-     @pref.defaultValues.each_with_index do |(key, value), index| -%>
 <%-       if index == 0 -%>
@@ -46,7 +46,7 @@
 <%-       else -%>
 #else
 <%-       end -%>
-#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= value %>
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= @pref.downcast %><%= value %><%= ")" if @pref.downcast %>
 <%-     end -%>
 #endif
 <%-   end -%>

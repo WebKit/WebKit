@@ -65,4 +65,6 @@ typedef NS_ENUM(NSInteger, WKSyntheticClickType) {
 
 @property (nonatomic, readonly) _WKHitTestResult *_hitTestResult WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+@property (nonatomic, readonly) BOOL _hasOpener WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end

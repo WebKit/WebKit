@@ -27,6 +27,7 @@
 #include "CSSParserContext.h"
 
 #include "CSSPropertyNames.h"
+#include "CSSValuePool.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Page.h"

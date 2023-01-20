@@ -2261,6 +2261,9 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime e
 #endif
         session.storageManager().suspend([callbackAggregator] { });
     });
+
+    for (auto& storageManager : m_closingStorageManagers)
+        storageManager->suspend([callbackAggregator] { });
 }
 
 void NetworkProcess::applicationDidEnterBackground()
@@ -2294,6 +2297,9 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
 #endif
         session.storageManager().resume();
     });
+
+    for (auto& storageManager : m_closingStorageManagers)
+        storageManager->resume();
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)

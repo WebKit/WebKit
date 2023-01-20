@@ -1042,6 +1042,8 @@ private:
             setPrediction(SpecDoubleReal);
             break;
         }
+
+        case MapOrSetDelete:
         case DeleteByVal:
         case DeleteById:
         case MultiDeleteByOffset:

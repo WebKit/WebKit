@@ -15,11 +15,27 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/calculate-depth-for-node.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/callback-cross-realm-report-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/change-layout-in-error.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/create-pattern-data-url.js
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/devicepixel2.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/eventloop.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/fragments.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/iframe-same-origin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/iframe-same-origin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/iframe-same-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/notify.html
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/observe.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/ordering.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/scrollbars-2.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/scrollbars.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/svg-with-css-box-001.html
+/LayoutTests/imported/w3c/web-platform-tests/resize-observer/svg-with-css-box-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/resize-observer/svg.html

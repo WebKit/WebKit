@@ -57,7 +57,12 @@ class WebPageProxy;
 using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteractionType;
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+// A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
+using CharKey = String;
+#else
 using CharKey = UChar32;
+#endif
 using CharKeySet = ListHashSet<CharKey>;
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;

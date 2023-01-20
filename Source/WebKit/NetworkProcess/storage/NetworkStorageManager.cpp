@@ -127,7 +127,7 @@ Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionI
 
 NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, UnifiedOriginStorageLevel level)
     : m_sessionID(sessionID)
-    , m_queue(SuspendableWorkQueue::create("com.apple.WebKit.Storage"))
+    , m_queue(SuspendableWorkQueue::create("com.apple.WebKit.Storage", SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
     , m_defaultOriginQuota(defaultOriginQuota)
     , m_defaultThirdPartyOriginQuota(defaultThirdPartyOriginQuota)
     , m_parentConnection(connection)
@@ -740,6 +740,7 @@ void NetworkStorageManager::suspend(CompletionHandler<void()>&& completionHandle
     if (m_sessionID.isEphemeral())
         return completionHandler();
 
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkStorageManager::suspend()", this);
     m_queue->suspend([this, protectedThis = Ref { *this }] {
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto localStorageManager = manager->existingLocalStorageManager())
@@ -757,6 +758,7 @@ void NetworkStorageManager::resume()
     if (m_sessionID.isEphemeral())
         return;
 
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkStorageManager::resume()", this);
     m_queue->resume();
 }
 

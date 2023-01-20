@@ -3157,12 +3157,9 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
             }
         }
     }
-    if (virtualRegister == thisRegister())
-        return "this"_s;
-    if (virtualRegister.isArgument())
-        return makeString("arguments[", virtualRegister.toArgument(), ']');
-
-    return emptyString();
+    StringPrintStream out;
+    out.print(virtualRegister);
+    return out.toString();
 }
 
 ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex bytecodeIndex)

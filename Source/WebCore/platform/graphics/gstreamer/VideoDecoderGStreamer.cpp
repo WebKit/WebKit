@@ -167,20 +167,20 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     }
 
     gst_caps_set_simple(inputCaps.get(), "width", G_TYPE_INT, config.width, "height", G_TYPE_INT, config.height, nullptr);
-    m_harness = GStreamerElementHarness::create(WTFMove(element), [protectedThis = Ref { *this }, this](const GRefPtr<GstBuffer>& outputBuffer) {
+    m_harness = GStreamerElementHarness::create(WTFMove(element), [protectedThis = Ref { *this }, this](auto& stream, const GRefPtr<GstBuffer>& outputBuffer) {
         if (protectedThis->m_isClosed)
             return;
 
         GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer.get())));
 
         if (m_presentationSize.isEmpty())
-            m_presentationSize = getVideoResolutionFromCaps(m_harness->outputCaps().get()).value_or(FloatSize { 0, 0 });
+            m_presentationSize = getVideoResolutionFromCaps(stream.outputCaps().get()).value_or(FloatSize { 0, 0 });
 
-        m_postTaskCallback([protectedThis = Ref { *this }, this, outputBuffer = GRefPtr<GstBuffer>(outputBuffer)]() mutable {
+        m_postTaskCallback([protectedThis = Ref { *this }, this, outputBuffer = GRefPtr<GstBuffer>(outputBuffer), outputCaps = stream.outputCaps()]() mutable {
             if (protectedThis->m_isClosed)
                 return;
 
-            auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), m_harness->outputCaps().get(), nullptr, nullptr));
+            auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
             auto videoFrame = VideoFrameGStreamer::create(WTFMove(sample), m_presentationSize, fromGstClockTime(GST_BUFFER_PTS(outputBuffer.get())));
 
             m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), static_cast<int64_t>(GST_BUFFER_PTS(outputBuffer.get())), GST_BUFFER_DURATION(outputBuffer.get()) });

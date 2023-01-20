@@ -20,8 +20,8 @@ function testDataRetrievalAllowed() {
     context.fillStyle = context.createPattern(video, "repeat");
     context.fillRect(0, 0, 100, 100);
 
-    shouldThrowErrorName("context.getImageData(0, 0, 100, 100)", "SecurityError");
-    shouldThrowErrorName("canvas.toDataURL()", "SecurityError");
+    shouldNotThrow("context.getImageData(0, 0, 100, 100)");
+    shouldNotThrow("canvas.toDataURL()");
 }
 
 function testDataRetrievalForbidden(description) {

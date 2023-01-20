@@ -62,26 +62,17 @@ struct AuthenticatorResponseData {
 template<class Encoder>
 static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
 {
-    encoder << static_cast<uint64_t>(buffer.byteLength());
-    encoder.encodeFixedLengthData(static_cast<const uint8_t*>(buffer.data()), buffer.byteLength(), 1);
+    encoder << Span { reinterpret_cast<const uint8_t*>(buffer.data()), buffer.byteLength() };
 }
 
 template<class Decoder>
 RefPtr<ArrayBuffer> WARN_UNUSED_RETURN decodeArrayBuffer(Decoder& decoder)
 {
-    std::optional<uint64_t> length;
-    decoder >> length;
-    if (!length)
-        return nullptr;
-
-    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(length.value()))
-        return nullptr;
-    auto buffer = ArrayBuffer::tryCreate(length.value(), sizeof(uint8_t));
+    std::optional<Span<const uint8_t>> buffer;
+    decoder >> buffer;
     if (!buffer)
         return nullptr;
-    if (!decoder.decodeFixedLengthData(static_cast<uint8_t*>(buffer->data()), length.value(), 1))
-        return nullptr;
-    return buffer;
+    return ArrayBuffer::tryCreate(buffer->data(), buffer->size_bytes());
 }
 
 template<class Encoder>

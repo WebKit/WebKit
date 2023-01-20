@@ -172,20 +172,31 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
             collectedHashes.attributes.append(attributeName.impl()->existingHash() * AttributeSalt);
         break;
     }
+    case CSSSelector::PseudoClass:
+        switch (selector.pseudoClassType()) {
+        case CSSSelector::PseudoClassIs:
+        case CSSSelector::PseudoClassWhere:
+            // We can use the filter in the trivial case of single argument :is()/:where().
+            // Supporting the multiargument case would require more than one hash.
+            if (selector.selectorList()->listSize() == 1)
+                collectSelectorHashes(collectedHashes, *selector.selectorList()->first(), IncludeRightmost::Yes);
+            break;
+        default:
+            break;
+        }
+        break;
     default:
         break;
     }
 }
 
-auto SelectorFilter::collectSelectorHashes(const CSSSelector& rightmostSelector) -> CollectedSelectorHashes
+void SelectorFilter::collectSelectorHashes(CollectedSelectorHashes& collectedHashes, const CSSSelector& rightmostSelector, IncludeRightmost includeRightmost)
 {
-    CollectedSelectorHashes collectedHashes;
-
     auto* selector = &rightmostSelector;
     auto relation = selector->relation();
 
     // Skip the topmost selector. It is handled quickly by the rule hashes.
-    bool skipOverSubselectors = true;
+    bool skipOverSubselectors = includeRightmost == IncludeRightmost::No;
     for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {
         // Only collect identifiers that match ancestors.
         switch (relation) {
@@ -208,7 +219,6 @@ auto SelectorFilter::collectSelectorHashes(const CSSSelector& rightmostSelector)
         }
         relation = selector->relation();
     }
-    return collectedHashes;
 }
 
 auto SelectorFilter::chooseSelectorHashesForFilter(const CollectedSelectorHashes& collectedSelectorHashes) -> Hashes
@@ -250,8 +260,9 @@ auto SelectorFilter::chooseSelectorHashesForFilter(const CollectedSelectorHashes
 
 SelectorFilter::Hashes SelectorFilter::collectHashes(const CSSSelector& selector)
 {
-    auto hashes = collectSelectorHashes(selector);
-    return chooseSelectorHashesForFilter(hashes);
+    CollectedSelectorHashes collectedHashes;
+    collectSelectorHashes(collectedHashes, selector, IncludeRightmost::No);
+    return chooseSelectorHashesForFilter(collectedHashes);
 }
 
 }

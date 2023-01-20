@@ -59,8 +59,7 @@ private:
 template<class Encoder>
 void Model::encode(Encoder& encoder) const
 {
-    encoder << static_cast<size_t>(m_data->size());
-    encoder.encodeFixedLengthData(m_data->makeContiguous()->data(), m_data->size(), 1);
+    encoder << m_data;
     encoder << m_mimeType;
     encoder << m_url;
 }
@@ -68,19 +67,9 @@ void Model::encode(Encoder& encoder) const
 template<class Decoder>
 RefPtr<Model> Model::decode(Decoder& decoder)
 {
-    std::optional<size_t> length;
-    decoder >> length;
-    if (!length)
-        return nullptr;
-
-    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(length.value())) {
-        decoder.markInvalid();
-        return nullptr;
-    }
-
-    Vector<uint8_t> data;
-    data.grow(*length);
-    if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
+    std::optional<Ref<SharedBuffer>> data;
+    decoder >> data;
+    if (!data)
         return nullptr;
 
     std::optional<String> mimeType;
@@ -93,7 +82,7 @@ RefPtr<Model> Model::decode(Decoder& decoder)
     if (!url)
         return nullptr;
 
-    return Model::create(SharedBuffer::create(WTFMove(data)), WTFMove(*mimeType), WTFMove(*url));
+    return Model::create(WTFMove(*data), WTFMove(*mimeType), WTFMove(*url));
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Model&);

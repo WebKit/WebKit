@@ -31,6 +31,7 @@
 #if ENABLE(WEBGL)
 
 #include "FormatConverter.h"
+#include "GCGLSpan.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "Image.h"
@@ -600,6 +601,48 @@ bool GraphicsContextGL::extractTextureData(unsigned width, unsigned height, GCGL
         return false;
 
     return true;
+}
+
+GCGLfloat GraphicsContextGL::getFloat(GCGLenum pname)
+{
+    GCGLfloat value[1] { };
+    getFloatv(pname, value);
+    return value[0];
+}
+
+GCGLboolean GraphicsContextGL::getBoolean(GCGLenum pname)
+{
+    GCGLboolean value[1] { };
+    getBooleanv(pname, value);
+    return value[0];
+}
+
+GCGLint GraphicsContextGL::getInteger(GCGLenum pname)
+{
+    GCGLint value[1] { };
+    getIntegerv(pname, value);
+    return value[0];
+}
+
+GCGLint GraphicsContextGL::getIntegeri(GCGLenum pname, GCGLuint index)
+{
+    GCGLint value[4] { };
+    getIntegeri_v(pname, index, value);
+    return value[0];
+}
+
+GCGLint GraphicsContextGL::getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname)
+{
+    GCGLint value[1] { };
+    getActiveUniformBlockiv(program, uniformBlockIndex, pname, value);
+    return value[0];
+}
+
+GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum internalformat, GCGLenum pname)
+{
+    GCGLint value[1] { };
+    getInternalformativ(target, internalformat, pname, value);
+    return value[0];
 }
 
 void GraphicsContextGL::setDrawingBufferColorSpace(const DestinationColorSpace&)

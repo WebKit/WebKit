@@ -179,10 +179,8 @@ void SerializedScriptValue::encode(Encoder& encoder) const
 
     if (hasArray) {
         encoder << static_cast<uint64_t>(m_arrayBufferContentsArray->size());
-        for (const auto &arrayBufferContents : *m_arrayBufferContentsArray) {
-            encoder << static_cast<uint64_t>(arrayBufferContents.sizeInBytes());
-            encoder.encodeFixedLengthData(static_cast<const uint8_t*>(arrayBufferContents.data()), arrayBufferContents.sizeInBytes(), 1);
-        }
+        for (const auto& arrayBufferContents : *m_arrayBufferContentsArray)
+            encoder << Span { reinterpret_cast<const uint8_t*>(arrayBufferContents.data()), arrayBufferContents.sizeInBytes() };
     }
 
 #if ENABLE(WEB_RTC)
@@ -220,24 +218,18 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
 
         arrayBufferContentsArray = makeUnique<ArrayBufferContentsArray>();
         while (arrayLength--) {
-            uint64_t bufferSize;
-            if (!decoder.decode(bufferSize))
-                return nullptr;
-            CheckedSize checkedBufferSize = bufferSize;
-            if (checkedBufferSize.hasOverflowed())
-                return nullptr;
-            if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+            Span<const uint8_t> data;
+            if (!decoder.decode(data))
                 return nullptr;
 
-            auto buffer = Gigacage::tryMalloc(Gigacage::Primitive, bufferSize);
+            auto buffer = Gigacage::tryMalloc(Gigacage::Primitive, data.size_bytes());
             if (!buffer)
                 return nullptr;
-            if (!decoder.decodeFixedLengthData(static_cast<uint8_t*>(buffer), bufferSize, 1)) {
-                Gigacage::free(Gigacage::Primitive, buffer);
-                return nullptr;
-            }
+
+            static_assert(sizeof(Span<const uint8_t>::element_type) == 1);
+            memcpy(buffer, data.data(), data.size_bytes());
             JSC::ArrayBufferDestructorFunction destructor = ArrayBuffer::primitiveGigacageDestructor();
-            arrayBufferContentsArray->append({ buffer, checkedBufferSize, std::nullopt, WTFMove(destructor) });
+            arrayBufferContentsArray->append({ buffer, data.size_bytes(), std::nullopt, WTFMove(destructor) });
         }
     }
 

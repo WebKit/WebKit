@@ -155,8 +155,6 @@ private:
     void acceleratedRenderingStateChanged() final { updateLayersAsNeeded(); }
     bool supportsAcceleratedRendering() const override { return true; }
 
-    bool hasSingleSecurityOrigin() const override { return true; }
-
     MediaPlayer::MovieLoadType movieLoadType() const override { return MediaPlayer::MovieLoadType::LiveStream; }
 
     String engineDescription() const override;

@@ -196,6 +196,19 @@ function forEachCanvasSource(crossOriginUrl, sameOriginUrl, callback) {
     },
 
     {
+      name: "redirected to same-origin HTMLVideoElement via a cross-origin URL",
+      factory: () => {
+        return new Promise((resolve, reject) => {
+          const video = document.createElement("video");
+          video.oncanplaythrough = () => resolve(video);
+          video.preload = "auto";
+          video.onerror = reject;
+          video.src = "/common/redirect.py?location=" + crossOriginUrl + "/common/redirect.py?location=" + getVideoURI(sameOriginUrl + "/media/movie_300");
+        });
+      },
+    },
+
+    {
       name: "unclean HTMLCanvasElement",
       factory: () => {
         return makeImage().then(image => {

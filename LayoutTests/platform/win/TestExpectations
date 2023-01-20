@@ -3594,6 +3594,7 @@ http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ F
 http/tests/security/anchor-download-allow-blob.html [ Failure ]
 http/tests/security/anchor-download-block-crossorigin.html [ Failure ]
 http/tests/security/canvas-remote-read-remote-video-redirect.html [ Crash Failure ]
+http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Failure ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html [ Failure ]

@@ -185,7 +185,7 @@ private:
 
 #if ENABLE(SERVICE_CONTROLS)
     IntSize imageControlsButtonSize() const final;
-    bool isImageControl(const Element&) const final;
+    bool isImageControlsButton(const Element&) const final;
 #endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;

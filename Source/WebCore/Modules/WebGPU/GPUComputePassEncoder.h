@@ -52,8 +52,8 @@ public:
     void setLabel(String&&);
 
     void setPipeline(const GPUComputePipeline&);
-    void dispatch(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ);
-    void dispatchIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
+    void dispatchWorkgroups(GPUSize32 workgroupCountX, std::optional<GPUSize32> workgroupCountY, std::optional<GPUSize32> workgroupCountZ);
+    void dispatchWorkgroupsIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
 
     void end();
 

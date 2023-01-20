@@ -26,6 +26,9 @@
 #include "config.h"
 #include "CSSContentDistributionValue.h"
 
+#include "CSSValueKeywords.h"
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 CSSContentDistributionValue::CSSContentDistributionValue(CSSValueID distribution, CSSValueID position, CSSValueID overflow)

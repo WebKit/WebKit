@@ -20,6 +20,7 @@
 #pragma once
 
 #if USE(ATSPI)
+#include "AccessibilityAtspiEnums.h"
 #include "IntRect.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
@@ -56,7 +57,7 @@ private:
     explicit AccessibilityRootAtspi(Page&);
 
     void embedded(const char* parentUniqueName, const char* parentPath);
-    IntRect frameRect(uint32_t) const;
+    IntRect frameRect(Atspi::CoordinateType) const;
 
     static GDBusInterfaceVTable s_accessibleFunctions;
     static GDBusInterfaceVTable s_socketFunctions;

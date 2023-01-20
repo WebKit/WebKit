@@ -39,11 +39,15 @@ namespace TestWebKitAPI {
 TEST_F(GStreamerTest, harnessBasic)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](const auto&) { });
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](auto&, const auto&) { });
+
+    // The identity element has a single source pad. Fetch the corresponding stream.
+    ASSERT_FALSE(harness->outputStreams().isEmpty());
+    auto& stream = harness->outputStreams().first();
 
     // Harness has not started processing data yet.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
 
     // Push a sample and expect initial events and an output buffer.
     auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
@@ -55,43 +59,47 @@ TEST_F(GStreamerTest, harnessBasic)
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     EXPECT_TRUE(harness->pushSample(sample.get()));
 
-    auto event = harness->pullEvent();
+    auto event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
     EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "stream-start");
 
-    event = harness->pullEvent();
+    event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
     EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "caps");
     GstCaps* eventCaps;
     gst_event_parse_caps(event.get(), &eventCaps);
     ASSERT_TRUE(gst_caps_is_equal(eventCaps, caps.get()));
 
-    event = harness->pullEvent();
+    event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
     EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "segment");
 
-    ASSERT_TRUE(gst_caps_is_equal(harness->outputCaps().get(), caps.get()));
+    ASSERT_TRUE(gst_caps_is_equal(stream->outputCaps().get(), caps.get()));
 
     // The harnessed element is identity, so output buffers should be the same as input buffers.
-    auto outputBuffer = harness->pullBuffer();
+    auto outputBuffer = stream->pullBuffer();
     GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
     ASSERT_TRUE(mappedOutputBuffer);
     EXPECT_EQ(mappedOutputBuffer.size(), 64);
     EXPECT_EQ(memcmp(mappedInputBuffer.data(), mappedOutputBuffer.data(), 64), 0);
 
     // Harness is now empty.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
 }
 
 TEST_F(GStreamerTest, harnessManualStart)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](const auto&) { });
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](auto&, const auto&) { });
+
+    // The identity element has a single source pad. Fetch the corresponding stream.
+    ASSERT_FALSE(harness->outputStreams().isEmpty());
+    auto& stream = harness->outputStreams().first();
 
     // Harness has not started processing data yet.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
 
     // Pushing a buffer before start is not allowed.
     EXPECT_FALSE(harness->pushBuffer(gst_buffer_new_allocate(nullptr, 64, nullptr)));
@@ -100,11 +108,11 @@ TEST_F(GStreamerTest, harnessManualStart)
     auto caps = adoptGRef(gst_caps_new_empty_simple("foo"));
     harness->start(WTFMove(caps));
 
-    auto event = harness->pullEvent();
+    auto event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
     EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "stream-start");
 
-    event = harness->pullEvent();
+    event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
     EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "caps");
     GstCaps* eventCaps;
@@ -112,7 +120,7 @@ TEST_F(GStreamerTest, harnessManualStart)
     const auto* structure = gst_caps_get_structure(eventCaps, 0);
     ASSERT_STREQ(gst_structure_get_name(structure), "foo");
 
-    event = harness->pullEvent();
+    event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
     EXPECT_STREQ(GST_EVENT_TYPE_NAME(event.get()), "segment");
 
@@ -125,22 +133,22 @@ TEST_F(GStreamerTest, harnessManualStart)
     EXPECT_EQ(mappedInputBuffer.size(), 64);
 
     // The harnessed element is identity, so output buffers should be the same as input buffers.
-    auto outputBuffer = harness->pullBuffer();
+    auto outputBuffer = stream->pullBuffer();
     GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
     ASSERT_TRUE(mappedOutputBuffer);
     EXPECT_EQ(mappedOutputBuffer.size(), 64);
     EXPECT_EQ(memcmp(mappedInputBuffer.data(), mappedOutputBuffer.data(), 64), 0);
 
     // Harness is now empty.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
 }
 
 TEST_F(GStreamerTest, harnessBufferProcessing)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
     unsigned counter = 0;
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](const auto& outputBuffer) mutable {
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](auto&, const auto& outputBuffer) mutable {
         GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
         ASSERT_TRUE(mappedOutputBuffer);
         EXPECT_EQ(mappedOutputBuffer.size(), 64);
@@ -148,9 +156,13 @@ TEST_F(GStreamerTest, harnessBufferProcessing)
         counter++;
     });
 
+    // The identity element has a single source pad. Fetch the corresponding stream.
+    ASSERT_FALSE(harness->outputStreams().isEmpty());
+    auto& stream = harness->outputStreams().first();
+
     // Harness has not started processing data yet.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
     ASSERT_EQ(counter, 0);
 
     // Push a batch of samples and expect they were all processed using the supplied harness callback.
@@ -169,7 +181,7 @@ TEST_F(GStreamerTest, harnessFlush)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
     unsigned counter = 0;
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](const auto& outputBuffer) mutable {
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](auto&, const auto& outputBuffer) mutable {
         GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
         ASSERT_TRUE(mappedOutputBuffer);
         EXPECT_EQ(mappedOutputBuffer.size(), 64);
@@ -177,9 +189,13 @@ TEST_F(GStreamerTest, harnessFlush)
         counter++;
     });
 
+    // The identity element has a single source pad. Fetch the corresponding stream.
+    ASSERT_FALSE(harness->outputStreams().isEmpty());
+    auto& stream = harness->outputStreams().first();
+
     // Harness has not started processing data yet.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
     ASSERT_EQ(counter, 0);
 
     // Push a batch of 3 samples, manually process the first two output buffers and flush. The last
@@ -191,13 +207,13 @@ TEST_F(GStreamerTest, harnessFlush)
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         EXPECT_TRUE(harness->pushSample(sample.get()));
     }
-    auto firstOutputBuffer = harness->pullBuffer();
+    auto firstOutputBuffer = stream->pullBuffer();
     GstMappedBuffer mappedFirstOutputBuffer(firstOutputBuffer.get(), GST_MAP_READ);
     ASSERT_TRUE(mappedFirstOutputBuffer);
     EXPECT_EQ(mappedFirstOutputBuffer.size(), 64);
     EXPECT_EQ(mappedFirstOutputBuffer.data()[0], 0);
 
-    auto secondOutputBuffer = harness->pullBuffer();
+    auto secondOutputBuffer = stream->pullBuffer();
     GstMappedBuffer mappedSecondOutputBuffer(secondOutputBuffer.get(), GST_MAP_READ);
     ASSERT_TRUE(mappedSecondOutputBuffer);
     EXPECT_EQ(mappedSecondOutputBuffer.size(), 64);
@@ -207,8 +223,8 @@ TEST_F(GStreamerTest, harnessFlush)
     ASSERT_EQ(counter, 1);
 
     // Flushed harness is empty.
-    ASSERT_NULL(harness->pullBuffer());
-    ASSERT_NULL(harness->pullEvent());
+    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullEvent());
 }
 
 } // namespace TestWebKitAPI

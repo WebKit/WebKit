@@ -266,12 +266,12 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_componentFunctions = {
         else if (!g_strcmp0(methodName, "GetExtents")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);
-            auto rect = rootObject.frameRect(coordinateType);
+            auto rect = rootObject.frameRect(static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("((iiii))", rect.x(), rect.y(), rect.width(), rect.height()));
         } else if (!g_strcmp0(methodName, "GetPosition")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);
-            auto rect = rootObject.frameRect(coordinateType);
+            auto rect = rootObject.frameRect(static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("((ii))", rect.x(), rect.y()));
         } else if (!g_strcmp0(methodName, "GetSize")) {
             auto rect = rootObject.frameRect(Atspi::CoordinateType::ParentCoordinates);
@@ -295,7 +295,7 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_componentFunctions = {
     { nullptr }
 };
 
-IntRect AccessibilityRootAtspi::frameRect(uint32_t coordinateType) const
+IntRect AccessibilityRootAtspi::frameRect(Atspi::CoordinateType coordinateType) const
 {
     if (!m_page)
         return { };

@@ -120,23 +120,9 @@ public:
 
     Test()
     {
-        GUniquePtr<char> localStorageDirectory(g_build_filename(dataDirectory(), "local-storage", nullptr));
-        GUniquePtr<char> indexedDBDirectory(g_build_filename(dataDirectory(), "indexeddb", nullptr));
-        GUniquePtr<char> diskCacheDirectory(g_build_filename(dataDirectory(), "disk-cache", nullptr));
-        GUniquePtr<char> applicationCacheDirectory(g_build_filename(dataDirectory(), "appcache", nullptr));
-        GUniquePtr<char> webSQLDirectory(g_build_filename(dataDirectory(), "websql", nullptr));
-        GUniquePtr<char> hstsDirectory(g_build_filename(dataDirectory(), "hsts", nullptr));
-        GUniquePtr<char> itpDirectory(g_build_filename(dataDirectory(), "itp", nullptr));
-        GUniquePtr<char> swRegistrationsDirectory(g_build_filename(dataDirectory(), "serviceworkers", nullptr));
-        GUniquePtr<char> domCacheDirectory(g_build_filename(dataDirectory(), "dom-cache", nullptr));
         GRefPtr<WebKitWebsiteDataManager> websiteDataManager = adoptGRef(webkit_website_data_manager_new(
-#if !ENABLE(2022_GLIB_API)
-            "local-storage-directory", localStorageDirectory.get(), "indexeddb-directory", indexedDBDirectory.get(),
-            "disk-cache-directory", diskCacheDirectory.get(), "offline-application-cache-directory", applicationCacheDirectory.get(),
-            "websql-directory", webSQLDirectory.get(), "hsts-cache-directory", hstsDirectory.get(),
-            "itp-directory", itpDirectory.get(), "service-worker-registrations-directory", swRegistrationsDirectory.get(),
-            "dom-cache-directory", domCacheDirectory.get(), 
-#endif
+            "base-data-directory", dataDirectory(),
+            "base-cache-directory", dataDirectory(),
             nullptr));
 
         m_webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,

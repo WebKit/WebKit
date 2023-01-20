@@ -44,7 +44,7 @@ public:
     virtual bool isLoading() const = 0;
 };
 
-class FontSelector : public RefCounted<FontSelector> {
+class FontSelector : public RefCounted<FontSelector>, public CanMakeWeakPtr<FontSelector> {
 public:
     virtual ~FontSelector() = default;
 

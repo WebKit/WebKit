@@ -48,12 +48,14 @@ void GPUComputePassEncoder::setPipeline(const GPUComputePipeline& computePipelin
     m_backing->setPipeline(computePipeline.backing());
 }
 
-void GPUComputePassEncoder::dispatch(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ)
+void GPUComputePassEncoder::dispatchWorkgroups(GPUSize32 workgroupCountX, std::optional<GPUSize32> workgroupCountY, std::optional<GPUSize32> workgroupCountZ)
 {
-    m_backing->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219 we should be able to specify the
+    // default values via the idl file
+    m_backing->dispatch(workgroupCountX, workgroupCountY.value_or(1), workgroupCountZ.value_or(1));
 }
 
-void GPUComputePassEncoder::dispatchIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
+void GPUComputePassEncoder::dispatchWorkgroupsIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
     m_backing->dispatchIndirect(indirectBuffer.backing(), indirectOffset);
 }

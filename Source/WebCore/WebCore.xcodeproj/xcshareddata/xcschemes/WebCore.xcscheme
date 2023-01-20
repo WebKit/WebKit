@@ -20,6 +20,20 @@
                ReferencedContainer = "container:WebCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "417DA6CF13734E02007C57FB"
+               BuildableName = "libWebCoreTestSupport.dylib"
+               BlueprintName = "WebCoreTestSupport"
+               ReferencedContainer = "container:WebCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

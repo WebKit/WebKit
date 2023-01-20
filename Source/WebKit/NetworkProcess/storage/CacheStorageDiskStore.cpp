@@ -349,7 +349,7 @@ void CacheStorageDiskStore::readAllRecords(ReadAllRecordsCallback&& callback)
             }
         }
 
-        m_callbackQueue->dispatch([fileDatas = crossThreadCopy(WTFMove(fileDatas)), blobDatas = crossThreadCopy(WTFMove(blobDatas)), didReadRecordFiles = WTFMove(didReadRecordFiles)]() mutable {
+        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = crossThreadCopy(WTFMove(fileDatas)), blobDatas = crossThreadCopy(WTFMove(blobDatas)), didReadRecordFiles = WTFMove(didReadRecordFiles)]() mutable {
             didReadRecordFiles(WTFMove(fileDatas), WTFMove(blobDatas));
         });
     });
@@ -396,7 +396,7 @@ void CacheStorageDiskStore::readRecords(const Vector<CacheStorageRecordInformati
             blobDatas.append(WTFMove(blobData));
         }
 
-        m_callbackQueue->dispatch([fileDatas = crossThreadCopy(WTFMove(fileDatas)), blobDatas = crossThreadCopy(WTFMove(blobDatas)), didReadRecordFiles = WTFMove(didReadRecordFiles)]() mutable {
+        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = crossThreadCopy(WTFMove(fileDatas)), blobDatas = crossThreadCopy(WTFMove(blobDatas)), didReadRecordFiles = WTFMove(didReadRecordFiles)]() mutable {
             didReadRecordFiles(WTFMove(fileDatas), WTFMove(blobDatas));
         });
     });

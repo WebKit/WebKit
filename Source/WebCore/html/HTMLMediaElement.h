@@ -459,9 +459,8 @@ public:
     // of one of them here.
     using HTMLElement::scriptExecutionContext;
 
-    bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     bool didPassCORSAccessCheck() const { return m_player && m_player->didPassCORSAccessCheck(); }
-    bool wouldTaintOrigin(const SecurityOrigin& origin) const { return m_player && m_player->wouldTaintOrigin(origin); }
+    bool taintsOrigin(const SecurityOrigin&) const;
     
     WEBCORE_EXPORT bool isFullscreen() const override;
     bool isStandardFullscreen() const;

@@ -175,6 +175,13 @@ void LibWebRTCProvider::setLoggingLevel(WTFLogLevel level)
 #endif
 }
 
+void LibWebRTCProvider::willCreatePeerConnectionFactory()
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
+    LibWebRTCCodecs::initializeIfNeeded();
+#endif
+}
+
 } // namespace WebKit
 
 #endif // USE(LIBWEBRTC)

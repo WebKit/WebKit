@@ -2038,6 +2038,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case MapOrSetDelete: {
+        Edge& mapEdge = node->child1();
+        AbstractHeapKind heap = (mapEdge.useKind() == MapObjectUse) ? JSMapFields : JSSetFields;
+        write(heap);
+        return;
+    }
+
     case WeakSetAdd: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();

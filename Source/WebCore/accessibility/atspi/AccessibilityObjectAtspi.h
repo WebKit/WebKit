@@ -95,10 +95,10 @@ public:
     WEBCORE_EXPORT HashMap<String, String> attributes() const;
     WEBCORE_EXPORT RelationMap relationMap() const;
 
-    WEBCORE_EXPORT AccessibilityObjectAtspi* hitTest(const IntPoint&, uint32_t) const;
-    WEBCORE_EXPORT IntRect elementRect(uint32_t) const;
+    WEBCORE_EXPORT AccessibilityObjectAtspi* hitTest(const IntPoint&, Atspi::CoordinateType) const;
+    WEBCORE_EXPORT IntRect elementRect(Atspi::CoordinateType) const;
     WEBCORE_EXPORT void scrollToMakeVisible(uint32_t) const;
-    WEBCORE_EXPORT void scrollToPoint(const IntPoint&, uint32_t) const;
+    WEBCORE_EXPORT void scrollToPoint(const IntPoint&, Atspi::CoordinateType) const;
 
     WEBCORE_EXPORT String text() const;
     enum class TextGranularity {
@@ -112,7 +112,7 @@ public:
         Paragraph
     };
     WEBCORE_EXPORT IntPoint boundaryOffset(unsigned, TextGranularity) const;
-    WEBCORE_EXPORT IntRect boundsForRange(unsigned, unsigned, uint32_t) const;
+    WEBCORE_EXPORT IntRect boundsForRange(unsigned, unsigned, Atspi::CoordinateType) const;
     struct TextAttributes {
         HashMap<String, String> attributes;
         int startOffset;
@@ -189,14 +189,14 @@ private:
     int characterAtOffset(int) const;
     std::optional<unsigned> characterOffset(UChar, int) const;
     std::optional<unsigned> characterIndex(UChar, unsigned) const;
-    IntRect textExtents(int, int, uint32_t) const;
-    int offsetAtPoint(const IntPoint&, uint32_t) const;
+    IntRect textExtents(int, int, Atspi::CoordinateType) const; 
+    int offsetAtPoint(const IntPoint&, Atspi::CoordinateType) const;
     IntPoint boundsForSelection(const VisibleSelection&) const;
     bool selectionBounds(int&, int&) const;
     bool selectRange(int, int);
     TextAttributes textAttributesWithUTF8Offset(std::optional<int> = std::nullopt, bool = false) const;
     bool scrollToMakeVisible(int, int, uint32_t) const;
-    bool scrollToPoint(int, int, uint32_t, int, int) const;
+    bool scrollToPoint(int, int, Atspi::CoordinateType, int, int) const;
 
     unsigned offsetInParent() const;
 

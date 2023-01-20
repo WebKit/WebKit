@@ -86,11 +86,8 @@ void MockPageOverlayClient::didMoveToPage(PageOverlay& overlay, Page* page)
         overlay.setNeedsDisplay();
 }
 
-void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
+void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect&)
 {
-    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
-        makeString("MockPageOverlayClient::drawRect dirtyRect (", dirtyRect.x(), ", ", dirtyRect.y(), ", ", dirtyRect.width(), ", ", dirtyRect.height(), ')'));
-
     GraphicsContextStateSaver stateSaver(context);
 
     FloatRect insetRect = overlay.bounds();

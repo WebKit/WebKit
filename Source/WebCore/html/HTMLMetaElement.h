@@ -22,12 +22,11 @@
 
 #pragma once
 
+#include "Color.h"
 #include "HTMLElement.h"
 #include "MediaQuery.h"
 
 namespace WebCore {
-
-class Color;
 
 class HTMLMetaElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLMetaElement);

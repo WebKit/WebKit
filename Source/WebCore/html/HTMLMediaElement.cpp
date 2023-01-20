@@ -435,6 +435,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
+    , m_currentIdentifier(MediaUniqueIdentifier::generate())
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
     , m_playing(false)
@@ -6614,6 +6615,13 @@ double HTMLMediaElement::minFastReverseRate() const
 double HTMLMediaElement::maxFastForwardRate() const
 {
     return m_player ? m_player->maxFastForwardRate() : 0;
+}
+
+bool HTMLMediaElement::taintsOrigin(const SecurityOrigin& origin) const
+{
+    if (didPassCORSAccessCheck())
+        return false;
+    return m_player && m_player->isCrossOrigin(origin);
 }
 
 bool HTMLMediaElement::isFullscreen() const

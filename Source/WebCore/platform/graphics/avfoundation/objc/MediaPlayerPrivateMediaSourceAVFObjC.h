@@ -248,7 +248,6 @@ private:
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by
     // javascript running in the page, the video will, by necessity, always be CORS correct and
     // in the page's origin.
-    bool hasSingleSecurityOrigin() const override { return true; }
     bool didPassCORSAccessCheck() const override { return true; }
 
     MediaPlayer::MovieLoadType movieLoadType() const override;

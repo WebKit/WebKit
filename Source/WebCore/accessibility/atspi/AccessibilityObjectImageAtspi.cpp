@@ -37,12 +37,12 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
         if (!g_strcmp0(methodName, "GetImageExtents")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);
-            auto rect = atspiObject->elementRect(coordinateType);
+            auto rect = atspiObject->elementRect(static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("((iiii))", rect.x(), rect.y(), rect.width(), rect.height()));
         } else if (!g_strcmp0(methodName, "GetImagePosition")) {
             uint32_t coordinateType;
             g_variant_get(parameters, "(u)", &coordinateType);
-            auto rect = atspiObject->elementRect(coordinateType);
+            auto rect = atspiObject->elementRect(static_cast<Atspi::CoordinateType>(coordinateType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(ii)", rect.x(), rect.y()));
         } else if (!g_strcmp0(methodName, "GetImageSize")) {
             auto rect = atspiObject->elementRect(Atspi::CoordinateType::ParentCoordinates);

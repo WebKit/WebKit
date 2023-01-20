@@ -3791,8 +3791,6 @@ webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls
 
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
 
-webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
-
 webkit.org/b/248062 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
 
 webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]
@@ -3867,8 +3865,9 @@ webkit.org/b/247831 fast/images/avif-heif-container-as-image.html [ ImageOnlyFai
 webkit.org/b/247831 fast/images/avif-image-decoding.html [ Failure ]
 webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
 
-webkit.org/b/250768 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Failure ]
-webkit.org/b/250768 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Failure ]
+# MSE isn't supported on iPhone at this time.
+media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Failure ]
+media/mediacapabilities/mediacapabilities-allowed-containers.html [ Failure ]
 
 # Screen Orientation API doesn't support nested frames yet
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Skip ]

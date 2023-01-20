@@ -49,15 +49,15 @@ GetOptions("debugger" => \$debugger);
 
 setConfiguration();
 
+my $dyld = jscProductDir();
 my $jsc;
 if ($debugger) {
-    my $debuggerCmd = defined($ENV{"DEBUGGER"}) ? $ENV{"DEBUGGER"} : "lldb";
-    $jsc = $debuggerCmd . " " . File::Spec->catfile(jscProductDir(), "jsc -- --useDollarVM=1 ") . "@ARGV";
+    my $debuggerCmd = defined($ENV{"DEBUGGER"}) ? $ENV{"DEBUGGER"} : "lldb --one-line 'env DYLD_FRAMEWORK_PATH=$dyld'";
+    $jsc = "$debuggerCmd " . File::Spec->catfile(jscProductDir(), "jsc") . " -- --useDollarVM=1 @ARGV"
 } else {
-    $jsc = File::Spec->catfile(jscProductDir(), "jsc --useDollarVM=1 ") . "@ARGV";
+    $jsc = File::Spec->catfile(jscProductDir(), "jsc") . " --useDollarVM=1 @ARGV";
 }
 
-my $dyld = jscProductDir();
 
 $ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
 print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";

@@ -1312,6 +1312,13 @@ Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemo
     if (keysToRemove.isEmpty())
         return { };
 
+    return removeQueryParameters(url, [&](auto& parameter) {
+        return keysToRemove.contains(parameter);
+    });
+}
+
+Vector<String> removeQueryParameters(URL& url, Function<bool(const String&)>&& shouldRemove) 
+{
     if (!url.hasQuery())
         return { };
 
@@ -1326,7 +1333,7 @@ Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemo
         if (key.isEmpty())
             continue;
 
-        if (keysToRemove.contains(key)) {
+        if (shouldRemove(key)) {
             removedParameters.append(key);
             continue;
         }

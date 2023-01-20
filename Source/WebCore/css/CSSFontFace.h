@@ -33,6 +33,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -120,7 +121,7 @@ public:
 
     static void appendSources(CSSFontFace&, CSSValueList&, ScriptExecutionContext*, bool isInitiatingElementInUserAgentShadowTree);
 
-    class Client {
+    class Client : public CanMakeWeakPtr<Client> {
     public:
         virtual ~Client() = default;
         virtual void fontLoaded(CSSFontFace&) { }
@@ -186,7 +187,7 @@ private:
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
-    HashSet<Client*> m_clients;
+    WeakHashSet<Client> m_clients;
     WeakPtr<FontFace> m_wrapper;
     FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
     

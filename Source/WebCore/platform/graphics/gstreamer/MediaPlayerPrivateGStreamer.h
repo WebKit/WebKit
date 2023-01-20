@@ -177,8 +177,7 @@ public:
     MediaTime minMediaTimeSeekable() const final { return MediaTime::zeroTime(); }
     bool didLoadingProgress() const final;
     unsigned long long totalBytes() const final;
-    bool hasSingleSecurityOrigin() const final;
-    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    std::optional<bool> isCrossOrigin(const SecurityOrigin&) const final;
     void simulateAudioInterruption() final;
 #if ENABLE(WEB_AUDIO)
     AudioSourceProvider* audioSourceProvider() final;
@@ -579,9 +578,6 @@ private:
     uint64_t m_httpResponseTotalSize { 0 };
     uint64_t m_networkReadPosition { 0 };
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
-
-    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
-    std::optional<bool> m_hasTaintedOrigin { std::nullopt };
 
     GRefPtr<GstElement> m_fpsSink { nullptr };
     uint64_t m_totalVideoFrames { 0 };

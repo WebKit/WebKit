@@ -253,4 +253,9 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 #endif
 }
 
+- (BOOL)_hasOpener
+{
+    return _navigationAction->hasOpener();
+}
+
 @end

@@ -1097,7 +1097,7 @@ class AnalyzeChange(buildstep.BuildStep, AddToLogMixin):
     def _get_patch(self):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
         if sourcestamp and sourcestamp.changes:
-            return '\n'.join(sourcestamp.changes[0].files)
+            return '\n'.join(sourcestamp.changes[0].files).encode('utf-8')
         if sourcestamp and sourcestamp.patch:
             return sourcestamp.patch[1]
         return None
@@ -5326,7 +5326,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             for line in sourcestamp.patch[1].splitlines():
                 match = re.search(self.RE_CHANGELOG, line)
                 if match:
-                    files.append(match.group(1))
+                    files.append(match.group(1).decode('utf-8'))
             return files
         return []
 

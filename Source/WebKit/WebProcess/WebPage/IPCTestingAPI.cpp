@@ -2549,7 +2549,16 @@ JSValueRef JSIPC::serializedTypeInfo(JSContextRef context, JSObjectRef thisObjec
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         for (size_t i = 0; i < type.members.size(); i++) {
-            membersArray->putDirectIndex(globalObject, i, JSC::jsNontrivialString(vm, type.members[i]));
+            JSC::JSObject* entry = constructEmptyObject(globalObject, globalObject->objectPrototype());
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+            entry->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsString(vm, String(type.members[i].type)));
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+            
+            entry->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::jsString(vm, String(type.members[i].name)));
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+            membersArray->putDirectIndex(globalObject, i, entry);
             RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
         }
 

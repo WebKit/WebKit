@@ -342,18 +342,22 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(resolvedCookieDirectory, FileSystem::pathFileName(m_configuration->cookieStorageFile())));
     }
 
-    // Do not back up cache type data.
-    std::array allCacheDirectories = {
-        resolvedApplicationCacheDirectory()
-        , resolvedMediaCacheDirectory()
-        , resolvedNetworkCacheDirectory()
+    // Default paths of WebsiteDataStore created with identifer are not under caches or tmp directory,
+    // so we need to explicitly exclude them from backup.
+    if (m_configuration->identifier()) {
+        Vector<String> allCacheDirectories = {
+            resolvedApplicationCacheDirectory()
+            , resolvedMediaCacheDirectory()
+            , resolvedNetworkCacheDirectory()
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-        , resolvedModelElementCacheDirectory()
+            , resolvedModelElementCacheDirectory()
 #endif
-    };
-
-    for (const auto& directory : allCacheDirectories)
-        FileSystem::setExcludedFromBackup(directory, true);
+        };
+        m_queue->dispatch([directories = crossThreadCopy(WTFMove(allCacheDirectories))]() {
+            for (auto& directory : directories)
+                FileSystem::setExcludedFromBackup(directory, true);
+        });
+    }
 
     // Clear data of deprecated types asynchronously.
     if (auto webSQLDirectory = m_configuration->webSQLDatabaseDirectory(); !webSQLDirectory.isEmpty()) {

@@ -1452,6 +1452,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, m_vm.hashMapBucketMapStructure.get());
         break;
 
+    case MapOrSetDelete:
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+
     case WeakSetAdd:
     case WeakMapSet:
         break;

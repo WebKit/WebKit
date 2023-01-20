@@ -2616,12 +2616,12 @@ bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
     return false;
 }
 
-std::optional<bool> MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin(const SecurityOrigin& origin) const
+std::optional<bool> MediaPlayerPrivateAVFoundationObjC::isCrossOrigin(const SecurityOrigin& origin) const
 {
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
     WebCoreNSURLSession *session = (WebCoreNSURLSession *)resourceLoader.URLSession;
     if ([session isKindOfClass:[WebCoreNSURLSession class]])
-        return [session wouldTaintOrigin:origin];
+        return [session isCrossOrigin:origin];
 
     return std::nullopt;
 }

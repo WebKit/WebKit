@@ -36,8 +36,9 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 ]
 interface GPUComputePassEncoder {
     undefined setPipeline(GPUComputePipeline pipeline);
-    undefined dispatch(GPUSize32 workgroupCountX, optional GPUSize32 workgroupCountY = 1, optional GPUSize32 workgroupCountZ = 1);
-    undefined dispatchIndirect(GPUBuffer indirectBuffer, GPUSize64 indirectOffset);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, last two parameters should have default value of 1
+    undefined dispatchWorkgroups(GPUSize32 workgroupCountX, optional GPUSize32 workgroupCountY, optional GPUSize32 workgroupCountZ);
+    undefined dispatchWorkgroupsIndirect(GPUBuffer indirectBuffer, GPUSize64 indirectOffset);
 
     undefined end();
 };

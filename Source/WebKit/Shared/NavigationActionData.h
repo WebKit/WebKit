@@ -61,6 +61,7 @@ struct NavigationActionData {
     bool treatAsSameOriginNavigation { false };
     bool hasOpenedFrames { false };
     bool openedByDOMWithOpener { false };
+    bool hasOpener { false };
     WebCore::SecurityOriginData requesterOrigin;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;

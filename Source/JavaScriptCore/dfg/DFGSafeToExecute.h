@@ -699,6 +699,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case DataViewSet:
     case SetAdd:
     case MapSet:
+    case MapOrSetDelete:
     case StringReplace:
     case StringReplaceRegExp:
     case ArithRandom:

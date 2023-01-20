@@ -55,7 +55,7 @@ struct WebKitWebSrcClass {
 GType webkit_web_src_get_type(void);
 void webKitWebSrcSetMediaPlayer(WebKitWebSrc*, WebCore::MediaPlayer*, const String&);
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
-bool webKitSrcWouldTaintOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
+bool webKitSrcIsCrossOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
 
 G_END_DECLS
 
