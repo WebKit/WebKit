@@ -56,7 +56,7 @@ class KeyboardScrollingAnimator : public CanMakeWeakPtr<KeyboardScrollingAnimato
 public:
     KeyboardScrollingAnimator(ScrollableArea&);
 
-    bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity);
+    bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity, bool isKeyRepeat);
     void handleKeyUpEvent();
     WEBCORE_EXPORT void stopScrollingImmediately();
 

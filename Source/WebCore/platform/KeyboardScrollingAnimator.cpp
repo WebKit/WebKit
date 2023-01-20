@@ -196,7 +196,7 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::makeKeyboardScroll(Scro
     return scroll;
 }
 
-bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity)
+bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direction, ScrollGranularity granularity, bool isKeyRepeat)
 {
     auto scroll = makeKeyboardScroll(direction, granularity);
     if (!scroll)
@@ -208,7 +208,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (!rubberbandableDirections().at(boxSideForDirection(direction)))
         return false;
 
-    if (granularity == ScrollGranularity::Document) {
+    if (granularity == ScrollGranularity::Document || (!isKeyRepeat && granularity == ScrollGranularity::Page)) {
         m_scrollableArea.endKeyboardScroll(false);
         auto newPosition = IntPoint(m_scrollableArea.scrollAnimator().currentPosition() + scroll->offset);
         m_scrollableArea.scrollAnimator().scrollToPositionWithAnimation(newPosition);
