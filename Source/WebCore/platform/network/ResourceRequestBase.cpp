@@ -492,16 +492,16 @@ void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(con
     m_platformRequestUpdated = false;
 }
 
-FormData* ResourceRequestBase::httpBody() const
+RefPtr<FormData> ResourceRequestBase::httpBody() const
 {
     updateResourceRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
 
-    return m_httpBody.get();
+    return m_httpBody;
 }
 
 bool ResourceRequestBase::hasUpload() const
 {
-    if (auto* body = httpBody()) {
+    if (auto body = httpBody()) {
         for (auto& element : body->elements()) {
             if (std::holds_alternative<WebCore::FormDataElement::EncodedFileData>(element.data) || std::holds_alternative<WebCore::FormDataElement::EncodedBlobData>(element.data))
                 return true;

@@ -40,7 +40,7 @@ KeepaliveRequestTracker::~KeepaliveRequestTracker()
 bool KeepaliveRequestTracker::tryRegisterRequest(CachedResource& resource)
 {
     ASSERT(resource.options().keepAlive);
-    auto* body = resource.resourceRequest().httpBody();
+    auto body = resource.resourceRequest().httpBody();
     if (!body)
         return true;
 
@@ -55,7 +55,7 @@ bool KeepaliveRequestTracker::tryRegisterRequest(CachedResource& resource)
 void KeepaliveRequestTracker::registerRequest(CachedResource& resource)
 {
     ASSERT(resource.options().keepAlive);
-    auto* body = resource.resourceRequest().httpBody();
+    auto body = resource.resourceRequest().httpBody();
     if (!body)
         return;
     ASSERT(!m_inflightKeepaliveRequests.contains(&resource));

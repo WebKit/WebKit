@@ -60,11 +60,13 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!url)
         return std::nullopt;
 
-    auto securityOrigin = SecurityOrigin::decode(decoder);
+    std::optional<Ref<SecurityOrigin>> securityOrigin;
+    decoder >> securityOrigin;
     if (!securityOrigin)
         return std::nullopt;
 
-    auto topOrigin = SecurityOrigin::decode(decoder);
+    std::optional<Ref<SecurityOrigin>> topOrigin;
+    decoder >> topOrigin;
     if (!topOrigin)
         return std::nullopt;
 
@@ -78,7 +80,7 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!globalFrameIdentifier)
         return std::nullopt;
 
-    return NavigationRequester { WTFMove(*url), securityOrigin.releaseNonNull(), topOrigin.releaseNonNull(), WTFMove(*policyContainer), *globalFrameIdentifier };
+    return NavigationRequester { WTFMove(*url), WTFMove(*securityOrigin), WTFMove(*topOrigin), WTFMove(*policyContainer), *globalFrameIdentifier };
 }
 
 } // namespace WebCore

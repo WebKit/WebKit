@@ -70,7 +70,8 @@ public:
         if (!hasFormData.value())
             return FormDataReference { };
 
-        auto formData = WebCore::FormData::decode(decoder);
+        std::optional<Ref<WebCore::FormData>> formData;
+        decoder >> formData;
         if (!formData)
             return std::nullopt;
 
@@ -81,7 +82,7 @@ public:
 
         WebKit::SandboxExtension::consumePermanently(*sandboxExtensionHandles);
 
-        return FormDataReference { formData.releaseNonNull() };
+        return FormDataReference { WTFMove(*formData) };
     }
 
 private:

@@ -339,9 +339,9 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     nsRequest.get().attribution = m_requestData.m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
-    FormData* formData = httpBody();
+    auto formData = httpBody();
     if (formData && !formData->isEmpty())
-        WebCore::setHTTPBody(nsRequest.get(), formData);
+        WebCore::setHTTPBody(nsRequest.get(), WTFMove(formData));
 
     if (NSInputStream *bodyStream = [nsRequest HTTPBodyStream]) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.

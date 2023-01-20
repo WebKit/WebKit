@@ -1122,6 +1122,17 @@ enum class WebCore::StoredCredentialsPolicy : uint8_t {
     EphemeralStateless
 };
 
+enum class WebCore::ContentSniffingPolicy : bool;
+enum class WebCore::ContentEncodingSniffingPolicy : bool;
+enum class WebCore::ClientCredentialPolicy : bool;
+enum class WebCore::ShouldRelaxThirdPartyCookieBlocking : bool;
+
+enum class WebCore::PreflightPolicy : uint8_t {
+    Consider,
+    Force,
+    Prevent
+};
+
 enum class WTFLogChannelState : uint8_t {
     Off,
     On,
@@ -2614,4 +2625,51 @@ enum class WebCore::AutocapitalizeType : uint8_t {
     Words,
     Sentences,
     AllCharacters
+};
+
+enum class WebCore::CrossOriginEmbedderPolicyValue : bool
+
+struct WebCore::CrossOriginEmbedderPolicy {
+    WebCore::CrossOriginEmbedderPolicyValue value;
+    String reportingEndpoint;
+    WebCore::CrossOriginEmbedderPolicyValue reportOnlyValue;
+    String reportOnlyReportingEndpoint;
+};
+
+struct WebCore::SameSiteInfo {
+    bool isSameSite;
+    bool isTopSite;
+    bool isSafeHTTPMethod;
+};
+
+[Return=Ref] class WebCore::SecurityOrigin {
+    WebCore::SecurityOriginData m_data;
+    String m_domain;
+    String m_filePath;
+    Markable<WebCore::OpaqueOriginIdentifier, WebCore::OpaqueOriginIdentifier::MarkableTraits> m_opaqueOriginIdentifier;
+    bool m_universalAccess;
+    bool m_domainWasSetInDOM;
+    bool m_canLoadLocalResources;
+    bool m_enforcesFilePathSeparation;
+    bool m_needsStorageAccessFromFileURLsQuirk;
+    std::optional<bool> m_isPotentiallyTrustworthy;
+    bool m_isLocal;
+}
+
+enum class WebCore::IncludeSecureCookies : bool;
+
+struct WebCore::CookieRequestHeaderFieldProxy {
+    URL firstParty;
+    WebCore::SameSiteInfo sameSiteInfo;
+    URL url;
+    std::optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::PageIdentifier> pageID;
+    WebCore::IncludeSecureCookies includeSecureCookies;
+};
+
+[Return=Ref] class WebCore::FormData {
+    bool m_alwaysStream;
+    Vector<char> m_boundary;
+    Vector<WebCore::FormDataElement> m_elements;
+    int64_t m_identifier;
 };

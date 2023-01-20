@@ -389,7 +389,7 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
     return adoptCF(CFReadStreamCreate(nullptr, static_cast<const void*>(&callBacks), formContext));
 }
 
-void setHTTPBody(CFMutableURLRequestRef request, FormData* formData)
+void setHTTPBody(CFMutableURLRequestRef request, const RefPtr<FormData>& formData)
 {
     if (!formData)
         return;

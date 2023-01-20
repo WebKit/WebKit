@@ -596,6 +596,23 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
     return origin;
 }
 
+Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, String&& domain, String&& filePath, Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits>&& opaqueOriginIdentifier, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal)
+{
+    auto origin = adoptRef(*new SecurityOrigin);
+    origin->m_data = WTFMove(data);
+    origin->m_domain = WTFMove(domain);
+    origin->m_filePath = WTFMove(filePath);
+    origin->m_opaqueOriginIdentifier = WTFMove(opaqueOriginIdentifier);
+    origin->m_universalAccess = universalAccess;
+    origin->m_domainWasSetInDOM = domainWasSetInDOM;
+    origin->m_canLoadLocalResources = canLoadLocalResources;
+    origin->m_enforcesFilePathSeparation = enforcesFilePathSeparation;
+    origin->m_needsStorageAccessFromFileURLsQuirk = needsStorageAccessFromFileURLsQuirk;
+    origin->m_isPotentiallyTrustworthy = isPotentiallyTrustworthy;
+    origin->m_isLocal = isLocal;
+    return origin;
+}
+
 bool SecurityOrigin::equal(const SecurityOrigin* other) const 
 {
     if (other == this)

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CurlFormDataStream {
 public:
-    explicit CurlFormDataStream(const FormData*);
+    explicit CurlFormDataStream(const RefPtr<FormData>&);
     WEBCORE_EXPORT ~CurlFormDataStream();
 
     void clean();

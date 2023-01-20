@@ -94,7 +94,7 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 
 void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegistryImpl& blobRegistry) const
 {
-    auto* formData = httpBody();
+    auto formData = httpBody();
     if (!formData || formData->isEmpty())
         return;
 

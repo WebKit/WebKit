@@ -137,7 +137,6 @@ class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptBuffer;
-class SecurityOrigin;
 class SerializedScriptValue;
 class FragmentedSharedBuffer;
 class StickyPositionViewportConstraints;
@@ -433,16 +432,6 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
 };
 
 #endif
-
-template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
-    static void encode(Encoder&, const RefPtr<WebCore::SecurityOrigin>&);
-    static std::optional<RefPtr<WebCore::SecurityOrigin>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::SecurityOrigin>> {
-    static void encode(Encoder&, const Ref<WebCore::SecurityOrigin>&);
-    static std::optional<Ref<WebCore::SecurityOrigin>> decode(Decoder&);
-};
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

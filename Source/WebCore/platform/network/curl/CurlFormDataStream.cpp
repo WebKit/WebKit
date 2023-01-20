@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-CurlFormDataStream::CurlFormDataStream(const FormData* formData)
+CurlFormDataStream::CurlFormDataStream(const RefPtr<FormData>& formData)
 {
     ASSERT(isMainThread());
 

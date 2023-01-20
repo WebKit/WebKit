@@ -38,8 +38,8 @@ namespace WebCore {
 
 class FormData;
 
-void setHTTPBody(NSMutableURLRequest *, FormData*);
-WEBCORE_EXPORT RetainPtr<NSInputStream> createHTTPBodyNSInputStream(FormData&);
+void setHTTPBody(NSMutableURLRequest *, const RefPtr<FormData>&);
+WEBCORE_EXPORT RetainPtr<NSInputStream> createHTTPBodyNSInputStream(Ref<FormData>&&);
 FormData* httpBodyFromStream(NSInputStream *);
 
 CFStringRef formDataStreamLengthPropertyName();

@@ -47,8 +47,51 @@ namespace WebKit {
 
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
 public:
-    void encode(IPC::Encoder&) const;
-    static std::optional<NetworkResourceLoadParameters> decode(IPC::Decoder&);
+    NetworkResourceLoadParameters() = default;
+    NetworkResourceLoadParameters(
+        NetworkLoadParameters&&
+        , WebCore::ResourceLoaderIdentifier
+        , RefPtr<WebCore::FormData>&& httpBody
+        , std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensionIfHttpBody
+        , std::optional<SandboxExtension::Handle>&& sandboxExtensionIflocalFile
+        , Seconds maximumBufferingTime
+        , WebCore::FetchOptions&&
+        , std::optional<WebCore::ContentSecurityPolicyResponseHeaders>&& cspResponseHeaders
+        , URL&& parentFrameURL
+        , URL&& frameURL
+        , WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy
+        , WebCore::CrossOriginEmbedderPolicy
+        , WebCore::HTTPHeaderMap&& originalRequestHeaders
+        , bool shouldRestrictHTTPResponseAccess
+        , WebCore::PreflightPolicy
+        , bool shouldEnableCrossOriginResourcePolicy
+        , Vector<RefPtr<WebCore::SecurityOrigin>>&& frameAncestorOrigins
+        , bool pageHasResourceLoadClient
+        , std::optional<WebCore::FrameIdentifier> parentFrameID
+        , bool crossOriginAccessControlCheckEnabled
+        , URL&& documentURL
+        , bool isCrossOriginOpenerPolicyEnabled
+        , bool isClearSiteDataHeaderEnabled
+        , bool isDisplayingInitialEmptyDocument
+        , WebCore::SandboxFlags effectiveSandboxFlags
+        , URL&& openerURL
+        , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
+        , uint64_t navigationID
+        , std::optional<WebCore::NavigationRequester>&&
+#if ENABLE(SERVICE_WORKER)
+        , WebCore::ServiceWorkersMode
+        , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
+        , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning>
+        , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+        , URL&& mainDocumentURL
+        , std::optional<UserContentControllerIdentifier>
+#endif
+    );
+    
+    std::optional<Vector<SandboxExtension::Handle>> sandboxExtensionsIfHttpBody() const;
+    std::optional<SandboxExtension::Handle> sandboxExtensionIflocalFile() const;
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
@@ -92,8 +135,6 @@ public:
     URL mainDocumentURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
-    
-    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
 };
 
 } // namespace WebKit

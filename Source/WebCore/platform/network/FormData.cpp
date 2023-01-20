@@ -91,6 +91,16 @@ Ref<FormData> FormData::create(const DOMFormData& formData, EncodingType encodin
     return result;
 }
 
+Ref<FormData> FormData::create(bool alwaysStream, Vector<char>&& boundary, Vector<WebCore::FormDataElement>&& elements, int64_t identifier)
+{
+    auto result = create();
+    result->setAlwaysStream(alwaysStream);
+    result->m_boundary = WTFMove(boundary);
+    result->m_elements = WTFMove(elements);
+    result->setIdentifier(identifier);
+    return result;
+}
+
 Ref<FormData> FormData::createMultiPart(const DOMFormData& formData)
 {
     auto result = create();

@@ -147,9 +147,9 @@ ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFU
                 _CFURLRequestSetStorageSession(mutableRequest.get(), storageSession);
             CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
 
-            FormData* body = m_handle->firstRequest().httpBody();
+            auto body = m_handle->firstRequest().httpBody();
             if (!equalLettersIgnoringASCIICase(m_handle->firstRequest().httpMethod(), "get"_s) && body && !body->isEmpty())
-                WebCore::setHTTPBody(mutableRequest.get(), body);
+                WebCore::setHTTPBody(mutableRequest.get(), WTFMove(body));
 
             String originalContentType = m_handle->firstRequest().httpContentType();
             if (!originalContentType.isEmpty())
