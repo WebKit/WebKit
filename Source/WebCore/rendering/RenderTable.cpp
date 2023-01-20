@@ -319,7 +319,7 @@ void RenderTable::updateLogicalWidth()
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInFragment(0); // FIXME: Work with regions someday.
         ComputedMarginValues marginValues;
         bool hasInvertedDirection =  cb.style().isLeftToRightDirection() == style().isLeftToRightDirection();
-        computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, logicalWidth(),
+        computeInlineDirectionMargins(cb, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
             hasInvertedDirection ? marginValues.m_start : marginValues.m_end,
             hasInvertedDirection ? marginValues.m_end : marginValues.m_start);
         setMarginStart(marginValues.m_start);
