@@ -200,7 +200,7 @@ class Tracker(GenericTracker):
             username=radar.originator.dsid,
             email=radar.originator.email,
         )
-        issue._milestone = radar.milestone.name
+        issue._milestone = radar.milestone.name if radar.milestone else ''
 
         if member == 'watchers':
             issue._watchers = []
