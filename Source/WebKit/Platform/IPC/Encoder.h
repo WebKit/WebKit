@@ -70,6 +70,8 @@ public:
     void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
     template<typename T, size_t Extent>
     void encodeSpan(const Span<T, Extent>&);
+    template<typename T>
+    void encodeObject(const T&);
 
     template<typename T>
     Encoder& operator<<(T&& t)
@@ -114,6 +116,13 @@ template<typename T, size_t Extent>
 inline void Encoder::encodeSpan(const Span<T, Extent>& data)
 {
     encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+}
+
+template<typename T>
+inline void Encoder::encodeObject(const T& object)
+{
+    static_assert(std::is_trivially_copyable_v<T>);
+    encodeSpan(Span { std::addressof(object), 1 });
 }
 
 } // namespace IPC

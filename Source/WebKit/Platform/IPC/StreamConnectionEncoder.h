@@ -76,6 +76,13 @@ public:
     }
 
     template<typename T>
+    bool encodeObject(const T& object)
+    {
+        static_assert(std::is_trivially_copyable_v<T>);
+        return encodeSpan(Span { std::addressof(object), 1 });
+    }
+
+    template<typename T>
     StreamConnectionEncoder& operator<<(T&& t)
     {
         ArgumentCoder<std::remove_cvref_t<T>, void>::encode(*this, std::forward<T>(t));

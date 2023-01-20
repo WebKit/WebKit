@@ -62,12 +62,12 @@ template<typename T> struct SimpleArgumentCoder {
     template<typename Encoder>
     static void encode(Encoder& encoder, const T& t)
     {
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), alignof(T));
+        encoder.encodeObject(t);
     }
 
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
+    static std::optional<T> decode(Decoder& decoder)
     {
-        return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), alignof(T));
+        return decoder.decodeObject<T>();
     }
 };
 
