@@ -69,7 +69,6 @@
 #include "FrameTreeNodeData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
-#include "LoadedWebArchive.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "NativeWebGestureEvent.h"
@@ -1751,7 +1750,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     prepareToLoadWebPage(process(), loadParameters);
 
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL), LoadedWebArchive::No), [this, protectedThis = Ref { *this }, process = m_process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL, htmlData = WTFMove(htmlData)] () mutable {
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(baseURL)), [this, protectedThis = Ref { *this }, process = m_process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL, htmlData = WTFMove(htmlData)] () mutable {
         loadParameters.data = { htmlData->data(), htmlData->size() };
         process->markProcessAsRecentlyUsed();
         process->assumeReadAccessToBaseURL(*this, baseURL.string());
@@ -1777,22 +1776,20 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     if (!hasRunningProcess())
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), { }, LoadedWebArchive::Yes), [this, protectedThis = Ref { *this }, webArchiveData = RefPtr { webArchiveData }, userData = RefPtr { userData }] {
-        auto transaction = m_pageLoadState.transaction();
-        m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
+    auto transaction = m_pageLoadState.transaction();
+    m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
 
-        LoadParameters loadParameters;
-        loadParameters.navigationID = 0;
-        loadParameters.data = webArchiveData->dataReference();
-        loadParameters.MIMEType = "application/x-webarchive"_s;
-        loadParameters.encodingName = "utf-16"_s;
-        loadParameters.userData = UserData(process().transformObjectsToHandles(userData.get()).get());
-        prepareToLoadWebPage(process(), loadParameters);
+    LoadParameters loadParameters;
+    loadParameters.navigationID = 0;
+    loadParameters.data = webArchiveData->dataReference();
+    loadParameters.MIMEType = "application/x-webarchive"_s;
+    loadParameters.encodingName = "utf-16"_s;
+    loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
+    prepareToLoadWebPage(process(), loadParameters);
 
-        m_process->markProcessAsRecentlyUsed();
-        send(Messages::WebPage::LoadData(loadParameters));
-        m_process->startResponsivenessTimer();
-    });
+    m_process->markProcessAsRecentlyUsed();
+    send(Messages::WebPage::LoadData(loadParameters));
+    m_process->startResponsivenessTimer();
 }
 
 void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
@@ -6074,7 +6071,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
 
     auto processIdentifier = processForNavigation->coreProcessIdentifier();
     auto preventProcessShutdownScope = processForNavigation->shutdownPreventingScope();
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), LoadedWebArchive::No), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), existingNetworkResourceLoadIdentifierToResume, navigationID] () mutable {
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url())), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), processForNavigation = WTFMove(processForNavigation), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), existingNetworkResourceLoadIdentifierToResume, navigation] () mutable {
         // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
         if (!m_provisionalPage)
             send(Messages::WebPage::StopLoadingDueToProcessSwap());

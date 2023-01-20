@@ -1486,12 +1486,6 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
     if (auto* speculativeLoadManager = m_cache ? m_cache->speculativeLoadManager() : nullptr)
         speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
 #endif
-#if ENABLE(WEB_ARCHIVE)
-    if (equalIgnoringASCIICase(response.mimeType(), "application/x-webarchive"_s)) {
-        auto& connection = connectionToWebProcess();
-        connection.networkProcess().webProcessWillLoadWebArchive(connection.webProcessIdentifier());
-    }
-#endif
 }
 
 void NetworkResourceLoader::initializeReportingEndpoints(const ResourceResponse& response)

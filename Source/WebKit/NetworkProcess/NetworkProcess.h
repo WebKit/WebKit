@@ -110,7 +110,6 @@ class NetworkStorageManager;
 class ProcessAssertion;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
-enum class LoadedWebArchive : bool;
 enum class RemoteWorkerType : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
@@ -398,8 +397,7 @@ public:
 
     bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
-    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
-    void webProcessWillLoadWebArchive(WebCore::ProcessIdentifier);
+    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
@@ -517,7 +515,7 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
-    HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
+    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);
