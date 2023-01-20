@@ -436,7 +436,7 @@ private:
 
     bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
-    bool setVideoSourceOrientation(ImageOrientation);
+
     MediaTime platformDuration() const;
     bool isMuted() const;
     void commitLoad();
@@ -495,7 +495,8 @@ private:
 
     void updateTracks(const GRefPtr<GstObject>& collectionOwner);
     void videoSinkCapsChanged(GstPad*);
-    void updateVideoSizeAndOrientationFromCaps(const GstCaps*);
+    void updateVideoSizeAndOrientationFromCapsAndTagList(const GRefPtr<GstCaps>&);
+    FloatSize applyVideoOrientationToCaps(const ImageOrientation&, const GRefPtr<GstCaps>&);
     bool hasFirstVideoSampleReachedSink() const;
 
 #if ENABLE(ENCRYPTED_MEDIA)
