@@ -20,7 +20,7 @@
 
             testExpected('internals.audioSessionCategory()', category);
         }
-        
+
         async function testAudioElement()
         {
             consoleWrite('<br><br>** &lt;audio> element test **');
@@ -41,7 +41,7 @@
             consoleWrite('<br>** Check category when an unmuted element is playing.');
             runWithKeyDown(() => { run('video.muted = false') });
             await waitFor(video, 'volumechange');
-            testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+            await waitForCategory('MediaPlayback', 1, '');
             testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
 
             consoleWrite('<br>** Mute the element, check again after 500ms.');

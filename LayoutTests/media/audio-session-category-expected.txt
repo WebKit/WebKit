@@ -19,6 +19,7 @@ EXPECTED (internals.routeSharingPolicy() == 'Default') OK
 ** Check category when an unmuted element is playing.
 RUN(video.muted = false)
 EVENT(volumechange)
+
 EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
 EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
 
