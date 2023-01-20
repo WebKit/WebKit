@@ -3918,8 +3918,13 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
 
     if (event.type() == eventNames().keydownEvent) {
         m_frame.editor().handleKeyboardEvent(event);
+#if PLATFORM(COCOA)
+        if (event.defaultHandled() && !(event.keyIdentifier() == "PageDown"_s || event.keyIdentifier() == "PageUp"_s))
+#else
         if (event.defaultHandled())
+#endif
             return;
+
         if (event.key() == "Escape"_s) {
             if (RefPtr activeModalDialog = m_frame.document()->activeModalDialog())
                 activeModalDialog->queueCancelTask();
@@ -4337,14 +4342,14 @@ void EventHandler::defaultTextInputEventHandler(TextEvent& event)
 bool EventHandler::defaultKeyboardScrollEventHandler(KeyboardEvent& event, ScrollLogicalDirection direction, ScrollGranularity granularity)
 {
     if (shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
-        return keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr);
+        return keyboardScrollRecursively(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr, event.repeat());
 
     return logicalScrollRecursively(direction, granularity);
 }
 
 void EventHandler::defaultPageUpDownEventHandler(KeyboardEvent& event)
 {
-#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN_CAIRO)
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN_CAIRO) || PLATFORM(COCOA)
     ASSERT(event.type() == eventNames().keydownEvent);
 
     if (event.ctrlKey() || event.metaKey() || event.altKey() || event.altGraphKey() || event.shiftKey())
@@ -4395,7 +4400,7 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
 
     bool defaultHandled = false;
     if (shouldUseSmoothKeyboardScrollingForFocusedScrollableArea())
-        defaultHandled = keyboardScroll(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr);
+        defaultHandled = keyboardScroll(scrollDirectionForKeyboardEvent(event), scrollGranularityForKeyboardEvent(event), nullptr, event.repeat());
     else
         defaultHandled = view->logicalScroll(direction, ScrollGranularity::Page);
 
@@ -4438,9 +4443,9 @@ void EventHandler::stopKeyboardScrolling()
         animator->handleKeyUpEvent();
 }
 
-bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, ScrollDirection direction, ScrollGranularity granularity)
+bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, ScrollDirection direction, ScrollGranularity granularity, bool isKeyRepeat)
 {
-    if (animator && animator->beginKeyboardScrollGesture(direction, granularity)) {
+    if (animator && animator->beginKeyboardScrollGesture(direction, granularity, isKeyRepeat)) {
         m_frame.page()->setCurrentKeyboardScrollingAnimator(animator);
         return true;
     }
@@ -4448,30 +4453,30 @@ bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animato
     return false;
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direction, ScrollGranularity granularity)
+bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direction, ScrollGranularity granularity, bool isKeyRepeat)
 {
     auto view = m_frame.view();
     if (!view)
         return false;
 
     auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
-    return beginKeyboardScrollGesture(animator, direction, granularity);
+    return beginKeyboardScrollGesture(animator, direction, granularity, isKeyRepeat);
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox)
+bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox, bool isKeyRepeat)
 {
     auto* scrollableArea = renderBox->layer() ? renderBox->layer()->scrollableArea() : nullptr;
     if (!scrollableArea)
         return false;
 
     auto* animator = scrollableArea->scrollAnimator().keyboardScrollingAnimator();
-    return beginKeyboardScrollGesture(animator, direction, granularity);
+    return beginKeyboardScrollGesture(animator, direction, granularity, isKeyRepeat);
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox)
+bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox, bool isKeyRepeat)
 {
     while (renderBox && !renderBox->isRenderView()) {
-        if (startKeyboardScrollAnimationOnRenderBoxLayer(direction, granularity, renderBox))
+        if (startKeyboardScrollAnimationOnRenderBoxLayer(direction, granularity, renderBox, isKeyRepeat))
             return true;
         renderBox = renderBox->containingBlock();
     }
@@ -4479,7 +4484,7 @@ bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(Scroll
     return false;
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode)
+bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode, bool isKeyRepeat)
 {
     RefPtr node = startingNode;
 
@@ -4495,14 +4500,17 @@ bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(Sc
             return false;
 
         RenderBox& renderBox = renderer->enclosingBox();
-        if (!renderer->isListBox() && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(direction, granularity, &renderBox))
+        if (!renderer->isListBox() && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(direction, granularity, &renderBox, isKeyRepeat))
             return true;
     }
     return false;
 }
 
-bool EventHandler::focusedScrollableAreaShouldUseSmoothKeyboardScrolling()
+bool EventHandler::shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()
 {
+    if (!m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled())
+        return false;
+
     Node* node = m_frame.document()->focusedElement();
     if (!node)
         node = m_mousePressNode.get();
@@ -4517,20 +4525,15 @@ bool EventHandler::focusedScrollableAreaShouldUseSmoothKeyboardScrolling()
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (!m_frame.settings().asyncFrameScrollingEnabled())
         return false;
+#endif
 
     if (!scrollableArea->scrollAnimatorEnabled())
         return false;
-#endif
 
     return true;
 }
 
-bool EventHandler::shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()
-{
-    return m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() && focusedScrollableAreaShouldUseSmoothKeyboardScrolling() && m_frame.settings().scrollAnimatorEnabled();
-}
-
-bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode)
+bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode, bool isKeyRepeat)
 {
     if (!direction || !granularity)
         return false;
@@ -4539,10 +4542,10 @@ bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> dire
 
     m_frame.document()->updateLayoutIgnorePendingStylesheets();
 
-    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(*direction, *granularity, startingNode))
+    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(*direction, *granularity, startingNode, isKeyRepeat))
         return true;
 
-    if (startKeyboardScrollAnimationOnDocument(*direction, *granularity))
+    if (startKeyboardScrollAnimationOnDocument(*direction, *granularity, isKeyRepeat))
         return true;
 
     RefPtr frame = &m_frame;
@@ -4553,10 +4556,10 @@ bool EventHandler::keyboardScrollRecursively(std::optional<ScrollDirection> dire
     if (!localParent)
         return false;
 
-    return localParent->eventHandler().keyboardScrollRecursively(direction, granularity, m_frame.ownerElement());
+    return localParent->eventHandler().keyboardScrollRecursively(direction, granularity, m_frame.ownerElement(), isKeyRepeat);
 }
 
-bool EventHandler::keyboardScroll(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode)
+bool EventHandler::keyboardScroll(std::optional<ScrollDirection> direction, std::optional<ScrollGranularity> granularity, Node* startingNode, bool isKeyRepeat)
 {
     if (!direction || !granularity)
         return false;
@@ -4565,10 +4568,10 @@ bool EventHandler::keyboardScroll(std::optional<ScrollDirection> direction, std:
 
     m_frame.document()->updateLayoutIgnorePendingStylesheets();
 
-    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(*direction, *granularity, startingNode))
+    if (startKeyboardScrollAnimationOnEnclosingScrollableContainer(*direction, *granularity, startingNode, isKeyRepeat))
         return true;
 
-    return startKeyboardScrollAnimationOnDocument(*direction, *granularity);
+    return startKeyboardScrollAnimationOnDocument(*direction, *granularity, isKeyRepeat);
 }
 
 void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent& event)
