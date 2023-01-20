@@ -1294,7 +1294,7 @@ static void testCFStrings(void)
     JSStringRef jsCFIString = JSStringCreateWithCFString(cfString);
     JSValueRef jsCFString = JSValueMakeString(context, jsCFIString);
 
-    CFStringRef cfEmptyString = CFStringCreateWithCString(kCFAllocatorDefault, "", kCFStringEncodingUTF8);
+    CFStringRef cfEmptyString = CFSTR("");
 
     JSStringRef jsCFEmptyIString = JSStringCreateWithCFString(cfEmptyString);
     JSValueRef jsCFEmptyString = JSValueMakeString(context, jsCFEmptyIString);
