@@ -185,12 +185,11 @@ void RemoteAudioDestinationManager::createAudioDestination(const String& inputDe
     completionHandler(newID);
 }
 
-void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier)
 {
     MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a deleteAudioDestination() message from a webpage in Lockdown mode.");
 
     m_audioDestinations.remove(identifier);
-    completionHandler();
 
     if (allowsExitUnderMemoryPressure())
         m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();

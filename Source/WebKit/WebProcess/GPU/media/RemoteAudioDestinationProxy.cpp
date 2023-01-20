@@ -128,13 +128,8 @@ IPC::Connection* RemoteAudioDestinationProxy::existingConnection()
 
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 {
-    if (m_gpuProcessConnection && m_destinationID) {
-        m_gpuProcessConnection->connection().sendWithAsyncReply(
-            Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), [] {
-            // Can't remove this from proxyMap() here because the object would have been already deleted.
-        });
-    }
-
+    if (m_gpuProcessConnection && m_destinationID)
+        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), 0);
     stopRenderingThread();
 }
 
