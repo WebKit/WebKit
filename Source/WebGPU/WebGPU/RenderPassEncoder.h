@@ -47,9 +47,9 @@ class RenderPipeline;
 class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, Device& device)
+    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, visibilityResultBufferSize, device));
+        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, device));
     }
     static Ref<RenderPassEncoder> createInvalid(Device& device)
     {
@@ -86,7 +86,7 @@ public:
     bool isValid() const { return m_renderCommandEncoder; }
 
 private:
-    RenderPassEncoder(id<MTLRenderCommandEncoder>, NSUInteger, Device&);
+    RenderPassEncoder(id<MTLRenderCommandEncoder>, NSUInteger, bool depthReadOnly, bool stencilReadOnly, Device&);
     RenderPassEncoder(Device&);
 
     bool validatePopDebugGroup() const;
@@ -105,6 +105,8 @@ private:
     NSUInteger m_vertexShaderInputBufferCount { 0 };
     NSUInteger m_visibilityResultBufferOffset { 0 };
     NSUInteger m_visibilityResultBufferSize { 0 };
+    bool m_depthReadOnly { false };
+    bool m_stencilReadOnly { false };
 };
 
 } // namespace WebGPU

@@ -168,9 +168,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         }
     }
 
+    bool depthReadOnly = false, stencilReadOnly = false;
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.depthAttachment;
-        ASSERT("FIXME: Add support for depthReadOnly" && !attachment->depthReadOnly);
+        depthReadOnly = attachment->depthReadOnly;
         mtlAttachment.clearDepth = attachment->clearDepth;
         mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
@@ -179,7 +180,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.stencilAttachment;
-        ASSERT("FIXME: Add support for stencilReadOnly" && !attachment->stencilReadOnly);
+        stencilReadOnly = attachment->stencilReadOnly;
         // FIXME: assign the correct stencil texture
         // mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.clearStencil = attachment->clearStencil;
@@ -211,7 +212,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
 
-    return RenderPassEncoder::create(mtlRenderCommandEncoder, visibilityResultBufferSize, m_device);
+    return RenderPassEncoder::create(mtlRenderCommandEncoder, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, m_device);
 }
 
 bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)

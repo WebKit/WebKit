@@ -35,10 +35,12 @@
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, Device& device)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
+    , m_depthReadOnly(depthReadOnly)
+    , m_stencilReadOnly(stencilReadOnly)
 {
 }
 
@@ -196,6 +198,9 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 {
     // FIXME: validation according to
     // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-setpipeline.
+    if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly))
+        return;
+
     m_primitiveType = pipeline.primitiveType();
     m_vertexShaderInputBufferCount = pipeline.vertexShaderInputBufferCount();
 
