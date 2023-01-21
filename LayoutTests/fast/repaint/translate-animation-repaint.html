@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+body {
+    margin: 0;
+    background-color: green;
+}
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+}
+
+#cover {
+    position: absolute;
+    left: 100px;
+    top: 0;
+    right: 0;
+    height: 100%;
+    background-color: green;
+}
+
+</style>
+</head>
+<body>
+
+<div id="target"></div>
+<div id="cover" class="green"></div>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+const repaintRectsFromString = (str) => {
+    const lines = str.split("\n");
+    lines.shift();
+    lines.pop();
+    return lines.map(line => line.trim());
+}
+
+(async function main() {
+    await UIHelper.renderingUpdate();
+    const target = document.getElementById("target");
+
+    window.internals?.startTrackingRepaints();
+    window.testRunner?.displayAndTrackRepaints();
+
+    const animation = target.animate({ translate: ["200px", "200px"] }, { duration: 1, fill: "forwards" });
+    await animation.finished;
+
+    if (window.internals) {
+        const repaintRects = repaintRectsFromString(window.internals?.repaintRectsAsText());
+        window.internals?.stopTrackingRepaints();
+
+        description("This test verifies that an element with a 'translate' animation does not leave its unanimated paint state on screen.");
+
+        // We log the first two repains because they're the relevant ones and some
+        // platforms will report more than 2.
+        debug(repaintRects[0]);
+        debug(repaintRects[1]);
+    }
+
+    finishJSTest();
+})();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

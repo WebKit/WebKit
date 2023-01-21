@@ -429,7 +429,7 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
         if (is<RenderLayerModelObject>(*this)) {
             // If we don't have a layer yet, but we are going to get one because of transform or opacity, then we need to repaint the old position of the object.
             bool hasLayer = downcast<RenderLayerModelObject>(*this).hasLayer();
-            bool willHaveLayer = newStyle.hasTransform() || newStyle.hasOpacity() || newStyle.hasFilter() || newStyle.hasBackdropFilter();
+            bool willHaveLayer = newStyle.affectsTransform() || newStyle.hasOpacity() || newStyle.hasFilter() || newStyle.hasBackdropFilter();
             if (!hasLayer && willHaveLayer)
                 return RequiredRepaint::RendererOnly;
         }
