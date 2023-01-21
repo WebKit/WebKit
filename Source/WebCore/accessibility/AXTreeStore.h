@@ -36,15 +36,16 @@ template<typename T>
 class AXTreeStore {
     WTF_MAKE_NONCOPYABLE(AXTreeStore);
     WTF_MAKE_FAST_ALLOCATED;
+public:
+    AXID treeID() const { return m_id; }
+    static T* treeForID(AXID);
 protected:
     AXTreeStore() = default;
     static void add(AXID, WeakPtr<T>);
     static void remove(AXID);
     static bool contains(AXID);
 
-    static RefPtr<T> treeForID(AXID);
     static AXID generateNewID();
-
     const AXID m_id { generateNewID() };
     static Lock s_storeLock;
 private:
@@ -73,7 +74,7 @@ inline bool AXTreeStore<T>::contains(AXID axID)
 }
 
 template<typename T>
-inline RefPtr<T> AXTreeStore<T>::treeForID(AXID axID)
+inline T* AXTreeStore<T>::treeForID(AXID axID)
 {
     Locker locker { s_storeLock };
     return map().get(axID).get();

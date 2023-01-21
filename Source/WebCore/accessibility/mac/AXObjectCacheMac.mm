@@ -821,11 +821,9 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
     if (!cache)
         return nil;
 
-    TextMarkerData textMarkerData;
-    cache->textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
-    if (!textMarkerData.axID || textMarkerData.ignored)
+    auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
+    if (!textMarkerData.objectID || textMarkerData.ignored)
         return nil;
-
     return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
@@ -847,11 +845,9 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::op
     if (!cache || !range)
         return nil;
 
-    TextMarkerData textMarkerData;
-    cache->startOrEndTextMarkerDataForRange(textMarkerData, *range, isStart);
-    if (!textMarkerData.axID)
+    auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
+    if (!textMarkerData.objectID)
         return nil;
-
     return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }
 
