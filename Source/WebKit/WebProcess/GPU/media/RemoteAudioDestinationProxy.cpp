@@ -97,13 +97,8 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
     if (!m_gpuProcessConnection) {
         m_gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
-        auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore), 0);
-        if (!sendResult) {
-            // The GPUProcess likely crashed during this synchronous IPC. gpuProcessConnectionDidClose() will get called to reconnect to the GPUProcess.
-            RELEASE_LOG_ERROR(Media, "RemoteAudioDestinationProxy::destinationID: IPC to create the audio destination failed, the GPUProcess likely crashed.");
-            return nullptr;
-        }
-        std::tie(m_destinationID) = sendResult.takeReply();
+        m_destinationID = RemoteAudioDestinationIdentifier::generate();
+        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore), 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;

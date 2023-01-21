@@ -54,17 +54,14 @@ public:
     RemoteAudioDestinationManager(GPUConnectionToWebProcess&);
     ~RemoteAudioDestinationManager();
 
-    bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, decoder, encoder); }
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
     bool allowsExitUnderMemoryPressure() const;
 
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, CompletionHandler<void(const WebKit::RemoteAudioDestinationIdentifier)>&&);
-
+    void createAudioDestination(RemoteAudioDestinationIdentifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore);
     void deleteAudioDestination(RemoteAudioDestinationIdentifier);
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
