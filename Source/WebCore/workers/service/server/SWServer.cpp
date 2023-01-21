@@ -1420,7 +1420,7 @@ void SWServer::softUpdate(SWServerRegistration& registration)
 void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
 {
     whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
-        LOG(Push, "ServiceWorker import is complete, can handle push message now");
+        RELEASE_LOG(Push, "WebPush: ServiceWorker import is complete, can handle push message now");
         if (!weakThis) {
             callback(false);
             return;
@@ -1430,19 +1430,19 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), WTFMove(registrationURL) };
         auto registration = m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
-            RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            RELEASE_LOG_ERROR(Push, "WebPush: Cannot process push message: Failed to find SW registration for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
             return;
         }
 
         auto* worker = registration->activeWorker();
         if (!worker) {
-            RELEASE_LOG_ERROR(Push, "Cannot process push message: No active worker for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            RELEASE_LOG_ERROR(Push, "WebPush: Cannot process push message: No active worker for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
             return;
         }
 
-        RELEASE_LOG(Push, "Firing Push event");
+        RELEASE_LOG(Push, "WebPush: Firing Push event");
 
         fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
             if (!connectionOrStatus.has_value()) {
@@ -1454,13 +1454,13 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
 
             worker->incrementFunctionalEventCounter();
             auto terminateWorkerTimer = makeUnique<Timer>([worker] {
-                RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a push event");
+                RELEASE_LOG_ERROR(ServiceWorker, "WebPush: Service worker is taking too much time to process a push event");
                 worker->decrementFunctionalEventCounter();
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
             connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
                 if (!succeeded)
-                    RELEASE_LOG(Push, "Push event was not successfully handled");
+                    RELEASE_LOG(Push, "WebPush: Push event was not successfully handled");
                 if (terminateWorkerTimer->isActive()) {
                     worker->decrementFunctionalEventCounter();
                     terminateWorkerTimer->stop();

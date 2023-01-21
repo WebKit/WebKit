@@ -2408,11 +2408,11 @@ void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, Completion
 void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, PushPermissionState permissionState, CompletionHandler<void(bool)>&& callback)
 {
     if (auto* session = networkSession(sessionID)) {
-        RELEASE_LOG(Push, "Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
+        RELEASE_LOG(Push, "WebPush: Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
         auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL);
 
         if (permissionState == PushPermissionState::Prompt) {
-            RELEASE_LOG(Push, "Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the prompt state; removing push subscription", origin.toString().utf8().data());
+            RELEASE_LOG(Push, "WebPush: Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the prompt state; removing push subscription", origin.toString().utf8().data());
             session->notificationManager().removePushSubscriptionsForOrigin(SecurityOriginData { origin }, [callback = WTFMove(callback)](auto&&) mutable {
                 callback(false);
             });
@@ -2420,7 +2420,7 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
         }
 
         if (permissionState == PushPermissionState::Denied) {
-            RELEASE_LOG(Push, "Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the denied state", origin.toString().utf8().data());
+            RELEASE_LOG(Push, "WebPush: Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the denied state", origin.toString().utf8().data());
             // FIXME: move topic to ignore list in webpushd if permission is denied.
             callback(false);
             return;
@@ -2432,7 +2432,7 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
             NetworkSession* session;
             if (!result && (session = networkSession(sessionID))) {
                 session->notificationManager().incrementSilentPushCount(WTFMove(origin), [scope = WTFMove(scope), callback = WTFMove(callback), result](unsigned newSilentPushCount) mutable {
-                    RELEASE_LOG_ERROR(Push, "Push message for scope %" PRIVATE_LOG_STRING " not handled properly; new silent push count: %u", scope.utf8().data(), newSilentPushCount);
+                    RELEASE_LOG_ERROR(Push, "WebPush: Push message for scope %" PRIVATE_LOG_STRING " not handled properly; new silent push count: %u", scope.utf8().data(), newSilentPushCount);
                     callback(result);
                 });
                 return;
@@ -2441,7 +2441,7 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
             callback(result);
         });
     } else
-        RELEASE_LOG_ERROR(Push, "Networking process asked to handle a push message from UI process in session %llu, but that session doesn't exist", sessionID.toUInt64());
+        RELEASE_LOG_ERROR(Push, "WebPush: Networking process asked to handle a push message from UI process in session %llu, but that session doesn't exist", sessionID.toUInt64());
 }
 
 #else
