@@ -1,4 +1,4 @@
-RUN(window.internals.settings.setVideoPlaybackRequiresUserGesture(true);)
+RUN(window.internals.settings.setRequiresUserGestureForVideoPlayback(true);)
 RUN(video = document.createElement("video"))
 RUN(video.src = findMediaFile("video", "content/test"))
 RUN(video.setAttribute("autoplay", ""))

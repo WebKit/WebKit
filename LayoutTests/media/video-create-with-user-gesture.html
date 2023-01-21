@@ -6,7 +6,7 @@
     <script src=video-test.js></script>
     <script>
     function runTest() {
-        run('window.internals.settings.setVideoPlaybackRequiresUserGesture(true);');
+        run('window.internals.settings.setRequiresUserGestureForVideoPlayback(true);');
         runWithKeyDown(() => {
             run('video = document.createElement("video")');
         });

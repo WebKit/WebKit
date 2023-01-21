@@ -1180,8 +1180,8 @@ public:
     void unregisterMediaElement(HTMLMediaElement&);
 #endif
 
-    bool audioPlaybackRequiresUserGesture() const;
-    bool videoPlaybackRequiresUserGesture() const;
+    bool requiresUserGestureForAudioPlayback() const;
+    bool requiresUserGestureForVideoPlayback() const;
     bool mediaDataLoadsAutomatically() const;
 
     void privateBrowsingStateDidChange(PAL::SessionID);
