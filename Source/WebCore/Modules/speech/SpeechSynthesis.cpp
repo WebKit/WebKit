@@ -60,7 +60,7 @@ SpeechSynthesis::SpeechSynthesis(ScriptExecutionContext& context)
 {
     if (context.isDocument()) {
 #if PLATFORM(IOS_FAMILY)
-        if (downcast<Document>(context).audioPlaybackRequiresUserGesture())
+        if (downcast<Document>(context).requiresUserGestureForAudioPlayback())
             m_restrictions = RequireUserGestureForSpeechStartRestriction;
 #endif
         m_speechSynthesisClient = downcast<Document>(context).frame()->page()->speechSynthesisClient();

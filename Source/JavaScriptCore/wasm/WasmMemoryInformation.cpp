@@ -33,34 +33,6 @@
 
 namespace JSC { namespace Wasm {
 
-const PinnedRegisterInfo& PinnedRegisterInfo::get()
-{
-    static LazyNeverDestroyed<PinnedRegisterInfo> staticPinnedRegisterInfo;
-    static std::once_flag staticPinnedRegisterInfoFlag;
-    std::call_once(staticPinnedRegisterInfoFlag, [] () {
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
-        GPRReg baseMemoryPointer = GPRInfo::regCS3;
-        GPRReg boundsCheckingSizeRegister = GPRInfo::regCS4;
-#elif CPU(ARM)
-        // Not enough registers. regCS0 is the wasm instance, regCS1 is LLInt PB
-        GPRReg baseMemoryPointer = InvalidGPRReg;
-        GPRReg boundsCheckingSizeRegister = InvalidGPRReg;
-#endif
-        GPRReg wasmContextInstancePointer = GPRInfo::regCS0;
-
-        staticPinnedRegisterInfo.construct(boundsCheckingSizeRegister, baseMemoryPointer, wasmContextInstancePointer);
-    });
-
-    return staticPinnedRegisterInfo.get();
-}
-
-PinnedRegisterInfo::PinnedRegisterInfo(GPRReg boundsCheckingSizeRegister, GPRReg baseMemoryPointer, GPRReg wasmContextInstancePointer)
-    : boundsCheckingSizeRegister(boundsCheckingSizeRegister)
-    , baseMemoryPointer(baseMemoryPointer)
-    , wasmContextInstancePointer(wasmContextInstancePointer)
-{
-}
-
 MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport)
     : m_initial(initial)
     , m_maximum(maximum)

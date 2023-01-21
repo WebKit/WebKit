@@ -130,7 +130,7 @@ bool WebAssemblyFunction::usesTagRegisters() const
 RegisterSet WebAssemblyFunction::calleeSaves() const
 {
     // Pessimistically save callee saves in BoundsChecking mode since the LLInt always bounds checks
-    RegisterSetBuilder result = Wasm::PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking);
+    RegisterSetBuilder result = RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking);
     if (usesTagRegisters()) {
         RegisterSetBuilder tagCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisters();
         tagCalleeSaves.filter(RegisterSetBuilder::runtimeTagRegisters());
@@ -167,7 +167,6 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     const auto& typeDefinition = Wasm::TypeInformation::get(typeIndex()).expand();
     const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
-    const auto& pinnedRegs = Wasm::PinnedRegisterInfo::get();
     RegisterAtOffsetList registersToSpill = usedCalleeSaveRegisters();
 
     const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
@@ -342,33 +341,31 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     // At this point, we're committed to doing a fast call.
 
-    jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), pinnedRegs.wasmContextInstancePointer);
+    jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), GPRInfo::wasmContextInstancePointer);
 
 #if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     if (!!instance()->instance().module().moduleInformation().memory) {
-        GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
         auto mode = instance()->memoryMode();
-
         if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance()->instance().memory()->sharingMode() == MemorySharingMode::Shared)) {
             // Capacity and basePointer will not be changed.
             if (mode == MemoryMode::BoundsChecking)
-                jit.move(CCallHelpers::TrustedImm64(instance()->instance().memory()->mappedCapacity()), pinnedRegs.boundsCheckingSizeRegister);
-            jit.move(CCallHelpers::TrustedImmPtr(instance()->instance().memory()->basePointer()), baseMemory);
+                jit.move(CCallHelpers::TrustedImm64(instance()->instance().memory()->mappedCapacity()), GPRInfo::wasmBoundsCheckingSizeRegister);
+            jit.move(CCallHelpers::TrustedImmPtr(instance()->instance().memory()->basePointer()), GPRInfo::wasmBaseMemoryPointer);
         } else {
             GPRReg scratchOrBoundsCheckingSize = InvalidGPRReg;
             if (isARM64E()) {
                 if (mode == MemoryMode::BoundsChecking)
-                    scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
+                    scratchOrBoundsCheckingSize = GPRInfo::wasmBoundsCheckingSizeRegister;
                 else
                     scratchOrBoundsCheckingSize = stackLimitGPR;
-                jit.loadPairPtr(pinnedRegs.wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, scratchOrBoundsCheckingSize);
+                jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, scratchOrBoundsCheckingSize);
             } else {
                 if (mode == MemoryMode::BoundsChecking)
-                    jit.loadPairPtr(pinnedRegs.wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs.boundsCheckingSizeRegister);
+                    jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
                 else
-                    jit.loadPtr(CCallHelpers::Address(pinnedRegs.wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
+                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
             }
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR(), /* validateAuth */ true, /* mayBeNull */ false);
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR(), /* validateAuth */ true, /* mayBeNull */ false);
         }
     }
 #endif
@@ -383,10 +380,10 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 #if USE(JSVALUE32_64)
     jit.storePtr(scratchJSR.payloadGPR(), CCallHelpers::addressFor(CallFrameSlot::callee));
     jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), CCallHelpers::addressFor(CallFrameSlot::callee).withOffset(TagOffset));
-    jit.storePtr(pinnedRegs.wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
+    jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
 #else
     static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
-    jit.storePairPtr(pinnedRegs.wasmContextInstancePointer, scratchJSR.payloadGPR(), GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
+    jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchJSR.payloadGPR(), GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
 #endif
 
     // FIXME: Currently we just do an indirect jump. But we should teach the Module

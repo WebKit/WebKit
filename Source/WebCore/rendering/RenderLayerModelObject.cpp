@@ -26,18 +26,22 @@
 #include "RenderLayerModelObject.h"
 
 #include "InspectorInstrumentation.h"
+#include "RenderDescendantIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
+#include "RenderSVGText.h"
 #include "RenderView.h"
 #include "SVGGraphicsElement.h"
+#include "SVGTextElement.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -430,6 +434,69 @@ void RenderLayerModelObject::updateHasSVGTransformFlags()
     bool hasSVGTransform = needsHasSVGTransformFlags();
     setHasTransformRelatedProperty(hasSVGTransform || style().hasTransformRelatedProperty());
     setHasSVGTransform(hasSVGTransform);
+}
+
+void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+
+    auto determineIfLayerTransformChangeModifiesScale = [&]() -> bool {
+        updateHasSVGTransformFlags();
+
+        // LBSE shares the text rendering code with the legacy SVG engine, largely unmodified.
+        // At present text layout depends on transformations ('screen font scaling factor' is used to
+        // determine which font to use for layout / painting). Therefore if the x/y scaling factors
+        // of the transformation matrix changes due to the transform update, we have to recompute the text metrics
+        // of all RenderSVGText descendants of the renderer in the ancestor chain, that will receive the transform
+        // update.
+        //
+        // There is no intrinsic reason for that, besides historical ones. If we decouple
+        // the 'font size screen scaling factor' from layout and only use it during painting
+        // we can optimize transformations for text, simply by avoid the need for layout.
+        auto previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
+        updateLayerTransform();
+
+        auto currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
+        if (previousTransform == currentTransform)
+            return false;
+
+        // Only if the effective x/y scale changes, a re-layout is necessary, due to changed on-screen scaling factors.
+        // The next RenderSVGText layout will see a different 'screen font scaling factor', different text metrics etc.
+        if (!WTF::areEssentiallyEqual(previousTransform.xScale(), currentTransform.xScale()))
+            return true;
+
+        if (!WTF::areEssentiallyEqual(previousTransform.yScale(), currentTransform.yScale()))
+            return true;
+
+        return false;
+    };
+
+    if (determineIfLayerTransformChangeModifiesScale()) {
+        if (auto* textAffectedByTransformChange = dynamicDowncast<RenderSVGText>(this)) {
+            // Mark text metrics for update, and only trigger a relayout and not an explicit repaint.
+            textAffectedByTransformChange->setNeedsTextMetricsUpdate();
+            textAffectedByTransformChange->textElement().updateSVGRendererForElementChange();
+            return;
+        }
+
+        // Recursively mark text metrics for update in all descendant RenderSVGText objects.
+        bool markedAny = false;
+        for (auto& textDescendantAffectedByTransformChange : descendantsOfType<RenderSVGText>(*this)) {
+            textDescendantAffectedByTransformChange.setNeedsTextMetricsUpdate();
+            textDescendantAffectedByTransformChange.textElement().updateSVGRendererForElementChange();
+            if (!markedAny)
+                markedAny = true;
+        }
+
+        // If we marked a text descendant for relayout, we are expecting a relayout ourselves, so no reason for an explicit repaint().
+        if (markedAny)
+            return;
+    }
+
+    // Instead of performing a full-fledged layout (issuing repaints), just recompute the layer transform, and repaint.
+    // In LBSE transformations do not affect the layout (except for text, where it still does!) -- SVG follows closely the CSS/HTML route, to avoid costly layouts.
+    updateLayerTransform();
+    repaint();
 }
 #endif
 

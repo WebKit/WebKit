@@ -359,7 +359,6 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
             if (auto value = consumeCustomIdent(range)) {
                 if (component.ident.isNull() || value->stringValue() == component.ident)
                     return value;
-                range = rangeCopy;
             }
             return nullptr;
         case CSSCustomPropertySyntax::Type::Percentage:
@@ -416,10 +415,10 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
 
     for (auto& component : syntax.definition) {
         if (auto value = consumeComponent(m_range, component)) {
-            if (!m_range.atEnd())
-                break;
-            return { value, component.type };
+            if (m_range.atEnd())
+                return { value, component.type };
         }
+        m_range = rangeCopy;
     }
     return { nullptr, CSSCustomPropertySyntax::Type::Unknown };
 }

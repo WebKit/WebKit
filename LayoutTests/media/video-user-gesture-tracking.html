@@ -6,7 +6,7 @@
     <script src=video-test.js></script>
     <script>
     function runTest() {
-        run('window.internals.settings.setVideoPlaybackRequiresUserGesture(true);');
+        run('window.internals.settings.setRequiresUserGestureForVideoPlayback(true);');
         run('video = document.createElement("video")');
         run('video.src = findMediaFile("video", "content/test")');
         run('document.body.appendChild(video)');

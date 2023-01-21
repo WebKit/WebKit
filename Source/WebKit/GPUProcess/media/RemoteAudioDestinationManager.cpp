@@ -70,13 +70,12 @@ class RemoteAudioDestination final
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteAudioDestination(GPUConnectionToWebProcess&, RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
-        : m_id(identifier)
+    RemoteAudioDestination(GPUConnectionToWebProcess&, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
+        : m_renderSemaphore(WTFMove(renderSemaphore))
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_numOutputChannels(numberOfOutputChannels)
 #endif
-        , m_renderSemaphore(WTFMove(renderSemaphore))
     {
         ASSERT(isMainRunLoop());
 #if PLATFORM(COCOA)
@@ -153,8 +152,8 @@ private:
         return status;
     }
 #endif
-
-    RemoteAudioDestinationIdentifier m_id;
+    IPC::Semaphore m_renderSemaphore;
+    bool m_isPlaying { false };
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
@@ -163,9 +162,6 @@ private:
     uint64_t m_startFrame { 0 };
     unsigned m_extraRequestedFrames { 0 };
 #endif
-    IPC::Semaphore m_renderSemaphore;
-
-    bool m_isPlaying { false };
 };
 
 RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebProcess& connection)
@@ -175,14 +171,12 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
-void RemoteAudioDestinationManager::createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, CompletionHandler<void(const WebKit::RemoteAudioDestinationIdentifier)>&& completionHandler)
+void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
 {
     MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 
-    auto newID = RemoteAudioDestinationIdentifier::generateThreadSafe();
-    auto destination = makeUniqueRef<RemoteAudioDestination>(m_gpuConnectionToWebProcess, newID, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
-    m_audioDestinations.add(newID, WTFMove(destination));
-    completionHandler(newID);
+    auto destination = makeUniqueRef<RemoteAudioDestination>(m_gpuConnectionToWebProcess, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
+    m_audioDestinations.add(identifier, WTFMove(destination));
 }
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier)

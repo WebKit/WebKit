@@ -2931,8 +2931,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
 
     BOOL mediaPlaybackRequiresUserGesture = [preferences mediaPlaybackRequiresUserGesture];
-    settings.setVideoPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences videoPlaybackRequiresUserGesture]);
-    settings.setAudioPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences audioPlaybackRequiresUserGesture]);
+    settings.setRequiresUserGestureForVideoPlayback(mediaPlaybackRequiresUserGesture || [preferences videoPlaybackRequiresUserGesture]);
+    settings.setRequiresUserGestureForAudioPlayback(mediaPlaybackRequiresUserGesture || [preferences audioPlaybackRequiresUserGesture]);
 
     DeprecatedGlobalSettings::setWebSQLEnabled([preferences webSQLEnabled]);
     DatabaseManager::singleton().setIsAvailable([preferences databasesEnabled]);

@@ -957,7 +957,7 @@ auto AirIRGenerator64::addRefIsNull(ExpressionType value, ExpressionType& result
 
 inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
 {
-    ASSERT(m_memoryBaseGPR);
+    static_assert(GPRInfo::wasmBaseMemoryPointer != InvalidGPRReg);
 
     auto result = g64();
 
@@ -965,7 +965,7 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
     case MemoryMode::BoundsChecking: {
         // In bound checking mode, while shared wasm memory partially relies on signal handler too, we need to perform bound checking
         // to ensure that no memory access exceeds the current memory size.
-        ASSERT(m_boundsCheckingSizeGPR);
+        static_assert(GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg);
         ASSERT(sizeOfOperation + offset > offset);
         auto temp = g64();
         append(Move, Arg::bigImm(static_cast<uint64_t>(sizeOfOperation) + offset - 1), temp);
@@ -977,7 +977,7 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
         }
 
         emitCheck([&] {
-            return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, Tmp(m_boundsCheckingSizeGPR));
+            return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, Tmp(GPRInfo::wasmBoundsCheckingSizeRegister));
         }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
@@ -1021,9 +1021,9 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
     }
 
     if constexpr (isARM64())
-        append(AddZeroExtend64, Tmp(m_memoryBaseGPR), pointer, result);
+        append(AddZeroExtend64, Tmp(GPRInfo::wasmBaseMemoryPointer), pointer, result);
     else
-        append(Add64, Tmp(m_memoryBaseGPR), result);
+        append(Add64, Tmp(GPRInfo::wasmBaseMemoryPointer), result);
     return result;
 }
 
@@ -1922,11 +1922,10 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));
-    GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
-    patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         JIT_COMMENT(jit, "Catch entrypoint patchpoint after loading from scratch buffer");
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        jit.prepareWasmCallOperation(wasmContextInstanceGPR);
+        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
         jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
         jit.addLinkTask([call] (LinkBuffer& linkBuffer) {

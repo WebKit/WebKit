@@ -274,7 +274,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     OSREntryData& osrEntryData = *context.arg<OSREntryData*>();
     uint32_t functionIndex = osrEntryData.functionIndex();
     uint32_t loopIndex = osrEntryData.loopIndex();
-    Instance* instance = context.gpr<Instance*>(Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer);
+    Instance* instance = context.gpr<Instance*>(GPRInfo::wasmContextInstancePointer);
 
     auto returnWithoutOSREntry = [&] {
         context.gpr(GPRInfo::argumentGPR0) = 0;

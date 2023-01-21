@@ -35,13 +35,6 @@ AnimatedImageDebugCanvasDrawingEnabled:
     WebCore:
       default: false
 
-AudioPlaybackRequiresUserGesture:
-  type: bool
-  defaultValue:
-    WebCore:
-      PLATFORM(IOS_FAMILY): true
-      default: false
-
 AutoscrollForDragAndDropEnabled:
   type: bool
   defaultValue:
@@ -523,13 +516,6 @@ ValidationMessageTimerMagnification:
   defaultValue:
     WebCore:
       default: 50
-
-VideoPlaybackRequiresUserGesture:
-  type: bool
-  defaultValue:
-    WebCore:
-      PLATFORM(IOS_FAMILY): true
-      default: false
 
 WebGLErrorsToConsoleEnabled:
   type: bool

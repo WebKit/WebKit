@@ -30,7 +30,7 @@ PASS d[3] is around 76
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-FAIL d[3] is not around 200 (actual: 170)
+FAIL d[3] is not around 200 (actual: 168)
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
@@ -38,7 +38,7 @@ PASS d[3] is around 49
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0
-FAIL d[3] is not around 199 (actual: 167)
+FAIL d[3] is not around 199 (actual: 165)
 PASS d[0] is 255
 PASS d[1] is 0
 PASS d[2] is 0

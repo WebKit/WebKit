@@ -1066,14 +1066,14 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 void AssemblyHelpers::loadWasmContextInstance(GPRReg dst)
 {
     JIT_COMMENT(*this, "Load wasm context instance to ", dst);
-    move(Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer, dst);
+    move(GPRInfo::wasmContextInstancePointer, dst);
     JIT_COMMENT(*this, "Load wasm instance done");
 }
 
 void AssemblyHelpers::storeWasmContextInstance(GPRReg src)
 {
     JIT_COMMENT(*this, "Store wasm context instance from", src);
-    move(src, Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer);
+    move(src, GPRInfo::wasmContextInstancePointer);
     JIT_COMMENT(*this, "Store wasm context instance done");
 }
 

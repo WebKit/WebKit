@@ -5905,7 +5905,7 @@ void Document::unregisterForDocumentSuspensionCallbacks(Element& element)
     m_documentSuspensionCallbackElements.remove(element);
 }
 
-bool Document::audioPlaybackRequiresUserGesture() const
+bool Document::requiresUserGestureForAudioPlayback() const
 {
     if (DocumentLoader* loader = this->loader()) {
         // If an audio playback policy was set during navigation, use it. If not, use the global settings.
@@ -5914,10 +5914,10 @@ bool Document::audioPlaybackRequiresUserGesture() const
             return policy == AutoplayPolicy::AllowWithoutSound || policy == AutoplayPolicy::Deny;
     }
 
-    return settings().audioPlaybackRequiresUserGesture();
+    return settings().requiresUserGestureForAudioPlayback();
 }
 
-bool Document::videoPlaybackRequiresUserGesture() const
+bool Document::requiresUserGestureForVideoPlayback() const
 {
     if (DocumentLoader* loader = this->loader()) {
         // If a video playback policy was set during navigation, use it. If not, use the global settings.
@@ -5926,7 +5926,7 @@ bool Document::videoPlaybackRequiresUserGesture() const
             return policy == AutoplayPolicy::Deny;
     }
 
-    return settings().videoPlaybackRequiresUserGesture();
+    return settings().requiresUserGestureForVideoPlayback();
 }
 
 bool Document::mediaDataLoadsAutomatically() const

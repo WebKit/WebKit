@@ -4782,19 +4782,21 @@ RequiresUserGestureForAudioPlayback:
   type: bool
   status: embedder
   webKitLegacyPreferenceKey: WebKitAudioPlaybackRequiresUserGesture
-  webcoreBinding: custom
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
+    WebCore:
+      PLATFORM(IOS_FAMILY): true
+      default: false
 
 RequiresUserGestureForMediaPlayback:
   type: bool
   status: embedder
   webKitLegacyPreferenceKey: WebKitMediaPlaybackRequiresUserGesture
-  webcoreBinding: custom
+  webcoreBinding: none
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
@@ -4806,11 +4808,12 @@ RequiresUserGestureForVideoPlayback:
   type: bool
   status: embedder
   webKitLegacyPreferenceKey: WebKitVideoPlaybackRequiresUserGesture
-  webcoreBinding: custom
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 RequiresUserGestureToLoadVideo:

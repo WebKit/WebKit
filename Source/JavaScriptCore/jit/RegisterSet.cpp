@@ -421,6 +421,22 @@ RegisterSet RegisterSetBuilder::allScalarRegisters()
     return result;
 }
 
+#if ENABLE(WEBASSEMBLY)
+RegisterSet RegisterSetBuilder::wasmPinnedRegisters(MemoryMode memoryMode)
+{
+    RegisterSet result;
+    if constexpr (GPRInfo::wasmBaseMemoryPointer != InvalidGPRReg)
+        result.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
+    if constexpr (GPRInfo::wasmContextInstancePointer != InvalidGPRReg)
+        result.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors);
+    if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg) {
+        if (memoryMode == MemoryMode::BoundsChecking)
+            result.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+    }
+    return result;
+}
+#endif
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)

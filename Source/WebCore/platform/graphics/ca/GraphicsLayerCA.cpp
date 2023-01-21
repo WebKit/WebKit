@@ -493,7 +493,7 @@ String GraphicsLayerCA::debugName() const
     String caLayerDescription;
     if (!m_layer->isPlatformCALayerRemote())
         caLayerDescription = makeString("CALayer(0x", hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") ");
-    return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID(), ") ", name());
+    return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID().object(), ") ", name());
 #else
     return name();
 #endif
@@ -1193,7 +1193,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
             m_contentsLayerPurpose = ContentsLayerPurpose::BackgroundColor;
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(makeString("contents color ", m_contentsLayer->layerID().toUInt64()));
+            m_contentsLayer->setName(makeString("contents color ", m_contentsLayer->layerID().object()));
 #else
             m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents color"));
 #endif
@@ -1254,7 +1254,7 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction
     if (model) {
         m_contentsLayer = createPlatformCALayer(*model, this);
 #if ENABLE(TREE_DEBUGGING)
-        m_contentsLayer->setName(makeString("contents model ", m_contentsLayer->layerID().toUInt64()));
+        m_contentsLayer->setName(makeString("contents model ", m_contentsLayer->layerID().object()));
 #else
         m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
@@ -2790,7 +2790,7 @@ void GraphicsLayerCA::updateContentsImage()
         if (!m_contentsLayer.get()) {
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(makeString("contents image ", m_contentsLayer->layerID().toUInt64()));
+            m_contentsLayer->setName(makeString("contents image ", m_contentsLayer->layerID().object()));
 #else
             m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents image"));
 #endif
@@ -2901,7 +2901,7 @@ void GraphicsLayerCA::updateContentsRects()
             m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
             m_contentsClippingLayer->setAnchorPoint({ });
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID().toUInt64()));
+            m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID().object()));
 #else
             m_contentsClippingLayer->setName(MAKE_STATIC_STRING_IMPL("contents clipping"));
 #endif
@@ -4524,7 +4524,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(const CloneID& cloneID,
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #if ENABLE(TREE_DEBUGGING)
-        resultLayer->setName(makeString("clone ", hex(cloneID[0U]), " of ", sourceLayer->layerID().toUInt64()));
+        resultLayer->setName(makeString("clone ", hex(cloneID[0U]), " of ", sourceLayer->layerID().object()));
 #else
         resultLayer->setName("clone of " + m_name);
 #endif

@@ -2322,8 +2322,6 @@ webkit.org/b/244297 [ Release arm64 ] svg/transforms/transformed-text-fill-gradi
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
 
-webkit.org/b/244639 [ Release arm64 ] imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
-
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Pass Failure ]
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Pass Failure ]
 

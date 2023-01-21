@@ -473,8 +473,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
     , m_processingPreferenceChange(false)
-    , m_shouldAudioPlaybackRequireUserGesture(document.topDocument().audioPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
-    , m_shouldVideoPlaybackRequireUserGesture(document.topDocument().videoPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
+    , m_shouldAudioPlaybackRequireUserGesture(document.topDocument().requiresUserGestureForAudioPlayback() && !processingUserGestureForMedia())
+    , m_shouldVideoPlaybackRequireUserGesture(document.topDocument().requiresUserGestureForVideoPlayback() && !processingUserGestureForMedia())
     , m_volumeLocked(defaultVolumeLocked())
     , m_opaqueRootProvider([this] { return opaqueRoot(); })
 #if USE(AUDIO_SESSION)
@@ -545,8 +545,8 @@ void HTMLMediaElement::initializeMediaSession()
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (!document.settings().videoPlaybackRequiresUserGesture() && !document.settings().audioPlaybackRequiresUserGesture()) {
-        // Relax RequireUserGestureForFullscreen when videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture is not set:
+    if (!document.requiresUserGestureForVideoPlayback() && !document.requiresUserGestureForAudioPlayback()) {
+        // Relax RequireUserGestureForFullscreen when requiresUserGestureForVideoPlayback and requiresUserGestureForAudioPlayback is not set:
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     }
 #endif
@@ -7878,12 +7878,12 @@ void HTMLMediaElement::updateRateChangeRestrictions()
         return;
 
     const auto& topDocument = document.topDocument();
-    if (topDocument.videoPlaybackRequiresUserGesture())
+    if (topDocument.requiresUserGestureForVideoPlayback())
         mediaSession().addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
     else
         mediaSession().removeBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
 
-    if (topDocument.audioPlaybackRequiresUserGesture())
+    if (topDocument.requiresUserGestureForAudioPlayback())
         mediaSession().addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
     else
         mediaSession().removeBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);

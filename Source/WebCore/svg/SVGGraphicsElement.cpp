@@ -149,12 +149,11 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
             if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()))
-                layerRenderer->updateHasSVGTransformFlags();
-            // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
-            updateSVGRendererForElementChange();
+                layerRenderer->repaintOrRelayoutAfterSVGTransformChange();
             return;
         }
 #endif
+
         if (auto* renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
         updateSVGRendererForElementChange();

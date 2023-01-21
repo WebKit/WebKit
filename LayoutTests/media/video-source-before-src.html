@@ -4,7 +4,7 @@
 <script>
 
 if (window.testRunner) {
-    internals.settings.setVideoPlaybackRequiresUserGesture(true);
+    internals.settings.setRequiresUserGestureForVideoPlayback(true);
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
 }
@@ -29,7 +29,7 @@ window.onload = () => {
 </head>
 <body>
 Append source element before setting src attribute.<br>
-Platforms that support setVideoPlaybackRequiresUserGesture
+Platforms that support setRequiresUserGestureForVideoPlayback
 will have the expected, empty, currentSrc. Platforms that don't should
 have the unexpected "src.mp4".<br>
 <video width=320 height=240></video>

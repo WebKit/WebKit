@@ -938,15 +938,14 @@ Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::SomeRegister);
     patch->resultConstraints.append(B3::ValueRep::SomeRegister); // result Tag
-    GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
-    patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         // Returning one EncodedJSValue on the stack
         constexpr int32_t resultSpace = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(static_cast<int32_t>(sizeof(EncodedJSValue)));
         jit.subPtr(CCallHelpers::TrustedImm32(resultSpace), MacroAssembler::stackPointerRegister);
         jit.move(params[3].gpr(), GPRInfo::argumentGPR0);
         jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR1);
-        jit.prepareWasmCallOperation(wasmContextInstanceGPR);
+        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
         jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
             linkBuffer.link<OperationPtrTag>(call, operationWasmRetrieveAndClearExceptionIfCatchable);

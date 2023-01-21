@@ -36,6 +36,7 @@
 #include "Path.h"
 #include "PlatformLayer.h"
 #include "ProcessIdentifier.h"
+#include "ProcessQualified.h"
 #include "Region.h"
 #include "ScrollableArea.h"
 #include "ScrollTypes.h"
@@ -277,7 +278,7 @@ public:
     virtual void initialize(Type) { }
 
     enum PlatformLayerIDType { };
-    using PlatformLayerID = ObjectIdentifier<PlatformLayerIDType>;
+    using PlatformLayerID = ProcessQualified<ObjectIdentifier<PlatformLayerIDType>>;
     virtual PlatformLayerID primaryLayerID() const { return { }; }
 
     GraphicsLayerClient& client() const { return *m_client; }
