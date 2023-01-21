@@ -343,21 +343,22 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
     ASSERT(inlineBox.isInlineBox());
 
     auto& layoutBox = lineRun.layoutBox();
+    // This inline box showed up first on this line.
+    ASSERT(inlineBox.isFirstBox());
+    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
 
     if (!linehasContent) {
-        // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
-        setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
+        // While "<div><span> </span></div>" produces empty line with no display boxes, we still need to assign box geometry to the associated inline box.
         return;
     }
 
-    auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
     auto inkOverflow = [&] {
+        auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
         auto inkOverflow = FloatRect { inlineBoxBorderBox };
         m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, style, inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
     };
 
-    ASSERT(inlineBox.isFirstBox());
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::NonRootInlineBox
         , layoutBox
@@ -370,19 +371,26 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , lineRun.isTruncated()
         , isFirstLastBox(inlineBox)
     });
-    // This inline box showed up first on this line.
-    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
 }
 
-void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, DisplayBoxes& boxes)
+void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, DisplayBoxes& boxes)
 {
     ASSERT(lineRun.layoutBox().isInlineBox());
     ASSERT(inlineBox.isInlineBox());
     ASSERT(!inlineBox.isFirstBox());
 
+    if (!linehasContent) {
+        // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line
+        // (empty here means no content at all including line breaks, not just visually empty) then we
+        // don't extend the spanning line box over to this line.
+        return;
+    }
+
+    // Middle or end of the inline box. Let's stretch the box as needed.
     auto& layoutBox = lineRun.layoutBox();
-    auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
+    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
     auto inkOverflow = [&] {
+        auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
         auto inkOverflow = FloatRect { inlineBoxBorderBox };
         m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, style, inkOverflow) || m_contentHasInkOverflow;
         return inkOverflow;
@@ -400,8 +408,6 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , lineRun.isTruncated()
         , isFirstLastBox(inlineBox)
     });
-    // Middle or end of the inline box. Let's stretch the box as needed.
-    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
 }
 
 void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, DisplayBoxes& boxes)
@@ -469,15 +475,10 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             continue;
         }
         if (lineRun.isLineSpanningInlineBoxStart()) {
-            if (!lineBox.hasContent()) {
-                // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line
-                // (empty here means no content at all including line breaks, not just visually empty) then we
-                // don't extend the spanning line box over to this line -also there is no next line in cases like this.
-                continue;
-            }
             appendSpanningInlineBoxDisplayBox(lineRun
                 , lineBox.inlineLevelBoxFor(lineRun)
                 , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState().boxGeometry(layoutBox)))
+                , lineBox.hasContent()
                 , boxes);
             continue;
         }
