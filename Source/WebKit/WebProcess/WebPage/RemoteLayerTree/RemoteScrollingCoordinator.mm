@@ -133,10 +133,10 @@ void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(Scrolling
 void RemoteScrollingCoordinator::scrollingStateInUIProcessChanged(const RemoteScrollingUIState& uiState)
 {
     // FIXME: Also track m_nodesWithActiveRubberBanding.
-    if (uiState.changes().contains(RemoteScrollingUIState::Changes::ScrollSnapNodes))
+    if (uiState.changes().contains(RemoteScrollingUIStateChanges::ScrollSnapNodes))
         m_nodesWithActiveScrollSnap = uiState.nodesWithActiveScrollSnap();
 
-    if (uiState.changes().contains(RemoteScrollingUIState::Changes::UserScrollNodes))
+    if (uiState.changes().contains(RemoteScrollingUIStateChanges::UserScrollNodes))
         m_nodesWithActiveUserScrolls = uiState.nodesWithActiveUserScrolls();
 }
 

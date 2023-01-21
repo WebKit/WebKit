@@ -5724,6 +5724,7 @@
 		5CE0C36B229F2D4B003695F0 /* WKContextMenuElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoInternal.h; sourceTree = "<group>"; };
 		5CE3491028E238E400196304 /* WKFrameMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFrameMac.h; path = mac/WKFrameMac.h; sourceTree = "<group>"; };
 		5CE3491128E2390200196304 /* WKFrameMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKFrameMac.cpp; path = mac/WKFrameMac.cpp; sourceTree = "<group>"; };
+		5CE77801297BA396000BA9CF /* RemoteLayerTree.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteLayerTree.serialization.in; sourceTree = "<group>"; };
 		5CE85B1F1C88E6430070BFCE /* PingLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoad.h; sourceTree = "<group>"; };
 		5CE9120B2293C1E0005BEC78 /* WKMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMain.h; sourceTree = "<group>"; };
 		5CE9120C2293C1E0005BEC78 /* WKMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKMain.mm; sourceTree = "<group>"; };
@@ -9555,6 +9556,7 @@
 				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
 				2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */,
 				2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */,
+				5CE77801297BA396000BA9CF /* RemoteLayerTree.serialization.in */,
 				2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */,
 				2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */,
 				1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */,

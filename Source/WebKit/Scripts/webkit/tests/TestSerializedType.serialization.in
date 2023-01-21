@@ -90,7 +90,7 @@ class WTF::Seconds {
     double value
 }
 
-[Alias=RectEdges<float>] alias WebCore::FloatBoxExtent {
+[Alias=class ScrollSnapOffsetsInfo<float,double>] alias WebCore::FloatBoxExtent {
     float top()
     float right()
     float bottom()

@@ -67,7 +67,7 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
 {
     for (auto* backingStore : m_backingStoresNeedingDisplay) {
         backingStore->prepareToDisplay();
-        backingStore->layer()->properties().notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
+        backingStore->layer()->properties().notePropertiesChanged(LayerChange::BackingStoreChanged);
         transaction.layerPropertiesChanged(*backingStore->layer());
     }
 }
@@ -105,7 +105,7 @@ Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackin
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
     for (auto& layer : transaction.changedLayers()) {
-        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
+        if (layer->properties().changedProperties & LayerChange::BackingStoreChanged) {
             needToScheduleVolatilityTimer = true;
             if (layer->properties().backingStore)
                 flushers.appendVector(layer->properties().backingStore->takePendingFlushers());

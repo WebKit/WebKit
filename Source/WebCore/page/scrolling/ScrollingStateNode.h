@@ -203,11 +203,67 @@ private:
     Type m_representation { EmptyRepresentation };
 };
 
+enum class ScrollingStateNodeProperty : uint64_t {
+    // ScrollingStateNode
+    Layer                                       = 1LLU << 0,
+    ChildNodes                                  = 1LLU << 1,
+    // ScrollingStateScrollingNode
+    ScrollableAreaSize                          = 1LLU << 2,
+    TotalContentsSize                           = 1LLU << 3,
+    ReachableContentsSize                       = 1LLU << 4,
+    ScrollPosition                              = 1LLU << 5,
+    ScrollOrigin                                = 1LLU << 6,
+    ScrollableAreaParams                        = 1LLU << 7,
+    ReasonsForSynchronousScrolling              = 1LLU << 8,
+    RequestedScrollPosition                     = 1LLU << 9,
+    SnapOffsetsInfo                             = 1LLU << 10,
+    CurrentHorizontalSnapOffsetIndex            = 1LLU << 11,
+    CurrentVerticalSnapOffsetIndex              = 1LLU << 12,
+    IsMonitoringWheelEvents                     = 1LLU << 13,
+    ScrollContainerLayer                        = 1LLU << 14,
+    ScrolledContentsLayer                       = 1LLU << 15,
+    HorizontalScrollbarLayer                    = 1LLU << 16,
+    VerticalScrollbarLayer                      = 1LLU << 17,
+    PainterForScrollbar                         = 1LLU << 18,
+    // ScrollingStateFrameScrollingNode
+    FrameScaleFactor                            = 1LLU << 19,
+    EventTrackingRegion                         = 1LLU << 20,
+    RootContentsLayer                           = 1LLU << 21,
+    CounterScrollingLayer                       = 1LLU << 22,
+    InsetClipLayer                              = 1LLU << 23,
+    ContentShadowLayer                          = 1LLU << 24,
+    HeaderHeight                                = 1LLU << 25,
+    FooterHeight                                = 1LLU << 26,
+    HeaderLayer                                 = 1LLU << 27,
+    FooterLayer                                 = 1LLU << 28,
+    BehaviorForFixedElements                    = 1LLU << 29,
+    TopContentInset                             = 1LLU << 30,
+    FixedElementsLayoutRelativeToFrame          = 1LLU << 31,
+    VisualViewportIsSmallerThanLayoutViewport   = 1LLU << 32,
+    AsyncFrameOrOverflowScrollingEnabled        = 1LLU << 33,
+    WheelEventGesturesBecomeNonBlocking         = 1LLU << 34,
+    ScrollingPerformanceTestingEnabled          = 1LLU << 35,
+    LayoutViewport                              = 1LLU << 36,
+    MinLayoutViewportOrigin                     = 1LLU << 37,
+    MaxLayoutViewportOrigin                     = 1LLU << 38,
+    OverrideVisualViewportSize                  = 1LLU << 39,
+    // ScrollingStatePositionedNode
+    RelatedOverflowScrollingNodes               = 1LLU << 40,
+    LayoutConstraintData                        = 1LLU << 41,
+    // ScrollingStateFixedNode, ScrollingStateStickyNode
+    ViewportConstraints                         = 1LLU << 42,
+    // ScrollingStateOverflowScrollProxyNode
+    OverflowScrollingNode                       = 1LLU << 43,
+    KeyboardScrollData                          = 1LLU << 44,
+};
+
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ScrollingStateNode();
-    
+
+    using Property = ScrollingStateNodeProperty;
+
     ScrollingNodeType nodeType() const { return m_nodeType; }
 
     bool isFixedNode() const { return m_nodeType == ScrollingNodeType::Fixed; }
@@ -222,60 +278,6 @@ public:
     virtual Ref<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
     Ref<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
     void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);
-
-    enum class Property : uint64_t {
-        // ScrollingStateNode
-        Layer                                       = 1LLU << 0,
-        ChildNodes                                  = 1LLU << 1,
-        // ScrollingStateScrollingNode
-        ScrollableAreaSize                          = 1LLU << 2,
-        TotalContentsSize                           = 1LLU << 3,
-        ReachableContentsSize                       = 1LLU << 4,
-        ScrollPosition                              = 1LLU << 5,
-        ScrollOrigin                                = 1LLU << 6,
-        ScrollableAreaParams                        = 1LLU << 7,
-        ReasonsForSynchronousScrolling              = 1LLU << 8,
-        RequestedScrollPosition                     = 1LLU << 9,
-        SnapOffsetsInfo                             = 1LLU << 10,
-        CurrentHorizontalSnapOffsetIndex            = 1LLU << 11,
-        CurrentVerticalSnapOffsetIndex              = 1LLU << 12,
-        IsMonitoringWheelEvents                     = 1LLU << 13,
-        ScrollContainerLayer                        = 1LLU << 14,
-        ScrolledContentsLayer                       = 1LLU << 15,
-        HorizontalScrollbarLayer                    = 1LLU << 16,
-        VerticalScrollbarLayer                      = 1LLU << 17,
-        PainterForScrollbar                         = 1LLU << 18,
-        // ScrollingStateFrameScrollingNode
-        FrameScaleFactor                            = 1LLU << 19,
-        EventTrackingRegion                         = 1LLU << 20,
-        RootContentsLayer                           = 1LLU << 21,
-        CounterScrollingLayer                       = 1LLU << 22,
-        InsetClipLayer                              = 1LLU << 23,
-        ContentShadowLayer                          = 1LLU << 24,
-        HeaderHeight                                = 1LLU << 25,
-        FooterHeight                                = 1LLU << 26,
-        HeaderLayer                                 = 1LLU << 27,
-        FooterLayer                                 = 1LLU << 28,
-        BehaviorForFixedElements                    = 1LLU << 29,
-        TopContentInset                             = 1LLU << 30,
-        FixedElementsLayoutRelativeToFrame          = 1LLU << 31,
-        VisualViewportIsSmallerThanLayoutViewport   = 1LLU << 32,
-        AsyncFrameOrOverflowScrollingEnabled        = 1LLU << 33,
-        WheelEventGesturesBecomeNonBlocking         = 1LLU << 34,
-        ScrollingPerformanceTestingEnabled          = 1LLU << 35,
-        LayoutViewport                              = 1LLU << 36,
-        MinLayoutViewportOrigin                     = 1LLU << 37,
-        MaxLayoutViewportOrigin                     = 1LLU << 38,
-        OverrideVisualViewportSize                  = 1LLU << 39,
-        // ScrollingStatePositionedNode
-        RelatedOverflowScrollingNodes               = 1LLU << 40,
-        LayoutConstraintData                        = 1LLU << 41,
-        // ScrollingStateFixedNode, ScrollingStateStickyNode
-        ViewportConstraints                         = 1LLU << 42,
-        // ScrollingStateOverflowScrollProxyNode
-        OverflowScrollingNode                       = 1LLU << 43,
-        KeyboardScrollData                          = 1LLU << 44,
-    };
     
     bool hasChangedProperties() const { return !m_changedProperties.isEmpty(); }
     bool hasChangedProperty(Property property) const { return m_changedProperties.contains(property); }

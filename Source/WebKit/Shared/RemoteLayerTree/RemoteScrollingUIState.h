@@ -39,18 +39,20 @@ using ScrollingNodeID = uint64_t;
 
 namespace WebKit {
 
+enum class RemoteScrollingUIStateChanges : uint8_t {
+    ScrollSnapNodes     = 1 << 0,
+    UserScrollNodes     = 1 << 1,
+};
+
 class RemoteScrollingUIState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Changes : uint8_t {
-        ScrollSnapNodes     = 1 << 0,
-        UserScrollNodes     = 1 << 1,
-    };
+    using Changes = RemoteScrollingUIStateChanges;
 
     void encode(IPC::Encoder&) const;
     static std::optional<RemoteScrollingUIState> decode(IPC::Decoder&);
 
-    OptionSet<Changes> changes() const { return m_changes; }
+    OptionSet<RemoteScrollingUIStateChanges> changes() const { return m_changes; }
     void clearChanges() { m_changes = { }; }
     
     void reset();
@@ -64,21 +66,9 @@ public:
     void removeNodeWithActiveUserScroll(WebCore::ScrollingNodeID);
 
 private:
-    OptionSet<Changes> m_changes;
+    OptionSet<RemoteScrollingUIStateChanges> m_changes;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveScrollSnap;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveUserScrolls;
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::RemoteScrollingUIState::Changes> {
-    using values = EnumValues<
-        WebKit::RemoteScrollingUIState::Changes,
-        WebKit::RemoteScrollingUIState::Changes::ScrollSnapNodes,
-        WebKit::RemoteScrollingUIState::Changes::UserScrollNodes
-    >;
-};
-
-} // namespace WTF

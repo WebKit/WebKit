@@ -79,7 +79,7 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
     backingStoreList.reserveInitialCapacity(m_backingStoresNeedingDisplay.size());
 
     for (auto* backingStore : m_backingStoresNeedingDisplay) {
-        backingStore->layer()->properties().notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
+        backingStore->layer()->properties().notePropertiesChanged(LayerChange::BackingStoreChanged);
         transaction.layerPropertiesChanged(*backingStore->layer());
 
         if (backingStore->performDelegatedLayerDisplay())

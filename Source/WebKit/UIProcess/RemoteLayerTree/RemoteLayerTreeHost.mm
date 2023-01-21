@@ -145,13 +145,13 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
             continue;
         }
 
-        if (properties.changedProperties.contains(RemoteLayerTreeTransaction::ClonedContentsChanged) && properties.clonedLayerID)
+        if (properties.changedProperties.contains(LayerChange::ClonedContentsChanged) && properties.clonedLayerID)
             clonesToUpdate.append({ layerID, *properties.clonedLayerID });
 
         RemoteLayerTreePropertyApplier::applyProperties(*node, this, properties, m_nodes, layerContentsType);
 
         if (m_isDebugLayerTreeHost) {
-            if (properties.changedProperties.contains(RemoteLayerTreeTransaction::BorderWidthChanged))
+            if (properties.changedProperties.contains(LayerChange::BorderWidthChanged))
                 node->layer().borderWidth = properties.borderWidth / indicatorScaleFactor;
             node->layer().masksToBounds = false;
         }
