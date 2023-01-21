@@ -2476,6 +2476,25 @@ def check_member_initialization_list(clean_lines, line_number, error):
                 break
 
 
+def check_member_raw_pointer(clean_lines, line_number, error):
+    """ Look for raw pointers and references in member variables.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    raw = clean_lines.raw_lines
+    line = raw[line_number]
+
+    begin_line = line
+    # Match `*,`, `*>`, `&,`, or `&>` before m_*. 
+    if search(r'[\*&](,|>)?(.[^,>]+(,|>))*\s+?(m_\S+)\s*(\{\s*.+?\s*\}\s*)?\;?$', line):
+        error(line_number, 'runtime/raw_pointer', 1,
+            'Member variable should be one of smart pointer types (Ref, RefPtr, CheckedRef, CheckedPtr, WeakPtr, or ThreadSafeWeakPtr).')
+
+
 def get_previous_non_blank_line(clean_lines, line_number):
     """Return the most recent non-blank line and its line number.
 
@@ -3090,7 +3109,8 @@ def check_braces(clean_lines, line_number, file_state, error):
             break
     if (search(r'{.*}\s*;', line)
         and line.count('{') == line.count('}')
-        and not search(r'struct|class|enum|\s*=\s*{', line)):
+        and not search(r'struct|class|enum|\s*=\s*{', line)
+        and not search(r'm_\S+\s*\{.\s*.*?\};', line)):
         error(line_number, 'readability/braces', 4,
               "You don't need a ; after a }")
 
@@ -3503,6 +3523,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_exit_statement_simplifications(clean_lines, line_number, error)
     check_spacing(file_extension, clean_lines, line_number, file_state, error)
     check_member_initialization_list(clean_lines, line_number, error)
+    check_member_raw_pointer(clean_lines, line_number, error)
     check_check(clean_lines, line_number, error)
     check_for_comparisons_to_zero(clean_lines, line_number, error)
     check_for_null(clean_lines, line_number, file_state, error)
@@ -4723,6 +4744,7 @@ class CppChecker(object):
         'runtime/once_flag',
         'runtime/printf',
         'runtime/printf_format',
+        'runtime/raw_pointer',
         'runtime/references',
         'runtime/retainptr',
         'runtime/rtti',
