@@ -30,6 +30,7 @@
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
+#include "MemoryMode.h"
 #include "Reg.h"
 #include "Width.h"
 #include <wtf/Bitmap.h>
@@ -207,6 +208,9 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet ftlCalleeSaveRegisters(); // Registers that might be saved and used by the FTL JIT.
     JS_EXPORT_PRIVATE static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
     JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
+#if ENABLE(WEBASSEMBLY)
+    JS_EXPORT_PRIVATE static RegisterSet wasmPinnedRegisters(MemoryMode);
+#endif
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForJSCall(RegisterSetBuilder live);
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForCCall(RegisterSetBuilder live);
 };

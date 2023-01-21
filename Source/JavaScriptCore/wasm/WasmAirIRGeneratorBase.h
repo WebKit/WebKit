@@ -895,9 +895,6 @@ public:
     Vector<ExpressionType> m_locals;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
 
-    GPRReg m_memoryBaseGPR { InvalidGPRReg };
-    GPRReg m_boundsCheckingSizeGPR { InvalidGPRReg };
-    GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
     bool m_makesCalls { false };
     bool m_makesTailCalls { false };
 
@@ -967,10 +964,9 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWasmContextInstance(Bas
     effects.writesPinned = true;
     effects.reads = B3::HeapRange::top();
     patchpoint->effects = effects;
-    patchpoint->clobberLate(RegisterSetBuilder(m_wasmContextInstanceGPR));
-    GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& param) {
-        jit.move(param[0].gpr(), wasmContextInstanceGPR);
+    patchpoint->clobberLate(RegisterSetBuilder(GPRInfo::wasmContextInstancePointer));
+    patchpoint->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& param) {
+        jit.move(param[0].gpr(), GPRInfo::wasmContextInstancePointer);
     });
     emitPatchpoint(block, patchpoint, ExpressionType(), instance);
 }
@@ -993,22 +989,15 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
     m_rootBlock = m_currentBlock;
 
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
-    const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
-    m_wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
-    m_code.pinRegister(m_wasmContextInstanceGPR);
+    m_code.pinRegister(GPRInfo::wasmContextInstancePointer);
 
     if constexpr (Derived::supportsPinnedStateRegisters) {
-
-        m_memoryBaseGPR = pinnedRegs.baseMemoryPointer;
-        m_code.pinRegister(m_memoryBaseGPR);
-
-        if (mode == MemoryMode::BoundsChecking) {
-            m_boundsCheckingSizeGPR = pinnedRegs.boundsCheckingSizeRegister;
-            m_code.pinRegister(m_boundsCheckingSizeGPR);
-        }
+        m_code.pinRegister(GPRInfo::wasmBaseMemoryPointer);
+        if (mode == MemoryMode::BoundsChecking)
+            m_code.pinRegister(GPRInfo::wasmBoundsCheckingSizeRegister);
     } else {
-        ASSERT(InvalidGPRReg == pinnedRegs.baseMemoryPointer);
-        ASSERT(InvalidGPRReg == pinnedRegs.boundsCheckingSizeRegister);
+        ASSERT(InvalidGPRReg == GPRInfo::wasmBaseMemoryPointer);
+        ASSERT(InvalidGPRReg == GPRInfo::wasmBoundsCheckingSizeRegister);
     }
 
     m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
@@ -1023,9 +1012,9 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
                 CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
                 jit.storePtr(scratchGPR, calleeSlot.withOffset(PayloadOffset));
                 jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
-                jit.storePtr(m_wasmContextInstanceGPR, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
+                jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
             } else
-                jit.storePairPtr(m_wasmContextInstanceGPR, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
+                jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
         }
 
         {
@@ -1074,7 +1063,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
                 MacroAssembler::JumpList overflow;
                 if (UNLIKELY(needUnderflowCheck))
                     overflow.append(jit.branchPtr(CCallHelpers::Above, scratch, GPRInfo::callFrameRegister));
-                jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfVM()), scratch2);
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), scratch2);
                 overflow.append(jit.branchPtr(CCallHelpers::Below, scratch, CCallHelpers::Address(scratch2, VM::offsetOfSoftStackLimit())));
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
@@ -1083,7 +1072,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
         }
     });
 
-    m_instanceValue = { Tmp(m_wasmContextInstanceGPR), Types::IPtr };
+    m_instanceValue = { Tmp(GPRInfo::wasmContextInstancePointer), Types::IPtr };
 
     append(EntrySwitch);
     m_mainEntrypointStart = m_code.addBlock();
@@ -1155,10 +1144,9 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(
     restoreWasmContextInstance(block, instance);
 
     if (!!memory && Derived::supportsPinnedStateRegisters) {
-        const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         RegisterSetBuilder clobbers;
-        clobbers.add(pinnedRegs->baseMemoryPointer, IgnoreVectors);
-        clobbers.add(pinnedRegs->boundsCheckingSizeRegister, IgnoreVectors);
+        clobbers.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
+        clobbers.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         clobbers.merge(RegisterSetBuilder::macroClobberedRegisters());
 
         auto* patchpoint = addPatchpoint(B3::Void);
@@ -1169,12 +1157,11 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(
         patchpoint->clobber(clobbers);
         patchpoint->numGPScratchRegisters = 1;
 
-        patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        patchpoint->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
             GPRReg scratch = params.gpScratch(0);
-            jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), baseMemory, pinnedRegs->boundsCheckingSizeRegister);
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs->boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+            jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
         });
 
         emitPatchpoint(block, patchpoint, ExpressionType(), instance);
@@ -3175,7 +3162,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             if (isTailCall) {
                 // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
                 CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
                 jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
             }
             CCallHelpers::Call call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
@@ -3191,7 +3178,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
         // We need to clobber all potential pinned registers since we might be leaving the instance.
         // We pessimistically assume we could be calling to something that is bounds checking.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+        patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
         patchpoint->setGenerator([this, handle, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (isTailCall)
@@ -3202,7 +3189,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             if (isTailCall) {
                 // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
                 CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
                 jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
                 jit.farJump(params[0].gpr(), WasmEntryPtrTag);
             } else
@@ -3248,7 +3235,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
         // We need to clobber all potential pinned registers since we might be leaving the instance.
         // We pessimistically assume we could be calling to something that is bounds checking.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+        patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
 
         emitUnlinkedWasmToWasmCall(WTFMove(data));
 
@@ -3282,7 +3269,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
 
     // We need to clobber the size register since the LLInt always bounds checks
     if (self().useSignalingMemory() || m_info.memory.isShared())
-        patchpoint->clobberLate(RegisterSetBuilder { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
+        patchpoint->clobberLate(RegisterSetBuilder { GPRInfo::wasmBoundsCheckingSizeRegister });
 
     emitUnlinkedWasmToWasmCall(WTFMove(data));
 
@@ -3422,7 +3409,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
         patchpoint->effects.writesPinned = true;
         // We pessimistically assume we're calling something with BoundsChecking memory.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+        patchpoint->clobber(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
         patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
         patchpoint->numGPScratchRegisters = 1;
 
@@ -3435,13 +3422,12 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
             jit.storeWasmContextInstance(calleeInstance);
 
             if constexpr (Derived::supportsPinnedStateRegisters) {
-                const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
                 // FIXME: We should support more than one memory size register
                 //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
-                ASSERT(pinnedRegs.boundsCheckingSizeRegister != calleeInstance);
-                ASSERT(pinnedRegs.baseMemoryPointer != calleeInstance);
-                jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister);
-                jit.cageConditionallyAndUntag(Gigacage::Primitive, pinnedRegs.baseMemoryPointer, pinnedRegs.boundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+                ASSERT(GPRInfo::wasmBoundsCheckingSizeRegister != calleeInstance);
+                ASSERT(GPRInfo::wasmBaseMemoryPointer != calleeInstance);
+                jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
             }
         });
 
@@ -3475,7 +3461,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
 
             // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
             CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-            jit.loadPtr(CCallHelpers::Address(m_wasmContextInstanceGPR, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
             jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
             jit.farJump(params[0].gpr(), WasmEntryPtrTag);
         });
@@ -3499,7 +3485,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
     // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
     // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
 
-    patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+    patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
 
     patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);

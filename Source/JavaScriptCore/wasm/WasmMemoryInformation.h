@@ -43,29 +43,6 @@ struct PinnedSizeRegisterInfo {
     unsigned sizeOffset;
 };
 
-class PinnedRegisterInfo {
-public:
-    PinnedRegisterInfo(GPRReg, GPRReg, GPRReg);
-
-    static const PinnedRegisterInfo& get();
-
-    RegisterSetBuilder toSave(MemoryMode mode) const
-    {
-        RegisterSetBuilder result;
-        if (baseMemoryPointer != InvalidGPRReg)
-            result.add(baseMemoryPointer, IgnoreVectors);
-        if (wasmContextInstancePointer != InvalidGPRReg)
-            result.add(wasmContextInstancePointer, IgnoreVectors);
-        if (mode == MemoryMode::BoundsChecking && boundsCheckingSizeRegister != InvalidGPRReg)
-            result.add(boundsCheckingSizeRegister, IgnoreVectors);
-        return result;
-    }
-
-    GPRReg boundsCheckingSizeRegister;
-    GPRReg baseMemoryPointer;
-    GPRReg wasmContextInstancePointer;
-};
-
 class MemoryInformation {
 public:
     MemoryInformation()
