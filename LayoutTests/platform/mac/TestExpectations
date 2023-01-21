@@ -2277,8 +2277,6 @@ webkit.org/b/231757 [ BigSur ] inspector/canvas/updateShader-webgl.html [ Pass F
 
 webkit.org/b/237840 [ Monterey ] webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Pass Crash ]
 
-webkit.org/b/238917 [ Monterey ] fast/text/khmer-lao-font.html [ Failure ]
-
 webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
 webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
