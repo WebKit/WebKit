@@ -2,7 +2,8 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -68,11 +69,6 @@ CSSToStyleMap::CSSToStyleMap(Style::BuilderState& builderState)
 RenderStyle* CSSToStyleMap::style() const
 {
     return &m_builderState.style();
-}
-
-bool CSSToStyleMap::useSVGZoomRules() const
-{
-    return m_builderState.useSVGZoomRules();
 }
 
 RefPtr<StyleImage> CSSToStyleMap::styleImage(CSSValue& value)
@@ -586,8 +582,7 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
 
 LengthBox CSSToStyleMap::mapNinePieceImageQuad(Quad& quad)
 {
-    // Get our zoom value.
-    CSSToLengthConversionData conversionData = useSVGZoomRules() ? m_builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f) : m_builderState.cssToLengthConversionData();
+    CSSToLengthConversionData conversionData = m_builderState.cssToLengthConversionData();
 
     // Set up a length box to represent our image slices.
     LengthBox box; // Defaults to 'auto' so we don't have to handle that explicitly below.
