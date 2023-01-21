@@ -325,7 +325,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID
 {
-    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting(makeObjectIdentifier<WebCore::GraphicsLayer::PlatformLayerIDType>(layerID));
+    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ makeObjectIdentifier<WebCore::GraphicsLayer::PlatformLayerIDType>(layerID), _page->process().coreProcessIdentifier() });
     if (!layer)
         return nil;
 
