@@ -222,6 +222,11 @@ bool BindGroupLayout::bindingContainsStage(uint32_t bindingIndex, ShaderStage sh
 
 #pragma mark WGPU Stubs
 
+void wgpuBindGroupLayoutRetain(WGPUBindGroupLayout bindGroupLayout)
+{
+    WebGPU::fromAPI(bindGroupLayout).ref();
+}
+
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 {
     WebGPU::fromAPI(bindGroupLayout).deref();

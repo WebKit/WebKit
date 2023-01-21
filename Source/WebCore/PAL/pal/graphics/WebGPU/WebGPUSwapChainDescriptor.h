@@ -25,19 +25,23 @@
 
 #pragma once
 
-#include "WebGPUExtent3D.h"
+#include "WebGPUCanvasCompositingAlphaMode.h"
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUObjectDescriptorBase.h"
+#include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
 
 namespace PAL::WebGPU {
 
 struct SwapChainDescriptor : public ObjectDescriptorBase {
-    Extent3D size;
-    Size32 sampleCount { 1 };
     TextureFormat format { TextureFormat::R8unorm };
-    TextureUsageFlags usage;
+    TextureUsageFlags usage { TextureUsage::RenderAttachment };
+    Vector<TextureFormat> viewFormats;
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    CanvasCompositingAlphaMode compositingAlphaMode { CanvasCompositingAlphaMode::Opaque };
+    uint32_t width { 0 };
+    uint32_t height { 0 };
 };
 
 } // namespace PAL::WebGPU

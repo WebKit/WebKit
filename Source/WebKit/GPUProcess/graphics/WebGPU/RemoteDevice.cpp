@@ -122,18 +122,6 @@ void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebG
     m_objectHeap.addObject(identifier, remoteBuffer);
 }
 
-void RemoteDevice::createSurface(const WebGPU::SurfaceDescriptor& descriptor, WebGPUIdentifier identifier)
-{
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-    auto surface = m_backing->createSurface(*convertedDescriptor);
-    auto remoteSurface = RemoteSurface::create(surface, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteSurface);
-}
-
 void RemoteDevice::createSwapChain(WebGPUIdentifier surfaceIdentifier, const WebGPU::SwapChainDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
@@ -159,20 +147,6 @@ void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, We
         return;
 
     auto texture = m_backing->createTexture(*convertedDescriptor);
-    auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteTexture);
-}
-
-void RemoteDevice::createSurfaceTexture(WebGPUIdentifier surfaceIdentifier, const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
-{
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-    auto surface = m_objectHeap.convertSurfaceFromBacking(surfaceIdentifier);
-    ASSERT(surface);
-    auto texture = m_backing->createSurfaceTexture(*convertedDescriptor, *surface);
     auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteTexture);
 }

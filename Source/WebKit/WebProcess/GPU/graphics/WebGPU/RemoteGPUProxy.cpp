@@ -31,15 +31,16 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
 #include "RemoteAdapterProxy.h"
+#include "RemoteCompositorIntegrationProxy.h"
 #include "RemoteGPU.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
+#include "RemoteSurfaceProxy.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <pal/graphics/WebGPU/WebGPUSupportedFeatures.h>
 #include <pal/graphics/WebGPU/WebGPUSupportedLimits.h>
 
 namespace WebKit {
-
 
 RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
     : m_backing(identifier)
@@ -147,6 +148,34 @@ void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& op
         response->limits.maxComputeWorkgroupsPerDimension
     );
     callback(WebGPU::RemoteAdapterProxy::create(WTFMove(response->name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), response->isFallbackAdapter, *this, m_convertToBackingContext, identifier));
+}
+
+Ref<PAL::WebGPU::Surface> RemoteGPUProxy::createSurface(const PAL::WebGPU::SurfaceDescriptor& descriptor)
+{
+    // FIXME: Should we be consulting m_lost?
+
+    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
+    if (!convertedDescriptor) {
+        // FIXME: Implement error handling.
+        return WebGPU::RemoteSurfaceProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+    }
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteGPU::CreateSurface(*convertedDescriptor, identifier));
+    UNUSED_VARIABLE(sendResult);
+
+    return WebGPU::RemoteSurfaceProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+Ref<PAL::WebGPU::CompositorIntegration> RemoteGPUProxy::createCompositorIntegration()
+{
+    // FIXME: Should we be consulting m_lost?
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteGPU::CreateCompositorIntegration(identifier));
+    UNUSED_VARIABLE(sendResult);
+
+    return WebGPU::RemoteCompositorIntegrationProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 } // namespace WebKit

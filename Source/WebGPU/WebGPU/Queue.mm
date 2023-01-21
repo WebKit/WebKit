@@ -466,6 +466,11 @@ void Queue::scheduleWork(Instance::WorkItem&& workItem)
 
 #pragma mark WGPU Stubs
 
+void wgpuQueueRetain(WGPUQueue queue)
+{
+    WebGPU::fromAPI(queue).ref();
+}
+
 void wgpuQueueRelease(WGPUQueue queue)
 {
     WebGPU::fromAPI(queue).deref();

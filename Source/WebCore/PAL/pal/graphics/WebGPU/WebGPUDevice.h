@@ -101,8 +101,6 @@ public:
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
-    virtual Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const Surface&) = 0;
-    virtual Ref<Surface> createSurface(const SurfaceDescriptor&) = 0;
     virtual Ref<SwapChain> createSwapChain(const Surface&, const SwapChainDescriptor&) = 0;
     virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;

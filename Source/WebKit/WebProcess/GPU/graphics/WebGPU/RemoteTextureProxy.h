@@ -42,20 +42,19 @@ class ConvertToBackingContext;
 class RemoteTextureProxy final : public PAL::WebGPU::Texture {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteTextureProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextureProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteTextureProxy(root, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteTextureProxy();
 
-    RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& root() { return m_root; }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteTextureProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteTextureProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteTextureProxy(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy(RemoteTextureProxy&&) = delete;
@@ -84,7 +83,7 @@ private:
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteDeviceProxy> m_parent;
+    Ref<RemoteGPUProxy> m_root;
 };
 
 } // namespace WebKit::WebGPU

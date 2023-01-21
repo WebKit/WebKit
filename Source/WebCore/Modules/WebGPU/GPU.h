@@ -37,29 +37,37 @@
 
 namespace WebCore {
 
+class GPUCompositorIntegration;
+class GPUSurface;
+struct GPUSurfaceDescriptor;
+
 class GPU : public RefCounted<GPU> {
 public:
-    static Ref<GPU> create()
+    static Ref<GPU> create(Ref<PAL::WebGPU::GPU>&& backing)
     {
-        return adoptRef(*new GPU());
+        return adoptRef(*new GPU(WTFMove(backing)));
     }
+
+    ~GPU();
 
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
     void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
     GPUTextureFormat getPreferredCanvasFormat();
 
-    void setBacking(PAL::WebGPU::GPU&);
+    Ref<GPUSurface> createSurface(const GPUSurfaceDescriptor&);
+
+    Ref<GPUCompositorIntegration> createCompositorIntegration();
 
 private:
-    GPU() = default;
+    GPU(Ref<PAL::WebGPU::GPU>&&);
 
     struct PendingRequestAdapterArguments {
         std::optional<GPURequestAdapterOptions> options;
         RequestAdapterPromise promise;
     };
     Deque<PendingRequestAdapterArguments> m_pendingRequestAdapterArguments;
-    RefPtr<PAL::WebGPU::GPU> m_backing;
+    Ref<PAL::WebGPU::GPU> m_backing;
 };
 
 }

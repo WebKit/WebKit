@@ -25,18 +25,14 @@
 
 #pragma once
 
-#include "WebGPUExtent3D.h"
-#include "WebGPUIntegralTypes.h"
+#include "WebGPUCompositorIntegration.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUTextureFormat.h"
 
 namespace PAL::WebGPU {
 
 struct SurfaceDescriptor : public ObjectDescriptorBase {
-    Extent3D size;
-    Size32 sampleCount { 1 };
-    TextureFormat format { TextureFormat::R8unorm };
-    TextureUsageFlags usage;
+    CompositorIntegration& compositorIntegration;
 };
 
 } // namespace PAL::WebGPU

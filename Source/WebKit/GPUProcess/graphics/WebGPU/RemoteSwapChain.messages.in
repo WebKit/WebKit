@@ -24,16 +24,10 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteSwapChain NotRefCounted Stream {
-    void Destroy()
+    void GetCurrentTexture(WebKit::WebGPUIdentifier identifier)
+    void GetCurrentTextureView(WebKit::WebGPUIdentifier identifier)
+    void Present()
     void SetLabel(String label)
-
-#if PLATFORM(COCOA)
-    void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous NotStreamEncodableReply
-#endif
-#if !PLATFORM(COCOA)
-    void PrepareForDisplay() -> () Synchronous
-#endif
-
 }
 
 #endif

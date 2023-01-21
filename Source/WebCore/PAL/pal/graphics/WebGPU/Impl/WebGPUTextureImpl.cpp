@@ -36,12 +36,14 @@
 
 namespace PAL::WebGPU {
 
-TextureImpl::TextureImpl(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
+TextureImpl::TextureImpl(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext, Ownership ownership)
     : m_format(format)
     , m_dimension(dimension)
     , m_backing(texture)
     , m_convertToBackingContext(convertToBackingContext)
 {
+    if (ownership == Ownership::Wrap)
+        wgpuTextureRetain(texture);
 }
 
 TextureImpl::~TextureImpl()

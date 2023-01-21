@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteDeviceProxy.h"
+#include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <pal/graphics/WebGPU/WebGPUSurface.h>
@@ -39,20 +39,20 @@ class ConvertToBackingContext;
 class RemoteSurfaceProxy final : public PAL::WebGPU::Surface {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteSurfaceProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteSurfaceProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteSurfaceProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteSurfaceProxy();
 
-    RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent; }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteSurfaceProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteSurfaceProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteSurfaceProxy(const RemoteSurfaceProxy&) = delete;
     RemoteSurfaceProxy(RemoteSurfaceProxy&&) = delete;
@@ -73,13 +73,11 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void destroy() final;
-
     void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteDeviceProxy> m_parent;
+    Ref<RemoteGPUProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

@@ -43,8 +43,6 @@ public:
     String label() const;
     void setLabel(String&&);
 
-    void destroy();
-
     PAL::WebGPU::Surface& backing() { return m_backing; }
     const PAL::WebGPU::Surface& backing() const { return m_backing; }
 

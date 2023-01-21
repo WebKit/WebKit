@@ -271,6 +271,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/WebGPU/RemoteBuffer \
 	GPUProcess/graphics/WebGPU/RemoteCommandBuffer \
 	GPUProcess/graphics/WebGPU/RemoteCommandEncoder \
+	GPUProcess/graphics/WebGPU/RemoteCompositorIntegration \
 	GPUProcess/graphics/WebGPU/RemoteComputePassEncoder \
 	GPUProcess/graphics/WebGPU/RemoteComputePipeline \
 	GPUProcess/graphics/WebGPU/RemoteDevice \

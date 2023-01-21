@@ -30,7 +30,8 @@
     ActiveDOMObject,
     EnabledBySetting=WebGPU,
     Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
+    SecureContext,
+    SkipVTableValidation,
 ]
 interface GPUCanvasContext {
     readonly attribute (HTMLCanvasElement

@@ -46,6 +46,7 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteBuffer.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteCommandBuffer.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteCommandEncoder.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteComputePipeline.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteDevice.messages.in

@@ -47,7 +47,7 @@ ComputePipelineImpl::~ComputePipelineImpl()
 
 Ref<BindGroupLayout> ComputePipelineImpl::getBindGroupLayout(uint32_t index)
 {
-    return BindGroupLayoutImpl::create(wgpuComputePipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
+    return BindGroupLayoutImpl::wrap(wgpuComputePipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
 }
 
 void ComputePipelineImpl::setLabelInternal(const String& label)

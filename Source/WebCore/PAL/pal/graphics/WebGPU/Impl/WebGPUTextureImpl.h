@@ -42,7 +42,11 @@ class TextureImpl final : public Texture {
 public:
     static Ref<TextureImpl> create(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext));
+        return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext, Ownership::Adopt));
+    }
+    static Ref<TextureImpl> wrap(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
+    {
+        return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext, Ownership::Wrap));
     }
 
     virtual ~TextureImpl();
@@ -50,7 +54,11 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    TextureImpl(WGPUTexture, TextureFormat, TextureDimension, ConvertToBackingContext&);
+    enum class Ownership {
+        Adopt,
+        Wrap,
+    };
+    TextureImpl(WGPUTexture, TextureFormat, TextureDimension, ConvertToBackingContext&, Ownership);
 
     TextureImpl(const TextureImpl&) = delete;
     TextureImpl(TextureImpl&&) = delete;

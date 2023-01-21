@@ -27,20 +27,13 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUExtent3D.h"
+#include "WebGPUIdentifier.h"
 #include "WebGPUObjectDescriptorBase.h"
-#include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
-#include <pal/graphics/WebGPU/WebGPUTextureUsage.h>
 
 namespace WebKit::WebGPU {
 
 struct SurfaceDescriptor : public ObjectDescriptorBase {
-    Extent3D size;
-    PAL::WebGPU::Size32 sampleCount { 1 };
-    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
-    PAL::WebGPU::TextureUsageFlags usage;
+    WebGPUIdentifier compositorIntegration;
 };
 
 } // namespace WebKit::WebGPU

@@ -52,11 +52,6 @@ void RemoteSurface::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteSurface::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteSurface::destroy()
-{
-    m_backing->destroy();
-}
-
 void RemoteSurface::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));

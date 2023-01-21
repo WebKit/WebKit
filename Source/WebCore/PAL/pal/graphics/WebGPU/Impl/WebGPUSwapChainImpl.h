@@ -29,17 +29,22 @@
 
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUSwapChain.h"
+#include "WebGPUTextureFormat.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
 
+class ConvertToBackingContext;
+class TextureImpl;
+class TextureViewImpl;
+
 class SwapChainImpl final : public SwapChain {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SwapChainImpl> create(WGPUSurface surface, WGPUSwapChain swapChain)
+    static Ref<SwapChainImpl> create(WGPUSwapChain swapChain, TextureFormat format, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new SwapChainImpl(surface, swapChain));
+        return adoptRef(*new SwapChainImpl(swapChain, format, convertToBackingContext));
     }
 
     virtual ~SwapChainImpl();
@@ -47,24 +52,30 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    SwapChainImpl(WGPUSurface, WGPUSwapChain);
+    SwapChainImpl(WGPUSwapChain, TextureFormat, ConvertToBackingContext&);
 
     SwapChainImpl(const SwapChainImpl&) = delete;
     SwapChainImpl(SwapChainImpl&&) = delete;
     SwapChainImpl& operator=(const SwapChainImpl&) = delete;
     SwapChainImpl& operator=(SwapChainImpl&&) = delete;
 
+    void clearCurrentTextureAndView();
+    void ensureCurrentTextureAndView();
+
     WGPUSwapChain backing() const { return m_backing; }
 
-    void destroy() final;
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
-#endif
+    Texture& getCurrentTexture() final;
+    TextureView& getCurrentTextureView() final;
+    void present() final;
 
     void setLabelInternal(const String&) final;
 
+    TextureFormat m_format { TextureFormat::Rgba8unorm };
+
     WGPUSwapChain m_backing { nullptr };
-    WGPUSurface m_surface { nullptr };
+    Ref<ConvertToBackingContext> m_convertToBackingContext;
+    RefPtr<TextureImpl> m_currentTexture;
+    RefPtr<TextureViewImpl> m_currentTextureView;
 };
 
 } // namespace PAL::WebGPU

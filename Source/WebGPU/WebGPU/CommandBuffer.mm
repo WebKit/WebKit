@@ -52,6 +52,11 @@ void CommandBuffer::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuCommandBufferRetain(WGPUCommandBuffer commandBuffer)
+{
+    WebGPU::fromAPI(commandBuffer).ref();
+}
+
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {
     WebGPU::fromAPI(commandBuffer).deref();

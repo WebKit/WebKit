@@ -41,6 +41,7 @@ namespace WebGPU {
 
 class Adapter;
 class Device;
+class Texture;
 class TextureView;
 
 class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
@@ -60,6 +61,7 @@ public:
 
     virtual void present();
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+    virtual Texture* getCurrentTexture(); // FIXME: This should return a Texture&.
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }

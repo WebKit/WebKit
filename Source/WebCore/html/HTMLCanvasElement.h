@@ -44,6 +44,7 @@ namespace WebCore {
 class BlobCallback;
 class CanvasRenderingContext;
 class CanvasRenderingContext2D;
+class GPU;
 class GraphicsContext;
 class Image;
 class ImageBitmapRenderingContext;
@@ -97,8 +98,8 @@ public:
 
     static bool isWebGPUType(const String&);
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    GPUCanvasContext* createContextWebGPU(const String&);
-    GPUCanvasContext* getContextWebGPU(const String&);
+    GPUCanvasContext* createContextWebGPU(const String&, GPU*);
+    GPUCanvasContext* getContextWebGPU(const String&, GPU*);
 #endif // HAVE(WEBGPU_IMPLEMENTATION)
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);

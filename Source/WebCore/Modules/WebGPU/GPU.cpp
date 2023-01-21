@@ -26,9 +26,19 @@
 #include "config.h"
 #include "GPU.h"
 
+#include "GPUCompositorIntegration.h"
+#include "GPUSurface.h"
+#include "GPUSurfaceDescriptor.h"
 #include "JSGPUAdapter.h"
 
 namespace WebCore {
+
+GPU::GPU(Ref<PAL::WebGPU::GPU>&& backing)
+    : m_backing(WTFMove(backing))
+{
+}
+
+GPU::~GPU() = default;
 
 static PAL::WebGPU::RequestAdapterOptions convertToBacking(const std::optional<GPURequestAdapterOptions>& options)
 {
@@ -38,22 +48,8 @@ static PAL::WebGPU::RequestAdapterOptions convertToBacking(const std::optional<G
     return options->convertToBacking();
 }
 
-void GPU::setBacking(PAL::WebGPU::GPU& backing)
-{
-    m_backing = &backing;
-    while (!m_pendingRequestAdapterArguments.isEmpty()) {
-        auto arguments = m_pendingRequestAdapterArguments.takeFirst();
-        requestAdapter(arguments.options, WTFMove(arguments.promise));
-    }
-}
-
 void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
 {
-    if (!m_backing) {
-        m_pendingRequestAdapterArguments.append({ options, WTFMove(promise) });
-        return;
-    }
-
     m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             promise.reject(nullptr);
@@ -66,6 +62,16 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
 GPUTextureFormat GPU::getPreferredCanvasFormat()
 {
     return GPUTextureFormat::Bgra8unorm;
+}
+
+Ref<GPUSurface> GPU::createSurface(const GPUSurfaceDescriptor& descriptor)
+{
+    return GPUSurface::create(m_backing->createSurface(descriptor.convertToBacking()));
+}
+
+Ref<GPUCompositorIntegration> GPU::createCompositorIntegration()
+{
+    return GPUCompositorIntegration::create(m_backing->createCompositorIntegration());
 }
 
 }

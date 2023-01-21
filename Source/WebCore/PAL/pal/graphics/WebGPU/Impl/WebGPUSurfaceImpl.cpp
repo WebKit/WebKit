@@ -36,29 +36,19 @@
 
 namespace PAL::WebGPU {
 
-SurfaceImpl::SurfaceImpl(WGPUSurface surface)
+SurfaceImpl::SurfaceImpl(WGPUSurface surface, ConvertToBackingContext& convertToBackingContext)
     : m_backing(surface)
+    , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
 SurfaceImpl::~SurfaceImpl()
 {
-    destroy();
-}
-
-void SurfaceImpl::destroy()
-{
     wgpuSurfaceRelease(m_backing);
 }
 
-void SurfaceImpl::setLabelInternal(const String& label)
+void SurfaceImpl::setLabelInternal(const String&)
 {
-    UNUSED_PARAM(label);
-}
-
-IOSurfaceRef SurfaceImpl::drawingBuffer() const
-{
-    return wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(m_backing);
 }
 
 } // namespace PAL::WebGPU

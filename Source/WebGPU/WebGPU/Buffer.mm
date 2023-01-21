@@ -341,6 +341,11 @@ void Buffer::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuBufferRetain(WGPUBuffer buffer)
+{
+    WebGPU::fromAPI(buffer).ref();
+}
+
 void wgpuBufferRelease(WGPUBuffer buffer)
 {
     WebGPU::fromAPI(buffer).deref();

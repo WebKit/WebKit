@@ -53,6 +53,11 @@ void RenderBundle::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuRenderBundleRetain(WGPURenderBundle renderBundle)
+{
+    WebGPU::fromAPI(renderBundle).ref();
+}
+
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {
     WebGPU::fromAPI(renderBundle).deref();

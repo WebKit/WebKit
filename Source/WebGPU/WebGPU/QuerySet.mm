@@ -122,6 +122,11 @@ Vector<MTLTimestamp> QuerySet::resolveTimestamps() const
 
 #pragma mark WGPU Stubs
 
+void wgpuQuerySetRetain(WGPUQuerySet querySet)
+{
+    WebGPU::fromAPI(querySet).ref();
+}
+
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
     WebGPU::fromAPI(querySet).deref();

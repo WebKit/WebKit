@@ -43,8 +43,6 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void destroy() = 0;
-
 protected:
     Surface() = default;
 

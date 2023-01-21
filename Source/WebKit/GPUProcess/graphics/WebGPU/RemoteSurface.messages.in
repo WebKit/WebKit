@@ -24,7 +24,6 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteSurface NotRefCounted Stream {
-    void Destroy()
     void SetLabel(String label)
 }
 

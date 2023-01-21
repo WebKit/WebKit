@@ -34,12 +34,19 @@
 namespace PAL::WebGPU {
 
 class Adapter;
+class CompositorIntegration;
+class Surface;
+struct SurfaceDescriptor;
 
 class GPU : public RefCounted<GPU> {
 public:
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
+
+    virtual Ref<Surface> createSurface(const SurfaceDescriptor&) = 0;
+
+    virtual Ref<CompositorIntegration> createCompositorIntegration() = 0;
 
 protected:
     GPU() = default;

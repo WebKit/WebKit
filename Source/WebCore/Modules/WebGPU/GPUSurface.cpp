@@ -44,8 +44,4 @@ void GPUSurface::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUSurface::destroy()
-{
-}
-
 }

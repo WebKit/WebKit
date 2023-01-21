@@ -39,7 +39,11 @@ class BindGroupLayoutImpl final : public BindGroupLayout {
 public:
     static Ref<BindGroupLayoutImpl> create(WGPUBindGroupLayout bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BindGroupLayoutImpl(bindGroupLayout, convertToBackingContext));
+        return adoptRef(*new BindGroupLayoutImpl(bindGroupLayout, convertToBackingContext, Ownership::Adopt));
+    }
+    static Ref<BindGroupLayoutImpl> wrap(WGPUBindGroupLayout bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
+    {
+        return adoptRef(*new BindGroupLayoutImpl(bindGroupLayout, convertToBackingContext, Ownership::Wrap));
     }
 
     virtual ~BindGroupLayoutImpl();
@@ -47,7 +51,11 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    BindGroupLayoutImpl(WGPUBindGroupLayout, ConvertToBackingContext&);
+    enum class Ownership {
+        Adopt,
+        Wrap,
+    };
+    BindGroupLayoutImpl(WGPUBindGroupLayout, ConvertToBackingContext&, Ownership);
 
     BindGroupLayoutImpl(const BindGroupLayoutImpl&) = delete;
     BindGroupLayoutImpl(BindGroupLayoutImpl&&) = delete;

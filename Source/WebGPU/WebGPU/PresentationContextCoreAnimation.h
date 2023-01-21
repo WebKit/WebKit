@@ -34,6 +34,7 @@
 namespace WebGPU {
 
 class Device;
+class Texture;
 class TextureView;
 
 class PresentationContextCoreAnimation : public PresentationContext {
@@ -50,6 +51,7 @@ public:
 
     void present() override;
     TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
+    Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
 
     bool isPresentationContextCoreAnimation() const override { return true; }
 
@@ -57,9 +59,10 @@ private:
     PresentationContextCoreAnimation(const WGPUSurfaceDescriptor&);
 
     struct Configuration {
-        Configuration(uint32_t width, uint32_t height, String&& label, WGPUTextureFormat format, Device& device)
+        Configuration(uint32_t width, uint32_t height, WGPUTextureUsageFlags usage, String&& label, WGPUTextureFormat format, Device& device)
             : width(width)
             , height(height)
+            , usage(usage)
             , label(WTFMove(label))
             , format(format)
             , device(device)
@@ -68,6 +71,7 @@ private:
 
         struct FrameState {
             id<CAMetalDrawable> currentDrawable;
+            RefPtr<Texture> currentTexture;
             RefPtr<TextureView> currentTextureView;
         };
 
@@ -76,6 +80,7 @@ private:
         std::optional<FrameState> currentFrameState;
         uint32_t width { 0 };
         uint32_t height { 0 };
+        WGPUTextureUsageFlags usage { WGPUTextureUsage_None };
         String label;
         WGPUTextureFormat format { WGPUTextureFormat_Undefined };
         Ref<Device> device;

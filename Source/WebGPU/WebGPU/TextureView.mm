@@ -55,6 +55,11 @@ void TextureView::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuTextureViewRetain(WGPUTextureView textureView)
+{
+    WebGPU::fromAPI(textureView).ref();
+}
+
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
     WebGPU::fromAPI(textureView).deref();

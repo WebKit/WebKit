@@ -243,6 +243,11 @@ void RenderPassEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuRenderPassEncoderRetain(WGPURenderPassEncoder renderPassEncoder)
+{
+    WebGPU::fromAPI(renderPassEncoder).ref();
+}
+
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 {
     WebGPU::fromAPI(renderPassEncoder).deref();

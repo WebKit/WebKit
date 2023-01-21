@@ -201,6 +201,11 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 
 #pragma mark WGPU Stubs
 
+void wgpuInstanceRetain(WGPUInstance instance)
+{
+    WebGPU::fromAPI(instance).ref();
+}
+
 void wgpuInstanceRelease(WGPUInstance instance)
 {
     WebGPU::fromAPI(instance).deref();
@@ -215,6 +220,7 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
 {
     // FIXME(PERFORMANCE): Use gperf to make this faster.
     // FIXME: Generate this at build time
+    // FIXME: Retain and release methods are not listed here.
     if (!strcmp(procName, "wgpuAdapterEnumerateFeatures"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterEnumerateFeatures);
     if (!strcmp(procName, "wgpuAdapterGetLimits"))
@@ -323,10 +329,6 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateShaderModule);
     if (!strcmp(procName, "wgpuDeviceCreateSwapChain"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateSwapChain);
-    if (!strcmp(procName, "wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer"))
-        return reinterpret_cast<WGPUProc>(&wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer);
-    if (!strcmp(procName, "wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer"))
-        return reinterpret_cast<WGPUProc>(&wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer);
     if (!strcmp(procName, "wgpuDeviceCreateTexture"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateTexture);
     if (!strcmp(procName, "wgpuDeviceDestroy"))
@@ -453,6 +455,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuShaderModuleSetLabel);
     if (!strcmp(procName, "wgpuSurfaceGetPreferredFormat"))
         return reinterpret_cast<WGPUProc>(&wgpuSurfaceGetPreferredFormat);
+    if (!strcmp(procName, "wgpuSwapChainGetCurrentTexture"))
+        return reinterpret_cast<WGPUProc>(&wgpuSwapChainGetCurrentTexture);
     if (!strcmp(procName, "wgpuSwapChainGetCurrentTextureView"))
         return reinterpret_cast<WGPUProc>(&wgpuSwapChainGetCurrentTextureView);
     if (!strcmp(procName, "wgpuSwapChainPresent"))

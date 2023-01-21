@@ -321,6 +321,11 @@ void Device::setLabel(String&&)
 
 #pragma mark WGPU Stubs
 
+void wgpuDeviceRetain(WGPUDevice device)
+{
+    WebGPU::fromAPI(device).ref();
+}
+
 void wgpuDeviceRelease(WGPUDevice device)
 {
     WebGPU::fromAPI(device).deref();

@@ -72,8 +72,6 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void destroy();
-
     void setLabel(String&&);
 
     Ref<PAL::WebGPU::Surface> m_backing;

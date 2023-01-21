@@ -28,6 +28,8 @@
 #ifdef __OBJC__
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
+#import <IOSurface/IOSurface.h>
+#import <IOSurface/IOSurfaceObjC.h>
 #endif
 
 namespace WTF {
@@ -56,6 +58,7 @@ WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFSet, NSSet)
 WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFString, NSString)
 WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFTimeZone, NSTimeZone)
 WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFURL, NSURL)
+WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(IOSurface, IOSurface)
 
 template<> struct CFTollFreeBridgingTraits<CFBooleanRef> { using BridgedType = NSNumber *; };
 

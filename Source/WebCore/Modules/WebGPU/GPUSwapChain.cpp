@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUSwapChain.h"
 
+#include "GPUTextureView.h"
+
 namespace WebCore {
 
 String GPUSwapChain::label() const
@@ -38,15 +40,39 @@ void GPUSwapChain::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-#if PLATFORM(COCOA)
-void GPUSwapChain::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
+void GPUSwapChain::clearCurrentTextureAndView()
 {
-    m_backing->prepareForDisplay(WTFMove(completionHandler));
+    m_currentTexture = nullptr;
+    m_currentTextureView = nullptr;
 }
-#endif
 
-void GPUSwapChain::destroy()
+void GPUSwapChain::ensureCurrentTextureAndView()
 {
+    ASSERT(static_cast<bool>(m_currentTexture) == static_cast<bool>(m_currentTextureView));
+
+    if (m_currentTexture && m_currentTextureView)
+        return;
+
+    m_currentTexture = GPUTexture::create(m_backing->getCurrentTexture()).ptr();
+    m_currentTextureView = GPUTextureView::create(m_backing->getCurrentTextureView()).ptr();
+}
+
+GPUTexture& GPUSwapChain::getCurrentTexture()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTexture;
+}
+
+GPUTextureView& GPUSwapChain::getCurrentTextureView()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTextureView;
+}
+
+void GPUSwapChain::present()
+{
+    m_backing->present();
+    clearCurrentTextureAndView();
 }
 
 }

@@ -278,6 +278,11 @@ void RenderBundleEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuRenderBundleEncoderRetain(WGPURenderBundleEncoder renderBundleEncoder)
+{
+    WebGPU::fromAPI(renderBundleEncoder).ref();
+}
+
 void wgpuRenderBundleEncoderRelease(WGPURenderBundleEncoder renderBundleEncoder)
 {
     WebGPU::fromAPI(renderBundleEncoder).deref();

@@ -965,6 +965,11 @@ void CommandEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuCommandEncoderRetain(WGPUCommandEncoder commandEncoder)
+{
+    WebGPU::fromAPI(commandEncoder).ref();
+}
+
 void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 {
     WebGPU::fromAPI(commandEncoder).deref();

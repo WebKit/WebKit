@@ -374,8 +374,7 @@ GPU* Navigator::gpu()
         if (!gpu)
             return nullptr;
 
-        m_gpuForWebGPU = GPU::create();
-        m_gpuForWebGPU->setBacking(*gpu);
+        m_gpuForWebGPU = GPU::create(*gpu);
     }
 
     return m_gpuForWebGPU.get();

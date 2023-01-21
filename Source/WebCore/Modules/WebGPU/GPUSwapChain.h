@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "GPUTexture.h"
+#include "GPUTextureView.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUSwapChain.h>
 #include <wtf/Ref.h>
@@ -43,10 +45,9 @@ public:
     String label() const;
     void setLabel(String&&);
 
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&);
-#endif
-    void destroy();
+    GPUTexture& getCurrentTexture();
+    GPUTextureView& getCurrentTextureView();
+    void present();
 
     PAL::WebGPU::SwapChain& backing() { return m_backing; }
     const PAL::WebGPU::SwapChain& backing() const { return m_backing; }
@@ -56,8 +57,13 @@ private:
         : m_backing(WTFMove(backing))
     {
     }
+    
+    void clearCurrentTextureAndView();
+    void ensureCurrentTextureAndView();
 
     Ref<PAL::WebGPU::SwapChain> m_backing;
+    RefPtr<GPUTexture> m_currentTexture;
+    RefPtr<GPUTextureView> m_currentTextureView;
 };
 
 }

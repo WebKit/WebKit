@@ -149,6 +149,11 @@ void Adapter::requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&& call
 
 #pragma mark WGPU Stubs
 
+void wgpuAdapterRetain(WGPUAdapter adapter)
+{
+    WebGPU::fromAPI(adapter).ref();
+}
+
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
     WebGPU::fromAPI(adapter).deref();

@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Texture.h"
+#import "TextureView.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebGPU {
@@ -68,7 +69,7 @@ void PresentationContextCoreAnimation::configure(Device& device, const WGPUSwapC
         return;
     }
 
-    m_configuration = Configuration(descriptor.width, descriptor.height, fromAPI(descriptor.label), descriptor.format, device);
+    m_configuration = Configuration(descriptor.width, descriptor.height, descriptor.usage, fromAPI(descriptor.label), descriptor.format, device);
 
     m_layer.pixelFormat = Texture::pixelFormat(descriptor.format);
     if (descriptor.usage == WGPUTextureUsage_RenderAttachment)
@@ -82,7 +83,22 @@ auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(
     auto label = this->label.utf8();
 
     id<CAMetalDrawable> currentDrawable = [layer nextDrawable];
-    id<MTLTexture> texture = currentDrawable.texture;
+    id<MTLTexture> backingTexture = currentDrawable.texture;
+
+    WGPUTextureDescriptor textureDescriptor {
+        nullptr,
+        label.data(),
+        usage,
+        WGPUTextureDimension_2D, {
+            width,
+            height,
+            1,
+        },
+        format,
+        1,
+        1,
+    };
+    auto texture = Texture::create(backingTexture, textureDescriptor, { format }, device);
 
     WGPUTextureViewDescriptor textureViewDescriptor {
         nullptr,
@@ -95,8 +111,8 @@ auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(
         1,
         WGPUTextureAspect_All,
     };
-    auto textureView = TextureView::create(texture, textureViewDescriptor, { { width, height, 1 } }, device);
-    return { currentDrawable, textureView.ptr() };
+    auto textureView = TextureView::create(backingTexture, textureViewDescriptor, { { width, height, 1 } }, device);
+    return { currentDrawable, texture.ptr(), textureView.ptr() };
 }
 
 void PresentationContextCoreAnimation::present()
@@ -121,6 +137,17 @@ TextureView* PresentationContextCoreAnimation::getCurrentTextureView()
         m_configuration->currentFrameState = m_configuration->generateCurrentFrameState(m_layer);
 
     return m_configuration->currentFrameState->currentTextureView.get();
+}
+
+Texture* PresentationContextCoreAnimation::getCurrentTexture()
+{
+    if (!m_configuration)
+        return nullptr;
+
+    if (!m_configuration->currentFrameState)
+        m_configuration->currentFrameState = m_configuration->generateCurrentFrameState(m_layer);
+
+    return m_configuration->currentFrameState->currentTexture.get();
 }
 
 } // namespace WebGPU

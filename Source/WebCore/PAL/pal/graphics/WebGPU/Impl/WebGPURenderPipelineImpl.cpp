@@ -47,7 +47,7 @@ RenderPipelineImpl::~RenderPipelineImpl()
 
 Ref<BindGroupLayout> RenderPipelineImpl::getBindGroupLayout(uint32_t index)
 {
-    return BindGroupLayoutImpl::create(wgpuRenderPipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
+    return BindGroupLayoutImpl::wrap(wgpuRenderPipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
 }
 
 void RenderPipelineImpl::setLabelInternal(const String& label)

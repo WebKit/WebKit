@@ -182,6 +182,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteCommandBufferMessageReceiver.c
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteCommandBufferMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteCommandEncoderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteCommandEncoderMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteCompositorIntegrationMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteCompositorIntegrationMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteComputePassEncoderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteComputePassEncoderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteComputePipelineMessageReceiver.cpp

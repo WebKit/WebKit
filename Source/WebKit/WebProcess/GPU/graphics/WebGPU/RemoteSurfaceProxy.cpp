@@ -33,7 +33,7 @@
 
 namespace WebKit::WebGPU {
 
-RemoteSurfaceProxy::RemoteSurfaceProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteSurfaceProxy::RemoteSurfaceProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -42,12 +42,6 @@ RemoteSurfaceProxy::RemoteSurfaceProxy(RemoteDeviceProxy& parent, ConvertToBacki
 
 RemoteSurfaceProxy::~RemoteSurfaceProxy()
 {
-}
-
-void RemoteSurfaceProxy::destroy()
-{
-    auto sendResult = send(Messages::RemoteSurface::Destroy());
-    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteSurfaceProxy::setLabelInternal(const String& label)

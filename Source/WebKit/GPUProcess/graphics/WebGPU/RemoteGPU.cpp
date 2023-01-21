@@ -30,13 +30,19 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteAdapter.h"
+#include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemoteRenderingBackend.h"
+#include "RemoteSurface.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include "WebGPUSurfaceDescriptor.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
+#include <pal/graphics/WebGPU/WebGPUCompositorIntegration.h>
+#include <pal/graphics/WebGPU/WebGPUSurface.h>
+#include <pal/graphics/WebGPU/WebGPUSurfaceDescriptor.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
@@ -160,6 +166,31 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
             limits.maxComputeWorkgroupsPerDimension(),
         }, adapter->isFallbackAdapter() } });
     });
+}
+
+void RemoteGPU::createSurface(const WebGPU::SurfaceDescriptor& descriptor, WebGPUIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    ASSERT(m_backing);
+
+    auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
+    ASSERT(convertedDescriptor);
+    if (!convertedDescriptor)
+        return;
+
+    auto surface = m_backing->createSurface(*convertedDescriptor);
+    auto remoteSurface = RemoteSurface::create(surface, m_objectHeap, *m_streamConnection, identifier);
+    m_objectHeap->addObject(identifier, remoteSurface);
+}
+
+void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    ASSERT(m_backing);
+
+    auto compositorIntegration = m_backing->createCompositorIntegration();
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, identifier);
+    m_objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 
 } // namespace WebKit

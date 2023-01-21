@@ -30,6 +30,7 @@ Modules/WebGPU/GPUCommandBuffer.cpp
 Modules/WebGPU/GPUCommandEncoder.cpp
 Modules/WebGPU/GPUCompilationInfo.cpp
 Modules/WebGPU/GPUCompilationMessage.cpp
+Modules/WebGPU/GPUCompositorIntegration.cpp
 Modules/WebGPU/GPUComputePassEncoder.cpp
 Modules/WebGPU/GPUComputePipeline.cpp
 Modules/WebGPU/GPUDevice.cpp

@@ -32,6 +32,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUCompilationInfo.h
     Modules/WebGPU/GPUCompilationMessage.h
     Modules/WebGPU/GPUCompilationMessageType.h
+    Modules/WebGPU/GPUCompositorIntegration.h
     Modules/WebGPU/GPUComputePassDescriptor.h
     Modules/WebGPU/GPUComputePassEncoder.h
     Modules/WebGPU/GPUComputePassTimestampLocation.h

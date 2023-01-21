@@ -29,16 +29,18 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUConvertToBackingContext.h"
-#include "WebGPUSurfaceDescriptor.h"
 #include "WebGPUSurfaceImpl.h"
+#include "WebGPUTextureImpl.h"
+#include "WebGPUTextureViewImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/CompletionHandler.h>
 
 namespace PAL::WebGPU {
 
-SwapChainImpl::SwapChainImpl(WGPUSurface surface, WGPUSwapChain swapChain)
-    : m_backing(swapChain)
-    , m_surface(surface)
+SwapChainImpl::SwapChainImpl(WGPUSwapChain swapChain, TextureFormat format, ConvertToBackingContext& convertToBackingContext)
+    : m_format(format)
+    , m_backing(swapChain)
+    , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
@@ -47,21 +49,43 @@ SwapChainImpl::~SwapChainImpl()
     wgpuSwapChainRelease(m_backing);
 }
 
-void SwapChainImpl::destroy()
+void SwapChainImpl::clearCurrentTextureAndView()
 {
-    wgpuSwapChainRelease(m_backing);
+    m_currentTexture = nullptr;
+    m_currentTextureView = nullptr;
 }
 
-void SwapChainImpl::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
+void SwapChainImpl::ensureCurrentTextureAndView()
+{
+    ASSERT(static_cast<bool>(m_currentTexture) == static_cast<bool>(m_currentTextureView));
+
+    if (m_currentTexture && m_currentTextureView)
+        return;
+
+    m_currentTexture = TextureImpl::wrap(wgpuSwapChainGetCurrentTexture(m_backing), m_format, TextureDimension::_2d, m_convertToBackingContext).ptr();
+    m_currentTextureView = TextureViewImpl::wrap(wgpuSwapChainGetCurrentTextureView(m_backing), m_convertToBackingContext).ptr();
+}
+
+Texture& SwapChainImpl::getCurrentTexture()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTexture;
+}
+
+TextureView& SwapChainImpl::getCurrentTextureView()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTextureView;
+}
+
+void SwapChainImpl::present()
 {
     wgpuSwapChainPresent(m_backing);
-    auto ioSurface = wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(m_surface);
-    completionHandler(MachSendRight::adopt(IOSurfaceCreateMachPort(ioSurface)));
+    clearCurrentTextureAndView();
 }
 
-void SwapChainImpl::setLabelInternal(const String& label)
+void SwapChainImpl::setLabelInternal(const String&)
 {
-    UNUSED_PARAM(label);
 }
 
 } // namespace PAL::WebGPU

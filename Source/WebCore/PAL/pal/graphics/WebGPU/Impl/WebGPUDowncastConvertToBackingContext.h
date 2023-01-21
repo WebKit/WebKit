@@ -64,6 +64,7 @@ public:
     WGPUSwapChain convertToBacking(const SwapChain&) final;
     WGPUTexture convertToBacking(const Texture&) final;
     WGPUTextureView convertToBacking(const TextureView&) final;
+    CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) final;
 
 private:
     DowncastConvertToBackingContext()

@@ -27,110 +27,102 @@
 #import "PresentationContextIOSurface.h"
 
 #import "APIConversions.h"
-
-// borrowed from pal/spi/cocoa/IOTypesSPI.h
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
-#include <IOKit/IOTypes.h>
-#else
-
-enum {
-    kIOWriteCombineCache = 4,
-};
-
-enum {
-    kIOMapCacheShift = 8,
-    kIOMapWriteCombineCache = kIOWriteCombineCache << kIOMapCacheShift,
-};
-#endif
+#import "Texture.h"
+#import "TextureView.h"
+#import <IOSurface/IOSurfaceObjC.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebGPU {
 
-static NSDictionary *optionsFor32BitSurface(int width, int height, unsigned pixelFormat)
-{
-    unsigned bytesPerElement = 4;
-    unsigned bytesPerPixel = 4;
-
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
-    ASSERT(bytesPerRow);
-
-    size_t totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
-    ASSERT(totalBytes);
-
-    return @{
-        (id)kIOSurfaceWidth: @(width),
-        (id)kIOSurfaceHeight: @(height),
-        (id)kIOSurfacePixelFormat: @(pixelFormat),
-        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
-        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
-        (id)kIOSurfaceAllocSize: @(totalBytes),
-#if PLATFORM(IOS_FAMILY)
-        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
-#endif
-        (id)kIOSurfaceElementHeight: @(1)
-    };
-}
-
-static RetainPtr<IOSurfaceRef> createIOSurface(int width, int height)
-{
-    NSDictionary *options = optionsFor32BitSurface(width, height, 'BGRA');
-    return adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
-}
-
-static RetainPtr<IOSurfaceRef> createSurfaceFromDescriptor(const WGPUSurfaceDescriptor& descriptor)
-{
-    if (!descriptor.nextInChain || descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking))
-        return nullptr;
-
-    auto widthHeight = reinterpret_cast<const WGPUSurfaceDescriptorCocoaCustomSurface*>(descriptor.nextInChain);
-    return createIOSurface(widthHeight->width, widthHeight->height);
-}
-
 PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor& descriptor)
-    : m_displayBuffer(createSurfaceFromDescriptor(descriptor))
-    , m_drawingBuffer(createSurfaceFromDescriptor(descriptor))
 {
+    const WGPUSurfaceDescriptorCocoaCustomSurface& cocoaSurface = *reinterpret_cast<const WGPUSurfaceDescriptorCocoaCustomSurface*>(descriptor.nextInChain);
+    m_recreateIOSurfaces = cocoaSurface.recreateIOSurfaces;
 }
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
 
-void PresentationContextIOSurface::configure(Device&, const WGPUSwapChainDescriptor&)
+void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
 {
+    m_renderBuffers.clear();
+    m_renderBufferViews.clear();
+    m_currentIndex = 0;
+
+    if (descriptor.nextInChain)
+        return;
+
+    if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
+        return;
+
+    NSArray<IOSurface *> *iosurfaces = bridge_cast(m_recreateIOSurfaces(&descriptor));
+    WGPUTextureDescriptor wgpuTextureDescriptor = {
+        nullptr,
+        descriptor.label,
+        descriptor.usage,
+        WGPUTextureDimension_2D, {
+            descriptor.width,
+            descriptor.height,
+            1,
+        },
+        descriptor.format,
+        1,
+        1,
+    };
+    WGPUTextureViewDescriptor wgpuTextureViewDescriptor = {
+        nullptr,
+        descriptor.label,
+        descriptor.format,
+        WGPUTextureViewDimension_2D,
+        0,
+        1,
+        0,
+        1,
+        WGPUTextureAspect_All,
+    };
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:descriptor.width height:descriptor.height mipmapped:NO];
+    textureDescriptor.usage = Texture::usage(descriptor.usage);
+    for (IOSurface *iosurface in iosurfaces) {
+        id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
+        texture.label = fromAPI(descriptor.label);
+        auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
+        m_renderBuffers.append(Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device));
+        m_renderBufferViews.append(TextureView::create(texture, wgpuTextureViewDescriptor, { { descriptor.width, descriptor.height, 1 } }, device));
+    }
+    ASSERT(m_renderBuffers.size() == m_renderBufferViews.size());
 }
 
 void PresentationContextIOSurface::present()
 {
-    nextDrawable();
+    ASSERT(m_renderBuffers.size() == m_renderBufferViews.size());
+
+    if (m_renderBuffers.isEmpty())
+        return;
+
+    m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
+}
+
+Texture* PresentationContextIOSurface::getCurrentTexture()
+{
+    ASSERT(m_renderBuffers.size() == m_renderBufferViews.size());
+
+    if (m_renderBuffers.isEmpty()) {
+        // FIXME: This should return an invalid texture view.
+        return nullptr;
+    }
+
+    return m_renderBuffers[m_currentIndex].ptr();
 }
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
 {
-    return nullptr;
-}
+    ASSERT(m_renderBuffers.size() == m_renderBufferViews.size());
 
-RetainPtr<IOSurfaceRef> PresentationContextIOSurface::nextDrawable()
-{
-    // FIXME: wait until a buffer is available
-    auto nextBuffer = m_drawingBuffer;
-    m_drawingBuffer = m_displayBuffer;
-    m_displayBuffer = nextBuffer;
+    if (m_renderBufferViews.isEmpty()) {
+        // FIXME: This should return an invalid texture view.
+        return nullptr;
+    }
 
-    return m_drawingBuffer;
+    return m_renderBufferViews[m_currentIndex].ptr();
 }
 
 } // namespace WebGPU
-
-#pragma mark WGPU Stubs
-
-IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface surface)
-{
-    if (auto* presentationContextIOSurface = downcast<WebGPU::PresentationContextIOSurface>(&WebGPU::fromAPI(surface)))
-        return presentationContextIOSurface->displayBuffer().get();
-    return nullptr;
-}
-
-IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface surface)
-{
-    if (auto* presentationContextIOSurface = downcast<WebGPU::PresentationContextIOSurface>(&WebGPU::fromAPI(surface)))
-        return presentationContextIOSurface->drawingBuffer().get();
-    return nullptr;
-}

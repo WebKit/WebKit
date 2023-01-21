@@ -39,7 +39,11 @@ class TextureViewImpl final : public TextureView {
 public:
     static Ref<TextureViewImpl> create(WGPUTextureView textureView, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new TextureViewImpl(textureView, convertToBackingContext));
+        return adoptRef(*new TextureViewImpl(textureView, convertToBackingContext, Ownership::Adopt));
+    }
+    static Ref<TextureViewImpl> wrap(WGPUTextureView textureView, ConvertToBackingContext& convertToBackingContext)
+    {
+        return adoptRef(*new TextureViewImpl(textureView, convertToBackingContext, Ownership::Wrap));
     }
 
     virtual ~TextureViewImpl();
@@ -47,7 +51,11 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    TextureViewImpl(WGPUTextureView, ConvertToBackingContext&);
+    enum class Ownership {
+        Adopt,
+        Wrap,
+    };
+    TextureViewImpl(WGPUTextureView, ConvertToBackingContext&, Ownership);
 
     TextureViewImpl(const TextureViewImpl&) = delete;
     TextureViewImpl(TextureViewImpl&&) = delete;

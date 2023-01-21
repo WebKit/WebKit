@@ -73,15 +73,11 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void destroy();
+    void getCurrentTexture(WebGPUIdentifier);
+    void getCurrentTextureView(WebGPUIdentifier);
+    void present();
 
     void setLabel(String&&);
-
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&);
-#else
-    void prepareForDisplay(CompletionHandler<void()>&&);
-#endif
 
     Ref<PAL::WebGPU::SwapChain> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

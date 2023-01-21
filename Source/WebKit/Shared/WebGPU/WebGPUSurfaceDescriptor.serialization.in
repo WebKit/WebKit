@@ -22,9 +22,6 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::SurfaceDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    WebKit::WebGPU::Extent3D size;
-    PAL::WebGPU::Size32 sampleCount;
-    PAL::WebGPU::TextureFormat format;
-    PAL::WebGPU::TextureUsageFlags usage;
+    WebKit::WebGPUIdentifier compositorIntegration;
 };
 #endif

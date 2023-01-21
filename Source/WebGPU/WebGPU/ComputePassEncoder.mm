@@ -141,6 +141,11 @@ void ComputePassEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuComputePassEncoderRetain(WGPUComputePassEncoder computePassEncoder)
+{
+    WebGPU::fromAPI(computePassEncoder).ref();
+}
+
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 {
     WebGPU::fromAPI(computePassEncoder).deref();

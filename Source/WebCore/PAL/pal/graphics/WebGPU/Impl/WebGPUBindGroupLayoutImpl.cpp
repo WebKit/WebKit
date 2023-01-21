@@ -33,10 +33,12 @@
 
 namespace PAL::WebGPU {
 
-BindGroupLayoutImpl::BindGroupLayoutImpl(WGPUBindGroupLayout bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
+BindGroupLayoutImpl::BindGroupLayoutImpl(WGPUBindGroupLayout bindGroupLayout, ConvertToBackingContext& convertToBackingContext, Ownership ownership)
     : m_backing(bindGroupLayout)
     , m_convertToBackingContext(convertToBackingContext)
 {
+    if (ownership == Ownership::Wrap)
+        wgpuBindGroupLayoutRetain(bindGroupLayout);
 }
 
 BindGroupLayoutImpl::~BindGroupLayoutImpl()

@@ -101,8 +101,6 @@ public:
 
     Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
     Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
-    Ref<GPUTexture> createSurfaceTexture(const GPUTextureDescriptor&, const GPUSurface&);
-    Ref<GPUSurface> createSurface(const GPUSurfaceDescriptor&);
     Ref<GPUSwapChain> createSwapChain(const GPUSurface&, const GPUSwapChainDescriptor&);
     Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);

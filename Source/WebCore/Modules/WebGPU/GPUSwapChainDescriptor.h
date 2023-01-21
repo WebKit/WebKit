@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include "GPUCanvasCompositingAlphaMode.h"
 #include "GPUExtent3DDict.h"
 #include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
 #include <pal/graphics/WebGPU/WebGPUSwapChainDescriptor.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -39,17 +41,25 @@ struct GPUSwapChainDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            WebCore::convertToBacking(size),
-            sampleCount,
             WebCore::convertToBacking(format),
             convertTextureUsageFlagsToBacking(usage),
+            viewFormats.map([] (auto& viewFormat) {
+                return WebCore::convertToBacking(viewFormat);
+            }),
+            WebCore::convertToBacking(colorSpace),
+            WebCore::convertToBacking(compositingAlphaMode),
+            width,
+            height,
         };
     }
 
-    GPUExtent3D size;
-    GPUSize32 sampleCount { 1 };
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
-    GPUTextureUsageFlags usage { 0 };
+    GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
+    Vector<GPUTextureFormat> viewFormats;
+    GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
+    GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
+    uint32_t width { 0 };
+    uint32_t height { 0 };
 };
 
 }

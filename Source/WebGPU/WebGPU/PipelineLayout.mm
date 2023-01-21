@@ -80,6 +80,11 @@ bool PipelineLayout::operator!=(const PipelineLayout& other) const
 
 #pragma mark WGPU Stubs
 
+void wgpuPipelineLayoutRetain(WGPUPipelineLayout pipelineLayout)
+{
+    WebGPU::fromAPI(pipelineLayout).ref();
+}
+
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {
     WebGPU::fromAPI(pipelineLayout).deref();

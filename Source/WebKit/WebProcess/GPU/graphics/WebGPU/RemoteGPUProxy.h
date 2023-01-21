@@ -32,6 +32,7 @@
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
+#include <pal/graphics/WebGPU/WebGPUSurface.h>
 #include <wtf/Deque.h>
 
 namespace WebKit {
@@ -98,6 +99,10 @@ private:
     IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
     void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
+
+    Ref<PAL::WebGPU::Surface> createSurface(const PAL::WebGPU::SurfaceDescriptor&) final;
+
+    Ref<PAL::WebGPU::CompositorIntegration> createCompositorIntegration() final;
 
     void abandonGPUProcess();
 

@@ -136,6 +136,10 @@ private:
 
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&&);
 
+    void createSurface(const WebGPU::SurfaceDescriptor&, WebGPUIdentifier);
+
+    void createCompositorIntegration(WebGPUIdentifier);
+
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;

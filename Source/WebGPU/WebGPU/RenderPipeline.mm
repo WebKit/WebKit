@@ -429,11 +429,10 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         }
     }
 
-    MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
+    MTLDepthStencilDescriptor *depthStencilDescriptor = [MTLDepthStencilDescriptor new];
     if (auto depthStencil = descriptor.depthStencil) {
         mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = Texture::pixelFormat(depthStencil->format);
 
-        depthStencilDescriptor = [MTLDepthStencilDescriptor new];
         depthStencilDescriptor.depthCompareFunction = convertToMTLCompare(depthStencil->depthCompare);
         depthStencilDescriptor.depthWriteEnabled = depthStencil->depthWriteEnabled;
         populateStencilOperation(depthStencilDescriptor.frontFaceStencil, depthStencil->stencilFront, depthStencil->stencilReadMask, depthStencil->stencilWriteMask);
@@ -617,6 +616,11 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuRenderPipelineRetain(WGPURenderPipeline renderPipeline)
+{
+    WebGPU::fromAPI(renderPipeline).ref();
+}
 
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {

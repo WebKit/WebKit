@@ -33,10 +33,12 @@
 
 namespace PAL::WebGPU {
 
-TextureViewImpl::TextureViewImpl(WGPUTextureView textureView, ConvertToBackingContext& convertToBackingContext)
+TextureViewImpl::TextureViewImpl(WGPUTextureView textureView, ConvertToBackingContext& convertToBackingContext, Ownership ownership)
     : m_backing(textureView)
     , m_convertToBackingContext(convertToBackingContext)
 {
+    if (ownership == Ownership::Wrap)
+        wgpuTextureViewRetain(textureView);
 }
 
 TextureViewImpl::~TextureViewImpl()

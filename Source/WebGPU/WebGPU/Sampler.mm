@@ -186,6 +186,11 @@ void Sampler::setLabel(String&&)
 
 #pragma mark WGPU Stubs
 
+void wgpuSamplerRetain(WGPUSampler sampler)
+{
+    WebGPU::fromAPI(sampler).ref();
+}
+
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
     WebGPU::fromAPI(sampler).deref();
