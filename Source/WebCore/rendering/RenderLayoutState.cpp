@@ -305,7 +305,7 @@ LayoutStateDisabler::~LayoutStateDisabler()
 static bool shouldDisablePaintOffsetCacheForSubtree(RenderElement& subtreeLayoutRoot)
 {
     for (auto* renderer = &subtreeLayoutRoot; renderer; renderer = renderer->container()) {
-        if (renderer->hasTransform() || renderer->hasReflection())
+        if (renderer->isTransformed() || renderer->hasReflection())
             return true;
     }
     return false;

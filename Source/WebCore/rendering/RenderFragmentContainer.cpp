@@ -522,7 +522,7 @@ LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const
         rect.unite(overflow->layoutOverflowRect());
     }
 
-    bool hasTransform = box->hasTransform();
+    bool hasTransform = box->isTransformed();
     if (box->isInFlowPositioned() || hasTransform) {
         if (hasTransform)
             rect = box->layer()->currentTransform().mapRect(rect);

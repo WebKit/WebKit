@@ -125,7 +125,7 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
 FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxComputation::DecorationOptions& options, bool* boundingBoxValid) const
 {
     auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
-        if (!child.hasTransform() || !child.hasLayer())
+        if (!child.isTransformed() || !child.hasLayer())
             return std::nullopt;
 
         ASSERT(child.isSVGLayerAwareRenderer());
