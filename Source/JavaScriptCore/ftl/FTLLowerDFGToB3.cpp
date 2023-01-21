@@ -14532,6 +14532,9 @@ IGNORE_CLANG_WARNINGS_END
 
                 CCallHelpers::JumpList done;
 
+                // If we have a JIT failure, then we'll fallback to the operationCase. Keep the return code for the branch after the PatchPoint.
+                done.append(jit.branch32(CCallHelpers::Equal, returnGPR, CCallHelpers::TrustedImm32(static_cast<int32_t>(Yarr::JSRegExpResult::JITCodeFailure))));
+
                 auto failedMatch = jit.branch32(CCallHelpers::LessThan, returnGPR, CCallHelpers::TrustedImm32(0));
 
                 // Saved cached result.
@@ -14559,7 +14562,8 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->effects.writes = HeapRange::top();
 
         ValueFromBlock inlineresult = m_out.anchor(patchpoint);
-        m_out.jump(continuation);
+
+        m_out.branch(m_out.equal(patchpoint, m_out.constInt32(static_cast<int32_t>(Yarr::JSRegExpResult::JITCodeFailure))), unsure(operationCase), unsure(continuation));
 
         m_out.appendTo(operationCase, continuation);
         ValueFromBlock operationResult;
