@@ -144,6 +144,9 @@ public:
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock* getRegExpJITCodeBlock()
     {
+        if (m_state != JITCode)
+            return nullptr;
+
         return m_regExpJITCode.get();
     }
 #endif

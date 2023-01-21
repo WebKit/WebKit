@@ -2812,7 +2812,9 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
         m_jit.load32(MacroAssembler::Address(stringImplGPR, StringImpl::lengthMemoryOffset()), strLengthGPR);
 
         // Clobbering input registers is OK since we already called flushRegisters.
-        // slowCases jumps are already done. So we can modify baseGPR etc.
+        // All slowCases jumps, except the JIT failure check below are already done.
+        // The JIT failure is generated in the inlined code before we trash/reuse baseGPR (regT1).
+        // The other registers needed for the slow paths are globalObjectGPR and argumentGPR, which are preserved for the inlined result.
         Yarr::YarrJITRegisters yarrRegisters;
         yarrRegisters.input = stringDataGPR;
         yarrRegisters.index = stringImplGPR;
@@ -2829,6 +2831,8 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
         auto commonData = m_jit.jitCode()->dfgCommon();
         m_jit.move(TrustedImm32(0), yarrRegisters.index);
         Yarr::jitCompileInlinedTest(&m_graph.m_stackChecker, regExp->pattern(), regExp->flags(), Yarr::CharSize::Char8, &vm(), commonData->m_boyerMooreData, m_jit, yarrRegisters);
+
+        slowCases.append(m_jit.branch32(MacroAssembler::Equal, yarrRegisters.returnRegister, MacroAssembler::TrustedImm32(static_cast<int32_t>(Yarr::JSRegExpResult::JITCodeFailure))));
 
         auto failedMatch = m_jit.branch32(MacroAssembler::LessThan, yarrRegisters.returnRegister, TrustedImm32(0));
 
