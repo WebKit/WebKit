@@ -30,21 +30,9 @@
 
 namespace PAL::WebGPU {
 
-enum class PowerPreference : uint8_t {
+enum class PowerPreference : bool {
     LowPower,
     HighPerformance,
 };
 
 } // namespace PAL::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<PAL::WebGPU::PowerPreference> {
-    using values = EnumValues<
-        PAL::WebGPU::PowerPreference,
-        PAL::WebGPU::PowerPreference::LowPower,
-        PAL::WebGPU::PowerPreference::HighPerformance
-    >;
-};
-
-} // namespace WTF

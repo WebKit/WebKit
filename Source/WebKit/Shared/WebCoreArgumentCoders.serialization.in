@@ -1411,6 +1411,21 @@ struct WebCore::MediaStreamRequest {
     bool isUserGesturePriviledged;
     WebCore::PageIdentifier pageIdentifier;
 }
+[LegacyPopulateFrom=EmptyConstructor, CustomHeader] class WebCore::MediaTrackConstraintSetMap {
+    std::optional<WebCore::IntConstraint> m_width;
+    std::optional<WebCore::IntConstraint> m_height;
+    std::optional<WebCore::IntConstraint> m_sampleRate;
+    std::optional<WebCore::IntConstraint> m_sampleSize;
+    std::optional<WebCore::DoubleConstraint> m_aspectRatio;
+    std::optional<WebCore::DoubleConstraint> m_frameRate;
+    std::optional<WebCore::DoubleConstraint> m_volume;
+    std::optional<WebCore::BooleanConstraint> m_echoCancellation;
+    std::optional<WebCore::BooleanConstraint> m_displaySurface;
+    std::optional<WebCore::BooleanConstraint> m_logicalSurface;
+    std::optional<WebCore::StringConstraint> m_facingMode;
+    std::optional<WebCore::StringConstraint> m_deviceId;
+    std::optional<WebCore::StringConstraint> m_groupId;
+}
 #endif
 
 #if ! ENABLE(MEDIA_STREAM)
@@ -2748,3 +2763,49 @@ header: <WebCore/ScrollingStateNode.h>
     bool isFocused;
     Vector<size_t> snapAreaIndices;
 };
+
+#if ENABLE(ENCRYPTED_MEDIA)
+enum class WebCore::CDMEncryptionScheme : bool
+struct WebCore::CDMMediaCapability {
+    String contentType;
+    String robustness;
+    std::optional<WebCore::CDMEncryptionScheme> encryptionScheme;
+};
+enum class WebCore::CDMSessionType : uint8_t {
+    Temporary,
+    PersistentUsageRecord,
+    PersistentLicense
+};
+#endif
+
+struct WebCore::MediaSelectionOption {
+    WebCore::MediaSelectionOption::MediaType mediaType;
+    String displayName;
+    WebCore::MediaSelectionOption::LegibleType legibleType;
+};
+
+[Nested] enum class WebCore::MediaSelectionOption::MediaType : uint8_t {
+    Unknown,
+    Audio,
+    Subtitles,
+    Captions,
+    Metadata,
+};
+
+[Nested] enum class WebCore::MediaSelectionOption::LegibleType : uint8_t {
+    Regular,
+    LegibleOff,
+    LegibleAuto,
+};
+
+enum class WebCore::MediaDecodingType : uint8_t {
+    File,
+    MediaSource,
+    WebRTC
+};
+
+enum class WebCore::MediaEncodingType : bool;
+
+class WebCore::BufferSource {
+    Span<const uint8_t> span()
+}

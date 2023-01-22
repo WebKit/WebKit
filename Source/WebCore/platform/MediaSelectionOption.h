@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct MediaSelectionOption {
-    enum class MediaType {
+    enum class MediaType : uint8_t {
         Unknown,
         Audio,
         Subtitles,
@@ -38,7 +38,7 @@ struct MediaSelectionOption {
         Metadata,
     };
 
-    enum class LegibleType {
+    enum class LegibleType : uint8_t {
         Regular,
         LegibleOff,
         LegibleAuto,
@@ -55,50 +55,9 @@ struct MediaSelectionOption {
     MediaSelectionOption isolatedCopy() const & { return { mediaType, displayName.isolatedCopy(), legibleType }; }
     MediaSelectionOption isolatedCopy() && { return { mediaType, WTFMove(displayName).isolatedCopy(), legibleType }; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool WARN_UNUSED_RETURN decode(Decoder&, MediaSelectionOption&);
-
     MediaType mediaType { MediaType::Unknown };
     String displayName;
     LegibleType legibleType { LegibleType::Regular };
 };
 
-template<class Encoder> void MediaSelectionOption::encode(Encoder& encoder) const
-{
-    encoder << mediaType;
-    encoder << displayName;
-    encoder << legibleType;
-}
-
-template<class Decoder> bool MediaSelectionOption::decode(Decoder& decoder, MediaSelectionOption& option)
-{
-    return decoder.decode(option.mediaType)
-        && decoder.decode(option.displayName)
-        && decoder.decode(option.legibleType);
-}
-
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaSelectionOption::MediaType> {
-    using values = EnumValues<
-        WebCore::MediaSelectionOption::MediaType,
-        WebCore::MediaSelectionOption::MediaType::Unknown,
-        WebCore::MediaSelectionOption::MediaType::Audio,
-        WebCore::MediaSelectionOption::MediaType::Subtitles,
-        WebCore::MediaSelectionOption::MediaType::Captions,
-        WebCore::MediaSelectionOption::MediaType::Metadata
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MediaSelectionOption::LegibleType> {
-    using values = EnumValues<
-        WebCore::MediaSelectionOption::LegibleType,
-        WebCore::MediaSelectionOption::LegibleType::Regular,
-        WebCore::MediaSelectionOption::LegibleType::LegibleOff,
-        WebCore::MediaSelectionOption::LegibleType::LegibleAuto
-    >;
-};
-
-} // namespace WTF
