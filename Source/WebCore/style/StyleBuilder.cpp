@@ -422,22 +422,29 @@ RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValueWithVariableRe
 
     // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
     bool hasCycles = false;
-    auto checkForCycles = [&](auto& propertyDependencies) {
+    bool isFontDependent = false;
+
+    auto checkDependencies = [&](auto& propertyDependencies) {
         for (auto property : propertyDependencies) {
             if (m_state.m_inProgressProperties.get(property)) {
                 m_state.m_inUnitCycleProperties.set(property);
                 hasCycles = true;
             }
+            if (property == CSSPropertyFontSize)
+                isFontDependent = true;
         }
     };
 
-    checkForCycles(dependencies.properties);
+    checkDependencies(dependencies.properties);
 
     if (m_state.element() == m_state.document().documentElement())
-        checkForCycles(dependencies.rootProperties);
+        checkDependencies(dependencies.rootProperties);
 
     if (hasCycles)
         return nullptr;
+
+    if (isFontDependent)
+        m_state.updateFont();
 
     return CSSPropertyParser::parseTypedCustomPropertyValue(name, syntax, resolvedData->tokens(), m_state, variableReferenceValue.context());
 }
