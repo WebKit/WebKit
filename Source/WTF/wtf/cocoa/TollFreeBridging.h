@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #ifdef __OBJC__
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
+#import <wtf/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
 namespace WTF {
@@ -56,6 +57,7 @@ WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFSet, NSSet)
 WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFString, NSString)
 WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFTimeZone, NSTimeZone)
 WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(CFURL, NSURL)
+WTF_DECLARE_TOLL_FREE_BRIDGING_TRAITS(IOSurface, IOSurface)
 
 template<> struct CFTollFreeBridgingTraits<CFBooleanRef> { using BridgedType = NSNumber *; };
 

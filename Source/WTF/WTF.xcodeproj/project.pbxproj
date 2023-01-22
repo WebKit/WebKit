@@ -50,6 +50,7 @@
 		1C96836426BE74DF00A2A2F9 /* LogInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836226BE74DF00A2A2F9 /* LogInitialization.cpp */; };
 		1C96836726BE754600A2A2F9 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836526BE754600A2A2F9 /* Logging.cpp */; };
 		1C96836926BE76B600A2A2F9 /* LoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836826BE76B600A2A2F9 /* LoggingCocoa.mm */; };
+		1C97FF7A297CD119006422AA /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C97FF79297CD110006422AA /* IOSurfaceSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */; };
 		1CF18F3B26BB579E004B1722 /* LogChannels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CF18F3926BB579E004B1722 /* LogChannels.cpp */; };
 		1CFD5D3D2851AB3E00A0E30B /* EnumeratedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1068,6 +1069,7 @@
 		1C96836526BE754600A2A2F9 /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		1C96836626BE754600A2A2F9 /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		1C96836826BE76B600A2A2F9 /* LoggingCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingCocoa.mm; sourceTree = "<group>"; };
+		1C97FF79297CD110006422AA /* IOSurfaceSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
 		1CA85CA7241B0B110071C2F5 /* RuntimeApplicationChecksCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecksCocoa.h; sourceTree = "<group>"; };
 		1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecksCocoa.cpp; sourceTree = "<group>"; };
 		1CCDB1491E566626006C73C0 /* TextBreakIteratorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCF.h; sourceTree = "<group>"; };
@@ -2786,6 +2788,7 @@
 			children = (
 				DDF306CA27C08654006A526F /* CFXPCBridgeSPI.h */,
 				DDF306C727C08654006A526F /* CrashReporterClientSPI.h */,
+				1C97FF79297CD110006422AA /* IOSurfaceSPI.h */,
 				DDF306CB27C08654006A526F /* MachVMSPI.h */,
 				DDF306CE27C08654006A526F /* NSLocaleSPI.h */,
 				DDF306CD27C08654006A526F /* NSObjCRuntimeSPI.h */,
@@ -3050,6 +3053,7 @@
 				DD3DC86227A4BF8E007E5B61 /* Int128.h in Headers */,
 				DDF307E627C086DF006A526F /* IntegerToStringConversion.h in Headers */,
 				DD3DC86E27A4BF8E007E5B61 /* InterferenceGraph.h in Headers */,
+				1C97FF7A297CD119006422AA /* IOSurfaceSPI.h in Headers */,
 				DD3DC8BA27A4BF8E007E5B61 /* IsoMalloc.h in Headers */,
 				DD3DC89827A4BF8E007E5B61 /* IsoMallocInlines.h in Headers */,
 				DD3DC8B227A4BF8E007E5B61 /* IterationStatus.h in Headers */,
