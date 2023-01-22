@@ -96,6 +96,7 @@ typedef enum {
 
 @interface NSTextAttachment ()
 - (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
+@property (strong) NSString *accessibilityLabel;
 @end
 
 @interface NSTextAlternatives : NSObject

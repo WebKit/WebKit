@@ -169,3 +169,37 @@ TEST(WKWebView, GetContentsWithOpticallySizedFontShouldReturnAttributedString)
 
     TestWebKitAPI::Util::run(&finished);
 }
+
+TEST(WKWebView, AttributedStringAccessibilityLabel)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+
+    NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<html><body><b>Hello</b> <img src='file://%@' width='100' height='100' alt='alt text'> <img src='file://%@' width='100' height='100' alt='aria label text'></body></html>", imagePath, imagePath]];
+
+    __block bool finished = false;
+
+    [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
+        EXPECT_NOT_NULL(attributedString);
+        EXPECT_NOT_NULL(documentAttributes);
+        EXPECT_NULL(error);
+
+        __block bool foundImage1 { NO };
+        __block bool foundImage2 { NO };
+        [attributedString enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(id value, NSRange attributeRange, BOOL* stop) {
+            if ([value isKindOfClass:NSTextAttachment.class]) {
+                if ([[value accessibilityLabel] isEqualToString:@"alt text"])
+                    foundImage1 = YES;
+                if ([[value accessibilityLabel] isEqualToString:@"aria label text"])
+                    foundImage2 = YES;
+            }
+        }];
+
+        EXPECT_TRUE(foundImage1);
+        EXPECT_TRUE(foundImage2);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
