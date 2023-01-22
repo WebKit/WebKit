@@ -307,6 +307,19 @@ AllowViewportShrinkToFitContent:
     WebCore:
       default: true
 
+AllowWebGLInWorkers:
+  type: bool
+  status: stable
+  humanReadableName: "Allow WebGL in Web Workers"
+  condition: ENABLE(WEBGL)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 AllowsAirPlayForMediaPlayback:
   type: bool
   status: embedder
