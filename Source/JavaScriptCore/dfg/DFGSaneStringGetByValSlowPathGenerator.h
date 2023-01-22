@@ -52,28 +52,28 @@ private:
     {
         linkFrom(jit);
         
-        MacroAssembler::Jump isNeg = jit->m_jit.branch32(
+        MacroAssembler::Jump isNeg = jit->branch32(
             MacroAssembler::LessThan, m_propertyReg, MacroAssembler::TrustedImm32(0));
         
 #if USE(JSVALUE64)
-        jit->m_jit.move(
+        jit->move(
             MacroAssembler::TrustedImm64(JSValue::encode(jsUndefined())), m_resultRegs.gpr());
 #else
-        jit->m_jit.move(
+        jit->move(
             MacroAssembler::TrustedImm32(JSValue::UndefinedTag), m_resultRegs.tagGPR());
-        jit->m_jit.move(
+        jit->move(
             MacroAssembler::TrustedImm32(0), m_resultRegs.payloadGPR());
 #endif
         jumpTo(jit);
         
-        isNeg.link(&jit->m_jit);
+        isNeg.link(jit);
 
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         jit->callOperation(operationGetByValStringInt, extractResult(m_resultRegs), m_globalObject, m_baseReg, m_propertyReg);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
-        jit->m_jit.exceptionCheck();
+        jit->exceptionCheck();
         
         jumpTo(jit);
     }

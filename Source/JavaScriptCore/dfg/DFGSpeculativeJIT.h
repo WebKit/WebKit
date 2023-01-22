@@ -70,7 +70,8 @@ enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
-class SpeculativeJIT {
+class SpeculativeJIT : public JITCompiler {
+    using Base = JITCompiler;
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
     friend struct OSRExit;
 private:
@@ -109,13 +110,11 @@ private:
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
     
 public:
-    SpeculativeJIT(JITCompiler&);
+    SpeculativeJIT(Graph& dfg);
     ~SpeculativeJIT();
 
-    VM& vm()
-    {
-        return m_jit.vm();
-    }
+    void compile();
+    void compileFunction();
 
     struct TrustedImmPtr {
         template <typename T>
@@ -156,7 +155,7 @@ public:
         MacroAssembler::TrustedImmPtr m_value;
     };
 
-    bool compile();
+    void compileBody();
     
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
@@ -226,7 +225,7 @@ public:
     GPRReg allocate()
     {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-        m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
+        addRegisterAllocationAtOffset(debugOffset());
 #endif
         VirtualRegister spillMe;
         GPRReg gpr = m_gprs.allocate(spillMe);
@@ -245,7 +244,7 @@ public:
         if (specific == InvalidGPRReg)
             allocate();
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-        m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
+        addRegisterAllocationAtOffset(debugOffset());
 #endif
         VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
         if (spillMe.isValid()) {
@@ -266,7 +265,7 @@ public:
     FPRReg fprAllocate()
     {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-        m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
+        addRegisterAllocationAtOffset(debugOffset());
 #endif
         VirtualRegister spillMe;
         FPRReg fpr = m_fprs.allocate(spillMe);
@@ -353,6 +352,9 @@ public:
     void noticeOSRBirth(Node*);
     void bail(AbortReason);
     void compileCurrentBlock();
+
+    void exceptionCheck();
+    CallSiteIndex recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex);
 
     void checkArgumentTypes();
 
@@ -452,34 +454,15 @@ public:
 
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)
-    GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
-    {
-        return m_jit.boxDouble(fpr, gpr);
-    }
-    FPRReg unboxDouble(GPRReg gpr, GPRReg resultGPR, FPRReg fpr)
-    {
-        return m_jit.unboxDouble(gpr, resultGPR, fpr);
-    }
+    using Base::boxDouble;
     GPRReg boxDouble(FPRReg fpr)
     {
         return boxDouble(fpr, allocate());
     }
     
+    using Base::boxInt52;
     void boxInt52(GPRReg sourceGPR, GPRReg targetGPR, DataFormat);
-#elif USE(JSVALUE32_64)
-    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
-    {
-        m_jit.boxDouble(fpr, tagGPR, payloadGPR);
-    }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr)
-    {
-        m_jit.unboxDouble(tagGPR, payloadGPR, fpr);
-    }
 #endif
-    void boxDouble(FPRReg fpr, JSValueRegs regs)
-    {
-        m_jit.boxDouble(fpr, regs);
-    }
 
     // Spill a VirtualRegister to the JSStack.
     void spill(VirtualRegister spillMe)
@@ -502,27 +485,27 @@ public:
         case DataFormatStorage: {
             // This is special, since it's not a JS value - as in it's not visible to JS
             // code.
-            m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
+            storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, DataFormatStorage);
             return;
         }
 
         case DataFormatInt32: {
-            m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
+            store32(info.gpr(), JITCompiler::payloadFor(spillMe));
             info.spill(m_stream, spillMe, DataFormatInt32);
             return;
         }
 
 #if USE(JSVALUE64)
         case DataFormatDouble: {
-            m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
+            storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, DataFormatDouble);
             return;
         }
 
         case DataFormatInt52:
         case DataFormatStrictInt52: {
-            m_jit.store64(info.gpr(), JITCompiler::addressFor(spillMe));
+            store64(info.gpr(), JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, spillFormat);
             return;
         }
@@ -535,23 +518,23 @@ public:
             // We need to box int32 and cell values ...
             // but on JSVALUE64 boxing a cell is a no-op!
             if (spillFormat == DataFormatInt32)
-                m_jit.or64(GPRInfo::numberTagRegister, reg);
+                or64(GPRInfo::numberTagRegister, reg);
             
             // Spill the value, and record it as spilled in its boxed form.
-            m_jit.store64(reg, JITCompiler::addressFor(spillMe));
+            store64(reg, JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, (DataFormat)(spillFormat | DataFormatJS));
             return;
 #elif USE(JSVALUE32_64)
         case DataFormatCell:
         case DataFormatBoolean: {
-            m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
+            store32(info.gpr(), JITCompiler::payloadFor(spillMe));
             info.spill(m_stream, spillMe, spillFormat);
             return;
         }
 
         case DataFormatDouble: {
             // On JSVALUE32_64 boxing a double is a no-op.
-            m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
+            storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, DataFormatDouble);
             return;
         }
@@ -559,8 +542,8 @@ public:
         default:
             // The following code handles JSValues.
             RELEASE_ASSERT(spillFormat & DataFormatJS);
-            m_jit.store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
-            m_jit.store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
+            store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
+            store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
             info.spill(m_stream, spillMe, spillFormat);
             return;
 #endif
@@ -626,13 +609,13 @@ public:
     {
         switch (op) {
         case ArithBitAnd:
-            m_jit.and32(Imm32(imm), op1, result);
+            and32(Imm32(imm), op1, result);
             break;
         case ArithBitOr:
-            m_jit.or32(Imm32(imm), op1, result);
+            or32(Imm32(imm), op1, result);
             break;
         case ArithBitXor:
-            m_jit.xor32(Imm32(imm), op1, result);
+            xor32(Imm32(imm), op1, result);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -642,13 +625,13 @@ public:
     {
         switch (op) {
         case ArithBitAnd:
-            m_jit.and32(op1, op2, result);
+            and32(op1, op2, result);
             break;
         case ArithBitOr:
-            m_jit.or32(op1, op2, result);
+            or32(op1, op2, result);
             break;
         case ArithBitXor:
-            m_jit.xor32(op1, op2, result);
+            xor32(op1, op2, result);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -658,13 +641,13 @@ public:
     {
         switch (op) {
         case ArithBitRShift:
-            m_jit.rshift32(op1, Imm32(shiftAmount), result);
+            rshift32(op1, Imm32(shiftAmount), result);
             break;
         case ArithBitLShift:
-            m_jit.lshift32(op1, Imm32(shiftAmount), result);
+            lshift32(op1, Imm32(shiftAmount), result);
             break;
         case BitURShift:
-            m_jit.urshift32(op1, Imm32(shiftAmount), result);
+            urshift32(op1, Imm32(shiftAmount), result);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -674,13 +657,13 @@ public:
     {
         switch (op) {
         case ArithBitRShift:
-            m_jit.rshift32(op1, shiftAmount, result);
+            rshift32(op1, shiftAmount, result);
             break;
         case ArithBitLShift:
-            m_jit.lshift32(op1, shiftAmount, result);
+            lshift32(op1, shiftAmount, result);
             break;
         case BitURShift:
-            m_jit.urshift32(op1, shiftAmount, result);
+            urshift32(op1, shiftAmount, result);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -777,13 +760,13 @@ public:
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
         if (format == DataFormatInt32) {
-            m_jit.jitAssertIsInt32(reg);
+            jitAssertIsInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
             info.initInt32(node, node->refCount(), reg);
         } else {
 #if USE(JSVALUE64)
             RELEASE_ASSERT(format == DataFormatJSInt32);
-            m_jit.jitAssertIsJSInt32(reg);
+            jitAssertIsJSInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
             info.initJSValue(node, node->refCount(), reg, format);
 #elif USE(JSVALUE32_64)
@@ -849,7 +832,7 @@ public:
     void jsValueResult(GPRReg reg, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
         if (format == DataFormatJSInt32)
-            m_jit.jitAssertIsJSInt32(reg);
+            jitAssertIsJSInt32(reg);
         
         if (mode == CallUseChildren)
             useChildren(node);
@@ -930,7 +913,7 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation, ResultRegType result, Args... args)
     {
-        m_jit.setupArguments<OperationType>(args...);
+        setupArguments<OperationType>(args...);
         return appendCallSetResult(operation, result);
     }
 
@@ -940,7 +923,7 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation, Args... args)
     {
-        m_jit.setupArguments<OperationType>(args...);
+        setupArguments<OperationType>(args...);
         return appendCall(operation);
     }
 
@@ -950,7 +933,7 @@ public:
     void>
     callOperation(CCallHelpers::Address address, ResultRegType result, Args... args)
     {
-        m_jit.setupArgumentsForIndirectCall<OperationType>(address, args...);
+        setupArgumentsForIndirectCall<OperationType>(address, args...);
         appendCallSetResult(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset), result);
     }
 
@@ -960,15 +943,15 @@ public:
     void>
     callOperation(CCallHelpers::Address address, Args... args)
     {
-        m_jit.setupArgumentsForIndirectCall<OperationType>(address, args...);
+        setupArgumentsForIndirectCall<OperationType>(address, args...);
         appendCall(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset));
     }
 
     JITCompiler::Call callThrowOperationWithCallFrameRollback(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
     {
-        m_jit.setupArguments<V_JITOperation_Cb>(codeBlockGPR);
+        setupArguments<V_JITOperation_Cb>(codeBlockGPR);
         JITCompiler::Call call = appendCall(operation);
-        m_jit.exceptionJumpWithCallFrameRollback();
+        exceptionJumpWithCallFrameRollback();
         return call;
     }
 
@@ -985,44 +968,44 @@ public:
         // anyway since it was not being updated by JIT'ed code by design.
 
         for (unsigned i = 0; i < sizeof(void*) / 4; i++)
-            m_jit.store32(TrustedImm32(0xbadbeef), reinterpret_cast<char*>(&vm().topCallFrame) + i * 4);
+            store32(TrustedImm32(0xbadbeef), reinterpret_cast<char*>(&vm().topCallFrame) + i * 4);
 #endif
-        m_jit.prepareCallOperation(vm());
+        prepareCallOperation(vm());
     }
 
     // These methods add call instructions, optionally setting results, and optionally rolling back the call frame on an exception.
     JITCompiler::Call appendCall(const CodePtr<CFunctionPtrTag> function)
     {
         prepareForExternalCall();
-        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        return m_jit.appendCall(function);
+        emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        return Base::appendCall(function);
     }
 
     void appendCall(CCallHelpers::Address address)
     {
         prepareForExternalCall();
-        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        m_jit.appendCall(address);
+        emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        Base::appendCall(address);
     }
 
     JITCompiler::Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
         prepareForExternalCall();
-        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        return m_jit.appendOperationCall(function);
+        emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        return Base::appendOperationCall(function);
     }
 
     void appendCallSetResult(CCallHelpers::Address address, GPRReg result)
     {
         appendCall(address);
         if (result != InvalidGPRReg)
-            m_jit.move(GPRInfo::returnValueGPR, result);
+            move(GPRInfo::returnValueGPR, result);
     }
 
     void appendCallSetResult(CCallHelpers::Address address, GPRReg result1, GPRReg result2)
     {
         appendCall(address);
-        m_jit.setupResults(result1, result2);
+        setupResults(result1, result2);
     }
 
     void appendCallSetResult(CCallHelpers::Address address, JSValueRegs resultRegs)
@@ -1038,14 +1021,14 @@ public:
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidGPRReg)
-            m_jit.move(GPRInfo::returnValueGPR, result);
+            move(GPRInfo::returnValueGPR, result);
         return call;
     }
 
     JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result1, GPRReg result2)
     {
         JITCompiler::Call call = appendCall(function);
-        m_jit.setupResults(result1, result2);
+        setupResults(result1, result2);
         return call;
     }
 
@@ -1062,103 +1045,116 @@ public:
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg)
-            m_jit.moveDouble(FPRInfo::returnValueFPR, result);
+            moveDouble(FPRInfo::returnValueFPR, result);
         return call;
     }
 
+    using Base::branchDouble;
     void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchDouble(cond, left, right), destination);
+        return addBranch(Base::branchDouble(cond, left, right), destination);
     }
     
+    using Base::branchDoubleNonZero;
     void branchDoubleNonZero(FPRReg value, FPRReg scratch, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchDoubleNonZero(value, scratch), destination);
+        return addBranch(Base::branchDoubleNonZero(value, scratch), destination);
     }
 
+    using Base::branchDoubleZeroOrNaN;
     void branchDoubleZeroOrNaN(FPRReg value, FPRReg scratch, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchDoubleZeroOrNaN(value, scratch), destination);
+        return addBranch(Base::branchDoubleZeroOrNaN(value, scratch), destination);
     }
     
+    using Base::branch32;
     template<typename T, typename U>
     void branch32(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
-        return addBranch(m_jit.branch32(cond, left, right), destination);
+        return addBranch(Base::branch32(cond, left, right), destination);
     }
     
+    using Base::branchTest32;
     template<typename T, typename U>
     void branchTest32(JITCompiler::ResultCondition cond, T value, U mask, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchTest32(cond, value, mask), destination);
+        return addBranch(Base::branchTest32(cond, value, mask), destination);
     }
     
     template<typename T>
     void branchTest32(JITCompiler::ResultCondition cond, T value, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchTest32(cond, value), destination);
+        return addBranch(Base::branchTest32(cond, value), destination);
     }
     
 #if USE(JSVALUE64)
+    using Base::branch64;
     template<typename T, typename U>
     void branch64(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
-        return addBranch(m_jit.branch64(cond, left, right), destination);
+        return addBranch(Base::branch64(cond, left, right), destination);
     }
 #endif
     
+    using Base::branch8;
     template<typename T, typename U>
     void branch8(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
-        return addBranch(m_jit.branch8(cond, left, right), destination);
+        return addBranch(Base::branch8(cond, left, right), destination);
     }
     
+    using Base::branchPtr;
     template<typename T, typename U>
     void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchPtr(cond, left, right), destination);
+        return addBranch(Base::branchPtr(cond, left, right), destination);
     }
 
+    using Base::branchLinkableConstant;
     template<typename T, typename U>
     void branchLinkableConstant(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchLinkableConstant(cond, left, right), destination);
+        return addBranch(Base::branchLinkableConstant(cond, left, right), destination);
     }
     
+    using Base::branchTestPtr;
     template<typename T, typename U>
     void branchTestPtr(JITCompiler::ResultCondition cond, T value, U mask, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchTestPtr(cond, value, mask), destination);
+        return addBranch(Base::branchTestPtr(cond, value, mask), destination);
     }
     
     template<typename T>
     void branchTestPtr(JITCompiler::ResultCondition cond, T value, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchTestPtr(cond, value), destination);
+        return addBranch(Base::branchTestPtr(cond, value), destination);
     }
     
+    using Base::branchTest8;
     template<typename T, typename U>
     void branchTest8(JITCompiler::ResultCondition cond, T value, U mask, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchTest8(cond, value, mask), destination);
+        return addBranch(Base::branchTest8(cond, value, mask), destination);
     }
     
     template<typename T>
     void branchTest8(JITCompiler::ResultCondition cond, T value, BasicBlock* destination)
     {
-        return addBranch(m_jit.branchTest8(cond, value), destination);
+        return addBranch(Base::branchTest8(cond, value), destination);
     }
     
     enum FallThroughMode {
         AtFallThroughPoint,
         ForceJump
     };
+
+    using Base::jump;
     void jump(BasicBlock* destination, FallThroughMode fallThroughMode = AtFallThroughPoint)
     {
         if (destination == nextBlock()
             && fallThroughMode == AtFallThroughPoint)
             return;
-        addBranch(m_jit.jump(), destination);
+        addBranch(jump(), destination);
     }
     
     void addBranch(const MacroAssembler::Jump& jump, BasicBlock* destination)
@@ -1580,32 +1576,35 @@ public:
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);
     void blessBoolean(GPRReg);
-    
+
+    using Base::emitAllocateJSCell;
     // Allocator for a cell of a specific size.
     template <typename StructureType> // StructureType can be GPR or ImmPtr.
     void emitAllocateJSCell(
         GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
         GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
+        Base::emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
     }
 
+    using Base::emitAllocateJSObject;
     // Allocator for an object of a specific size.
     template <typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObject(
         GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
         StorageType storage, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateJSObject(
+        Base::emitAllocateJSObject(
             resultGPR, allocator, allocatorGPR, structure, storage, scratchGPR, slowPath);
     }
 
+    using Base::emitAllocateJSObjectWithKnownSize;
     template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObjectWithKnownSize(
         GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1,
         GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath, size_t size)
     {
-        m_jit.emitAllocateJSObjectWithKnownSize<ClassType>(vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath, size);
+        emitAllocateJSObjectWithKnownSize<ClassType>(vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath, size);
     }
 
     // Convenience allocator for a built-in object.
@@ -1613,13 +1612,14 @@ public:
     void emitAllocateJSObject(GPRReg resultGPR, StructureType structure, StorageType storage,
         GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateJSObject<ClassType>(vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath);
+        emitAllocateJSObject<ClassType>(vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath);
     }
 
+    using Base::emitAllocateVariableSizedJSObject;
     template <typename ClassType, typename StructureType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateVariableSizedJSObject(GPRReg resultGPR, StructureType structure, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateVariableSizedJSObject<ClassType>(vm(), resultGPR, structure, allocationSize, scratchGPR1, scratchGPR2, slowPath);
+        emitAllocateVariableSizedJSObject<ClassType>(vm(), resultGPR, structure, allocationSize, scratchGPR1, scratchGPR2, slowPath);
     }
 
     void emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure, GPRReg storageGPR, unsigned numElements, unsigned vectorLength);
@@ -1779,8 +1779,6 @@ public:
         return generationInfo(edge.node());
     }
 
-    // The JIT, while also provides MacroAssembler functionality.
-    JITCompiler& m_jit;
     Graph& m_graph;
 
     // The current node being generated.

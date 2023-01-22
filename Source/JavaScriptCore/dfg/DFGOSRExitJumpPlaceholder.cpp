@@ -43,7 +43,7 @@ void OSRExitJumpPlaceholder::fill(JITCompiler& jit, const MacroAssembler::JumpLi
 
 void OSRExitJumpPlaceholder::fill(SpeculativeJIT* jit, const MacroAssembler::JumpList& jumps)
 {
-    fill(jit->m_jit, jumps);
+    fill(*jit, jumps);
 }
 
 } } // namespace JSC::DFG

@@ -46,14 +46,14 @@ public:
     virtual ~SlowPathGenerator() { }
     void generate(SpeculativeJIT* jit)
     {
-        m_label = jit->m_jit.label();
+        m_label = jit->label();
         jit->m_currentNode = m_currentNode;
         jit->m_outOfLineStreamIndex = m_streamIndex;
         jit->m_origin = m_origin;
         generateInternal(jit);
         jit->m_outOfLineStreamIndex = std::nullopt;
         if (ASSERT_ENABLED)
-            jit->m_jit.abortWithReason(DFGSlowPathGeneratorFellThrough);
+            jit->abortWithReason(DFGSlowPathGeneratorFellThrough);
     }
     MacroAssembler::Label label() const { return m_label; }
     virtual MacroAssembler::Call call() const
@@ -79,19 +79,19 @@ public:
     JumpingSlowPathGenerator(JumpType from, SpeculativeJIT* jit)
         : SlowPathGenerator(jit)
         , m_from(from)
-        , m_to(jit->m_jit.label())
+        , m_to(jit->label())
     {
     }
     
 protected:
     void linkFrom(SpeculativeJIT* jit)
     {
-        m_from.link(&jit->m_jit);
+        m_from.link(jit);
     }
     
     void jumpTo(SpeculativeJIT* jit)
     {
-        jit->m_jit.jump().linkTo(m_to, &jit->m_jit);
+        jit->jump().linkTo(m_to, jit);
     }
 
     JumpType m_from;
@@ -145,7 +145,7 @@ protected:
                 jit->silentFill(m_plans[i]);
         }
         if (m_exceptionCheckRequirement == ExceptionCheckRequirement::CheckNeeded)
-            jit->m_jit.exceptionCheck();
+            jit->exceptionCheck();
         this->jumpTo(jit);
     }
 
@@ -228,7 +228,7 @@ private:
     {
         this->linkFrom(jit);
         for (unsigned i = numberOfAssignments; i--;)
-            jit->m_jit.move(m_source[i], m_destination[i]);
+            jit->move(m_source[i], m_destination[i]);
         this->jumpTo(jit);
     }
 
@@ -284,7 +284,7 @@ private:
     void unpackAndGenerate(SpeculativeJIT* jit, std::index_sequence<ArgumentsIndex...>)
     {
         this->setUp(jit);
-        m_stubInfoConstant.materialize(jit->m_jit, m_stubInfoGPR);
+        m_stubInfoConstant.materialize(*jit, m_stubInfoGPR);
         if constexpr (std::is_same<ResultType, NoResultTag>::value)
             jit->callOperation<FunctionType>(m_slowPathOperationAddress, std::get<ArgumentsIndex>(m_arguments)...);
         else

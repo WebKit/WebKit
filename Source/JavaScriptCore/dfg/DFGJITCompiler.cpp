@@ -39,7 +39,6 @@
 #include "DFGThunks.h"
 #include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
-#include "MaxFrameExtentForSlowPathCall.h"
 #include "ProbeContext.h"
 #include "ThunkGenerators.h"
 #include "VM.h"
@@ -172,15 +171,6 @@ void JITCompiler::compileEntryExecutionFlag()
     if (m_graph.m_plan.canTierUpAndOSREnter())
         store8(TrustedImm32(0), &m_jitCode->neverExecutedEntry);
 #endif // ENABLE(FTL_JIT)
-}
-
-void JITCompiler::compileBody()
-{
-    // We generate the speculative code path, followed by OSR exit code to return
-    // to the old JIT code if speculations fail.
-
-    bool compiledSpeculative = m_speculative->compile();
-    ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 }
 
 void JITCompiler::link(LinkBuffer& linkBuffer)
@@ -383,185 +373,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_jitCode->m_linkerIR = LinkerIR(WTFMove(m_graph.m_constantPool));
 }
 
-static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& stackOverflow)
-{
-    int frameTopOffset = virtualRegisterForLocal(jit.graph().requiredRegisterCountForExecutionAndExit() - 1).offset() * sizeof(Register);
-    unsigned maxFrameSize = -frameTopOffset;
-
-    jit.addPtr(MacroAssembler::TrustedImm32(frameTopOffset), GPRInfo::callFrameRegister, GPRInfo::regT1);
-    if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
-        stackOverflow.append(jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, GPRInfo::callFrameRegister));
-    stackOverflow.append(jit.branchPtr(MacroAssembler::Above, MacroAssembler::AbsoluteAddress(jit.vm().addressOfSoftStackLimit()), GPRInfo::regT1));
-}
-
-void JITCompiler::compile()
-{
-    makeCatchOSREntryBuffer();
-
-    setStartOfCode();
-    compileEntry();
-    m_speculative = makeUnique<SpeculativeJIT>(*this);
-
-    // Plant a check that sufficient space is available in the JSStack.
-    JumpList stackOverflow;
-    emitStackOverflowCheck(*this, stackOverflow);
-
-    addPtr(TrustedImm32(-(m_graph.frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister, stackPointerRegister);
-    checkStackPointerAlignment();
-    compileSetupRegistersForEntry();
-    compileEntryExecutionFlag();
-    compileBody();
-    setEndOfMainPath();
-
-    // === Footer code generation ===
-    //
-    // Generate the stack overflow handling; if the stack check in the entry head fails,
-    // we need to call out to a helper function to throw the StackOverflowError.
-    stackOverflow.link(this);
-
-    emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
-
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
-    m_speculative->callThrowOperationWithCallFrameRollback(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
-
-    // Generate slow path code.
-    m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
-    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
-    
-    linkOSRExits();
-    
-    // Create OSR entry trampolines if necessary.
-    m_speculative->createOSREntries();
-    setEndOfCode();
-
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
-    if (linkBuffer->didFailToAllocate()) {
-        m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
-        return;
-    }
-    
-    link(*linkBuffer);
-    m_speculative->linkOSREntries(*linkBuffer);
-
-    disassemble(*linkBuffer);
-
-    auto codeRef = FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
-    m_jitCode->initializeCodeRefForDFG(codeRef, codeRef.code());
-    m_jitCode->variableEventStream = m_speculative->finalizeEventStream();
-
-    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer));
-    m_graph.m_plan.setFinalizer(WTFMove(finalizer));
-}
-
-void JITCompiler::compileFunction()
-{
-    makeCatchOSREntryBuffer();
-
-    setStartOfCode();
-    Label entryLabel(this);
-    compileEntry();
-
-    // === Function header code generation ===
-    // This is the main entry point, without performing an arity check.
-    // If we needed to perform an arity check we will already have moved the return address,
-    // so enter after this.
-    Label fromArityCheck(this);
-    // Plant a check that sufficient space is available in the JSStack.
-    JumpList stackOverflow;
-    emitStackOverflowCheck(*this, stackOverflow);
-
-    // Move the stack pointer down to accommodate locals
-    addPtr(TrustedImm32(-(m_graph.frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister, stackPointerRegister);
-    checkStackPointerAlignment();
-
-    compileSetupRegistersForEntry();
-    compileEntryExecutionFlag();
-
-    // === Function body code generation ===
-    m_speculative = makeUnique<SpeculativeJIT>(*this);
-    compileBody();
-    setEndOfMainPath();
-
-    // === Function footer code generation ===
-    //
-    // The fast entry point into a function does not check the correct number of arguments
-    // have been passed to the call (we only use the fast entry point where we can statically
-    // determine the correct number of arguments have been passed, or have already checked).
-    // In cases where an arity check is necessary, we enter here.
-    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    Call callArityFixup;
-    Label arityCheck;
-    bool requiresArityFixup = m_codeBlock->numParameters() != 1;
-    if (requiresArityFixup) {
-        arityCheck = label();
-        compileEntry();
-
-        unsigned numberOfParameters = m_codeBlock->numParameters();
-        load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
-        branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(numberOfParameters)).linkTo(fromArityCheck, this);
-
-        getArityPadding(vm(), numberOfParameters, GPRInfo::regT1, GPRInfo::regT0, GPRInfo::regT2, GPRInfo::regT3, stackOverflow);
-
-        emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
-        move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-        callArityFixup = nearCall();
-        jump(fromArityCheck);
-    } else
-        arityCheck = entryLabel;
-
-    // Generate code to perform the stack overflow handling (if the stack check in
-    // the function header fails), and generate the entry point with arity check.
-    //
-    // Generate the stack overflow handling; if the stack check in the function head fails,
-    // we need to call out to a helper function to throw the StackOverflowError.
-    stackOverflow.link(this);
-
-    emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
-
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
-    m_speculative->callThrowOperationWithCallFrameRollback(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
-
-    // Generate slow path code.
-    m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
-    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
-    
-    linkOSRExits();
-    
-    // Create OSR entry trampolines if necessary.
-    m_speculative->createOSREntries();
-    setEndOfCode();
-
-    // === Link ===
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
-    if (linkBuffer->didFailToAllocate()) {
-        m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
-        return;
-    }
-    link(*linkBuffer);
-    m_speculative->linkOSREntries(*linkBuffer);
-    
-    if (requiresArityFixup)
-        linkBuffer->link(callArityFixup, vm().getCTIStub(arityFixupGenerator).code());
-
-    disassemble(*linkBuffer);
-
-    CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
-
-    m_jitCode->initializeCodeRefForDFG(
-        FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
-        withArityCheck);
-    m_jitCode->variableEventStream = m_speculative->finalizeEventStream();
-
-    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);
-    m_graph.m_plan.setFinalizer(WTFMove(finalizer));
-}
-
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)
 {
     if (shouldDumpDisassembly()) {
@@ -649,9 +460,9 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
     m_osrEntry.append(WTFMove(entry));
 }
 
-void JITCompiler::appendExceptionHandlingOSRExit(ExitKind kind, unsigned eventStreamIndex, CodeOrigin opCatchOrigin, HandlerInfo* exceptionHandler, CallSiteIndex callSite, MacroAssembler::JumpList jumpsToFail)
+void JITCompiler::appendExceptionHandlingOSRExit(SpeculativeJIT* speculative, ExitKind kind, unsigned eventStreamIndex, CodeOrigin opCatchOrigin, HandlerInfo* exceptionHandler, CallSiteIndex callSite, MacroAssembler::JumpList jumpsToFail)
 {
-    OSRExit exit(kind, JSValueRegs(), MethodOfGettingAValueProfile(), m_speculative.get(), eventStreamIndex);
+    OSRExit exit(kind, JSValueRegs(), MethodOfGettingAValueProfile(), speculative, eventStreamIndex);
     exit.m_codeOrigin = opCatchOrigin;
     exit.m_exceptionHandlerCallSiteIndex = callSite;
     OSRExitCompilationInfo& exitInfo = appendExitInfo(jumpsToFail);
@@ -659,54 +470,9 @@ void JITCompiler::appendExceptionHandlingOSRExit(ExitKind kind, unsigned eventSt
     m_exceptionHandlerOSRExitCallSites.append(ExceptionHandlingOSRExitInfo { exitInfo, *exceptionHandler, callSite });
 }
 
-void JITCompiler::exceptionCheck()
+void JITCompiler::setEndOfMainPath(CodeOrigin semanticOrigin)
 {
-    // It's important that we use origin.forExit here. Consider if we hoist string
-    // addition outside a loop, and that we exit at the point of that concatenation
-    // from an out of memory exception.
-    // If the original loop had a try/catch around string concatenation, if we "catch"
-    // that exception inside the loop, then the loops induction variable will be undefined 
-    // in the OSR exit value recovery. It's more defensible for the string concatenation, 
-    // then, to not be caught by the for loops' try/catch.
-    // Here is the program I'm speaking about:
-    //
-    // >>>> lets presume "c = a + b" gets hoisted here.
-    // for (var i = 0; i < length; i++) {
-    //     try {
-    //         c = a + b
-    //     } catch(e) { 
-    //         If we threw an out of memory error, and we cought the exception
-    //         right here, then "i" would almost certainly be undefined, which
-    //         would make no sense.
-    //         ... 
-    //     }
-    // }
-    CodeOrigin opCatchOrigin;
-    HandlerInfo* exceptionHandler;
-    bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_speculative->m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler); 
-    if (willCatchException) {
-        unsigned streamIndex = m_speculative->m_outOfLineStreamIndex ? *m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream.size();
-        MacroAssembler::Jump hadException = emitNonPatchableExceptionCheck(vm());
-        // We assume here that this is called after callOpeartion()/appendCall() is called.
-        appendExceptionHandlingOSRExit(ExceptionCheck, streamIndex, opCatchOrigin, exceptionHandler, m_jitCode->common.codeOrigins->lastCallSite(), hadException);
-    } else
-        m_exceptionChecks.append(emitExceptionCheck(vm()));
-}
-
-CallSiteIndex JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex)
-{
-    CodeOrigin opCatchOrigin;
-    HandlerInfo* exceptionHandler;
-    bool willCatchException = m_graph.willCatchExceptionInMachineFrame(callSiteCodeOrigin, opCatchOrigin, exceptionHandler);
-    CallSiteIndex callSite = addCallSite(callSiteCodeOrigin);
-    if (willCatchException)
-        appendExceptionHandlingOSRExit(GenericUnwind, eventStreamIndex, opCatchOrigin, exceptionHandler, callSite);
-    return callSite;
-}
-
-void JITCompiler::setEndOfMainPath()
-{
-    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), m_speculative->m_origin.semantic);
+    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), semanticOrigin);
     if (LIKELY(!m_disassembler))
         return;
     m_disassembler->setEndOfMainPath(labelIgnoringWatchpoints());

@@ -59,6 +59,7 @@
 #include "DFGPutStackSinkingPhase.h"
 #include "DFGSSAConversionPhase.h"
 #include "DFGSSALoweringPhase.h"
+#include "DFGSpeculativeJIT.h"
 #include "DFGStackLayoutPhase.h"
 #include "DFGStaticExecutionCountEstimationPhase.h"
 #include "DFGStoreBarrierClusteringPhase.h"
@@ -343,11 +344,11 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         {
             CompilerTimingScope timingScope("DFG", "machine code generation");
 
-            JITCompiler dataFlowJIT(dfg);
+            SpeculativeJIT speculativeJIT(dfg);
             if (m_codeBlock->codeType() == FunctionCode)
-                dataFlowJIT.compileFunction();
+                speculativeJIT.compileFunction();
             else
-                dataFlowJIT.compile();
+                speculativeJIT.compile();
         }
         
         return DFGPath;
