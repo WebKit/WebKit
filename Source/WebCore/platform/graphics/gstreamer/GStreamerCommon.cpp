@@ -58,6 +58,10 @@
 #include "GStreamerMediaStreamSource.h"
 #endif
 
+#if ENABLE(SPEECH_SYNTHESIS)
+#include "WebKitFliteSourceGStreamer.h"
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
 #include "CDMThunder.h"
 #include "WebKitThunderDecryptorGStreamer.h"
@@ -367,6 +371,10 @@ void registerWebKitGStreamerElements()
 
 #if ENABLE(MEDIA_SOURCE)
         gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
+#endif
+
+#if ENABLE(SPEECH_SYNTHESIS)
+        gst_element_register(nullptr, "webkitflitesrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_FLITE_SRC);
 #endif
 
 #if ENABLE(VIDEO)

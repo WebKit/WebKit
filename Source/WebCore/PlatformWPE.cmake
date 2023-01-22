@@ -151,3 +151,12 @@ if (ENABLE_GAMEPAD)
         platform/gamepad/libwpe/GamepadProviderLibWPE.h
     )
 endif ()
+
+if (ENABLE_SPEECH_SYNTHESIS)
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${Flite_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${Flite_LIBRARIES}
+    )
+endif ()
