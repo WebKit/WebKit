@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -77,10 +78,13 @@ inline void RenderOverflow::addLayoutOverflow(const LayoutRect& rect)
 {
     LayoutUnit maxX = std::max(rect.maxX(), m_layoutOverflow.maxX());
     LayoutUnit maxY = std::max(rect.maxY(), m_layoutOverflow.maxY());
-    m_layoutOverflow.setX(std::min(rect.x(), m_layoutOverflow.x()));
-    m_layoutOverflow.setY(std::min(rect.y(), m_layoutOverflow.y()));
-    m_layoutOverflow.setWidth(maxX - m_layoutOverflow.x());
-    m_layoutOverflow.setHeight(maxY - m_layoutOverflow.y());
+    LayoutUnit minX = std::min(rect.x(), m_layoutOverflow.x());
+    LayoutUnit minY = std::min(rect.y(), m_layoutOverflow.y());
+    // In case the width/height is larger than LayoutUnit can represent, fix the right/bottom edge and shift the top/left ones
+    m_layoutOverflow.setWidth(maxX - minX);
+    m_layoutOverflow.setHeight(maxY - minY);
+    m_layoutOverflow.setX(maxX - m_layoutOverflow.width());
+    m_layoutOverflow.setY(maxY - m_layoutOverflow.height());
 }
 
 inline void RenderOverflow::addVisualOverflow(const LayoutRect& rect)
