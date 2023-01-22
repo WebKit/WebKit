@@ -79,6 +79,16 @@ void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
     });
 }
 
+void UIScriptControllerCocoa::doAfterPresentationUpdate(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }).get()];
+}
+
 void UIScriptControllerCocoa::completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID)
 {
     dispatch_async(dispatch_get_main_queue(), ^{
