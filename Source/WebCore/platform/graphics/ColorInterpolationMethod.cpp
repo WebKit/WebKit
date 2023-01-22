@@ -79,9 +79,6 @@ static void serializationForCSS(StringBuilder& builder, HueInterpolationMethod h
     case HueInterpolationMethod::Decreasing:
         builder.append(" decreasing hue");
         break;
-    case HueInterpolationMethod::Specified:
-        builder.append(" specified hue");
-        break;
     }
 }
 
@@ -154,9 +151,6 @@ TextStream& operator<<(TextStream& ts, HueInterpolationMethod hueInterpolationMe
         break;
     case HueInterpolationMethod::Decreasing:
         ts << "decreasing";
-        break;
-    case HueInterpolationMethod::Specified:
-        ts << "specified";
         break;
     }
     return ts;

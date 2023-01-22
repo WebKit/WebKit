@@ -2843,7 +2843,6 @@ static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSPa
         { CSSValueLonger, HueInterpolationMethod::Longer },
         { CSSValueIncreasing, HueInterpolationMethod::Increasing },
         { CSSValueDecreasing, HueInterpolationMethod::Decreasing },
-        { CSSValueSpecified, HueInterpolationMethod::Specified },
     };
     static constexpr SortedArrayMap hueInterpolationMethodMap { hueInterpolationMethodMappings };
 

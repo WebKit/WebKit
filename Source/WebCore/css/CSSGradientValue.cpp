@@ -138,9 +138,6 @@ static void appendHueInterpolationMethod(StringBuilder& builder, HueInterpolatio
     case HueInterpolationMethod::Decreasing:
         builder.append(" decreasing hue");
         break;
-    case HueInterpolationMethod::Specified:
-        builder.append(" specified hue");
-        break;
     }
 }
 
