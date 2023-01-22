@@ -236,7 +236,7 @@ shouldBeEqualToString('flexbox.style.flexFlow', '');
 function testFlexFlowValue(value, expected, expectedComputed)
 {
     flexbox.style.flexFlow = value;
-    shouldBeEqualToString('flexbox.style.flexFlow', expected.replace(/^ /, '').replace(/ $/, ''));
+    shouldBeEqualToString('flexbox.style.flexFlow', expected);
     shouldBeEqualToString('window.getComputedStyle(flexbox, null).flexFlow', expectedComputed);
 }
 
@@ -245,7 +245,17 @@ var wraps = ['', 'nowrap', 'wrap', 'wrap-reverse'];
 directions.forEach(function(direction) {
     wraps.forEach(function(wrap) {
         var expectedComputed = (direction || 'row') + ' ' + (wrap || 'nowrap');
-        var expected = direction + ' ' + wrap;
+        var isInitialDirection = direction == '' || direction == 'row';
+        var isInitialWrap = wrap == '' || wrap == 'nowrap';
+        var expected;
+        if (isInitialDirection && isInitialWrap && (direction != '' || wrap != ''))
+            expected = 'row';
+        else if (isInitialDirection)
+            expected = wrap;
+        else if (isInitialWrap)
+            expected = direction;
+        else
+            expected = direction + ' ' + wrap;
         testFlexFlowValue(direction + ' ' + wrap, expected, expectedComputed);
         testFlexFlowValue(wrap + ' ' + direction, expected, expectedComputed);
     });

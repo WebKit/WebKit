@@ -272,13 +272,10 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBorderTop:
     case CSSPropertyColumnRule:
     case CSSPropertyColumns:
-    case CSSPropertyFlex:
     case CSSPropertyFlexFlow:
     case CSSPropertyListStyle:
     case CSSPropertyOutline:
-    case CSSPropertyPerspectiveOrigin:
     case CSSPropertyTextEmphasis:
-    case CSSPropertyTransformOrigin:
     case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextStroke:
         return getShorthandValue(shorthand);
@@ -299,6 +296,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyOverscrollBehavior:
     case CSSPropertyPaddingBlock:
     case CSSPropertyPaddingInline:
+    case CSSPropertyPlaceContent:
+    case CSSPropertyPlaceItems:
+    case CSSPropertyPlaceSelf:
     case CSSPropertyScrollMarginBlock:
     case CSSPropertyScrollMarginInline:
     case CSSPropertyScrollPaddingBlock:
@@ -333,7 +333,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyContainer:
         if (propertyAsValueID(CSSPropertyContainerType) == CSSValueNormal)
             return getPropertyValue(CSSPropertyContainerName);
-        return getShorthandValue(shorthand, " / ");
+        return makeString(getPropertyValue(CSSPropertyContainerName), " / ", getPropertyValue(CSSPropertyContainerType));
+    case CSSPropertyFlex:
+        return makeString(getPropertyValue(CSSPropertyFlexGrow), ' ', getPropertyValue(CSSPropertyFlexShrink), ' ', getPropertyValue(CSSPropertyFlexBasis));
     case CSSPropertyGridArea:
         return getGridAreaShorthandValue();
     case CSSPropertyGridTemplate:
@@ -349,13 +351,15 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:
         return pageBreakValue(shorthand);
+    case CSSPropertyPerspectiveOrigin:
+        return makeString(getPropertyValue(CSSPropertyPerspectiveOriginX), ' ', getPropertyValue(CSSPropertyPerspectiveOriginY));
+    case CSSPropertyTransformOrigin:
+        if (auto z = getPropertyValue(CSSPropertyTransformOriginZ); z != "0px"_s)
+            return makeString(getPropertyValue(CSSPropertyTransformOriginX), ' ', getPropertyValue(CSSPropertyTransformOriginY), ' ', z);
+        return makeString(getPropertyValue(CSSPropertyTransformOriginX), ' ', getPropertyValue(CSSPropertyTransformOriginY));
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
         return webkitColumnBreakValue(shorthand);
-    case CSSPropertyPlaceContent:
-    case CSSPropertyPlaceItems:
-    case CSSPropertyPlaceSelf:
-        return getAlignmentShorthandValue(shorthand);
     case CSSPropertyFont:
         return fontValue(shorthand);
     case CSSPropertyFontVariant:
@@ -454,6 +458,8 @@ String StyleProperties::fontValue(const StylePropertyShorthand& shorthand) const
     std::optional<CSSValueID> stretchKeyword;
     if (auto stretchBase = getPropertyCSSValue(CSSPropertyFontStretch)) {
         auto stretch = downcast<CSSPrimitiveValue>(stretchBase.get());
+        if (stretch->isCalculated())
+            return emptyString();
         if (!stretch->isPercentage())
             stretchKeyword = stretch->valueID();
         else {
@@ -493,40 +499,28 @@ String StyleProperties::offsetValue() const
     ASSERT(offsetShorthand().length() == 5);
     StringBuilder result;
 
-    auto offsetPosition = propertyAt(findPropertyIndex(CSSPropertyOffsetPosition));
-    if (!offsetPosition.isImplicit())
-        result.append(offsetPosition.value()->cssText());
+    auto offsetPosition = getPropertyCSSValue(CSSPropertyOffsetPosition);
+    auto offsetPath = getPropertyCSSValue(CSSPropertyOffsetPath);
+    auto offsetDistance = getPropertyCSSValue(CSSPropertyOffsetDistance);
+    auto offsetRotate = getPropertyCSSValue(CSSPropertyOffsetRotate);
+    auto offsetAnchor = getPropertyCSSValue(CSSPropertyOffsetAnchor);
 
-    auto offsetPath = propertyAt(findPropertyIndex(CSSPropertyOffsetPath));
-    if (!offsetPath.isImplicit())
-        result.append(result.isEmpty() ? "" : " ", offsetPath.value()->cssText());
+    bool nonInitialDistance = !isInitialValueForLonghand(CSSPropertyOffsetDistance, *offsetDistance);
+    bool nonInitialRotate = !isInitialValueForLonghand(CSSPropertyOffsetRotate, *offsetRotate);
 
-    // At this point, result is not empty because either offset-position or offset-path
-    // must be present.
+    if (!isInitialValueForLonghand(CSSPropertyOffsetPosition, *offsetPosition))
+        result.append(offsetPosition->cssText());
+    if (!isInitialValueForLonghand(CSSPropertyOffsetPath, *offsetPath) || nonInitialDistance || nonInitialRotate)
+        result.append(result.isEmpty() ? "" : " ", offsetPath->cssText());
+    if (nonInitialDistance)
+        result.append(result.isEmpty() ? "" : " ", offsetDistance->cssText());
+    if (nonInitialRotate)
+        result.append(result.isEmpty() ? "" : " ", offsetRotate->cssText());
+    if (result.isEmpty())
+        result.append(textExpandingInitialValuePlaceholder(CSSPropertyOffsetPosition, *offsetPosition));
 
-    auto offsetDistance = propertyAt(findPropertyIndex(CSSPropertyOffsetDistance));
-    if (!offsetDistance.isImplicit()) {
-        auto offsetDistanceValue = offsetDistance.value();
-        // Only include offset-distance if the distance is non-zero.
-        // isZero() returns std::nullopt if offsetDistanceValue is a calculated value, in which case
-        // we use value_or() to override to false.
-        if (!downcast<CSSPrimitiveValue>(*offsetDistanceValue).isZero().value_or(false))
-            result.append(' ', offsetDistanceValue->cssText());
-    }
-
-    auto offsetRotate = propertyAt(findPropertyIndex(CSSPropertyOffsetRotate));
-    if (!offsetRotate.isImplicit()) {
-        auto offsetRotateValue = offsetRotate.value();
-        if (!downcast<CSSOffsetRotateValue>(*offsetRotateValue).isInitialValue())
-            result.append(' ', offsetRotateValue->cssText());
-    }
-
-    auto offsetAnchor = propertyAt(findPropertyIndex(CSSPropertyOffsetAnchor));
-    if (!offsetAnchor.isImplicit()) {
-        auto offsetAnchorValue = offsetAnchor.value();
-        if (!isValueID(offsetAnchorValue, CSSValueAuto))
-            result.append(" / ", offsetAnchorValue->cssText());
-    }
+    if (!isInitialValueForLonghand(CSSPropertyOffsetAnchor, *offsetAnchor))
+        result.append(" / ", offsetAnchor->cssText());
 
     return result.toString();
 }
@@ -961,11 +955,6 @@ String StyleProperties::getGridValue() const
     return result.toString();
 }
 
-String StyleProperties::getGridShorthandValue(const StylePropertyShorthand& shorthand) const
-{
-    return getShorthandValue(shorthand, " / ");
-}
-
 static bool isCustomIdentValue(const CSSValue& value)
 {
     return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isCustomIdent();
@@ -1014,14 +1003,17 @@ String StyleProperties::getGridAreaShorthandValue() const
     return result.toString();
 }
 
-String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand, const char* separator) const
+String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand) const
 {
     StringBuilder result;
     for (auto longhand : shorthand) {
-        if (isPropertyImplicit(longhand))
+        auto value = getPropertyCSSValue(longhand);
+        if (isInitialValueForLonghand(longhand, *value))
             continue;
-        result.append(result.isEmpty() ? "" : separator, getPropertyValue(longhand));
+        result.append(result.isEmpty() ? "" : " ", value->cssText());
     }
+    if (result.isEmpty())
+        return getPropertyValue(shorthand.properties()[0]);
     return result.toString();
 }
 
@@ -1041,12 +1033,6 @@ String StyleProperties::getCommonValue(const StylePropertyShorthand& shorthand) 
     return result;
 }
 
-String StyleProperties::getAlignmentShorthandValue(const StylePropertyShorthand& shorthand) const
-{
-    String value = getCommonValue(shorthand);
-    return value.isEmpty() ? getShorthandValue(shorthand) : value;
-}
-
 String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& shorthand) const
 {
     ASSERT(shorthand.length() == 5);
@@ -1058,8 +1044,7 @@ String StyleProperties::borderImagePropertyValue(const StylePropertyShorthand& s
     for (auto longhand : shorthand) {
         auto value = getPropertyCSSValue(longhand);
 
-        // FIXME: We should omit values based on them being equal to the initial value, not based on the implicit flag.
-        if (isPropertyImplicit(longhand)) {
+        if (isInitialValueForLonghand(longhand, *value)) {
             if (longhand == CSSPropertyBorderImageSlice || longhand == CSSPropertyWebkitMaskBoxImageSlice)
                 omittedSlice = true;
             else if (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyWebkitMaskBoxImageWidth)
