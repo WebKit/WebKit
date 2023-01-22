@@ -277,6 +277,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/mossgreensquare-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/nested-color-mix-with-currentcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-002-expected.html
@@ -503,12 +504,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-func-whitespace-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-func-whitespace-b-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-func-whitespace-b.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-values-meaning-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-values-meaning-b-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-values-meaning-b.xht
@@ -583,10 +578,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-h-rotating-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-h-rotating-b-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-h-rotating-b.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-b-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-parsing-f-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-parsing-f.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-values-b-expected.html

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <wtf/EnumTraits.h>
+#if HAVE(IOSURFACE)
 
-namespace PAL::WebGPU {
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+#import <IOSurface/IOSurface.h>
+#else
+typedef struct __IOSurface *IOSurfaceRef;
+#endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-enum class PowerPreference : bool {
-    LowPower,
-    HighPerformance,
-};
+#ifdef __OBJC__
+#import <IOSurface/IOSurfaceObjC.h>
+#endif
 
-} // namespace PAL::WebGPU
+#endif // HAVE(IOSURFACE)

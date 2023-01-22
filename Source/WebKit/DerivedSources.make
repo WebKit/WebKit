@@ -482,6 +482,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ios/InteractionInformationAtPosition.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/Model.serialization.in \
+	Shared/PALArgumentCoders.serialization.in \
 	Shared/Pasteboard.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \

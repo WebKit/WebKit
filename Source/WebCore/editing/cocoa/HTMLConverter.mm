@@ -237,6 +237,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement&);
 - (void)setIgnoresOrientation:(BOOL)flag;
 - (void)setBounds:(CGRect)bounds;
 - (BOOL)ignoresOrientation;
+@property (strong) NSString *accessibilityLabel;
 @end
 
 #endif
@@ -1316,6 +1317,12 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     if (fileWrapper || usePlaceholder) {
         NSUInteger textLength = [_attrStr length];
         RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
+
+        if (auto& ariaLabel = element.getAttribute("aria-label"_s); !ariaLabel.isEmpty())
+            attachment.get().accessibilityLabel = ariaLabel;
+        if (auto& altText = element.getAttribute("alt"_s); !altText.isEmpty())
+            attachment.get().accessibilityLabel = altText;
+
 #if PLATFORM(IOS_FAMILY)
         float verticalAlign = 0.0;
         _caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, verticalAlign);

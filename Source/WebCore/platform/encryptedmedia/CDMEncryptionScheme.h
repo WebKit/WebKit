@@ -31,21 +31,9 @@
 
 namespace WebCore {
 
-enum class CDMEncryptionScheme : uint8_t {
+enum class CDMEncryptionScheme : bool {
     cenc,
     cbcs,
-};
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CDMEncryptionScheme> {
-    using values = EnumValues<
-        WebCore::CDMEncryptionScheme,
-        WebCore::CDMEncryptionScheme::cenc,
-        WebCore::CDMEncryptionScheme::cbcs
-    >;
 };
 
 }

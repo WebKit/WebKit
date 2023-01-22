@@ -67,7 +67,7 @@ class GPU;
 enum class IndexFormat : uint8_t;
 enum class LoadOp : uint8_t;
 class PipelineLayout;
-enum class PowerPreference : uint8_t;
+enum class PowerPreference : bool;
 enum class PrimitiveTopology : uint8_t;
 class QuerySet;
 enum class QueryType : uint8_t;

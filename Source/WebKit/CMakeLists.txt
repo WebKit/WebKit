@@ -531,6 +531,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameTreeNodeData.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/Model.serialization.in
+    Shared/PALArgumentCoders.serialization.in
     Shared/Pasteboard.serialization.in
     Shared/SameDocumentNavigationType.serialization.in
     Shared/SessionState.serialization.in

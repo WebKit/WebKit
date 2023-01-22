@@ -35,7 +35,7 @@ struct CDMKeySystemConfiguration;
 struct CDMMediaCapability;
 struct CDMRestrictions;
 
-enum class CDMEncryptionScheme : uint8_t;
+enum class CDMEncryptionScheme : bool;
 enum class CDMKeyStatus : uint8_t;
 enum class CDMMessageType : uint8_t;
 enum class CDMRequirement : uint8_t;
