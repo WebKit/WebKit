@@ -251,6 +251,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 
 @end
 
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
 @interface WebAVPictureInPicturePlayerLayerView : UIView
 @end
 
@@ -272,6 +273,7 @@ static WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLay
 
     return (WebAVPictureInPicturePlayerLayerView *)[theClass alloc];
 }
+#endif
 
 @interface WebAVPlayerLayerView : __AVPlayerLayerView
 @property (retain) UIView* videoView;
@@ -327,6 +329,7 @@ static void WebAVPlayerLayerView_setVideoView(id aSelf, SEL, UIView *videoView)
     [webAVPlayerLayer setVideoSublayer:[videoView layer]];
 }
 
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
 static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView(id aSelf, SEL)
 {
     WebAVPlayerLayerView *playerLayerView = aSelf;
@@ -365,12 +368,16 @@ static WebAVPictureInPicturePlayerLayerView *WebAVPlayerLayerView_pictureInPictu
     }
     return pipView;
 }
+#endif
 
 static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 {
     WebAVPlayerLayerView *playerLayerView = aSelf;
+    
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     RetainPtr<WebAVPictureInPicturePlayerLayerView> pipView = adoptNS([playerLayerView valueForKey:@"_pictureInPicturePlayerLayerView"]);
     [playerLayerView setValue:nil forKey:@"_pictureInPicturePlayerLayerView"];
+#endif
     objc_super superClass { playerLayerView, get__AVPlayerLayerViewClass() };
     auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
     super_dealloc(&superClass, @selector(dealloc));
@@ -391,11 +398,13 @@ static WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
         class_addMethod(theClass, @selector(setVideoView:), (IMP)WebAVPlayerLayerView_setVideoView, "v@:@");
         class_addMethod(theClass, @selector(videoView), (IMP)WebAVPlayerLayerView_videoView, "@@:");
         class_addMethod(theClass, @selector(playerLayer), (IMP)WebAVPlayerLayerView_playerLayer, "@@:");
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
         class_addMethod(theClass, @selector(startRoutingVideoToPictureInPicturePlayerLayerView), (IMP)WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView, "v@:");
         class_addMethod(theClass, @selector(stopRoutingVideoToPictureInPicturePlayerLayerView), (IMP)WebAVPlayerLayerView_stopRoutingVideoToPictureInPicturePlayerLayerView, "v@:");
         class_addMethod(theClass, @selector(pictureInPicturePlayerLayerView), (IMP)WebAVPlayerLayerView_pictureInPicturePlayerLayerView, "@@:");
 
         class_addIvar(theClass, "_pictureInPicturePlayerLayerView", sizeof(WebAVPictureInPicturePlayerLayerView *), log2(sizeof(WebAVPictureInPicturePlayerLayerView *)), "@");
+#endif
 
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPlayerLayerView");
@@ -899,10 +908,12 @@ void VideoFullscreenInterfaceAVKit::videoDimensionsChanged(const FloatSize& vide
     [playerController() setContentDimensions:videoDimensions];
     [m_playerLayerView setNeedsLayout];
 
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     WebAVPictureInPicturePlayerLayerView *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
     WebAVPlayerLayer *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
     [pipPlayerLayer setVideoDimensions:playerLayer.videoDimensions];
     [pipView setNeedsLayout];
+#endif
 }
 
 void VideoFullscreenInterfaceAVKit::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
@@ -1514,12 +1525,14 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
 
     if (m_fullscreenChangeObserver) {
         FloatSize size;
+#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
         if (m_currentMode.hasPictureInPicture()) {
             auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
             auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
             auto videoFrame = [pipPlayerLayer calculateTargetVideoFrame];
             size = FloatSize(videoFrame.size());
         }
+#endif
         m_fullscreenChangeObserver->didEnterFullscreen(size);
         m_enteringPictureInPicture = false;
         m_changingStandbyOnly = false;
