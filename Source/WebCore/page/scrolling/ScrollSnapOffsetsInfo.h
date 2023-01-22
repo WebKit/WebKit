@@ -85,6 +85,7 @@ template<typename UnitType> inline bool operator==(const SnapOffset<UnitType>& a
 
 using LayoutScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<LayoutUnit, LayoutRect>;
 using FloatScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<float, FloatRect>;
+using FloatSnapOffset = SnapOffset<float>;
 
 template <> template <>
 LayoutScrollSnapOffsetsInfo FloatScrollSnapOffsetsInfo::convertUnits(float /* unusedScaleFactor */) const;

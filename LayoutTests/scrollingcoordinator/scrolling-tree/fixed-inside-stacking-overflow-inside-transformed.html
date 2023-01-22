@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+
+        .container {
+            position: absolute;
+            margin: 20px;
+            transform: translateX(0);
+            padding: 10px;
+            border: 1px solid gray;
+        }
+        
+        .scroller {
+            position: relative;
+            z-index: 0;
+            margin: 20px;
+            width: 400px;
+            height: 400px;
+            overflow: scroll;
+            padding: 20px;
+            border: 10px solid gray;
+        }
+
+        .inner {
+            height: 500%;
+        }
+        
+        .inner-fixed {
+            position: fixed;
+            top: 150px;
+            left: 50px;
+            width: 400px;
+            height: 50px;
+            background-color: orange;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', async () => {
+            const scroller = document.getElementsByClassName('scroller')[0];
+            scroller.scrollTo(0, 50);
+            await UIHelper.renderingUpdate();
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="scroller">
+        <div class="inner"></div>
+        <div class="inner-fixed">
+            Fixed inside scroller
+        </div>
+    </div>
+</div>
+<pre id="scrollingTree"></pre>
+</body>
+</html>

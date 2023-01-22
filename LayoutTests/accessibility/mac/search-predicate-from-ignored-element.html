@@ -1,50 +1,47 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
 
+<div id="container" role="group">
 <div id="test">First line of text<br>
 <button id="button" aria-hidden="true">button</button>
 <br>Third line of text</div>
-
-<p id="description"></p>
-<div id="console"></div>
+</div>
 
 <script>
-    description("This tests the ability to search for accessible elements from an ignored element.");
-    
     if (window.accessibilityController) {
-        
-        document.getElementById("body").focus();
-        var containerElement = accessibilityController.focusedElement;
-        
-        var element = accessibilityController.accessibleElementById("test").childAtIndex(0);
-        var markerRange = element.textMarkerRangeForElement(element);
-        shouldBe("element.stringForTextMarkerRange(markerRange)", "'First line of text'");
-        
-        // Try to get the ignored element using line text marker calls
-        var textMarker = element.endTextMarkerForTextMarkerRange(markerRange);
-        textMarker = element.nextTextMarker(textMarker);
-        textMarker = element.nextTextMarker(textMarker);
-        var lineRange = element.lineTextMarkerRangeForTextMarker(textMarker);
-        shouldBe("element.stringForTextMarkerRange(lineRange)", "'button'");
-        
-        textMarker = element.startTextMarkerForTextMarkerRange(lineRange);
-        var startElement = element.accessibilityElementForTextMarker(textMarker);
-        
-        // Search forward
-        var resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false);
-        shouldBe("resultElement.stringValue", "'AXValue: Third line of text'");
-        
-        // Search backward
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXAnyTypeSearchKey", "", false);
-        shouldBe("resultElement.stringValue", "'AXValue: First line of text'");
-    }
-        
-</script>
+        let output = "This tests the ability to search for accessible elements from an ignored element.\n\n";
 
-<script src="../../resources/js-test-post.js"></script>
+        var container = accessibilityController.accessibleElementById("container");
+        var element = accessibilityController.accessibleElementById("test").childAtIndex(0);
+        var range = element.textMarkerRangeForElement(element);
+        output += expect("element.stringForTextMarkerRange(range)", "'First line of text'");
+
+        // Try to get the ignored element using line text marker calls.
+        var marker = element.endTextMarkerForTextMarkerRange(range);
+        marker = element.nextTextMarker(marker);
+        marker = element.nextTextMarker(marker);
+        range = element.lineTextMarkerRangeForTextMarker(marker);
+        output += expect("element.stringForTextMarkerRange(range)", "'button'");
+
+        marker = element.startTextMarkerForTextMarkerRange(range);
+        var startElement = element.accessibilityElementForTextMarker(marker);
+
+        // Search forward
+        var resultElement = container.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false);
+        output += expect("resultElement.stringValue", "'AXValue: Third line of text'");
+
+        // Search backward
+        resultElement = container.uiElementForSearchPredicate(startElement, false, "AXAnyTypeSearchKey", "", false);
+        output += expect("resultElement.stringValue", "'AXValue: First line of text'");
+
+        document.getElementById("container").style.visibility = "hidden";
+        debug(output);
+    }
+</script>
 </body>
 </html>

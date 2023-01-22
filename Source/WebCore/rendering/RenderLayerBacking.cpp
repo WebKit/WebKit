@@ -655,7 +655,7 @@ void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
     TransformationMatrix t;
-    if (m_owningLayer.hasTransform())
+    if (m_owningLayer.isTransformed())
         m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations);
     
     if (m_contentsContainmentLayer) {
@@ -828,7 +828,7 @@ void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
 {
     for (auto* curr = &layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform() || curr->hasCompositedScrollableOverflow())
+        if (curr->isTransformed() || curr->hasCompositedScrollableOverflow())
             return true;
     }
 
@@ -3753,7 +3753,7 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
     if (graphicsLayer != transformedLayer)
         return false;
 
-    if (m_owningLayer.hasTransform()) {
+    if (m_owningLayer.isTransformed()) {
         transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations);
         return true;
     }

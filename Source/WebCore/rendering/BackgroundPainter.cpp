@@ -513,7 +513,7 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
     // Determine the background positioning area and set destination rect to the background painting area.
     // Destination rect will be adjusted later if the background is non-repeating.
     auto enclosingLayer = renderer.enclosingLayer();
-    bool isTransformed = renderer.hasTransform() || (enclosingLayer && enclosingLayer->hasTransformedAncestor());
+    bool isTransformed = renderer.isTransformed() || (enclosingLayer && enclosingLayer->hasTransformedAncestor());
     bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground && !isTransformed;
 
     LayoutRect destinationRect(borderBoxRect);

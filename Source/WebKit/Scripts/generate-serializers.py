@@ -195,10 +195,27 @@ def argument_coder_declarations(serialized_types, skip_nested):
     return result
 
 
+def typenames(alias):
+    return ', '.join(['typename' for x in range(alias.count(',') + 1)])
+
+
 def remove_template_parameters(alias):
-    match = re.search(r'(.*)<', alias)
+    match = re.search(r'(struct|class) (.*)<', alias)
+    assert match
+    return match.groups()[1]
+
+
+def remove_alias_struct_or_class(alias):
+    match = re.search(r'(struct|class) (.*)', alias)
+    assert match
+    return match.groups()[1].replace(',', ', ')
+
+
+def alias_struct_or_class(alias):
+    match = re.search(r'(struct|class) (.*)', alias)
     assert match
     return match.groups()[0]
+
 
 def generate_header(serialized_types, serialized_enums):
     result = []
@@ -227,8 +244,8 @@ def generate_header(serialized_types, serialized_enums):
             result.append('#if ' + type.condition)
         if type.alias is not None:
             result.append('namespace ' + type.namespace + ' {')
-            result.append('template<typename> class ' + remove_template_parameters(type.alias) + ';')
-            result.append('using ' + type.name + ' = ' + type.alias + ';')
+            result.append('template<' + typenames(type.alias) + '> ' + alias_struct_or_class(type.alias) + ' ' + remove_template_parameters(type.alias) + ';')
+            result.append('using ' + type.name + ' = ' + remove_alias_struct_or_class(type.alias) + ';')
             result.append('}')
         else:
             if type.namespace is None:
@@ -603,11 +620,15 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
         if type.members_are_subclasses:
             continue
         result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
-        for member in type.members:
-            result.append('            {')
-            result.append('            "' + member.type + '"_s,')
-            result.append('            "' + member.name + '"_s')
-            result.append('            },')
+        for i in range(len(type.members)):
+            if i == 0:
+                result.append('            {')
+            result.append('                "' + type.members[i].type + '"_s,')
+            result.append('                "' + type.members[i].name + '"_s')
+            if i == len(type.members) - 1:
+                result.append('            }')
+            else:
+                result.append('            }, {')
         result.append('        } },')
     result.append('    };')
     result.append('}')

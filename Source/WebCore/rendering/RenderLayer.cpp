@@ -1348,7 +1348,7 @@ void RenderLayer::setReferenceBoxForPathOperations()
 
 void RenderLayer::updateTransform()
 {
-    bool hasTransform = renderer().hasTransform();
+    bool hasTransform = renderer().isTransformed();
     bool had3DTransform = has3DTransform();
 
     bool hadTransform = !!m_transform;
@@ -1478,7 +1478,7 @@ void RenderLayer::updatePagination()
         // Content inside a transform is not considered to be paginated, since we simply
         // paint the transform multiple times in each column, so we don't have to use
         // fragments for the transformed content.
-        if (parent()->hasTransform())
+        if (parent()->isTransformed())
             m_enclosingPaginationLayer = nullptr;
         else
             m_enclosingPaginationLayer = parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
@@ -1492,7 +1492,7 @@ void RenderLayer::updatePagination()
             // Content inside a transform is not considered to be paginated, since we simply
             // paint the transform multiple times in each column, so we don't have to use
             // fragments for the transformed content.
-            if (containingBlock->layer()->hasTransform())
+            if (containingBlock->layer()->isTransformed())
                 m_enclosingPaginationLayer = nullptr;
             else
                 m_enclosingPaginationLayer = containingBlock->layer()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers);
@@ -2179,7 +2179,7 @@ LayoutPoint RenderLayer::absoluteToContents(const LayoutPoint& absolutePoint) co
 
 bool RenderLayer::cannotBlitToWindow() const
 {
-    if (isTransparent() || hasReflection() || hasTransform())
+    if (isTransparent() || hasReflection() || isTransformed())
         return true;
     if (!parent())
         return false;
@@ -2246,7 +2246,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
     // would be better to respect clips.
     
     if (rootLayer != &layer && ((transparencyBehavior == PaintingTransparencyClipBox && layer.paintsWithTransform(paintBehavior))
-        || (transparencyBehavior == HitTestingTransparencyClipBox && layer.hasTransform()))) {
+        || (transparencyBehavior == HitTestingTransparencyClipBox && layer.isTransformed()))) {
         // The best we can do here is to use enclosed bounding boxes to establish a "fuzzy" enough clip to encompass
         // the transformed layer and all of its children.
         RenderLayer::PaginationInclusionMode mode = transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::IncludeCompositedPaginatedLayers : RenderLayer::ExcludeCompositedPaginatedLayers;
@@ -3441,7 +3441,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     const LayoutRect* layerBoundingBox, ShouldApplyRootOffsetToFragments applyRootOffsetToFragments)
 {
     RenderLayer* paginationLayer = enclosingPaginationLayerInSubtree(rootLayer, inclusionMode);
-    if (!paginationLayer || hasTransform()) {
+    if (!paginationLayer || isTransformed()) {
         // For unpaginated layers, there is only one fragment.
         LayerFragment fragment;
         ClipRectsContext clipRectsContext(rootLayer, clipRectsType, clipRectOptions);

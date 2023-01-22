@@ -1,0 +1,86 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if PLATFORM(COCOA)
+header: "RemoteLayerTreeTransaction.h"
+[OptionSet] enum class WebKit::LayerChange : uint64_t {
+    NameChanged
+    ChildrenChanged
+    PositionChanged
+    BoundsChanged
+    BackgroundColorChanged
+    AnchorPointChanged
+    BorderWidthChanged
+    BorderColorChanged
+    OpacityChanged
+    TransformChanged
+    SublayerTransformChanged
+    HiddenChanged
+    GeometryFlippedChanged
+    DoubleSidedChanged
+    MasksToBoundsChanged
+    OpaqueChanged
+    ContentsHiddenChanged
+    MaskLayerChanged
+    ClonedContentsChanged
+    ContentsRectChanged
+    ContentsScaleChanged
+    CornerRadiusChanged
+    ShapeRoundedRectChanged
+    ShapePathChanged
+    MinificationFilterChanged
+    MagnificationFilterChanged
+    BlendModeChanged
+    WindRuleChanged
+    SpeedChanged
+    TimeOffsetChanged
+    BackingStoreChanged
+    BackingStoreAttachmentChanged
+    FiltersChanged
+    AnimationsChanged
+    AntialiasesEdgesChanged
+    CustomAppearanceChanged
+    UserInteractionEnabledChanged
+    EventRegionChanged
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    SeparatedChanged
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    SeparatedPortalChanged
+    DescendentOfSeparatedPortalChanged
+#endif
+    ScrollingNodeIDChanged
+};
+#endif
+
+header: "SwapBuffersDisplayRequirement.h"
+enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
+    NeedsFullDisplay,
+    NeedsNormalDisplay,
+    NeedsNoDisplay
+};
+
+header: "RemoteScrollingUIState.h"
+[OptionSet] enum class WebKit::RemoteScrollingUIStateChanges : uint8_t {
+    ScrollSnapNodes
+    UserScrollNodes
+};

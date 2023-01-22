@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Google Inc. All rights reserved.
+ * Copyright (c) 2012-2013, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,7 +37,7 @@ namespace WebCore {
 
 class LayoutPoint {
 public:
-    LayoutPoint() : m_x(0), m_y(0) { }
+    LayoutPoint() { }
     template<typename T, typename U> LayoutPoint(T x, U y) : m_x(x), m_y(y) { }
     LayoutPoint(const IntPoint& point) : m_x(point.x()), m_y(point.y()) { }
     explicit LayoutPoint(const FloatPoint& size) : m_x(size.x()), m_y(size.y()) { }

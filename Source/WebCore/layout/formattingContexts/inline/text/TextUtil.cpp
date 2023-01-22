@@ -70,8 +70,9 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     if (useSimplifiedContentMeasuring)
         width = fontCascade.widthForSimpleText(StringView(text).substring(from, to - from));
     else {
-        WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
         auto& style = inlineTextBox.style();
+        auto directionalOverride = style.unicodeBidi() == UnicodeBidi::Override;
+        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style.direction() : TextDirection::LTR, directionalOverride };
         if (!style.collapseWhiteSpace() && style.tabSize())
             run.setTabSize(true, style.tabSize());
         width = fontCascade.width(run);

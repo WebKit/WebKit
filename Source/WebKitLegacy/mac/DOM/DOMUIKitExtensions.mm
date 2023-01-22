@@ -273,7 +273,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
                     noCost = YES;
             }
             result = (noCost ? 0 : 1);
-        } else if (renderer->hasTransform()) {
+        } else if (renderer->isTransformed()) {
             result = INT_MAX;
         }
     }

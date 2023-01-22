@@ -36,6 +36,7 @@
 #include "AXIsolatedObject.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
+#include "AXTextMarker.h"
 #include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"
@@ -1229,7 +1230,7 @@ void AXObjectCache::notificationPostTimerFired()
     notificationsToPost.reserveInitialCapacity(notifications.size());
     for (const auto& note : notifications) {
         ASSERT(note.first);
-        if (!note.first->objectID() || !note.first->axObjectCache())
+        if (note.first->isDetached() || !note.first->axObjectCache())
             continue;
 
 #if ASSERT_ENABLED
@@ -1430,12 +1431,16 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
         selectedChildrenChanged(renderer->node());
 }
 
-void AXObjectCache::selectedStateChanged(Node* node)
+static bool isARIATableCell(Node* node)
 {
-    // For a table cell, post AXSelectedStateChanged on the cell itself.
-    // For any other element, post AXSelectedChildrenChanged on the parent.
-    if (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s)
-        || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s))
+    return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
+}
+
+void AXObjectCache::onSelectedChanged(Node* node)
+{
+    if (isARIATableCell(node))
+        postNotification(node, AXSelectedCellChanged);
+    else if (is<HTMLOptionElement>(node))
         postNotification(node, AXSelectedStateChanged);
     else if (auto* axObject = getOrCreate(node)) {
         if (auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*axObject, false, [] (const auto& object) {
@@ -2139,7 +2144,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_relevantAttr)
         postNotification(element, AXLiveRegionRelevantChanged);
     else if (attrName == aria_selectedAttr)
-        selectedStateChanged(element);
+        onSelectedChanged(element);
     else if (attrName == aria_setsizeAttr)
         postNotification(element, AXSetSizeChanged);
     else if (attrName == aria_expandedAttr)
@@ -2211,7 +2216,7 @@ void AXObjectCache::stopCachingComputedObjectAttributes()
     m_computedObjectAttributeCache = nullptr;
 }
 
-VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)
+VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData& textMarkerData)
 {
     if (!isNodeInUse(textMarkerData.node)
         || textMarkerData.node->isPseudoElement())
@@ -2227,7 +2232,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
         return { };
 
     auto* cache = renderer->document().axObjectCache();
-    if (cache && !cache->m_idsInUse.contains(textMarkerData.axID))
+    if (cache && !cache->m_idsInUse.contains(textMarkerData.axObjectID()))
         return { };
 
     return visiblePosition;
@@ -2235,13 +2240,10 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
 
 CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& textMarkerData)
 {
-    if (!isNodeInUse(textMarkerData.node))
-        return CharacterOffset();
-    
-    if (textMarkerData.ignored)
-        return CharacterOffset();
-    
-    CharacterOffset result = CharacterOffset(textMarkerData.node, textMarkerData.characterStartIndex, textMarkerData.characterOffset);
+    if (textMarkerData.ignored || !isNodeInUse(textMarkerData.node))
+        return { };
+
+    CharacterOffset result(textMarkerData.node, textMarkerData.characterStart, textMarkerData.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (textMarkerData.affinity == Affinity::Upstream)
@@ -2505,37 +2507,17 @@ std::optional<SimpleRange> AXObjectCache::rangeForUnorderedCharacterOffsets(cons
     return { { *start, *end } };
 }
 
-void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
+TextMarkerData AXObjectCache::textMarkerDataForCharacterOffset(const CharacterOffset& characterOffset)
 {
     if (characterOffset.isNull())
-        return;
-    
-    Node* domNode = characterOffset.node;
-    if (is<HTMLInputElement>(*domNode) && downcast<HTMLInputElement>(*domNode).isPasswordField()) {
-        textMarkerData.ignored = true;
-        return;
-    }
-    
-    RefPtr<AccessibilityObject> obj = this->getOrCreate(domNode);
-    if (!obj)
-        return;
-    
-    // Convert to visible position.
-    VisiblePosition visiblePosition = visiblePositionFromCharacterOffset(characterOffset);
-    int vpOffset = 0;
-    if (!visiblePosition.isNull()) {
-        Position deepPos = visiblePosition.deepEquivalent();
-        vpOffset = deepPos.deprecatedEditingOffset();
-    }
-    
-    textMarkerData.axID = obj.get()->objectID();
-    textMarkerData.node = domNode;
-    textMarkerData.characterOffset = characterOffset.offset;
-    textMarkerData.characterStartIndex = characterOffset.startIndex;
-    textMarkerData.offset = vpOffset;
-    textMarkerData.affinity = visiblePosition.affinity();
-    
-    this->setNodeInUse(domNode);
+        return { };
+
+    if (is<HTMLInputElement>(characterOffset.node)
+        && downcast<HTMLInputElement>(*characterOffset.node).isPasswordField())
+        return { *this, { }, true };
+
+    setNodeInUse(characterOffset.node);
+    return { *this, characterOffset, false };
 }
 
 CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(const SimpleRange& range, bool isStart, bool enterTextControls)
@@ -2569,17 +2551,12 @@ CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(const SimpleRan
     return traverseToOffsetInRange(copyRange, offset, options, stayWithinRange);
 }
 
-void AXObjectCache::startOrEndTextMarkerDataForRange(TextMarkerData& textMarkerData, const SimpleRange& range, bool isStart)
+TextMarkerData AXObjectCache::startOrEndTextMarkerDataForRange(const SimpleRange& range, bool isStart)
 {
-    // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
-    // Warning: This is risky and bad because TextMarkerData is a nontrivial type.
-    memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
-    
-    CharacterOffset characterOffset = startOrEndCharacterOffsetForRange(range, isStart);
+    auto characterOffset = startOrEndCharacterOffsetForRange(range, isStart);
     if (characterOffset.isNull())
-        return;
-    
-    setTextMarkerDataWithCharacterOffset(textMarkerData, characterOffset);
+        return { };
+    return textMarkerDataForCharacterOffset(characterOffset);
 }
 
 CharacterOffset AXObjectCache::characterOffsetForNodeAndOffset(Node& node, int offset, TraverseOption option)
@@ -2628,15 +2605,6 @@ CharacterOffset AXObjectCache::characterOffsetForNodeAndOffset(Node& node, int o
     return characterOffset;
 }
 
-void AXObjectCache::textMarkerDataForCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
-{
-    // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
-    // Warning: This is risky and bad because TextMarkerData is a nontrivial type.
-    memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
-
-    setTextMarkerDataWithCharacterOffset(textMarkerData, characterOffset);
-}
-
 bool AXObjectCache::shouldSkipBoundary(const CharacterOffset& previous, const CharacterOffset& next)
 {
     // Match the behavior of VisiblePosition, we should skip the node boundary when there's no visual space or new line character.
@@ -2655,41 +2623,57 @@ bool AXObjectCache::shouldSkipBoundary(const CharacterOffset& previous, const Ch
     
     return true;
 }
-    
-void AXObjectCache::textMarkerDataForNextCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
+
+TextMarkerData AXObjectCache::textMarkerDataForNextCharacterOffset(const CharacterOffset& characterOffset)
 {
-    CharacterOffset next = characterOffset;
-    CharacterOffset previous = characterOffset;
+    TextMarkerData data;
+    auto next = characterOffset;
+    auto previous = characterOffset;
     bool shouldContinue;
     do {
         shouldContinue = false;
         next = nextCharacterOffset(next, false);
         if (shouldSkipBoundary(previous, next))
             next = nextCharacterOffset(next, false);
-        textMarkerDataForCharacterOffset(textMarkerData, next);
-        
+        data = textMarkerDataForCharacterOffset(next);
+
         // We should skip next CharacterOffset if it's visually the same.
         if (!lengthForRange(rangeForUnorderedCharacterOffsets(previous, next)))
             shouldContinue = true;
         previous = next;
-    } while (textMarkerData.ignored || shouldContinue);
+    } while (data.ignored || shouldContinue);
+    return data;
 }
 
-void AXObjectCache::textMarkerDataForPreviousCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
+AXTextMarker AXObjectCache::nextTextMarker(const AXTextMarker& marker)
 {
-    CharacterOffset previous = characterOffset;
-    CharacterOffset next = characterOffset;
+    ASSERT(m_id == marker.treeID());
+    return textMarkerDataForNextCharacterOffset(marker);
+}
+
+TextMarkerData AXObjectCache::textMarkerDataForPreviousCharacterOffset(const CharacterOffset& characterOffset)
+{
+    TextMarkerData data;
+    auto previous = characterOffset;
+    auto next = characterOffset;
     bool shouldContinue;
     do {
         shouldContinue = false;
         previous = previousCharacterOffset(previous, false);
-        textMarkerDataForCharacterOffset(textMarkerData, previous);
-        
+        data = textMarkerDataForCharacterOffset(previous);
+
         // We should skip previous CharacterOffset if it's visually the same.
         if (!lengthForRange(rangeForUnorderedCharacterOffsets(previous, next)))
             shouldContinue = true;
         next = previous;
-    } while (textMarkerData.ignored || shouldContinue);
+    } while (data.ignored || shouldContinue);
+    return data;
+}
+
+AXTextMarker AXObjectCache::previousTextMarker(const AXTextMarker& marker)
+{
+    ASSERT(m_id == marker.treeID());
+    return textMarkerDataForPreviousCharacterOffset(marker);
 }
 
 Node* AXObjectCache::nextNode(Node* node) const
@@ -2787,79 +2771,45 @@ AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(TextMar
     return this->getOrCreate(domNode);
 }
 
-std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(const VisiblePosition& visiblePos)
+std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(const VisiblePosition& visiblePosition)
 {
-    if (visiblePos.isNull())
+    if (visiblePosition.isNull())
         return std::nullopt;
 
-    Position deepPos = visiblePos.deepEquivalent();
-    Node* domNode = deepPos.anchorNode();
-    ASSERT(domNode);
-    if (!domNode)
+    Position position = visiblePosition.deepEquivalent();
+    Node* node = position.anchorNode();
+    ASSERT(node);
+    if (!node)
         return std::nullopt;
 
-    if (is<HTMLInputElement>(*domNode) && downcast<HTMLInputElement>(*domNode).isPasswordField())
+    if (is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).isPasswordField())
         return std::nullopt;
 
     // If the visible position has an anchor type referring to a node other than the anchored node, we should
     // set the text marker data with CharacterOffset so that the offset will correspond to the node.
-    CharacterOffset characterOffset = characterOffsetFromVisiblePosition(visiblePos);
-    if (deepPos.anchorType() == Position::PositionIsAfterAnchor || deepPos.anchorType() == Position::PositionIsAfterChildren) {
-        TextMarkerData textMarkerData;
-        textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
-        return textMarkerData;
-    }
+    auto characterOffset = characterOffsetFromVisiblePosition(visiblePosition);
+    if (position.anchorType() == Position::PositionIsAfterAnchor || position.anchorType() == Position::PositionIsAfterChildren)
+        return textMarkerDataForCharacterOffset(characterOffset);
 
-    // find or create an accessibility object for this node
-    AXObjectCache* cache = domNode->document().axObjectCache();
+    auto* cache = node->document().axObjectCache();
     if (!cache)
         return std::nullopt;
-    RefPtr<AccessibilityObject> obj = cache->getOrCreate(domNode);
-
-    // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
-    // Warning: This is risky and bad because TextMarkerData is a nontrivial type.
-    TextMarkerData textMarkerData;
-    memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
-    
-    textMarkerData.axID = obj.get()->objectID();
-    textMarkerData.node = domNode;
-    textMarkerData.offset = deepPos.deprecatedEditingOffset();
-    textMarkerData.anchorType = deepPos.anchorType();
-    textMarkerData.affinity = visiblePos.affinity();
-
-    textMarkerData.characterOffset = characterOffset.offset;
-    textMarkerData.characterStartIndex = characterOffset.startIndex;
-
-    cache->setNodeInUse(domNode);
-
-    return textMarkerData;
+    cache->setNodeInUse(node);
+    return { { *cache, node, visiblePosition,
+        characterOffset.startIndex, characterOffset.offset, false } };
 }
 
-// This function exits as a performance optimization to avoid a synchronous layout.
+// This function exists as a performance optimization to avoid a synchronous layout.
 std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement& textControl)
 {
     if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(textControl).isPasswordField())
         return std::nullopt;
 
-    AXObjectCache* cache = textControl.document().axObjectCache();
+    auto* cache = textControl.document().axObjectCache();
     if (!cache)
         return std::nullopt;
-
-    RefPtr<AccessibilityObject> obj = cache->getOrCreate(&textControl);
-    if (!obj)
-        return std::nullopt;
-
-    // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
-    // Warning: This is risky and bad because TextMarkerData is a nontrivial type.
-    TextMarkerData textMarkerData;
-    memset(static_cast<void*>(&textMarkerData), 0, sizeof(TextMarkerData));
-    
-    textMarkerData.axID = obj.get()->objectID();
-    textMarkerData.node = &textControl;
-
     cache->setNodeInUse(&textControl);
-
-    return textMarkerData;
+    return { { *cache, &textControl, { }, false } };
 }
 
 CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset& characterOffset, bool ignoreNextNodeStart)
@@ -3683,7 +3633,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
 
     for (const auto& notification : notifications) {
         AXLOG(notification);
-        if (!notification.first || !notification.first->objectID().isValid())
+        if (!notification.first || notification.first->isDetached())
             continue;
 
         switch (notification.second) {
@@ -3738,6 +3688,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
+        case AXSelectedCellChanged:
         case AXSelectedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;

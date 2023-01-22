@@ -58,7 +58,7 @@ public:
     RemoteLayerBackingStore(PlatformCALayerRemote*);
     ~RemoteLayerBackingStore();
 
-    enum class Type : uint8_t {
+    enum class Type : bool {
         IOSurface,
         Bitmap
     };
@@ -218,15 +218,3 @@ private:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::RemoteLayerBackingStore::Type> {
-    using values = EnumValues<
-        WebKit::RemoteLayerBackingStore::Type,
-        WebKit::RemoteLayerBackingStore::Type::IOSurface,
-        WebKit::RemoteLayerBackingStore::Type::Bitmap
-    >;
-};
-
-} // namespace WTF

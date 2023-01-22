@@ -34,16 +34,3 @@ enum class SwapBuffersDisplayRequirement : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::SwapBuffersDisplayRequirement> {
-    using values = EnumValues<
-        WebKit::SwapBuffersDisplayRequirement,
-        WebKit::SwapBuffersDisplayRequirement::NeedsFullDisplay,
-        WebKit::SwapBuffersDisplayRequirement::NeedsNormalDisplay,
-        WebKit::SwapBuffersDisplayRequirement::NeedsNoDisplay
-    >;
-};
-
-} // namespace WTF

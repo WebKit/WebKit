@@ -53,57 +53,124 @@ Vector<SerializedTypeInfo> allSerializedTypes()
 {
     return {
         { "Namespace::Subnamespace::StructName"_s, {
-            { "FirstMemberType"_s, "a"_s },
-            { "SecondMemberType"_s, "b"_s },
-            { "RetainPtr<CFTypeRef>"_s, "c"_s }
+            {
+                "FirstMemberType"_s,
+                "firstMemberName"_s
+            }, {
+                "SecondMemberType"_s,
+                "secondMemberName"_s
+            }, {
+                "RetainPtr<CFTypeRef>"_s,
+                "nullableTestMember"_s
+            }
         } },
         { "Namespace::OtherClass"_s, {
-            { "bool"_s, "a"_s },
-            { "int"_s, "b"_s },
-            { "bool"_s, "c"_s },
-            { "RetainPtr<NSArray>"_s, "d"_s }
+            {
+                "bool"_s,
+                "isNull"_s
+            }, {
+                "int"_s,
+                "a"_s
+            }, {
+                "bool"_s,
+                "b"_s
+            }, {
+                "RetainPtr<NSArray>"_s,
+                "dataDetectorResults"_s
+            }
         } },
         { "Namespace::ReturnRefClass"_s, {
-            { "double"_s, "a"_s },
-            { "double"_s, "b"_s },
-            { "std::unique_ptr<int>"_s, "c"_s }
+            {
+                "double"_s,
+                "functionCall().member1"_s
+            }, {
+                "double"_s,
+                "functionCall().member2"_s
+            }, {
+                "std::unique_ptr<int>"_s,
+                "uniqueMember"_s
+            }
         } },
         { "Namespace::EmptyConstructorStruct"_s, {
-            { "int"_s, "a"_s },
-            { "double"_s, "b"_s }
+            {
+                "int"_s,
+                "m_int"_s
+            }, {
+                "double"_s,
+                "m_double"_s
+            }
         } },
         { "Namespace::EmptyConstructorNullable"_s, {
-            { "bool"_s, "a"_s },
-            { "MemberType"_s, "b"_s },
-            { "OtherMemberType"_s, "c"_s }
+            {
+                "bool"_s,
+                "m_isNull"_s
+            }, {
+                "MemberType"_s,
+                "m_type"_s
+            }, {
+                "OtherMemberType"_s,
+                "m_value"_s
+            }
         } },
         { "WithoutNamespace"_s, {
-            { "int"_s, "a"_s }
+            {
+                "int"_s,
+                "a"_s
+            }
         } },
         { "WithoutNamespaceWithAttributes"_s, {
-            { "int"_s, "a"_s }
+            {
+                "int"_s,
+                "a"_s
+            }
         } },
         { "WebCore::InheritsFrom"_s, {
-            { "float"_s, "a"_s }
+            {
+                "float"_s,
+                "b"_s
+            }
         } },
         { "WebCore::InheritanceGrandchild"_s, {
-            { "double"_s, "a"_s }
+            {
+                "double"_s,
+                "c"_s
+            }
         } },
         { "Seconds"_s, {
-            { "double"_s, "a"_s }
+            {
+                "double"_s,
+                "value()"_s
+            }
         } },
         { "CreateUsingClass"_s, {
-            { "double"_s, "a"_s }
+            {
+                "double"_s,
+                "value"_s
+            }
         } },
         { "WebCore::FloatBoxExtent"_s, {
-            { "float"_s, "a"_s },
-            { "float"_s, "b"_s },
-            { "float"_s, "c"_s },
-            { "float"_s, "d"_s }
+            {
+                "float"_s,
+                "top()"_s
+            }, {
+                "float"_s,
+                "right()"_s
+            }, {
+                "float"_s,
+                "bottom()"_s
+            }, {
+                "float"_s,
+                "left()"_s
+            }
         } },
         { "NullableSoftLinkedMember"_s, {
-            { "RetainPtr<DDActionContext>"_s, "a"_s },
-            { "RetainPtr<DDActionContext>"_s, "b"_s }
+            {
+                "RetainPtr<DDActionContext>"_s,
+                "firstMember"_s
+            }, {
+                "RetainPtr<DDActionContext>"_s,
+                "secondMember"_s
+            }
         } },
     };
 }

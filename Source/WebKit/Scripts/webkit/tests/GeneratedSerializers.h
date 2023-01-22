@@ -48,8 +48,8 @@ namespace WebCore { class InheritanceGrandchild; }
 namespace WTF { class Seconds; }
 namespace WTF { class CreateUsingClass; }
 namespace WebCore {
-template<typename> class RectEdges;
-using FloatBoxExtent = RectEdges<float>;
+template<typename, typename> class ScrollSnapOffsetsInfo;
+using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
 }
 struct NullableSoftLinkedMember;
 namespace WebCore { class TimingFunction; }

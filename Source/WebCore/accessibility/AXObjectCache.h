@@ -44,6 +44,7 @@ class TextStream;
 
 namespace WebCore {
 
+class AXTextMarker;
 class Document;
 class HTMLAreaElement;
 class HTMLTableElement;
@@ -56,19 +57,7 @@ class RenderText;
 class ScrollView;
 class VisiblePosition;
 class Widget;
-
-struct TextMarkerData {
-    AXID axID;
-
-    Node* node { nullptr };
-    unsigned offset { 0 };
-    Position::AnchorType anchorType { Position::PositionIsOffsetInAnchor };
-    Affinity affinity { Affinity::Downstream };
-
-    int characterStartIndex { 0 };
-    int characterOffset { 0 };
-    bool ignored { false };
-};
+struct TextMarkerData;
 
 struct CharacterOffset {
     Node* node;
@@ -236,15 +225,17 @@ public:
     // Text marker utilities.
     std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&);
     std::optional<TextMarkerData> textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement&);
-    void textMarkerDataForCharacterOffset(TextMarkerData&, const CharacterOffset&);
-    void textMarkerDataForNextCharacterOffset(TextMarkerData&, const CharacterOffset&);
-    void textMarkerDataForPreviousCharacterOffset(TextMarkerData&, const CharacterOffset&);
-    VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
+    TextMarkerData textMarkerDataForCharacterOffset(const CharacterOffset&);
+    TextMarkerData textMarkerDataForNextCharacterOffset(const CharacterOffset&);
+    AXTextMarker nextTextMarker(const AXTextMarker&);
+    TextMarkerData textMarkerDataForPreviousCharacterOffset(const CharacterOffset&);
+    AXTextMarker previousTextMarker(const AXTextMarker&);
+    VisiblePosition visiblePositionForTextMarkerData(const TextMarkerData&);
     CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
     // Use ignoreNextNodeStart/ignorePreviousNodeEnd to determine the behavior when we are at node boundary. 
     CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreNextNodeStart = true);
     CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
-    void startOrEndTextMarkerDataForRange(TextMarkerData&, const SimpleRange&, bool);
+    TextMarkerData startOrEndTextMarkerDataForRange(const SimpleRange&, bool);
     CharacterOffset startOrEndCharacterOffsetForRange(const SimpleRange&, bool, bool enterTextControls = false);
     AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);
     std::optional<SimpleRange> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
@@ -455,9 +446,10 @@ protected:
     Node* nextNode(Node*) const;
     Node* previousNode(Node*) const;
     CharacterOffset traverseToOffsetInRange(const SimpleRange&, int, TraverseOption = TraverseOptionDefault, bool stayWithinRange = false);
+public:
     VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&);
+protected:
     CharacterOffset characterOffsetFromVisiblePosition(const VisiblePosition&);
-    void setTextMarkerDataWithCharacterOffset(TextMarkerData&, const CharacterOffset&);
     UChar32 characterAfter(const CharacterOffset&);
     UChar32 characterBefore(const CharacterOffset&);
     CharacterOffset characterOffsetForNodeAndOffset(Node&, int, TraverseOption = TraverseOptionDefault);

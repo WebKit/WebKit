@@ -1175,7 +1175,7 @@ struct WebCore::ExceptionDetails {
 };
 
 header: <WebCore/RectEdges.h>
-[Alias=RectEdges<float>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::FloatBoxExtent {
+[Alias=class RectEdges<float>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::FloatBoxExtent {
     float top()
     float right()
     float bottom()
@@ -2672,4 +2672,79 @@ struct WebCore::CookieRequestHeaderFieldProxy {
     Vector<char> m_boundary;
     Vector<WebCore::FormDataElement> m_elements;
     int64_t m_identifier;
+};
+
+#if ENABLE(ASYNC_SCROLLING)
+header: <WebCore/ScrollingStateNode.h>
+[OptionSet] enum class WebCore::ScrollingStateNodeProperty : uint64_t {
+    Layer
+    ChildNodes
+    ScrollableAreaSize
+    TotalContentsSize
+    ReachableContentsSize
+    ScrollPosition
+    ScrollOrigin
+    ScrollableAreaParams
+    ReasonsForSynchronousScrolling
+    RequestedScrollPosition
+    SnapOffsetsInfo
+    CurrentHorizontalSnapOffsetIndex
+    CurrentVerticalSnapOffsetIndex
+    IsMonitoringWheelEvents
+    ScrollContainerLayer
+    ScrolledContentsLayer
+    HorizontalScrollbarLayer
+    VerticalScrollbarLayer
+    PainterForScrollbar
+    FrameScaleFactor
+    EventTrackingRegion
+    RootContentsLayer
+    CounterScrollingLayer
+    InsetClipLayer
+    ContentShadowLayer
+    HeaderHeight
+    FooterHeight
+    HeaderLayer
+    FooterLayer
+    BehaviorForFixedElements
+    TopContentInset
+    FixedElementsLayoutRelativeToFrame
+    VisualViewportIsSmallerThanLayoutViewport
+    AsyncFrameOrOverflowScrollingEnabled
+    WheelEventGesturesBecomeNonBlocking
+    ScrollingPerformanceTestingEnabled
+    LayoutViewport
+    MinLayoutViewportOrigin
+    MaxLayoutViewportOrigin
+    OverrideVisualViewportSize
+    RelatedOverflowScrollingNodes
+    LayoutConstraintData
+    ViewportConstraints
+    OverflowScrollingNode
+    KeyboardScrollData
+};
+#endif
+
+[CustomHeader] struct WebCore::RequestedScrollData {
+    WebCore::ScrollRequestType requestType;
+    WebCore::FloatPoint scrollPosition;
+    WebCore::ScrollType scrollType;
+    WebCore::ScrollClamping clamping;
+    WebCore::ScrollIsAnimated animated;
+}
+
+[Alias=struct ScrollSnapOffsetsInfo<float,WebCore::FloatRect>, CustomHeader] alias WebCore::FloatScrollSnapOffsetsInfo {
+    WebCore::ScrollSnapStrictness strictness;
+    Vector<WebCore::FloatSnapOffset> horizontalSnapOffsets;
+    Vector<WebCore::FloatSnapOffset> verticalSnapOffsets;
+    Vector<WebCore::FloatRect> snapAreas;
+}
+
+[Alias=struct SnapOffset<float>, CustomHeader] alias WebCore::FloatSnapOffset {
+    float offset;
+    WebCore::ScrollSnapStop stop;
+    bool hasSnapAreaLargerThanViewport;
+    uint64_t snapTargetID;
+    bool isFocused;
+    Vector<size_t> snapAreaIndices;
 };

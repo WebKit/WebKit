@@ -181,28 +181,22 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 + (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache
 {
-    if (!cache)
+    if (!cache || characterOffset.isNull())
         return nil;
-    
-    if (characterOffset.isNull())
-        return nil;
-    
-    TextMarkerData textMarkerData;
-    cache->textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
-    if (!textMarkerData.axID && !textMarkerData.ignored)
+
+    auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
+    if (!textMarkerData.objectID && !textMarkerData.ignored)
         return nil;
     return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
 + (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const std::optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache
 {
-    if (!cache)
+    if (!cache || !range)
         return nil;
-    if (!range)
-        return nil;
-    TextMarkerData textMarkerData;
-    cache->startOrEndTextMarkerDataForRange(textMarkerData, *range, isStart);
-    if (!textMarkerData.axID)
+
+    auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
+    if (!textMarkerData.objectID)
         return nil;
     return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
@@ -2673,26 +2667,24 @@ static RenderObject* rendererForView(WAKView* view)
 
 - (WebAccessibilityTextMarker *)nextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
 {
-    AXObjectCache* cache = self.axBackingObject->axObjectCache();
+    auto* cache = self.axBackingObject->axObjectCache();
     if (!cache)
         return nil;
-    
-    TextMarkerData textMarkerData;
-    cache->textMarkerDataForNextCharacterOffset(textMarkerData, characterOffset);
-    if (!textMarkerData.axID)
+
+    auto textMarkerData = cache->textMarkerDataForNextCharacterOffset(characterOffset);
+    if (!textMarkerData.objectID)
         return nil;
     return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
 
 - (WebAccessibilityTextMarker *)previousMarkerForCharacterOffset:(CharacterOffset&)characterOffset
 {
-    AXObjectCache* cache = self.axBackingObject->axObjectCache();
+    auto* cache = self.axBackingObject->axObjectCache();
     if (!cache)
         return nil;
-    
-    TextMarkerData textMarkerData;
-    cache->textMarkerDataForPreviousCharacterOffset(textMarkerData, characterOffset);
-    if (!textMarkerData.axID)
+
+    auto textMarkerData = cache->textMarkerDataForPreviousCharacterOffset(characterOffset);
+    if (!textMarkerData.objectID)
         return nil;
     return adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache]).autorelease();
 }
