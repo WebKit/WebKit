@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,11 +53,6 @@ RemoteSwapChain::~RemoteSwapChain() = default;
 void RemoteSwapChain::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteSwapChain::messageReceiverName(), m_identifier.toUInt64());
-}
-
-void RemoteSwapChain::destroy()
-{
-    m_backing->destroy();
 }
 
 void RemoteSwapChain::setLabel(String&& label)

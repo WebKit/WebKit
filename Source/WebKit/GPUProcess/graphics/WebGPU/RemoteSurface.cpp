@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,11 +50,6 @@ RemoteSurface::~RemoteSurface() = default;
 void RemoteSurface::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteSurface::messageReceiverName(), m_identifier.toUInt64());
-}
-
-void RemoteSurface::destroy()
-{
-    m_backing->destroy();
 }
 
 void RemoteSurface::setLabel(String&& label)

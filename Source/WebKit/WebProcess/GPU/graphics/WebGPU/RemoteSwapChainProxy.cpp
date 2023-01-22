@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,12 +45,6 @@ RemoteSwapChainProxy::RemoteSwapChainProxy(RemoteDeviceProxy& parent, ConvertToB
 
 RemoteSwapChainProxy::~RemoteSwapChainProxy()
 {
-}
-
-void RemoteSwapChainProxy::destroy()
-{
-    auto sendResult = send(Messages::RemoteSwapChain::Destroy());
-    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteSwapChainProxy::setLabelInternal(const String& label)
