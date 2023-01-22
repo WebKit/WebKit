@@ -87,7 +87,7 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
     auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
     JSDOMWindow* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
-    return elements.map([frame, &jsContext, globalObject](auto& element) -> GRefPtr<JSCValue> {
+    return elements.map([&jsContext, globalObject](auto& element) -> GRefPtr<JSCValue> {
         JSValueRef jsValue = nullptr;
         {
             JSC::JSLockHolder lock(globalObject);

@@ -40,7 +40,7 @@ public:
     static Ref<ScrollingTreePositionedNodeNicosia> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreePositionedNodeNicosia();
 
-    Nicosia::CompositionLayer* layer() const { return m_layer.get(); }
+    Nicosia::CompositionLayer* layer() const override { return m_layer.get(); }
 
 private:
     ScrollingTreePositionedNodeNicosia(ScrollingTree&, ScrollingNodeID);
