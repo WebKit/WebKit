@@ -391,7 +391,7 @@ URL HitTestResult::absoluteImageURL() const
         || is<SVGImageElement>(*imageNode)) {
         auto imageURL = imageNode->document().completeURL(downcast<Element>(*imageNode).imageSourceURL());
         if (auto* page = imageNode->document().page())
-            return page->sanitizeLookalikeCharacters(imageURL);
+            return page->sanitizeLookalikeCharacters(imageURL, LookalikeCharacterSanitizationTrigger::Unspecified);
         return imageURL;
     }
 
@@ -422,7 +422,7 @@ URL HitTestResult::absoluteMediaURL() const
     if (auto* element = mediaElement()) {
         auto sourceURL = element->currentSrc();
         if (auto* page = element->document().page())
-            return page->sanitizeLookalikeCharacters(sourceURL);
+            return page->sanitizeLookalikeCharacters(sourceURL, LookalikeCharacterSanitizationTrigger::Unspecified);
         return sourceURL;
     }
 #endif
@@ -634,7 +634,7 @@ URL HitTestResult::absoluteLinkURL() const
 
     auto url = m_innerURLElement->absoluteLinkURL();
     if (auto* page = m_innerURLElement->document().page())
-        return page->sanitizeLookalikeCharacters(url);
+        return page->sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Unspecified);
 
     return url;
 }

@@ -238,6 +238,12 @@ enum class RenderingUpdateStep : uint32_t {
     CaretAnimation                  = 1 << 17,
 };
 
+enum LookalikeCharacterSanitizationTrigger : uint8_t {
+    Unspecified,
+    Navigation,
+    Copy,
+};
+
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::FlushAutofocusCandidates,
     RenderingUpdateStep::Resize,
@@ -958,8 +964,8 @@ public:
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
-    URL sanitizeLookalikeCharacters(const URL&) const;
-    String sanitizeLookalikeCharacters(const String&) const;
+    URL sanitizeLookalikeCharacters(const URL&, LookalikeCharacterSanitizationTrigger) const;
+    String sanitizeLookalikeCharacters(const String&, LookalikeCharacterSanitizationTrigger) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);
