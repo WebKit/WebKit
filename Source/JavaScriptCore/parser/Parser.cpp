@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -3208,6 +3208,8 @@ parseMethod:
             DepthManager statementDepth(&m_statementDepth);
             m_statementDepth = 1;
             failIfFalse(parseBlockStatement(context, BlockType::StaticBlock), "Cannot parse class static block");
+            auto* symbolImpl = bitwise_cast<SymbolImpl*>(m_vm.propertyNames->builtinNames().staticInitializerBlockPrivateName().impl());
+            ident = &m_parserArena.identifierArena().makeIdentifier(const_cast<VM&>(m_vm), symbolImpl);
             property = context.createProperty(ident, type, SuperBinding::Needed, tag);
             classScope->markLastUsedVariablesSetAsCaptured(usedVariablesSize);
         } else {
