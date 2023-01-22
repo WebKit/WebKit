@@ -106,10 +106,11 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
         if (!dependencies.isEmpty())
             return nullptr;
 
-        auto style = RenderStyle::clone(*m_scope.resolver().rootDefaultStyle());
-        Style::Builder dummyBuilder(style, { document, style }, { }, { });
+        // We don't need to provide a real context style since only computationally independent values are allowed (no 'em' etc).
+        auto placeholderStyle = RenderStyle::create();
+        Style::Builder builder { placeholderStyle, { document, RenderStyle::defaultStyle() }, { }, { } };
 
-        return CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenRange, dummyBuilder.state(), { document });
+        return CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenRange, builder.state(), { document });
     }();
 
     if (!initialValue)
