@@ -1370,12 +1370,14 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     // 3. ReturnIfAbrupt(S).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    JSValue localeValue = callFrame->argument(0);
+
     // Optimization for empty strings.
-    if (s.isEmpty())
+    if (s.isEmpty() && localeValue.isUndefined())
         return JSValue::encode(sVal);
 
     // 4. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, localeValue);
 
     // 5. ReturnIfAbrupt(requestedLocales).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
