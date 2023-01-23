@@ -110,7 +110,7 @@ class Branch(Command):
             return 1
 
         if not args.issue:
-            if Tracker.instance():
+            if Tracker.instance() and getattr(args, 'update_issue', True):
                 prompt = '{}nter issue URL or title of new issue: '.format('{}, e'.format(why) if why else 'E')
             else:
                 prompt = '{}nter name of new branch (or issue URL): '.format('{}, e'.format(why) if why else 'E')
@@ -127,7 +127,7 @@ class Branch(Command):
             elif issue:
                 args.issue = str(issue.id)
 
-        if not issue and Tracker.instance():
+        if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
             if ' ' in args.issue:
                 if getattr(Tracker.instance(), 'credentials', None):
                     Tracker.instance().credentials(required=True, validate=True)
@@ -146,7 +146,7 @@ class Branch(Command):
             else:
                 log.warning("'{}' has no spaces, assuming user intends it to be a branch name".format(args.issue))
 
-        needs_radar = issue and not isinstance(issue.tracker, radar.Tracker)
+        needs_radar = issue and not isinstance(issue.tracker, radar.Tracker) and getattr(args, 'update_issue', True)
         needs_radar = needs_radar and any([
             isinstance(tracker, radar.Tracker) and tracker.radarclient()
             for tracker in Tracker._trackers
