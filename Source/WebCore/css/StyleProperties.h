@@ -155,53 +155,29 @@ public:
 
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
-    StyleProperties() = default;
+    int findPropertyIndex(CSSPropertyID) const;
+    int findCustomPropertyIndex(StringView propertyName) const;
 
 protected:
-    StyleProperties(CSSParserMode cssParserMode, StylePropertiesType type)
-        : m_cssParserMode(cssParserMode)
+    StyleProperties(CSSParserMode mode, StylePropertiesType type)
+        : m_cssParserMode(mode)
         , m_type(type)
-        , m_arraySize(0)
     { }
 
-    StyleProperties(CSSParserMode cssParserMode, unsigned immutableArraySize)
-        : m_cssParserMode(cssParserMode)
+    StyleProperties(CSSParserMode mode, unsigned immutableArraySize)
+        : m_cssParserMode(mode)
         , m_type(ImmutablePropertiesType)
         , m_arraySize(immutableArraySize)
     { }
 
-    int findPropertyIndex(CSSPropertyID) const;
-    int findCustomPropertyIndex(const String& propertyName) const;
-
     unsigned m_cssParserMode : 3;
     mutable unsigned m_type : 2;
-    unsigned m_arraySize : 27;
+    unsigned m_arraySize : 27 { 0 };
 
 private:
-    String getGridRowColumnShorthandValue(const StylePropertyShorthand&) const;
-    String getGridAreaShorthandValue() const;
-    String getGridTemplateValue() const;
-    String getGridValue() const;
-    String getShorthandValue(const StylePropertyShorthand&) const;
-    String getCommonValue(const StylePropertyShorthand&) const;
-    String borderImagePropertyValue(const StylePropertyShorthand&) const;
-    String borderPropertyValue(const StylePropertyShorthand&, const StylePropertyShorthand&, const StylePropertyShorthand&) const;
-    String borderRadiusShorthandValue(const StylePropertyShorthand&) const;
-    String breakInsideShorthandValue(const StylePropertyShorthand&) const;
-    String pageBreakValue(const StylePropertyShorthand&) const;
-    String webkitColumnBreakValue(const StylePropertyShorthand&) const;
-    String getLayeredShorthandValue(const StylePropertyShorthand&) const;
-    String get2Values(const StylePropertyShorthand&) const;
-    String get4Values(const StylePropertyShorthand&) const;
-    String fontValue(const StylePropertyShorthand&) const;
-    String fontVariantValue() const;
-    String fontSynthesisValue() const;
-    String offsetValue() const;
-    String commonShorthandChecks(const StylePropertyShorthand&) const;
-    bool hasAllInitialValues(const StylePropertyShorthand&) const;
     StringBuilder asTextInternal() const;
-
-    friend class PropertySetCSSStyleDeclaration;
+    String serializeLonghandValue(CSSPropertyID) const;
+    String serializeShorthandValue(CSSPropertyID) const;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
@@ -220,7 +196,7 @@ public:
     unsigned size() const { return propertyCount(); }
 
     int findPropertyIndex(CSSPropertyID) const;
-    int findCustomPropertyIndex(const String& propertyName) const;
+    int findCustomPropertyIndex(StringView propertyName) const;
     
     void* m_storage;
 
@@ -270,7 +246,6 @@ public:
 
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
-    bool setProperty(CSSPropertyID, CSSPropertyID identifier, bool important = false);
     bool setProperty(const CSSProperty&, CSSProperty* slot = nullptr);
 
     bool removeProperty(CSSPropertyID, String* returnText = nullptr);
@@ -286,7 +261,7 @@ public:
     CSSStyleDeclaration& ensureInlineCSSStyleDeclaration(StyledElement& parentElement);
 
     int findPropertyIndex(CSSPropertyID) const;
-    int findCustomPropertyIndex(const String& propertyName) const;
+    int findCustomPropertyIndex(StringView propertyName) const;
     
     Vector<CSSProperty, 4> m_propertyVector;
 
@@ -299,7 +274,9 @@ private:
     explicit MutableStyleProperties(const StyleProperties&);
     MutableStyleProperties(Vector<CSSProperty>&&);
 
-    bool removeShorthandProperty(CSSPropertyID);
+    bool removeLonghandProperty(CSSPropertyID, String* returnText);
+    bool removeShorthandProperty(CSSPropertyID, String* returnText);
+    bool removePropertyAtIndex(int index, String* returnText);
     CSSProperty* findCSSPropertyWithID(CSSPropertyID);
     CSSProperty* findCustomCSSPropertyWithName(const String&);
     std::unique_ptr<PropertySetCSSStyleDeclaration> m_cssomWrapper;
@@ -353,7 +330,7 @@ inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
     return downcast<ImmutableStyleProperties>(*this).findPropertyIndex(propertyID);
 }
 
-inline int StyleProperties::findCustomPropertyIndex(const String& propertyName) const
+inline int StyleProperties::findCustomPropertyIndex(StringView propertyName) const
 {
     if (is<MutableStyleProperties>(*this))
         return downcast<MutableStyleProperties>(*this).findCustomPropertyIndex(propertyName);

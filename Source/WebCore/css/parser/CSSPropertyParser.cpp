@@ -623,13 +623,14 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     auto range = m_range;
 
-    RefPtr<CSSValue> fontStyle;
-    RefPtr<CSSValue> fontVariantCaps;
-    RefPtr<CSSValue> fontWeight;
-    RefPtr<CSSValue> fontStretch;
-    RefPtr<CSSValue> fontSize;
-    RefPtr<CSSValue> lineHeight;
-    RefPtr<CSSValue> fontFamily;
+    RefPtr<CSSValue> values[7];
+    auto& fontStyle = values[0];
+    auto& fontVariantCaps = values[1];
+    auto& fontWeight = values[2];
+    auto& fontStretch = values[3];
+    auto& fontSize = values[4];
+    auto& lineHeight = values[5];
+    auto& fontFamily = values[6];
 
     // Optional font-style, font-variant, font-stretch and font-weight, in any order.
     for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
@@ -667,29 +668,10 @@ bool CSSPropertyParser::consumeFont(bool important)
     if (!fontFamily || !range.atEnd())
         return false;
 
-    auto reset = [&] (CSSPropertyID property, CSSValueID initialValue) {
-        ASSERT(initialValue != CSSValueInvalid);
-        addProperty(property, CSSPropertyFont, CSSPrimitiveValue::create(initialValue), important, true);
-    };
-    auto add = [&] (CSSPropertyID property, RefPtr<CSSValue>& value) {
-        if (value)
-            addProperty(property, CSSPropertyFont, value.releaseNonNull(), important);
-        else
-            reset(property, CSSValueNormal);
-    };
-
-    // This must be in the same order as the list of shorthands in CSSProperties.json.
-    add(CSSPropertyFontStyle, fontStyle);
-    add(CSSPropertyFontVariantCaps, fontVariantCaps);
-    add(CSSPropertyFontWeight, fontWeight);
-    add(CSSPropertyFontStretch, fontStretch);
-    add(CSSPropertyFontSize, fontSize);
-    add(CSSPropertyLineHeight, lineHeight);
-    add(CSSPropertyFontFamily, fontFamily);
-    for (auto [property, initialValue] : fontShorthandSubpropertiesResetToInitialValues)
-        reset(property, initialValue);
-
     m_range = range;
+    auto shorthand = fontShorthand();
+    for (unsigned i = 0; i < shorthand.length(); ++i)
+        addProperty(shorthand.properties()[i], CSSPropertyFont, i < std::size(values) ? WTFMove(values[i]) : nullptr, important, true);
     return true;
 }
 

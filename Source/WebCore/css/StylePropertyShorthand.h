@@ -71,19 +71,4 @@ constexpr bool isShorthandCSSProperty(CSSPropertyID id)
     return id >= firstShorthandProperty && id <= lastShorthandProperty;
 }
 
-constexpr std::pair<CSSPropertyID, CSSValueID> fontShorthandSubpropertiesResetToInitialValues[] = {
-    { CSSPropertyFontSizeAdjust, CSSValueNone },
-    { CSSPropertyFontKerning, CSSValueAuto },
-    { CSSPropertyFontVariantAlternates, CSSValueNormal },
-    { CSSPropertyFontVariantLigatures, CSSValueNormal },
-    { CSSPropertyFontVariantNumeric, CSSValueNormal },
-    { CSSPropertyFontVariantEastAsian, CSSValueNormal },
-    { CSSPropertyFontVariantPosition, CSSValueNormal },
-    { CSSPropertyFontFeatureSettings, CSSValueNormal },
-#if ENABLE(VARIATION_FONTS)
-    { CSSPropertyFontOpticalSizing, CSSValueAuto },
-    { CSSPropertyFontVariationSettings, CSSValueNormal },
-#endif
-};
-
 } // namespace WebCore
