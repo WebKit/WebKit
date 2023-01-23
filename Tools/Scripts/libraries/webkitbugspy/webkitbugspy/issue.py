@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -71,6 +71,7 @@ class Issue(object):
         self._project = None
         self._component = None
         self._version = None
+        self._milestone = None
 
         self.tracker.populate(self, None)
 
@@ -180,6 +181,12 @@ class Issue(object):
         if self._version is None:
             self.tracker.populate(self, 'version')
         return self._version
+
+    @property
+    def milestone(self):
+        if self._milestone is None:
+            self.tracker.populate(self, 'milestone')
+        return self._milestone or None
 
     @property
     def redacted(self):

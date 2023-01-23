@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -141,6 +141,7 @@ class GitHub(Base, mocks.Requests):
             created_at=self.time_string(issue['timestamp']),
             state='opened' if issue['opened'] else 'closed',
             labels=self._labels_for_issue(issue),
+            milestone=dict(title=issue['milestone']) if issue.get('milestone') else None,
             assignee=dict(login=self.users[issue['assignee'].name].username) if issue['assignee'] else None,
             assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
         ))
@@ -268,6 +269,7 @@ class GitHub(Base, mocks.Requests):
             user=dict(login=self.users[issue['creator'].name].username),
             created_at=self.time_string(issue['timestamp']),
             state='opened' if issue['opened'] else 'closed',
+            milestone=None,
             labels=self._labels_for_issue(issue),
             assignee=dict(login=self.users[issue['assignee'].name].username) if issue['assignee'] else None,
             assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
