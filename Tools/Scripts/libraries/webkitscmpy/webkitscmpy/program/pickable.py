@@ -187,12 +187,13 @@ class Pickable(Command):
 
         for ref in list(filtered_in):
             commit = all_commits[ref]
-            relationships = Trace.relationships(commit, repository, commits_story=commits_story)
+            relationships = Trace.relationships(commit, repository)
             if not relationships:
                 continue
             for rel in relationships:
                 if rel.type in Relationship.IDENTITY:
-                    filtered_in.remove(ref)
+                    if rel.commit in commits_story:
+                        filtered_in.remove(ref)
                     break
                 if rel.type in Relationship.PAIRED + Relationship.UNDO and str(rel.commit) not in filtered_in:
                     filtered_in.remove(ref)

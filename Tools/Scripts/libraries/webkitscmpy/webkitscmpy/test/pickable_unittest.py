@@ -139,6 +139,44 @@ class TestPickable(testing.PathTestCase):
             '4.2@safari-xxx-branch | efbdb34cc145 | [WebKit] Some change\n',
         )
 
+    def test_branch_diverged_cherry_pick(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
+            repo.commits['safari-xxx-branch'] = [
+                repo.commits['main'][3],
+                Commit(
+                    hash='6eedcf4492c3b14a97b886c4df59e8698f10539f',
+                    author=repo.commits['main'][3].author,
+                    timestamp=int(time.time()) - 1000,
+                    branch='safari-xxx-branch',
+                    message='Versioning.\n',
+                    identifier='4.1@safari-xxx-branch',
+                ), Commit(
+                    hash='efbdb34cc1454d1772838a41e22df23d231567b9',
+                    author=repo.commits['main'][3].author,
+                    timestamp=int(time.time()) - 100,
+                    branch='safari-xxx-branch',
+                    message='[WebKit] Some change\n',
+                    identifier='4.2@safari-xxx-branch',
+                ), Commit(
+                    hash='d10204abba135b5b9588936d7eec7cd001d07d0f',
+                    author=repo.commits['main'][3].author,
+                    timestamp=int(time.time()) - 10,
+                    branch='safari-xxx-branch',
+                    message='Cherry-pick 790725a6d79e.\n    7th commit\n',
+                    identifier='4.3@safari-xxx-branch',
+                ),
+            ]
+            self.assertEqual(0, program.main(
+                args=('pickable', 'safari-xxx-branch'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '4.3@safari-xxx-branch | d10204abba13 | Cherry-pick 790725a6d79e.\n'
+            '4.2@safari-xxx-branch | efbdb34cc145 | [WebKit] Some change\n',
+        )
+
     def test_branch_none(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
             repo.commits['safari-xxx-branch'] = [
