@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+struct BlendingContext;
 class SVGElement;
 
 class PathOperation : public RefCounted<PathOperation> {
@@ -54,6 +55,9 @@ public:
 
     virtual bool operator==(const PathOperation&) const = 0;
     bool operator!=(const PathOperation& o) const { return !(*this == o); }
+
+    virtual bool canBlend(const PathOperation&) const { return false; }
+    virtual RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const { return nullptr; }
 
     OperationType type() const { return m_type; }
     bool isSameType(const PathOperation& o) const { return o.type() == m_type; }
@@ -103,6 +107,17 @@ public:
     static Ref<ShapePathOperation> create(Ref<BasicShape>&& shape, CSSBoxType referenceBox)
     {
         return adoptRef(*new ShapePathOperation(WTFMove(shape), referenceBox));
+    }
+
+    bool canBlend(const PathOperation& to) const final
+    {
+        return is<ShapePathOperation>(to) && m_shape->canBlend(downcast<ShapePathOperation>(to).basicShape());
+    }
+
+    RefPtr<PathOperation> blend(const PathOperation* to, const BlendingContext& context) const final
+    {
+        ASSERT(is<ShapePathOperation>(to));
+        return ShapePathOperation::create(downcast<ShapePathOperation>(*to).basicShape().blend(m_shape, context));
     }
 
     const BasicShape& basicShape() const { return m_shape; }
@@ -219,16 +234,8 @@ public:
     Size size() const { return m_size; }
     bool isContaining() const { return m_isContaining; }
 
-    bool canBlend(const RayPathOperation& other) const
-    {
-        // Two rays can only be blended if they have the same size and are both containing.
-        return m_size == other.m_size && m_isContaining == other.m_isContaining;
-    }
-
-    Ref<RayPathOperation> blend(const RayPathOperation& to, const BlendingContext& context) const
-    {
-        return RayPathOperation::create(WebCore::blend(m_angle, to.m_angle, context), m_size, m_isContaining);
-    }
+    bool canBlend(const PathOperation&) const final;
+    RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
 
     double lengthForPath() const;
     double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;
