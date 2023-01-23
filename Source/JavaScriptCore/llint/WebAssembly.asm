@@ -2113,18 +2113,8 @@ wasmOp(rethrow, WasmRethrow, macro(ctx)
 end)
 
 macro commonCatchImpl(ctx)
-    loadp Callee[cfr], t3
-    convertCalleeToVM(t3)
+    getVMFromCallFrame(t3, t0)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
-
-    loadp VM::calleeForWasmCatch + PayloadOffset[t3], ws1
-    storep 0, VM::calleeForWasmCatch + PayloadOffset[t3]
-    storep ws1, Callee + PayloadOffset[cfr]
-if not JSVALUE64
-    loadi VM::calleeForWasmCatch + TagOffset[t3], ws1
-    storei EmptyValueTag, VM::calleeForWasmCatch + TagOffset[t3]
-    storei ws1, Callee + TagOffset[cfr]
-end
 
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]

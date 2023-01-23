@@ -804,7 +804,6 @@ WASM_SLOW_PATH_DECL(throw)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
-    JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -822,16 +821,6 @@ WASM_SLOW_PATH_DECL(throw)
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
-    // FIXME: We could make this better:
-    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
-    // require a cell in the callee field to load the VM. (The baseline JIT does not require
-    // this since it is compiled with a constant VM pointer.) We could make the calling convention
-    // for exceptions first load callFrameForCatch info call frame register before jumping
-    // to the exception handler. If we did this, we could remove this terrible hack.
-    // https://bugs.webkit.org/show_bug.cgi?id=170440
-    vm.calleeForWasmCatch = callFrame->callee();
-    Register* calleeSlot = bitwise_cast<Register*>(callFrame) + static_cast<int>(CallFrameSlot::callee);
-    *calleeSlot = bitwise_cast<JSCell*>(jsInstance->module());
     WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
 }
 
@@ -839,7 +828,6 @@ WASM_SLOW_PATH_DECL(rethrow)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
-    JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -851,16 +839,6 @@ WASM_SLOW_PATH_DECL(rethrow)
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
-    // FIXME: We could make this better:
-    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
-    // require a cell in the callee field to load the VM. (The baseline JIT does not require
-    // this since it is compiled with a constant VM pointer.) We could make the calling convention
-    // for exceptions first load callFrameForCatch info call frame register before jumping
-    // to the exception handler. If we did this, we could remove this terrible hack.
-    // https://bugs.webkit.org/show_bug.cgi?id=170440
-    vm.calleeForWasmCatch = callFrame->callee();
-    Register* calleeSlot = bitwise_cast<Register*>(callFrame) + static_cast<int>(CallFrameSlot::callee);
-    *calleeSlot = bitwise_cast<JSCell*>(jsInstance->module());
     WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
 }
 
