@@ -1089,7 +1089,7 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
 
     const auto& layerProperties = *it->value;
     CGRect rect = layerProperties.eventRegion.region().bounds();
-    if ((layerProperties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged) && !CGRectIsEmpty(rect))
+    if ((layerProperties.changedProperties & WebKit::LayerChange::EventRegionChanged) && !CGRectIsEmpty(rect))
         overlayRegionIDs.add(layerID);
 
     for (auto childLayerID : layerProperties.children)
