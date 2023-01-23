@@ -6206,7 +6206,7 @@ OverscrollBehavior FrameView::horizontalOverscrollBehavior() const
 {
     auto* document = m_frame->document();
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
-    if (scrollingObject && renderView() && renderView()->canBeScrolledAndHasScrollableArea())
+    if (scrollingObject && renderView())
         return scrollingObject->style().overscrollBehaviorX();
     return OverscrollBehavior::Auto;
 }
@@ -6215,7 +6215,7 @@ OverscrollBehavior FrameView::verticalOverscrollBehavior()  const
 {
     auto* document = m_frame->document();
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
-    if (scrollingObject && renderView() && renderView()->canBeScrolledAndHasScrollableArea())
+    if (scrollingObject && renderView())
         return scrollingObject->style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
 }

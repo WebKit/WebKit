@@ -992,14 +992,14 @@ int RenderLayerScrollableArea::horizontalScrollbarHeight(OverlayScrollbarSizeRel
 
 OverscrollBehavior RenderLayerScrollableArea::horizontalOverscrollBehavior() const
 {
-    if (m_layer.renderBox() && m_layer.renderBox()->canBeScrolledAndHasScrollableArea())
+    if (m_layer.renderBox())
         return m_layer.renderer().style().overscrollBehaviorX();
     return OverscrollBehavior::Auto;
 }
 
 OverscrollBehavior RenderLayerScrollableArea::verticalOverscrollBehavior() const
 {
-    if (m_layer.renderBox() && m_layer.renderBox()->canBeScrolledAndHasScrollableArea())
+    if (m_layer.renderBox())
         return m_layer.renderer().style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
 }
