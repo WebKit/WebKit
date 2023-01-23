@@ -51,6 +51,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webPageProxy.process().connection())
+
 UIScrollView *RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID(ScrollingNodeID nodeID) const
 {
     auto* treeNode = m_scrollingTree->nodeForID(nodeID);
@@ -183,9 +185,9 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
         Vector<GraphicsLayer::PlatformLayerID> stationaryScrollContainerIDs;
 
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
-            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
-            if (!overflowNode)
-                continue;
+            auto* node = m_scrollingTree->nodeForID(overflowNodeID);
+            MESSAGE_CHECK(is<ScrollingTreeOverflowScrollingNode>(node));
+            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(node);
             stationaryScrollContainerIDs.append(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
         }
 
@@ -196,9 +198,10 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
     }
 
     for (auto& scrollProxyNode : m_scrollingTree->activeOverflowScrollProxyNodes()) {
-        auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(scrollProxyNode->overflowScrollingNodeID()));
-        if (!overflowNode)
-            continue;
+        auto* node = m_scrollingTree->nodeForID(scrollProxyNode->overflowScrollingNodeID());
+        MESSAGE_CHECK(is<ScrollingTreeOverflowScrollingNode>(node));
+        auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(node);
+
         if (auto* layerNode = RemoteLayerTreeNode::forCALayer(scrollProxyNode->layer())) {
             layerNode->setActingScrollContainerID(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
             m_layersWithScrollingRelations.add(layerNode->layerID());
@@ -298,8 +301,10 @@ CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOf
     CGPoint activePoint = currentPoint;
 
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
-    ASSERT(root && is<ScrollingTreeFrameScrollingNode>(root));
-    ScrollingTreeFrameScrollingNode& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
+    if (!is<ScrollingTreeFrameScrollingNode>(root))
+        return CGPointZero;
+
+    auto& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
     const auto& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
     const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
 
