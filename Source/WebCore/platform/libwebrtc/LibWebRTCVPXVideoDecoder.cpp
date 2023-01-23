@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCVPXVideoDecoder.h"
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "LibWebRTCDav1dDecoder.h"
 #include "Logging.h"
