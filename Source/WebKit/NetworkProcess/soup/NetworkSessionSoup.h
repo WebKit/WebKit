@@ -32,6 +32,7 @@
 typedef struct _SoupSession SoupSession;
 
 namespace WebCore {
+class CertificateInfo;
 class SoupNetworkSession;
 struct SoupNetworkProxySettings;
 }
@@ -60,6 +61,7 @@ public:
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled; }
 
     void setIgnoreTLSErrors(bool);
+    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String&);
     void setProxySettings(const WebCore::SoupNetworkProxySettings&);
 
 private:
