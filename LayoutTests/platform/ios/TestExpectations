@@ -2021,14 +2021,6 @@ fast/text/fallback-language-han.html [ Skip ]
 
 # Pasteboard tests failing due to extra -webkit-text-size-adjust: auto.
 editing/pasteboard/copy-null-characters.html [ Failure ]
-editing/pasteboard/copy-resolves-urls.html [ Failure ]
-editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure ]
-editing/pasteboard/do-not-copy-unnecessary-styles-2.html [ Failure ]
-editing/pasteboard/paste-noscript-svg.html [ Failure ]
-editing/pasteboard/paste-noscript-xhtml.xhtml [ Failure ]
-editing/pasteboard/paste-noscript.html [ Failure ]
-editing/pasteboard/paste-visible-script.html [ Failure ]
-editing/pasteboard/paste-wrapped-blockquote-into-nonblockquote.html [ Failure ]
 
 # Failing pasteboard to triage
 editing/pasteboard/4242293-1.html [ Failure ]
