@@ -789,7 +789,6 @@
 				1CEBD7E02716AFBA00A5254D /* Frameworks */,
 				1CEBD7E12716AFBA00A5254D /* Resources */,
 				6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */,
-				6517571627C9AC3000D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
 			);
@@ -885,24 +884,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd ${SCRIPT_INPUT_FILE_0}\npython3 ./SingleHeader/MakeSingleHeader.py -o ${SCRIPT_OUTPUT_FILE_0} Foundation/Foundation.hpp QuartzCore/QuartzCore.hpp Metal/Metal.hpp\n";
-		};
-		6517571627C9AC3000D9FE40 /* Copy Frameworks to Secondary Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Frameworks to Secondary Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "export FRAMEWORKS_TO_COPY_TO_SECONDARY_PATH=\"WebGPU\"\n\"${SRCROOT}/Scripts/copy-frameworks-to-secondary-path.sh\"\n";
 		};
 		6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;
