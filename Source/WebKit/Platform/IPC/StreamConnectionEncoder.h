@@ -54,6 +54,31 @@ public:
 
     ~StreamConnectionEncoder() = default;
 
+    template<typename T, size_t Extent>
+    bool encodeSpan(const Span<T, Extent>& data)
+    {
+        return encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+    }
+
+    template<typename T>
+    bool encodeObject(const T& object)
+    {
+        static_assert(std::is_trivially_copyable_v<T>);
+        return encodeSpan(Span { std::addressof(object), 1 });
+    }
+
+    template<typename T>
+    StreamConnectionEncoder& operator<<(T&& t)
+    {
+        ArgumentCoder<std::remove_cvref_t<T>, void>::encode(*this, std::forward<T>(t));
+        return *this;
+    }
+
+    size_t size() const { ASSERT(isValid()); return m_encodedSize; }
+    bool isValid() const { return m_bufferCapacity; }
+    operator bool() const { return isValid(); }
+
+private:
     bool encodeFixedLengthData(const uint8_t* data, size_t size, size_t alignment)
     {
         size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer + m_encodedSize));
@@ -69,23 +94,6 @@ public:
         return true;
     }
 
-    template<typename T, size_t Extent>
-    bool encodeSpan(const Span<T, Extent>& data)
-    {
-        return encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
-    }
-
-    template<typename T>
-    StreamConnectionEncoder& operator<<(T&& t)
-    {
-        ArgumentCoder<std::remove_cvref_t<T>, void>::encode(*this, std::forward<T>(t));
-        return *this;
-    }
-
-    size_t size() const { ASSERT(isValid()); return m_encodedSize; }
-    bool isValid() const { return m_bufferCapacity; }
-    operator bool() const { return isValid(); }
-private:
     bool reserve(size_t alignedSize, size_t additionalSize)
     {
         size_t size = alignedSize + additionalSize;
@@ -95,6 +103,7 @@ private:
         }
         return true;
     }
+
     uint8_t* m_buffer;
     size_t m_bufferCapacity;
     size_t m_encodedSize { 0 };

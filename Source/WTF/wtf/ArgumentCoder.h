@@ -92,9 +92,9 @@ struct ArgumentCoder<bool> {
     template<typename Decoder>
     static std::optional<bool> decode(Decoder& decoder)
     {
-        uint8_t data;
-        if (decoder.decodeFixedLengthData(&data, sizeof(uint8_t), alignof(uint8_t)) && data <= 1)
-            return !!data; // This ensures that only the lower bit is set in a boolean for IPC messages
+        auto data = decoder.template decode<uint8_t>();
+        if (data && *data <= 1) // This ensures that only the lower bit is set in a boolean for IPC messages
+            return !!*data;
         return std::nullopt;
     }
 };
@@ -104,16 +104,13 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, T value)
     {
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
+        encoder.encodeObject(value);
     }
 
     template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
-        T result;
-        if (decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&result), sizeof(T), alignof(T)))
-            return result;
-        return std::nullopt;
+        return decoder.template decodeObject<T>();
     }
 };
 

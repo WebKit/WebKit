@@ -262,9 +262,9 @@ void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bo
     SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
 }
     
-bool ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder, RectEdges<bool>& boxEdges)
+std::optional<RectEdges<bool>> ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder)
 {
-    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder, boxEdges);
+    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder);
 }
 
 #if ENABLE(META_VIEWPORT)
@@ -273,17 +273,9 @@ void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportAr
     SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
 }
 
-bool ArgumentCoder<ViewportArguments>::decode(Decoder& decoder, ViewportArguments& viewportArguments)
-{
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
-}
-
 std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
 {
-    ViewportArguments viewportArguments;
-    if (!SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments))
-        return std::nullopt;
-    return viewportArguments;
+    return SimpleArgumentCoder<ViewportArguments>::decode(decoder);
 }
 
 #endif // ENABLE(META_VIEWPORT)
