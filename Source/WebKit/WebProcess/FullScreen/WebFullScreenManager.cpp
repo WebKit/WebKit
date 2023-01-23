@@ -323,7 +323,6 @@ void WebFullScreenManager::didExitFullScreen()
 
 void WebFullScreenManager::setAnimatingFullScreen(bool animating)
 {
-    ASSERT(m_element);
     if (!m_element)
         return;
     m_element->document().fullscreenManager().setAnimatingFullscreen(animating);
