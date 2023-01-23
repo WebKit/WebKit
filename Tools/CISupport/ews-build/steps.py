@@ -798,7 +798,7 @@ class ShowIdentifier(shell.ShellCommand):
     haltOnFailure = False
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+        super().__init__(timeout=5 * 60, logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
@@ -813,10 +813,10 @@ class ShowIdentifier(shell.ShellCommand):
                 break
 
         self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', revision])
-        return shell.ShellCommand.start(self)
+        return super().start()
 
     def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        rc = super().evaluateCommand(cmd)
         if rc != SUCCESS:
             return rc
 
@@ -851,7 +851,7 @@ class ShowIdentifier(shell.ShellCommand):
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {'step': 'Failed to find identifier'}
-        return shell.ShellCommand.getResultSummary(self)
+        return super().getResultSummary()
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
@@ -1232,7 +1232,7 @@ class FindModifiedLayoutTests(AnalyzeChange):
 
     def __init__(self, skipBuildIfNoResult=True):
         self.skipBuildIfNoResult = skipBuildIfNoResult
-        buildstep.BuildStep.__init__(self)
+        super().__init__()
 
     def find_test_names_from_patch(self, patch):
         tests = []
@@ -1584,7 +1584,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
         self.enableSkipEWSLabel = enableSkipEWSLabel
         self.addURLs = addURLs
-        buildstep.BuildStep.__init__(self)
+        super().__init__()
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -2880,7 +2880,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
 
     def __init__(self, **kwargs):
-        shell.Test.__init__(self, logEnviron=False, sigtermTime=10, **kwargs)
+        super().__init__(logEnviron=False, sigtermTime=10, **kwargs)
         self.binaryFailures = []
         self.stressTestFailures = []
         self.flaky = {}
@@ -2907,10 +2907,10 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
 
         self.setCommand(self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform')))
         self.command.extend(self.command_extra)
-        return shell.Test.start(self)
+        return super().start()
 
     def evaluateCommand(self, cmd):
-        rc = shell.Test.evaluateCommand(self, cmd)
+        rc = super().evaluateCommand(cmd)
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed JSC tests'
             self.descriptionDone = message
@@ -2928,7 +2928,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
         return rc
 
     def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+        super().commandComplete(cmd)
         logLines = self.log_observer_json.getStdout()
         json_text = ''.join([line for line in logLines.splitlines()])
         try:
@@ -2976,7 +2976,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
         elif self.results == SUCCESS and self.flaky:
             return {'step': "Passed JSC tests (%d flaky)" % len(self.flaky)}
 
-        return shell.Test.getResultSummary(self)
+        return super().getResultSummary()
 
 
 class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
@@ -3193,7 +3193,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                WithProperties('--%(configuration)s')]
 
     def __init__(self, **kwargs):
-        shell.Test.__init__(self, logEnviron=False, **kwargs)
+        super().__init__(logEnviron=False, **kwargs)
         self.incorrectLayoutLines = []
         self.failing_tests_filtered = []
         self.preexisting_failures_in_results_db = []
@@ -3233,7 +3233,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
         self.setLayoutTestCommand()
-        return shell.Test.start(self)
+        return super().start()
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
     nrwt_log_message_regexp = re.compile(r'\d{2}:\d{2}:\d{2}(\.\d+)?\s+\d+\s+(?P<message>.*)')
@@ -3274,7 +3274,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
-        yield shell.Test.runCommand(self, command)
+        yield super().runCommand(command)
 
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
@@ -4237,7 +4237,7 @@ class UploadBuiltProduct(transfer.FileUpload):
         kwargs['masterdest'] = self.masterdest
         kwargs['mode'] = 0o0644
         kwargs['blocksize'] = 1024 * 256
-        transfer.FileUpload.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
@@ -4258,7 +4258,7 @@ class TransferToS3(master.MasterShellCommand):
 
     def __init__(self, **kwargs):
         kwargs['command'] = self.command
-        master.MasterShellCommand.__init__(self, logEnviron=False, **kwargs)
+        super().__init__(logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
@@ -4333,7 +4333,7 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
         kwargs['workerdest'] = self.workerdest
         kwargs['mode'] = 0o0644
         kwargs['blocksize'] = 1024 * 256
-        transfer.FileDownload.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
@@ -4599,7 +4599,7 @@ class UploadTestResults(transfer.FileUpload):
         kwargs['masterdest'] = Interpolate('public_html/results/%(prop:buildername)s/%(prop:change_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
         kwargs['mode'] = 0o0644
         kwargs['blocksize'] = 1024 * 256
-        transfer.FileUpload.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
 
 class ExtractTestResults(master.MasterShellCommand):
@@ -4617,7 +4617,7 @@ class ExtractTestResults(master.MasterShellCommand):
         self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/%(prop:change_id)s-%(prop:buildnumber)s{}'.format(identifier))
         self.command = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
 
-        master.MasterShellCommand.__init__(self, command=self.command, logEnviron=False)
+        super().__init__(command=self.command, logEnviron=False)
 
     def resultDirectoryURL(self):
         path = self.resultDirectory.replace('public_html/results/', '') + '/'
@@ -4769,7 +4769,7 @@ class ApplyWatchList(shell.ShellCommand):
     flunkOnFailure = True
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, timeout=2 * 60, logEnviron=False, **kwargs)
+        super().__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
