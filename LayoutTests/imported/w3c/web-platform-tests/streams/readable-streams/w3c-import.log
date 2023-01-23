@@ -20,10 +20,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cross-realm-crash.window.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/default-reader.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/global.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/reentrant-strategies.any.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.any.js

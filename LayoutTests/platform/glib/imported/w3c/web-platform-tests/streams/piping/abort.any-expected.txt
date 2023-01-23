@@ -2,7 +2,7 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
 
-Harness Error (FAIL), message = Unhandled rejection: error1
+Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
 
 PASS a signal argument 'null' should cause pipeTo() to reject
 PASS a signal argument 'AbortSignal' should cause pipeTo() to reject
@@ -33,4 +33,5 @@ PASS abort should do nothing after the readable is closed
 PASS abort should do nothing after the readable is errored
 PASS abort should do nothing after the readable is errored, even with pending writes
 PASS abort should do nothing after the writable is errored
+PASS pipeTo on a teed readable byte stream should only be aborted when both branches are aborted
 

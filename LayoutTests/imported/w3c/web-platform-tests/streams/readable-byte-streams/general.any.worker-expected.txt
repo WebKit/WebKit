@@ -104,4 +104,5 @@ NOTRUN ReadableStream with byte source: autoAllocateChunkSize, releaseLock() wit
 NOTRUN ReadableStream with byte source: autoAllocateChunkSize, releaseLock() with pending read(), read(view) on second reader, enqueue()
 NOTRUN ReadableStream with byte source: read(view) with 1 element Uint16Array, respond(1), releaseLock(), read(view) on second reader with 1 element Uint16Array, respond(1)
 NOTRUN ReadableStream with byte source: read(view) with 1 element Uint16Array, respond(1), releaseLock(), read() on second reader, enqueue()
+NOTRUN ReadableStream with byte source: autoAllocateChunkSize, read(), respondWithNewView()
 

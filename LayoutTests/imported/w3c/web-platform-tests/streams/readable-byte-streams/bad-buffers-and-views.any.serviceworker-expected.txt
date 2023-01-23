@@ -21,6 +21,7 @@ FAIL ReadableStream with byte source: respondWithNewView() throws if the supplie
 PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view has a different offset (in the readable state)
 PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view has a different offset (in the closed state)
 FAIL ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer has a different length (in the readable state) assert_throws_js: function "() => c.byobRequest.respondWithNewView(view)" did not throw
+PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer has a different length (autoAllocateChunkSize)
 PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view has a larger length (in the readable state)
 PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer has been detached (in the closed state)
 PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer is zero-length (in the closed state)
