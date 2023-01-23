@@ -180,11 +180,11 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
     if (!player()->supportsFullscreen())
         return false;
 
-#if PLATFORM(IOS_FAMILY) && !ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-    UNUSED_PARAM(videoFullscreenMode);
+#if PLATFORM(IOS_FAMILY)
     // Fullscreen implemented by player.
-    return true;
-#else
+    if (!document().settings().videoFullscreenRequiresElementFullscreen())
+        return true;
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModeStandard && !document().settings().fullScreenEnabled())
@@ -200,7 +200,6 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
         return false;
 
     return page->chrome().client().supportsVideoFullscreen(videoFullscreenMode);
-#endif // PLATFORM(IOS_FAMILY) && !ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 }
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

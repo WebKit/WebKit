@@ -6291,6 +6291,18 @@ VerticalFormControlsEnabled:
     WebCore:
       default: false
 
+VideoFullscreenRequiresElementFullscreen:
+  type: bool
+  status: embedder
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 VideoQualityIncludesDisplayCompositingEnabled:
   type: bool
   status: embedder

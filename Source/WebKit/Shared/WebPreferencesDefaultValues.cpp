@@ -65,6 +65,11 @@ bool defaultAlternateFormControlDesignEnabled()
 {
     return false;
 }
+
+bool defaultVideoFullscreenRequiresElementFullscreen()
+{
+    return false;
+}
 #endif
 
 #endif
