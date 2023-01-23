@@ -480,14 +480,12 @@ class Setup(Command):
                 if cls.github(args, nw_rmt, remote=name, team=repository.config().get('webkitscmpy.access.{}'.format(name), None)):
                     result += 1
                     continue
-                log.info("Adding forked {remote} remote as '{username}-{remote}' and '{remote}-fork'...".format(
-                    remote=name, username=username,
-                ))
-                for fork_name in ['{}-{}'.format(username, name), '{}-fork'.format(name)]:
-                    if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name)), fetch=False):
-                        result += 1
-                    else:
-                        available_remotes.append(fork_name)
+                fork_name = '{}-fork'.format(name)
+                log.info("Adding forked {remote} remote as '{name}'...".format(remote=name, name=fork_name))
+                if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name)), fetch=False):
+                    result += 1
+                else:
+                    available_remotes.append(fork_name)
 
         else:
             warning = '''Checkout using {actual} as origin remote
@@ -506,12 +504,11 @@ Automation may create pull requests and forks in unexpected locations
         if cls.github(args, rmt, team=repository.config().get('webkitscmpy.access.origin', None), **kwargs):
             return result + 1
 
-        log.info("Adding forked remote as '{}' and 'fork'...".format(username))
-        for name in [username, 'fork']:
-            if cls._add_remote(repository, name, cls._fork_remote(repository.url(), username, rmt.name), fetch=False):
-                result += 1
-            else:
-                available_remotes.append(name)
+        log.info("Adding forked remote as 'fork'...".format(username))
+        if cls._add_remote(repository, 'fork', cls._fork_remote(repository.url(), username, rmt.name), fetch=False):
+            result += 1
+        else:
+            available_remotes.append('fork')
 
         for rem in available_remotes:
             if 'fork' not in rem:
