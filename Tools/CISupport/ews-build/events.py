@@ -297,7 +297,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         return defer.returnValue(files)
 
     def extractProperties(self, payload):
-        result = super(GitHubEventHandlerNoEdits, self).extractProperties(payload)
+        result = super().extractProperties(payload)
         if payload.get('base', {}).get('repo', {}).get('full_name') not in self.PUBLIC_REPOS:
             for field in self.SENSATIVE_FIELDS:
                 if field in result:
@@ -320,16 +320,16 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
-            return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'unsafe_merge_queue')
+            return super().handle_pull_request(payload, 'unsafe_merge_queue')
         if action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
             log.msg("PR #{} was labeled for merge-queue".format(pr_number))
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
-            return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
+            return super().handle_pull_request(payload, 'merge_queue')
 
         if sender in self.ACCOUNTS_TO_IGNORE:
             log.msg(f"PR #{pr_number} was updated by '{sender}', ignore it")
             return ([], 'git')
 
-        return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)
+        return super().handle_pull_request(payload, event)
