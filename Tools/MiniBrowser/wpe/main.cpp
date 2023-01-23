@@ -257,10 +257,6 @@ int main(int argc, char *argv[])
         webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
     }
 
-    const char* singleprocess = g_getenv("MINIBROWSER_SINGLEPROCESS");
-    webkit_web_context_set_process_model(webContext, (singleprocess && *singleprocess) ?
-        WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS : WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
-
     WebKitUserContentManager* userContentManager = nullptr;
     if (contentFilter) {
         GFile* contentFilterFile = g_file_new_for_commandline_arg(contentFilter);

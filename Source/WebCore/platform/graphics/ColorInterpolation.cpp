@@ -66,15 +66,9 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
         return { theta1, theta2 };
     };
 
-    auto normalizeAnglesUsingSpecifiedAlgorithm = [] (auto theta1, auto theta2) -> std::pair<float, float> {
-        // https://drafts.csswg.org/css-color-4/#hue-specified
-        return { theta1, theta2 };
-    };
-
     // https://www.w3.org/TR/css-color-4/#hue-interpolation
-    //    "Unless the type of hue interpolation is specified, both angles need to
-    //     be constrained to [0, 360) prior to interpolation. One way to do this
-    //     is θ = ((θ % 360) + 360) % 360."
+    //    "Both angles need to be constrained to [0, 360] prior to interpolation.
+    //     One way to do this is θ = ((θ % 360) + 360) % 360."
 
     switch (method) {
     case HueInterpolationMethod::Shorter:
@@ -85,8 +79,6 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
         return normalizeAnglesUsingIncreasingAlgorithm(normalizeHue(component1), normalizeHue(component2));
     case HueInterpolationMethod::Decreasing:
         return normalizeAnglesUsingDecreasingAlgorithm(normalizeHue(component1), normalizeHue(component2));
-    case HueInterpolationMethod::Specified:
-        return normalizeAnglesUsingSpecifiedAlgorithm(component1, component2);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

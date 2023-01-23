@@ -28,7 +28,6 @@
 #include "config.h"
 #include "CSSParser.h"
 
-#include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
@@ -36,23 +35,16 @@
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
-#include "CSSRegisteredCustomProperty.h"
 #include "CSSSelectorParser.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
 #include "CSSValuePool.h"
-#include "CSSVariableData.h"
-#include "CSSVariableReferenceValue.h"
-#include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "Element.h"
 #include "Page.h"
-#include "RenderStyle.h"
 #include "RenderTheme.h"
 #include "Settings.h"
-#include "StyleBuilder.h"
 #include "StyleColor.h"
-#include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include <wtf/NeverDestroyed.h>
@@ -189,75 +181,6 @@ bool CSSParser::parseDeclaration(MutableStyleProperties& declaration, const Stri
 void CSSParser::parseDeclarationForInspector(const CSSParserContext& context, const String& string, CSSParserObserver& observer)
 {
     CSSParserImpl::parseDeclarationListForInspector(string, context, observer);
-}
-
-RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, Style::BuilderState& builderState)
-{
-    if (is<CSSPendingSubstitutionValue>(value)) {
-        // FIXME: Should have a resolvedShorthands cache to stop this from being done over and over for each longhand value.
-        auto& substitution = downcast<CSSPendingSubstitutionValue>(value);
-
-        auto shorthandID = substitution.shorthandPropertyId();
-
-        auto resolvedData = substitution.shorthandValue().resolveVariableReferences(builderState);
-        if (!resolvedData)
-            return nullptr;
-
-        ParsedPropertyVector parsedProperties;
-        if (!CSSPropertyParser::parseValue(shorthandID, false, resolvedData->tokens(), substitution.shorthandValue().context(), parsedProperties, StyleRuleType::Style))
-            return nullptr;
-
-        for (auto& property : parsedProperties) {
-            if (property.id() == propID)
-                return property.value();
-        }
-
-        return nullptr;
-    }
-
-    const CSSVariableReferenceValue& valueWithReferences = downcast<CSSVariableReferenceValue>(value);
-    auto resolvedData = valueWithReferences.resolveVariableReferences(builderState);
-    if (!resolvedData)
-        return nullptr;
-
-    return CSSPropertyParser::parseSingleValue(propID, resolvedData->tokens(), valueWithReferences.context());
-}
-
-RefPtr<CSSCustomPropertyValue> CSSParser::parseCustomPropertyValueWithVariableReferences(const CSSCustomPropertyValue& value, Style::BuilderState& builderState)
-{
-    const auto& customPropValue = downcast<CSSCustomPropertyValue>(value);
-    const auto& valueWithReferences = std::get<Ref<CSSVariableReferenceValue>>(customPropValue.value()).get();
-
-    auto& name = downcast<CSSCustomPropertyValue>(value).name();
-    auto* registered = builderState.document().customPropertyRegistry().get(name);
-    auto& syntax = registered ? registered->syntax : CSSCustomPropertySyntax::universal();
-
-    auto resolvedData = valueWithReferences.resolveVariableReferences(builderState);
-    if (!resolvedData)
-        return nullptr;
-
-    auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, resolvedData->tokens(), valueWithReferences.context());
-
-    // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
-    bool hasCycles = false;
-    auto checkForCycles = [&](auto& propertyDependencies) {
-        for (auto property : propertyDependencies) {
-            if (builderState.inProgressProperties().get(property)) {
-                builderState.inUnitCycleProperties().set(property);
-                hasCycles = true;
-            }
-        }
-    };
-
-    checkForCycles(dependencies.properties);
-
-    if (builderState.element() == builderState.document().documentElement())
-        checkForCycles(dependencies.rootProperties);
-
-    if (hasCycles)
-        return nullptr;
-
-    return CSSPropertyParser::parseTypedCustomPropertyValue(AtomString { name }, syntax, resolvedData->tokens(), builderState, valueWithReferences.context());
 }
 
 Vector<double> CSSParser::parseKeyframeKeyList(const String& selector)

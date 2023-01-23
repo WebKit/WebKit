@@ -248,6 +248,8 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'audio', 'gstreamer', 'WebKitWebAudioSourceGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'gstreamer', 'VideoEncoderPrivateGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'gstreamer', 'VideoEncoderPrivateGStreamer.h'),
+      os.path.join('Source', 'WebCore', 'platform', 'gstreamer', 'WebKitFliteSourceGStreamer.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'gstreamer', 'WebKitFliteSourceGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'gstreamer', 'GStreamerMediaStreamSource.h'),
       os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'gstreamer', 'GStreamerMediaStreamSource.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'ProxyResolverSoup.cpp'),

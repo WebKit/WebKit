@@ -108,9 +108,6 @@ public:
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
-    auto& inProgressProperties() const { return m_inProgressProperties; }
-    auto& inUnitCycleProperties() { return m_inUnitCycleProperties; }
-
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);

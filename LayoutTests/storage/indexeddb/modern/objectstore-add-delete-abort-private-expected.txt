@@ -1,0 +1,19 @@
+This test verifies version change transaction that adds and removes object store can be aborted succesfully.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+openRequest = indexedDB.open(dbname);
+transaction = openRequest.transaction;
+database = openRequest.result;
+database.createObjectStore('os1');
+database.deleteObjectStore('os1');
+objectStore = database.createObjectStore('os2')
+newOpenRequest = indexedDB.open(dbname);
+newDatabase = newOpenRequest.result;
+PASS newDatabase.objectStoreNames.length is 0
+newObjectStore = newDatabase.createObjectStore('os1');
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

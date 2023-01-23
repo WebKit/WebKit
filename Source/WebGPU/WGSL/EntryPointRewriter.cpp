@@ -28,6 +28,7 @@
 
 #include "AST.h"
 #include "ASTVisitor.h"
+#include "CallGraph.h"
 
 namespace WGSL {
 
@@ -251,34 +252,10 @@ void EntryPointRewriter::appendBuiltins()
     }
 }
 
-class RewriteEntryPoints : public AST::Visitor {
-public:
-    RewriteEntryPoints(AST::ShaderModule& shaderModule)
-        : AST::Visitor()
-        , m_shaderModule(shaderModule)
-    {
-    }
-
-    void visit(AST::FunctionDecl&) override;
-
-private:
-    AST::ShaderModule& m_shaderModule;
-};
-
-void RewriteEntryPoints::visit(AST::FunctionDecl& functionDecl)
+void rewriteEntryPoints(CallGraph& callGraph)
 {
-    for (auto& attribute : functionDecl.attributes()) {
-        if (attribute->kind() == AST::Node::Kind::StageAttribute) {
-            EntryPointRewriter(m_shaderModule, functionDecl).rewrite();
-            return;
-        }
-    }
-
-}
-
-void rewriteEntryPoints(AST::ShaderModule& shaderModule)
-{
-    RewriteEntryPoints(shaderModule).AST::Visitor::visit(shaderModule);
+    for (auto& entryPoint : callGraph.entrypoints())
+        EntryPointRewriter(callGraph.ast(), entryPoint.m_function).rewrite();
 }
 
 } // namespace WGSL

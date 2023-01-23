@@ -1649,7 +1649,7 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
 {
     auto sanitizedURL = url;
     if (auto* page = m_document.page())
-        sanitizedURL = page->sanitizeLookalikeCharacters(url);
+        sanitizedURL = page->sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Copy);
 
     PasteboardURL pasteboardURL;
     pasteboardURL.url = sanitizedURL;

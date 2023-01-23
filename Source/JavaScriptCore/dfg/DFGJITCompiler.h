@@ -91,9 +91,6 @@ public:
     JITCompiler(Graph& dfg);
     ~JITCompiler();
     
-    void compile();
-    void compileFunction();
-    
     // Accessors for properties.
     Graph& graph() { return m_graph; }
     
@@ -120,7 +117,7 @@ public:
         m_disassembler->setForNode(node, labelIgnoringWatchpoints());
     }
     
-    void setEndOfMainPath();
+    void setEndOfMainPath(CodeOrigin semanticOrigin);
     void setEndOfCode();
     
     CallSiteIndex addCallSite(CodeOrigin codeOrigin)
@@ -282,6 +279,7 @@ public:
         return result;
     }
 
+
     unsigned appendSpeculationRecovery(const SpeculationRecovery& recovery)
     {
         unsigned result = m_speculationRecovery.size();
@@ -292,8 +290,6 @@ public:
     RefPtr<JITCode> jitCode() { return m_jitCode; }
     
     Vector<Label>& blockHeads() { return m_blockHeads; }
-
-    CallSiteIndex recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin&, unsigned eventStreamIndex);
 
     PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder() { return m_pcToCodeOriginMapBuilder; }
 
@@ -386,21 +382,20 @@ public:
     std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin);
     LinkerIR::Constant addToConstantPool(LinkerIR::Type, void*);
 
-private:
+    void appendExceptionHandlingOSRExit(SpeculativeJIT*, ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
+
+protected:
     friend class OSRExitJumpPlaceholder;
     
     // Internal implementation to compile.
     void compileEntry();
     void compileSetupRegistersForEntry();
     void compileEntryExecutionFlag();
-    void compileBody();
     void link(LinkBuffer&);
     
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
     void linkOSRExits();
     void disassemble(LinkBuffer&);
-
-    void appendExceptionHandlingOSRExit(ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
 
     void makeCatchOSREntryBuffer();
 
@@ -473,7 +468,6 @@ private:
     };
     Vector<ExceptionHandlingOSRExitInfo> m_exceptionHandlerOSRExitCallSites;
     
-    std::unique_ptr<SpeculativeJIT> m_speculative;
     PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 };
 

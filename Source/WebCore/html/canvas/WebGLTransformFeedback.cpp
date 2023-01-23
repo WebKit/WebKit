@@ -30,6 +30,7 @@
 
 #include "WebCoreOpaqueRoot.h"
 #include "WebGL2RenderingContext.h"
+#include "WebGLBuffer.h"
 #include "WebGLContextGroup.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Lock.h>

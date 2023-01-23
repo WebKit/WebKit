@@ -42,8 +42,7 @@ enum class HueInterpolationMethod : uint8_t {
     Shorter,
     Longer,
     Increasing,
-    Decreasing,
-    Specified
+    Decreasing
 };
 
 enum class ColorInterpolationColorSpace : uint8_t {
@@ -58,7 +57,7 @@ enum class ColorInterpolationColorSpace : uint8_t {
     XYZD50,
     XYZD65
 };
-    
+
 template <typename T, typename = void>
 struct HasHueInterpolationMethod : std::false_type { };
 
@@ -283,8 +282,7 @@ template<> struct EnumTraits<WebCore::HueInterpolationMethod> {
         WebCore::HueInterpolationMethod::Shorter,
         WebCore::HueInterpolationMethod::Longer,
         WebCore::HueInterpolationMethod::Increasing,
-        WebCore::HueInterpolationMethod::Decreasing,
-        WebCore::HueInterpolationMethod::Specified
+        WebCore::HueInterpolationMethod::Decreasing
     >;
 };
 

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBXR)
 
-#include "CanvasBase.h"
+#include "CanvasObserver.h"
 #include "ExceptionOr.h"
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"

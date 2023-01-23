@@ -56,8 +56,6 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<W
     , m_tables(m_instance->module().moduleInformation().tableCount())
 {
     m_instance->setOwner(this);
-    for (unsigned i = 0; i < this->instance().numImportFunctions(); ++i)
-        new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, WebAssemblyModuleRecord* moduleRecord)
@@ -90,12 +88,12 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.append(table);
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
-        visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
+        visitor.append(thisObject->instance().importFunction(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 
     for (size_t i : thisObject->instance().globalsToBinding()) {
         Wasm::Global* binding = thisObject->instance().getGlobalBinding(i);
         if (binding)
-            visitor.appendUnbarriered(binding->owner<JSWebAssemblyGlobal>());
+            visitor.appendUnbarriered(binding->owner());
     }
     for (size_t i : thisObject->instance().globalsToMark())
         visitor.appendUnbarriered(JSValue::decode(thisObject->instance().loadI64Global(i)));
@@ -178,9 +176,10 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm)) JSWebAssemblyInstance(vm, instanceStructure, Wasm::Instance::create(vm, WTFMove(module)));
+    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm)) JSWebAssemblyInstance(vm, instanceStructure, Wasm::Instance::create(vm, globalObject, WTFMove(module)));
     jsInstance->finishCreation(vm, jsModule, moduleRecord);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
+    globalObject->use();
 
     if (creationMode == Wasm::CreationMode::FromJS) {
         // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.

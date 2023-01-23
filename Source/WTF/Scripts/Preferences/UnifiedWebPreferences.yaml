@@ -307,6 +307,19 @@ AllowViewportShrinkToFitContent:
     WebCore:
       default: true
 
+AllowWebGLInWorkers:
+  type: bool
+  status: stable
+  humanReadableName: "Allow WebGL in Web Workers"
+  condition: ENABLE(WEBGL)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 AllowsAirPlayForMediaPlayback:
   type: bool
   status: embedder
@@ -6270,6 +6283,18 @@ VerticalFormControlsEnabled:
   status: testable
   humanReadableName: "Vertical form control support"
   humanReadableDescription: "Enable support for form controls in vertical writing mode"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+VideoFullscreenRequiresElementFullscreen:
+  type: bool
+  status: embedder
+  condition: PLATFORM(IOS_FAMILY)
   defaultValue:
     WebKitLegacy:
       default: false

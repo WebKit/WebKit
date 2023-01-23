@@ -1,4 +1,4 @@
-# Copyright (C) 2019, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -264,29 +264,40 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
 
     @defer.inlineCallbacks
     def _get_pr_files(self, repo, number):
-        # Copied from https://github.com/buildbot/buildbot/blob/v2.10.5/master/buildbot/www/hooks/github.py to include added/modified/deleted
-        headers = {"User-Agent": "Buildbot"}
+        # Heavy modification of https://github.com/buildbot/buildbot/blob/v2.10.5/master/buildbot/www/hooks/github.py
+        PER_PAGE_LIMIT = 100  # GitHub will list a maximum of 100 files in a single response
+        NUM_PAGE_LIMIT = 30  # GitHub stops returning files in a PR after 3000 files
+
+        headers = {}
         if self._token:
             headers["Authorization"] = "token " + self._token
 
-        url = "/repos/{}/pulls/{}/files".format(repo, number)
-        http = yield httpclientservice.HTTPClientService.getService(
-            self.master,
-            self.github_api_endpoint,
-            headers=headers,
-            debug=self.debug,
-            verify=self.verify,
-        )
-        res = yield http.get(url)
-        if 200 <= res.code < 300:
-            data = yield res.json()
-            return [self.file_with_status_sign(f) for f in data]
+        page = 1
+        files = []
+        while page < NUM_PAGE_LIMIT:
+            response = yield TwistedAdditions.request(
+                url="{}/repos/{}/pulls/{}/files".format(self.github_api_endpoint, repo, number),
+                type=b'GET',
+                params=dict(
+                    per_page=PER_PAGE_LIMIT,
+                    page=page,
+                ), headers=headers,
+                logger=log.msg,
+            )
+            if not response or response.status_code // 100 != 2:
+                break
+            data = response.json()
+            files += [self.file_with_status_sign(f) for f in data]
+            if len(data) < PER_PAGE_LIMIT:
+                break
+            page += 1
 
-        log.msg('Failed fetching PR files: response code {}'.format(res.code))
-        return []
+        if not files:
+            log.msg('Failed fetching files for PR #{}: response code {}'.format(number, response.code if response else '?'))
+        return defer.returnValue(files)
 
     def extractProperties(self, payload):
-        result = super(GitHubEventHandlerNoEdits, self).extractProperties(payload)
+        result = super().extractProperties(payload)
         if payload.get('base', {}).get('repo', {}).get('full_name') not in self.PUBLIC_REPOS:
             for field in self.SENSATIVE_FIELDS:
                 if field in result:
@@ -309,16 +320,16 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
-            return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'unsafe_merge_queue')
+            return super().handle_pull_request(payload, 'unsafe_merge_queue')
         if action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
             log.msg("PR #{} was labeled for merge-queue".format(pr_number))
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
-            return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
+            return super().handle_pull_request(payload, 'merge_queue')
 
         if sender in self.ACCOUNTS_TO_IGNORE:
             log.msg(f"PR #{pr_number} was updated by '{sender}', ignore it")
             return ([], 'git')
 
-        return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)
+        return super().handle_pull_request(payload, event)

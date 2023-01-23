@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -27,39 +27,27 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
-#include "CanvasBase.h"
-#include "ClientOrigin.h"
+#include "CanvasObserver.h"
+#include "Color.h"
 #include "ContainerNode.h"
-#include "DOMAudioSession.h"
-#include "DisabledAdaptations.h"
 #include "DocumentEventTiming.h"
-#include "FocusOptions.h"
 #include "FontSelectorClient.h"
-#include "FragmentScriptingPermission.h"
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
-#include "FrameLoaderTypes.h"
-#include "GraphicsTypes.h"
 #include "OrientationNotifier.h"
 #include "PageIdentifier.h"
-#include "PlatformEvent.h"
 #include "PlaybackTargetClientContextIdentifier.h"
-#include "ReferrerPolicy.h"
 #include "RegistrableDomain.h"
 #include "RenderPtr.h"
 #include "ReportingClient.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "StringWithDirection.h"
-#include "StyleColor.h"
 #include "Supplementable.h"
 #include "Timer.h"
 #include "TreeScope.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
-#include "VisibilityState.h"
 #include <wtf/Deque.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
@@ -72,10 +60,6 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include "EventTrackingRegions.h"
-#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <wtf/ThreadingPrimitives.h>
@@ -261,23 +245,47 @@ class GPUCanvasContext;
 
 struct ApplicationManifest;
 struct BoundaryPoint;
+struct ClientOrigin;
+struct FocusOptions;
 struct HighlightRangeData;
 struct IntersectionObserverData;
 struct SecurityPolicyViolationEventInit;
 
+#if ENABLE(TOUCH_EVENTS)
+struct EventTrackingRegions;
+#endif
+
+#if USE(SYSTEM_PREVIEW)
+struct SystemPreviewInfo;
+#endif
+
 template<typename> class ExceptionOr;
 
 enum CollectionType;
+enum CSSPropertyID : uint16_t;
 
+enum class CompositeOperator : uint8_t;
+enum class DOMAudioSessionType : uint8_t;
+enum class DisabledAdaptations : uint8_t;
+enum class FocusDirection : uint8_t;
+enum class FocusTrigger : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMutedState : uint8_t;
+enum class ParserContentPolicy : uint8_t;
+enum class PlatformEventType : uint8_t;
+enum class ReferrerPolicySource : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
 enum class RenderingUpdateStep : uint32_t;
 enum class StyleColorOptions : uint8_t;
 enum class MutationObserverOptionType : uint8_t;
 enum class ViolationReportType : uint8_t;
+enum class VisibilityState : bool;
+
+#if ENABLE(TOUCH_EVENTS)
+enum class EventTrackingRegionsEventType : uint8_t;
+#endif
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -823,9 +831,10 @@ public:
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
     // Returns whether focus was blocked. A true value does not necessarily mean the element was focused.
     // The element could have already been focused or may not be focusable (e.g. <input disabled>).
-    WEBCORE_EXPORT bool setFocusedElement(Element*, const FocusOptions& = { });
+    WEBCORE_EXPORT bool setFocusedElement(Element*);
+    WEBCORE_EXPORT bool setFocusedElement(Element*, const FocusOptions&);
     Element* focusedElement() const { return m_focusedElement.get(); }
-    bool wasLastFocusByClick() const { return m_latestFocusTrigger == FocusTrigger::Click; }
+    inline bool wasLastFocusByClick() const;
     void setLatestFocusTrigger(FocusTrigger trigger) { m_latestFocusTrigger = trigger; }
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
     const UserActionElementSet& userActionElements() const { return m_userActionElements; }
@@ -945,7 +954,7 @@ public:
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
-    bool hasListenerTypeForEventType(PlatformEvent::Type) const;
+    bool hasListenerTypeForEventType(PlatformEventType) const;
     void addListenerTypeIfNeeded(const AtomString& eventType);
 
     inline bool hasMutationObserversOfType(MutationObserverOptionType) const;
@@ -1432,7 +1441,7 @@ public:
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
-    ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin().data() }; }
+    inline ClientOrigin clientOrigin() const;
 
     inline bool isSameOriginAsTopDocument() const;
     bool shouldForceNoOpenerBasedOnCOOP() const;
@@ -1734,8 +1743,8 @@ public:
     bool lazyImageLoadingEnabled() const;
 
 #if ENABLE(DOM_AUDIO_SESSION)
-    void setAudioSessionType(DOMAudioSession::Type type) { m_audioSessionType = type; }
-    DOMAudioSession::Type audioSessionType() const { return m_audioSessionType; }
+    void setAudioSessionType(DOMAudioSessionType type) { m_audioSessionType = type; }
+    DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
 #endif
 
 protected:
@@ -2269,7 +2278,7 @@ private:
 
     bool m_updateTitleTaskScheduled { false };
 
-    FocusTrigger m_latestFocusTrigger { FocusTrigger::Other };
+    FocusTrigger m_latestFocusTrigger { };
 
     OrientationNotifier m_orientationNotifier;
     mutable RefPtr<Logger> m_logger;
@@ -2343,7 +2352,7 @@ private:
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
 
 #if ENABLE(DOM_AUDIO_SESSION)
-    DOMAudioSession::Type m_audioSessionType { DOMAudioSession::Type::Auto };
+    DOMAudioSessionType m_audioSessionType { };
 #endif
 };
 

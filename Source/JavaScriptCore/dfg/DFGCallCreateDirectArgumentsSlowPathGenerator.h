@@ -59,8 +59,8 @@ private:
             operationCreateDirectArguments, m_resultGPR, SpeculativeJIT::TrustedImmPtr(&jit->vm()), m_structure, m_lengthGPR, m_minCapacity);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
-        jit->m_jit.exceptionCheck();
-        jit->m_jit.loadPtr(
+        jit->exceptionCheck();
+        jit->loadPtr(
             MacroAssembler::Address(m_resultGPR, DirectArguments::offsetOfLength()), m_lengthGPR);
         jumpTo(jit);
     }

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-enum class VisibilityState {
+enum class VisibilityState : bool {
     Hidden,
     Visible
 };

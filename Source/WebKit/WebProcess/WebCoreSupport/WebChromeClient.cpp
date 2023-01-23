@@ -1534,9 +1534,9 @@ void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOp
 
 #endif
 
-URL WebChromeClient::sanitizeLookalikeCharacters(const URL& url) const
+URL WebChromeClient::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger trigger) const
 {
-    return m_page.sanitizeLookalikeCharacters(url);
+    return m_page.sanitizeLookalikeCharacters(url, trigger);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

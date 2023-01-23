@@ -634,11 +634,6 @@ public:
         return OBJECT_OFFSETOF(VM, callFrameForCatch);
     }
 
-    static ptrdiff_t calleeForWasmCatchOffset()
-    {
-        return OBJECT_OFFSETOF(VM, calleeForWasmCatch);
-    }
-
     static ptrdiff_t topEntryFrameOffset()
     {
         return OBJECT_OFFSETOF(VM, topEntryFrame);
@@ -723,7 +718,6 @@ public:
     EncodedJSValue encodedHostCallReturnValue { };
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch { nullptr };
-    CalleeBits calleeForWasmCatch;
     void* targetMachinePCForThrow;
     JSOrWasmInstruction targetInterpreterPCForThrow;
     unsigned varargsLength;

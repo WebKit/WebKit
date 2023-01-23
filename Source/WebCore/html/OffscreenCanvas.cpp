@@ -192,15 +192,23 @@ static bool requiresAcceleratedCompositingForWebGL()
 #endif
 }
 
-static bool shouldEnableWebGL(bool webGLEnabled, bool acceleratedCompositingEnabled)
+static bool shouldEnableWebGL(const Settings::Values& settings, bool isWorker)
 {
-    if (!webGLEnabled)
+    if (!settings.webGLEnabled)
         return false;
+
+    if (isWorker && !settings.allowWebGLInWorkers)
+        return false;
+
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
+    if (isWorker && !settings.useGPUProcessForWebGLEnabled)
+        return false;
+#endif
 
     if (!requiresAcceleratedCompositingForWebGL())
         return true;
 
-    return acceleratedCompositingEnabled;
+    return settings.acceleratedCompositingEnabled;
 }
 
 void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGLContextAttributes&& attrs)
@@ -210,11 +218,11 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
     auto scriptExecutionContext = this->scriptExecutionContext();
     if (scriptExecutionContext->isWorkerGlobalScope()) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
-        if (!shouldEnableWebGL(workerGlobalScope.settingsValues().webGLEnabled, workerGlobalScope.settingsValues().acceleratedCompositingEnabled))
+        if (!shouldEnableWebGL(workerGlobalScope.settingsValues(), true))
             return;
     } else if (scriptExecutionContext->isDocument()) {
         auto& settings = downcast<Document>(*scriptExecutionContext).settings();
-        if (!shouldEnableWebGL(settings.webGLEnabled(), settings.acceleratedCompositingEnabled()))
+        if (!shouldEnableWebGL(settings.values(), false))
             return;
     } else
         return;

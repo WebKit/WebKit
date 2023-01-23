@@ -320,24 +320,13 @@ static RefPtr<TransformOperation> blendFunc(TransformOperation* from, TransformO
 
 static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation* to, const CSSPropertyBlendingContext& context)
 {
-    if (is<ShapePathOperation>(from) && is<ShapePathOperation>(to)) {
-        auto& fromShape = downcast<ShapePathOperation>(*from).basicShape();
-        auto& toShape = downcast<ShapePathOperation>(*to).basicShape();
-
-        if (fromShape.canBlend(toShape))
-            return ShapePathOperation::create(toShape.blend(fromShape, context));
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1);
+        return context.progress ? to : from;
     }
 
-    if (is<RayPathOperation>(from) && is<RayPathOperation>(to)) {
-        auto& fromRay = downcast<RayPathOperation>(*from);
-        auto& toRay = downcast<RayPathOperation>(*to);
-
-        if (fromRay.canBlend(toRay))
-            return fromRay.blend(toRay, context);
-    }
-
-    // fall back to discrete animation.
-    return context.progress < 0.5 ? from : to;
+    ASSERT(from && to);
+    return from->blend(to, context);
 }
 
 static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, const CSSPropertyBlendingContext& context)
@@ -348,9 +337,7 @@ static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, con
     }
 
     ASSERT(from && to);
-    const BasicShape& fromShape = *from->shape();
-    const BasicShape& toShape = *to->shape();
-    return ShapeValue::create(toShape.blend(fromShape, context), to->cssBox());
+    return from->blend(*to, context);
 }
 
 static inline RefPtr<FilterOperation> blendFunc(FilterOperation* from, FilterOperation* to, const CSSPropertyBlendingContext& context, bool blendToPassthrough = false)
@@ -359,50 +346,14 @@ static inline RefPtr<FilterOperation> blendFunc(FilterOperation* from, FilterOpe
     return to->blend(from, context, blendToPassthrough);
 }
 
-static inline FilterOperations blendFilterOperations(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
-{
-    if (context.compositeOperation == CompositeOperation::Add) {
-        ASSERT(context.progress == 1.0);
-        FilterOperations resultOperations;
-        resultOperations.operations().appendVector(from.operations());
-        resultOperations.operations().appendVector(to.operations());
-        return resultOperations;
-    }
-
-    if (context.isDiscrete) {
-        ASSERT(!context.progress || context.progress == 1.0);
-        return context.progress ? to : from;
-    }
-
-    FilterOperations result;
-    size_t fromSize = from.operations().size();
-    size_t toSize = to.operations().size();
-    size_t size = std::max(fromSize, toSize);
-    for (size_t i = 0; i < size; i++) {
-        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : nullptr;
-        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : nullptr;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), context) : (fromOp ? blendFunc(0, fromOp.get(), context, true) : nullptr);
-        if (blendedOp)
-            result.operations().append(blendedOp);
-        else {
-            auto identityOp = PassthroughFilterOperation::create();
-            if (context.progress > 0.5)
-                result.operations().append(toOp ? toOp : WTFMove(identityOp));
-            else
-                result.operations().append(fromOp ? fromOp : WTFMove(identityOp));
-        }
-    }
-    return result;
-}
-
 static inline FilterOperations blendFunc(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
-    return blendFilterOperations(from, to, context);
+    return from.blend(to, context);
 }
 
 static inline RefPtr<StyleImage> blendFilter(RefPtr<StyleImage> inputImage, const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
-    auto filterResult = blendFilterOperations(from, to, context);
+    auto filterResult = from.blend(to, context);
     return StyleFilterImage::create(WTFMove(inputImage), WTFMove(filterResult));
 }
 
@@ -592,18 +543,6 @@ static inline FontSelectionValue blendFunc(FontSelectionValue from, FontSelectio
 static inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSelectionValue> from, std::optional<FontSelectionValue> to, const CSSPropertyBlendingContext& context)
 {
     return blendFunc(*from, *to, context);
-}
-
-static inline OffsetRotation blendFunc(const OffsetRotation& from, const OffsetRotation& to, const CSSPropertyBlendingContext& context)
-{
-    if (context.isDiscrete) {
-        ASSERT(!context.progress || context.progress == 1.0);
-        return context.progress ? to : from;
-    }
-
-    ASSERT(from.hasAuto() == to.hasAuto());
-
-    return OffsetRotation(from.hasAuto(), clampTo<float>(blend(from.angle(), to.angle(), context)));
 }
 
 static inline bool canInterpolate(const GridTrackList& from, const GridTrackList& to)
@@ -810,27 +749,23 @@ protected:
     void (RenderStyle::*m_setter)(T);
 };
 
-class OffsetRotatePropertyWrapper final : public PropertyWrapperGetter<OffsetRotation> {
+class OffsetRotateWrapper final : public PropertyWrapperGetter<OffsetRotation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OffsetRotatePropertyWrapper(CSSPropertyID property, OffsetRotation (RenderStyle::*getter)() const, void (RenderStyle::*setter)(OffsetRotation&&))
-        : PropertyWrapperGetter(property, getter)
-        , m_setter(setter)
+    OffsetRotateWrapper()
+        : PropertyWrapperGetter(CSSPropertyOffsetRotate, &RenderStyle::offsetRotate)
     {
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        return value(from).hasAuto() == value(to).hasAuto();
+        return value(from).canBlend(value(to));
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination.*m_setter)(blendFunc(value(from), value(to), context));
+        destination.setOffsetRotate(value(from).blend(value(to), context));
     }
-
-private:
-    void (RenderStyle::*m_setter)(OffsetRotation&&);
 };
 
 template <typename T>
@@ -1292,24 +1227,9 @@ public:
 private:
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
     {
-        auto fromPath = value(from);
-        auto toPath = value(to);
-
-        if (is<ShapePathOperation>(fromPath) && is<ShapePathOperation>(toPath)) {
-            auto& fromShape = downcast<ShapePathOperation>(*fromPath).basicShape();
-            auto& toShape = downcast<ShapePathOperation>(*toPath).basicShape();
-
-            return fromShape.canBlend(toShape);
-        }
-
-        if (is<RayPathOperation>(fromPath) && is<RayPathOperation>(toPath)) {
-            auto& fromRay = downcast<RayPathOperation>(*fromPath);
-            auto& toRay = downcast<RayPathOperation>(*toPath);
-
-            return fromRay.canBlend(toRay);
-        }
-
-        return false;
+        auto* fromPath = value(from);
+        auto* toPath = value(to);
+        return fromPath && toPath && fromPath->canBlend(*toPath);
     }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
@@ -1393,17 +1313,7 @@ private:
     {
         auto* fromShape = value(from);
         auto* toShape = value(to);
-
-        if (!fromShape || !toShape)
-            return false;
-
-        if (fromShape->type() != ShapeValue::Type::Shape || toShape->type() != ShapeValue::Type::Shape)
-            return false;
-
-        if (fromShape->cssBox() != toShape->cssBox())
-            return false;
-
-        return fromShape->shape()->canBlend(*toShape->shape());
+        return fromShape && toShape && fromShape->canBlend(*toShape);
     }
 };
 
@@ -3568,7 +3478,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetPosition, &RenderStyle::offsetPosition, &RenderStyle::setOffsetPosition),
         new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetAnchor, &RenderStyle::offsetAnchor, &RenderStyle::setOffsetAnchor),
         new PropertyWrapperContent,
-        new OffsetRotatePropertyWrapper(CSSPropertyOffsetRotate, &RenderStyle::offsetRotate, &RenderStyle::setOffsetRotate),
+        new OffsetRotateWrapper,
         new DiscretePropertyWrapper<TextDecorationSkipInk>(CSSPropertyTextDecorationSkipInk, &RenderStyle::textDecorationSkipInk, &RenderStyle::setTextDecorationSkipInk),
         new DiscreteSVGPropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolation, &SVGRenderStyle::colorInterpolation, &SVGRenderStyle::setColorInterpolation),
         new DiscreteFontDescriptionTypedWrapper<Kerning>(CSSPropertyFontKerning, &FontCascadeDescription::kerning, &FontCascadeDescription::setKerning),

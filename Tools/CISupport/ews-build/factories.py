@@ -220,7 +220,7 @@ class macOSBuildOnlyFactory(BuildFactory):
     skipUpload = True
 
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=True, **kwargs):
-        super(macOSBuildOnlyFactory, self).__init__(platform=platform, configuration=configuration, architectures=architectures, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, **kwargs)
+        super().__init__(platform=platform, configuration=configuration, architectures=architectures, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, **kwargs)
 
 
 class watchOSBuildFactory(BuildFactory):

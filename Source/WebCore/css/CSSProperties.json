@@ -1720,18 +1720,18 @@
         "border": {
             "codegen-properties": {
                 "longhands": [
-                    "border-top-color",
-                    "border-top-style",
                     "border-top-width",
-                    "border-right-color",
-                    "border-right-style",
                     "border-right-width",
-                    "border-bottom-color",
-                    "border-bottom-style",
                     "border-bottom-width",
-                    "border-left-color",
-                    "border-left-style",
                     "border-left-width",
+                    "border-top-style",
+                    "border-right-style",
+                    "border-bottom-style",
+                    "border-left-style",
+                    "border-top-color",
+                    "border-right-color",
+                    "border-bottom-color",
+                    "border-left-color",
                     "border-image-source",
                     "border-image-slice",
                     "border-image-width",
@@ -1747,12 +1747,12 @@
         "border-block": {
             "codegen-properties": {
                 "longhands": [
-                    "border-block-start-color",
-                    "border-block-start-style",
                     "border-block-start-width",
-                    "border-block-end-color",
+                    "border-block-end-width",
+                    "border-block-start-style",
                     "border-block-end-style",
-                    "border-block-end-width"
+                    "border-block-start-color",
+                    "border-block-end-color"
                 ]
             },
             "specification": {
@@ -2247,12 +2247,12 @@
         "border-inline": {
             "codegen-properties": {
                 "longhands": [
-                    "border-inline-start-color",
-                    "border-inline-start-style",
                     "border-inline-start-width",
-                    "border-inline-end-color",
+                    "border-inline-end-width",
+                    "border-inline-start-style",
                     "border-inline-end-style",
-                    "border-inline-end-width"
+                    "border-inline-start-color",
+                    "border-inline-end-color"
                 ]
             },
             "specification": {

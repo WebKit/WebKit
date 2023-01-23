@@ -4156,15 +4156,15 @@ ScreenOrientationManager* Page::screenOrientationManager() const
     return m_screenOrientationManager.get();
 }
 
-URL Page::sanitizeLookalikeCharacters(const URL& url) const
+URL Page::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger trigger) const
 {
-    return chrome().client().sanitizeLookalikeCharacters(url);
+    return chrome().client().sanitizeLookalikeCharacters(url, trigger);
 }
 
-String Page::sanitizeLookalikeCharacters(const String& urlString) const
+String Page::sanitizeLookalikeCharacters(const String& urlString, LookalikeCharacterSanitizationTrigger trigger) const
 {
     if (auto url = URL { urlString }; url.isValid())
-        return sanitizeLookalikeCharacters(WTFMove(url)).string();
+        return sanitizeLookalikeCharacters(WTFMove(url), trigger).string();
     return urlString;
 }
 

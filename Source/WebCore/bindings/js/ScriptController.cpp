@@ -789,6 +789,12 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
+void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> securityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
+{
+    bool didReplaceDocument = false;
+    executeJavaScriptURL(url, securityOrigin, shouldReplaceDocumentIfJavaScriptURL, didReplaceDocument);
+}
+
 void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> requesterSecurityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, bool& didReplaceDocument)
 {
     ASSERT(url.protocolIsJavaScript());

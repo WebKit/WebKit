@@ -160,19 +160,6 @@ Register* CallFrame::topOfFrameInternal()
     return registers() + codeBlock->stackPointerOffset();
 }
 
-bool CallFrame::isAnyWasmCallee() const
-{
-    CalleeBits callee = this->callee();
-    if (callee.isWasm())
-        return true;
-
-    ASSERT(callee.isCell());
-    if (!!callee.rawPtr() && isWebAssemblyInstance(callee.asCell()))
-        return true;
-
-    return false;
-}
-
 CallFrame* CallFrame::callerFrame(EntryFrame*& currEntryFrame) const
 {
     if (callerFrameOrEntryFrame() == currEntryFrame) {
@@ -264,7 +251,7 @@ JSGlobalObject* CallFrame::globalObjectOfClosestCodeBlock(VM& vm, CallFrame* cal
 
 String CallFrame::friendlyFunctionName()
 {
-    if (this->isAnyWasmCallee())
+    if (this->isWasmFrame())
         return emptyString();
 
     CodeBlock* codeBlock = this->codeBlock();
@@ -290,7 +277,7 @@ String CallFrame::friendlyFunctionName()
 
 void CallFrame::dump(PrintStream& out) const
 {
-    if (!this->isAnyWasmCallee()) {
+    if (!this->isWasmFrame()) {
         if (CodeBlock* codeBlock = this->codeBlock()) {
             out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
 
@@ -353,7 +340,7 @@ void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAl
 #if ENABLE(WEBASSEMBLY)
 JSGlobalObject* CallFrame::lexicalGlobalObjectFromWasmCallee(VM&) const
 {
-    return wasmInstance()->owner<JSWebAssemblyInstance>()->globalObject();
+    return wasmInstance()->globalObject();
 }
 #endif
 

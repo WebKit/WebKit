@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class ShapeValue : public RefCounted<ShapeValue> {
 public:
     static Ref<ShapeValue> create(Ref<BasicShape>&& shape, CSSBoxType cssBox)
@@ -65,6 +67,9 @@ public:
         ASSERT(m_type == Type::Image);
         m_image = WTFMove(image);
     }
+
+    bool canBlend(const ShapeValue&) const;
+    Ref<ShapeValue> blend(const ShapeValue&, const BlendingContext&) const;
 
     bool operator==(const ShapeValue&) const;
     bool operator!=(const ShapeValue& other) const

@@ -26,6 +26,9 @@
 #include "config.h"
 #include "OffsetRotation.h"
 
+#include "AnimationUtilities.h"
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 OffsetRotation::OffsetRotation(bool hasAuto, float angle)
@@ -37,6 +40,22 @@ OffsetRotation::OffsetRotation(bool hasAuto, float angle)
 bool OffsetRotation::operator==(const OffsetRotation& o) const
 {
     return m_hasAuto == o.m_hasAuto && m_angle == o.m_angle;
+}
+
+bool OffsetRotation::canBlend(const OffsetRotation& to) const
+{
+    return m_hasAuto == to.hasAuto();
+}
+
+OffsetRotation OffsetRotation::blend(const OffsetRotation& to, const BlendingContext& context) const
+{
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1.0);
+        return context.progress ? to : *this;
+    }
+
+    ASSERT(canBlend(to));
+    return OffsetRotation(m_hasAuto, clampTo<float>(WebCore::blend(m_angle, to.angle(), context)));
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const OffsetRotation& rotation)

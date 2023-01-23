@@ -9,7 +9,7 @@ PASS columnsValue("columns3") is "10px"
 PASS columnsValue("columns4") is "auto"
 PASS columnsValue("columns5") is "2"
 PASS columnsValue("columns6") is "10px 2"
-PASS columnsValue("columns7") is "auto auto"
+PASS columnsValue("columns7") is "auto"
 NOTE: 'foo' is an illegal CSS value for 'columns'.
 PASS columnsValue("columns8") is ""
 NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns the empty string.

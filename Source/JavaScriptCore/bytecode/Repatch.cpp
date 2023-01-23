@@ -89,13 +89,13 @@ static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
     linkSlowPathTo(vm, callLinkInfo, virtualThunk);
 }
 
-static JSCell* webAssemblyOwner(JSCell* callee)
+static JSCell* webAssemblyOwner(CallFrame* callFrame)
 {
 #if ENABLE(WEBASSEMBLY)
     // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return jsCast<JSWebAssemblyInstance*>(callee)->module();
+    return jsCast<JSWebAssemblyInstance*>(callFrame->wasmInstance()->owner())->module();
 #else
-    UNUSED_PARAM(callee);
+    UNUSED_PARAM(callFrame);
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 #endif // ENABLE(WEBASSEMBLY)
@@ -108,16 +108,16 @@ void linkMonomorphicCall(
     ASSERT(!callLinkInfo.stub());
 
     CallFrame* callerFrame = callFrame->callerFrame();
-    // Our caller must have a cell for a callee. When calling
-    // this from Wasm, we ensure the callee is a cell.
-    ASSERT(callerFrame->callee().isCell());
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
     CodeBlock* callerCodeBlock = nullptr;
     JSCell* owner = nullptr;
-    if (callerFrame->isAnyWasmCallee())
-        owner = webAssemblyOwner(callerFrame->callee().asCell());
-    else {
+    if (callerFrame->isWasmFrame()) {
+        // When calling this from Wasm, callee is Wasm::Callee.
+        owner = webAssemblyOwner(callerFrame);
+    } else {
+        // Our caller must have a cell for a callee.
+        ASSERT(callerFrame->callee().isCell());
         callerCodeBlock = callerFrame->codeBlock();
         owner = callerCodeBlock;
     }
@@ -1634,17 +1634,14 @@ void linkDirectCall(
 static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo)
 {
     CallFrame* callerFrame = callFrame->callerFrame();
-    // Our caller must have a cell for a callee. When calling
-    // this from Wasm, we ensure the callee is a cell.
-    ASSERT(callerFrame->callee().isCell());
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
     CodeBlock* callerCodeBlock = nullptr;
-    if (!callerFrame->isAnyWasmCallee())
+    if (!callerFrame->isWasmFrame())
         callerCodeBlock = callerFrame->codeBlock();
 
     dataLogLnIf(shouldDumpDisassemblyFor(callerCodeBlock),
-        "Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()));
+        "Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerCodeBlock ? callerFrame->codeOrigin() : CodeOrigin { }));
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = vm.getCTIVirtualCall(callLinkInfo.callMode());
     revertCall(vm, callLinkInfo, virtualThunk);
@@ -1674,17 +1671,15 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         return;
     }
 
-    // Our caller must be have a cell for a callee. When calling
-    // this from Wasm, we ensure the callee is a cell.
-    ASSERT(callerFrame->callee().isCell());
-
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
     CodeBlock* callerCodeBlock = nullptr;
     JSCell* owner = nullptr;
-    bool isWebAssembly = callerFrame->isAnyWasmCallee();
-    if (isWebAssembly)
-        owner = webAssemblyOwner(callerFrame->callee().asCell());
-    else {
+    bool isWebAssembly = callerFrame->isWasmFrame();
+    if (isWebAssembly) {
+        // When calling this from Wasm, callee is Wasm::Callee.
+        owner = webAssemblyOwner(callerFrame);
+    } else {
+        // Our caller must have a cell for a callee.
         callerCodeBlock = callerFrame->codeBlock();
         owner = callerCodeBlock;
     }

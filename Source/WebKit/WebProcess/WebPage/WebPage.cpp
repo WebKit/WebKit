@@ -642,7 +642,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     });
 #endif
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#if ENABLE(SPEECH_SYNTHESIS) && !USE(GSTREAMER)
     pageConfiguration.speechSynthesisClient = makeUnique<WebSpeechSynthesisClient>(*this);
 #endif
 
@@ -2871,12 +2871,12 @@ WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
     corePage()->contextMenuController().clearContextMenu();
 
     // Simulate a mouse click to generate the correct menu.
-    PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+    PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMousePressEvent(mousePressEvent);
     Ref mainFrame = corePage()->mainFrame();
     bool handled = corePage()->userInputBridge().handleContextMenuEvent(mousePressEvent, mainFrame);
     auto* menu = handled ? &contextMenu() : nullptr;
-    PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::MouseReleased, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+    PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::Type::MouseReleased, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMouseReleaseEvent(mouseReleaseEvent);
 
     return menu;
@@ -3105,7 +3105,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
     PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
 
     switch (platformMouseEvent.type()) {
-        case PlatformEvent::MousePressed: {
+        case PlatformEvent::Type::MousePressed: {
 #if ENABLE(CONTEXT_MENUS)
             if (isContextClick(platformMouseEvent))
                 page->corePage()->contextMenuController().clearContextMenu();
@@ -3118,12 +3118,12 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
 #endif
             return handled;
         }
-        case PlatformEvent::MouseReleased:
+        case PlatformEvent::Type::MouseReleased:
             if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
                 frame.eventHandler().invalidateClick();
             return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
 
-        case PlatformEvent::MouseMoved:
+        case PlatformEvent::Type::MouseMoved:
 #if PLATFORM(COCOA)
             // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
             // button is currently pressed. It is possible that neither of those things will be true since on
@@ -3135,9 +3135,9 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
 #endif
             return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
 
-        case PlatformEvent::MouseForceChanged:
-        case PlatformEvent::MouseForceDown:
-        case PlatformEvent::MouseForceUp:
+        case PlatformEvent::Type::MouseForceChanged:
+        case PlatformEvent::Type::MouseForceDown:
+        case PlatformEvent::Type::MouseForceUp:
             return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
 
         default:
@@ -3580,7 +3580,7 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
 
     if (isKeyboardEventValid && event.type() == WebEventType::KeyDown) {
         PlatformKeyboardEvent platformEvent(platform(event));
-        platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
+        platformEvent.disambiguateKeyDownEvent(PlatformEvent::Type::RawKeyDown);
         focusController->setInitialFocus(forward ? FocusDirection::Forward : FocusDirection::Backward, &KeyboardEvent::create(platformEvent, &frame->windowProxy()).get());
         completionHandler();
         return;
@@ -4776,7 +4776,7 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
-    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::MouseMoved, 0, { }, WallTime::now(), 0, WebCore::NoTap);
+    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), 0, WebCore::NoTap);
     m_page->mainFrame().eventHandler().dragSourceEndedAt(event, dragOperationMask);
 
     send(Messages::WebPageProxy::DidEndDragging());

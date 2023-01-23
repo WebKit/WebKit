@@ -91,7 +91,7 @@ public:
 
     void linkGlobal(VM& vm, uint32_t index, JSWebAssemblyGlobal* value)
     {
-        ASSERT(value == value->global()->owner<JSWebAssemblyGlobal>());
+        ASSERT(value == value->global()->owner());
         instance().linkGlobal(index, *value->global());
         vm.writeBarrier(this, value);
     }

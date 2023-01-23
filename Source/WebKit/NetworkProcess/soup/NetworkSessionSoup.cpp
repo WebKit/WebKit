@@ -145,6 +145,11 @@ void NetworkSessionSoup::setIgnoreTLSErrors(bool ignoreTLSErrors)
     m_networkSession->setIgnoreTLSErrors(ignoreTLSErrors);
 }
 
+void NetworkSessionSoup::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+{
+    m_networkSession->allowSpecificHTTPSCertificateForHost(certificateInfo, host);
+}
+
 void NetworkSessionSoup::setProxySettings(const SoupNetworkProxySettings& settings)
 {
     m_networkSession->setProxySettings(settings);

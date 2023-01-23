@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CanvasBase.h"
+#include "CanvasObserver.h"
 #include "MediaStreamTrack.h"
 #include "Timer.h"
 #include <wtf/TypeCasts.h>

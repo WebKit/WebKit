@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -256,6 +256,7 @@ namespace JSC {
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
     {
+        ASSERT(name.impl());
     }
 
     inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
@@ -265,6 +266,7 @@ namespace JSC {
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
     {
+        ASSERT(name.impl());
     }
     
     inline PropertyNode::PropertyNode(ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
@@ -292,6 +294,7 @@ namespace JSC {
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
     {
+        ASSERT(ident.impl());
     }
 
     inline PropertyListNode::PropertyListNode(const JSTokenLocation& location, PropertyNode* node)

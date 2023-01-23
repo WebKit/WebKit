@@ -83,7 +83,7 @@ void appendInteractionRegionLayersForLayer(NSMutableArray *sublayers, CALayer *l
 
 void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host, const RemoteLayerTreeTransaction::LayerProperties& properties)
 {
-    ASSERT(properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged);
+    ASSERT(properties.changedProperties & LayerChange::EventRegionChanged);
 
     HashMap<IntRect, CALayer *> interactionRegionLayers;
     for (CALayer *sublayer in layer.sublayers) {

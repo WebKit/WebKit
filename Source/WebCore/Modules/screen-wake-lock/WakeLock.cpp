@@ -27,7 +27,7 @@
 #include "WakeLock.h"
 
 #include "DOMWindow.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "Exception.h"
 #include "FeaturePolicy.h"

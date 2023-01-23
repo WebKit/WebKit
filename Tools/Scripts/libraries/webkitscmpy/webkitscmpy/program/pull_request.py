@@ -116,6 +116,12 @@ class PullRequest(Command):
             help='Explicitly enable or disable EWS on the PR',
             action=arguments.NoAction,
         )
+        parser.add_argument(
+            '--no-issue', '--no-bug',
+            dest='update_issue', default=True,
+            help='Disable automatic bug creation and updates',
+            action=arguments.NoAction,
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -324,7 +330,9 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=True):
+    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None):
+        if update_issue is None:
+            update_issue = getattr(args, 'update_issue', True)
         source_remote = args.remote or repository.default_remote
         if not repository.config().get('remote.{}.url'.format(source_remote)):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
@@ -558,7 +566,7 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
                 return 1
             print("Created '{}'!".format(pr))
-            if cls.is_revert_commit(commits[0]):
+            if cls.is_revert_commit(commits[0]) and update_issue:
                 cls.add_comment_to_reverted_commit_bug_tracker(repository, args, pr, commits[0])
 
         if issue and update_issue:

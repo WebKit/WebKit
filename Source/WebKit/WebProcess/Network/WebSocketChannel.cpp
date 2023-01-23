@@ -34,6 +34,7 @@
 #include <WebCore/Blob.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Document.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/Frame.h>

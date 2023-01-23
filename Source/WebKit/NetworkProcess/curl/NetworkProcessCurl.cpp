@@ -42,7 +42,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 {
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(PAL::SessionID, const CertificateInfo& certificateInfo, const String& host)
 {
     notImplemented();
 }

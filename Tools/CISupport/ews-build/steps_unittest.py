@@ -129,11 +129,11 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
         os.chdir(self._temp_directory)
         self._expected_uploaded_files = []
 
-        super(BuildStepMixinAdditions, self).setUpBuildStep()
+        super().setUpBuildStep()
 
     def tearDownBuildStep(self):
         shutil.rmtree(self._temp_directory)
-        super(BuildStepMixinAdditions, self).tearDownBuildStep()
+        super().tearDownBuildStep()
 
     def fakeBuildFinished(self, text, results):
         self.build.text = text
@@ -144,7 +144,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
         if self.previous_steps:
             del kwargs['previous_steps']
 
-        super(BuildStepMixinAdditions, self).setupStep(step, *args, **kwargs)
+        super().setupStep(step, *args, **kwargs)
         self.build.terminate = False
         self.build.stopped = False
         self.build.executedSteps = self.executedSteps
@@ -228,7 +228,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
                 actual_sources = sorted([source.asDict() for source in self.build.sources], key=operator.itemgetter('codebase'))
                 expected_sources = sorted([source.asDict() for source in self._expected_sources], key=operator.itemgetter('codebase'))
                 self.assertEqual(actual_sources, expected_sources)
-        deferred_result = super(BuildStepMixinAdditions, self).runStep()
+        deferred_result = super().runStep()
         deferred_result.addCallback(check)
         return deferred_result
 

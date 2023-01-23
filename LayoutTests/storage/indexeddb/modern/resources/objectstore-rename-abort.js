@@ -10,10 +10,9 @@ function openDatabase()
 
 function onDatabaseUpgradeNeeded()
 {
-    evalAndLog("request = event.target;");
-    evalAndLog("transaction = request.transaction;");
+    evalAndLog("transaction = openRequest.transaction;");
     transaction.onabort = onTransactionAbort;
-    evalAndLog("database = request.result;");
+    evalAndLog("database = openRequest.result;");
     evalAndLog("objectStore = database.createObjectStore('os1');");
     evalAndLog("database.deleteObjectStore('os1');");
     evalAndLog("objectStore2 = database.createObjectStore('os2')");

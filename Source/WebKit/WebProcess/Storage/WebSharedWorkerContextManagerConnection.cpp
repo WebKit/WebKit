@@ -139,4 +139,10 @@ void WebSharedWorkerContextManagerConnection::close()
     WebProcess::singleton().enableTermination();
 }
 
+void WebSharedWorkerContextManagerConnection::sharedWorkerTerminated(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
+{
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::sharedWorkerTerminated: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
+    m_connectionToNetworkProcess->send(Messages::WebSharedWorkerServerToContextConnection::SharedWorkerTerminated { sharedWorkerIdentifier }, 0);
+}
+
 } // namespace WebKit

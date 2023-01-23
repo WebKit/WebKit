@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -490,7 +490,7 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_frontFace(frontFace)
     , m_cullMode(cullMode)
     , m_depthStencilDescriptor(depthStencilDescriptor)
-    , m_depthStencilState([device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor])
+    , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
     , m_reflection(reflection)
 #endif
@@ -599,7 +599,6 @@ void RenderPipeline::setLabel(String&&)
 
 id<MTLDepthStencilState> RenderPipeline::depthStencilState() const
 {
-    ASSERT(m_depthStencilState);
     return m_depthStencilState;
 }
 

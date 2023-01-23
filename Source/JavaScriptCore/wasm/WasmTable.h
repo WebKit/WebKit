@@ -35,7 +35,11 @@
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class JSWebAssemblyTable;
+
+namespace Wasm {
 
 class Instance;
 class FuncRefTable;
@@ -55,8 +59,8 @@ public:
 
     static uint32_t allocatedLength(uint32_t length);
 
-    template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
-    void setOwner(JSObject* owner)
+    JSWebAssemblyTable* owner() const { return m_owner; }
+    void setOwner(JSWebAssemblyTable* owner)
     {
         ASSERT(!m_owner);
         ASSERT(owner);
@@ -93,7 +97,7 @@ protected:
     uint32_t m_length;
     const TableElementType m_type;
     const std::optional<uint32_t> m_maximum;
-    JSObject* m_owner;
+    JSWebAssemblyTable* m_owner;
 };
 
 class ExternRefTable final : public Table {

@@ -783,6 +783,7 @@ public:
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(toggleAction.get()), TRUE);
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new(toggleAction.get()));
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        G_GNUC_END_IGNORE_DEPRECATIONS;
 #endif
         GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTKCustomGAction", nullptr)));
         g_simple_action_set_enabled(G_SIMPLE_ACTION(gAction.get()), FALSE);
@@ -790,7 +791,6 @@ public:
         GRefPtr<GAction> toggleGAction = adoptGRef(G_ACTION(g_simple_action_new_stateful("WebKitGTKCustomToggleGAction", nullptr, g_variant_new_boolean(TRUE))));
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_gaction(toggleGAction.get(), "Custom T_oggle GAction", nullptr));
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
-        G_GNUC_END_IGNORE_DEPRECATIONS;
 
         // Add a submenu.
         GRefPtr<WebKitContextMenu> subMenu = adoptGRef(webkit_context_menu_new());

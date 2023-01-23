@@ -71,6 +71,8 @@ public:
 
     void copyInitialCalleeGroupToAllMemoryModes(MemoryMode);
 
+    WasmToJSCallee& wasmToJSCallee() { return m_wasmToJSCallee.get(); }
+
 private:
     Ref<CalleeGroup> getOrCreateCalleeGroup(VM&, MemoryMode);
 
@@ -78,6 +80,7 @@ private:
     Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CalleeGroup> m_calleeGroups[numberOfMemoryModes];
     Ref<LLIntCallees> m_llintCallees;
+    Ref<WasmToJSCallee> m_wasmToJSCallee;
     MacroAssemblerCodeRef<JITCompilationPtrTag> m_llintEntryThunks;
     Lock m_lock;
 };

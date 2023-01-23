@@ -393,8 +393,7 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
 end
 
 op(llint_handle_uncaught_exception, macro ()
-    loadp Callee[cfr], t3
-    convertCalleeToVM(t3)
+    getVMFromCallFrame(t3, t0)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     storep 0, VM::callFrameForCatch[t3]
 
@@ -418,7 +417,7 @@ op(llint_get_host_call_return_value, macro ()
     functionPrologue()
     pushCalleeSaves()
     loadp Callee[cfr], t0
-    convertCalleeToVM(t0)
+    convertJSCalleeToVM(t0)
     loadq VM::encodedHostCallReturnValue[t0], t0
     popCalleeSaves()
     functionEpilogue()
@@ -2665,8 +2664,7 @@ commonOp(llint_op_catch, macro () end, macro (size)
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
-    loadp Callee[cfr], t3
-    convertCalleeToVM(t3)
+    getVMFromCallFrame(t3, t0)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
@@ -2709,8 +2707,7 @@ end)
 
 
 op(llint_throw_from_slow_path_trampoline, macro ()
-    loadp Callee[cfr], t1
-    convertCalleeToVM(t1)
+    getVMFromCallFrame(t1, t2)
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
 
     callSlowPath(_llint_slow_path_handle_exception)
@@ -2718,8 +2715,7 @@ op(llint_throw_from_slow_path_trampoline, macro ()
     # When throwing from the interpreter (i.e. throwing from LLIntSlowPaths), so
     # the throw target is not necessarily interpreted code, we come to here.
     # This essentially emulates the JIT's throwing protocol.
-    loadp Callee[cfr], t1
-    convertCalleeToVM(t1)
+    getVMFromCallFrame(t1, t2)
     if ARM64E
         loadp VM::targetMachinePCForThrow[t1], a0
         leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1

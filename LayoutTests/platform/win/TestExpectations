@@ -2294,6 +2294,9 @@ svg/transforms/transformed-container-small-units.svg [ ImageOnlyFailure ]
 svg/transforms/transformed-container.svg [ ImageOnlyFailure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
+# The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
+svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
+
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################

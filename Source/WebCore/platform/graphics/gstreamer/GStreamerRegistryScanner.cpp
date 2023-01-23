@@ -175,6 +175,15 @@ GList* GStreamerRegistryScanner::ElementFactories::factory(GStreamerRegistryScan
 
 GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::ElementFactories::hasElementForMediaType(ElementFactories::Type factoryType, const char* capsString, ElementFactories::CheckHardwareClassifier shouldCheckHardwareClassifier, std::optional<Vector<String>> disallowedList) const
 {
+    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string(capsString));
+    if (!caps)
+        return { };
+
+    return hasElementForCaps(factoryType, caps, shouldCheckHardwareClassifier, disallowedList);
+}
+
+GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::ElementFactories::hasElementForCaps(ElementFactories::Type factoryType, const GRefPtr<GstCaps>& caps, ElementFactories::CheckHardwareClassifier shouldCheckHardwareClassifier, std::optional<Vector<String>> disallowedList) const
+{
     auto* elementFactories = factory(factoryType);
     if (!elementFactories)
         return { };
@@ -183,9 +192,6 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     if (factoryType == Type::AudioEncoder || factoryType == Type::VideoEncoder || factoryType == Type::Muxer || factoryType == Type::RtpDepayloader)
         padDirection = GST_PAD_SRC;
 
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string(capsString));
-    if (!caps)
-        return { };
     GList* candidates = gst_element_factory_list_filter(elementFactories, caps.get(), padDirection, false);
     bool isSupported = candidates;
     bool isUsingHardware = false;
@@ -671,6 +677,23 @@ bool GStreamerRegistryScanner::areAllCodecsSupported(Configuration configuration
     }
 
     return true;
+}
+
+GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::areCapsSupported(Configuration configuration, const GRefPtr<GstCaps>& caps, bool shouldCheckForHardwareUse)
+{
+    OptionSet<ElementFactories::Type> factoryTypes;
+    switch (configuration) {
+    case Configuration::Decoding:
+        factoryTypes.add(ElementFactories::Type::VideoDecoder);
+        break;
+    case Configuration::Encoding:
+        factoryTypes.add(ElementFactories::Type::VideoEncoder);
+        break;
+    }
+    auto lookupResult = ElementFactories(factoryTypes).hasElementForCaps(factoryTypes.toSingleValue().value(), caps, ElementFactories::CheckHardwareClassifier::Yes);
+    bool supported = lookupResult && shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true;
+    GST_DEBUG("%s decoding supported for caps %" GST_PTR_FORMAT ": %s", shouldCheckForHardwareUse ? "Hardware" : "Software", caps.get(), boolForPrinting(supported));
+    return { supported, supported ? lookupResult.factory : nullptr };
 }
 
 GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1CodecSupported(Configuration configuration, const String& codec, bool shouldCheckForHardwareUse) const

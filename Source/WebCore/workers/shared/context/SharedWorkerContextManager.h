@@ -50,13 +50,14 @@ public:
         virtual ~Connection() { }
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;
         virtual void postExceptionToWorkerObject(SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) = 0;
+        virtual void sharedWorkerTerminated(SharedWorkerIdentifier) = 0;
         bool isClosed() const { return m_isClosed; }
 
     protected:
         void setAsClosed() { m_isClosed = true; }
 
         // IPC message handlers.
-        WEBCORE_EXPORT void postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, String&& sourceOrigin);
+        WEBCORE_EXPORT void postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, String&& sourceOrigin, CompletionHandler<void(bool)>&&);
         WEBCORE_EXPORT void terminateSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void suspendSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void resumeSharedWorker(SharedWorkerIdentifier);

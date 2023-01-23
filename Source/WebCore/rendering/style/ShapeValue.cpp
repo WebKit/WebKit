@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ShapeValue.h"
 
+#include "AnimationUtilities.h"
 #include "CachedImage.h"
 #include <wtf/PointerComparison.h>
 
@@ -48,6 +49,26 @@ bool ShapeValue::operator==(const ShapeValue& other) const
         && m_cssBox == other.m_cssBox
         && arePointingToEqualData(m_shape, other.m_shape)
         && arePointingToEqualData(m_image, other.m_image);
+}
+
+bool ShapeValue::canBlend(const ShapeValue& to) const
+{
+    if (m_type != ShapeValue::Type::Shape || to.type() != ShapeValue::Type::Shape)
+        return false;
+
+    if (m_cssBox != to.cssBox())
+        return false;
+
+    if (auto* toShape = to.shape())
+        return m_shape && m_shape->canBlend(*toShape);
+
+    return false;
+}
+
+Ref<ShapeValue> ShapeValue::blend(const ShapeValue& to, const BlendingContext& context) const
+{
+    ASSERT(m_shape && to.shape());
+    return ShapeValue::create(to.shape()->blend(*m_shape, context), m_cssBox);
 }
 
 } // namespace WebCore

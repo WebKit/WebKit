@@ -123,6 +123,29 @@ private:
     }
 };
 
+class WasmToJSCallee final : public Callee {
+public:
+    friend class Callee;
+
+    static Ref<WasmToJSCallee> create()
+    {
+        return adoptRef(*new WasmToJSCallee);
+    }
+
+private:
+    WasmToJSCallee();
+
+    std::tuple<void*, void*> rangeImpl() const
+    {
+        return { nullptr, nullptr };
+    }
+
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
+
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
+};
+
+
 class JSToWasmICCallee final : public JITCallee {
 public:
     static Ref<JSToWasmICCallee> create()

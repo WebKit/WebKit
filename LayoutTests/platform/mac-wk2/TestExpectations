@@ -1804,3 +1804,10 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ BigSur+ ] imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Pass Failure Crash ]
 
 webkit.org/b/248997 [ BigSur+ ] http/tests/navigation/fragment-navigation-policy-ignore.html [ Pass Failure ]
+
+# WebGL in OffscreenCanvas requires the GPUP.
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Skip ]
+

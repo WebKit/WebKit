@@ -82,21 +82,21 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
         return false;
 
     switch (event.type()) {
-    case PlatformEvent::MousePressed: {
+    case PlatformEvent::Type::MousePressed: {
         m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
         m_dragging = true;
         IntPoint location = m_overlay->frame().location();
         m_dragPoint = event.position() + IntPoint(-location.x(), -location.y());
         return true;
     }
-    case PlatformEvent::MouseReleased:
+    case PlatformEvent::Type::MouseReleased:
         if (m_dragging) {
             m_overlay->setShouldIgnoreMouseEventsOutsideBounds(true);
             m_dragging = false;
             return true;
         }
         break;
-    case PlatformEvent::MouseMoved:
+    case PlatformEvent::Type::MouseMoved:
         if (m_dragging) {
             IntRect newFrame = m_overlay->frame();
 

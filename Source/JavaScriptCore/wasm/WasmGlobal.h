@@ -34,7 +34,11 @@
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class JSWebAssemblyGlobal;
+
+namespace Wasm {
 
 class Instance;
 
@@ -67,8 +71,8 @@ public:
     void set(JSGlobalObject*, JSValue);
     DECLARE_VISIT_AGGREGATE;
 
-    template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
-    void setOwner(JSObject* owner)
+    JSWebAssemblyGlobal* owner() const { return m_owner; }
+    void setOwner(JSWebAssemblyGlobal* owner)
     {
         ASSERT(!m_owner);
         ASSERT(owner);
@@ -104,7 +108,7 @@ private:
 
     Wasm::Type m_type;
     Wasm::Mutability m_mutability;
-    JSObject* m_owner { nullptr };
+    JSWebAssemblyGlobal* m_owner { nullptr };
     Value m_value;
 };
 

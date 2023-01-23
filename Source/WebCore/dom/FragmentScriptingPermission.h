@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum class ParserContentPolicy {
+enum class ParserContentPolicy : uint8_t {
     AllowScriptingContent = 1 << 0,
     AllowPluginContent = 1 << 1,
     DoNotMarkAlreadyStarted = 1 << 2,

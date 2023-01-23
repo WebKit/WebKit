@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PathOperation.h"
 
+#include "AnimationUtilities.h"
 #include "GeometryUtilities.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -68,6 +69,20 @@ const SVGElement* ReferencePathOperation::element() const
 Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position)
 {
     return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(containingBlockBoundingRect), WTFMove(position)));
+}
+
+bool RayPathOperation::canBlend(const PathOperation& to) const
+{
+    if (auto* toRayPathOperation = dynamicDowncast<RayPathOperation>(to))
+        return m_size == toRayPathOperation->size() && m_isContaining == toRayPathOperation->isContaining();
+    return false;
+}
+
+RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const BlendingContext& context) const
+{
+    ASSERT(is<RayPathOperation>(to));
+    auto& toRayPathOperation = downcast<RayPathOperation>(*to);
+    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining);
 }
 
 double RayPathOperation::lengthForPath() const

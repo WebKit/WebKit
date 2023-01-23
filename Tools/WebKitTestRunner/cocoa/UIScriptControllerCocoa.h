@@ -39,6 +39,8 @@ protected:
     void doAsyncTask(JSValueRef) override;
 
 private:
+    void doAfterPresentationUpdate(JSValueRef) override;
+
     void setViewScale(double) override;
     void setMinimumEffectiveWidth(double) override;
     void setWebViewEditable(bool) override;

@@ -32,7 +32,7 @@ namespace WebCore {
 class PlatformTouchEvent : public PlatformEvent {
 public:
     PlatformTouchEvent()
-        : PlatformEvent(PlatformEvent::TouchStart)
+        : PlatformEvent(PlatformEvent::Type::TouchStart)
     {
     }
 

@@ -35,7 +35,6 @@ public:
         , m_webViewBusNames(numViews)
         , m_webViews(numViews)
     {
-        webkit_web_context_set_process_model(m_webContext.get(), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
     }
 
     void initializeWebExtensions() override
@@ -171,7 +170,6 @@ public:
         : m_mainLoop(g_main_loop_new(nullptr, TRUE))
         , m_initializeWebExtensionsSignalCount(0)
     {
-        webkit_web_context_set_process_model(m_webContext.get(), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
         m_webView = WEBKIT_WEB_VIEW(Test::createWebView(m_webContext.get()));
 #if PLATFORM(GTK)
         g_object_ref_sink(m_webView);
@@ -252,9 +250,6 @@ static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* te
 
 void beforeAll()
 {
-    // Check that default setting is the one stated in the documentation
-    g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()), ==, WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
-
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
 }

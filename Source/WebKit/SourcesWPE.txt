@@ -216,6 +216,8 @@ UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 
+UIProcess/gstreamer/WebPageProxyGStreamer.cpp
+
 UIProcess/Inspector/glib/RemoteInspectorClient.cpp
 UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp
 

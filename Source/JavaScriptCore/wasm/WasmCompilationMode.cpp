@@ -48,6 +48,8 @@ const char* makeString(CompilationMode mode)
         return "EmbedderEntrypoint";
     case CompilationMode::JSToWasmICMode:
         return "JSToWasmIC";
+    case CompilationMode::WasmToJSMode:
+        return "WasmToJS";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "";

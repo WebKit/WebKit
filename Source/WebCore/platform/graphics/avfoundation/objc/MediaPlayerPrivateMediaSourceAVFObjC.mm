@@ -75,13 +75,15 @@ namespace WebCore {
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("WaitingToSeek"),
         MAKE_STATIC_STRING_IMPL("Seeking"),
         MAKE_STATIC_STRING_IMPL("WaitingForAvailableFame"),
         MAKE_STATIC_STRING_IMPL("SeekCompleted"),
     };
-    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::Seeking) == 0, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::Seeking is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingForAvailableFame) == 1, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingForAvailableFame is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::SeekCompleted) == 2, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::SeekCompleted is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingToSeek) == 0, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingToSeek is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::Seeking) == 1, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::Seeking is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingForAvailableFame) == 2, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::WaitingForAvailableFame is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerPrivateMediaSourceAVFObjC::SeekState::SeekCompleted) == 3, "MediaPlayerPrivateMediaSourceAVFObjC::SeekState::SeekCompleted is not 3 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
@@ -151,7 +153,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_readyState(MediaPlayer::ReadyState::HaveNothing)
     , m_rate(1)
     , m_playing(0)
-    , m_seeking(false)
+    , m_synchronizerSeeking(false)
     , m_loadingProgressed(false)
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -174,10 +176,10 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
             return;
 
         auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
-        ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_seeking, ", pending = ", !!m_pendingSeek);
+        ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_synchronizerSeeking, ", pending = ", !!m_pendingSeek);
 
-        if (m_seeking && !m_pendingSeek) {
-            m_seeking = false;
+        if (m_synchronizerSeeking && !m_pendingSeek) {
+            m_synchronizerSeeking = false;
 
             if (shouldBePlaying())
                 [m_synchronizer setRate:m_rate];
@@ -523,7 +525,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& ti
 {
     ALWAYS_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
 
-    m_seeking = true;
     m_pendingSeek = makeUnique<PendingSeek>(time, negativeThreshold, positiveThreshold);
 
     if (m_seekTimer.isActive())
@@ -550,34 +551,38 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     if (m_lastSeekTime.hasDoubleValue())
         m_lastSeekTime = MediaTime::createWithDouble(m_lastSeekTime.toDouble(), MediaTime::DefaultTimeScale);
 
+    m_seekCompleted = WaitingToSeek;
+
+    m_mediaSourcePrivate->willSeek();
+    m_mediaSourcePrivate->seekToTime(m_lastSeekTime);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted()
+{
+    if (m_seekCompleted != WaitingToSeek)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_seekCompleted = Seeking;
+
     MediaTime synchronizerTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
     ALWAYS_LOG(LOGIDENTIFIER, "seekTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime);
 
     bool doesNotRequireSeek = synchronizerTime == m_lastSeekTime;
 
-    m_mediaSourcePrivate->willSeek();
     [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
-    m_mediaSourcePrivate->seekToTime(m_lastSeekTime);
 
     // In cases where the destination seek time precisely matches the synchronizer's existing time
     // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
     // the seek completed successfully.
     if (doesNotRequireSeek) {
-        m_seeking = false;
+        m_synchronizerSeeking = false;
 
         if (shouldBePlaying())
             [m_synchronizer setRate:m_rate];
         if (!seeking() && m_seekCompleted)
             m_player->timeChanged();
     }
-}
-
-void MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted()
-{
-    if (!m_seeking)
-        return;
-    ALWAYS_LOG(LOGIDENTIFIER);
-    m_seekCompleted = Seeking;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
@@ -593,13 +598,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
     m_seekCompleted = SeekCompleted;
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
-    if (!m_seeking)
+    if (!m_synchronizerSeeking)
         m_player->timeChanged();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
 {
-    return m_seeking || m_seekCompleted != SeekCompleted;
+    return m_pendingSeek || m_synchronizerSeeking || m_seekCompleted != SeekCompleted;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)

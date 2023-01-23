@@ -161,9 +161,10 @@ void NetworkProcess::setIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLS
         static_cast<NetworkSessionSoup&>(*session).setIgnoreTLSErrors(ignoreTLSErrors);
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, const CertificateInfo& certificateInfo, const String& host)
 {
-    SoupNetworkSession::allowSpecificHTTPSCertificateForHost(certificateInfo, host);
+    if (auto* session = networkSession(sessionID))
+        static_cast<NetworkSessionSoup&>(*session).allowSpecificHTTPSCertificateForHost(certificateInfo, host);
 }
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)

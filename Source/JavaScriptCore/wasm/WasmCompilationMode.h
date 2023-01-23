@@ -35,6 +35,7 @@ enum class CompilationMode : uint8_t {
     OMGForOSREntryMode,
     EmbedderEntrypointMode,
     JSToWasmICMode,
+    WasmToJSMode,
 };
 
 const char* makeString(CompilationMode);
@@ -47,6 +48,7 @@ constexpr inline bool isOSREntry(CompilationMode compilationMode)
     case CompilationMode::OMGMode:
     case CompilationMode::EmbedderEntrypointMode:
     case CompilationMode::JSToWasmICMode:
+    case CompilationMode::WasmToJSMode:
         return false;
     case CompilationMode::BBQForOSREntryMode:
     case CompilationMode::OMGForOSREntryMode:
@@ -66,6 +68,7 @@ constexpr inline bool isAnyBBQ(CompilationMode compilationMode)
     case CompilationMode::OMGMode:
     case CompilationMode::EmbedderEntrypointMode:
     case CompilationMode::JSToWasmICMode:
+    case CompilationMode::WasmToJSMode:
         return false;
     }
     RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
@@ -82,6 +85,7 @@ constexpr inline bool isAnyOMG(CompilationMode compilationMode)
     case CompilationMode::LLIntMode:
     case CompilationMode::EmbedderEntrypointMode:
     case CompilationMode::JSToWasmICMode:
+    case CompilationMode::WasmToJSMode:
         return false;
     }
     RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();

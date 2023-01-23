@@ -37,6 +37,7 @@ namespace JSC { namespace Wasm {
 Module::Module(LLIntPlan& plan)
     : m_moduleInformation(plan.takeModuleInformation())
     , m_llintCallees(LLIntCallees::createFromVector(plan.takeCallees()))
+    , m_wasmToJSCallee(WasmToJSCallee::create())
     , m_llintEntryThunks(plan.takeEntryThunks())
 {
 }

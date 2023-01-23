@@ -1497,7 +1497,7 @@ macro assertNotConstant(size, index)
     end)
 end
 
-macro convertCalleeToVM(callee)
+macro convertJSCalleeToVM(callee)
     btpnz callee, (constexpr PreciseAllocation::halfAlignment), .preciseAllocation
     andp MarkedBlockMask, callee
     loadp MarkedBlockHeaderOffset + MarkedBlock::Header::m_vm[callee], callee
@@ -1505,6 +1505,30 @@ macro convertCalleeToVM(callee)
 .preciseAllocation:
     loadp PreciseAllocationVMOffset[callee], callee
 .done:
+end
+
+macro getVMFromCallFrame(vm, scratch)
+if WEBASSEMBLY
+        if JSVALUE64
+            loadq Callee[cfr], vm
+            move vm, scratch
+            andq (constexpr JSValue::WasmMask), scratch
+            bqeq scratch, (constexpr JSValue::WasmTag), .isWasmCallee
+        else
+            loadi Callee + TagOffset[cfr], scratch
+            bieq scratch, (constexpr JSValue::WasmTag), .isWasmCallee
+            loadp Callee + PayloadOffset[cfr], vm
+        end
+        convertJSCalleeToVM(vm)
+        jmp .loaded
+    .isWasmCallee:
+        loadp CodeBlock + PayloadOffset[cfr], vm
+        loadp Wasm::Instance::m_vm[vm], vm
+    .loaded:
+else
+    loadp Callee + PayloadOffset[cfr], vm
+    convertJSCalleeToVM(vm)
+end
 end
 
 # Do the bare minimum required to execute code. Sets up the PC, leave the CodeBlock*

@@ -30,8 +30,10 @@
 #include <glib-object.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _SoupCache SoupCache;
@@ -42,6 +44,7 @@ typedef struct _SoupSession SoupSession;
 namespace WebCore {
 
 class CertificateInfo;
+class HostTLSCertificateSet;
 class ResourceError;
 
 class SoupNetworkSession {
@@ -66,7 +69,7 @@ public:
 
     WEBCORE_EXPORT void setIgnoreTLSErrors(bool);
     std::optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);
-    static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 
     void getHostNamesWithHSTSCache(HashSet<String>&);
     void deleteHSTSCacheForHostNames(const Vector<String>&);
@@ -79,6 +82,7 @@ private:
     PAL::SessionID m_sessionID;
     bool m_ignoreTLSErrors { false };
     SoupNetworkProxySettings m_proxySettings;
+    HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash> m_allowedCertificates;
 };
 
 } // namespace WebCore

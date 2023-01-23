@@ -54,6 +54,7 @@ public:
 
     void establishConnection(CompletionHandler<void()>&&) final;
     void postExceptionToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
+    void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

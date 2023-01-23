@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCVPXVideoDecoder.h"
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "LibWebRTCDav1dDecoder.h"
 #include "Logging.h"
@@ -35,6 +35,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN

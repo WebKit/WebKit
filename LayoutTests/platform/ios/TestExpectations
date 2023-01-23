@@ -1770,7 +1770,6 @@ fast/text/glyph-reordering.html [ Failure ]
 fast/text/international/001.html [ Failure ]
 fast/text/international/cjk-segmentation.html [ Failure ]
 fast/text/international/thai-cursor-position.html [ Failure ]
-fast/text/international/vertical-text-glyph-test.html [ Failure ]
 fast/text/international/vertical-text-metrics-test.html [ Failure ]
 fast/text/international/wrap-CJK-001.html [ Failure ]
 fast/text/justify-ideograph-complex.html [ Failure ]
@@ -2021,14 +2020,6 @@ fast/text/fallback-language-han.html [ Skip ]
 
 # Pasteboard tests failing due to extra -webkit-text-size-adjust: auto.
 editing/pasteboard/copy-null-characters.html [ Failure ]
-editing/pasteboard/copy-resolves-urls.html [ Failure ]
-editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure ]
-editing/pasteboard/do-not-copy-unnecessary-styles-2.html [ Failure ]
-editing/pasteboard/paste-noscript-svg.html [ Failure ]
-editing/pasteboard/paste-noscript-xhtml.xhtml [ Failure ]
-editing/pasteboard/paste-noscript.html [ Failure ]
-editing/pasteboard/paste-visible-script.html [ Failure ]
-editing/pasteboard/paste-wrapped-blockquote-into-nonblockquote.html [ Failure ]
 
 # Failing pasteboard to triage
 editing/pasteboard/4242293-1.html [ Failure ]
@@ -3853,6 +3844,9 @@ imported/w3c/web-platform-tests/websockets/opening-handshake/002.html?wpt_flags=
 imported/w3c/web-platform-tests/websockets/unload-a-document/001.html?wpt_flags=h2 [ Skip ]
 imported/w3c/web-platform-tests/websockets/unload-a-document/002.html?wpt_flags=h2 [ Skip ]
 imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=h2 [ Skip ]
+
+# The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
+svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]

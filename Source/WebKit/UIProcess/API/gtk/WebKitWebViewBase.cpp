@@ -2719,7 +2719,7 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
     if (!renderNode)
         return nullptr;
 
-    graphene_rect_t viewport = { 0, 0, static_cast<float>(size.width()), static_cast<float>(size.height()) };
+    graphene_rect_t viewport = { { 0, 0 }, { static_cast<float>(size.width()), static_cast<float>(size.height()) } };
     GdkTexture* texture = gsk_renderer_render_texture(renderer, renderNode.get(), &viewport);
 
     return ViewSnapshot::create(WTFMove(texture));

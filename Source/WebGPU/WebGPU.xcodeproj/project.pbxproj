@@ -84,6 +84,8 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
+		9789C31B297EA105009E9006 /* CallGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C319297EA105009E9006 /* CallGraph.h */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
@@ -333,6 +335,8 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
+		9789C319297EA105009E9006 /* CallGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallGraph.h; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
@@ -615,6 +619,8 @@
 			children = (
 				33EA185C27BC193D00A1DD52 /* AST */,
 				979240B1297018290050EA2C /* Metal */,
+				9789C318297EA105009E9006 /* CallGraph.cpp */,
+				9789C319297EA105009E9006 /* CallGraph.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
@@ -761,6 +767,7 @@
 				33EA187227BC1FE100A1DD52 /* ASTVariableQualifier.h in Headers */,
 				3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */,
 				3A1337E828FBD56400F29B73 /* ASTVisitor.h in Headers */,
+				9789C31B297EA105009E9006 /* CallGraph.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
 				979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
@@ -789,7 +796,6 @@
 				1CEBD7E02716AFBA00A5254D /* Frameworks */,
 				1CEBD7E12716AFBA00A5254D /* Resources */,
 				6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */,
-				6517571627C9AC3000D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
 			);
@@ -886,24 +892,6 @@
 			shellPath = /bin/sh;
 			shellScript = "cd ${SCRIPT_INPUT_FILE_0}\npython3 ./SingleHeader/MakeSingleHeader.py -o ${SCRIPT_OUTPUT_FILE_0} Foundation/Foundation.hpp QuartzCore/QuartzCore.hpp Metal/Metal.hpp\n";
 		};
-		6517571627C9AC3000D9FE40 /* Copy Frameworks to Secondary Path */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Frameworks to Secondary Path";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "export FRAMEWORKS_TO_COPY_TO_SECONDARY_PATH=\"WebGPU\"\n\"${SRCROOT}/Scripts/copy-frameworks-to-secondary-path.sh\"\n";
-		};
 		6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -964,6 +952,7 @@
 			files = (
 				3ADB94442900F7D700CFFDC2 /* ASTStringDumper.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
+				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
 				979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,

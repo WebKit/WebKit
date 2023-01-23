@@ -579,12 +579,6 @@ webkit.org/b/234606 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure 
 webkit.org/b/234606 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
 
-# Remove when Cairo will support non-sRGB interpolation methods.
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hsl.html [ Skip ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hwb.html [ Skip ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-lch.html [ Skip ]
-webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-oklch.html [ Skip ]
-
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 
@@ -1344,6 +1338,9 @@ svg/transforms/transformed-child-in-container.svg [ ImageOnlyFailure ]
 svg/transforms/transformed-container-small-units.svg [ ImageOnlyFailure ]
 svg/transforms/transformed-container.svg [ ImageOnlyFailure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
+
+# The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
+svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
@@ -2208,8 +2205,9 @@ fast/dom/Window/slow-unload-handler.html [ WontFix ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
 # Missing WebSpeech implementation
-webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
+webkit.org/b/250656 fast/speechsynthesis/speech-synthesis-real-client-version.html [ Crash ]
+webkit.org/b/250656 fast/speechsynthesis/voices-non-mock.html [ Failure ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]

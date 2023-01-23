@@ -228,7 +228,7 @@ class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):
         self.WK2Builder = {'name': 'macOS-High-Sierra-WK2-EWS', 'shortname': 'mac-wk2', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'workernames': ['ews101', 'ews102']}
         self.ews101 = {'name': 'ews101', 'platform': 'mac-sierra'}
         self.ews102 = {'name': 'ews102', 'platform': 'ios-11'}
-        super(TestcheckWorkersAndBuildersForConsistency, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def test_checkWorkersAndBuildersForConsistency(self):
         with self.assertRaises(Exception) as context:

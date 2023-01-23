@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/audio-testing.js"></script>
+<script src="resources/audiobuffersource-testing-legacy.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests AudioBufferSourceNode starts immediately if the `when` value passed to start() is in the past.");
+jsTestIsAsync = true;
+
+const numberOfFrames = 256;
+const sourceBufferSize = numberOfFrames / 2;
+const sampleRate = 44100.;
+
+let context = new OfflineAudioContext(1, numberOfFrames, sampleRate);
+let source = null;
+
+function createSourceNode()
+{
+    if (source) {
+        source.disconnect();
+        source.stop();
+    }
+    source = context.createBufferSource();
+    source.buffer = createTestBuffer(context, numberOfFrames / 2);
+    source.loop = true;
+    source.connect(context.destination);
+    source.start(0, 0, sourceBufferSize / sampleRate);
+}
+
+function convertToRegularJSArray(data, offset, count)
+{
+    let array = new Array();
+    let outputIndex = 0;
+    for (let i = offset; i < offset + count; ++i)
+        array[outputIndex++] = data[i];
+    return array;
+}
+
+context.suspend(sourceBufferSize / sampleRate).then(() => {
+    createSourceNode();
+    context.resume();
+});
+createSourceNode();
+context.startRendering().then((renderBuffer) => {
+    let renderedData = renderBuffer.getChannelData(0);
+    let expectedData = source.buffer.getChannelData(0);
+    let success = true;
+    for (var i = 0; i < expectedData.length; ++i) {
+        if (expectedData[i] != renderedData[i]) {
+            var s = "First half: expected: " + convertToRegularJSArray(expectedData, 0, sourceBufferSize) + " actual: " + convertToRegularJSArray(renderedData, 0, sourceBufferSize);
+            testFailed(s);
+            success = false;
+            break;
+        }
+    }
+    if (success)
+        testPassed("First half of the rendered data is identical to the source buffer");
+    
+    success = true;
+    for (var i = 0; i < expectedData.length; ++i) {
+        if (expectedData[i] != renderedData[sourceBufferSize + i]) {
+            var s = "Second half: expected: " + convertToRegularJSArray(expectedData, 0, sourceBufferSize) + " actual: " + convertToRegularJSArray(renderedData, sourceBufferSize, sourceBufferSize);
+            testFailed(s);
+            success = false;
+            break;
+        }
+    }
+    if (success)
+        testPassed("Second half of the rendered data is identical to the source buffer as well");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -70,7 +70,9 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
         platform/gstreamer/GStreamerCodecUtilities.cpp
         platform/gstreamer/GStreamerElementHarness.cpp
+        platform/gstreamer/PlatformSpeechSynthesizerGStreamer.cpp
         platform/gstreamer/VideoEncoderPrivateGStreamer.cpp
+        platform/gstreamer/WebKitFliteSourceGStreamer.cpp
 
         platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
 

@@ -258,6 +258,8 @@ UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 
+UIProcess/gstreamer/WebPageProxyGStreamer.cpp
+
 UIProcess/gtk/AcceleratedBackingStore.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreWayland.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify

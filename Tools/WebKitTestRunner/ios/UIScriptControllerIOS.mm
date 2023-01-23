@@ -134,16 +134,6 @@ void UIScriptControllerIOS::waitForOutstandingCallbacks()
     }
 }
 
-void UIScriptControllerIOS::doAfterPresentationUpdate(JSValueRef callback)
-{
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    }).get()];
-}
-
 void UIScriptControllerIOS::doAfterNextStablePresentationUpdate(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

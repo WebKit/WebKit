@@ -1,0 +1,6 @@
+PASS
+(repaint rects
+  (rect 50 14 96 46)
+  (rect 50 14 96 46)
+)
+

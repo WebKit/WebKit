@@ -162,36 +162,38 @@ static inline void buildEntryBufferForCatchNoSIMD(Probe::Context& context) { bui
 static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& jit)
 {
     JIT_COMMENT(jit, "shared catch prologue");
-    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, GPRInfo::regT0);
+#if USE(JSVALUE64)
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+    jit.move(GPRInfo::regT0, GPRInfo::regT3);
+    jit.and64(CCallHelpers::TrustedImm64(JSValue::WasmMask), GPRInfo::regT3);
+    auto isWasmCallee = jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+#else
+    jit.loadPtr(CCallHelpers::tagFor(CallFrameSlot::callee), GPRInfo::regT0);
+    auto isWasmCallee = jit.branch32(CCallHelpers::Equal, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+#endif
+    CCallHelpers::JumpList doneCases;
     {
         // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
         // https://bugs.webkit.org/show_bug.cgi?id=231213
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
-        auto loadedCase = jit.jump();
+        doneCases.append(jit.jump());
 
         preciseAllocationCase.link(&jit);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
-
-        loadedCase.link(&jit);
+        doneCases.append(jit.jump());
     }
+
+    isWasmCallee.link(&jit);
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
+
+    doneCases.link(&jit);
+
     JIT_COMMENT(jit, "restore callee saves from vm entry buffer");
     jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
-
-    {
-        CCallHelpers::Address calleeForWasmCatch { GPRInfo::regT0, static_cast<int32_t>(VM::calleeForWasmCatchOffset()) };
-        CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
-        JSValueRegs tmp {
-#if USE(JSVALUE32_64)
-            GPRInfo::nonPreservedNonArgumentGPR0,
-#endif
-            GPRInfo::regT3
-        };
-        jit.loadValue(calleeForWasmCatch, tmp);
-        jit.storeValue(tmp, calleeSlot);
-        jit.storeValue(JSValue { }, calleeForWasmCatch, tmp);
-    }
 
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()), GPRInfo::callFrameRegister);
     jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()));

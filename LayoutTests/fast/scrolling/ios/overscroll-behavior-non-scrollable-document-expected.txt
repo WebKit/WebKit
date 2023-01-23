@@ -1,0 +1,9 @@
+Top
+PASS window.pageYOffset is 0
+PASS window.pageXOffset is 0
+PASS window.pageYOffset is 0
+PASS window.pageXOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

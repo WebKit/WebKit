@@ -4527,7 +4527,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
     switch ([event type]) {
     case NSEventTypeKeyDown: {
         WebCore::PlatformKeyboardEvent platformEvent = WebCore::PlatformEventFactory::createPlatformKeyboardEvent(event);
-        platformEvent.disambiguateKeyDownEvent(WebCore::PlatformEvent::RawKeyDown);
+        platformEvent.disambiguateKeyDownEvent(WebCore::PlatformEvent::Type::RawKeyDown);
         return WebCore::KeyboardEvent::create(platformEvent, &coreFrame->windowProxy());
     }
     case NSEventTypeKeyUp:
@@ -6009,7 +6009,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
         }
         // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
         // Keypress (Char event) handler is the latest opportunity to execute.
-        if (!haveTextInsertionCommands || platformEvent->type() == WebCore::PlatformEvent::Char)
+        if (!haveTextInsertionCommands || platformEvent->type() == WebCore::PlatformEvent::Type::Char)
             [self _executeSavedKeypressCommands];
     }
     _private->interpretKeyEventsParameters = nullptr;
@@ -6051,7 +6051,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
         if (!webView.isEditable && event.isTabKey)
             return NO;
 
-        bool isCharEvent = platformEvent->type() == WebCore::PlatformKeyboardEvent::Char;
+        bool isCharEvent = platformEvent->type() == WebCore::PlatformKeyboardEvent::Type::Char;
 
         if (!isCharEvent && [webView._UIKitDelegateForwarder handleKeyTextCommandForCurrentEvent])
             return YES;

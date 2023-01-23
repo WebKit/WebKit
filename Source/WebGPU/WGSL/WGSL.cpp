@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WGSL.h"
 
+#include "CallGraph.h"
 #include "EntryPointRewriter.h"
 #include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
@@ -34,24 +35,32 @@
 
 namespace WGSL {
 
-#define CHECK_PASS(pass, ast, ...) \
-    do { \
-        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+#define CHECK_PASS(name, pass, ...) \
+    dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+    auto name##Expected = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        auto result = pass(ast, ##__VA_ARGS__); \
-        if (!result) { \
-            if (dumpPassFailure) \
-                dataLogLn("failed pass: " # pass, Lexer::errorString(result.error(), whlslSource1, whlslSource2)); \
-            return makeUnexpected(Lexer::errorString(result.error(), whlslSource1, whlslSource2)); \
-        } \
+        return pass(__VA_ARGS__); \
+    }(); \
+    if (!name##Expected) { \
+        if (dumpPassFailure) \
+            dataLogLn("failed pass: " # pass, toString(name##Expected.error())); \
+        return makeUnexpected(name##Expected.error()); \
+    } \
+    auto& name = *name##Expected; \
+
+#define RUN_PASS(pass, ...) \
+    do { \
+        PhaseTimer phaseTimer(#pass, phaseTimes); \
+        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+        pass(__VA_ARGS__); \
     } while (0)
 
-#define RUN_PASS(pass, ast, ...) \
-    do { \
+#define RUN_PASS_WITH_RESULT(name, pass, ...) \
+    dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+    auto name = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
-        pass(ast, ##__VA_ARGS__); \
-    } while (0)
+        return pass(__VA_ARGS__); \
+    }();
 
 std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&)
 {
@@ -86,8 +95,9 @@ PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayo
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
+        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(resolveTypeReferences, ast);
-        RUN_PASS(rewriteEntryPoints, ast);
+        RUN_PASS(rewriteEntryPoints, callGraph);
 
         dumpASTAtEndIfNeeded(ast);
 

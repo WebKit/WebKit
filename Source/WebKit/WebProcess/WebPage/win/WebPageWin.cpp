@@ -233,7 +233,7 @@ bool WebPage::handleEditingKeyboardEvent(WebCore::KeyboardEvent& event)
 
     auto command = frame->editor().command(String::fromLatin1(interpretKeyEvent(&event)));
 
-    if (keyEvent->type() == PlatformEvent::RawKeyDown) {
+    if (keyEvent->type() == PlatformEvent::Type::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide
         // how commands that just insert text if executed via Editor
         // should be treated, so we leave it upon WebCore to either

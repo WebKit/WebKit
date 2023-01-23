@@ -81,12 +81,12 @@ const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
 class PlatformWheelEvent : public PlatformEvent {
 public:
     PlatformWheelEvent()
-        : PlatformEvent(PlatformEvent::Wheel)
+        : PlatformEvent(Type::Wheel)
     {
     }
 
     PlatformWheelEvent(IntPoint position, IntPoint globalPosition, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, PlatformWheelEventGranularity granularity, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
-        : PlatformEvent(PlatformEvent::Wheel, shiftKey, ctrlKey, altKey, metaKey, { })
+        : PlatformEvent(Type::Wheel, shiftKey, ctrlKey, altKey, metaKey, { })
         , m_granularity(granularity)
         , m_position(position)
         , m_globalPosition(globalPosition)

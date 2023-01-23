@@ -82,6 +82,7 @@
 #import <WebCore/Text.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TreeWalker.h>
+#import <WebCore/VisibilityState.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/XPathExpression.h>
 #import <WebCore/XPathNSResolver.h>

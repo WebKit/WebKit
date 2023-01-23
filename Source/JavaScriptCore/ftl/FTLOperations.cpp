@@ -322,7 +322,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
                 if (property.location().kind() == ClosureVarPLoc)
                     numberOfClosureVarPloc++;
             }
-            ASSERT(numberOfClosureVarPloc == table->scopeSize());
+            ASSERT_UNUSED(numberOfClosureVarPloc, numberOfClosureVarPloc == table->scopeSize());
         }
 
         return result;

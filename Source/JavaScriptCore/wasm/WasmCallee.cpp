@@ -78,6 +78,9 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::JSToWasmICMode:
         func(static_cast<JSToWasmICCallee*>(this));
         break;
+    case CompilationMode::WasmToJSMode:
+        func(static_cast<WasmToJSCallee*>(this));
+        break;
     }
 }
 
@@ -147,6 +150,12 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, size_t index, std::p
 void JITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
 {
     m_entrypoint = WTFMove(entrypoint);
+    CalleeRegistry::singleton().registerCallee(this);
+}
+
+WasmToJSCallee::WasmToJSCallee()
+    : Callee(Wasm::CompilationMode::WasmToJSMode)
+{
     CalleeRegistry::singleton().registerCallee(this);
 }
 

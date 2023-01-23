@@ -90,9 +90,8 @@ using namespace WebKit;
  * The #WebKitWebContext manages all aspects common to all
  * #WebKitWebView<!-- -->s.
  *
- * You can define the #WebKitCacheModel and #WebKitProcessModel with
- * webkit_web_context_set_cache_model() and
- * webkit_web_context_set_process_model(), depending on the needs of
+ * You can define the #WebKitCacheModel with
+ * webkit_web_context_set_cache_model(), depending on the needs of
  * your application. You can access the #WebKitSecurityManager to specify
  * the behaviour of your application regarding security using
  * webkit_web_context_get_security_manager().
@@ -220,7 +219,6 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 
     CString faviconDatabaseDirectory;
-    WebKitProcessModel processModel;
 
     HashMap<WebPageProxyIdentifier, WebKitWebView*> webViews;
 
@@ -439,8 +437,6 @@ static void webkitWebContextConstructed(GObject* object)
 #if ENABLE(2022_GLIB_API)
     priv->processPool->setSandboxEnabled(true);
 #endif
-
-    priv->processModel = WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))
@@ -1697,69 +1693,51 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
     websiteDataStore.allowSpecificHTTPSCertificateForHost(certificateInfo, String::fromUTF8(host));
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_process_model:
  * @context: the #WebKitWebContext
  * @process_model: a #WebKitProcessModel
  *
- * Specifies a process model for WebViews.
- *
- * Specifies a process model for WebViews, which WebKit will use to
- * determine how auxiliary processes are handled.
- *
- * %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES will use
- * one process per view most of the time, while still allowing for web
- * views to share a process when needed (for example when different
- * views interact with each other). Using this model, when a process
- * hangs or crashes, only the WebViews using it stop working, while
- * the rest of the WebViews in the application will still function
- * normally.
- *
- * %WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS is deprecated since 2.26,
- * using it has no effect for security reasons.
- *
- * This method **must be called before any web process has been created**,
- * as early as possible in your application. Calling it later will make
- * your application crash.
+ * This function previously allowed specifying the process model to use.
+ * However, since 2.26, the only allowed process model is
+ * %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES, so this function
+ * does nothing.
  *
  * Since: 2.4
+ *
+ * Deprecated: 2.40
  */
 void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProcessModel processModel)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    if (processModel == WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS) {
+    if (processModel == WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS)
         g_warning("WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS is deprecated and has no effect");
-        return;
-    }
-
-    if (processModel == context->priv->processModel)
-        return;
-
-    context->priv->processModel = processModel;
 }
 
 /**
  * webkit_web_context_get_process_model:
  * @context: the #WebKitWebContext
  *
- * Returns the current process model.
+ * Returns %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES.
  *
- * For more information about this value
+ * For more information about why this function is deprecated,
  * see webkit_web_context_set_process_model().
  *
- * Returns: the current #WebKitProcessModel
+ * Returns: %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES
  *
  * Since: 2.4
+ *
+ * Deprecated: 2.40
  */
 WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
-    return context->priv->processModel;
+    return WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
 }
 
-#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_web_process_count_limit:
  * @context: the #WebKitWebContext

@@ -250,16 +250,16 @@ public:
         m_force = forceDefaultValue;
 
         PlatformEvent::Type type = event.type();
-        ASSERT(type == PlatformEvent::MouseMoved || type == PlatformEvent::MousePressed || type == PlatformEvent::MouseReleased);
+        ASSERT(type == PlatformEvent::Type::MouseMoved || type == PlatformEvent::Type::MousePressed || type == PlatformEvent::Type::MouseReleased);
 
         switch (type) {
-        case PlatformEvent::MouseMoved:
+        case PlatformEvent::Type::MouseMoved:
             m_state = TouchMoved;
             break;
-        case PlatformEvent::MousePressed:
+        case PlatformEvent::Type::MousePressed:
             m_state = TouchPressed;
             break;
-        case PlatformEvent::MouseReleased:
+        case PlatformEvent::Type::MouseReleased:
             m_state = TouchReleased;
             break;
         default:
@@ -274,18 +274,18 @@ public:
     explicit SyntheticSingleTouchEvent(const PlatformMouseEvent& event)
     {
         switch (event.type()) {
-        case PlatformEvent::MouseMoved:
-            m_type = TouchMove;
+        case PlatformEvent::Type::MouseMoved:
+            m_type = Type::TouchMove;
             break;
-        case PlatformEvent::MousePressed:
-            m_type = TouchStart;
+        case PlatformEvent::Type::MousePressed:
+            m_type = Type::TouchStart;
             break;
-        case PlatformEvent::MouseReleased:
-            m_type = TouchEnd;
+        case PlatformEvent::Type::MouseReleased:
+            m_type = Type::TouchEnd;
             break;
         default:
             ASSERT_NOT_REACHED();
-            m_type = NoType;
+            m_type = Type::NoType;
             break;
         }
         m_timestamp = event.timestamp();
@@ -2232,9 +2232,9 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
 #if ENABLE(POINTER_LOCK)
     if (m_frame.page()->pointerLockController().isLocked()) {
         m_frame.page()->pointerLockController().dispatchLockedMouseEvent(event, eventNames().webkitmouseforcechangedEvent);
-        if (event.type() == PlatformEvent::MouseForceDown)
+        if (event.type() == PlatformEvent::Type::MouseForceDown)
             m_frame.page()->pointerLockController().dispatchLockedMouseEvent(event, eventNames().webkitmouseforcedownEvent);
-        if (event.type() == PlatformEvent::MouseForceUp)
+        if (event.type() == PlatformEvent::Type::MouseForceUp)
             m_frame.page()->pointerLockController().dispatchLockedMouseEvent(event, eventNames().webkitmouseforceupEvent);
         return true;
     }
@@ -2250,9 +2250,9 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
     auto mouseEvent = prepareMouseEvent(hitType, event);
 
     bool swallowedEvent = !dispatchMouseEvent(eventNames().webkitmouseforcechangedEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
-    if (event.type() == PlatformEvent::MouseForceDown)
+    if (event.type() == PlatformEvent::Type::MouseForceDown)
         swallowedEvent |= !dispatchMouseEvent(eventNames().webkitmouseforcedownEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
-    if (event.type() == PlatformEvent::MouseForceUp)
+    if (event.type() == PlatformEvent::Type::MouseForceUp)
         swallowedEvent |= !dispatchMouseEvent(eventNames().webkitmouseforceupEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
 
     return swallowedEvent;
@@ -2283,10 +2283,10 @@ bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& platform
     // clears the text box. So it's important this happens after the event
     // handlers have been fired.
 #if PLATFORM(GTK)
-    if (platformMouseEvent.type() != PlatformEvent::MousePressed)
+    if (platformMouseEvent.type() != PlatformEvent::Type::MousePressed)
         return false;
 #else
-    if (platformMouseEvent.type() != PlatformEvent::MouseReleased)
+    if (platformMouseEvent.type() != PlatformEvent::Type::MouseReleased)
         return false;
 #endif
 
@@ -3399,9 +3399,9 @@ bool EventHandler::sendContextMenuEventForKey()
     // This is required for web compatibility.
 
 #if OS(WINDOWS)
-    PlatformEvent::Type eventType = PlatformEvent::MouseReleased;
+    PlatformEvent::Type eventType = PlatformEvent::Type::MouseReleased;
 #else
-    PlatformEvent::Type eventType = PlatformEvent::MousePressed;
+    PlatformEvent::Type eventType = PlatformEvent::Type::MousePressed;
 #endif
     PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, { }, WallTime::now(), ForceAtClick, NoTap);
 
@@ -3489,7 +3489,7 @@ void EventHandler::fakeMouseMoveEventTimerFired()
         return;
 
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, modifiers, WallTime::now(), 0, NoTap);
+    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), 0, NoTap);
     mouseMoved(fakeMouseMoveEvent);
 }
 #endif // !ENABLE(IOS_TOUCH_EVENTS)
@@ -3569,7 +3569,7 @@ bool EventHandler::isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent& ke
     if (document->fullscreenManager().isFullscreenKeyboardInputAllowed())
         return true;
 
-    if (keyEvent.type() == PlatformKeyboardEvent::Char) {
+    if (keyEvent.type() == PlatformKeyboardEvent::Type::Char) {
         if (keyEvent.text().length() != 1)
             return false;
         UChar character = keyEvent.text()[0];
@@ -3626,12 +3626,12 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     LOG(Editing, "EventHandler %p keyEvent (text %s keyIdentifier %s)", this, initialKeyEvent.text().utf8().data(), initialKeyEvent.keyIdentifier().utf8().data());
 
 #if ENABLE(POINTER_LOCK)
-    if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE && m_frame.page()->pointerLockController().element()) {
+    if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE && m_frame.page()->pointerLockController().element()) {
         m_frame.page()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
     }
 #endif
 
-    if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
+    if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
         if (auto* page = m_frame.page()) {
             if (auto* validationMessageClient = page->validationMessageClient())
                 validationMessageClient->hideAnyValidationMessage();
@@ -3640,7 +3640,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 
 #if ENABLE(FULLSCREEN_API)
     if (m_frame.document()->fullscreenManager().isFullscreen()) {
-        if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
+        if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
             m_frame.document()->fullscreenManager().cancelFullscreen();
             return true;
         }
@@ -3656,7 +3656,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 #if ENABLE(PAN_SCROLLING)
     if (Ref(m_frame.mainFrame())->eventHandler().panScrollInProgress()) {
         // If a key is pressed while the panScroll is in progress then we want to stop
-        if (initialKeyEvent.type() == PlatformEvent::KeyDown || initialKeyEvent.type() == PlatformEvent::RawKeyDown)
+        if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown || initialKeyEvent.type() == PlatformEvent::Type::RawKeyDown)
             stopAutoscrollTimer();
 
         // If we were in panscroll mode, we swallow the key event
@@ -3686,18 +3686,18 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     // On Windows, WebKit explicitly calls handleAccessKey() instead of dispatching a keypress event for WM_SYSCHAR messages.
     // Other platforms currently match either Mac or Windows behavior, depending on whether they send combined KeyDown events.
     bool matchedAnAccessKey = false;
-    if (initialKeyEvent.type() == PlatformEvent::KeyDown)
+    if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown)
         matchedAnAccessKey = handleAccessKey(initialKeyEvent);
 
     // FIXME: it would be fair to let an input method handle KeyUp events before DOM dispatch.
-    if (initialKeyEvent.type() == PlatformEvent::KeyUp || initialKeyEvent.type() == PlatformEvent::Char)
+    if (initialKeyEvent.type() == PlatformEvent::Type::KeyUp || initialKeyEvent.type() == PlatformEvent::Type::Char)
         return !element->dispatchKeyEvent(initialKeyEvent);
 
     bool backwardCompatibilityMode = needsKeyboardEventDisambiguationQuirks();
 
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
-    if (keyDownEvent.type() != PlatformEvent::RawKeyDown)
-        keyDownEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown, backwardCompatibilityMode);
+    if (keyDownEvent.type() != PlatformEvent::Type::RawKeyDown)
+        keyDownEvent.disambiguateKeyDownEvent(PlatformEvent::Type::RawKeyDown, backwardCompatibilityMode);
     auto keydown = KeyboardEvent::create(keyDownEvent, &m_frame.windowProxy());
     if (matchedAnAccessKey)
         keydown->preventDefault();
@@ -3715,7 +3715,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     };
     setHasFocusVisibleIfNeeded(*element);
 
-    if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
+    if (initialKeyEvent.type() == PlatformEvent::Type::RawKeyDown) {
         element->dispatchEvent(keydown);
         // If frame changed as a result of keydown dispatch, then return true to avoid sending a subsequent keypress message to the new frame.
         bool changedFocusedFrame = m_frame.page() && &m_frame != &m_frame.page()->focusController().focusedOrMainFrame();
@@ -3767,7 +3767,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     }
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;
-    keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Char, backwardCompatibilityMode);
+    keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Type::Char, backwardCompatibilityMode);
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
     auto keypress = KeyboardEvent::create(keyPressEvent, &m_frame.windowProxy());
@@ -4102,7 +4102,7 @@ RefPtr<Element> EventHandler::draggedElement() const
 
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)
 {
-    if (event.event().button() != LeftButton || event.event().type() != PlatformEvent::MouseMoved) {
+    if (event.event().button() != LeftButton || event.event().type() != PlatformEvent::Type::MouseMoved) {
         // If we allowed the other side of the bridge to handle a drag
         // last time, then m_mousePressed might still be set. So we
         // clear it now to make sure the next move after a drag
@@ -4136,7 +4136,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
     // or else we bail on the dragging stuff and allow selection to occur
     if (m_mouseDownMayStartDrag && m_dragMayStartSelectionInstead && dragState().type.contains(DragSourceAction::Selection) && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
-        ASSERT(event.event().type() == PlatformEvent::MouseMoved);
+        ASSERT(event.event().type() == PlatformEvent::Type::MouseMoved);
         if (dragState().type.contains(DragSourceAction::Image)) {
             // ... unless the mouse is over an image, then we start dragging just the image
             dragState().type = DragSourceAction::Image;
@@ -4935,7 +4935,7 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
         return false;
 
     PlatformEvent::Type eventType = platformMouseEvent.type();
-    if (eventType != PlatformEvent::MouseMoved && eventType != PlatformEvent::MousePressed && eventType != PlatformEvent::MouseReleased)
+    if (eventType != PlatformEvent::Type::MouseMoved && eventType != PlatformEvent::Type::MousePressed && eventType != PlatformEvent::Type::MouseReleased)
         return false;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent };
@@ -4944,7 +4944,7 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
         return false;
 
     // The order is important. This check should follow the subframe test: http://webkit.org/b/111292.
-    if (eventType == PlatformEvent::MouseMoved && !m_touchPressed)
+    if (eventType == PlatformEvent::Type::MouseMoved && !m_touchPressed)
         return true;
 
     SyntheticSingleTouchEvent touchEvent(platformMouseEvent);

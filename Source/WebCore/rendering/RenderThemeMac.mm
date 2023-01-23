@@ -231,11 +231,7 @@ bool RenderThemeMac::useFormSemanticContext() const
 
 bool RenderThemeMac::supportsLargeFormControls() const
 {
-#if HAVE(LARGE_CONTROL_SIZE)
     return ThemeMac::supportsLargeFormControls();
-#else
-    return false;
-#endif
 }
 
 NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
@@ -844,10 +840,8 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
 NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 {
     int fontSize = style.computedFontPixelSize();
-#if HAVE(LARGE_CONTROL_SIZE)
     if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
-#endif
     if (fontSize >= 16)
         return NSControlSizeRegular;
     if (fontSize >= 11)
@@ -857,12 +851,10 @@ NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 
 NSControlSize RenderThemeMac::controlSizeForCell(NSCell*, const IntSize* sizes, const IntSize& minSize, float zoomLevel) const
 {
-#if HAVE(LARGE_CONTROL_SIZE)
     if (ThemeMac::supportsLargeFormControls()
         && minSize.width() >= static_cast<int>(sizes[NSControlSizeLarge].width() * zoomLevel)
         && minSize.height() >= static_cast<int>(sizes[NSControlSizeLarge].height() * zoomLevel))
         return NSControlSizeLarge;
-#endif
 
     if (minSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomLevel)
         && minSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomLevel))
@@ -930,10 +922,8 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
 NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
 {
     int fontSize = style.computedFontPixelSize();
-#if HAVE(LARGE_CONTROL_SIZE)
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
-#endif
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
         return NSControlSizeRegular;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
@@ -1118,10 +1108,8 @@ PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& s
         return PopupMenuStyle::PopupMenuSizeSmall;
     case NSControlSizeMini:
         return PopupMenuStyle::PopupMenuSizeMini;
-#if HAVE(LARGE_CONTROL_SIZE)
     case NSControlSizeLarge:
         return ThemeMac::supportsLargeFormControls() ? PopupMenuStyle::PopupMenuSizeLarge : PopupMenuStyle::PopupMenuSizeNormal;
-#endif
     default:
         return PopupMenuStyle::PopupMenuSizeNormal;
     }
@@ -1399,11 +1387,7 @@ int RenderThemeMac::sliderTickOffsetFromTrackCenter() const
 
 // FIXME (<rdar://problem/80870479>): Ideally, this constant should be obtained from AppKit using -[NSSliderCell knobThickness].
 // However, the method currently returns an incorrect value, both with and without a control view associated with the cell.
-#if HAVE(LARGE_CONTROL_SIZE)
 constexpr int sliderThumbThickness = 17;
-#else
-constexpr int sliderThumbThickness = 15;
-#endif
 
 void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {

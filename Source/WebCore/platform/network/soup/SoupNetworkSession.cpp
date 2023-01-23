@@ -42,7 +42,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -94,14 +93,6 @@ private:
 
     HashSet<String> m_certificates;
 };
-
-using AllowedCertificatesMap = HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash>;
-
-static AllowedCertificatesMap& allowedCertificates()
-{
-    static NeverDestroyed<AllowedCertificatesMap> certificates;
-    return certificates;
-}
 
 SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
@@ -344,8 +335,8 @@ std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& reque
     if (m_ignoreTLSErrors || !tlsErrors)
         return std::nullopt;
 
-    auto it = allowedCertificates().find<ASCIICaseInsensitiveStringViewHashTranslator>(requestURL.host());
-    if (it != allowedCertificates().end() && it->value.contains(certificate))
+    auto it = m_allowedCertificates.find<ASCIICaseInsensitiveStringViewHashTranslator>(requestURL.host());
+    if (it != m_allowedCertificates.end() && it->value.contains(certificate))
         return std::nullopt;
 
     return ResourceError::tlsError(requestURL, tlsErrors, certificate);
@@ -353,7 +344,7 @@ std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& reque
 
 void SoupNetworkSession::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    allowedCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate().get());
+    m_allowedCertificates.add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate().get());
 }
 
 } // namespace WebCore

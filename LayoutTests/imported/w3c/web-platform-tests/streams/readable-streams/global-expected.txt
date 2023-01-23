@@ -1,0 +1,12 @@
+
+
+FAIL Stream objects created in expected globals assert_equals: reader was created in this global (.call) expected true but got false
+PASS Cancel promise is created in same global as stream
+PASS Closed Promise in correct global
+FAIL Reader objects in correct global assert_equals: Reader comes from this global expected true but got false
+PASS Desired size can be grafted from one prototype to another
+PASS Closing errored stream throws object in appropriate global
+PASS Can enqueue chunks from multiple globals
+PASS Correct errors and globals for closed streams
+FAIL Tee Branches in correct global assert_equals: Branch created in this global (as stream is in this global) expected true but got false
+

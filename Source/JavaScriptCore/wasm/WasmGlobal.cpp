@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCJSValueInlines.h"
+#include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "WasmTypeDefinitionInlines.h"

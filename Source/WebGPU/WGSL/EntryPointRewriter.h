@@ -27,10 +27,8 @@
 
 namespace WGSL {
 
-namespace AST {
-class ShaderModule;
-}
+class CallGraph;
 
-void rewriteEntryPoints(AST::ShaderModule&);
+void rewriteEntryPoints(CallGraph&);
 
 } // namespace WGSL

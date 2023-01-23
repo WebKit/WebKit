@@ -36,58 +36,63 @@ enum class EventHandling : uint8_t {
     DefaultHandled      = 1 << 2,
 };
 
-class PlatformEvent {
-public:
-    enum Type : uint8_t {
-        NoType = 0,
+enum class PlatformEventType : uint8_t {
+    NoType = 0,
 
-        // PlatformKeyboardEvent
-        KeyDown,
-        KeyUp,
-        RawKeyDown,
-        Char,
+    // PlatformKeyboardEvent
+    KeyDown,
+    KeyUp,
+    RawKeyDown,
+    Char,
 
-        // PlatformMouseEvent
-        MouseMoved,
-        MousePressed,
-        MouseReleased,
-        MouseForceChanged,
-        MouseForceDown,
-        MouseForceUp,
-        MouseScroll,
+    // PlatformMouseEvent
+    MouseMoved,
+    MousePressed,
+    MouseReleased,
+    MouseForceChanged,
+    MouseForceDown,
+    MouseForceUp,
+    MouseScroll,
 
-        // PlatformWheelEvent
-        Wheel,
+    // PlatformWheelEvent
+    Wheel,
 
 #if ENABLE(TOUCH_EVENTS)
-        // PlatformTouchEvent
-        TouchStart,
-        TouchMove,
-        TouchEnd,
-        TouchCancel,
-        TouchForceChange,
+    // PlatformTouchEvent
+    TouchStart,
+    TouchMove,
+    TouchEnd,
+    TouchCancel,
+    TouchForceChange,
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-        // PlatformGestureEvent
-        GestureStart,
-        GestureChange,
-        GestureEnd,
+    // PlatformGestureEvent
+    GestureStart,
+    GestureChange,
+    GestureEnd,
 #endif
-    };
+};
 
-    enum class Modifier : uint8_t {
-        AltKey      = 1 << 0,
-        ControlKey  = 1 << 1,
-        MetaKey     = 1 << 2,
-        ShiftKey    = 1 << 3,
-        CapsLockKey = 1 << 4,
+enum class PlatformEventModifier : uint8_t {
+    AltKey      = 1 << 0,
+    ControlKey  = 1 << 1,
+    MetaKey     = 1 << 2,
+    ShiftKey    = 1 << 3,
+    CapsLockKey = 1 << 4,
 
-        // Never used in native platforms but added for initEvent
-        AltGraphKey = 1 << 5,
-    };
+    // Never used in native platforms but added for initEvent
+    AltGraphKey = 1 << 5,
+};
 
-    Type type() const { return static_cast<Type>(m_type); }
+
+class PlatformEvent {
+public:
+
+    using Type = PlatformEventType;
+    using Modifier = PlatformEventModifier;
+
+    Type type() const { return m_type; }
 
     bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
     bool controlKey() const { return m_modifiers.contains(Modifier::ControlKey); }
@@ -100,7 +105,7 @@ public:
 
 protected:
     PlatformEvent()
-        : m_type(NoType)
+        : m_type(Type::NoType)
     {
     }
 
@@ -135,7 +140,7 @@ protected:
     ~PlatformEvent() = default;
 
     WallTime m_timestamp;
-    unsigned m_type;
+    Type m_type;
     OptionSet<Modifier> m_modifiers;
 };
 

@@ -28,6 +28,8 @@
 #if ENABLE(WEBGL2)
 
 #include "WebGLSharedObject.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 class AbstractSlotVisitor;

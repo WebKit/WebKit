@@ -623,13 +623,14 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     auto range = m_range;
 
-    RefPtr<CSSValue> fontStyle;
-    RefPtr<CSSValue> fontVariantCaps;
-    RefPtr<CSSValue> fontWeight;
-    RefPtr<CSSValue> fontStretch;
-    RefPtr<CSSValue> fontSize;
-    RefPtr<CSSValue> lineHeight;
-    RefPtr<CSSValue> fontFamily;
+    RefPtr<CSSValue> values[7];
+    auto& fontStyle = values[0];
+    auto& fontVariantCaps = values[1];
+    auto& fontWeight = values[2];
+    auto& fontStretch = values[3];
+    auto& fontSize = values[4];
+    auto& lineHeight = values[5];
+    auto& fontFamily = values[6];
 
     // Optional font-style, font-variant, font-stretch and font-weight, in any order.
     for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
@@ -667,29 +668,10 @@ bool CSSPropertyParser::consumeFont(bool important)
     if (!fontFamily || !range.atEnd())
         return false;
 
-    auto reset = [&] (CSSPropertyID property, CSSValueID initialValue) {
-        ASSERT(initialValue != CSSValueInvalid);
-        addProperty(property, CSSPropertyFont, CSSPrimitiveValue::create(initialValue), important, true);
-    };
-    auto add = [&] (CSSPropertyID property, RefPtr<CSSValue>& value) {
-        if (value)
-            addProperty(property, CSSPropertyFont, value.releaseNonNull(), important);
-        else
-            reset(property, CSSValueNormal);
-    };
-
-    // This must be in the same order as the list of shorthands in CSSProperties.json.
-    add(CSSPropertyFontStyle, fontStyle);
-    add(CSSPropertyFontVariantCaps, fontVariantCaps);
-    add(CSSPropertyFontWeight, fontWeight);
-    add(CSSPropertyFontStretch, fontStretch);
-    add(CSSPropertyFontSize, fontSize);
-    add(CSSPropertyLineHeight, lineHeight);
-    add(CSSPropertyFontFamily, fontFamily);
-    for (auto [property, initialValue] : fontShorthandSubpropertiesResetToInitialValues)
-        reset(property, initialValue);
-
     m_range = range;
+    auto shorthand = fontShorthand();
+    for (unsigned i = 0; i < shorthand.length(); ++i)
+        addProperty(shorthand.properties()[i], CSSPropertyFont, i < std::size(values) ? WTFMove(values[i]) : nullptr, important, true);
     return true;
 }
 
@@ -878,13 +860,8 @@ bool CSSPropertyParser::consumeColumns(bool important)
     if (!m_range.atEnd())
         return false;
 
-    // If both values are auto, set column-width explicitly to auto so the shorthand serializes correctly.
-    if (!columnWidth && !columnCount)
-        columnWidth = CSSPrimitiveValue::create(CSSValueAuto);
-
     addProperty(CSSPropertyColumnWidth, CSSPropertyColumns, WTFMove(columnWidth), important);
     addProperty(CSSPropertyColumnCount, CSSPropertyColumns, WTFMove(columnCount), important);
-
     return true;
 }
 
@@ -899,21 +876,128 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     // Currently, this tries to cover just longhands that can be omitted from shorthands when parsing or serializing.
     // Later, we likely want to cover all properties, and generate the table from CSSProperties.json.
     switch (longhand) {
+    case CSSPropertyAccentColor:
+    case CSSPropertyAlignSelf:
+    case CSSPropertyAspectRatio:
+    case CSSPropertyBackgroundSize:
+    case CSSPropertyBlockSize:
+    case CSSPropertyBottom:
+    case CSSPropertyBreakAfter:
+    case CSSPropertyBreakBefore:
+    case CSSPropertyBreakInside:
+    case CSSPropertyCaretColor:
+    case CSSPropertyClip:
+    case CSSPropertyColumnCount:
+    case CSSPropertyColumnWidth:
+    case CSSPropertyCursor:
+    case CSSPropertyDominantBaseline:
+    case CSSPropertyFlexBasis:
+    case CSSPropertyFontKerning:
+    case CSSPropertyFontSynthesisSmallCaps:
+    case CSSPropertyFontSynthesisStyle:
+    case CSSPropertyFontSynthesisWeight:
+    case CSSPropertyGridAutoColumns:
+    case CSSPropertyGridAutoRows:
+    case CSSPropertyGridColumnEnd:
+    case CSSPropertyGridColumnStart:
+    case CSSPropertyGridRowEnd:
+    case CSSPropertyGridRowStart:
+    case CSSPropertyHeight:
+    case CSSPropertyImageRendering:
+    case CSSPropertyInlineSize:
+    case CSSPropertyInputSecurity:
+    case CSSPropertyInsetBlockEnd:
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetInlineEnd:
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyJustifySelf:
+    case CSSPropertyLeft:
+    case CSSPropertyLineBreak:
+    case CSSPropertyMaskSize:
+    case CSSPropertyOffsetAnchor:
+    case CSSPropertyOffsetPosition:
+    case CSSPropertyOffsetRotate:
+    case CSSPropertyOverflowAnchor:
+    case CSSPropertyOverscrollBehaviorBlock:
+    case CSSPropertyOverscrollBehaviorInline:
+    case CSSPropertyOverscrollBehaviorX:
+    case CSSPropertyOverscrollBehaviorY:
+    case CSSPropertyPage:
+    case CSSPropertyPointerEvents:
+    case CSSPropertyQuotes:
+    case CSSPropertyRight:
+    case CSSPropertyScrollBehavior:
+    case CSSPropertyScrollPaddingBlockEnd:
+    case CSSPropertyScrollPaddingBlockStart:
+    case CSSPropertyScrollPaddingBottom:
+    case CSSPropertyScrollPaddingInlineEnd:
+    case CSSPropertyScrollPaddingInlineStart:
+    case CSSPropertyScrollPaddingLeft:
+    case CSSPropertyScrollPaddingRight:
+    case CSSPropertyScrollPaddingTop:
+    case CSSPropertySize:
+    case CSSPropertyTableLayout:
+    case CSSPropertyTextAlignLast:
+    case CSSPropertyTextDecorationSkipInk:
+    case CSSPropertyTextDecorationThickness:
+    case CSSPropertyTextJustify:
+    case CSSPropertyTextUnderlineOffset:
+    case CSSPropertyTextUnderlinePosition:
+    case CSSPropertyTop:
+    case CSSPropertyWebkitMaskBoxImageWidth:
+    case CSSPropertyWebkitMaskSourceType:
+    case CSSPropertyWillChange:
+    case CSSPropertyZIndex:
+    case CSSPropertyZoom:
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyFontOpticalSizing:
+#endif
+        return CSSValueAuto;
+    case CSSPropertyAlignContent:
+    case CSSPropertyAlignItems:
+    case CSSPropertyAlignTracks:
+    case CSSPropertyAnimationDirection:
+    case CSSPropertyBackgroundBlendMode:
+    case CSSPropertyColumnGap:
+    case CSSPropertyContainerType:
+    case CSSPropertyContent:
+    case CSSPropertyFontFeatureSettings:
+    case CSSPropertyFontPalette:
+    case CSSPropertyFontStretch:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontVariantAlternates:
+    case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariantEastAsian:
+    case CSSPropertyFontVariantLigatures:
+    case CSSPropertyFontVariantNumeric:
+    case CSSPropertyFontVariantPosition:
+    case CSSPropertyFontWeight:
+    case CSSPropertyJustifyContent:
+    case CSSPropertyLeadingTrim:
+    case CSSPropertyLetterSpacing:
+    case CSSPropertyLineHeight:
+    case CSSPropertyOverflowWrap:
+    case CSSPropertyRowGap:
+    case CSSPropertyScrollSnapStop:
+    case CSSPropertySpeakAs:
+    case CSSPropertyWhiteSpace:
+    case CSSPropertyWordBreak:
+    case CSSPropertyWordSpacing:
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyFontVariationSettings:
+#endif
+        return CSSValueNormal;
+    case CSSPropertyAlignmentBaseline:
+    case CSSPropertyVerticalAlign:
+        return CSSValueBaseline;
     case CSSPropertyAnimationDelay:
     case CSSPropertyAnimationDuration:
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
         return InitialNumericValue { 0, CSSUnitType::CSS_S };
-    case CSSPropertyAnimationDirection:
-    case CSSPropertyContainerType:
-    case CSSPropertyFontVariantAlternates:
-    case CSSPropertyFontVariantCaps:
-    case CSSPropertyFontVariantEastAsian:
-    case CSSPropertyFontVariantNumeric:
-    case CSSPropertyFontVariantPosition:
-        return CSSValueNormal;
     case CSSPropertyAnimationFillMode:
     case CSSPropertyAnimationName:
+    case CSSPropertyAppearance:
     case CSSPropertyBackgroundImage:
     case CSSPropertyBorderBlockEndStyle:
     case CSSPropertyBorderBlockStartStyle:
@@ -927,17 +1011,66 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyBorderRightStyle:
     case CSSPropertyBorderStyle:
     case CSSPropertyBorderTopStyle:
+    case CSSPropertyBoxShadow:
+    case CSSPropertyClear:
+    case CSSPropertyClipPath:
     case CSSPropertyColumnRuleStyle:
+    case CSSPropertyColumnSpan:
+    case CSSPropertyContain:
+    case CSSPropertyContainIntrinsicBlockSize:
+    case CSSPropertyContainIntrinsicHeight:
+    case CSSPropertyContainIntrinsicInlineSize:
+    case CSSPropertyContainIntrinsicWidth:
+    case CSSPropertyContainerName:
+    case CSSPropertyCounterIncrement:
+    case CSSPropertyCounterReset:
+    case CSSPropertyFilter:
+    case CSSPropertyFloat:
+    case CSSPropertyFontSizeAdjust:
+    case CSSPropertyGridTemplateAreas:
+    case CSSPropertyGridTemplateColumns:
+    case CSSPropertyGridTemplateRows:
+    case CSSPropertyHangingPunctuation:
     case CSSPropertyListStyleImage:
+    case CSSPropertyMarginTrim:
+    case CSSPropertyMarkerEnd:
+    case CSSPropertyMarkerMid:
+    case CSSPropertyMarkerStart:
     case CSSPropertyMaskImage:
+    case CSSPropertyMaxBlockSize:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyMaxInlineSize:
+    case CSSPropertyMaxWidth:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMinWidth:
     case CSSPropertyOffsetPath:
     case CSSPropertyOutlineStyle:
-    case CSSPropertyTextEmphasisStyle:
+    case CSSPropertyPerspective:
+    case CSSPropertyResize:
+    case CSSPropertyRotate:
+    case CSSPropertyScale:
+    case CSSPropertyScrollSnapAlign:
+    case CSSPropertyScrollSnapType:
+    case CSSPropertyShapeOutside:
+    case CSSPropertyStrokeDasharray:
+    case CSSPropertyTextCombineUpright:
     case CSSPropertyTextDecorationLine:
+    case CSSPropertyTextEmphasisStyle:
+    case CSSPropertyTextGroupAlign:
+    case CSSPropertyTextShadow:
+    case CSSPropertyTextTransform:
+    case CSSPropertyTransform:
+    case CSSPropertyTranslate:
     case CSSPropertyWebkitMaskBoxImageSource:
+    case CSSPropertyWidth:
         return CSSValueNone;
     case CSSPropertyAnimationIterationCount:
     case CSSPropertyBorderImageWidth:
+    case CSSPropertyFillOpacity:
+    case CSSPropertyFlexShrink:
+    case CSSPropertyFloodOpacity:
+    case CSSPropertyStrokeOpacity:
+    case CSSPropertyOpacity:
         return InitialNumericValue { 1, CSSUnitType::CSS_NUMBER };
     case CSSPropertyAnimationPlayState:
         return CSSValueRunning;
@@ -946,6 +1079,12 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueEase;
     case CSSPropertyBackgroundAttachment:
         return CSSValueScroll;
+    case CSSPropertyBackfaceVisibility:
+    case CSSPropertyContentVisibility:
+    case CSSPropertyOverflowX:
+    case CSSPropertyOverflowY:
+    case CSSPropertyVisibility:
+        return CSSValueVisible;
     case CSSPropertyBackgroundClip:
     case CSSPropertyMaskClip:
     case CSSPropertyMaskOrigin:
@@ -963,16 +1102,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyBackgroundRepeat:
     case CSSPropertyMaskRepeat:
         return CSSValueRepeat;
-    case CSSPropertyBackgroundSize:
-    case CSSPropertyColumnCount:
-    case CSSPropertyColumnWidth:
-    case CSSPropertyMaskSize:
-    case CSSPropertyOffsetAnchor:
-    case CSSPropertyOffsetPosition:
-    case CSSPropertyOffsetRotate:
-    case CSSPropertyWebkitMaskBoxImageWidth:
-    case CSSPropertyWebkitMaskSourceType:
-        return CSSValueAuto;
     case CSSPropertyBorderBlockColor:
     case CSSPropertyBorderBlockEndColor:
     case CSSPropertyBorderBlockStartColor:
@@ -999,8 +1128,11 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyBorderRightWidth:
     case CSSPropertyBorderTopWidth:
     case CSSPropertyColumnRuleWidth:
+    case CSSPropertyFontSize:
     case CSSPropertyOutlineWidth:
         return CSSValueMedium;
+    case CSSPropertyBorderCollapse:
+        return CSSValueSeparate;
     case CSSPropertyBorderImageOutset:
     case CSSPropertyWebkitMaskBoxImageOutset:
         return InitialNumericValue { 0, CSSUnitType::CSS_NUMBER };
@@ -1010,10 +1142,36 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyBorderImageSlice:
     case CSSPropertyWebkitMaskBoxImageSlice:
         return InitialNumericValue { 100, CSSUnitType::CSS_PERCENTAGE };
+    case CSSPropertyBoxSizing:
+        return CSSValueContentBox;
+    case CSSPropertyCaptionSide:
+        return CSSValueTop;
+    case CSSPropertyClipRule:
+    case CSSPropertyFillRule:
+        return CSSValueNonzero;
+    case CSSPropertyColor:
+        return CSSValueCanvastext;
+    case CSSPropertyColorInterpolationFilters:
+        return CSSValueLinearRGB;
+    case CSSPropertyColumnFill:
+        return CSSValueBalance;
+    case CSSPropertyDisplay:
+        return CSSValueInline;
+    case CSSPropertyEmptyCells:
+        return CSSValueShow;
     case CSSPropertyFlexDirection:
+    case CSSPropertyGridAutoFlow:
         return CSSValueRow;
     case CSSPropertyFlexWrap:
         return CSSValueNowrap;
+    case CSSPropertyFloodColor:
+        return CSSValueBlack;
+    case CSSPropertyImageOrientation:
+        return CSSValueFromImage;
+    case CSSPropertyJustifyItems:
+        return CSSValueLegacy;
+    case CSSPropertyLightingColor:
+        return CSSValueWhite;
     case CSSPropertyListStylePosition:
         return CSSValueOutside;
     case CSSPropertyListStyleType:
@@ -1022,14 +1180,58 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueAdd;
     case CSSPropertyMaskMode:
         return CSSValueMatchSource;
+    case CSSPropertyMaskType:
+        return CSSValueLuminance;
+    case CSSPropertyObjectFit:
+        return CSSValueFill;
     case CSSPropertyOffsetDistance:
     case CSSPropertyTransformOriginZ:
     case CSSPropertyWebkitTextStrokeWidth:
         return InitialNumericValue { 0, CSSUnitType::CSS_PX };
+    case CSSPropertyOrphans:
+    case CSSPropertyWidows:
+        return InitialNumericValue { 2, CSSUnitType::CSS_NUMBER };
+    case CSSPropertyPerspectiveOriginX:
+    case CSSPropertyPerspectiveOriginY:
+    case CSSPropertyTransformOriginX:
+    case CSSPropertyTransformOriginY:
+        return InitialNumericValue { 50, CSSUnitType::CSS_PERCENTAGE };
+    case CSSPropertyPosition:
+        return CSSValueStatic;
+    case CSSPropertyPrintColorAdjust:
+        return CSSValueEconomy;
+    case CSSPropertyStrokeColor:
+        return CSSValueTransparent;
+    case CSSPropertyStrokeLinecap:
+        return CSSValueButt;
+    case CSSPropertyStrokeLinejoin:
+        return CSSValueMiter;
+    case CSSPropertyStrokeMiterlimit:
+        return InitialNumericValue { 4, CSSUnitType::CSS_NUMBER };
+    case CSSPropertyStrokeWidth:
+        return InitialNumericValue { 1, CSSUnitType::CSS_PX };
+    case CSSPropertyTabSize:
+        return InitialNumericValue { 8, CSSUnitType::CSS_NUMBER };
+    case CSSPropertyTextAlign:
+        return CSSValueStart;
     case CSSPropertyTextDecorationStyle:
         return CSSValueSolid;
+    case CSSPropertyTextEdge:
+        return CSSValueLeading;
+    case CSSPropertyTextOrientation:
+        return CSSValueMixed;
+    case CSSPropertyTextOverflow:
+        return CSSValueClip;
+    case CSSPropertyTextWrap:
+        return CSSValueWrap;
+    case CSSPropertyTransformBox:
+        return CSSValueViewBox;
+    case CSSPropertyTransformStyle:
+        return CSSValueFlat;
     case CSSPropertyTransitionProperty:
         return CSSValueAll;
+    case CSSPropertyWritingMode:
+        return CSSValueHorizontalTb;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1126,6 +1328,12 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
                 return true;
         }
         break;
+    case CSSPropertyOffsetRotate:
+        if (auto rotateValue = dynamicDowncast<CSSOffsetRotateValue>(value)) {
+            if (rotateValue->isInitialValue())
+                return true;
+        }
+        break;
     default:
         break;
     }
@@ -1147,16 +1355,26 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
                 return "0"_s;
             if (initialValue.number == 1.0)
                 return "1"_s;
+            if (initialValue.number == 2.0)
+                return "2"_s;
+            if (initialValue.number == 4.0)
+                return "4"_s;
+            if (initialValue.number == 8.0)
+                return "8"_s;
             break;
         case CSSUnitType::CSS_PERCENTAGE:
             if (initialValue.number == 0.0)
                 return "0%"_s;
+            if (initialValue.number == 50.0)
+                return "50%"_s;
             if (initialValue.number == 100.0)
                 return "100%"_s;
             break;
         case CSSUnitType::CSS_PX:
             if (initialValue.number == 0.0)
                 return "0px"_s;
+            if (initialValue.number == 1.0)
+                return "1px"_s;
             break;
         case CSSUnitType::CSS_S:
             if (initialValue.number == 0.0)

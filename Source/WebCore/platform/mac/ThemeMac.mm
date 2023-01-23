@@ -154,10 +154,8 @@ Theme& Theme::singleton()
 static NSControlSize controlSizeForFont(const FontCascade& font)
 {
     int fontSize = font.pixelSize();
-#if HAVE(LARGE_CONTROL_SIZE)
     if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
-#endif
     if (fontSize >= 16)
         return NSControlSizeRegular;
     if (fontSize >= 11)
@@ -185,12 +183,10 @@ static LengthSize sizeFromFont(const FontCascade& font, const LengthSize& zoomed
 
 static NSControlSize controlSizeFromPixelSize(const std::array<IntSize, 4>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
-#if HAVE(LARGE_CONTROL_SIZE)
     if (ThemeMac::supportsLargeFormControls()
         && minZoomedSize.width() >= static_cast<int>(sizes[NSControlSizeLarge].width() * zoomFactor)
         && minZoomedSize.height() >= static_cast<int>(sizes[NSControlSizeLarge].height() * zoomFactor))
         return NSControlSizeLarge;
-#endif
     if (minZoomedSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomFactor)
         && minZoomedSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomFactor))
         return NSControlSizeRegular;
@@ -304,12 +300,10 @@ static const std::array<IntSize, 4>& radioSizes()
     static std::array<IntSize, 4> sizes;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#if HAVE(LARGE_CONTROL_SIZE)
         if (ThemeMac::supportsLargeFormControls()) {
             sizes = { { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10), IntSize(16, 16) } };
             return;
         }
-#endif
         sizes = { { IntSize(16, 16), IntSize(12, 12), IntSize(10, 10), IntSize(0, 0) } };
     });
     return sizes;
@@ -463,11 +457,7 @@ static void setUpButtonCell(NSButtonCell *cell, StyleAppearance appearance, cons
         break;
 #endif
     default:
-#if HAVE(LARGE_CONTROL_SIZE)
         auto largestControlSize = ThemeMac::supportsLargeFormControls() ? NSControlSizeLarge : NSControlSizeRegular;
-#else
-        auto largestControlSize = NSControlSizeRegular;
-#endif
         NSBezelStyle style = (zoomedSize.height() > buttonSizes()[largestControlSize].height() * zoomFactor) ? NSBezelStyleShadowlessSquare : NSBezelStyleRounded;
         [cell setBezelStyle:style];
         break;
@@ -507,10 +497,8 @@ static const std::array<IntSize, 4>& stepperSizes()
 static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 {
     int fontSize = font.pixelSize();
-#if HAVE(LARGE_CONTROL_SIZE)
     if (fontSize >= 23 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
-#endif
     if (fontSize >= 18)
         return NSControlSizeRegular;
     if (fontSize >= 13)
@@ -767,8 +755,6 @@ bool ThemeMac::userPrefersContrast() const
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
 }
 
-#if HAVE(LARGE_CONTROL_SIZE)
-
 bool ThemeMac::supportsLargeFormControls()
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -776,8 +762,6 @@ bool ThemeMac::supportsLargeFormControls()
     ALLOW_DEPRECATED_DECLARATIONS_END
     return hasSupport;
 }
-
-#endif // HAVE(LARGE_CONTROL_SIZE)
 
 }
 

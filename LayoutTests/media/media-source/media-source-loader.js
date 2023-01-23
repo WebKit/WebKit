@@ -2,65 +2,56 @@ function MediaSourceLoader(url, prefix)
 {
     this._url = url;
     this._prefix = prefix;
-    setTimeout(this.loadManifest.bind(this));
+    this._manifestTimeout = setTimeout(this.loadManifest.bind(this));
 
     this.onload = null;
     this.onerror = null;
 }
 
 MediaSourceLoader.prototype = {
-    loadManifest: function()
+    load: async function()
     {
-        var request = new XMLHttpRequest();
-        request.open('GET', this._url, true);
-        request.responseType = 'json';
-        request.onload = this.loadManifestSucceeded.bind(this);
-        request.onerror = this.loadManifestFailed.bind(this);
-        request.send();
+        if (this._manifestTimeout) {
+            clearTimeout(this._manifestTimeout);
+            this._manifestTimeout = null;
+        }
+        return this.loadManifest();
     },
 
-    loadManifestSucceeded: function(e)
+    loadManifest: async function()
     {
-        this._manifest = e.target.response;
+        try {
+            let fetchResult = await fetch(this._url);
+            let manifest = await fetchResult.json();
 
-        if (!this._manifest || !this._manifest.url) {
-            if (this.onerror)
-                this.onerror();
-            return;
+            if (manifest && manifest.url) {
+                this._manifest = manifest;
+                return this.loadMediaData();
+            }
+        } catch(e) {
         }
 
-        this.loadMediaData();
-    },
-
-    loadManifestFailed: function()
-    {
         if (this.onerror)
             this.onerror();
+        return Promise.reject("Failed loading manifest");
     },
 
-    loadMediaData: function()
+    loadMediaData: async function()
     {
-        var request = new XMLHttpRequest();
-        var url = (this._prefix ? this._prefix : '') + this._manifest.url
-        request.open('GET', url, true);
-        request.responseType = 'arraybuffer';
-        request.onload = this.loadMediaDataSucceeded.bind(this);
-        request.onerror = this.loadMediaDataFailed.bind(this);
-        request.send();
-    },
+        try {
+            let url = (this._prefix ? this._prefix : '') + this._manifest.url;
+            let fetchResult = await fetch(url);
+            let arrayBuffer = await fetchResult.arrayBuffer();
+            this._mediaData = arrayBuffer;
+            if (this.onload)
+                this.onload();
+            return;
+        } catch(e) {
+        }
 
-    loadMediaDataSucceeded: function(e)
-    {
-        this._mediaData = e.target.response;
-
-        if (this.onload)
-            this.onload();
-    },
-
-    loadMediaDataFailed: function()
-    {
-        if (this.onerror)
+        if(this.onerror)
             this.onerror();
+        return Promise.reject("Failed loading media data");
     },
 
     type: function()

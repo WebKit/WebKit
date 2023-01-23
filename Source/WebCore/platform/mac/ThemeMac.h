@@ -33,9 +33,7 @@ namespace WebCore {
 
 class ThemeMac final : public ThemeCocoa {
 public:
-#if HAVE(LARGE_CONTROL_SIZE)
     static bool supportsLargeFormControls();
-#endif
 
     static NSView *ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     WEBCORE_EXPORT static void setUseFormSemanticContext(bool);

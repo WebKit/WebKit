@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ]-->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html {
+            overscroll-behavior: none;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        async function doTest()
+        {
+            shouldBe('window.pageYOffset', '0');
+            shouldBe('window.pageXOffset', '0');
+            
+            await UIHelper.dragFromPointToPoint(150, 150, 200, 200, 0.1);
+            shouldBe('window.pageYOffset', '0');
+            shouldBe('window.pageXOffset', '0');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    Top
+    <div class="content"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
