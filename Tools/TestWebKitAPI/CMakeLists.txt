@@ -228,7 +228,12 @@ if (ENABLE_WEBCORE)
         ${TESTWEBKITAPI_DIR}
     )
 
+    set(TestWebCore_DEFINITIONS
+      WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
+    )
+
     WEBKIT_EXECUTABLE_DECLARE(TestWebCore)
+    target_compile_definitions(TestWebCore PUBLIC TestWebCore_DEFINITIONS)
 endif ()
 
 # TestWebKitLegacy definitions

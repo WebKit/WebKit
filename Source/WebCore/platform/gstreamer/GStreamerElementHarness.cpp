@@ -74,8 +74,8 @@ static GstStaticPadTemplate s_harnessSinkPadTemplate = GST_STATIC_PAD_TEMPLATE("
  * `GStreamerElementHarness::Stream` using the `pullBuffer()` and `pullEvent()` methods. The list of
  * output streams can be queried with the `GStreamerElementHarness::outputStreams()` method.
  *
- * For the time being this class only supports elements with one sink pad and one src pad. Support
- * for different topologies can be added as-needed.
+ * The harness can work on elements exposing either a static source pad, or one-to-many "sometimes"
+ * source pads. Support for different topologies can be added as-needed.
  */
 
 GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, ProcessBufferCallback&& processOutputBufferCallback)
@@ -90,9 +90,38 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
     auto clock = adoptGRef(gst_system_clock_obtain());
     gst_element_set_clock(m_element.get(), clock.get());
 
-    auto elementSrcPad = adoptGRef(gst_element_get_static_pad(m_element.get(), "src"));
-    auto stream = GStreamerElementHarness::Stream::create(WTFMove(elementSrcPad));
-    m_outputStreams.append(WTFMove(stream));
+    bool hasSometimesSrcPad = false;
+    for (auto* item = gst_element_class_get_pad_template_list(GST_ELEMENT_GET_CLASS(m_element.get())); item; item = g_list_next(item)) {
+        auto* padTemplate = GST_PAD_TEMPLATE(item->data);
+        if (GST_PAD_TEMPLATE_DIRECTION(padTemplate) == GST_PAD_SRC && GST_PAD_TEMPLATE_PRESENCE(padTemplate) == GST_PAD_SOMETIMES) {
+            hasSometimesSrcPad = true;
+            break;
+        }
+    }
+
+    if (hasSometimesSrcPad) {
+        GST_DEBUG_OBJECT(m_element.get(), "Expecting output buffers on sometimes src pad(s).");
+        g_signal_connect(m_element.get(), "pad-added", reinterpret_cast<GCallback>(+[](GstElement* element, GstPad* pad, gpointer userData) {
+            GST_DEBUG_OBJECT(element, "Pad added: %" GST_PTR_FORMAT, pad);
+            auto& harness = *reinterpret_cast<GStreamerElementHarness*>(userData);
+            auto stream = GStreamerElementHarness::Stream::create(GRefPtr<GstPad>(pad));
+            harness.m_outputStreams.append(WTFMove(stream));
+        }), this);
+
+        g_signal_connect(m_element.get(), "pad-removed", reinterpret_cast<GCallback>(+[](GstElement* element, GstPad* pad, gpointer userData) {
+            GST_DEBUG_OBJECT(element, "Pad removed: %" GST_PTR_FORMAT, pad);
+            auto& harness = *reinterpret_cast<GStreamerElementHarness*>(userData);
+            harness.m_outputStreams.removeAllMatching([pad = GRefPtr<GstPad>(pad)](auto& item) -> bool {
+                return item->pad() == pad;
+            });
+        }), this);
+
+    } else {
+        GST_DEBUG_OBJECT(m_element.get(), "Expecting output buffers on static src pad.");
+        auto elementSrcPad = adoptGRef(gst_element_get_static_pad(m_element.get(), "src"));
+        auto stream = GStreamerElementHarness::Stream::create(WTFMove(elementSrcPad));
+        m_outputStreams.append(WTFMove(stream));
+    }
 
     m_srcPad = gst_pad_new_from_static_template(&s_harnessSrcPadTemplate, "src");
     gst_pad_set_query_function_full(m_srcPad.get(), reinterpret_cast<GstPadQueryFunction>(+[](GstPad* pad, GstObject* parent, GstQuery* query) -> gboolean {
@@ -181,7 +210,7 @@ bool GStreamerElementHarness::pushBuffer(GstBuffer* buffer)
     GST_TRACE_OBJECT(m_element.get(), "Pushing %" GST_PTR_FORMAT, buffer);
     auto result = gst_pad_push(m_srcPad.get(), buffer);
     GST_TRACE_OBJECT(m_element.get(), "Buffer push result: %s", gst_flow_get_name(result));
-    return result == GST_FLOW_OK;
+    return result == GST_FLOW_OK || result == GST_FLOW_EOS;
 }
 
 bool GStreamerElementHarness::pushEvent(GstEvent* event)
@@ -239,6 +268,14 @@ GRefPtr<GstEvent> GStreamerElementHarness::Stream::pullEvent()
     if (m_sinkEventQueue.isEmpty())
         return nullptr;
     return m_sinkEventQueue.takeLast();
+}
+
+bool GStreamerElementHarness::Stream::sendEvent(GstEvent* event)
+{
+    GST_TRACE_OBJECT(m_pad.get(), "Sending %" GST_PTR_FORMAT, event);
+    auto result = gst_pad_send_event(m_pad.get(), event);
+    GST_TRACE_OBJECT(m_pad.get(), "Result: %s", boolForPrinting(result));
+    return result;
 }
 
 const GRefPtr<GstCaps>& GStreamerElementHarness::Stream::outputCaps()

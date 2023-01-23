@@ -48,6 +48,8 @@ public:
         GRefPtr<GstBuffer> pullBuffer();
         GRefPtr<GstEvent> pullEvent();
 
+        bool sendEvent(GstEvent*);
+
         const GRefPtr<GstPad>& pad() const { return m_pad; }
         const GRefPtr<GstCaps>& outputCaps();
 
