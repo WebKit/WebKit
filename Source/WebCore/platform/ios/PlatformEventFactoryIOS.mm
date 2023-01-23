@@ -72,14 +72,14 @@ static PlatformEvent::Type mouseEventType(WebEvent *event)
 {
     switch (event.type) {
     case WebEventMouseDown:
-        return PlatformEvent::MousePressed;
+        return PlatformEvent::Type::MousePressed;
     case WebEventMouseUp:
-        return PlatformEvent::MouseReleased;
+        return PlatformEvent::Type::MouseReleased;
     case WebEventMouseMoved:
-        return PlatformEvent::MouseMoved;
+        return PlatformEvent::Type::MouseMoved;
     default:
         ASSERT_NOT_REACHED();
-        return PlatformEvent::MousePressed;
+        return PlatformEvent::Type::MousePressed;
     }
 }
 
@@ -109,7 +109,7 @@ public:
     {
         ASSERT(event.type == WebEventScrollWheel);
 
-        m_type = PlatformEvent::Wheel;
+        m_type = PlatformEvent::Type::Wheel;
         m_timestamp = WallTime::now();
 
         m_position = pointForEvent(event);
@@ -488,7 +488,7 @@ public:
     {
         ASSERT(event.type == WebEventKeyDown || event.type == WebEventKeyUp);
 
-        m_type = (event.type == WebEventKeyUp ? PlatformEvent::KeyUp : PlatformEvent::KeyDown);
+        m_type = (event.type == WebEventKeyUp ? PlatformEvent::Type::KeyUp : PlatformEvent::Type::KeyDown);
         m_modifiers = modifiersForEvent(event);
         m_timestamp = WallTime::now();
 
@@ -560,27 +560,27 @@ static PlatformEvent::Type touchEventType(WebEvent *event)
 {
     switch (event.type) {
     case WebEventTouchBegin:
-        return PlatformEvent::TouchStart;
+        return PlatformEvent::Type::TouchStart;
     case WebEventTouchEnd:
-        return PlatformEvent::TouchEnd;
+        return PlatformEvent::Type::TouchEnd;
     case WebEventTouchCancel:
-        return PlatformEvent::TouchCancel;
+        return PlatformEvent::Type::TouchCancel;
     case WebEventTouchChange:
-        return PlatformEvent::TouchMove;
+        return PlatformEvent::Type::TouchMove;
     default:
         ASSERT_NOT_REACHED();
-        return PlatformEvent::TouchCancel;
+        return PlatformEvent::Type::TouchCancel;
     }
 }
     
 static PlatformTouchPoint::TouchPhaseType touchPhaseFromPlatformEventType(PlatformEvent::Type type)
 {
     switch (type) {
-    case PlatformEvent::TouchStart:
+    case PlatformEvent::Type::TouchStart:
         return PlatformTouchPoint::TouchPhaseBegan;
-    case PlatformEvent::TouchMove:
+    case PlatformEvent::Type::TouchMove:
         return PlatformTouchPoint::TouchPhaseMoved;
-    case PlatformEvent::TouchEnd:
+    case PlatformEvent::Type::TouchEnd:
         return PlatformTouchPoint::TouchPhaseEnded;
     default:
         ASSERT_NOT_REACHED();

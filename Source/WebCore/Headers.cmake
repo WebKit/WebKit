@@ -905,6 +905,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/Autofill.h
     html/CachedHTMLCollection.h
     html/CanvasBase.h
+    html/CanvasObserver.h
     html/CollectionTraversal.h
     html/CollectionType.h
     html/CustomElementFormValue.h

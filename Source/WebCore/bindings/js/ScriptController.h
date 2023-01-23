@@ -109,11 +109,7 @@ public:
 
     // This asserts that URL argument is a JavaScript URL.
     void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin>, ShouldReplaceDocumentIfJavaScriptURL, bool& didReplaceDocument);
-    void executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> securityOrigin = nullptr, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL)
-    {
-        bool didReplaceDocument = false;
-        executeJavaScriptURL(url, securityOrigin, shouldReplaceDocumentIfJavaScriptURL, didReplaceDocument);
-    }
+    void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
 
     static void initializeMainThread();
 

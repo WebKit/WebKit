@@ -41,25 +41,27 @@ enum class TrackingType : uint8_t {
     Synchronous = 2
 };
 
+enum class EventTrackingRegionsEventType : uint8_t {
+    Mousedown,
+    Mousemove,
+    Mouseup,
+    Mousewheel,
+    Pointerdown,
+    Pointerenter,
+    Pointerleave,
+    Pointermove,
+    Pointerout,
+    Pointerover,
+    Pointerup,
+    Touchend,
+    Touchforcechange,
+    Touchmove,
+    Touchstart,
+    Wheel,
+};
+
 struct EventTrackingRegions {
-    enum class EventType : uint8_t {
-        Mousedown,
-        Mousemove,
-        Mouseup,
-        Mousewheel,
-        Pointerdown,
-        Pointerenter,
-        Pointerleave,
-        Pointermove,
-        Pointerout,
-        Pointerover,
-        Pointerup,
-        Touchend,
-        Touchforcechange,
-        Touchmove,
-        Touchstart,
-        Wheel,
-    };
+    using EventType = EventTrackingRegionsEventType;
 
     WEBCORE_EXPORT static ASCIILiteral eventName(EventType);
     WEBCORE_EXPORT static const AtomString& eventNameAtomString(const EventNames&, EventType);

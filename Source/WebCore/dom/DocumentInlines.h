@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "ClientOrigin.h"
 #include "Document.h"
+#include "FocusOptions.h"
 #include "FrameDestructionObserverInlines.h"
 #include "MediaProducer.h"
 #include "SecurityOrigin.h"
@@ -80,6 +82,8 @@ inline bool Document::hasMutationObserversOfType(MutationObserverOptionType type
     return m_mutationObserverTypes.containsAny(type);
 }
 
+inline ClientOrigin Document::clientOrigin() const { return { topOrigin().data(), securityOrigin().data() }; }
+
 inline bool Document::isSameOriginAsTopDocument() const { return securityOrigin().isSameOriginAs(topOrigin()); }
 
 inline bool Document::shouldMaskURLForBindings(const URL& urlToMask) const
@@ -116,5 +120,8 @@ inline WebCoreOpaqueRoot Node::opaqueRoot() const
         return WebCoreOpaqueRoot { &document() };
     return traverseToOpaqueRoot();
 }
+
+inline bool Document::wasLastFocusByClick() const { return m_latestFocusTrigger == FocusTrigger::Click; }
+
 
 } // namespace WebCore

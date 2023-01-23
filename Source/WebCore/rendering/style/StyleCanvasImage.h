@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "CanvasBase.h"
+#include "CanvasObserver.h"
 #include "StyleGeneratedImage.h"
 #include <wtf/text/WTFString.h>
 

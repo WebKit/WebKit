@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient {
 public:
     static Ref<StyleCrossfadeImage> create(RefPtr<StyleImage> from, RefPtr<StyleImage> to, double percentage, bool isPrefixed)

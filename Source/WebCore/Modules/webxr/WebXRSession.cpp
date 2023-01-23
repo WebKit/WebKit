@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "JSWebXRReferenceSpace.h"
+#include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"

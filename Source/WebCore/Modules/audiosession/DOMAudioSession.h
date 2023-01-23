@@ -36,14 +36,17 @@
 
 namespace WebCore {
 
+enum class DOMAudioSessionType : uint8_t { Auto, Playback, Transient, TransientSolo, Ambient, PlayAndRecord };
+enum class DOMAudioSessionState : uint8_t { Inactive, Active, Interrupted };
+
 class DOMAudioSession final : public RefCounted<DOMAudioSession>, public ActiveDOMObject, public EventTarget, public AudioSession::InterruptionObserver {
     WTF_MAKE_ISO_ALLOCATED(DOMAudioSession);
 public:
     static Ref<DOMAudioSession> create(ScriptExecutionContext*);
     ~DOMAudioSession();
 
-    enum class Type : uint8_t { Auto, Playback, Transient, TransientSolo, Ambient, PlayAndRecord };
-    enum class State : uint8_t { Inactive, Active, Interrupted };
+    using Type = DOMAudioSessionType;
+    using State = DOMAudioSessionState;
 
     ExceptionOr<void> setType(Type);
     Type type() const;

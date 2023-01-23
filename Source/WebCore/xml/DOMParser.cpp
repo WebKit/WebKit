@@ -20,6 +20,7 @@
 #include "DOMParser.h"
 
 #include "DOMImplementation.h"
+#include "FragmentScriptingPermission.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 

@@ -61,21 +61,21 @@ static PlatformEvent::Type messageToEventType(UINT message)
         case WM_LBUTTONDOWN:
         case WM_RBUTTONDOWN:
         case WM_MBUTTONDOWN:
-            return PlatformEvent::MousePressed;
+            return PlatformEvent::Type::MousePressed;
 
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MBUTTONUP:
-            return PlatformEvent::MouseReleased;
+            return PlatformEvent::Type::MouseReleased;
 
         case WM_MOUSELEAVE:
         case WM_MOUSEMOVE:
-            return PlatformEvent::MouseMoved;
+            return PlatformEvent::Type::MouseMoved;
 
         default:
             ASSERT_NOT_REACHED();
             //Move is relatively harmless
-            return PlatformEvent::MouseMoved;
+            return PlatformEvent::Type::MouseMoved;
     }
 }
 

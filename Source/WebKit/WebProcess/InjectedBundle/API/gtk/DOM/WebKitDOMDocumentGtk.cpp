@@ -58,6 +58,7 @@
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/VisibilityState.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

@@ -60,27 +60,27 @@ public:
         // PlatformEvent
         switch (webEvent.type()) {
         case WebEventType::MouseDown:
-            m_type = WebCore::PlatformEvent::MousePressed;
+            m_type = WebCore::PlatformEvent::Type::MousePressed;
             m_force = WebCore::ForceAtClick;
             break;
         case WebEventType::MouseUp:
-            m_type = WebCore::PlatformEvent::MouseReleased;
+            m_type = WebCore::PlatformEvent::Type::MouseReleased;
             m_force = WebCore::ForceAtClick;
             break;
         case WebEventType::MouseMove:
-            m_type = WebCore::PlatformEvent::MouseMoved;
+            m_type = WebCore::PlatformEvent::Type::MouseMoved;
             m_force = webEvent.force();
             break;
         case WebEventType::MouseForceChanged:
-            m_type = WebCore::PlatformEvent::MouseForceChanged;
+            m_type = WebCore::PlatformEvent::Type::MouseForceChanged;
             m_force = webEvent.force();
             break;
         case WebEventType::MouseForceDown:
-            m_type = WebCore::PlatformEvent::MouseForceDown;
+            m_type = WebCore::PlatformEvent::Type::MouseForceDown;
             m_force = WebCore::ForceAtForceClick;
             break;
         case WebEventType::MouseForceUp:
-            m_type = WebCore::PlatformEvent::MouseForceUp;
+            m_type = WebCore::PlatformEvent::Type::MouseForceUp;
             m_force = WebCore::ForceAtForceClick;
             break;
         default:
@@ -146,7 +146,7 @@ public:
     WebKit2PlatformWheelEvent(const WebWheelEvent& webEvent)
     {
         // PlatformEvent
-        m_type = PlatformEvent::Wheel;
+        m_type = PlatformEvent::Type::Wheel;
 
         m_modifiers = platform(webEvent.modifiers());
 
@@ -190,16 +190,16 @@ public:
         // PlatformEvent
         switch (webEvent.type()) {
         case WebEventType::KeyDown:
-            m_type = WebCore::PlatformEvent::KeyDown;
+            m_type = WebCore::PlatformEvent::Type::KeyDown;
             break;
         case WebEventType::KeyUp:
-            m_type = WebCore::PlatformEvent::KeyUp;
+            m_type = WebCore::PlatformEvent::Type::KeyUp;
             break;
         case WebEventType::RawKeyDown:
-            m_type = WebCore::PlatformEvent::RawKeyDown;
+            m_type = WebCore::PlatformEvent::Type::RawKeyDown;
             break;
         case WebEventType::Char:
-            m_type = WebCore::PlatformEvent::Char;
+            m_type = WebCore::PlatformEvent::Type::Char;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -327,16 +327,16 @@ public:
         // PlatformEvent
         switch (webEvent.type()) {
         case WebEventType::TouchStart:
-            m_type = WebCore::PlatformEvent::TouchStart;
+            m_type = WebCore::PlatformEvent::Type::TouchStart;
             break;
         case WebEventType::TouchMove:
-            m_type = WebCore::PlatformEvent::TouchMove;
+            m_type = WebCore::PlatformEvent::Type::TouchMove;
             break;
         case WebEventType::TouchEnd:
-            m_type = WebCore::PlatformEvent::TouchEnd;
+            m_type = WebCore::PlatformEvent::Type::TouchEnd;
             break;
         case WebEventType::TouchCancel:
-            m_type = WebCore::PlatformEvent::TouchCancel;
+            m_type = WebCore::PlatformEvent::Type::TouchCancel;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -380,13 +380,13 @@ public:
     {
         switch (webEvent.type()) {
         case WebEventType::GestureStart:
-            m_type = WebCore::PlatformEvent::GestureStart;
+            m_type = WebCore::PlatformEvent::Type::GestureStart;
             break;
         case WebEventType::GestureChange:
-            m_type = WebCore::PlatformEvent::GestureChange;
+            m_type = WebCore::PlatformEvent::Type::GestureChange;
             break;
         case WebEventType::GestureEnd:
-            m_type = WebCore::PlatformEvent::GestureEnd;
+            m_type = WebCore::PlatformEvent::Type::GestureEnd;
             break;
         default:
             ASSERT_NOT_REACHED();

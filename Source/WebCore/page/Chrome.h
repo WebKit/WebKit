@@ -39,6 +39,8 @@ class GPU;
 
 namespace WebCore {
 
+enum class TextDirection : bool;
+
 class ChromeClient;
 class ColorChooser;
 class ColorChooserClient;

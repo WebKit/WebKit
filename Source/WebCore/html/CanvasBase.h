@@ -34,6 +34,7 @@ namespace WebCore {
 
 class AffineTransform;
 class CanvasBase;
+class CanvasObserver;
 class CanvasRenderingContext;
 class Element;
 class GraphicsClient;
@@ -45,17 +46,6 @@ class FloatRect;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
-
-class CanvasObserver : public CanMakeWeakPtr<CanvasObserver> {
-public:
-    virtual ~CanvasObserver() = default;
-
-    virtual bool isStyleCanvasImage() const { return false; }
-
-    virtual void canvasChanged(CanvasBase&, const std::optional<FloatRect>& changedRect) = 0;
-    virtual void canvasResized(CanvasBase&) = 0;
-    virtual void canvasDestroyed(CanvasBase&) = 0;
-};
 
 class CanvasDisplayBufferObserver : public CanMakeWeakPtr<CanvasDisplayBufferObserver> {
 public:
