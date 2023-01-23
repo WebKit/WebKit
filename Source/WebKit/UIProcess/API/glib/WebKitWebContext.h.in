@@ -64,6 +64,7 @@ typedef enum {
     WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER
 } WebKitCacheModel;
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * WebKitProcessModel:
  * @WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS: Deprecated 2.26.
@@ -80,11 +81,14 @@ typedef enum {
  * Enum values used for determining the #WebKitWebContext process model.
  *
  * Since: 2.4
+ *
+ * Deprecated: 2.40
  */
 typedef enum {
     WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS,
     WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
 } WebKitProcessModel;
+#endif
 
 /**
  * WebKitURISchemeRequestCallback:
@@ -289,12 +293,14 @@ webkit_web_context_allow_tls_certificate_for_host   (WebKitWebContext           
                                                      GTlsCertificate               *certificate,
                                                      const gchar                   *host);
 
-WEBKIT_API void
+#if !ENABLE(2022_GLIB_API)
+WEBKIT_DEPRECATED void
 webkit_web_context_set_process_model                (WebKitWebContext              *context,
                                                      WebKitProcessModel             process_model);
 
-WEBKIT_API WebKitProcessModel
+WEBKIT_DEPRECATED WebKitProcessModel
 webkit_web_context_get_process_model                (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API void
 webkit_web_context_initialize_notification_permissions
