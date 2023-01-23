@@ -685,7 +685,7 @@ static String functionName(JSC::CodeBlock& codeBlock)
 
 static String functionName(JSC::CallFrame* callFrame)
 {
-    if (callFrame->isAnyWasmCallee())
+    if (callFrame->isWasmFrame())
         return nullString();
 
     if (auto* codeBlock = callFrame->codeBlock())

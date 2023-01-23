@@ -2062,11 +2062,11 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled, (JSGlobalObject* glob
 
     CallerFunctor wasmToJSFrame;
     StackVisitor::visit(callFrame, vm, wasmToJSFrame);
-    if (!wasmToJSFrame.callerFrame() || !wasmToJSFrame.callerFrame()->isAnyWasmCallee())
+    if (!wasmToJSFrame.callerFrame() || !wasmToJSFrame.callerFrame()->isWasmFrame())
         return throwVMError(globalObject, scope, "caller is not a wasm->js import function"_s);
 
     // We have a wrapper frame that we generate for imports. If we ever can direct call from wasm we would need to change this.
-    ASSERT(!wasmToJSFrame.callerFrame()->callee().isWasm());
+    ASSERT(wasmToJSFrame.callerFrame()->callee().isWasm());
     CallerFunctor wasmFrame;
     StackVisitor::visit(wasmToJSFrame.callerFrame(), vm, wasmFrame);
     ASSERT(wasmFrame.callerFrame()->callee().isWasm());

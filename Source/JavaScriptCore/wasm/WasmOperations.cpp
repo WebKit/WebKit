@@ -497,20 +497,35 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance* instanc
 }
 #endif
 
-JSC_DEFINE_JIT_OPERATION(operationWasmUnwind, void, (Instance* instance))
+JSC_DEFINE_JIT_OPERATION(operationWasmUnwind, void*, (Instance* instance))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
+
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    // FIXME: We could make this better:
+    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
+    // require a cell in the callee field to load the VM. (The baseline JIT does not require
+    // this since it is compiled with a constant VM pointer.) We could make the calling convention
+    // for exceptions first load callFrameForCatch info call frame register before jumping
+    // to the exception handler. If we did this, we could remove this terrible hack.
+    // https://bugs.webkit.org/show_bug.cgi?id=170440
+    vm.calleeForWasmCatch = callFrame->callee();
+    Register* calleeSlot = bitwise_cast<Register*>(callFrame) + static_cast<int>(CallFrameSlot::callee);
+    *calleeSlot = bitwise_cast<JSCell*>(jsInstance->module());
+    return vm.targetMachinePCForThrow;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (Instance* instance, EncodedJSValue v))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     return JSValue::decode(v).toBigInt64(globalObject);
 }
@@ -519,7 +534,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF64, double, (Instance* instance, Enc
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     return JSValue::decode(v).toNumber(globalObject);
 }
@@ -528,7 +543,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToI32, int32_t, (Instance* instance, En
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     return JSValue::decode(v).toInt32(globalObject);
 }
@@ -537,7 +552,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (Instance* instance, Enco
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     return static_cast<float>(JSValue::decode(v).toNumber(globalObject));
 }
@@ -546,7 +561,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance* i
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -564,7 +579,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (Instance* in
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value));
 }
@@ -574,7 +589,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (Instance* instance, con
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -659,7 +674,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (Wasm::Instanc
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     NativeCallFrameTracer tracer(vm, callFrame);
 
     ObjectInitializationScope initializationScope(vm);
@@ -779,8 +794,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance*
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = instance->globalObject();
     return JSValue::encode(JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex));
 }
 
@@ -834,8 +849,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, unsigne
     NativeCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = instance->globalObject();
 
     const Wasm::Tag& tag = instance->tag(exceptionIndex);
 
@@ -875,8 +890,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRethrow, void*, (Instance* instance, Encod
     NativeCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = instance->globalObject();
 
     throwException(globalObject, throwScope, JSValue::decode(thrownValue));
 

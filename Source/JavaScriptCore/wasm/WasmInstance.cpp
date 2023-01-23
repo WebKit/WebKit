@@ -39,8 +39,9 @@
 
 namespace JSC { namespace Wasm {
 
-Instance::Instance(VM& vm, Ref<Module>&& module)
+Instance::Instance(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)
     : m_vm(&vm)
+    , m_globalObject(globalObject)
     , m_module(WTFMove(module))
     , m_globalsToMark(m_module.get().moduleInformation().globalCount())
     , m_globalsToBinding(m_module.get().moduleInformation().globalCount())
@@ -78,10 +79,10 @@ Instance::Instance(VM& vm, Ref<Module>&& module)
     }
 }
 
-Ref<Instance> Instance::create(VM& vm, Ref<Module>&& module)
+Ref<Instance> Instance::create(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)
 {
     ASSERT(allocationSize(maxImports, maxTables, maxGlobals) <= INT32_MAX);
-    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount(), module->moduleInformation().globalCount()))) Instance(vm, WTFMove(module)));
+    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount(), module->moduleInformation().globalCount()))) Instance(vm, globalObject, WTFMove(module)));
 }
 
 Instance::~Instance() = default;
@@ -98,11 +99,11 @@ void Instance::setGlobal(unsigned i, JSValue value)
         Wasm::Global* global = getGlobalBinding(i);
         if (!global)
             return;
-        global->valuePointer()->m_externref.set(vm(), global->owner<JSWebAssemblyGlobal>(), value);
+        global->valuePointer()->m_externref.set(vm(), global->owner(), value);
         return;
     }
     ASSERT(m_owner);
-    slot.m_externref.set(vm(), owner<JSWebAssemblyInstance>(), value);
+    slot.m_externref.set(vm(), owner(), value);
 }
 
 JSValue Instance::getFunctionWrapper(unsigned i) const
@@ -118,8 +119,8 @@ void Instance::setFunctionWrapper(unsigned i, JSValue value)
     ASSERT(m_owner);
     ASSERT(value.isCallable());
     ASSERT(!m_functionWrappers.contains(i));
-    Locker locker { owner<JSWebAssemblyInstance>()->cellLock() };
-    m_functionWrappers.set(i, WriteBarrier<Unknown>(vm(), owner<JSWebAssemblyInstance>(), value));
+    Locker locker { owner()->cellLock() };
+    m_functionWrappers.set(i, WriteBarrier<Unknown>(vm(), owner(), value));
     ASSERT(getFunctionWrapper(i) == value);
 }
 
@@ -203,7 +204,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
 {
     RELEASE_ASSERT(length <= segment.length());
 
-    JSWebAssemblyInstance* jsInstance = owner<JSWebAssemblyInstance>();
+    JSWebAssemblyInstance* jsInstance = owner();
     JSWebAssemblyTable* jsTable = jsInstance->table(tableIndex);
     JSGlobalObject* globalObject = jsInstance->globalObject();
     VM& vm = globalObject->vm();
@@ -224,7 +225,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
         uint32_t functionIndex = segment.functionIndices[srcIndex];
         TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
         if (isImportFunction(functionIndex)) {
-            JSObject* functionImport = importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
+            JSObject* functionImport = importFunction(functionIndex).get();
             if (isWebAssemblyHostFunction(functionImport)) {
                 WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(functionImport);
                 // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.

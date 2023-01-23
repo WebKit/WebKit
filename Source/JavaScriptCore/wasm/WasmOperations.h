@@ -53,7 +53,7 @@ void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, Sa
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
 #endif
-JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (Instance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void*, (Instance*));
 
 JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (Instance*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (Instance*, EncodedJSValue));

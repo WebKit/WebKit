@@ -46,7 +46,7 @@ inline EncodedJSValue refFunc(Instance* instance, uint32_t index)
 
 inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue)
 {
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = instance->vm();
 
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
@@ -137,9 +137,9 @@ inline void arraySet(Instance* instance, uint32_t typeIndex, EncodedJSValue arra
 
 inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool useDefault, uint64_t* arguments)
 {
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
-    const TypeDefinition& structTypeDefinition = jsInstance->instance().module().moduleInformation().typeSignatures[typeIndex]->expand();
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = instance->globalObject();
+    const TypeDefinition& structTypeDefinition = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     const StructType& structType = *structTypeDefinition.as<StructType>();
 
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
@@ -178,7 +178,7 @@ inline EncodedJSValue structGet(EncodedJSValue encodedStructReference, uint32_t 
 
 inline void structSet(Instance* instance, EncodedJSValue encodedStructReference, uint32_t fieldIndex, EncodedJSValue argument)
 {
-    JSGlobalObject* globalObject = instance->owner<JSWebAssemblyInstance>()->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     auto structReference = JSValue::decode(encodedStructReference);
     ASSERT(structReference.isObject());
     JSObject* structureAsObject = jsCast<JSObject*>(structReference);
@@ -443,8 +443,8 @@ inline int32_t memoryAtomicNotify(Instance* instance, unsigned base, unsigned of
 
 inline void* throwWasmToJSException(CallFrame* callFrame, Wasm::ExceptionType type, Instance* wasmInstance)
 {
-    JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = instance->globalObject();
+    JSWebAssemblyInstance* instance = wasmInstance->owner();
+    JSGlobalObject* globalObject = wasmInstance->globalObject();
 
     // Do not retrieve VM& from CallFrame since CallFrame's callee is not a JSCell.
     VM& vm = globalObject->vm();

@@ -433,7 +433,7 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     }
 
     // Dumping from low memory to high memory.
-    bool isWasm = callFrame->isAnyWasmCallee();
+    bool isWasm = callFrame->isWasmFrame();
     CodeBlock* codeBlock = isWasm ? nullptr : callFrame->codeBlock();
     unsigned numCalleeLocals = codeBlock ? codeBlock->numCalleeLocals() : 0;
     unsigned numVars = codeBlock ? codeBlock->numVars() : 0;

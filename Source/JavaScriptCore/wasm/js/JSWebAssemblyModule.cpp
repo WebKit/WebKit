@@ -155,7 +155,7 @@ Expected<void, Wasm::BindingFailure> JSWebAssemblyModule::generateWasmToJSStubs(
         FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> stubs(moduleInformation.importFunctionCount());
         for (unsigned importIndex = 0; importIndex < moduleInformation.importFunctionCount(); ++importIndex) {
             Wasm::TypeIndex typeIndex = moduleInformation.importFunctionTypeIndices.at(importIndex);
-            auto binding = Wasm::wasmToJS(vm, callLinkInfos[importIndex], typeIndex, importIndex);
+            auto binding = Wasm::wasmToJS(vm, m_module->wasmToJSCallee(), callLinkInfos[importIndex], typeIndex, importIndex);
             if (UNLIKELY(!binding))
                 return makeUnexpected(binding.error());
             stubs[importIndex] = binding.value();

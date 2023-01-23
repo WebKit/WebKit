@@ -804,8 +804,8 @@ WASM_SLOW_PATH_DECL(throw)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -839,8 +839,8 @@ WASM_SLOW_PATH_DECL(rethrow)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
 
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -867,8 +867,7 @@ WASM_SLOW_PATH_DECL(rethrow)
 WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
 {
     UNUSED_PARAM(callFrame);
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    JSGlobalObject* globalObject = jsInstance->globalObject();
+    JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
