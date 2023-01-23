@@ -3845,6 +3845,9 @@ imported/w3c/web-platform-tests/websockets/unload-a-document/001.html?wpt_flags=
 imported/w3c/web-platform-tests/websockets/unload-a-document/002.html?wpt_flags=h2 [ Skip ]
 imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=h2 [ Skip ]
 
+# The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
+svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
+
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
