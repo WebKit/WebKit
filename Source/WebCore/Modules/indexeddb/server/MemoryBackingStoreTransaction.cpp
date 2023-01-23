@@ -127,6 +127,11 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
 
     objectStore->deleteAllIndexes(*this);
 
+    // If the store removed is previously added in this transaction, we don't need to
+    // keep it for transaction abort.
+    if (auto addedObjectStore = m_versionChangeAddedObjectStores.take(&objectStore.get()))
+        return;
+
     auto addResult = m_deletedObjectStores.add(objectStore->info().name(), nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = WTFMove(objectStore);
