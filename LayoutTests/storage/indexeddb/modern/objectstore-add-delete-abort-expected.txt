@@ -1,4 +1,4 @@
-This test verifies renaming object store can be reverted succesfully if version change transaction aborts.
+This test verifies version change transaction that adds and removes object store can be aborted succesfully.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -6,14 +6,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 openRequest = indexedDB.open(dbname);
 transaction = openRequest.transaction;
 database = openRequest.result;
-objectStore = database.createObjectStore('os1');
+database.createObjectStore('os1');
 database.deleteObjectStore('os1');
-objectStore2 = database.createObjectStore('os2')
-objectStore2.name = 'os1';
-objectStore2.put(1, 1).onsuccess = () => { transaction.abort(); }
+objectStore = database.createObjectStore('os2')
 newOpenRequest = indexedDB.open(dbname);
 newDatabase = newOpenRequest.result;
 PASS newDatabase.objectStoreNames.length is 0
+newObjectStore = newDatabase.createObjectStore('os1');
 PASS successfullyParsed is true
 
 TEST COMPLETE
