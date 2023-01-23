@@ -30,20 +30,7 @@ namespace WebCore {
 
 class Document;
 
-struct ImageWithScale {
-    RefPtr<StyleImage> image;
-    float scaleFactor { 1 };
-};
-
-inline bool operator==(const ImageWithScale& a, const ImageWithScale& b)
-{
-    return a.image == b.image && a.scaleFactor == b.scaleFactor;
-}
-
-inline bool operator!=(const ImageWithScale& a, const ImageWithScale& b)
-{
-    return !(a == b);
-}
+struct ImageWithScale;
 
 class StyleMultiImage : public StyleImage {
     WTF_MAKE_FAST_ALLOCATED;
@@ -54,8 +41,7 @@ protected:
     StyleMultiImage(Type);
 
     bool equals(const StyleMultiImage& other) const;
-
-    virtual ImageWithScale selectBestFitImage(const Document&) = 0;
+    virtual ImageWithScale selectBestFitImage(const Document&) const = 0;
     CachedImage* cachedImage() const final;
 
 private:

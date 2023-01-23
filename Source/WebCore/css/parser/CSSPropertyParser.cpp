@@ -475,7 +475,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
             return { color };
         }
         case CSSCustomPropertySyntax::Type::Image: {
-            auto styleImage = builderState.createStyleImage(value);
+            auto styleImage = builderState.createStyleImage(const_cast<CSSValue&>(value));
             if (!styleImage)
                 return { };
             return { WTFMove(styleImage) };

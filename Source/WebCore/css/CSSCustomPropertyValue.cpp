@@ -78,7 +78,7 @@ String CSSCustomPropertyValue::customCSSText() const
             return serializationForCSS(value);
         }, [&](const RefPtr<StyleImage>& value) {
             // FIXME: This is not right for gradients that use `currentcolor`. There should be a way preserve it.
-            return value->computedStyleValue(RenderStyle::defaultStyle())->cssText();
+            return value->cssValue()->cssText();
         }, [&](const URL& value) {
             return serializeURL(value.string());
         }, [&](const String& value) {

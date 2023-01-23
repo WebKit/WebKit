@@ -117,6 +117,7 @@ public:
     const Color& absoluteColor() const;
 
     WEBCORE_EXPORT Color resolveColor(const Color& colorPropertyValue) const;
+    WEBCORE_EXPORT Color resolveColorWithoutCurrentColor() const;
 
     friend bool operator==(const StyleColor&, const StyleColor&);
     friend WEBCORE_EXPORT String serializationForCSS(const StyleColor&);

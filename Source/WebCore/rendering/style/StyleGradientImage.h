@@ -26,89 +26,39 @@
 
 #pragma once
 
-#include "CSSGradientValue.h"
-#include "StyleColor.h"
 #include "StyleGeneratedImage.h"
-#include <variant>
 
 namespace WebCore {
 
-struct StyleGradientImageStop {
-    std::optional<StyleColor> color;
-    RefPtr<CSSPrimitiveValue> position;
-};
+class CSSGradientValue;
 
 class StyleGradientImage final : public StyleGeneratedImage {
 public:
-    using Stop = StyleGradientImageStop;
-
-    struct LinearData {
-        CSSLinearGradientValue::Data data;
-        CSSGradientRepeat repeating;
-    };
-    struct PrefixedLinearData {
-        CSSPrefixedLinearGradientValue::Data data;
-        CSSGradientRepeat repeating;
-    };
-    struct DeprecatedLinearData {
-        CSSDeprecatedLinearGradientValue::Data data;
-    };
-    struct RadialData {
-        CSSRadialGradientValue::Data data;
-        CSSGradientRepeat repeating;
-    };
-    struct PrefixedRadialData {
-        CSSPrefixedRadialGradientValue::Data data;
-        CSSGradientRepeat repeating;
-    };
-    struct DeprecatedRadialData {
-        CSSDeprecatedRadialGradientValue::Data data;
-    };
-    struct ConicData {
-        CSSConicGradientValue::Data data;
-        CSSGradientRepeat repeating;
-    };
-
-    using Data = std::variant<LinearData, DeprecatedLinearData, PrefixedLinearData, RadialData, DeprecatedRadialData, PrefixedRadialData, ConicData>;
-
-    static Ref<StyleGradientImage> create(Data data, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImageStop> stops)
+    static Ref<StyleGradientImage> create(Ref<CSSGradientValue>&& value)
     {
-        return adoptRef(*new StyleGradientImage(WTFMove(data), colorInterpolationMethod, WTFMove(stops)));
+        return adoptRef(*new StyleGradientImage(WTFMove(value)));
     }
     virtual ~StyleGradientImage();
 
-    bool operator==(const StyleImage&) const final;
-    bool equals(const StyleGradientImage&) const;
-
-    static constexpr bool isFixedSize = false;
-
 private:
-    explicit StyleGradientImage(Data&&, CSSGradientColorInterpolationMethod, Vector<StyleGradientImageStop>&&);
+    explicit StyleGradientImage(Ref<CSSGradientValue>&&);
 
-    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
+    bool operator==(const StyleImage&) const final;
+
+    CSSImageGeneratorValue& imageValue() final;
+    Ref<CSSValue> cssValue() const final;
+    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
-    Ref<Gradient> createGradient(const LinearData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const PrefixedLinearData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const DeprecatedLinearData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const RadialData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const PrefixedRadialData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const DeprecatedRadialData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const ConicData&, const RenderElement&, const FloatSize&) const;
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
 
-    template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat, CSSGradientRepeat) const;
-    template<typename GradientAdapter> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&) const;
-
-    Data m_data;
-    CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
-    Vector<StyleGradientImageStop> m_stops;
-    bool m_knownCacheableBarringFilter { false };
+    Ref<CSSGradientValue> m_imageGeneratorValue;
 };
 
 } // namespace WebCore

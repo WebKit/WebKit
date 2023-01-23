@@ -26,55 +26,39 @@
 
 #pragma once
 
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
 #include "StyleGeneratedImage.h"
 
 namespace WebCore {
 
-class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient {
+class CSSCrossfadeValue;
+
+class StyleCrossfadeImage final : public StyleGeneratedImage {
 public:
-    static Ref<StyleCrossfadeImage> create(RefPtr<StyleImage> from, RefPtr<StyleImage> to, double percentage, bool isPrefixed)
+    static Ref<StyleCrossfadeImage> create(Ref<CSSCrossfadeValue>&& value)
     {
-        return adoptRef(*new StyleCrossfadeImage(WTFMove(from), WTFMove(to), percentage, isPrefixed));
+        return adoptRef(*new StyleCrossfadeImage(WTFMove(value)));
     }
     virtual ~StyleCrossfadeImage();
 
-    RefPtr<StyleCrossfadeImage> blend(const StyleCrossfadeImage&, const BlendingContext&) const;
+private:
+    explicit StyleCrossfadeImage(Ref<CSSCrossfadeValue>&&);
 
     bool operator==(const StyleImage&) const final;
-    bool equals(const StyleCrossfadeImage&) const;
-    bool equalInputImages(const StyleCrossfadeImage&) const;
 
-    static constexpr bool isFixedSize = true;
-
-private:
-    explicit StyleCrossfadeImage(RefPtr<StyleImage>&&, RefPtr<StyleImage>&&, double, bool);
-
-    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
+    CSSImageGeneratorValue& imageValue() final;
+    Ref<CSSValue> cssValue() const final;
+    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
-    // CachedImageClient.
-    void imageChanged(CachedImage*, const IntRect*) final;
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
 
-    RefPtr<StyleImage> m_from;
-    RefPtr<StyleImage> m_to;
-    double m_percentage;
-    bool m_isPrefixed;
-
-    // FIXME: Rather than caching and tracking the input image via CachedImages, we should
-    // instead use a new, StyleImage specific notification, to allow correct tracking of
-    // nested images (e.g. one of the input images for a StyleCrossfadeImage is a StyleFilterImage
-    // where its input image is a StyleCachedImage).
-    CachedResourceHandle<CachedImage> m_cachedFromImage;
-    CachedResourceHandle<CachedImage> m_cachedToImage;
-    bool m_inputImagesAreReady;
+    Ref<CSSCrossfadeValue> m_imageGeneratorValue;
 };
 
 } // namespace WebCore

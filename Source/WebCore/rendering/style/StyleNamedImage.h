@@ -27,36 +27,38 @@
 #pragma once
 
 #include "StyleGeneratedImage.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CSSNamedImageValue;
+
 class StyleNamedImage final : public StyleGeneratedImage {
 public:
-    static Ref<StyleNamedImage> create(String name)
+    static Ref<StyleNamedImage> create(Ref<CSSNamedImageValue>&& value)
     {
-        return adoptRef(*new StyleNamedImage(WTFMove(name)));
+        return adoptRef(*new StyleNamedImage(WTFMove(value)));
     }
     virtual ~StyleNamedImage();
 
-    bool operator==(const StyleImage&) const final;
-    bool equals(const StyleNamedImage&) const;
-
-    static constexpr bool isFixedSize = false;
-
 private:
-    explicit StyleNamedImage(String&&);
+    explicit StyleNamedImage(Ref<CSSNamedImageValue>&&);
 
-    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
+    bool operator==(const StyleImage&) const final;
+
+    CSSImageGeneratorValue& imageValue() final;
+    Ref<CSSValue> cssValue() const final;
+    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
-    String m_name;
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
+
+    Ref<CSSNamedImageValue> m_imageGeneratorValue;
 };
 
 } // namespace WebCore

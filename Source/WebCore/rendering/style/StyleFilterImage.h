@@ -26,54 +26,39 @@
 
 #pragma once
 
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
-#include "FilterOperations.h"
 #include "StyleGeneratedImage.h"
 
 namespace WebCore {
 
-class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient {
+class CSSFilterImageValue;
+
+class StyleFilterImage final : public StyleGeneratedImage {
 public:
-    static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, FilterOperations filterOperations)
+    static Ref<StyleFilterImage> create(Ref<CSSFilterImageValue>&& value)
     {
-        return adoptRef(*new StyleFilterImage(WTFMove(image), WTFMove(filterOperations)));
+        return adoptRef(*new StyleFilterImage(WTFMove(value)));
     }
     virtual ~StyleFilterImage();
 
-    bool operator==(const StyleImage& other) const final;
-    bool equals(const StyleFilterImage&) const;
-    bool equalInputImages(const StyleFilterImage&) const;
-
-    RefPtr<StyleImage> inputImage() const { return m_image; }
-    const FilterOperations& filterOperations() const { return m_filterOperations; }
-
-    static constexpr bool isFixedSize = true;
-
 private:
-    explicit StyleFilterImage(RefPtr<StyleImage>&&, FilterOperations&&);
+    explicit StyleFilterImage(Ref<CSSFilterImageValue>&&);
 
-    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
+    bool operator==(const StyleImage&) const final;
+
+    CSSImageGeneratorValue& imageValue() final;
+    Ref<CSSValue> cssValue() const final;
+    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
-    // CachedImageClient.
-    void imageChanged(CachedImage*, const IntRect* = nullptr) final;
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
 
-    RefPtr<StyleImage> m_image;
-    FilterOperations m_filterOperations;
-
-    // FIXME: Rather than caching and tracking the input image via CachedImages, we should
-    // instead use a new, StyleImage specific notification, to allow correct tracking of
-    // nested images (e.g. the input image for a StyleFilterImage is a StyleCrossfadeImage
-    // where one of the inputs to the StyleCrossfadeImage is a StyleCachedImage).
-    CachedResourceHandle<CachedImage> m_cachedImage;
-    bool m_inputImageIsReady;
+    Ref<CSSFilterImageValue> m_imageGeneratorValue;
 };
 
 } // namespace WebCore

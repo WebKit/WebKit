@@ -1575,7 +1575,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
 
     bool didSet = false;
     for (auto& item : downcast<CSSValueList>(value)) {
-        if (item->isImage()) {
+        if (is<CSSImageGeneratorValue>(item) || is<CSSImageSetValue>(item) || is<CSSImageValue>(item)) {
             builderState.style().setContent(builderState.createStyleImage(item.get()), didSet);
             didSet = true;
             continue;

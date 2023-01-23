@@ -33,6 +33,7 @@
 #include "CSSBackgroundRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageWidthValue.h"
+#include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
@@ -483,25 +484,26 @@ void CSSToStyleMap::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
     CSSValueList& borderImage = downcast<CSSValueList>(*value);
 
     for (auto& current : borderImage) {
-        if (current->isImage())
-            image.setImage(styleImage(current));
-        else if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(current.get()))
-            mapNinePieceImageSlice(*imageSlice, image);
-        else if (auto* slashList = dynamicDowncast<CSSValueList>(current.get())) {
+        if (is<CSSImageValue>(current) || is<CSSImageGeneratorValue>(current) || is<CSSImageSetValue>(current))
+            image.setImage(styleImage(current.get()));
+        else if (is<CSSBorderImageSliceValue>(current))
+            mapNinePieceImageSlice(current, image);
+        else if (is<CSSValueList>(current)) {
+            CSSValueList& slashList = downcast<CSSValueList>(current.get());
             // Map in the image slices.
-            if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(slashList->item(0)))
-                mapNinePieceImageSlice(*imageSlice, image);
+            if (is<CSSBorderImageSliceValue>(slashList.item(0)))
+                mapNinePieceImageSlice(*slashList.item(0), image);
 
             // Map in the border slices.
-            if (auto* borderImageWidth = dynamicDowncast<CSSBorderImageWidthValue>(slashList->item(1)))
-                mapNinePieceImageWidth(*borderImageWidth, image);
+            if (is<CSSBorderImageWidthValue>(slashList.item(1)))
+                mapNinePieceImageWidth(*slashList.item(1), image);
 
             // Map in the outset.
-            if (slashList->item(2))
-                image.setOutset(mapNinePieceImageQuad(*slashList->item(2)));
-        } else if (auto* imageRepeat = dynamicDowncast<CSSPrimitiveValue>(current.get())) {
+            if (slashList.item(2))
+                image.setOutset(mapNinePieceImageQuad(*slashList.item(2)));
+        } else if (is<CSSPrimitiveValue>(current)) {
             // Set the appropriate rules for stretch/round/repeat of the slices.
-            mapNinePieceImageRepeat(*imageRepeat, image);
+            mapNinePieceImageRepeat(current, image);
         }
     }
 }
@@ -511,14 +513,12 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSValue& value, NinePieceImage& imag
     if (!is<CSSBorderImageSliceValue>(value))
         return;
 
-    mapNinePieceImageSlice(downcast<CSSBorderImageSliceValue>(value), image);
-}
+    // Retrieve the border image value.
+    auto& borderImageSlice = downcast<CSSBorderImageSliceValue>(value);
 
-void CSSToStyleMap::mapNinePieceImageSlice(CSSBorderImageSliceValue& value, NinePieceImage& image)
-{
     // Set up a length box to represent our image slices.
     LengthBox box;
-    Quad& slices = value.slices();
+    Quad& slices = borderImageSlice.slices();
     if (slices.top()->isPercentage())
         box.top() = Length(slices.top()->doubleValue(), LengthType::Percent);
     else
@@ -538,7 +538,7 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSBorderImageSliceValue& value, Nine
     image.setImageSlices(box);
 
     // Set our fill mode.
-    image.setFill(value.m_fill);
+    image.setFill(borderImageSlice.m_fill);
 }
 
 void CSSToStyleMap::mapNinePieceImageWidth(CSSValue& value, NinePieceImage& image)
@@ -546,16 +546,10 @@ void CSSToStyleMap::mapNinePieceImageWidth(CSSValue& value, NinePieceImage& imag
     if (!is<CSSBorderImageWidthValue>(value))
         return;
 
-    return mapNinePieceImageWidth(downcast<CSSBorderImageWidthValue>(value), image);
-}
-
-void CSSToStyleMap::mapNinePieceImageWidth(CSSBorderImageWidthValue& value, NinePieceImage& image)
-{
-    if (!is<CSSBorderImageWidthValue>(value))
-        return;
-
-    image.setBorderSlices(mapNinePieceImageQuad(value.widths()));
-    image.setOverridesBorderWidths(value.m_overridesBorderWidths);
+    // Retrieve the border image value.
+    auto& borderImageWidth = downcast<CSSBorderImageWidthValue>(value);
+    image.setBorderSlices(mapNinePieceImageQuad(borderImageWidth.widths()));
+    image.setOverridesBorderWidths(borderImageWidth.m_overridesBorderWidths);
 }
 
 LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
@@ -630,12 +624,8 @@ void CSSToStyleMap::mapNinePieceImageRepeat(CSSValue& value, NinePieceImage& ima
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    mapNinePieceImageRepeat(downcast<CSSPrimitiveValue>(value), image);
-}
-
-void CSSToStyleMap::mapNinePieceImageRepeat(CSSPrimitiveValue& value, NinePieceImage& image)
-{
-    Pair* pair = value.pairValue();
+    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    Pair* pair = primitiveValue.pairValue();
     if (!pair || !pair->first() || !pair->second())
         return;
 

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class StyleCursorImage;
+class CSSCursorImageValue;
 
 class SVGCursorElement final : public SVGElement, public SVGTests, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGCursorElement);
@@ -36,8 +36,8 @@ public:
 
     virtual ~SVGCursorElement();
 
-    void addClient(StyleCursorImage&);
-    void removeClient(StyleCursorImage&);
+    void addClient(CSSCursorImageValue&);
+    void removeClient(CSSCursorImageValue&);
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -60,7 +60,7 @@ private:
 
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
-    HashSet<StyleCursorImage*> m_clients;
+    HashSet<CSSCursorImageValue*> m_clients;
 };
 
 } // namespace WebCore

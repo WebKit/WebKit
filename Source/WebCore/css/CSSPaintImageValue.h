@@ -28,37 +28,49 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSValue.h"
-#include <wtf/text/WTFString.h>
+#include "CSSImageGeneratorValue.h"
 
 namespace WebCore {
-
-class CSSVariableData;
-class StyleImage;
 
 namespace Style {
 class BuilderState;
 }
 
-class CSSPaintImageValue final : public CSSValue {
+class CSSVariableData;
+
+class CSSPaintImageValue final : public CSSImageGeneratorValue {
 public:
-    static Ref<CSSPaintImageValue> create(String name, Ref<CSSVariableData> arguments)
+    static Ref<CSSPaintImageValue> create(const String& name, Ref<CSSVariableData>&& arguments)
     {
-        return adoptRef(*new CSSPaintImageValue(WTFMove(name), WTFMove(arguments)));
+        return adoptRef(*new CSSPaintImageValue(name, WTFMove(arguments)));
     }
-    ~CSSPaintImageValue();
 
     const String& name() const { return m_name; }
+
+    RefPtr<Image> image(RenderElement&, const FloatSize&);
 
     bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
     String customCSSText() const;
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    bool isFixedSize() const { return false; }
+    FloatSize fixedSize(const RenderElement&) const { return FloatSize(); }
+
+    bool isPending() const { return false; }
+    bool knownToBeOpaque(const RenderElement&) const { return false; }
+
+    void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
+
+    Ref<CSSPaintImageValue> valueWithStylesResolved(Style::BuilderState&) { return *this; }
 
 private:
-    explicit CSSPaintImageValue(String&&, Ref<CSSVariableData>&&);
+    CSSPaintImageValue(const String& name, Ref<CSSVariableData>&& arguments)
+        : CSSImageGeneratorValue(PaintImageClass)
+        , m_name(name)
+        , m_arguments(WTFMove(arguments))
+    {
+    }
 
-    String m_name;
+    const String m_name;
     Ref<CSSVariableData> m_arguments;
 };
 

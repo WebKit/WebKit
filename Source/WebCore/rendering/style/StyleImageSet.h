@@ -28,29 +28,22 @@
 
 namespace WebCore {
 
+class CSSImageSetValue;
+
 class StyleImageSet final : public StyleMultiImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleImageSet> create(Vector<ImageWithScale>);
+    static Ref<StyleImageSet> create(CSSImageSetValue&);
     virtual ~StyleImageSet();
 
     bool operator==(const StyleImage& other) const;
-    bool equals(const StyleImageSet&) const;
-
-    ImageWithScale selectBestFitImage(const Document&) final;
 
 private:
-    explicit StyleImageSet(Vector<ImageWithScale>&&);
+    explicit StyleImageSet(CSSImageSetValue&);
 
-    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
-
-    ImageWithScale bestImageForScaleFactor();
-    void updateDeviceScaleFactor(const Document&);
-
-    bool m_accessedBestFitImage { false };
-    ImageWithScale m_bestFitImage;
-    float m_deviceScaleFactor { 1 };
-    Vector<ImageWithScale> m_images;
+    Ref<CSSValue> cssValue() const final;
+    ImageWithScale selectBestFitImage(const Document&) const final;
+    Ref<CSSImageSetValue> m_cssValue;
 };
 
 } // namespace WebCore

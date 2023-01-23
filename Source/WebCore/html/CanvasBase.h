@@ -50,7 +50,7 @@ class CanvasObserver : public CanMakeWeakPtr<CanvasObserver> {
 public:
     virtual ~CanvasObserver() = default;
 
-    virtual bool isStyleCanvasImage() const { return false; }
+    virtual bool isCanvasObserverProxy() const { return false; }
 
     virtual void canvasChanged(CanvasBase&, const std::optional<FloatRect>& changedRect) = 0;
     virtual void canvasResized(CanvasBase&) = 0;

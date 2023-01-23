@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSImageValue.h"
 #include "CSSParserContext.h"
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"

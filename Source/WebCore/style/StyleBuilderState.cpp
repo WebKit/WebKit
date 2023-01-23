@@ -96,39 +96,52 @@ bool BuilderState::useSVGZoomRulesForLength() const
     return is<SVGElement>(element()) && !(is<SVGSVGElement>(*element()) && element()->parentNode());
 }
 
-RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
+Ref<CSSValue> BuilderState::resolveImageStyles(CSSValue& value)
 {
     if (is<CSSImageValue>(value))
-        return downcast<CSSImageValue>(value).createStyleImage(*this);
+        return downcast<CSSImageValue>(value).valueWithStylesResolved(*this);
     if (is<CSSImageSetValue>(value))
-        return downcast<CSSImageSetValue>(value).createStyleImage(*this);
+        return downcast<CSSImageSetValue>(value).valueWithStylesResolved(*this);
     if (is<CSSCursorImageValue>(value))
-        return downcast<CSSCursorImageValue>(value).createStyleImage(*this);
+        return downcast<CSSCursorImageValue>(value).valueWithStylesResolved(*this);
     if (is<CSSNamedImageValue>(value))
-        return downcast<CSSNamedImageValue>(value).createStyleImage(*this);
+        return downcast<CSSNamedImageValue>(value).valueWithStylesResolved(*this);
     if (is<CSSCanvasValue>(value))
-        return downcast<CSSCanvasValue>(value).createStyleImage(*this);
+        return downcast<CSSCanvasValue>(value).valueWithStylesResolved(*this);
     if (is<CSSCrossfadeValue>(value))
-        return downcast<CSSCrossfadeValue>(value).createStyleImage(*this);
+        return downcast<CSSCrossfadeValue>(value).valueWithStylesResolved(*this);
     if (is<CSSFilterImageValue>(value))
-        return downcast<CSSFilterImageValue>(value).createStyleImage(*this);
-    if (is<CSSLinearGradientValue>(value))
-        return downcast<CSSLinearGradientValue>(value).createStyleImage(*this);
-    if (is<CSSPrefixedLinearGradientValue>(value))
-        return downcast<CSSPrefixedLinearGradientValue>(value).createStyleImage(*this);
-    if (is<CSSDeprecatedLinearGradientValue>(value))
-        return downcast<CSSDeprecatedLinearGradientValue>(value).createStyleImage(*this);
-    if (is<CSSRadialGradientValue>(value))
-        return downcast<CSSRadialGradientValue>(value).createStyleImage(*this);
-    if (is<CSSPrefixedRadialGradientValue>(value))
-        return downcast<CSSPrefixedRadialGradientValue>(value).createStyleImage(*this);
-    if (is<CSSDeprecatedRadialGradientValue>(value))
-        return downcast<CSSDeprecatedRadialGradientValue>(value).createStyleImage(*this);
-    if (is<CSSConicGradientValue>(value))
-        return downcast<CSSConicGradientValue>(value).createStyleImage(*this);
+        return downcast<CSSFilterImageValue>(value).valueWithStylesResolved(*this);
+    if (is<CSSGradientValue>(value))
+        return downcast<CSSGradientValue>(value).valueWithStylesResolved(*this);
 #if ENABLE(CSS_PAINTING_API)
     if (is<CSSPaintImageValue>(value))
-        return downcast<CSSPaintImageValue>(value).createStyleImage(*this);
+        return downcast<CSSPaintImageValue>(value).valueWithStylesResolved(*this);
+#endif
+    return value;
+}
+
+RefPtr<StyleImage> BuilderState::createStyleImage(CSSValue& value)
+{
+    if (is<CSSImageValue>(value))
+        return StyleCachedImage::create(downcast<CSSImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSImageSetValue>(value))
+        return StyleImageSet::create(downcast<CSSImageSetValue>(resolveImageStyles(value).get()));
+    if (is<CSSCursorImageValue>(value))
+        return StyleCursorImage::create(downcast<CSSCursorImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSNamedImageValue>(value))
+        return StyleNamedImage::create(downcast<CSSNamedImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSCanvasValue>(value))
+        return StyleCanvasImage::create(downcast<CSSCanvasValue>(resolveImageStyles(value).get()));
+    if (is<CSSCrossfadeValue>(value))
+        return StyleCrossfadeImage::create(downcast<CSSCrossfadeValue>(resolveImageStyles(value).get()));
+    if (is<CSSFilterImageValue>(value))
+        return StyleFilterImage::create(downcast<CSSFilterImageValue>(resolveImageStyles(value).get()));
+    if (is<CSSGradientValue>(value))
+        return StyleGradientImage::create(downcast<CSSGradientValue>(resolveImageStyles(value).get()));
+#if ENABLE(CSS_PAINTING_API)
+    if (is<CSSPaintImageValue>(value))
+        return StylePaintImage::create(downcast<CSSPaintImageValue>(resolveImageStyles(value).get()));
 #endif
     return nullptr;
 }

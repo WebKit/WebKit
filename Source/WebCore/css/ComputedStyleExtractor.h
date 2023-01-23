@@ -64,8 +64,6 @@ public:
     enum class AdjustPixelValuesForComputedStyle : uint8_t { Yes, No };
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
-    static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
-
     static void addValueForAnimationPropertyToList(CSSValueList&, CSSPropertyID, const Animation*);
 
     static bool updateStyleIfNeededForProperty(Element&, CSSPropertyID);
@@ -77,6 +75,7 @@ private:
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID);
     Ref<CSSValue> adjustSVGPaint(SVGPaintType, const String& url, Ref<CSSPrimitiveValue> color) const;
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
+    Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&) const;
 
     Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
     RefPtr<CSSValueList> getCSSPropertyValuesFor2SidesShorthand(const StylePropertyShorthand&);

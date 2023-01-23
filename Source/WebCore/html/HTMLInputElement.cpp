@@ -2125,23 +2125,18 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(unsigned start,
     return { };
 }
 
-static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
+static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
 {
-    Vector<StyleGradientImage::Stop> stops {
-        { Color::black, CSSPrimitiveValue::create(50, CSSUnitType::CSS_PERCENTAGE) },
-        { Color::transparentBlack, CSSPrimitiveValue::create(100, CSSUnitType::CSS_PERCENTAGE) }
+    CSSGradientColorStopList stops {
+        { CSSValuePool::singleton().createColorValue(Color::black), CSSPrimitiveValue::create(50, CSSUnitType::CSS_PERCENTAGE), { } },
+        { CSSValuePool::singleton().createColorValue(Color::transparentBlack), CSSPrimitiveValue::create(100, CSSUnitType::CSS_PERCENTAGE), { } }
     };
 
-    return StyleGradientImage::create(
-        StyleGradientImage::LinearData {
-            {
-                CSSLinearGradientValue::Angle { CSSPrimitiveValue::create(90, CSSUnitType::CSS_DEG) }
-            },
-            CSSGradientRepeat::NonRepeating
-        },
-        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied),
-        WTFMove(stops)
-    );
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied);
+    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient, colorInterpolationMethod, WTFMove(stops));
+    gradient->setAngle(CSSPrimitiveValue::create(90, CSSUnitType::CSS_DEG));
+    gradient->resolveRGBColors();
+    return gradient;
 }
 
 RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
@@ -2163,7 +2158,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
         textBlockStyle.setMaxWidth(Length { 100, LengthType::Percent });
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
-        textBlockStyle.setMaskImage(autoFillStrongPasswordMaskImage());
+        textBlockStyle.setMaskImage(StyleGradientImage::create(autoFillStrongPasswordMaskImage()));
         // A stacking context is needed for the mask.
         if (textBlockStyle.hasAutoUsedZIndex())
             textBlockStyle.setUsedZIndex(0);

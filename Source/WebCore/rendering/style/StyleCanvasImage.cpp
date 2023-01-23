@@ -28,124 +28,73 @@
 #include "StyleCanvasImage.h"
 
 #include "CSSCanvasValue.h"
-#include "HTMLCanvasElement.h"
-#include "InspectorInstrumentation.h"
-#include "RenderElement.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
-StyleCanvasImage::StyleCanvasImage(String&& name)
-    : StyleGeneratedImage { Type::CanvasImage, StyleCanvasImage::isFixedSize }
-    , m_name { WTFMove(name) }
-    , m_element { nullptr }
+StyleCanvasImage::StyleCanvasImage(Ref<CSSCanvasValue>&& value)
+    : StyleGeneratedImage(Type::CanvasImage, value->isFixedSize())
+    , m_imageGeneratorValue { WTFMove(value) }
 {
 }
 
-StyleCanvasImage::~StyleCanvasImage()
-{
-    if (m_element)
-        m_element->removeObserver(*this);
-}
+StyleCanvasImage::~StyleCanvasImage() = default;
 
 bool StyleCanvasImage::operator==(const StyleImage& other) const
 {
-    return is<StyleCanvasImage>(other) && equals(downcast<StyleCanvasImage>(other));
+    if (is<StyleCanvasImage>(other))
+        return arePointingToEqualData(m_imageGeneratorValue.ptr(), downcast<StyleCanvasImage>(other).m_imageGeneratorValue.ptr());
+    return false;
 }
 
-bool StyleCanvasImage::equals(const StyleCanvasImage& other) const
+CSSImageGeneratorValue& StyleCanvasImage::imageValue()
 {
-    return m_name == other.m_name;
+    return m_imageGeneratorValue;
 }
 
-Ref<CSSValue> StyleCanvasImage::computedStyleValue(const RenderStyle&) const
+Ref<CSSValue> StyleCanvasImage::cssValue() const
 {
-    return CSSCanvasValue::create(m_name);
+    return m_imageGeneratorValue.copyRef();
 }
 
 bool StyleCanvasImage::isPending() const
 {
-    return false;
+    return m_imageGeneratorValue->isPending();
 }
 
-void StyleCanvasImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
+void StyleCanvasImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
+    m_imageGeneratorValue->loadSubimages(loader, options);
 }
 
-RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const FloatSize&) const
+RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const FloatSize& size) const
 {
-    if (!renderer)
-        return &Image::nullImage();
-
-    ASSERT(clients().contains(const_cast<RenderElement*>(renderer)));
-    auto* element = this->element(renderer->document());
-    if (!element || !element->buffer())
-        return nullptr;
-    return element->copiedImage();
+    return renderer ? m_imageGeneratorValue->image(const_cast<RenderElement&>(*renderer), size) : &Image::nullImage();
 }
 
-bool StyleCanvasImage::knownToBeOpaque(const RenderElement&) const
+bool StyleCanvasImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    // FIXME: When CanvasRenderingContext2DSettings.alpha is implemented, this can be improved to check for it.
-    return false;
+    return m_imageGeneratorValue->knownToBeOpaque(renderer);
 }
 
 FloatSize StyleCanvasImage::fixedSize(const RenderElement& renderer) const
 {
-    if (auto* element = this->element(renderer.document()))
-        return FloatSize { element->size() };
-    return { };
+    return m_imageGeneratorValue->fixedSize(renderer);
 }
 
-void StyleCanvasImage::didAddClient(RenderElement& renderer)
+void StyleCanvasImage::addClient(RenderElement& renderer)
 {
-    if (auto* element = this->element(renderer.document()))
-        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
+    m_imageGeneratorValue->addClient(renderer);
 }
 
-void StyleCanvasImage::didRemoveClient(RenderElement& renderer)
+void StyleCanvasImage::removeClient(RenderElement& renderer)
 {
-    if (auto* element = this->element(renderer.document()))
-        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
+    m_imageGeneratorValue->removeClient(renderer);
 }
 
-void StyleCanvasImage::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>& changedRect)
+bool StyleCanvasImage::hasClient(RenderElement& renderer) const
 {
-    ASSERT_UNUSED(canvasBase, is<HTMLCanvasElement>(canvasBase));
-    ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
-
-    if (!changedRect)
-        return;
-
-    auto imageChangeRect = enclosingIntRect(changedRect.value());
-    for (auto& client : clients().values())
-        client->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
-}
-
-void StyleCanvasImage::canvasResized(CanvasBase& canvasBase)
-{
-    ASSERT_UNUSED(canvasBase, is<HTMLCanvasElement>(canvasBase));
-    ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
-
-    for (auto& client : clients().values())
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
-}
-
-void StyleCanvasImage::canvasDestroyed(CanvasBase& canvasBase)
-{
-    ASSERT_UNUSED(canvasBase, is<HTMLCanvasElement>(canvasBase));
-    ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
-    m_element = nullptr;
-}
-
-HTMLCanvasElement* StyleCanvasImage::element(Document& document) const
-{
-    if (!m_element) {
-        m_element = document.getCSSCanvasElement(m_name);
-        if (!m_element)
-            return nullptr;
-        m_element->addObserver(const_cast<StyleCanvasImage&>(*this));
-    }
-    return m_element;
+    return m_imageGeneratorValue->clients().contains(&renderer);
 }
 
 } // namespace WebCore

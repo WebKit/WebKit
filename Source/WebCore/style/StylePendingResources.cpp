@@ -35,7 +35,8 @@
 #include "RenderStyle.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
-#include "StyleImage.h"
+#include "StyleCachedImage.h"
+#include "StyleGeneratedImage.h"
 #include "TransformFunctions.h"
 
 namespace WebCore {

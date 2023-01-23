@@ -30,19 +30,12 @@
 #if ENABLE(CSS_PAINTING_API)
 
 #include "CSSVariableData.h"
-#include "StylePaintImage.h"
+#include "CustomPaintImage.h"
+#include "PaintWorkletGlobalScope.h"
+#include "RenderElement.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-CSSPaintImageValue::CSSPaintImageValue(String&& name, Ref<CSSVariableData>&& arguments)
-    : CSSValue { PaintImageClass }
-    , m_name { WTFMove(name) }
-    , m_arguments { WTFMove(arguments) }
-{
-}
-
-CSSPaintImageValue::~CSSPaintImageValue() = default;
 
 String CSSPaintImageValue::customCSSText() const
 {
@@ -50,9 +43,40 @@ String CSSPaintImageValue::customCSSText() const
     return makeString("paint(", m_name, ')');
 }
 
-RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(Style::BuilderState&) const
+RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const FloatSize& size)
 {
-    return StylePaintImage::create(m_name, m_arguments);
+    if (size.isEmpty())
+        return nullptr;
+    auto* selectedGlobalScope = renderElement.document().paintWorkletGlobalScopeForName(m_name);
+    if (!selectedGlobalScope)
+        return nullptr;
+    Locker locker { selectedGlobalScope->paintDefinitionLock() };
+    auto* registration = selectedGlobalScope->paintDefinitionMap().get(m_name);
+
+    if (!registration)
+        return nullptr;
+
+    // FIXME: Check if argument list matches syntax.
+    Vector<String> arguments;
+    CSSParserTokenRange localRange(m_arguments->tokenRange());
+
+    while (!localRange.atEnd()) {
+        StringBuilder builder;
+        while (!localRange.atEnd() && localRange.peek() != CommaToken) {
+            if (localRange.peek() == CommentToken)
+                localRange.consume();
+            else if (localRange.peek().getBlockType() == CSSParserToken::BlockStart) {
+                localRange.peek().serialize(builder);
+                builder.append(localRange.consumeBlock().serialize(), ')');
+            } else
+                localRange.consume().serialize(builder);
+        }
+        if (!localRange.atEnd())
+            localRange.consume(); // comma token
+        arguments.append(builder.toString());
+    }
+
+    return CustomPaintImage::create(*registration, size, renderElement, arguments);
 }
 
 } // namespace WebCore

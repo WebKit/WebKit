@@ -32,26 +32,53 @@
 #include "Document.h"
 #include "Element.h"
 #include "StyleBuilderState.h"
-#include "StyleCachedImage.h"
 
 namespace WebCore {
 
-CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorType)
+static bool operator==(const ResolvedURL& a, const ResolvedURL& b)
+{
+    return a.specifiedURLString == b.specifiedURLString && a.resolvedURL == b.resolvedURL;
+}
+
+// https://drafts.csswg.org/css-values/#url-local-url-flag
+bool ResolvedURL::isLocalURL() const
+{
+    return specifiedURLString.startsWith('#');
+}
+
+static ResolvedURL makeResolvedURL(URL&& resolvedURL)
+{
+    auto string = resolvedURL.string();
+    return { WTFMove(string), WTFMove(resolvedURL) };
+}
+
+CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource)
     : CSSValue(ImageClass)
     , m_location(WTFMove(location))
-    , m_initiatorType(WTFMove(initiatorType))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
 
-Ref<CSSImageValue> CSSImageValue::create(ResolvedURL location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
+CSSImageValue::CSSImageValue(CachedImage& image)
+    : CSSValue(ImageClass)
+    , m_location { image.url().string(), image.url() }
+    , m_cachedImage(&image)
 {
-    return adoptRef(*new CSSImageValue(WTFMove(location), loadedFromOpaqueSource, WTFMove(initiatorType)));
 }
 
-Ref<CSSImageValue> CSSImageValue::create(URL imageURL, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
+Ref<CSSImageValue> CSSImageValue::create(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    return create(makeResolvedURL(WTFMove(imageURL)), loadedFromOpaqueSource, WTFMove(initiatorType));
+    return adoptRef(*new CSSImageValue(WTFMove(location), loadedFromOpaqueSource));
+}
+
+Ref<CSSImageValue> CSSImageValue::create(URL&& imageURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+{
+    return create(makeResolvedURL(WTFMove(imageURL)), loadedFromOpaqueSource);
+}
+
+Ref<CSSImageValue> CSSImageValue::create(CachedImage& image)
+{
+    return adoptRef(*new CSSImageValue(image));
 }
 
 CSSImageValue::~CSSImageValue() = default;
@@ -74,16 +101,16 @@ URL CSSImageValue::reresolvedURL(const Document& document) const
     return document.completeURL(m_location.resolvedURL.string());
 }
 
-RefPtr<StyleImage> CSSImageValue::createStyleImage(Style::BuilderState& state) const
+Ref<CSSImageValue> CSSImageValue::valueWithStylesResolved(Style::BuilderState& state)
 {
     auto location = makeResolvedURL(reresolvedURL(state.document()));
     if (m_location == location)
-        return StyleCachedImage::create(const_cast<CSSImageValue&>(*this));
+        return *this;
     auto result = create(WTFMove(location), m_loadedFromOpaqueSource);
     result->m_cachedImage = m_cachedImage;
     result->m_initiatorType = m_initiatorType;
-    result->m_unresolvedValue = const_cast<CSSImageValue*>(this);
-    return StyleCachedImage::create(WTFMove(result));
+    result->m_unresolvedValue = this;
+    return result;
 }
 
 CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)

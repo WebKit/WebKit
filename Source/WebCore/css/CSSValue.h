@@ -80,8 +80,8 @@ public:
     bool isFontValue() const { return m_classType == FontClass; }
     bool isFontStyleRangeValue() const { return m_classType == FontStyleRangeClass; }
     bool isFontStyleWithAngleValue() const { return m_classType == FontStyleWithAngleClass; }
-    bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= PrefixedRadialGradientClass; }
-    bool isGradientValue() const { return m_classType >= LinearGradientClass && m_classType <= PrefixedRadialGradientClass; }
+    bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= ConicGradientClass; }
+    bool isGradientValue() const { return m_classType >= LinearGradientClass && m_classType <= ConicGradientClass; }
     bool isNamedImageValue() const { return m_classType == NamedImageClass; }
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
     bool isImageValue() const { return m_classType == ImageClass; }
@@ -89,10 +89,6 @@ public:
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }
     bool isRadialGradientValue() const { return m_classType == RadialGradientClass; }
     bool isConicGradientValue() const { return m_classType == ConicGradientClass; }
-    bool isDeprecatedLinearGradientValue() const { return m_classType == DeprecatedLinearGradientClass; }
-    bool isDeprecatedRadialGradientValue() const { return m_classType == DeprecatedRadialGradientClass; }
-    bool isPrefixedLinearGradientValue() const { return m_classType == PrefixedLinearGradientClass; }
-    bool isPrefixedRadialGradientValue() const { return m_classType == PrefixedRadialGradientClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isCubicBezierTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass; }
@@ -118,10 +114,6 @@ public:
 
     bool isOffsetRotateValue() const { return m_classType == OffsetRotateClass; }
     bool isRayValue() const { return m_classType == RayClass; }
-
-    // NOTE: This returns true for all image like values except CSSCursorImageValues, as these are
-    //       the values that corrispond to the CSS <image> production.
-    bool isImage() const { return isImageValue() || isImageSetValue() || isImageGeneratorValue(); }
 
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
 
@@ -165,10 +157,6 @@ protected:
         LinearGradientClass,
         RadialGradientClass,
         ConicGradientClass,
-        DeprecatedLinearGradientClass,
-        DeprecatedRadialGradientClass,
-        PrefixedLinearGradientClass,
-        PrefixedRadialGradientClass,
 
         // Timing function classes.
         CubicBezierTimingFunctionClass,

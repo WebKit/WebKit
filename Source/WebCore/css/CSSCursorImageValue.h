@@ -27,7 +27,11 @@
 
 namespace WebCore {
 
-class StyleImage;
+class Document;
+class WeakPtrImplWithEventTargetData;
+class SVGCursorElement;
+
+struct ImageWithScale;
 
 namespace Style {
 class BuilderState;
@@ -36,23 +40,32 @@ class BuilderState;
 class CSSCursorImageValue final : public CSSValue {
 public:
     static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource);
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL, LoadedFromOpaqueSource);
     ~CSSCursorImageValue();
 
     std::optional<IntPoint> hotSpot() const { return m_hotSpot; }
 
     const URL& imageURL() const { return m_originalURL; }
+
     String customCSSText() const;
+
+    ImageWithScale selectBestFitImage(const Document&);
+
     bool equals(const CSSCursorImageValue&) const;
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    void cursorElementRemoved(SVGCursorElement&);
+    void cursorElementChanged(SVGCursorElement&);
+
+    Ref<CSSCursorImageValue> valueWithStylesResolved(Style::BuilderState&);
 
 private:
-    CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL, LoadedFromOpaqueSource);
+    CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource);
+
+    SVGCursorElement* updateCursorElement(const Document&);
 
     URL m_originalURL;
     Ref<CSSValue> m_imageValue;
     std::optional<IntPoint> m_hotSpot;
+    WeakHashSet<SVGCursorElement, WeakPtrImplWithEventTargetData> m_cursorElements;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };
 

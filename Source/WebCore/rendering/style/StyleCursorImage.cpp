@@ -26,123 +26,51 @@
 #include "StyleCursorImage.h"
 
 #include "CSSCursorImageValue.h"
-#include "CSSImageValue.h"
+#include "CSSImageSetValue.h"
 #include "CachedImage.h"
 #include "FloatSize.h"
 #include "RenderElement.h"
-#include "SVGCursorElement.h"
-#include "SVGElementTypeHelpers.h"
-#include "SVGLengthContext.h"
-#include "SVGURIReference.h"
-#include "StyleBuilderState.h"
-#include "StyleCachedImage.h"
-#include "StyleImageSet.h"
 
 namespace WebCore {
 
-Ref<StyleCursorImage> StyleCursorImage::create(Ref<StyleImage>&& image, const std::optional<IntPoint>& hotSpot, const URL& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<StyleCursorImage> StyleCursorImage::create(CSSCursorImageValue& cssValue)
 { 
-    return adoptRef(*new StyleCursorImage(WTFMove(image), hotSpot, originalURL, loadedFromOpaqueSource));
+    return adoptRef(*new StyleCursorImage(cssValue)); 
 }
 
-StyleCursorImage::StyleCursorImage(Ref<StyleImage>&& image, const std::optional<IntPoint>& hotSpot, const URL& originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    : StyleMultiImage { Type::CursorImage }
-    , m_image { WTFMove(image) }
-    , m_hotSpot { hotSpot }
-    , m_originalURL { originalURL }
-    , m_loadedFromOpaqueSource { loadedFromOpaqueSource }
+StyleCursorImage::StyleCursorImage(CSSCursorImageValue& cssValue)
+    : StyleMultiImage(Type::CursorImage)
+    , m_cssValue(cssValue)
 {
 }
 
-StyleCursorImage::~StyleCursorImage()
-{
-    for (auto& element : m_cursorElements)
-        element.removeClient(*this);
-}
+StyleCursorImage::~StyleCursorImage() = default;
 
 bool StyleCursorImage::operator==(const StyleImage& other) const
 {
     return is<StyleCursorImage>(other) && equals(downcast<StyleCursorImage>(other));
 }
 
-bool StyleCursorImage::equals(const StyleCursorImage& other) const
-{
-    return equalInputImages(other) && StyleMultiImage::equals(other);
-}
-
-bool StyleCursorImage::equalInputImages(const StyleCursorImage& other) const
-{
-    return m_image.get() == other.m_image.get();
-}
-
-Ref<CSSValue> StyleCursorImage::computedStyleValue(const RenderStyle& style) const
+Ref<CSSValue> StyleCursorImage::cssValue() const
 { 
-    return CSSCursorImageValue::create(m_image->computedStyleValue(style), m_hotSpot, m_originalURL, m_loadedFromOpaqueSource );
+    return m_cssValue.copyRef(); 
 }
 
-ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
+ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document) const
 {
-    if (is<StyleImageSet>(m_image))
-        return downcast<StyleImageSet>(m_image.get()).selectBestFitImage(document);
-
-    if (is<StyleCachedImage>(m_image)) {
-        if (auto* cursorElement = updateCursorElement(document)) {
-            auto existingImageURL = downcast<StyleCachedImage>(m_image.get()).imageURL();
-            auto updatedImageURL = document.completeURL(cursorElement->href());
-
-            if (existingImageURL != updatedImageURL)
-                m_image = StyleCachedImage::create(CSSImageValue::create(WTFMove(updatedImageURL), m_loadedFromOpaqueSource));
-        }
-    }
-
-    return { m_image.ptr(), 1 };
-}
-
-SVGCursorElement* StyleCursorImage::updateCursorElement(const Document& document)
-{
-    auto element = SVGURIReference::targetElementFromIRIString(m_originalURL.string(), document).element;
-    if (!is<SVGCursorElement>(element))
-        return nullptr;
-
-    // FIXME: Not right to keep old cursor elements as clients. The new one should replace the old, not join it in a set.
-    auto& cursorElement = downcast<SVGCursorElement>(*element);
-    if (m_cursorElements.add(cursorElement).isNewEntry) {
-        cursorElementChanged(cursorElement);
-        cursorElement.addClient(*this);
-    }
-    return &cursorElement;
-}
-
-void StyleCursorImage::cursorElementRemoved(SVGCursorElement& cursorElement)
-{
-    // FIXME: Not right to stay a client of a cursor element until the element is destroyed. We'd want to stop being a client once it's no longer a valid target, like when it's disconnected.
-    m_cursorElements.remove(cursorElement);
-}
-
-void StyleCursorImage::cursorElementChanged(SVGCursorElement& cursorElement)
-{
-    // FIXME: Seems wrong that changing an old cursor element, one that that is no longer the target, changes the hot spot.
-    // FIXME: This will override a hot spot that was specified in CSS, which is probably incorrect.
-    // FIXME: Should we clamp from float to int instead of just casting here?
-    SVGLengthContext lengthContext(nullptr);
-    m_hotSpot = IntPoint {
-        static_cast<int>(std::round(cursorElement.x().value(lengthContext))),
-        static_cast<int>(std::round(cursorElement.y().value(lengthContext)))
-    };
-
-    // FIXME: Why doesn't this funtion check for a change to the href of the cursor element? Why would we dynamically track changes to x/y but not href?
+    return m_cssValue->selectBestFitImage(document);
 }
 
 void StyleCursorImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom)
 {
     if (!hasCachedImage())
         return;
-    cachedImage()->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, m_originalURL);
+    cachedImage()->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, m_cssValue->imageURL());
 }
 
 bool StyleCursorImage::usesDataProtocol() const
 {
-    return m_originalURL.protocolIsData();
+    return m_cssValue->imageURL().protocolIsData();
 }
 
-} // namespace WebCore
+}
