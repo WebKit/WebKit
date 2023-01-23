@@ -62,6 +62,9 @@ void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedW
         // a race towards its destruction.
         callOnMainThread([worker = WTFMove(worker)] { });
     });
+
+    if (auto* connection = SharedWorkerContextManager::singleton().connection())
+        connection->sharedWorkerTerminated(sharedWorkerIdentifier);
 }
 
 void SharedWorkerContextManager::suspendSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
@@ -108,18 +111,19 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
     proxy->thread().start([](const String& /*exceptionMessage*/) { });
 }
 
-void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, String&& sourceOrigin)
+void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, String&& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainThread());
     auto* proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier);
     RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::Connection::postConnectEvent: sharedWorkerIdentifier=%" PRIu64 ", proxy=%p", sharedWorkerIdentifier.toUInt64(), proxy);
     if (!proxy)
-        return;
+        return completionHandler(false);
 
     proxy->thread().runLoop().postTask([transferredPort = WTFMove(transferredPort), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& scriptExecutionContext) mutable {
         ASSERT(!isMainThread());
         downcast<SharedWorkerGlobalScope>(scriptExecutionContext).postConnectEvent(WTFMove(transferredPort), WTFMove(sourceOrigin));
     });
+    completionHandler(true);
 }
 
 void SharedWorkerContextManager::Connection::terminateSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)

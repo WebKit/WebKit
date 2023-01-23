@@ -61,7 +61,7 @@ public:
     void terminateWhenPossible() { m_shouldTerminateWhenPossible = true; }
 
     void launchSharedWorker(WebSharedWorker&);
-    void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&);
+    void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&, CompletionHandler<void(bool)>&&);
     void terminateSharedWorker(const WebSharedWorker&);
 
     void suspendSharedWorker(WebCore::SharedWorkerIdentifier);
@@ -80,6 +80,7 @@ private:
 
     // IPC messages.
     void postExceptionToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
+    void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;

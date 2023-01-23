@@ -22,4 +22,5 @@
 
 messages -> WebSharedWorkerServerToContextConnection NotRefCounted {
     PostExceptionToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, String errorMessage, int lineNumber, int columnNumber, String sourceURL)
+    SharedWorkerTerminated(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
 }
