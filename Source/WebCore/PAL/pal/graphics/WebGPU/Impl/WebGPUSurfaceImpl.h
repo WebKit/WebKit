@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,9 @@ class ConvertToBackingContext;
 class SurfaceImpl final : public Surface {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SurfaceImpl> create(WGPUSurface surface)
+    static Ref<SurfaceImpl> create(WGPUSurface surface, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new SurfaceImpl(surface));
+        return adoptRef(*new SurfaceImpl(surface, convertToBackingContext));
     }
 
     virtual ~SurfaceImpl();
@@ -54,7 +54,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    SurfaceImpl(WGPUSurface);
+    SurfaceImpl(WGPUSurface, ConvertToBackingContext&);
 
     SurfaceImpl(const SurfaceImpl&) = delete;
     SurfaceImpl(SurfaceImpl&&) = delete;
@@ -66,6 +66,7 @@ private:
     void setLabelInternal(const String&) final;
 
     WGPUSurface m_backing { nullptr };
+    Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 
 } // namespace PAL::WebGPU

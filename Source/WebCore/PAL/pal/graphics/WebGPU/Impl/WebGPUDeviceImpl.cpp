@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -188,7 +188,7 @@ Ref<Surface> DeviceImpl::createSurface(const SurfaceDescriptor& descriptor)
         label.data()
     };
 
-    return SurfaceImpl::create(wgpuInstanceCreateSurface(nullptr, &surfaceDescriptor));
+    return SurfaceImpl::create(wgpuInstanceCreateSurface(nullptr, &surfaceDescriptor), m_convertToBackingContext);
 }
 
 Ref<SwapChain> DeviceImpl::createSwapChain(const Surface& surface, const SwapChainDescriptor& descriptor)
@@ -208,7 +208,7 @@ Ref<SwapChain> DeviceImpl::createSwapChain(const Surface& surface, const SwapCha
     };
 
     WGPUSurface wgpuSurface = m_convertToBackingContext->convertToBacking(surface);
-    return SwapChainImpl::create(wgpuSurface, wgpuDeviceCreateSwapChain(backing(), wgpuSurface, &backingDescriptor));
+    return SwapChainImpl::create(wgpuSurface, wgpuDeviceCreateSwapChain(backing(), wgpuSurface, &backingDescriptor), m_convertToBackingContext);
 }
 
 Ref<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
