@@ -2,7 +2,8 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -1681,21 +1682,6 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
     // If the object has a page or column break value of "before", then we should shift to the top of the next page.
     LayoutUnit result = applyBeforeBreak(child, logicalTopAfterClear);
 
-    if (pageLogicalHeightForOffset(result)) {
-        LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(result, ExcludePageBoundary);
-        LayoutUnit spaceShortage = child.logicalHeight() - remainingLogicalHeight;
-        if (spaceShortage > 0) {
-            // If the child crosses a column boundary, report a break, in case nothing inside it has already
-            // done so. The column balancer needs to know how much it has to stretch the columns to make more
-            // content fit. If no breaks are reported (but do occur), the balancer will have no clue. FIXME:
-            // This should be improved, though, because here we just pretend that the child is
-            // unsplittable. A splittable child, on the other hand, has break opportunities at every position
-            // where there's no child content, border or padding. In other words, we risk stretching more
-            // than necessary.
-            setPageBreak(result, spaceShortage);
-        }
-    }
-
     if (child.shouldApplySizeContainment())
         adjustSizeContainmentChildForPagination(child, result);
 
@@ -1705,9 +1691,11 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
     
     LayoutUnit paginationStrut;
     LayoutUnit unsplittableAdjustmentDelta = logicalTopAfterUnsplittableAdjustment - logicalTopBeforeUnsplittableAdjustment;
-    if (unsplittableAdjustmentDelta)
+    LayoutUnit childLogicalHeight = child.logicalHeight();
+    if (unsplittableAdjustmentDelta) {
+        setPageBreak(result, childLogicalHeight - unsplittableAdjustmentDelta);
         paginationStrut = unsplittableAdjustmentDelta;
-    else if (childRenderBlock && childRenderBlock->paginationStrut())
+    } else if (childRenderBlock && childRenderBlock->paginationStrut())
         paginationStrut = childRenderBlock->paginationStrut();
 
     if (paginationStrut) {
@@ -1722,6 +1710,27 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
                 childRenderBlock->setPaginationStrut(0);
         } else
             result += paginationStrut;
+    }
+
+    if (!unsplittableAdjustmentDelta) {
+        if (LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(result)) {
+            LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(result, ExcludePageBoundary);
+            LayoutUnit spaceShortage = child.logicalHeight() - remainingLogicalHeight;
+            if (spaceShortage > 0) {
+                // If the child crosses a column boundary, report a break, in case nothing inside it
+                // has already done so. The column balancer needs to know how much it has to stretch
+                // the columns to make more content fit. If no breaks are reported (but do occur),
+                // the balancer will have no clue. Only measure the space after the last column
+                // boundary, in case it crosses more than one.
+                LayoutUnit spaceShortageInLastColumn = intMod(spaceShortage, pageLogicalHeight);
+                setPageBreak(result, spaceShortageInLastColumn ? spaceShortageInLastColumn : spaceShortage);
+            } else if (remainingLogicalHeight == pageLogicalHeight && offsetFromLogicalTopOfFirstPage() + child.logicalTop()) {
+                // We're at the very top of a page or column, and it's not the first one. This child
+                // may turn out to be the smallest piece of content that causes a page break, so we
+                // need to report it.
+                setPageBreak(result, childLogicalHeight);
+            }
+        }
     }
 
     // Similar to how we apply clearance. Boost height() to be the place where we're going to position the child.

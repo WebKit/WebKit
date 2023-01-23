@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 784x193
-  RenderBlock {DIV} at (0,0) size 784x193 [border: (2px solid #800000)]
-    RenderMultiColumnSet at (2,2) size 780x189
-layer at (10,10) size 382x268
-  RenderMultiColumnFlowThread at (2,2) size 382x268
+layer at (8,8) size 784x162
+  RenderBlock {DIV} at (0,0) size 784x162 [border: (2px solid #800000)]
+    RenderMultiColumnSet at (2,2) size 780x158
+layer at (10,10) size 382x316
+  RenderMultiColumnFlowThread at (2,2) size 382x316
     RenderBlock {DIV} at (0,0) size 382x110
-    RenderBlock {DIV} at (0,110) size 379x158 [bgcolor=#00FF00] [border: (2px solid #000000)]
+    RenderBlock {DIV} at (0,158) size 379x158 [bgcolor=#00FF00] [border: (2px solid #000000)]
       RenderBlock {DIV} at (12,2) size 355x154 [bgcolor=#008000] [border: (2px solid #0000FF)]
         RenderInline {SPAN} at (0,0) size 192x147
           RenderText {#text} at (2,3) size 192x147
