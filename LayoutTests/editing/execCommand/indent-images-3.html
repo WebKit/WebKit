@@ -10,11 +10,11 @@ if (window.testRunner)
 while (script = document.querySelector('script'))
     script.parentNode.removeChild(script);
 
-getSelection().setPosition(document.getElementsByTagName('div')[0], 2);
+getSelection().setPosition(document.getElementsByTagName('span')[0], 2);
 document.execCommand('indent');
 
 Markup.description('This test indents insides a document with exactly two image elements.\n'
-+ 'Indentation should fail because the root editable element is inline.');
++ 'Indentation should succeed even if the root editable element is inline.');
 Markup.dump(document.body);
 
 </script>

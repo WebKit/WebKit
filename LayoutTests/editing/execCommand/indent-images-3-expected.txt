@@ -1,8 +1,11 @@
 This test indents insides a document with exactly two image elements.
-Indentation should fail because the root editable element is inline.
+Indentation should succeed even if the root editable element is inline.
 | <span>
 |   contenteditable=""
-|   <img>
-|   <img>
+|   <blockquote>
+|     style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|     <img>
+|     <img>
+|     <#selection-caret>
 | "\n"
 | "\n"
