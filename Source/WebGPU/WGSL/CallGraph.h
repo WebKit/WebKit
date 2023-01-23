@@ -25,10 +25,45 @@
 
 #pragma once
 
+// FIXME: move Stage out of StageAttribute so we don't need to include this
+#include "ASTStageAttribute.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+
 namespace WGSL {
 
-class CallGraph;
+namespace AST {
+class CallableExpression;
+class ShaderModule;
+class FunctionDecl;
+};
 
-void rewriteEntryPoints(CallGraph&);
+class CallGraph {
+    friend class CallGraphBuilder;
+
+public:
+    struct Callee {
+        AST::FunctionDecl* m_target;
+        Vector<AST::CallableExpression*> m_callSites;
+    };
+
+    struct EntryPoint {
+        AST::FunctionDecl& m_function;
+        AST::StageAttribute::Stage m_stage;
+    };
+
+    AST::ShaderModule& ast() { return m_ast; }
+    const Vector<EntryPoint>& entrypoints() { return m_entrypoints; }
+
+private:
+    CallGraph(AST::ShaderModule&);
+
+    AST::ShaderModule& m_ast;
+    Vector<EntryPoint> m_entrypoints;
+    HashMap<String, AST::FunctionDecl*> m_functionsByName;
+    HashMap<AST::FunctionDecl*, Vector<Callee>> m_callees;
+};
+
+CallGraph buildCallGraph(AST::ShaderModule&);
 
 } // namespace WGSL
