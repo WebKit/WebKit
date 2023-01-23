@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLShaderPrecisionFormat.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
