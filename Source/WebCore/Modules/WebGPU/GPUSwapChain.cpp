@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,41 @@ String GPUSwapChain::label() const
 void GPUSwapChain::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));
+}
+
+void GPUSwapChain::clearCurrentTextureAndView()
+{
+    m_currentTexture = nullptr;
+    m_currentTextureView = nullptr;
+}
+
+void GPUSwapChain::ensureCurrentTextureAndView()
+{
+    ASSERT(static_cast<bool>(m_currentTexture) == static_cast<bool>(m_currentTextureView));
+
+    if (m_currentTexture && m_currentTextureView)
+        return;
+
+    m_currentTexture = GPUTexture::create(m_backing->getCurrentTexture()).ptr();
+    m_currentTextureView = GPUTextureView::create(m_backing->getCurrentTextureView()).ptr();
+}
+
+GPUTexture& GPUSwapChain::getCurrentTexture()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTexture;
+}
+
+GPUTextureView& GPUSwapChain::getCurrentTextureView()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTextureView;
+}
+
+void GPUSwapChain::present()
+{
+    m_backing->present();
+    clearCurrentTextureAndView();
 }
 
 #if PLATFORM(COCOA)

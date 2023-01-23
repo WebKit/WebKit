@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 
 #include "RemoteSurface.h"
 #include "RemoteSwapChainMessages.h"
+#include "RemoteTexture.h"
+#include "RemoteTextureView.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUSurfaceDescriptor.h"
@@ -53,6 +55,25 @@ RemoteSwapChain::~RemoteSwapChain() = default;
 void RemoteSwapChain::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteSwapChain::messageReceiverName(), m_identifier.toUInt64());
+}
+
+void RemoteSwapChain::getCurrentTexture(WebGPUIdentifier identifier)
+{
+    auto& texture = m_backing->getCurrentTexture();
+    auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    m_objectHeap.addObject(identifier, remoteTexture);
+}
+
+void RemoteSwapChain::getCurrentTextureView(WebGPUIdentifier identifier)
+{
+    auto& textureView = m_backing->getCurrentTextureView();
+    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    m_objectHeap.addObject(identifier, remoteTextureView);
+}
+
+void RemoteSwapChain::present()
+{
+    m_backing->present();
 }
 
 void RemoteSwapChain::destroy()

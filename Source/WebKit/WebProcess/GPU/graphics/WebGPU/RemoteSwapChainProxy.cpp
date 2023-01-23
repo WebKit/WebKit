@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 
 #include "RemoteSurfaceProxy.h"
 #include "RemoteSwapChainMessages.h"
+#include "RemoteTextureProxy.h"
+#include "RemoteTextureViewProxy.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUSurfaceDescriptor.h"
 #include <pal/graphics/WebGPU/WebGPUSurfaceDescriptor.h>
@@ -45,6 +47,55 @@ RemoteSwapChainProxy::RemoteSwapChainProxy(RemoteDeviceProxy& parent, ConvertToB
 
 RemoteSwapChainProxy::~RemoteSwapChainProxy()
 {
+}
+
+void RemoteSwapChainProxy::clearCurrentTextureAndView()
+{
+    m_currentTexture = nullptr;
+    m_currentTextureView = nullptr;
+}
+
+void RemoteSwapChainProxy::ensureCurrentTextureAndView()
+{
+    ASSERT(static_cast<bool>(m_currentTexture) == static_cast<bool>(m_currentTextureView));
+
+    if (m_currentTexture && m_currentTextureView)
+        return;
+
+    {
+        auto identifier = WebGPUIdentifier::generate();
+        auto sendResult = send(Messages::RemoteSwapChain::GetCurrentTexture(identifier));
+        UNUSED_VARIABLE(sendResult);
+
+        m_currentTexture = RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
+    }
+
+    {
+        auto identifier = WebGPUIdentifier::generate();
+        auto sendResult = send(Messages::RemoteSwapChain::GetCurrentTextureView(identifier));
+        UNUSED_VARIABLE(sendResult);
+
+        m_currentTextureView = RemoteTextureViewProxy::create(root(), m_convertToBackingContext, identifier);
+    }
+}
+
+PAL::WebGPU::Texture& RemoteSwapChainProxy::getCurrentTexture()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTexture;
+}
+
+PAL::WebGPU::TextureView& RemoteSwapChainProxy::getCurrentTextureView()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTextureView;
+}
+
+void RemoteSwapChainProxy::present()
+{
+    auto sendResult = send(Messages::RemoteSwapChain::Present());
+    UNUSED_VARIABLE(sendResult);
+    clearCurrentTextureAndView();
 }
 
 void RemoteSwapChainProxy::destroy()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,20 +38,19 @@ class ConvertToBackingContext;
 class RemoteTextureViewProxy final : public PAL::WebGPU::TextureView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureViewProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextureViewProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteTextureViewProxy(root, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteTextureViewProxy();
 
-    RemoteTextureProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& root() { return m_root; }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteTextureViewProxy(RemoteTextureProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteTextureViewProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteTextureViewProxy(const RemoteTextureViewProxy&) = delete;
     RemoteTextureViewProxy(RemoteTextureViewProxy&&) = delete;
@@ -76,7 +75,7 @@ private:
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<RemoteTextureProxy> m_parent;
+    Ref<RemoteGPUProxy> m_root;
 };
 
 } // namespace WebKit::WebGPU

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,16 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUSurfaceDescriptor.h"
 #include "WebGPUSurfaceImpl.h"
+#include "WebGPUTextureImpl.h"
+#include "WebGPUTextureViewImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/CompletionHandler.h>
 
 namespace PAL::WebGPU {
 
-SwapChainImpl::SwapChainImpl(WGPUSurface surface, WGPUSwapChain swapChain)
-    : m_backing(swapChain)
+SwapChainImpl::SwapChainImpl(WGPUSurface surface, WGPUSwapChain swapChain, TextureFormat format)
+    : m_format(format)
+    , m_backing(swapChain)
     , m_surface(surface)
 {
 }
@@ -50,6 +53,42 @@ SwapChainImpl::~SwapChainImpl()
 void SwapChainImpl::destroy()
 {
     wgpuSwapChainRelease(m_backing);
+}
+
+void SwapChainImpl::clearCurrentTextureAndView()
+{
+    m_currentTexture = nullptr;
+    m_currentTextureView = nullptr;
+}
+
+void SwapChainImpl::ensureCurrentTextureAndView()
+{
+    ASSERT(static_cast<bool>(m_currentTexture) == static_cast<bool>(m_currentTextureView));
+
+    if (m_currentTexture && m_currentTextureView)
+        return;
+
+    // FIXME: This is wrong; these objects are +0, but our Impl wrappers treat them as +1 objects.
+    m_currentTexture = TextureImpl::create(wgpuSwapChainGetCurrentTexture(m_backing), m_format, TextureDimension::_2d, m_convertToBackingContext).ptr();
+    m_currentTextureView = TextureViewImpl::create(wgpuSwapChainGetCurrentTextureView(m_backing), m_convertToBackingContext).ptr();
+}
+
+Texture& SwapChainImpl::getCurrentTexture()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTexture;
+}
+
+TextureView& SwapChainImpl::getCurrentTextureView()
+{
+    ensureCurrentTextureAndView();
+    return *m_currentTextureView;
+}
+
+void SwapChainImpl::present()
+{
+    wgpuSwapChainPresent(m_backing);
+    clearCurrentTextureAndView();
 }
 
 void SwapChainImpl::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

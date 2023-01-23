@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,22 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "WebGPUIntegralTypes.h"
 #include "WebGPUSwapChain.h"
-#include <IOSurface/IOSurfaceRef.h>
+#include "WebGPUTextureFormat.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
 
+class ConvertToBackingContext;
+class TextureImpl;
+class TextureViewImpl;
+
 class SwapChainImpl final : public SwapChain {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SwapChainImpl> create(WGPUSurface surface, WGPUSwapChain swapChain)
+    static Ref<SwapChainImpl> create(WGPUSurface surface, WGPUSwapChain swapChain, TextureFormat format)
     {
-        return adoptRef(*new SwapChainImpl(surface, swapChain));
+        return adoptRef(*new SwapChainImpl(surface, swapChain, format));
     }
 
     virtual ~SwapChainImpl();
@@ -47,14 +50,21 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    SwapChainImpl(WGPUSurface, WGPUSwapChain);
+    SwapChainImpl(WGPUSurface, WGPUSwapChain, TextureFormat);
 
     SwapChainImpl(const SwapChainImpl&) = delete;
     SwapChainImpl(SwapChainImpl&&) = delete;
     SwapChainImpl& operator=(const SwapChainImpl&) = delete;
     SwapChainImpl& operator=(SwapChainImpl&&) = delete;
 
+    void clearCurrentTextureAndView();
+    void ensureCurrentTextureAndView();
+
     WGPUSwapChain backing() const { return m_backing; }
+
+    Texture& getCurrentTexture() final;
+    TextureView& getCurrentTextureView() final;
+    void present() final;
 
     void destroy() final;
 #if PLATFORM(COCOA)
@@ -63,8 +73,12 @@ private:
 
     void setLabelInternal(const String&) final;
 
+    TextureFormat m_format { TextureFormat::Rgba8unorm };
+
     WGPUSwapChain m_backing { nullptr };
     WGPUSurface m_surface { nullptr };
+    RefPtr<TextureImpl> m_currentTexture;
+    RefPtr<TextureViewImpl> m_currentTextureView;
 };
 
 } // namespace PAL::WebGPU

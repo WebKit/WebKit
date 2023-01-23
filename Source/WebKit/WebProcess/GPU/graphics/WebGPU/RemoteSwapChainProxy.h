@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+class RemoteTextureProxy;
+class RemoteTextureViewProxy;
 
 class RemoteSwapChainProxy final : public PAL::WebGPU::SwapChain {
     WTF_MAKE_FAST_ALLOCATED;
@@ -77,13 +79,22 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
+    PAL::WebGPU::Texture& getCurrentTexture() final;
+    PAL::WebGPU::TextureView& getCurrentTextureView() final;
+    void present() final;
+
     void destroy() final;
 
     void setLabelInternal(const String&) final;
 
+    void clearCurrentTextureAndView();
+    void ensureCurrentTextureAndView();
+
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteDeviceProxy> m_parent;
+    RefPtr<RemoteTextureProxy> m_currentTexture;
+    RefPtr<RemoteTextureViewProxy> m_currentTextureView;
 };
 
 } // namespace WebKit::WebGPU

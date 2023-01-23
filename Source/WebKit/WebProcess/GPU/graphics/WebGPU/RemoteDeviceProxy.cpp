@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,14 +123,14 @@ Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createTexture(const PAL::WebGPU::Te
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {
         // FIXME: Implement error handling.
-        return RemoteTextureProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+        return RemoteTextureProxy::create(root(), m_convertToBackingContext, WebGPUIdentifier::generate());
     }
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateTexture(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier);
+    return RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
 }
 
 Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createSurfaceTexture(const PAL::WebGPU::TextureDescriptor& descriptor, const PAL::WebGPU::Surface& surface)
@@ -138,14 +138,14 @@ Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createSurfaceTexture(const PAL::Web
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {
         // FIXME: Implement error handling.
-        return RemoteTextureProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+        return RemoteTextureProxy::create(root(), m_convertToBackingContext, WebGPUIdentifier::generate());
     }
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateSurfaceTexture(m_convertToBackingContext->convertToBacking(surface), *convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier);
+    return RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
 }
 
 Ref<PAL::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const PAL::WebGPU::SamplerDescriptor& descriptor)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -453,6 +453,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuShaderModuleSetLabel);
     if (!strcmp(procName, "wgpuSurfaceGetPreferredFormat"))
         return reinterpret_cast<WGPUProc>(&wgpuSurfaceGetPreferredFormat);
+    if (!strcmp(procName, "wgpuSwapChainGetCurrentTexture"))
+        return reinterpret_cast<WGPUProc>(&wgpuSwapChainGetCurrentTexture);
     if (!strcmp(procName, "wgpuSwapChainGetCurrentTextureView"))
         return reinterpret_cast<WGPUProc>(&wgpuSwapChainGetCurrentTextureView);
     if (!strcmp(procName, "wgpuSwapChainPresent"))

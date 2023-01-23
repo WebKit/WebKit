@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,8 @@ namespace PAL::WebGPU {
 
 class Surface;
 struct SurfaceDescriptor;
+class Texture;
+class TextureView;
 
 class SwapChain : public RefCounted<SwapChain> {
 public:
@@ -46,6 +48,10 @@ public:
         m_label = WTFMove(label);
         setLabelInternal(m_label);
     }
+
+    virtual Texture& getCurrentTexture() = 0;
+    virtual TextureView& getCurrentTextureView() = 0;
+    virtual void present() = 0;
 
     virtual void destroy() = 0;
 

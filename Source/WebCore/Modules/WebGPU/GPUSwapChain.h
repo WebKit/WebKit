@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "GPUTexture.h"
+#include "GPUTextureView.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUSwapChain.h>
 #include <wtf/Ref.h>
@@ -43,6 +45,10 @@ public:
     String label() const;
     void setLabel(String&&);
 
+    GPUTexture& getCurrentTexture();
+    GPUTextureView& getCurrentTextureView();
+    void present();
+
 #if PLATFORM(COCOA)
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&);
 #endif
@@ -57,7 +63,12 @@ private:
     {
     }
 
+    void clearCurrentTextureAndView();
+    void ensureCurrentTextureAndView();
+
     Ref<PAL::WebGPU::SwapChain> m_backing;
+    RefPtr<GPUTexture> m_currentTexture;
+    RefPtr<GPUTextureView> m_currentTextureView;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,10 @@
 
 namespace WebKit::WebGPU {
 
-RemoteTextureProxy::RemoteTextureProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteTextureProxy::RemoteTextureProxy(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_parent(parent)
+    , m_root(root)
 {
 }
 
@@ -53,7 +53,7 @@ Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
         convertedDescriptor = m_convertToBackingContext->convertToBacking(*descriptor);
         if (!convertedDescriptor) {
             // FIXME: Implement error handling.
-            return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+            return RemoteTextureViewProxy::create(root(), m_convertToBackingContext, WebGPUIdentifier::generate());
         }
     }
 
@@ -61,7 +61,7 @@ Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
     auto sendResult = send(Messages::RemoteTexture::CreateView(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
+    return RemoteTextureViewProxy::create(root(), m_convertToBackingContext, identifier);
 }
 
 void RemoteTextureProxy::destroy()
