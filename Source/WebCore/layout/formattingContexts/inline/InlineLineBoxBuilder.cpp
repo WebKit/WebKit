@@ -165,16 +165,14 @@ AscentAndDescent LineBoxBuilder::enclosingAscentDescentWithFallbackFonts(const I
     auto shouldUseLineGapToAdjustAscentDescent = inlineBox.isRootInlineBox() || isTextEdgeLeading(inlineBox);
     for (auto* font : fallbackFontsForContent) {
         auto& fontMetrics = font->fontMetrics();
-        InlineLayoutUnit ascent = fontMetrics.ascent(fontBaseline);
-        InlineLayoutUnit descent = fontMetrics.descent(fontBaseline);
+        auto ascentAndDescent = ascentAndDescentWithTextEdgeForInlineBox(inlineBox, fontMetrics, fontBaseline);
         if (shouldUseLineGapToAdjustAscentDescent) {
-            auto logicalHeight = ascent + descent;
-            auto halfLeading = (fontMetrics.lineSpacing() - logicalHeight) / 2;
-            ascent = ascent + halfLeading;
-            descent = descent + halfLeading;
+            auto halfLeading = (fontMetrics.lineSpacing() - ascentAndDescent.height()) / 2;
+            ascentAndDescent.ascent += halfLeading;
+            ascentAndDescent.descent += halfLeading;
         }
-        maxAscent = std::max(maxAscent, ascent);
-        maxDescent = std::max(maxDescent, descent);
+        maxAscent = std::max(maxAscent, ascentAndDescent.ascent);
+        maxDescent = std::max(maxDescent, ascentAndDescent.descent);
     }
     // We need floor/ceil to match legacy layout integral positioning.
     return { floorf(maxAscent), ceilf(maxDescent) };
