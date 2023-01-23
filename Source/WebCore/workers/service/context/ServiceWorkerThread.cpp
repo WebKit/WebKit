@@ -225,7 +225,7 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
 {
     auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
     serviceWorkerGlobalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
+        RELEASE_LOG(ServiceWorker, "WebPush: ServiceWorkerThread::queueTaskToFirePushEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
 
         serviceWorkerGlobalScope->setHasPendingSilentPushEvent(true);
 
@@ -244,7 +244,7 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
             bool showedNotification = !serviceWorkerGlobalScope->hasPendingSilentPushEvent();
             bool success = !hasRejectedAnyPromise && showedNotification;
 
-            RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);
+            RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "WebPush: ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);
 
             callback(success);
         });

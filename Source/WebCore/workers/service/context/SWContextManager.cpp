@@ -119,6 +119,8 @@ void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::op
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
+        RELEASE_LOG(ServiceWorker, "WebPush: Unable to find service worker thread proxy to fire push event");
+
         callback(false);
         return;
     }
