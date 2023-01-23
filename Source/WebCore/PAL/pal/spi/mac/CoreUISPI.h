@@ -64,12 +64,10 @@ extern const CFStringRef kCUIUserInterfaceLayoutDirectionLeftToRight;
 extern const CFStringRef kCUIValueKey;
 
 extern const CFStringRef kCUIWidgetKey;
+extern const CFStringRef kCUIWidgetButtonComboBox;
 extern const CFStringRef kCUIWidgetButtonLittleArrows;
 extern const CFStringRef kCUIWidgetProgressIndeterminateBar;
 extern const CFStringRef kCUIWidgetProgressBar;
 extern const CFStringRef kCUIWidgetScrollBarTrackCorner;
-#if HAVE(LARGE_CONTROL_SIZE)
-extern const CFStringRef kCUIWidgetButtonComboBox;
-#endif
 
 #endif

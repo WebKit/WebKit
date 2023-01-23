@@ -210,11 +210,9 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int selectedIndex)
     case PopupMenuStyle::PopupMenuSizeMini:
         controlSize = NSControlSizeMini;
         break;
-#if HAVE(LARGE_CONTROL_SIZE)
     case PopupMenuStyle::PopupMenuSizeLarge:
         controlSize = NSControlSizeLarge;
         break;
-#endif
     }
 
     PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), selectedIndex, toNSFont(font), controlSize, !m_client->menuStyle().hasDefaultAppearance());
