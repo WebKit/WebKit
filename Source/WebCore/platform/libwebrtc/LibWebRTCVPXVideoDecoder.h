@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#if ENABLE(WEB_CODECS) && PLATFORM(COCOA) && USE(LIBWEBRTC)
 
 #include "VideoDecoder.h"
 #include <wtf/FastMalloc.h>

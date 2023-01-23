@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
-#if USE(LIBWEBRTC)
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
 #include "LibWebRTCVPXVideoDecoder.h"
 #endif
 
@@ -57,7 +57,7 @@ void VideoDecoder::create(const String& codecName, const Config& config, CreateC
 
 void VideoDecoder::createLocalDecoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
 {
-#if USE(LIBWEBRTC)
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
     UNUSED_PARAM(config);
     if (codecName == "vp8"_s) {
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));

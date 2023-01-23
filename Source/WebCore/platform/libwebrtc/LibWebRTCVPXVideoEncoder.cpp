@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCVPXVideoEncoder.h"
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#if ENABLE(WEB_CODECS) && PLATFORM(COCOA) && USE(LIBWEBRTC)
 
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/FastMalloc.h>
