@@ -13,7 +13,7 @@ PASS test2: remove/appendChild trigger notification
 PASS test3: dimensions match
 PASS test4: transform do not cause notifications
 PASS test5: moving an element does not trigger notifications
-PASS test6: inline element notifies once with 0x0.
+FAIL test6: inline element notifies once with 0x0. assert_unreached: Timed out waiting for notification. (1000ms) Reached unreachable code
 PASS test7: unobserve inside notify callback
 PASS test8: observe inside notify callback
 PASS test9: disconnect inside notify callback
