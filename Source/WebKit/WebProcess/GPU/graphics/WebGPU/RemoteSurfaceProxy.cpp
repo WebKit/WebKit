@@ -42,12 +42,14 @@ RemoteSurfaceProxy::RemoteSurfaceProxy(RemoteDeviceProxy& parent, ConvertToBacki
 
 RemoteSurfaceProxy::~RemoteSurfaceProxy()
 {
+    destroy();
 }
 
 void RemoteSurfaceProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteSurface::Destroy());
     UNUSED_VARIABLE(sendResult);
+    m_destroyed = true;
 }
 
 void RemoteSurfaceProxy::setLabelInternal(const String& label)

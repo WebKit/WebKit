@@ -49,7 +49,11 @@ SurfaceImpl::~SurfaceImpl()
 
 void SurfaceImpl::destroy()
 {
+    if (!m_backing)
+        return;
+
     wgpuSurfaceRelease(m_backing);
+    m_backing = nullptr;
 }
 
 void SurfaceImpl::setLabelInternal(const String&)

@@ -45,12 +45,14 @@ RemoteSwapChainProxy::RemoteSwapChainProxy(RemoteDeviceProxy& parent, ConvertToB
 
 RemoteSwapChainProxy::~RemoteSwapChainProxy()
 {
+    destroy();
 }
 
 void RemoteSwapChainProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteSwapChain::Destroy());
     UNUSED_VARIABLE(sendResult);
+    m_destroyed = true;
 }
 
 void RemoteSwapChainProxy::setLabelInternal(const String& label)

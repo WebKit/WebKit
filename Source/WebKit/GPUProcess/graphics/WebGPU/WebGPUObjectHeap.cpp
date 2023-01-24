@@ -53,10 +53,119 @@
 #include "RemoteTexture.h"
 #include "RemoteTextureView.h"
 
+#if PLATFORM(COCOA)
+#include <notify.h>
+#include <unordered_map>
+#endif
+
 namespace WebKit::WebGPU {
+
+#if PLATFORM(COCOA)
+const char* ObjectHeap::typeOfObject(const ObjectHeap::Object& object)
+{
+    return WTF::switchOn(object,
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>& adapter) {
+            return "RemoteAdapter";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>& bindGroup) {
+            return "RemoteBindGroup";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>& bindGroupLayout) {
+            return "RemoteBindGroupLayout";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>& adapter) {
+            return "RemoteBuffer";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>& bindGroup) {
+            return "RemoteCommandBuffer";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>& bindGroupLayout) {
+            return "RemoteCommandEncoder";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>& adapter) {
+            return "RemoteComputePassEncoder";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>& bindGroupLayout) {
+            return "RemoteComputePipeline";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>& device) {
+            return "RemoteDevice";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>& externalTexture) {
+            return "RemoteExternalTexture";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>& pipelineLayout) {
+            return "RemotePipelineLayout";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>& querySet) {
+            return "RemoteQuerySet";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>& queue) {
+            return "RemoteQueue";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>& renderBundleEncoder) {
+            return "RemoteRenderBundleEncoder";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>& adapter) {
+            return "RemoteRenderBundle";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>& bindGroup) {
+            return "RemoteRenderPassEncoder";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>& bindGroupLayout) {
+            return "RemoteRenderPipeline";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>& adapter) {
+            return "RemoteSampler";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>& bindGroup) {
+            return "RemoteShaderModule";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteSurface>& bindGroupLayout) {
+            return "RemoteSurface";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteSwapChain>& adapter) {
+            return "RemoteSwapChain";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>& bindGroup) {
+            return "RemoteTexture";
+        },
+        [] (const IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>& bindGroupLayout) {
+            return "RemoteTextureView";
+        },
+        [] (auto&& autoObject) {
+            (void)autoObject;
+            return "empty";
+        });
+}
+void ObjectHeap::printObjectHeap()
+{
+    std::unordered_map<char const*, int> counts;
+    for (auto& keyValuePair : m_objects)
+        ++counts[typeOfObject(keyValuePair.value)];
+
+    WTFLogAlways("===================== WebGPU ObjectHeap table =====================");
+    for (auto& keyValuePair : counts)
+        WTFLogAlways("%s - %d", keyValuePair.first, keyValuePair.second);
+
+    WTFLogAlways("===================================================================\n");
+}
+#endif // PLATFORM(COCOA)
 
 ObjectHeap::ObjectHeap()
 {
+#if PLATFORM(COCOA)
+    static ObjectHeap* currentObjectHeap;
+    currentObjectHeap = this;
+    // "notifyutil -p com.apple.WebKit.WebGPU.PrintObjectHeap"
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        int printObjectHeapToken;
+        notify_register_dispatch("com.apple.WebKit.WebGPU.PrintObjectHeap", &printObjectHeapToken, dispatch_get_main_queue(), ^(int) {
+            currentObjectHeap->printObjectHeap();
+        });
+    });
+#endif
 }
 
 ObjectHeap::~ObjectHeap()
@@ -201,10 +310,9 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteTextureView& textu
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void ObjectHeap::removeObject(WebGPUIdentifier identifier)
+bool ObjectHeap::removeObject(WebGPUIdentifier identifier)
 {
-    auto result = m_objects.remove(identifier);
-    ASSERT_UNUSED(result, result);
+    return m_objects.remove(identifier);
 }
 
 void ObjectHeap::clear()

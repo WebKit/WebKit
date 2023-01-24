@@ -45,7 +45,10 @@ RemoteSurface::RemoteSurface(PAL::WebGPU::Surface& surface, WebGPU::ObjectHeap& 
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteSurface::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteSurface::~RemoteSurface() = default;
+RemoteSurface::~RemoteSurface()
+{
+    destroy();
+}
 
 void RemoteSurface::stopListeningForIPC()
 {
@@ -54,7 +57,8 @@ void RemoteSurface::stopListeningForIPC()
 
 void RemoteSurface::destroy()
 {
-    m_backing->destroy();
+    if (m_objectHeap.removeObject(m_identifier))
+        m_backing->destroy();
 }
 
 void RemoteSurface::setLabel(String&& label)

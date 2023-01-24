@@ -42,6 +42,8 @@ RemotePipelineLayoutProxy::RemotePipelineLayoutProxy(RemoteDeviceProxy& parent, 
 
 RemotePipelineLayoutProxy::~RemotePipelineLayoutProxy()
 {
+    auto sendResult = send(Messages::RemotePipelineLayout::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemotePipelineLayoutProxy::setLabelInternal(const String& label)

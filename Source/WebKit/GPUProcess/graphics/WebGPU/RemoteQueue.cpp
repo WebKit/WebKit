@@ -44,7 +44,15 @@ RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHe
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteQueue::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteQueue::~RemoteQueue() = default;
+RemoteQueue::~RemoteQueue()
+{
+    destroy();
+}
+
+void RemoteQueue::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteQueue::stopListeningForIPC()
 {

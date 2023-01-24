@@ -57,7 +57,12 @@ RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, WebGP
     waitUntilInitialized();
 }
 
-RemoteGPUProxy::~RemoteGPUProxy() = default;
+RemoteGPUProxy::~RemoteGPUProxy()
+{
+    auto sendResult = send(Messages::RemoteGPU::Destroy());
+    UNUSED_VARIABLE(sendResult);
+    abandonGPUProcess();
+}
 
 void RemoteGPUProxy::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {

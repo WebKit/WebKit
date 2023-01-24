@@ -44,6 +44,7 @@ RemoteTextureProxy::RemoteTextureProxy(RemoteDeviceProxy& parent, ConvertToBacki
 
 RemoteTextureProxy::~RemoteTextureProxy()
 {
+    destroy();
 }
 
 Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>& descriptor)
@@ -68,6 +69,7 @@ void RemoteTextureProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteTexture::Destroy());
     UNUSED_VARIABLE(sendResult);
+    m_destroyed = true;
 }
 
 void RemoteTextureProxy::setLabelInternal(const String& label)

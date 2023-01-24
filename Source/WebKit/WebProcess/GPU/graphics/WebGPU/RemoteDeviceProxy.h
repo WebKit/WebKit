@@ -67,11 +67,15 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN bool send(T&& message)
     {
+        if (!root().isValid() || m_destroyed)
+            return false;
+
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
+        ASSERT(root().isValid() && !m_destroyed);
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
@@ -116,6 +120,7 @@ private:
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;
     Ref<RemoteQueueProxy> m_queue;
+    bool m_destroyed { false };
 };
 
 } // namespace WebKit::WebGPU

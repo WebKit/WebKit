@@ -48,7 +48,10 @@ RemoteSwapChain::RemoteSwapChain(PAL::WebGPU::SwapChain& swapChain, WebGPU::Obje
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteSwapChain::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteSwapChain::~RemoteSwapChain() = default;
+RemoteSwapChain::~RemoteSwapChain()
+{
+    destroy();
+}
 
 void RemoteSwapChain::stopListeningForIPC()
 {
@@ -57,7 +60,8 @@ void RemoteSwapChain::stopListeningForIPC()
 
 void RemoteSwapChain::destroy()
 {
-    m_backing->destroy();
+    if (m_objectHeap.removeObject(m_identifier))
+        m_backing->destroy();
 }
 
 void RemoteSwapChain::setLabel(String&& label)

@@ -42,12 +42,14 @@ RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBac
 
 RemoteQuerySetProxy::~RemoteQuerySetProxy()
 {
+    destroy();
 }
 
 void RemoteQuerySetProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteQuerySet::Destroy());
     UNUSED_VARIABLE(sendResult);
+    m_destroyed = true;
 }
 
 void RemoteQuerySetProxy::setLabelInternal(const String& label)

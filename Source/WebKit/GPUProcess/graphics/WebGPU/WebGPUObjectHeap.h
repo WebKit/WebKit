@@ -122,7 +122,7 @@ public:
     void addObject(WebGPUIdentifier, RemoteTexture&);
     void addObject(WebGPUIdentifier, RemoteTextureView&);
 
-    void removeObject(WebGPUIdentifier);
+    bool removeObject(WebGPUIdentifier);
 
     void clear();
 
@@ -180,6 +180,11 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
     >;
     HashMap<WebGPUIdentifier, Object> m_objects;
+
+#if PLATFORM(COCOA)
+    void printObjectHeap();
+    const char* typeOfObject(const ObjectHeap::Object&);
+#endif
 };
 
 } // namespace WebKit::WebGPU

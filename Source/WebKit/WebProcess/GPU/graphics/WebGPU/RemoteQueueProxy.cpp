@@ -42,6 +42,8 @@ RemoteQueueProxy::RemoteQueueProxy(RemoteDeviceProxy& parent, ConvertToBackingCo
 
 RemoteQueueProxy::~RemoteQueueProxy()
 {
+    auto sendResult = send(Messages::RemoteQueue::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQueueProxy::submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&& commandBuffers)

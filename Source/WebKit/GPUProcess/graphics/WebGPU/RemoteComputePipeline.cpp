@@ -46,7 +46,15 @@ RemoteComputePipeline::RemoteComputePipeline(PAL::WebGPU::ComputePipeline& compu
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteComputePipeline::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteComputePipeline::~RemoteComputePipeline() = default;
+RemoteComputePipeline::~RemoteComputePipeline()
+{
+    destroy();
+}
+
+void RemoteComputePipeline::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteComputePipeline::stopListeningForIPC()
 {

@@ -65,11 +65,15 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN bool send(T&& message)
     {
+        if (!root().isValid() || m_destroyed)
+            return false;
+
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
+        ASSERT(root().isValid());
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
@@ -88,6 +92,7 @@ private:
     Ref<RemoteDeviceProxy> m_parent;
     std::optional<Vector<uint8_t>> m_data;
     PAL::WebGPU::MapModeFlags m_mapModeFlags;
+    bool m_destroyed { false };
 };
 
 } // namespace WebKit::WebGPU

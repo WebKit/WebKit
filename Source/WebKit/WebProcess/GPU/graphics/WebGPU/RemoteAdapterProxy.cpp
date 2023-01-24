@@ -44,6 +44,8 @@ RemoteAdapterProxy::RemoteAdapterProxy(String&& name, PAL::WebGPU::SupportedFeat
 
 RemoteAdapterProxy::~RemoteAdapterProxy()
 {
+    auto sendResult = send(Messages::RemoteAdapter::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(Ref<PAL::WebGPU::Device>&&)>&& callback)

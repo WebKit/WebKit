@@ -58,6 +58,7 @@ public:
     RemoteGPUProxy& root() { return *this; }
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+    bool isValid() const { return m_gpuProcessConnection; }
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
@@ -88,11 +89,15 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN bool send(T&& message)
     {
+        if (!root().isValid())
+            return false;
+
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
+        ASSERT(root().isValid());
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }

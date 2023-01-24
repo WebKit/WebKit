@@ -50,7 +50,15 @@ RemoteAdapter::RemoteAdapter(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& 
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteAdapter::~RemoteAdapter() = default;
+RemoteAdapter::~RemoteAdapter()
+{
+    destroy();
+}
+
+void RemoteAdapter::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteAdapter::stopListeningForIPC()
 {

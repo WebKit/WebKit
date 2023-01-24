@@ -24,6 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteExternalTexture NotRefCounted Stream {
+    void Destroy()
     void SetLabel(String label)
 }
 

@@ -44,7 +44,15 @@ RemoteBindGroupLayout::RemoteBindGroupLayout(PAL::WebGPU::BindGroupLayout& bindG
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteBindGroupLayout::~RemoteBindGroupLayout() = default;
+RemoteBindGroupLayout::~RemoteBindGroupLayout()
+{
+    destroy();
+}
+
+void RemoteBindGroupLayout::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteBindGroupLayout::stopListeningForIPC()
 {

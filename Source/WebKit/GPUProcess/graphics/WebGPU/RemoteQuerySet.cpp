@@ -44,7 +44,10 @@ RemoteQuerySet::RemoteQuerySet(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectHe
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteQuerySet::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteQuerySet::~RemoteQuerySet() = default;
+RemoteQuerySet::~RemoteQuerySet()
+{
+    destroy();
+}
 
 void RemoteQuerySet::stopListeningForIPC()
 {
@@ -53,7 +56,8 @@ void RemoteQuerySet::stopListeningForIPC()
 
 void RemoteQuerySet::destroy()
 {
-    m_backing->destroy();
+    if (m_objectHeap.removeObject(m_identifier))
+        m_backing->destroy();
 }
 
 void RemoteQuerySet::setLabel(String&& label)

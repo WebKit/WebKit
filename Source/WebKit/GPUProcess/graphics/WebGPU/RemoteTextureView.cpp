@@ -44,7 +44,15 @@ RemoteTextureView::RemoteTextureView(PAL::WebGPU::TextureView& textureView, WebG
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteTextureView::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteTextureView::~RemoteTextureView() = default;
+RemoteTextureView::~RemoteTextureView()
+{
+    destroy();
+}
+
+void RemoteTextureView::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteTextureView::stopListeningForIPC()
 {

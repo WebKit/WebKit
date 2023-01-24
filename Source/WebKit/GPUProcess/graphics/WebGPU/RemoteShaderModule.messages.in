@@ -25,6 +25,7 @@
 
 messages -> RemoteShaderModule NotRefCounted Stream {
     void CompilationInfo() -> (Vector<WebKit::WebGPU::CompilationMessage> messages) Synchronous
+    void Destroy()
     void SetLabel(String label)
 }
 

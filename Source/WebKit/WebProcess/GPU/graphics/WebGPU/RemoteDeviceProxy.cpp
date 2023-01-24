@@ -61,6 +61,7 @@ RemoteDeviceProxy::RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&& featu
 
 RemoteDeviceProxy::~RemoteDeviceProxy()
 {
+    destroy();
 }
 
 PAL::WebGPU::Queue& RemoteDeviceProxy::queue()
@@ -70,6 +71,9 @@ PAL::WebGPU::Queue& RemoteDeviceProxy::queue()
 
 void RemoteDeviceProxy::destroy()
 {
+    auto sendResult = send(Messages::RemoteDevice::Destroy());
+    UNUSED_VARIABLE(sendResult);
+    m_destroyed = true;
 }
 
 Ref<PAL::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const PAL::WebGPU::BufferDescriptor& descriptor)

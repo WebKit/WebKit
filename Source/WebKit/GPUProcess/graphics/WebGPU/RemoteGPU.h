@@ -125,6 +125,7 @@ private:
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
     void workQueueInitialize();
     void workQueueUninitialize();
+    void destroy();
 
     template<typename T>
     bool send(T&& message) const

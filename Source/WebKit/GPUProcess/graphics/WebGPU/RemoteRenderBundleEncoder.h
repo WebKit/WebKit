@@ -100,6 +100,7 @@ private:
     void finish(const WebGPU::RenderBundleDescriptor&, WebGPUIdentifier);
 
     void setLabel(String&&);
+    void destroy();
 
     Ref<PAL::WebGPU::RenderBundleEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

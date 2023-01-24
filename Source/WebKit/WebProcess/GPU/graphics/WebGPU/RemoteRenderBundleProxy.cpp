@@ -42,6 +42,8 @@ RemoteRenderBundleProxy::RemoteRenderBundleProxy(RemoteDeviceProxy& parent, Conv
 
 RemoteRenderBundleProxy::~RemoteRenderBundleProxy()
 {
+    auto sendResult = send(Messages::RemoteRenderBundle::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderBundleProxy::setLabelInternal(const String& label)

@@ -46,7 +46,15 @@ RemoteShaderModule::RemoteShaderModule(PAL::WebGPU::ShaderModule& shaderModule, 
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteShaderModule::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteShaderModule::~RemoteShaderModule() = default;
+RemoteShaderModule::~RemoteShaderModule()
+{
+    destroy();
+}
+
+void RemoteShaderModule::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteShaderModule::stopListeningForIPC()
 {

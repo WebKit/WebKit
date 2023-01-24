@@ -44,7 +44,15 @@ RemoteRenderPassEncoder::RemoteRenderPassEncoder(PAL::WebGPU::RenderPassEncoder&
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderPassEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteRenderPassEncoder::~RemoteRenderPassEncoder() = default;
+RemoteRenderPassEncoder::~RemoteRenderPassEncoder()
+{
+    destroy();
+}
+
+void RemoteRenderPassEncoder::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteRenderPassEncoder::stopListeningForIPC()
 {

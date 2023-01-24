@@ -48,7 +48,10 @@ RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& 
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteTexture::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteTexture::~RemoteTexture() = default;
+RemoteTexture::~RemoteTexture()
+{
+    destroy();
+}
 
 void RemoteTexture::stopListeningForIPC()
 {
@@ -73,7 +76,8 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
 
 void RemoteTexture::destroy()
 {
-    m_backing->destroy();
+    if (m_objectHeap.removeObject(m_identifier))
+        m_backing->destroy();
 }
 
 void RemoteTexture::setLabel(String&& label)

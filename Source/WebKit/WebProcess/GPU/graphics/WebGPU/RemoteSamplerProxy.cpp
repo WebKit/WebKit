@@ -42,6 +42,8 @@ RemoteSamplerProxy::RemoteSamplerProxy(RemoteDeviceProxy& parent, ConvertToBacki
 
 RemoteSamplerProxy::~RemoteSamplerProxy()
 {
+    auto sendResult = send(Messages::RemoteSampler::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteSamplerProxy::setLabelInternal(const String& label)

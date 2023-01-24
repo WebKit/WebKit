@@ -46,7 +46,15 @@ RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(PAL::WebGPU::RenderBundleEn
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder() = default;
+RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder()
+{
+    destroy();
+}
+
+void RemoteRenderBundleEncoder::destroy()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
 
 void RemoteRenderBundleEncoder::stopListeningForIPC()
 {

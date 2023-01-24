@@ -44,6 +44,8 @@ RemoteShaderModuleProxy::RemoteShaderModuleProxy(RemoteDeviceProxy& parent, Conv
 
 RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 {
+    auto sendResult = send(Messages::RemoteShaderModule::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)

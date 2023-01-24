@@ -42,6 +42,7 @@ RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBacking
 
 RemoteBufferProxy::~RemoteBufferProxy()
 {
+    destroy();
 }
 
 void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void()>&& callback)
@@ -96,6 +97,7 @@ void RemoteBufferProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteBuffer::Destroy());
     UNUSED_VARIABLE(sendResult);
+    m_destroyed = true;
 }
 
 void RemoteBufferProxy::setLabelInternal(const String& label)

@@ -77,6 +77,13 @@ void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
     });
 }
 
+void RemoteGPU::destroy()
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        stopListeningForIPC(Ref { *this });
+    });
+}
+
 void RemoteGPU::workQueueInitialize()
 {
     assertIsCurrent(workQueue());

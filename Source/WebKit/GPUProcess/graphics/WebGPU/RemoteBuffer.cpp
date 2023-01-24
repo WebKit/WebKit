@@ -43,7 +43,10 @@ RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& obje
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteBuffer::~RemoteBuffer() = default;
+RemoteBuffer::~RemoteBuffer()
+{
+    destroy();
+}
 
 void RemoteBuffer::stopListeningForIPC()
 {
@@ -96,7 +99,8 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 
 void RemoteBuffer::destroy()
 {
-    m_backing->destroy();
+    if (m_objectHeap.removeObject(m_identifier))
+        m_backing->destroy();
 }
 
 void RemoteBuffer::setLabel(String&& label)

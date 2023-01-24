@@ -42,6 +42,8 @@ RemoteRenderPassEncoderProxy::RemoteRenderPassEncoderProxy(RemoteCommandEncoderP
 
 RemoteRenderPassEncoderProxy::~RemoteRenderPassEncoderProxy()
 {
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::Destroy());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderPassEncoderProxy::setPipeline(const PAL::WebGPU::RenderPipeline& renderPipeline)

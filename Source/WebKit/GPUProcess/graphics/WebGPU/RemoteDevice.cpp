@@ -93,7 +93,10 @@ RemoteDevice::RemoteDevice(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& obje
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteDevice::~RemoteDevice() = default;
+RemoteDevice::~RemoteDevice()
+{
+    destroy();
+}
 
 void RemoteDevice::stopListeningForIPC()
 {
@@ -107,7 +110,8 @@ RemoteQueue& RemoteDevice::queue()
 
 void RemoteDevice::destroy()
 {
-    m_backing->destroy();
+    if (m_objectHeap.removeObject(m_identifier))
+        m_backing->destroy();
 }
 
 void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)
