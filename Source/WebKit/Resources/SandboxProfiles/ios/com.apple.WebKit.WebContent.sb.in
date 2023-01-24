@@ -25,6 +25,9 @@
 
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 65 67)))
 #endif
 
 ;;;

@@ -27,6 +27,8 @@
 (allow system-fcntl
     (fcntl-command
         F_BARRIERFSYNC
+        F_CHECK_LV
+        F_GETCONFINED
         F_GETFL
         F_GETPATH
         F_GETPROTECTIONCLASS
@@ -35,6 +37,7 @@
         F_OFD_SETLKWTIMEOUT
         F_RDADVISE
         F_SETCONFINED
+        F_SETFD
         F_SETFL))
 
 (allow file-link)
@@ -61,6 +64,9 @@
             SO_RCVBUF
             SO_REUSEADDR
             SO_REUSEPORT)))
+
+(with-filter (mac-policy-name "vnguard")
+    (allow system-mac-syscall (mac-syscall-number 1)))
 #endif
 
 (allow system-privilege (with grant)

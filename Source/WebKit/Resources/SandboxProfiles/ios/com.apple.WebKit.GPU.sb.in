@@ -28,10 +28,11 @@
     (fcntl-command
         F_ADDFILESIGS_RETURN
         F_CHECK_LV
-        F_GETPATH))
+        F_GETPATH
+        F_SETFD))
 
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 5)))
+    (allow system-mac-syscall (mac-syscall-number 5 67)))
 #endif
 
 ;;;
