@@ -293,7 +293,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             page += 1
 
         if not files:
-            log.msg('Failed fetching files for PR #{}: response code {}'.format(number, response.code if response else '?'))
+            log.msg('Failed fetching files for PR #{}: response code {}'.format(number, response.status_code if response else '?'))
         return defer.returnValue(files)
 
     def extractProperties(self, payload):
