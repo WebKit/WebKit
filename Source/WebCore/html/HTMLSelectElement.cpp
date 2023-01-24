@@ -259,14 +259,18 @@ String HTMLSelectElement::value() const
 void HTMLSelectElement::setValue(const String& value)
 {
     // Find the option with value() matching the given parameter and make it the current selection.
-    auto optionIndex = listItems().findIf([&] (const auto& item) {
-        if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get()))
-            return optionElement->value() == value;
+    unsigned optionIndex = 0;
+    for (auto& item : listItems()) {
+        if (auto* option = dynamicDowncast<HTMLOptionElement>(item.get())) {
+            if (option->value() == value) {
+                setSelectedIndex(optionIndex);
+                return;
+            }
+            ++optionIndex;
+        }
+    }
 
-        return false;
-    });
-
-    setSelectedIndex(optionIndex);
+    setSelectedIndex(-1);
 }
 
 bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const

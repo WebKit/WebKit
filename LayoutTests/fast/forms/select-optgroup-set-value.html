@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <select id="select">
+        <optgroup>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+        </optgroup>
+    </select>
+</body>
+<script>
+
+description("Tests that setting the value of a &lt;select&gt; element to an &lt;option&gt; within an &lt;optgroup&gt; sets the correct value.");
+
+shouldBeEqualToString("select.value", "A");
+select.value = "B";
+shouldBeEqualToString("select.value", "B");
+
+</script>
+</html>
