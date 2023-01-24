@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <style>
@@ -25,7 +24,7 @@
             margin-left: 25px;
         }
     </style>
-    
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -44,13 +43,12 @@
                 if (window.testRunner)
                     testRunner.notifyDone();
             }, false)
+
             window.scrollTo(0, 800);
             
-            window.setTimeout(function() {
-                if (window.eventSender) {
-                    eventSender.mouseMoveTo(50, 100);
-                    eventSender.mouseScrollBy(-1, -2);
-                }
+            window.setTimeout(async () => {
+                if (window.eventSender)
+                    await UIHelper.statelessMouseWheelScrollAt(50, 100, -1, -2);
             }, 0);
         }
 

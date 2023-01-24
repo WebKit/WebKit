@@ -54,6 +54,7 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, -5, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
 
+            // FIXME: Use await UIHelper.waitForScrollCompletion();
             return new Promise(resolve => {
                 eventSender.callAfterScrollingCompletes(() => {
                     requestAnimationFrame(resolve);

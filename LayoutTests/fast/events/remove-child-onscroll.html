@@ -1,12 +1,13 @@
 <html>
     <head>
+        <script src="../../resources/ui-helper.js"></script>
         <script>
             if (window.testRunner) {
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
             }
 
-            function dispatchScrollEvents()
+            async function dispatchScrollEvents()
             {
                 if (window.eventSender && window.testRunner) {
                     testRunner.waitUntilDone();
@@ -23,8 +24,7 @@
                         },
                         false);
 
-                      eventSender.mouseMoveTo(100, 100);
-                      eventSender.mouseScrollBy(0, -1);
+                    await UIHelper.statelessMouseWheelScrollAt(100, 100, 0, -1);
                 }
             }
         </script>

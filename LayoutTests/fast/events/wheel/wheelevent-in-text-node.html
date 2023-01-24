@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="../../../resources/js-test-pre.js"></script>
     <script>
         window.jsTestIsAsync = true;
 
-        function test() {
+        async function test() {
             var div = document.querySelector('div');
             if (window.eventSender) {
+                await UIHelper.ensurePresentationUpdate();
                 eventSender.mouseMoveTo(div.offsetLeft + 5, div.offsetTop + 5);
                 eventSender.mouseScrollBy(0,120);
             } else {
@@ -24,10 +26,10 @@
             finishJSTest();
         }
 
-        window.onload = function () {
+        window.onload = async function () {
             var div = document.querySelector('div');
             div.addEventListener('mousewheel', wheelHandler);
-            test();
+            await test();
         };
     </script>
     <script src="../../../resources/js-test-post.js"></script>

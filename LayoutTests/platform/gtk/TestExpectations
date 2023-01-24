@@ -30,7 +30,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element
 # Some Apple ports don't support RTL scrollbars.
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
-fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
 fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html  [ Pass ]
 fast/scrolling/rtl-scrollbars-position-absolute.html  [ Pass ]
 fast/scrolling/rtl-scrollbars-position-fixed.html [ Pass ]
@@ -1490,6 +1489,10 @@ webkit.org/b/159143 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
 
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
+
+webkit.org/b/250610 fast/events/wheel/wheelevent-in-text-node.html [ Skip ]
+webkit.org/b/250610 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Skip ]
+webkit.org/b/250610 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
 
 # Missing glyph symbol is not rendered properly.
 webkit.org/b/140252 fast/css/line-height-determined-by-primary-font.html [ Failure ]

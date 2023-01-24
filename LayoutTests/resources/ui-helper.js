@@ -101,7 +101,7 @@ window.UIHelper = class UIHelper {
         await UIHelper.startMonitoringWheelEvents();
         eventSender.mouseMoveTo(x, y);
         eventSender.mouseScrollBy(deltaX, deltaY);
-        await UIHelper.waitForScrollCompletion();
+        return UIHelper.waitForScrollCompletion();
     }
 
     static async mouseWheelMayBeginAt(x, y)
@@ -1459,6 +1459,16 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => target.addEventListener(eventName, resolve, { once: true }));
     }
 
+    static waitForEventHandler(target, eventName, handler)
+    {
+        return new Promise((resolve) => {
+            target.addEventListener(eventName, (e) => {
+                handler(e)
+                resolve();
+            }, { once: true });
+        });
+    }
+
     static callFunctionAndWaitForEvent(functionToCall, target, eventName)
     {
         return new Promise(async resolve => {
@@ -1468,7 +1478,7 @@ window.UIHelper = class UIHelper {
                     target.addEventListener(eventName, (e) => {
                         event = e;
                         eventListenerResolve();
-                    }, {once: true});
+                    }, { once: true });
                 }),
                 new Promise(async functionResolve => {
                     await functionToCall();

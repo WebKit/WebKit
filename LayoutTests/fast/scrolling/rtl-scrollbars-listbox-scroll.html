@@ -24,12 +24,16 @@ if (window.internals) {
 <option>November</option>
 <option>December</option>
 </select>
+<script src="../../resources/ui-helper.js"></script>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+    
 if (window.eventSender) {
-    window.addEventListener('load', function() {
-        eventSender.mouseMoveTo(25, 5);
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "began", "none");
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    window.addEventListener('load', async () => {
+        await UIHelper.mouseWheelScrollAt(25, 5, 0, -20, 0, 0);
+        if (window.testRunner)
+            testRunner.notifyDone();
     });
 }
 </script>
