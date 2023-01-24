@@ -67,11 +67,16 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         return m_damageRect.maxY() > rect.y() && m_damageRect.y() < rect.maxY();
     };
 
-    if (!box.isVisible() || box.isLineBreak())
+    if (box.isFullyTruncated()) {
+        // Fully truncated boxes are visually empty and they don't show their descendants either (unlike visibility property). 
+        return;
+    }
+
+    if (box.isLineBreak())
         return;
 
     if (box.isInlineBox()) {
-        if (!hasDamage(box))
+        if (!box.isVisible() || !hasDamage(box))
             return;
 
         auto inlineBoxPaintInfo = PaintInfo { m_paintInfo };
@@ -83,7 +88,8 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
     }
 
     if (box.isText()) {
-        if (!box.text()->length() || !hasDamage(box))
+        auto hasVisibleDamage = box.text()->length() && box.isVisible() && hasDamage(box); 
+        if (!hasVisibleDamage)
             return;
 
         ModernTextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
