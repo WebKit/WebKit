@@ -523,19 +523,32 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
     }).get()];
 }
 
-void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(QueryCompletionHandler&& handler)
+static inline bool canCurrentProcessAccessPasskeysForRelyingParty(const WebCore::SecurityOriginData& data)
 {
-    handler([getASCWebKitSPISupportClass() shouldUseAlternateCredentialStore]);
+    if ([getASCWebKitSPISupportClass() respondsToSelector:@selector(canCurrentProcessAccessPasskeysForRelyingParty:)])
+        return [getASCWebKitSPISupportClass() canCurrentProcessAccessPasskeysForRelyingParty:data.securityOrigin()->domain()];
+    return false;
+}
+
+void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(const WebCore::SecurityOriginData& data, QueryCompletionHandler&& handler)
+{
+    if (canCurrentProcessAccessPasskeysForRelyingParty(data)) {
+        handler([getASCWebKitSPISupportClass() shouldUseAlternateCredentialStore]);
+        return;
+    }
+    handler(false);
 }
 
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData& data, QueryCompletionHandler&& handler)
 {
-    if ([getASCWebKitSPISupportClass() shouldUseAlternateCredentialStore]) {
-        handler(![getASCWebKitSPISupportClass() respondsToSelector:@selector(arePasskeysDisallowedForRelyingParty:)] || ![getASCWebKitSPISupportClass() arePasskeysDisallowedForRelyingParty:data.securityOrigin()->domain()]);
-        return;
+    if (canCurrentProcessAccessPasskeysForRelyingParty(data)) {
+        if ([getASCWebKitSPISupportClass() shouldUseAlternateCredentialStore]) {
+            handler(![getASCWebKitSPISupportClass() respondsToSelector:@selector(arePasskeysDisallowedForRelyingParty:)] || ![getASCWebKitSPISupportClass() arePasskeysDisallowedForRelyingParty:data.securityOrigin()->domain()]);
+            return;
+        }
+        handler(LocalService::isAvailable());
     }
-
-    handler(LocalService::isAvailable());
+    handler(false);
 }
 
 void WebAuthenticatorCoordinatorProxy::cancel()
