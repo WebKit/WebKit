@@ -139,8 +139,10 @@ VideoFrameTimeMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const
 
 void RealtimeIncomingVideoSource::notifyNewFrame()
 {
+#if !RELEASE_LOG_DISABLED
     if (m_frameRateMonitor)
         m_frameRateMonitor->update();
+#endif
 }
 
 } // namespace WebCore
